@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any, ClassVar
 
 import pyarrow as pa
+import pyarrow.parquet as pq
 
 from placekeepers.adapters.base import Adapter, FetchError, quote_literal
 from placekeepers.cache import RawFetch
@@ -77,6 +78,11 @@ class UrlAdapter(Adapter):
             if self.add_source_date:
                 constants["source_date"] = pa.scalar(self.source_date(raw), pa.date32())
             geojson_to_geoparquet(path, out, keep=self.keep_fields, constants=constants)
+            if self.keep_fields:
+                written = set(pq.read_schema(out).names)
+                gone = [name for name in self.keep_fields if name.lower() not in written]
+                if gone:
+                    self.notes.append(f"The file no longer has the fields {', '.join(gone)}")
         elif kind == "csv":
             con = self.ctx.duckdb()
             try:

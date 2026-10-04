@@ -237,8 +237,7 @@ def landcare_accounts(path: Path | None) -> set[str]:
     }
 
 
-# Care already happening: PHS LandCare and gardens ----------------------------------------------
-
+# Care already happening: PHS LandCare and gardens
 LANDCARE_PROGRAMS = {"PLC": 1, "CLC": 2, "LANDBANK": 3, "PHDC": 4}
 
 
@@ -294,9 +293,7 @@ def build_gardens(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) 
     return BuildResult(writer.count, [])
 
 
-# Boundaries --------------------------------------------------------------------------------------
-
-
+# Boundaries
 def build_council_districts(
     ctx: Context, paths: dict[str, Path], out: Path, as_of: date
 ) -> BuildResult:
