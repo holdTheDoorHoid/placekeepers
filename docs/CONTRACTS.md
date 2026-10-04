@@ -379,10 +379,11 @@ The lot dossier (milestone M1.6) reads them.
 **Which parcels.** Every candidate parcel (`pipeline/src/placekeepers/candidates.py`: on either City
 vacancy list, owned by the City, the Land Bank, the Redevelopment Authority or PHDC, in PHS
 LandCare, vacant land or a vacant exterior to the assessor, cleaned and sealed or demolished since
-2016, or on the unsafe or imminently dangerous lists) that OPA or the City's list of public
-property still knows. On 2026-10-04 that was 72,535 parcels in 211 files: 104.6 MB on disk and 13.4
-MB as served compressed; the largest file (`885.json`) is 6.7 MB, 0.8 MB compressed. Any other
-parcel is looked up live. The file is named by the first three digits of the 9 digit OPA account.
+2016, or on the unsafe or imminently dangerous lists), and every parcel the vacancy model shows,
+that OPA or the City's list of public property still knows. On 2026-10-04 that was 77,866 parcels
+in 211 files: 109.4 MB on disk and 14.0 MB as served compressed; the largest file (`885.json`) is
+6.8 MB, 0.8 MB compressed. Any other parcel is looked up live. The file is named by the first three
+digits of the 9 digit OPA account.
 
 ```json
 {
@@ -402,7 +403,7 @@ parcel is looked up live. The file is named by the first three digits of the 9 d
   "parcels": {
     "123456789": {
       "address": "1234 N EXAMPLE ST",
-      "vacancy": {"kind": "lot", "confidence": "medium", "reasons": ["City lists it as vacant land"]},
+      "vacancy": {"kind": "lot", "confidence": "high", "rs": 13, "n": 2},
       "owner": {
         "names": ["MORALES ROSA"],
         "mailing": "41 ORCHARD RD, CHERRY HILL NJ 08002",
@@ -435,8 +436,15 @@ holds its own `text` and `data`. Put together, `text`, `careful` and `next_step`
 the possible estate flag then reads the ETHICS.md text word for word. `notices` holds the deed fraud
 notice the same way. Both are written in full in every file, so one file is all a dossier needs.
 
-**`vacancy`**: `null` when we do not call the parcel vacant. Until the vacancy model (M1.2) is
-merged, the call comes from the City's lists: a lot or a building, `confidence` `medium`.
+**`vacancy`** (decided 2026-10-04 by the orchestrator): the vacancy model's call, read from the same
+output the lots layer reads, so the dossier and the map always agree. It carries the tile's fields,
+not sentences: `kind` (`lot` or `building`, from the tile's `k`), `confidence` (`high`, `medium` or
+`low`), `rs` (the reason bits of section 4), `n` (independent records that agree), and `dy`, `sy`,
+`ny` only when present. The web app turns `rs` into sentences (`web/src/places/reasons.ts`), so the
+wording lives in one place. `vacancy` is `null` for a parcel the model leaves out (parks, gardens,
+parking and similar) or does not call vacant. When the model has not run, the map shows the City's
+lists alone and so do the dossiers: `confidence` `medium`, `rs` with bit 0 (land list) or bit 1
+(building list) or both, and `n` 0.
 
 **`owner`**: `names` as OPA publishes them (owner 1, then owner 2); `mailing`, the mailing address
 lines as the City publishes them, joined with commas (or `null`); `type`, one of `individual`,
@@ -457,7 +465,7 @@ Flags, in this order, with their `data`:
 | `tax_debt_2025` | every owner | `as_of` ("2025-07-09"), `total_due` (dollars), `years` (tax years owed) |
 | `sheriff_sales` | every owner | `sales`: `date` and `price` of each, oldest first |
 | `years_since_sale` | private owners | `year`; with a known sale `date`, `price` and `source` (`opa_properties` when it comes from the assessor, before the deed records begin in 2000); with none, `sold: false` and `year` is the year since which there has been no sale on the open market |
-| `many_parcels` | private owners with at least 5 parcels we call vacant | `count`, `list` (a key of `tables/owners.json`) |
+| `many_parcels` | private owners with at least 5 parcels we call vacant with high or medium confidence | `count`, `list` (a key of `tables/owners.json`) |
 | `fast_resales` | every owner | `count`, `dates` (two or more sales within 24 months of each other) |
 | `open_violations` | every owner | `count`, `last` (date), `title` (the City's violation title) |
 | `unsafe`, `imminently_dangerous` | every owner | `since` (date) |
@@ -482,7 +490,8 @@ market value]` pairs, newest year first.
 last completed demolition). L&I case numbers are never published.
 
 **`routes`**: registry route ids in the order to try them (docs/ROUTES.md; rules in
-`derive/routes.py`). Conservatorship appears only for a private parcel we call vacant.
+`derive/routes.py`). Conservatorship appears only for a private parcel we call vacant with high or
+medium confidence: a parcel we are not sure about may be someone's home.
 **`suggestions`**: registry suggestion ids (a vacant lot gets `clean_and_green`, a vacant building
 `seal_abandoned_building`).
 
@@ -513,8 +522,9 @@ City's Carto API; anything it cannot refresh stays as in the shard, labeled with
 }
 ```
 
-Every private owner holding at least `min_parcels` parcels we call vacant, keyed by the `list` id
-of its `many_parcels` flag, with the parcels' accounts. Owners are matched conservatively: two
-parcels share an owner only when all their owner names match after spelling is evened out (capitals,
-no punctuation, "L.L.C." as LLC, "&" as AND), so one owner under two spellings counts twice and two
-owners are never merged. Public owners are left out: the City lists its own holdings.
+Every private owner holding at least `min_parcels` parcels we call vacant with high or medium
+confidence, keyed by the `list` id of its `many_parcels` flag, with the parcels' accounts. Owners
+are matched conservatively: two parcels share an owner only when all their owner names match after
+spelling is evened out (capitals, no punctuation, "L.L.C." as LLC, "&" as AND), so one owner under
+two spellings counts twice and two owners are never merged. Public owners are left out: the City
+lists its own holdings. On 2026-10-04: 464 owners, 91 KB.
