@@ -107,15 +107,20 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
                     paths[source_id] = SnapshotStore(ctx.cache, source_id).path_for(status.snapshot)
             if not paths:
                 notes.append(f"{layer.id} has no usable data yet")
-                log.warning("publish: %s has no usable snapshot in %s", layer.id,
-                            ", ".join(builder.sources))
+                log.warning(
+                    "publish: %s has no usable snapshot in %s", layer.id, ", ".join(builder.sources)
+                )
                 continue
             target = staging / geojson_name(layer.file, layer.source_layer)
             built = builder.build(ctx, paths, target, as_of)
             notes.extend(built.notes)
             result.features[f"{layer.file} {layer.source_layer}"] = built.features
-            log.info("publish: %s layer %s has %s features", layer.file, layer.source_layer,
-                     f"{built.features:,}")
+            log.info(
+                "publish: %s layer %s has %s features",
+                layer.file,
+                layer.source_layer,
+                f"{built.features:,}",
+            )
             layers_by_file.setdefault(layer.file, []).append((layer.source_layer, target))
             attributions.setdefault(layer.file, []).extend(
                 registry.sources[source_id].attribution for source_id in paths

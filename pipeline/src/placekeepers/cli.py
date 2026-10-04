@@ -55,25 +55,31 @@ def _context(args: argparse.Namespace) -> Context:
 
 def _print_steps(results: list[StepResult]) -> None:
     for item in results:
-        print(f"  {item.step:<9} {item.source:<24} {item.outcome:<11} {item.seconds:6.1f} s  "
-              f"{item.detail}")
+        print(
+            f"  {item.step:<9} {item.source:<24} {item.outcome:<11} {item.seconds:6.1f} s  "
+            f"{item.detail}"
+        )
 
 
 def format_health(statuses: list[SourceStatus]) -> str:
     headers = ("source", "status", "rows", "newest", "last success", "stale since", "message")
     rows = []
     for status in statuses:
-        rows.append((
-            status.id,
-            status.status,
-            f"{status.rows:,}" if status.rows is not None else "",
-            status.newest_record or "",
-            (status.last_success or "").replace("T", " ").replace("Z", " UTC"),
-            status.stale_since or "",
-            status.message or "",
-        ))
-    widths = [max(len(headers[i]), *(len(row[i]) for row in rows)) if rows else len(headers[i])
-              for i in range(len(headers))]
+        rows.append(
+            (
+                status.id,
+                status.status,
+                f"{status.rows:,}" if status.rows is not None else "",
+                status.newest_record or "",
+                (status.last_success or "").replace("T", " ").replace("Z", " UTC"),
+                status.stale_since or "",
+                status.message or "",
+            )
+        )
+    widths = [
+        max(len(headers[i]), *(len(row[i]) for row in rows)) if rows else len(headers[i])
+        for i in range(len(headers))
+    ]
     lines = ["  ".join(headers[i].ljust(widths[i]) for i in range(len(headers))).rstrip()]
     lines.append("  ".join("-" * widths[i] for i in range(len(headers))))
     for row in rows:
@@ -81,7 +87,7 @@ def format_health(statuses: list[SourceStatus]) -> str:
     return "\n".join(lines)
 
 
-# -- commands ---------------------------------------------------------------------------------------
+# -- commands --------------------------------------------------------------------------------
 
 
 def cmd_registry_check(args: argparse.Namespace) -> int:
@@ -116,8 +122,10 @@ def _publish(ctx: Context, args: argparse.Namespace) -> int:
 
     as_of = date.fromisoformat(args.as_of) if args.as_of else None
     result = publish(ctx, Path(args.out), as_of=as_of)
-    print(f"Published to {result.out_dir} in {result.seconds:.1f} s "
-          f"(build {result.manifest['build_id']}).")
+    print(
+        f"Published to {result.out_dir} in {result.seconds:.1f} s "
+        f"(build {result.manifest['build_id']})."
+    )
     for name, count in result.features.items():
         print(f"  {name}: {count:,} features")
     for file in result.tiles_built:
@@ -136,9 +144,10 @@ def cmd_health(args: argparse.Namespace) -> int:
     sources = select_sources(ctx.registry, _ids(args))
     statuses = all_statuses(ctx, sources)
     if args.json:
-        data = {status.id: {**status.to_manifest(),
-                            "consecutive_failures": status.consecutive_failures}
-                for status in statuses}
+        data = {
+            status.id: {**status.to_manifest(), "consecutive_failures": status.consecutive_failures}
+            for status in statuses
+        }
         print(json.dumps(data, indent=2))
     else:
         print(format_health(statuses))
@@ -171,21 +180,28 @@ def cmd_all(args: argparse.Namespace) -> int:
     return 0
 
 
-# -- parser -----------------------------------------------------------------------------------------
+# -- parser ----------------------------------------------------------------------------------
 
 
 def build_parser() -> argparse.ArgumentParser:
     common = argparse.ArgumentParser(add_help=False)
-    common.add_argument("--cache", help="cache folder (default: $PK_CACHE or ~/.cache/placekeepers)")
+    common.add_argument(
+        "--cache", help="cache folder (default: $PK_CACHE or ~/.cache/placekeepers)"
+    )
     common.add_argument("-v", "--verbose", action="store_true", help="show more detail")
 
     filters = argparse.ArgumentParser(add_help=False)
-    filters.add_argument("--sources", action="append", metavar="IDS",
-                         help="comma separated source ids (default: all)")
+    filters.add_argument(
+        "--sources",
+        action="append",
+        metavar="IDS",
+        help="comma separated source ids (default: all)",
+    )
 
     offline = argparse.ArgumentParser(add_help=False)
-    offline.add_argument("--offline", action="store_true",
-                         help="use only the cache; download nothing")
+    offline.add_argument(
+        "--offline", action="store_true", help="use only the cache; download nothing"
+    )
 
     out = argparse.ArgumentParser(add_help=False)
     out.add_argument("--out", default=None, help="data root to write (default: build/data)")
@@ -201,30 +217,38 @@ def build_parser() -> argparse.ArgumentParser:
     check = registry_commands.add_parser("check", help="check the registry", parents=[common])
     check.set_defaults(func=cmd_registry_check)
 
-    fetch = commands.add_parser("fetch", help="download sources",
-                                parents=[common, filters, offline])
+    fetch = commands.add_parser(
+        "fetch", help="download sources", parents=[common, filters, offline]
+    )
     fetch.add_argument("ids", nargs="*", help="source ids (default: all)")
     fetch.set_defaults(func=cmd_fetch)
 
-    validate = commands.add_parser("validate", help="check new downloads and make snapshots",
-                                   parents=[common, filters, offline])
+    validate = commands.add_parser(
+        "validate",
+        help="check new downloads and make snapshots",
+        parents=[common, filters, offline],
+    )
     validate.add_argument("ids", nargs="*", help="source ids (default: all)")
     validate.set_defaults(func=cmd_validate)
 
-    publish = commands.add_parser("publish", help="write the published data",
-                                  parents=[common, offline, out])
+    publish = commands.add_parser(
+        "publish", help="write the published data", parents=[common, offline, out]
+    )
     publish.set_defaults(func=cmd_publish)
 
-    health = commands.add_parser("health", help="show source health",
-                                 parents=[common, filters, offline])
+    health = commands.add_parser(
+        "health", help="show source health", parents=[common, filters, offline]
+    )
     health.add_argument("ids", nargs="*", help="source ids (default: all)")
     health.add_argument("--json", action="store_true", help="print JSON")
-    health.add_argument("--strict", action="store_true",
-                        help="exit with status 1 when any source is not ok")
+    health.add_argument(
+        "--strict", action="store_true", help="exit with status 1 when any source is not ok"
+    )
     health.set_defaults(func=cmd_health)
 
-    run_all = commands.add_parser("all", help="fetch, validate, publish, report",
-                                  parents=[common, filters, offline, out])
+    run_all = commands.add_parser(
+        "all", help="fetch, validate, publish, report", parents=[common, filters, offline, out]
+    )
     run_all.set_defaults(func=cmd_all)
     return parser
 

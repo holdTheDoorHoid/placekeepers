@@ -57,25 +57,31 @@ def evaluate(
         checks.append(Check("required_columns", True, "All required columns are present"))
 
     if rows < health.min_rows:
-        checks.append(Check(
-            "min_rows", False,
-            f"Only {_n(rows)} rows, fewer than the {_n(health.min_rows)} expected",
-        ))
+        checks.append(
+            Check(
+                "min_rows",
+                False,
+                f"Only {_n(rows)} rows, fewer than the {_n(health.min_rows)} expected",
+            )
+        )
     else:
         checks.append(Check("min_rows", True, f"{_n(rows)} rows (at least {_n(health.min_rows)})"))
 
     if last_good is not None and last_good.rows > 0:
         drop = (last_good.rows - rows) / last_good.rows * 100
         if drop > health.max_drop_pct:
-            checks.append(Check(
-                "max_drop_pct", False,
-                f"Rows fell from {_n(last_good.rows)} to {_n(rows)} ({drop:.0f}% fewer), more than "
-                f"the {health.max_drop_pct:g}% allowed",
-            ))
+            checks.append(
+                Check(
+                    "max_drop_pct",
+                    False,
+                    f"Rows fell from {_n(last_good.rows)} to {_n(rows)} ({drop:.0f}% fewer), "
+                    f"more than the {health.max_drop_pct:g}% allowed",
+                )
+            )
         else:
-            checks.append(Check(
-                "max_drop_pct", True, f"Rows went from {_n(last_good.rows)} to {_n(rows)}"
-            ))
+            checks.append(
+                Check("max_drop_pct", True, f"Rows went from {_n(last_good.rows)} to {_n(rows)}")
+            )
 
     if health.newest_field:
         field = health.newest_field
@@ -85,11 +91,14 @@ def evaluate(
             checks.append(Check("newest_record", False, f"No usable dates in {field}"))
         elif health.max_age_days is not None and (today - newest).days > health.max_age_days:
             age = (today - newest).days
-            checks.append(Check(
-                "newest_record", False,
-                f"The newest record is from {newest.isoformat()}, {age} days ago (the limit is "
-                f"{health.max_age_days} days)",
-            ))
+            checks.append(
+                Check(
+                    "newest_record",
+                    False,
+                    f"The newest record is from {newest.isoformat()}, {age} days ago (the limit is "
+                    f"{health.max_age_days} days)",
+                )
+            )
         else:
             checks.append(Check("newest_record", True, f"The newest record is from {newest}"))
     return checks

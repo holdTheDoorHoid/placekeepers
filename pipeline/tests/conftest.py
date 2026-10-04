@@ -73,7 +73,7 @@ class FakeCarto:
         if after:
             rows = [row for row in rows if row["cartodb_id"] > int(after.group(1))]
         rows = rows[:limit]
-        select = query[len("SELECT "): query.index(" FROM ")]
+        select = query[len("SELECT ") : query.index(" FROM ")]
         names = re.findall(r" AS (\w+)", select)
         buffer = io.StringIO()
         writer = csv.writer(buffer, lineterminator="\n")
@@ -84,8 +84,7 @@ class FakeCarto:
                 value = row["cartodb_id"] if name == "_key" else row.get(name)
                 values.append("" if value is None else value)
             writer.writerow(values)
-        return httpx.Response(200, text=buffer.getvalue(),
-                              headers={"content-type": "text/csv"})
+        return httpx.Response(200, text=buffer.getvalue(), headers={"content-type": "text/csv"})
 
 
 def hex_wkb(geometry: Any) -> str:
@@ -107,22 +106,26 @@ class FakeArcgis:
         self.requests.append(request)
         if self.errors_before_success > 0:
             self.errors_before_success -= 1
-            return httpx.Response(200, json={"error": {"code": self.error_code,
-                                                       "message": "Invalid URL"}})
+            return httpx.Response(
+                200, json={"error": {"code": self.error_code, "message": "Invalid URL"}}
+            )
         params = request.url.params
         if not request.url.path.endswith("/query"):
-            return httpx.Response(200, json={
-                "objectIdField": "objectid",
-                "maxRecordCount": self.max_records,
-                "geometryType": "esriGeometryPolygon",
-                "fields": self.fields,
-                "editingInfo": {"dataLastEditDate": 1790523183650},
-            })
+            return httpx.Response(
+                200,
+                json={
+                    "objectIdField": "objectid",
+                    "maxRecordCount": self.max_records,
+                    "geometryType": "esriGeometryPolygon",
+                    "fields": self.fields,
+                    "editingInfo": {"dataLastEditDate": 1790523183650},
+                },
+            )
         if params.get("returnCountOnly") == "true":
             return httpx.Response(200, json={"count": len(self.features)})
         offset = int(params["resultOffset"])
         count = int(params["resultRecordCount"])
-        page = self.features[offset: offset + count]
+        page = self.features[offset : offset + count]
         more = offset + count < len(self.features)
         body = {
             "type": "FeatureCollection",
@@ -133,8 +136,12 @@ class FakeArcgis:
 
 
 def arcgis_feature(properties: dict[str, Any], geometry: Any) -> dict[str, Any]:
-    return {"type": "Feature", "id": properties.get("objectid"), "properties": properties,
-            "geometry": mapping(geometry) if geometry is not None else None}
+    return {
+        "type": "Feature",
+        "id": properties.get("objectid"),
+        "properties": properties,
+        "geometry": mapping(geometry) if geometry is not None else None,
+    }
 
 
 class Router:
@@ -174,8 +181,9 @@ def make_context(
 
     def factory() -> PoliteClient:
         transport = httpx.MockTransport(handler or (lambda request: httpx.Response(599)))
-        return PoliteClient(transport=transport, sleep=lambda seconds: None, min_interval=0,
-                            max_attempts=3)
+        return PoliteClient(
+            transport=transport, sleep=lambda seconds: None, min_interval=0, max_attempts=3
+        )
 
     return Context(settings, registry, http_factory=factory)
 

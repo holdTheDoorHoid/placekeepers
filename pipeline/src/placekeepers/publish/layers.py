@@ -63,8 +63,9 @@ class LayerBuilder:
 
 
 def build_hin(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) -> BuildResult:
-    table = pq.read_table(paths["high_injury_network"],
-                          columns=["objectid", "stname", "length_ft", "geometry"])
+    table = pq.read_table(
+        paths["high_injury_network"], columns=["objectid", "stname", "length_ft", "geometry"]
+    )
     rows = sorted(table.to_pylist(), key=lambda row: row["objectid"])
     with GeoJSONWriter(out) as writer:
         for row in rows:
@@ -201,8 +202,9 @@ def build_parcels(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) 
         )
     both = [account for account, found in kinds.items() if len(found) > 1]
     if both:
-        as_lots = sum(1 for account in both if parcel_kind(kinds[account],
-                                                           descriptions.get(account)) == 1)
+        as_lots = sum(
+            1 for account in both if parcel_kind(kinds[account], descriptions.get(account)) == 1
+        )
         notes.append(
             f"{len(both)} parcels are on both City vacancy lists: {as_lots} shown as lots because "
             f"the City describes them as vacant land, {len(both) - as_lots} as buildings"
@@ -218,8 +220,12 @@ def build_parcels(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) 
 
 
 BUILDERS: tuple[LayerBuilder, ...] = (
-    LayerBuilder("tiles/lots.pmtiles", "parcels",
-                 ("vacant_indicators_land", "vacant_indicators_bldg"), build_parcels),
+    LayerBuilder(
+        "tiles/lots.pmtiles",
+        "parcels",
+        ("vacant_indicators_land", "vacant_indicators_bldg"),
+        build_parcels,
+    ),
     LayerBuilder("tiles/streets.pmtiles", "hin", ("high_injury_network",), build_hin),
     LayerBuilder("tiles/context.pmtiles", "h3", ("shootings",), build_h3),
 )

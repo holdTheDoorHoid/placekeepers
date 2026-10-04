@@ -207,7 +207,8 @@ class Layer(Strict):
     sources: Annotated[list[Id], Field(min_length=1)]
     # A relative path under the data root. Segments cannot start with a dot or a slash.
     file: Annotated[
-        str, StringConstraints(pattern=r"^[A-Za-z0-9_][A-Za-z0-9_.-]*(/[A-Za-z0-9_][A-Za-z0-9_.-]*)*$")
+        str,
+        StringConstraints(pattern=r"^[A-Za-z0-9_][A-Za-z0-9_.-]*(/[A-Za-z0-9_][A-Za-z0-9_.-]*)*$"),
     ]
     source_layer: Id
     geometry: Literal["point", "line", "polygon"]
@@ -371,7 +372,9 @@ def _describe(error: dict[str, Any]) -> str:
         return f"{prefix}{error['input']!r} is not one of {expected}"
     if kind == "union_tag_invalid":
         ctx = error.get("ctx", {})
-        return f"{prefix}unknown kind {ctx.get('tag')!r}; expected one of {ctx.get('expected_tags')}"
+        return (
+            f"{prefix}unknown kind {ctx.get('tag')!r}; expected one of {ctx.get('expected_tags')}"
+        )
     message = error["msg"]
     if message.startswith("Value error, "):
         message = message[len("Value error, ") :]
@@ -441,9 +444,10 @@ def _cross_check(
         where = f"registry/sources.yaml: {source.id}"
         if source.license not in licenses:
             problems.append(f"{where}: license '{source.license}' is not in registry/licenses.yaml")
-        if isinstance(source.endpoint, CuratedEndpoint) and repo_root is not None:
-            if not (repo_root / source.endpoint.path).is_file():
-                problems.append(f"{where}: curated file {source.endpoint.path} does not exist")
+        endpoint = source.endpoint
+        curated = isinstance(endpoint, CuratedEndpoint) and repo_root is not None
+        if curated and not (repo_root / endpoint.path).is_file():
+            problems.append(f"{where}: curated file {endpoint.path} does not exist")
 
     for layer in reg["layers"].values():
         where = f"registry/layers.yaml: {layer.id}"

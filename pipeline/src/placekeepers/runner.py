@@ -96,8 +96,9 @@ def fetch_source(ctx: Context, source: Source) -> StepResult:
             log.debug("%s: details", source.id, exc_info=True)
             return result("failed", message)
         files = sorted(path.name for path in partial.iterdir())
-        raw = RawFetch(source=source.id, fetch_id=fetch_id, fetched_at=iso_z(moment),
-                       files=files, info=info)
+        raw = RawFetch(
+            source=source.id, fetch_id=fetch_id, fetched_at=iso_z(moment), files=files, info=info
+        )
         raws.commit(partial, raw)
         raws.prune(keep=fetch_id)
         state.pending_fetch = fetch_id
@@ -203,7 +204,8 @@ def validate_source(ctx: Context, source: Source) -> StepResult:
 def all_statuses(ctx: Context, sources: list[Source] | None = None) -> list[SourceStatus]:
     chosen = sources if sources is not None else list(ctx.registry.sources.values())
     return [
-        source_status(source.id, SnapshotStore(ctx.cache, source.id),
-                      has_adapter=source.id in ADAPTERS)
+        source_status(
+            source.id, SnapshotStore(ctx.cache, source.id), has_adapter=source.id in ADAPTERS
+        )
         for source in chosen
     ]

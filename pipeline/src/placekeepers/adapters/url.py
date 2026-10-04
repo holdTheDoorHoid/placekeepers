@@ -26,8 +26,12 @@ class UrlAdapter(Adapter):
     def fetch(self, dest: Path) -> dict[str, Any]:
         name = f"data.{self.endpoint.format}"
         result = self.ctx.http.download(self.endpoint.url, dest / name)
-        return {"file": name, "format": self.endpoint.format, "bytes": result.bytes,
-                "sha256": result.sha256}
+        return {
+            "file": name,
+            "format": self.endpoint.format,
+            "bytes": result.bytes,
+            "sha256": result.sha256,
+        }
 
     def normalize(self, raw: RawFetch, out: Path) -> None:
         assert raw.dir is not None
@@ -48,7 +52,9 @@ class UrlAdapter(Adapter):
             import geopandas
 
             frame = geopandas.read_file(path)
-            frame = frame.rename_geometry("geometry") if frame.geometry.name != "geometry" else frame
+            frame = (
+                frame.rename_geometry("geometry") if frame.geometry.name != "geometry" else frame
+            )
             frame.to_crs(4326).to_parquet(out, compression="zstd")
         else:
             raise FetchError(f"{kind} downloads need a source specific adapter")

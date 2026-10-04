@@ -70,11 +70,14 @@ def tippecanoe_command(
 ) -> list[str]:
     command = [
         exe,
-        "--output", str(out),
+        "--output",
+        str(out),
         "--force",
         "--quiet",
-        "--name", tileset_name(file),
-        "--attribution", html.escape(attribution),
+        "--name",
+        tileset_name(file),
+        "--attribution",
+        html.escape(attribution),
         *TILE_OPTIONS.get(file, DEFAULT_OPTIONS),
     ]
     for name, path in layers:

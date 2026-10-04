@@ -40,8 +40,9 @@ def test_the_real_registry_passes() -> None:
 
 def test_a_layer_without_a_description_fails(repo_copy: Path) -> None:
     edit(repo_copy, "layers", lambda layers: by_id(layers, "hin_2025").update(description="  "))
-    assert problems(repo_copy) == ["registry/layers.yaml: entry 2 (hin_2025): description: must "
-                                   "not be empty"]
+    assert problems(repo_copy) == [
+        "registry/layers.yaml: entry 2 (hin_2025): description: must not be empty"
+    ]
 
 
 def test_a_layer_missing_the_description_key_fails(repo_copy: Path) -> None:
@@ -59,16 +60,22 @@ def test_an_unknown_key_fails(repo_copy: Path) -> None:
 
 
 def test_an_unknown_nested_key_fails(repo_copy: Path) -> None:
-    edit(repo_copy, "sources",
-         lambda sources: by_id(sources, "shootings")["health"].update(max_age=3))
+    edit(
+        repo_copy,
+        "sources",
+        lambda sources: by_id(sources, "shootings")["health"].update(max_age=3),
+    )
     assert problems(repo_copy) == [
         "registry/sources.yaml: entry 5 (shootings): health: unknown key 'max_age'"
     ]
 
 
 def test_a_dangling_source_reference_fails(repo_copy: Path) -> None:
-    edit(repo_copy, "layers",
-         lambda layers: by_id(layers, "shootings_hex").update(sources=["shooting_victims"]))
+    edit(
+        repo_copy,
+        "layers",
+        lambda layers: by_id(layers, "shootings_hex").update(sources=["shooting_victims"]),
+    )
     assert problems(repo_copy) == [
         "registry/layers.yaml: shootings_hex: source 'shooting_victims' is not in "
         "registry/sources.yaml"
@@ -102,8 +109,11 @@ def test_other_cross_references_are_checked(repo_copy: Path) -> None:
 
     edit(repo_copy, "suggestions", suggestions)
 
-    edit(repo_copy, "lenses",
-         lambda entries: by_id(entries, "violence")["presets"][0]["weights"].update(heat=2))
+    edit(
+        repo_copy,
+        "lenses",
+        lambda entries: by_id(entries, "violence")["presets"][0]["weights"].update(heat=2),
+    )
     assert sorted(problems(repo_copy)) == [
         "registry/layers.yaml: hin_2025: group 'street' is not in registry/groups.yaml",
         "registry/lenses.yaml: violence: preset 'research' weights unknown factor 'heat'",
@@ -115,16 +125,24 @@ def test_other_cross_references_are_checked(repo_copy: Path) -> None:
 
 
 def test_lens_factor_fields_must_be_well_formed(repo_copy: Path) -> None:
-    edit(repo_copy, "lenses",
-         lambda entries: by_id(entries, "violence")["factors"][1].update(field="shootings"))
+    edit(
+        repo_copy,
+        "lenses",
+        lambda entries: by_id(entries, "violence")["factors"][1].update(field="shootings"),
+    )
     [problem] = problems(repo_copy)
-    assert problem.startswith("registry/lenses.yaml: entry 1 (violence): factors.1.field: "
-                              "'shootings' does not match the expected form")
+    assert problem.startswith(
+        "registry/lenses.yaml: entry 1 (violence): factors.1.field: "
+        "'shootings' does not match the expected form"
+    )
 
 
 def test_the_violence_lens_refuses_factors_without_violence_evidence(repo_copy: Path) -> None:
-    edit(repo_copy, "lenses",
-         lambda entries: by_id(entries, "violence")["factors"][3].update(evidence="not_violence"))
+    edit(
+        repo_copy,
+        "lenses",
+        lambda entries: by_id(entries, "violence")["factors"][3].update(evidence="not_violence"),
+    )
     assert problems(repo_copy) == [
         "registry/lenses.yaml: violence: factor 'canopy_gap' has no violence evidence and cannot "
         "be in the violence lens"
@@ -132,8 +150,11 @@ def test_the_violence_lens_refuses_factors_without_violence_evidence(repo_copy: 
 
 
 def test_a_choice_default_must_be_an_option(repo_copy: Path) -> None:
-    edit(repo_copy, "layers",
-         lambda layers: by_id(layers, "shootings_hex")["settings"][0].update(default="m24"))
+    edit(
+        repo_copy,
+        "layers",
+        lambda layers: by_id(layers, "shootings_hex")["settings"][0].update(default="m24"),
+    )
     [problem] = problems(repo_copy)
     assert "default 'm24' is not one of the options ['m12', 'm36']" in problem
 
@@ -141,12 +162,16 @@ def test_a_choice_default_must_be_an_option(repo_copy: Path) -> None:
 def test_repeated_ids_and_repeated_yaml_keys_fail(repo_copy: Path) -> None:
     edit(repo_copy, "partners", lambda partners: partners.append(dict(partners[0])))
     path = repo_copy / "registry" / "groups.yaml"
-    path.write_text(path.read_text().replace(
-        "  label: Boundaries\n", "  label: Boundaries\n  label: Edges\n"), encoding="utf-8")
+    path.write_text(
+        path.read_text().replace("  label: Boundaries\n", "  label: Boundaries\n  label: Edges\n"),
+        encoding="utf-8",
+    )
     found = problems(repo_copy)
     assert "registry/partners.yaml: entry 7 (phs): id 'phs' is used more than once" in found
-    assert any(item.startswith("registry/groups.yaml: not valid YAML") and "appears twice" in item
-               for item in found)
+    assert any(
+        item.startswith("registry/groups.yaml: not valid YAML") and "appears twice" in item
+        for item in found
+    )
 
 
 def test_an_unknown_registry_file_fails(repo_copy: Path) -> None:

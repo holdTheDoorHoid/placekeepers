@@ -146,7 +146,11 @@ class PoliteClient:
                 delay = self._backoff(attempt, exc.response)
                 log.warning(
                     "%s: %s; trying again in %.0f s (attempt %d of %d)",
-                    _short(url), exc, delay, attempt + 1, self.max_attempts,
+                    _short(url),
+                    exc,
+                    delay,
+                    attempt + 1,
+                    self.max_attempts,
                 )
                 self.sleep(delay)
         raise HttpError(f"{_short(url)}: gave up after {self.max_attempts} attempts: {last}")

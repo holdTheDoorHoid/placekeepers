@@ -8,7 +8,7 @@ Layout under $PK_CACHE (default ~/.cache/placekeepers):
     snapshots/<source_id>/current.parquet  a link to the last good snapshot
     snapshots/<source_id>/state.json       the result of the latest attempt
     tmp/                                   scratch space for DuckDB
-    research/                              reserved for the vacancy study; the pipeline never writes here
+    research/                              reserved for the vacancy study; never written here
 
 Other agents and worktrees read this cache while the pipeline writes it, so every file and folder
 appears atomically: it is written under a hidden temporary name in the same folder, then renamed.
@@ -200,7 +200,9 @@ class RawStore:
     def latest(self) -> RawFetch | None:
         if not self.dir.is_dir():
             return None
-        ids = sorted(p.name for p in self.dir.iterdir() if p.is_dir() and not p.name.startswith("."))
+        ids = sorted(
+            p.name for p in self.dir.iterdir() if p.is_dir() and not p.name.startswith(".")
+        )
         for fetch_id in reversed(ids):
             raw = self.get(fetch_id)
             if raw is not None:

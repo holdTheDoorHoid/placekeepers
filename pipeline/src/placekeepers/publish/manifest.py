@@ -24,7 +24,10 @@ def git_short_hash(repo_root: Path) -> str:
     try:
         completed = subprocess.run(
             ["git", "-C", str(repo_root), "rev-parse", "--short=7", "HEAD"],
-            capture_output=True, text=True, check=True, timeout=10,
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=10,
         )
         return completed.stdout.strip() or "nogit"
     except (OSError, subprocess.SubprocessError):
@@ -60,9 +63,7 @@ def build_manifest(
         "schema": SCHEMA,
         "build_id": build_id(generated_at, commit),
         "generated_at": iso_z(generated_at),
-        "sources": {
-            source_id: statuses[source_id].to_manifest() for source_id in registry.sources
-        },
+        "sources": {source_id: statuses[source_id].to_manifest() for source_id in registry.sources},
         "layers": {
             layer.id: {
                 "file": layer.file,

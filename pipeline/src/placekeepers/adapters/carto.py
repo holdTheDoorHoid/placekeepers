@@ -92,7 +92,9 @@ def _check_carto_csv(path: Path) -> None:
     with path.open("rb") as handle:
         start = handle.read(512).lstrip()
     if start.startswith(b"{"):
-        raise HttpError(f"Carto sent an error instead of CSV: {start[:300].decode(errors='replace')}")
+        raise HttpError(
+            f"Carto sent an error instead of CSV: {start[:300].decode(errors='replace')}"
+        )
 
 
 class CartoAdapter(Adapter):
@@ -137,8 +139,12 @@ class CartoAdapter(Adapter):
 
     def fetch(self, dest: Path) -> dict[str, Any]:
         expected = self.count()
-        log.info("%s: %s rows to download from Carto table %s", self.id, f"{expected:,}",
-                 self.endpoint.table)
+        log.info(
+            "%s: %s rows to download from Carto table %s",
+            self.id,
+            f"{expected:,}",
+            self.endpoint.table,
+        )
         after: int | None = None
         total = 0
         chunk = 0
@@ -157,8 +163,15 @@ class CartoAdapter(Adapter):
                 chunk -= 1
                 break
             total += rows
-            log.info("%s: chunk %d, %s rows (%s of %s so far), %.1f MB", self.id, chunk,
-                     f"{rows:,}", f"{total:,}", f"{expected:,}", result.bytes / 1e6)
+            log.info(
+                "%s: chunk %d, %s rows (%s of %s so far), %.1f MB",
+                self.id,
+                chunk,
+                f"{rows:,}",
+                f"{total:,}",
+                f"{expected:,}",
+                result.bytes / 1e6,
+            )
             if rows < self.chunk_rows or last_key is None:
                 break
             after = last_key
@@ -170,8 +183,12 @@ class CartoAdapter(Adapter):
                     "next run"
                 )
             expected = recount
-        return {"rows": total, "chunks": chunk, "table": self.endpoint.table,
-                "expected_rows": expected}
+        return {
+            "rows": total,
+            "chunks": chunk,
+            "table": self.endpoint.table,
+            "expected_rows": expected,
+        }
 
     # -- normalize -----------------------------------------------------------------------------
 
@@ -215,8 +232,8 @@ class CartoAdapter(Adapter):
         if not typed:
             return
         counts = ", ".join(
-            f"count(*) FILTER (WHERE {quote_ident(c.name)} IS NOT NULL "
-            f"AND {_cast(c)} IS NULL)" for c in typed
+            f"count(*) FILTER (WHERE {quote_ident(c.name)} IS NOT NULL AND {_cast(c)} IS NULL)"
+            for c in typed
         )
         lost = con.execute(f"SELECT {counts} FROM {source}").fetchone()
         for column, number in zip(typed, lost, strict=True):

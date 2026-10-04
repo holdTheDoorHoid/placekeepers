@@ -89,8 +89,9 @@ class Settings:
         return self.fixed_now or utc_now()
 
     @classmethod
-    def from_env(cls, *, repo_root: Path | None = None, cache_root: Path | None = None,
-                 offline: bool = False) -> Settings:
+    def from_env(
+        cls, *, repo_root: Path | None = None, cache_root: Path | None = None, offline: bool = False
+    ) -> Settings:
         return cls(
             repo_root=repo_root or find_repo_root(),
             cache_root=cache_root or default_cache_root(),

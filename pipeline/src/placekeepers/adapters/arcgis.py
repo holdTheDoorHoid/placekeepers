@@ -113,8 +113,9 @@ class ArcgisAdapter(Adapter):
             raise FetchError("The layer has no object id field to page by")
         page_size = min(self.page_size, int(layer.get("maxRecordCount") or self.page_size))
         expected = self.count()
-        log.info("%s: %s features to download from %s", self.id, f"{expected:,}",
-                 self.endpoint.service)
+        log.info(
+            "%s: %s features to download from %s", self.id, f"{expected:,}", self.endpoint.service
+        )
 
         total = 0
         page = 0
@@ -167,7 +168,8 @@ class ArcgisAdapter(Adapter):
     def normalize(self, raw: RawFetch, out: Path) -> None:
         assert raw.dir is not None
         fields = [
-            f for f in raw.info["fields"]
+            f
+            for f in raw.info["fields"]
             if f["type"] != "esriFieldTypeGeometry" and f["name"].lower() not in self.skip_fields
         ]
         names = [f["name"].lower() for f in fields]
@@ -184,9 +186,7 @@ class ArcgisAdapter(Adapter):
                 geometry = feature.get("geometry")
                 geometries.append(shape(geometry) if geometry else None)
 
-        columns = {
-            f["name"].lower(): arrow_column(values[f["name"]], f["type"]) for f in fields
-        }
+        columns = {f["name"].lower(): arrow_column(values[f["name"]], f["type"]) for f in fields}
         wkb = shapely.to_wkb(np.array(geometries, dtype=object), flavor="iso")
         columns[GEOMETRY_COLUMN] = pa.array(list(wkb), type=pa.binary())
         missing = sum(1 for g in geometries if g is None or g.is_empty)

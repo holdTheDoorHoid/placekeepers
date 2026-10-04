@@ -112,7 +112,9 @@ class SnapshotStore:
             try:
                 metas.append(SnapshotMeta.from_json(json.loads(path.read_text(encoding="utf-8"))))
             except (ValueError, TypeError) as exc:
-                log.warning("%s: ignoring unreadable sidecar %s (%s)", self.source_id, path.name, exc)
+                log.warning(
+                    "%s: ignoring unreadable sidecar %s (%s)", self.source_id, path.name, exc
+                )
         return sorted(metas, key=lambda meta: meta.snapshot_id)
 
     def get(self, snapshot_id: str) -> SnapshotMeta | None:
