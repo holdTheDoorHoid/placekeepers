@@ -278,6 +278,7 @@ Short property names keep tiles small. Integers are preferred to strings.
 | `vc` | int | vacancy confidence: 1 low, 2 medium, 3 high |
 | `ot` | int | owner type: 1 individual, 2 company, 3 City, 4 Land Bank, 5 Redevelopment Authority, 6 housing authority, 7 nonprofit, 8 other public, 0 unknown |
 | `lc` | int | 1 if maintained by PHS LandCare |
+| `rt` | int | the first lawful step to get permission, as a category (codes below) |
 | `rs` | int | the reasons, as bits (below); added 2026-10-04 by M1.2 |
 | `n` | int | how many independent records agree that it is vacant, for its kind (lot or building) |
 | `dy`, `sy`, `ny` | int | year of the demolition (bit 4), the City's clean and seal (bit 7), or the new construction permit (bits 12 and 13); present only with those bits |
@@ -316,6 +317,21 @@ never change meaning once published. The id names each reason in the pipeline
 list of public property decides first (`PUB` 3, `PLB` 4, `PRA` 5, `PHDC` 8), then the owner names
 as OPA publishes them, by documented patterns (public bodies, company forms, nonprofit words, a
 person's name). The dossier's `owner.type` gives the same type by name (section 6).
+
+`rt`, the first lawful step to get permission for the parcel (added 2026-10-04): the first route
+the parcel's dossier lists (`placekeepers.derive.routes.routes_for`, from the same owner type, owner
+names and LandCare record), so a lot's map value and its dossier always agree. Codes never change
+meaning. It names a kind of step, for filtering and for plotting need against it; it is never a
+score or an order of how easy a parcel is to get (ETHICS.md, "Things we do not build").
+
+| Code | First step |
+|---|---|
+| 0 | No clear route yet: an unknown owner with no name |
+| 1 | PHS LandCare already cares for it: Community LandCare stewardship |
+| 2 | The City or the Land Bank owns it: a garden agreement or license |
+| 3 | The Redevelopment Authority or PHDC owns it: ask PHDC |
+| 4 | The housing authority or another public body owns it: ask the owner (the agency) |
+| 5 | A private owner (a person, a company, a nonprofit, or a name we could not type): ask the owner |
 
 The violence reduction lens factors (added 2026-10-04 by M1.4, computed by `pk derive` in
 `placekeepers.derive.lenses`), each an integer from 0 to 100 and ranked among the parcels in this

@@ -62,7 +62,8 @@ from placekeepers.derive.flags import (
     owner_flags,
     shows_deed_fraud_notice,
 )
-from placekeepers.derive.routes import routes_for, suggestions_for
+from placekeepers.derive.routes import first_route_code, routes_for, suggestions_for
+from placekeepers.derive.vacancy import REASONS
 from placekeepers.derive.vacancy import output_path as vacancy_output
 from placekeepers.health import SourceStatus
 from placekeepers.publish.layers import (
@@ -118,6 +119,17 @@ LANDCARE_PROGRAMS = {
     "LANDBANK": "land_bank",
     "PHDC": "phdc",
 }
+
+#: The reason bit the vacancy model sets for a parcel PHS LandCare keeps up, by account or by its
+#: shape (the map's `lc`). The routes count it too, so a lot the map marks as LandCare lists
+#: Community LandCare first, in its dossier and in the map's `rt` alike.
+LANDCARE_BIT = next(1 << reason.bit for reason in REASONS if reason.id == "landcare")
+
+
+def in_landcare(account: str, by_account: set[str] | dict, call: dict[str, Any] | None) -> bool:
+    """A LandCare lot: PHS's record names the account, or the vacancy model marks it."""
+    return account in by_account or bool(call and call.get("rs", 0) & LANDCARE_BIT)
+
 
 # Meters per degree near Philadelphia (latitude 40), for short distances.
 M_PER_DEG_LAT = 111_000.0
@@ -615,10 +627,10 @@ def shooting_cells(path: Path, as_of: date) -> dict[str, list[int]]:
     return counts
 
 
-# Owner type codes for the map tiles
-def owner_type_codes(paths: dict[str, Path], accounts: set[str]) -> dict[str, int]:
-    """The `ot` code (docs/CONTRACTS.md section 4) for each account, from OPA's owner names and
-    the City owned property layer; accounts with neither are left out (0, unknown)."""
+# Owner type and route codes for the map tiles
+def owner_facts(paths: dict[str, Path], accounts: set[str]) -> dict[str, tuple[ow.OwnerType, bool]]:
+    """The owner type and whether OPA names an owner, for each account OPA or the City owned
+    property layer knows: the same inputs build_dossiers uses."""
     agencies: dict[str, str] = {}
     if "city_owned_property" in paths:
         table = read_columns(paths["city_owned_property"], ["opabrt", "agency"])
@@ -640,9 +652,44 @@ def owner_type_codes(paths: dict[str, Path], accounts: set[str]) -> dict[str, in
         ):
             names[account] = [n for n in (owner_1, owner_2) if n and n.strip()]
     return {
-        account: ow.owner_type(names.get(account, []), agencies.get(account)).code
+        account: (
+            ow.owner_type(names.get(account, []), agencies.get(account)),
+            bool(names.get(account)),
+        )
         for account in names.keys() | agencies.keys()
     }
+
+
+def owner_type_codes(paths: dict[str, Path], accounts: set[str]) -> dict[str, int]:
+    """The `ot` code (docs/CONTRACTS.md section 4) for each account, from OPA's owner names and
+    the City owned property layer; accounts with neither are left out (0, unknown)."""
+    return {account: found.code for account, (found, _) in owner_facts(paths, accounts).items()}
+
+
+def route_codes(
+    paths: dict[str, Path],
+    accounts: set[str],
+    known_routes: set[str] | None = None,
+    calls: dict[str, dict[str, Any]] | None = None,
+) -> dict[str, int]:
+    """The `rt` code (docs/CONTRACTS.md section 4) for each account: the first route its dossier
+    lists, from the same owner type, owner names and LandCare record (routes.first_route_code).
+    `calls` are the parcels' vacancy blocks (at least `rs`), as vacancy_calls gives them."""
+    facts = owner_facts(paths, accounts)
+    landcare = set(read_landcare(paths["phs_landcare"])[0]) if "phs_landcare" in paths else set()
+    calls = calls or {}
+    nobody = (ow.owner_type([], None), False)
+    codes = {}
+    for account in accounts:
+        found, has_names = facts.get(account, nobody)
+        cared_for = in_landcare(account, landcare, calls.get(account))
+        routes = [
+            route
+            for route in routes_for(found, has_names=has_names, in_landcare=cared_for)
+            if known_routes is None or route in known_routes
+        ]
+        codes[account] = first_route_code(routes, found.type)
+    return codes
 
 
 # Building the dossiers
@@ -847,7 +894,7 @@ def build_dossiers(
                 has_names=facts.has_names,
                 vacant=confident(account),
                 side_yard_eligible=bool(owned and owned["side_yard"]),
-                in_landcare=account in landcare,
+                in_landcare=in_landcare(account, landcare, call),
                 gardened=account in gardened,
             )
             if route in known_routes

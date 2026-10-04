@@ -56,6 +56,37 @@ def routes_for(
     return routes
 
 
+#: The `rt` tile property (docs/CONTRACTS.md section 4): the first lawful step to get permission
+#: for a parcel, as a category. The codes never change meaning. It names a kind of step; it is
+#: never a score or an order of how easy a parcel is to get (docs/ETHICS.md, "Things we do not
+#: build").
+ROUTE_NONE = 0  # no clear route yet: an unknown owner with no name
+ROUTE_LANDCARE = 1  # PHS LandCare already cares for it: Community LandCare stewardship
+ROUTE_LAND_BANK = 2  # the City or the Land Bank: a garden agreement or license
+ROUTE_PHDC = 3  # the Redevelopment Authority or PHDC: ask PHDC
+ROUTE_PUBLIC_OWNER = 4  # the housing authority or another public body: ask the owner
+ROUTE_PRIVATE_OWNER = 5  # a person, company, nonprofit or untyped name: ask the owner
+
+PUBLIC_OWNERS = frozenset({"housing_authority", "other_public"})
+
+
+def first_route_code(routes: list[str], owner_type: str) -> int:
+    """The `rt` code for a parcel from the routes its dossier lists (routes_for, in order) and its
+    owner type."""
+    if not routes:
+        return ROUTE_NONE
+    first = routes[0]
+    if first == "community_landcare":
+        return ROUTE_LANDCARE
+    if first in {"land_bank_garden_agreement", "land_bank_side_yard"}:
+        return ROUTE_LAND_BANK
+    if first == "contact_phdc":
+        return ROUTE_PHDC
+    if owner_type in PUBLIC_OWNERS:
+        return ROUTE_PUBLIC_OWNER
+    return ROUTE_PRIVATE_OWNER
+
+
 SUGGESTIONS_BY_KIND = {"lot": ["clean_and_green"], "building": ["seal_abandoned_building"]}
 
 
