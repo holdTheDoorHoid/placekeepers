@@ -134,4 +134,4 @@ pipeline/.venv/bin/ruff check pipeline
 | `PK_KEEP_SNAPSHOTS` | Good snapshots kept per source (default 3) |
 | `PK_DUCKDB_MEMORY`, `PK_DUCKDB_THREADS` | DuckDB limits (default 1GB and 4) |
 | `PK_TIPPECANOE` | A specific tippecanoe binary; empty means build no tiles |
-| `PK_MIN_FREE_GB` | Disk space every download leaves free (default 10) |
+| `PK_MIN_FREE_GB` | Disk space every download leaves free (default 10; the weekly refresh on GitHub, whose runners have about 14 GB, uses 3) |

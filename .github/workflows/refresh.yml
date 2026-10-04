@@ -48,9 +48,19 @@ jobs:
   pipeline:
     name: Fetch, check and publish the data
     runs-on: ubuntu-24.04
+    # A full run took about 11 minutes on a laptop on 2026-10-04 (28 sources, two bulk files of
+    # about 500 MB each); 90 minutes leaves room for slow City servers and the base map.
     timeout-minutes: 90
     permissions:
       contents: read # read the data-snapshots release
+    env:
+      # The runner has about 14 GB free, so the laptop's 10 GB floor would skip every download
+      # and quietly serve last week's data. A run needs about 2 GB at its peak (the restored
+      # snapshots, one bulk GeoJSON file of about 600 MB while it is read, the new snapshots and
+      # their tars), so 3 GB still stops a runaway before the disk fills.
+      PK_MIN_FREE_GB: "3"
+      # Keep only the newest good snapshot of each source on the runner (the release holds it).
+      PK_KEEP_SNAPSHOTS: "1"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -103,12 +113,17 @@ jobs:
             cp "$WORK/manifest.json" build/manifests/previous-manifest.json
           fi
           python .github/scripts/refresh.py restore --cache "$PK_CACHE" --from "$WORK/assets"
+          # Unpacked now; free the space before the downloads.
+          rm -f "$WORK"/assets/snapshot-*.tar
 
       - name: Fetch, check and publish
         env:
           BREAK_SOURCE: ${{ inputs.break_source || '' }}
         run: |
           out="$GITHUB_WORKSPACE/build/site/data"
+          echo "Disk before the pipeline:"
+          df -h /
+          trap 'echo "Disk after the pipeline:"; df -h /' EXIT
           if [ -z "$BREAK_SOURCE" ]; then
             pk all --out "$out"
             exit 0
@@ -242,6 +257,10 @@ jobs:
           while read -r action name; do
             if [ "$action" = delete ]; then
               gh release delete-asset "$RELEASE_TAG" "$name" --yes
+            elif [ "$action" = keep ]; then
+              echo "Unchanged since last week, kept as it is: $name"
+            elif [ "$action" = missing ]; then
+              echo "::warning::$name did not change this week but is no longer on the release; that source downloads again next week."
             elif [ "$action" = skip ]; then
               echo "::warning::Not saving an unexpected file: $name"
             fi
