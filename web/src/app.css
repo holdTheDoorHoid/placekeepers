@@ -319,7 +319,7 @@ caption {
 
 @media print {
   @page {
-    margin: 12mm;
+    margin: 10mm;
   }
   body:has(.pk-print) .app,
   body:has(.pk-print) dialog {

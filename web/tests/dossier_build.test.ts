@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { loadRegistry } from '../plugins/registry.ts';
 import { parseManifest } from '../src/data/manifest.ts';
-import { IDLE_PARTS, buildDossier, documentLabel, type DossierInput, type LiveParts, type Part } from '../src/dossier/build.ts';
+import { IDLE_PARTS, buildDossier, cityTitle, documentLabel, type DossierInput, type LiveParts, type Part } from '../src/dossier/build.ts';
 import { plain } from '../src/dossier/plain.ts';
 import { parseCommon, parseShard } from '../src/dossier/shard.ts';
 import type { Assessment, LiveLi, LiveProperty, Transfer } from '../src/dossier/types.ts';
@@ -262,6 +262,11 @@ describe('details', () => {
     parcel.owner!.flags = [{ id: 'open_violations', text: 'L&I lists 1 open violation, from May 1, 2020 for dumping - private lot.', careful: null, nextStep: null, links: [], list: null }];
     const view = buildDossier(input('990000001', { liveOn: false, shard: { status: 'found', parcel, generatedAt: null, notes } }));
     expect(view.owner.flags[0]!.text).toBe('L&I lists 1 open violation, from May 1, 2020 for dumping, private lot.');
+  });
+
+  it('writes L&I titles in sentence case, keeping their abbreviations', () => {
+    expect(cityTitle('ID STRUCTURE')).toBe('ID structure');
+    expect(cityTitle('EXTERIOR AREA WEEDS')).toBe('Exterior area weeds');
   });
 
   it('marks sheriff deeds and deeds that covered several properties', () => {

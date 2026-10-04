@@ -329,10 +329,21 @@ export function transferRow(t: Transfer): TransferRow {
   };
 }
 
+/** Abbreviations L&I writes in its titles, kept in capitals ("ID STRUCTURE" is imminently dangerous). */
+const LI_ABBREVIATIONS = new Set(['ID', 'L&I', 'HVAC']);
+
+/** An L&I title in sentence case, with its abbreviations still in capitals. */
+export function cityTitle(text: string): string {
+  return sentenceCase(text)
+    .split(' ')
+    .map((word) => (LI_ABBREVIATIONS.has(word.toUpperCase()) ? word.toUpperCase() : word))
+    .join(' ');
+}
+
 export function liRow(e: LiEvent): LiRow {
   const h = strings.dossier.history;
-  const title = e.title ? sentenceCase(e.title) : '';
-  const detail = e.kind === 'permit' && e.detail && e.detail.toLowerCase() !== (e.title ?? '').toLowerCase() ? sentenceCase(e.detail) : '';
+  const title = e.title ? cityTitle(e.title) : '';
+  const detail = e.kind === 'permit' && e.detail && e.detail.toLowerCase() !== (e.title ?? '').toLowerCase() ? cityTitle(e.detail) : '';
   return {
     date: e.date ? (formatDate(e.date, 'short') ?? e.date) : h.noDate,
     kind: h.kinds[e.kind] ?? sentenceCase(e.kind),

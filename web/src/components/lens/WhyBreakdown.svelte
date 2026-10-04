@@ -16,7 +16,7 @@
   {:else}
     <p class="muted small">{strings.why.intro}</p>
     <table>
-      <caption class="sr-only">{strings.why.title}</caption>
+      <caption class="sr-only">{strings.why.caption}</caption>
       <thead>
         <tr>
           <th scope="col">{strings.why.factor}</th>

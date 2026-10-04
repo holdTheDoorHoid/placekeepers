@@ -18,26 +18,25 @@
 <h4>{h.transfersTitle}</h4>
 <ProvenanceLine provenance={history.transfersProvenance} />
 {#if history.transfers && history.transfers.length}
-  <div class="scroll" role="region" aria-labelledby="{idPrefix}-transfers-caption" tabindex="-1">
+  <div class="scroll">
     <table class="transfers">
       <caption id="{idPrefix}-transfers-caption">{h.transfersCaption}</caption>
       <thead>
         <tr>
           <th scope="col">{h.recorded}</th>
-          <th scope="col">{h.document}</th>
-          <th scope="col">{h.price}</th>
-          <th scope="col">{h.from}</th>
-          <th scope="col">{h.to}</th>
+          <th scope="col">{h.documentAndPrice}</th>
+          <th scope="col">{h.fromAndTo}</th>
         </tr>
       </thead>
       <tbody>
         {#each history.transfers as row, i (i)}
           <tr class:sheriff={row.sheriff}>
             <td class="nowrap">{row.date}</td>
-            <td>{row.document}</td>
-            <td class="num">{row.price}</td>
-            <td>{row.from}</td>
-            <td>{row.to}</td>
+            <td>{row.document}<span class="price">{row.price}</span></td>
+            <td>
+              <span class="party"><span class="muted">{h.from}:</span> {row.from}</span>
+              <span class="party"><span class="muted">{h.to}:</span> {row.to}</span>
+            </td>
           </tr>
         {/each}
       </tbody>
@@ -120,8 +119,14 @@
     overflow-x: auto;
   }
   .transfers {
-    min-width: 520px;
     font-size: 0.85rem;
+  }
+  .price,
+  .party {
+    display: block;
+  }
+  .price {
+    font-variant-numeric: tabular-nums;
   }
   .assessments {
     max-width: 320px;
@@ -165,4 +170,5 @@
   caption {
     font-size: 0.85rem;
   }
+
 </style>

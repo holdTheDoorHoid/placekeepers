@@ -78,6 +78,7 @@
   <section>
     <h2>{s.sections.sources}</h2>
     <ul class="sources">{#each m.sources as line (line)}<li>{line}</li>{/each}</ul>
+    {#if m.moreSources}<p class="meta">{m.moreSources}</p>{/if}
   </section>
 
   <footer>
@@ -87,7 +88,7 @@
 
 <style>
   .print-sheet {
-    font: 9.5pt/1.3 var(--pk-font);
+    font: 9pt/1.25 var(--pk-font);
     color: #000;
   }
   .brand {
@@ -98,20 +99,20 @@
   }
   h1 {
     margin: 0 0 2px;
-    font-size: 15pt;
+    font-size: 14pt;
   }
   h2 {
-    margin: 8px 0 2px;
+    margin: 6px 0 2px;
     padding-bottom: 1px;
     border-bottom: 1px solid #999;
-    font-size: 11pt;
+    font-size: 10.5pt;
   }
   h3 {
     margin: 4px 0 1px;
     font-size: 10pt;
   }
   p {
-    margin: 0 0 3px;
+    margin: 0 0 2px;
   }
   ul,
   ol {
@@ -124,7 +125,7 @@
   }
   .warning,
   .note {
-    font-size: 8.5pt;
+    font-size: 8pt;
   }
   .warning {
     font-weight: 700;
@@ -132,7 +133,7 @@
   table {
     border-collapse: collapse;
     width: 100%;
-    font-size: 8.5pt;
+    font-size: 8pt;
   }
   caption {
     text-align: left;
@@ -146,7 +147,7 @@
     vertical-align: top;
   }
   .sources {
-    font-size: 8.5pt;
+    font-size: 8pt;
   }
   footer {
     margin-top: 8px;

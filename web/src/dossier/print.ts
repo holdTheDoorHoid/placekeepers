@@ -5,7 +5,7 @@
 import { formatDate, strings } from '../strings.ts';
 import type { DossierView, TransferRow } from './build.ts';
 
-export const PRINT_LIMITS = { suggestions: 3, steps: 3, flags: 6, transfers: 5, li: 4, sources: 8, reasons: 5 } as const;
+export const PRINT_LIMITS = { suggestions: 3, steps: 3, flags: 6, transfers: 4, li: 4, sources: 6, reasons: 5 } as const;
 
 export interface PrintModel {
   title: string;
@@ -17,12 +17,14 @@ export interface PrintModel {
     names: string[];
     mailing: string | null;
     type: string;
+    /** Each flag's title and what it means; the possible estate flag in full, as docs/ETHICS.md words it. */
     flags: { title: string; text: string }[];
     tax: string;
     deedFraud: string | null;
   };
   history: { transfers: TransferRow[]; moreTransfers: number; assessment: string | null; li: string[] };
   sources: string[];
+  moreSources: string | null;
   notLegalAdvice: string;
 }
 
@@ -30,8 +32,15 @@ export function printModel(view: DossierView, now: Date = new Date()): PrintMode
   const reasons = view.summary.reasons ? view.summary.reasons.agree : [];
   const transfers = view.history.transfers ?? [];
   const latest = view.history.assessments?.find((a) => a.marketValue !== null) ?? null;
-  const flags = view.owner.flags.slice(0, PRINT_LIMITS.flags).map((f) => ({ title: f.title, text: f.text }));
-  const tax = view.owner.tax.flag ? `${view.owner.tax.flag.title}: ${view.owner.tax.flag.text}` : `${view.owner.tax.text ?? ''} ${view.owner.tax.link.label}: ${view.owner.tax.link.url}`.trim();
+  const flags = view.owner.flags.slice(0, PRINT_LIMITS.flags).map((f) => ({
+    title: f.title,
+    // The possible estate flag is never shortened: its protective parts are the point of it.
+    text: f.id === 'possible_estate' ? [f.text, f.careful, f.nextStep].filter(Boolean).join(' ') : f.text,
+  }));
+  const taxCenter = strings.dossier.print.taxCenter(view.owner.tax.link.url);
+  const tax = view.owner.tax.flag
+    ? `${view.owner.tax.flag.title}: ${view.owner.tax.flag.text} ${taxCenter}`
+    : `${view.owner.tax.text ?? ''} ${taxCenter}`.trim();
   return {
     title: view.title,
     opa: view.opa,
@@ -68,6 +77,8 @@ export function printModel(view: DossierView, now: Date = new Date()): PrintMode
       li: (view.history.li.summary ?? []).slice(0, PRINT_LIMITS.li),
     },
     sources: view.sources.rows.slice(0, PRINT_LIMITS.sources).map((r) => `${r.name}: ${r.when}`),
+    moreSources:
+      view.sources.rows.length > PRINT_LIMITS.sources ? strings.dossier.print.moreSources(view.sources.rows.length - PRINT_LIMITS.sources) : null,
     notLegalAdvice: strings.app.notAffiliated,
   };
 }

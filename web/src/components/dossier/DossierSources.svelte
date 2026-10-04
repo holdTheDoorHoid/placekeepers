@@ -11,7 +11,10 @@
 <p class="small">{src.intro}</p>
 <ul class="sources">
   {#each sources.rows as row (row.id)}
-    <li><a href={row.homepage} target="_blank" rel="noopener noreferrer">{row.name}</a> <span class="muted">({row.publisher})</span>: {row.when}</li>
+    <li>
+      <a href={row.homepage} target="_blank" rel="noopener noreferrer">{row.name}</a>: {row.when}
+      <span class="publisher muted">{src.by(row.publisher)}</span>
+    </li>
   {/each}
 </ul>
 <p>
@@ -28,6 +31,10 @@
     font-size: 0.875rem;
   }
   .sources li {
-    margin: 3px 0;
+    margin: 4px 0;
+  }
+  .publisher {
+    display: block;
+    font-size: 0.8rem;
   }
 </style>

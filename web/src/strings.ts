@@ -199,6 +199,7 @@ export const strings = {
 
   why: {
     title: 'Why this score',
+    caption: 'Each factor\'s citywide rank, its weight, and the points it adds to the score',
     intro: 'The score is a weighted average of these factors. Each factor is a citywide rank from 0 to 100.',
     factor: 'Factor',
     value: 'Rank',
@@ -667,7 +668,7 @@ export const strings = {
         'City records name a different owner than our weekly snapshot did, so notes that were about the earlier owner are left out.',
       parts: { meaning: 'What it means', careful: 'Be careful', next: 'A careful next step' },
       flagTitles: {
-        absentee: 'The owner gets mail somewhere else',
+        absentee: 'Where the owner gets mail',
         possible_estate: 'Possible estate',
         tax_debt_2025: 'Tax debt as of July 2025',
         sheriff_sales: 'Past sheriff sales',
@@ -787,6 +788,8 @@ export const strings = {
       date: 'Date',
       recorded: 'Recorded',
       document: 'Document',
+      documentAndPrice: 'Document and price',
+      fromAndTo: 'From and to',
       price: 'Price',
       from: 'From',
       to: 'To',
@@ -873,6 +876,7 @@ export const strings = {
       newest: (date: string) => `newest record ${date}`,
       taxSnapshot: 'Clean & Green Philly\'s final snapshot, July 9, 2025',
       notUsed: 'not used for this parcel',
+      by: (publisher: string) => `from ${publisher}`,
       correction: 'Report a correction',
       correctionHelp: 'Opens a form on GitHub, filled in with this parcel. Sending it needs a free GitHub account.',
       ownerNote:
@@ -893,6 +897,8 @@ export const strings = {
       recent: 'Recent history',
       moreOnline: (n: number) => `${plural(n, 'more record', 'more records')} on the lot page online.`,
       lastAssessment: (year: number, value: string) => `City assessment for ${year}: ${value}.`,
+      moreSources: (n: number) => `${plural(n, 'more source', 'more sources')} on the lot page online.`,
+      taxCenter: (url: string) => `Today's balance: the City's Tax Center, ${url}`,
     },
   },
 } as const;
