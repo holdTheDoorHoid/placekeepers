@@ -178,7 +178,7 @@ export const strings = {
 
   why: {
     title: 'Why this score',
-    intro: 'The score is a weighted average of these factors. Each factor is a citywide rank from 0 to 100.',
+    intro: 'The score is a weighted average of these factors. Each runs from 0 to 100, where 100 means the most need.',
     factor: 'Factor',
     value: 'Rank',
     weight: 'Weight',

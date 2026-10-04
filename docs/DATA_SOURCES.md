@@ -89,9 +89,9 @@ Both allow browser requests without a key.
 | Council districts 2024 (City ArcGIS `Council_Districts_2024`) | Filters, contacts | City terms | Live |
 | Registered Community Organizations (City ArcGIS `Zoning_RCO`, 240) | Filters, who to talk to | City terms | Live |
 | Philadelphia neighborhoods (OpenDataPhilly GitHub, 159, by Abaca Labs) | Filters, names | CC BY 4.0 | Live |
-| Census tracts and block groups | Aggregation | Public domain | Live |
+| Census tracts 2020 (City ArcGIS `Census_Tracts_2020`, 408, adjusted to the City's standard boundary) | Each parcel's tract, for the poverty rate | City terms (from the Census Bureau, public domain) | Used (M1.4): source `census_tracts_2020` |
 | ACS 5 year 2020 to 2024, table B17001 from the Census Bureau's table based summary file (`www2.census.gov`, 119 MB, no key) | Poverty rate (violence lens), renter share | CC0 | Live. The Census API now refuses requests without a key (checked 2026-10-04); a free key is an owner action if the API is wanted |
-| Tree canopy change 2008 to 2018 (City ArcGIS `TreeCanopyChange_2008_2018`) | Canopy deficit | City terms | Live, but old |
+| Tree canopy change 2008 to 2018 (City ArcGIS `TreeCanopyChange_2008_2018`, 665,748 polygons marked gain, loss or no change; University of Vermont Spatial Analysis Laboratory for Parks and Recreation) | Canopy deficit (violence lens) | City terms | Used (M1.4): source `tree_canopy_2018`, kept as canopy per H3 cell. The newest canopy the City publishes. The City's `hex_tree_canopy` (2,833 hexagons, PhillyStat 360) has no description, and its hexagon areas are in square feet while its canopy totals are in an unstated unit, so it is not used |
 | Tree Equity Score (American Forests) | Canopy gap per block group | Not stated | Stale since 2021 |
 | Market Value Analysis 2023 (City ArcGIS `mva_2023`, Reinvestment Fund) | Displacement watch | City terms | Live |
 

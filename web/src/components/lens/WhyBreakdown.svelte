@@ -1,5 +1,5 @@
 <script lang="ts">
-  // The "why" behind a score: each factor's citywide rank, its weight, and how many points
+  // The "why" behind a score: each factor's value from 0 to 100, its weight, and how many points
   // it adds. The points add up to the score.
   import { displayedBreakdown, type ScoreExplanation } from '../../map/lens.ts';
   import { strings } from '../../strings.ts';
