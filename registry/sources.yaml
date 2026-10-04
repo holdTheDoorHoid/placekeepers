@@ -286,7 +286,7 @@
   homepage: https://opendataphilly.org/datasets/crashes/
   endpoint: {kind: arcgis, service: collision_crash_2020_2024, layer: 0}
   license: city_terms
-  attribution: "Crash data: Pennsylvania Department of Transportation, published by the City of Philadelphia"
+  attribution: "Crashes: PennDOT, published by the City of Philadelphia"
   cadence: yearly
   health: {min_rows: 34000, max_drop_pct: 5, newest_field: crash_date, max_age_days: 800}
   release: v0.1
@@ -296,7 +296,7 @@
   homepage: https://opendataphilly.org/datasets/crashes/
   endpoint: {kind: arcgis, service: COLLISION_CRASH_2016_2020, layer: 0}
   license: city_terms
-  attribution: "Crash data: Pennsylvania Department of Transportation, published by the City of Philadelphia"
+  attribution: "Crashes: PennDOT, published by the City of Philadelphia"
   cadence: frozen
   health: {min_rows: 43000, max_drop_pct: 5}
   release: v0.1
@@ -306,7 +306,7 @@
   homepage: https://opendataphilly.org/datasets/crashes/
   endpoint: {kind: arcgis, service: COLLISION_CRASH_2007_2017, layer: 0}
   license: city_terms
-  attribution: "Crash data: Pennsylvania Department of Transportation, published by the City of Philadelphia"
+  attribution: "Crashes: PennDOT, published by the City of Philadelphia"
   cadence: frozen
   health: {min_rows: 10000, max_drop_pct: 5}
   release: v0.1
@@ -336,7 +336,7 @@
   homepage: https://opendataphilly.org/datasets/street-centerlines/
   endpoint: {kind: arcgis, service: Street_Centerline, layer: 0}
   license: city_terms
-  attribution: "Street centerlines: City of Philadelphia Streets Department"
+  attribution: "Streets: City of Philadelphia Streets Department"
   cadence: irregular
   health: {min_rows: 40000, max_drop_pct: 5}
   release: v0.1
@@ -346,7 +346,7 @@
   homepage: https://github.com/holdTheDoorHoid/placekeepers/blob/main/data/curated/memorials.yaml
   endpoint: {kind: curated, path: data/curated/memorials.yaml}
   license: odbl
-  attribution: "Memorial names: gathered by hand from public memorial lists, each linked to its source"
+  attribution: "Memorial names: public memorial lists"
   cadence: irregular
   health: {min_rows: 0, max_drop_pct: 100}
   release: v0.1
