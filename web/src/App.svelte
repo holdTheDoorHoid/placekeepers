@@ -84,7 +84,15 @@
 </script>
 
 <div class="app">
-  <a class="skip-link" href="#places-section">{strings.app.skipToList}</a>
+  <!-- Moves focus without touching the address bar, which holds the map state. -->
+  <a
+    class="skip-link"
+    href="#places-section"
+    onclick={(e) => {
+      e.preventDefault();
+      document.getElementById('places-section')?.focus();
+    }}>{strings.app.skipToList}</a
+  >
   <Header {store} onOpenSettings={() => (settingsOpen = true)} />
   {#if sample}<p class="sample" role="note">{strings.app.sampleData}</p>{/if}
   <main class="stage {store.state.view}">

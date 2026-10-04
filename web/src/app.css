@@ -8,7 +8,7 @@
   --pk-surface-2: #ebebe5;
   --pk-text: #1d2327;
   --pk-muted: #4d5860;
-  --pk-border: #b9c0c4;
+  --pk-border: #868e96; /* 3.3 to 1 on white: control outlines need 3 to 1 */
   --pk-accent: #1f5f8b;
   --pk-accent-hover: #174a6d;
   --pk-accent-ink: #ffffff;

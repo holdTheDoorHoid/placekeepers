@@ -1,9 +1,10 @@
 // Serves the data root at <base>data/ while developing (vite) and previewing (vite preview).
 //
-// Files are looked up first in the real data root (public/data/ in development, which the
-// pipeline output and the base map extract are copied into, or dist/data/ in a preview),
-// and then in the committed sample at fixtures/data/. Range requests are supported because
-// PMTiles reads small byte ranges of large files.
+// One data root is used as a whole, never a mix: if the real data root (public/data/ in
+// development, where a pipeline build can be copied, or dist/data/ in a preview) has a
+// manifest.json, it is used; otherwise the committed sample at fixtures/data/ is. The base map
+// (basemap/, made by scripts/make-basemap.sh) always comes from the real data root. Range
+// requests are supported because PMTiles reads small byte ranges of large files.
 
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import type { IncomingMessage, ServerResponse } from 'node:http';
@@ -75,10 +76,15 @@ function middleware(base: string, primaryRoot: string): Connect.NextHandleFuncti
     } catch {
       return next();
     }
-    // The real data root is served by Vite itself; only fall back to the sample here.
-    if (findFile([primaryRoot], relative)) return next();
+    // Vite itself serves the real data root; this only stands in the sample when there is none.
+    const realRoot = existsSync(resolve(primaryRoot, 'manifest.json'));
+    if (realRoot || relative.startsWith('basemap/')) return next();
     const file = findFile([FIXTURE_DATA_DIR], relative);
-    if (!file) return next();
+    if (!file) {
+      res.statusCode = 404;
+      res.end();
+      return;
+    }
     sendFile(req, res, file);
   };
 }

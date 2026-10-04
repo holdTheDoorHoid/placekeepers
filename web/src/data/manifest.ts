@@ -304,7 +304,8 @@ export function describeStatus(row: StatusRow): StatusText {
   const details: string[] = [];
   if (e) {
     const success = formatDate(e.last_success);
-    details.push(success ? s.lastSuccess(success) : s.neverSucceeded);
+    if (success) details.push(s.lastSuccess(success));
+    else if (row.status !== 'missing') details.push(s.neverSucceeded);
     const attempt = formatDate(e.last_attempt);
     if (attempt && e.last_attempt !== e.last_success) details.push(s.lastAttempt(attempt));
     if (e.rows !== null) details.push(s.rows(e.rows));

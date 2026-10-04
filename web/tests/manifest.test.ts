@@ -265,6 +265,16 @@ describe('status in plain words', () => {
     expect(describeStatus(rows[0]!)).toEqual({ label: 'Not fetched yet', summary: 'This source has not been fetched yet.', details: [] });
   });
 
+  it('does not repeat itself for a source listed as never fetched', () => {
+    const m = manifestWith();
+    m.sources.shootings = { status: 'missing', last_attempt: null, last_success: null, stale_since: null, rows: null, newest_record: null, message: null };
+    expect(describeStatus(statusRows(reg, m).find((r) => r.id === 'shootings')!)).toEqual({
+      label: 'Not fetched yet',
+      summary: 'This source has not been fetched yet.',
+      details: [],
+    });
+  });
+
   it('adds sources the manifest knows but the registry does not', () => {
     const m = manifestWith({ sources: { mystery: { status: 'ok' } } });
     expect(statusRows(reg, m).at(-1)).toMatchObject({ id: 'mystery', source: null, name: 'mystery', status: 'ok' });

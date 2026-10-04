@@ -1,9 +1,8 @@
 // Drives the MapLibre map from the app state. Svelte owns the state; this class makes the
-// map match it:
-//   - a layer's data is added the first time the layer is switched on, never before;
-//   - after that, only what changed is sent to the map (a paint property, a filter, or the
-//     visibility), so moving a lens slider is a single paint update and reloads nothing;
-//   - camera moves made by the person flow back to the state through events.move.
+// map match it. A layer's data is added the first time the layer is switched on, never
+// before. After that, only what changed is sent to the map (a paint property, a filter, or
+// the visibility), so moving a lens slider is a single paint update and reloads nothing.
+// Camera moves made by the person flow back to the state through events.move.
 // This module is loaded on demand, which keeps MapLibre out of the first download.
 
 import 'maplibre-gl/dist/maplibre-gl.css';
