@@ -37,16 +37,9 @@ export function formatNumber(n: number): string {
 const moneyFormat = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 const timeFormat = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' });
 
-/** Whole dollars, for example "$1,500"; half a dollar rounds up. */
+/** Whole dollars, for example "$1,500"; half a dollar rounds up, as on the City's property page. */
 export function formatMoney(n: number): string {
   return moneyFormat.format(Math.round(n));
-}
-
-const centsFormat = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-/** A price as the City records it: "$1,500", or "$17,500.25" when it has cents. */
-export function formatPrice(n: number): string {
-  return Number.isInteger(Math.round(n * 100) / 100) ? moneyFormat.format(n) : centsFormat.format(n);
 }
 
 /** A time of day in Philadelphia, for example "2:14 PM". */
@@ -799,7 +792,7 @@ export const strings = {
       noTransfers: 'No deeds on record.',
       recordsNote: 'City deed records are complete from 2000 on. Older sales may be missing.',
       datesNote:
-        'Each date is the date on the deed, as the City\'s property page shows it; the City records a deed days or weeks later. When one deed covered several properties, the price is this property\'s share.',
+        'Each date is the date on the deed and each price is rounded to the dollar, as the City\'s property page shows them; the City records a deed days or weeks later. When one deed covered several properties, the price is this property\'s share.',
       // The City's deed types in plain words. A type not listed here is shown in sentence case,
       // with any dash replaced by a comma.
       documents: {

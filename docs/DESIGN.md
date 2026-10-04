@@ -236,8 +236,9 @@ As built (M1.6, 2026-10-04):
   opens that lot directly, even with live data off.
 - **Print** gives one page per lot: the summary, what you can do, who owns it, recent history and
   sources, ending with "Not legal advice."
-- Deeds show the date on the deed and the adjusted price (this property's share when one deed
-  covered several), as the City's property page does, in the snapshot and live alike. The City's
+- Deeds show the date on the deed and the adjusted price rounded to the dollar (this property's
+  share when one deed covered several), as the City's property page does, in the snapshot and live
+  alike. The City's
   page lists only plain deeds; the lot page lists every deed, sheriff deeds and other kinds too.
 - The browser builds exactly the pipeline's flag sentences: a shared set of cases with the
   pipeline's answers (`pipeline/tests/fixtures/wording_parity.json`) is checked by both test

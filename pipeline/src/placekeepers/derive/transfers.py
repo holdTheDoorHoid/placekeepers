@@ -14,9 +14,11 @@ From the City's transfer records (Carto `rtt_summary`, source `real_estate_trans
   each other. Deeds dated the same day count as one sale.
 
 Each deed's date and price are the ones the City's property page shows (decided 2026-10-04 by the
-orchestrator): the date on the deed (the City's `display_date`, a day in Philadelphia; the
-recording date when the deed has none) and the adjusted total (this property's share when one
-deed covered several properties; the total consideration when there is no adjusted total).
+orchestrator): the date on the deed (the City's `display_date`, a day in Philadelphia; the City
+uses the recording date when the deed has no date, or a date after it was recorded) and the
+adjusted total (this property's share when one deed covered several properties; the total
+consideration when there is no adjusted total). Prices keep their cents here; the City's page and
+the flag sentences round them to the dollar.
 
 The records are complete only from 2000 on: the candidate parcels have about 4,000 deeds a year
 from 2000 and a few dozen a year before 1999 (checked 2026-10-04). OPA's own last sale date and

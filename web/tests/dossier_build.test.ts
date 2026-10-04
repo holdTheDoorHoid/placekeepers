@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { loadRegistry } from '../plugins/registry.ts';
 import { parseManifest } from '../src/data/manifest.ts';
-import { IDLE_PARTS, buildDossier, cityTitle, documentLabel, type DossierInput, type LiveParts, type Part } from '../src/dossier/build.ts';
+import { IDLE_PARTS, buildDossier, cityTitle, documentLabel, transferRow, type DossierInput, type LiveParts, type Part } from '../src/dossier/build.ts';
 import { plain } from '../src/dossier/plain.ts';
 import { parseCommon, parseShard } from '../src/dossier/shard.ts';
 import type { Assessment, LiveLi, LiveProperty, Transfer } from '../src/dossier/types.ts';
@@ -274,6 +274,15 @@ describe('details', () => {
     expect(view.history.transfers![0]).toMatchObject({ price: "$30,000, this property's share of one deed for 2 properties", sheriff: false });
     const sheriff = buildDossier(input('990000001', { liveOn: false })).history.transfers!.find((t) => t.sheriff)!;
     expect(sheriff).toMatchObject({ document: "Sheriff's deed", price: '$1,600' });
+  });
+
+  it('rounds deed prices to the dollar, as the City property page does', () => {
+    // Shares the City shows as $6,167, $1 and $0 (OPA 331050500 and 091136000, checked 2026-10-04).
+    const deed = { date: '2014-07-29', type: 'DEED', from: ['A'], to: ['B'], fromMore: 0, toMore: 0 };
+    expect(transferRow({ ...deed, price: 6166.67, properties: 3 }).price).toBe("$6,167, this property's share of one deed for 3 properties");
+    expect(transferRow({ ...deed, price: 0.5, properties: 2 }).price).toBe("$1, this property's share of one deed for 2 properties");
+    expect(transferRow({ ...deed, price: 0.33, properties: 3 }).price).toBe("$0, this property's share of one deed for 3 properties");
+    expect(transferRow({ ...deed, price: null, properties: 1 }).price).toBe('None recorded');
   });
 
   it('shows the City list of public property and the side yard program for a Land Bank lot', () => {

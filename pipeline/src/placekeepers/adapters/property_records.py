@@ -16,9 +16,12 @@ class RealEstateTransfers(CartoAccountsAdapter):
     who granted it to whom, when, and for how much. `property_count` above 1 means one price
     covered several properties.
 
-    `display_date` (the date on the deed, or the recording date when the deed has none, as a day
-    in Philadelphia) and `adjusted_total_consideration` (this property's share of the price) are
-    what the City's property page shows; the lot dossier shows them too."""
+    `display_date` (the date on the deed as a day in Philadelphia; the City uses the recording date
+    when the deed has no date, or a date after it was recorded) and `adjusted_total_consideration`
+    (this property's share of the price) are what the City's property page shows; the lot dossier
+    shows them too. Its timestamps are real times of day, so a deed signed on an evening in
+    Philadelphia falls on the next day in UTC: `display_date` is read as its day in Philadelphia,
+    as the City's page shows it."""
 
     account_column = "opa_account_num"
     columns = (

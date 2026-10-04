@@ -546,10 +546,11 @@ flag is computed is in `pipeline/src/placekeepers/derive/` (`owners.py`, `transf
 **`transfers`**: every deed, newest first: every document type that names a deed, and certificates
 of stock transfer. Mortgages and other filings are left out. Changed 2026-10-04 by M1.6b, as the
 orchestrator decided, so the dossier matches the City's property page: `date` is the date on the
-deed as that page shows it (the City's `display_date`, a day in Philadelphia; the recording date
-when the deed has none); `price` is the adjusted total in dollars, to the cent when it has cents
-(this property's share when one deed covered several properties; the total consideration when there
-is no adjusted total; `null` when the record has neither). `type` is the City's document type as
+deed as that page shows it (the City's `display_date`, a day in Philadelphia; the City uses the
+recording date when the deed has no date, or a date after it was recorded); `price` is the adjusted
+total in dollars, to the cent when it has cents (this property's share when one deed covered several
+properties; the total consideration when there is no adjusted total; `null` when the record has
+neither). The lot page rounds prices to the dollar, half a dollar up, as the City's page does. `type` is the City's document type as
 published; `from` and `to` up to 10 names each, with `from_more` and `to_more` counting the rest;
 `properties` when one price covered several properties. Sales for a token price ($100 or less) and
 sheriff deeds are listed here but are not "sales" for `years_since_sale`. The flags built from the
