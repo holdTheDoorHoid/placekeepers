@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Node
+node_modules/
+web/dist/
+web/public/data/
+
+# Pipeline outputs and caches (raw data lives in ~/.cache/placekeepers)
+build/
+research/vacancy/out/
+*.pmtiles
+!web/fixtures/**/*.pmtiles
+
+# Private drafts for the owner (never published)
+docs/outreach/
+
+# Editors and OS
+.DS_Store
+.idea/
+.vscode/

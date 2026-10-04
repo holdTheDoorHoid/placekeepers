@@ -1,0 +1,7 @@
+# Partner organizations. See docs/ROUTES.md section 5.
+- {id: phs, name: Pennsylvania Horticultural Society, url: "https://phsonline.org/", one_line: "LandCare, Community LandCare and Philly Spring Cleanup."}
+- {id: gjli, name: Garden Justice Legal Initiative, url: "https://groundedinphilly.org/", one_line: "Free legal help and guides for using vacant land."}
+- {id: ngt, name: Neighborhood Gardens Trust, url: "https://ngtrust.org/", one_line: "Preserves community gardens permanently."}
+- {id: land_bank, name: Philadelphia Land Bank, url: "https://phillylandbank.org/", one_line: "City programs for vacant lots, including side yards and gardens."}
+- {id: bike_coalition, name: Bicycle Coalition of Greater Philadelphia, url: "https://bicyclecoalition.org/", one_line: "Vision Zero advocacy, ghost bikes and Families for Safe Streets."}
+- {id: feet_first, name: Feet First Philly, url: "https://feetfirstphilly.org/", one_line: "Pedestrian advocacy, walk audits and public space mini grants."}

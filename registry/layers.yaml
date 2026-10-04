@@ -1,0 +1,69 @@
+# Map layers. Every layer gets a toggle generated from this file. See docs/CONTRACTS.md.
+- id: vacant_parcels
+  label: Vacant lots and buildings
+  group: lots
+  description: >-
+    Parcels that are probably vacant, with how sure we are and why. Combines the City's vacancy
+    indicator with other City records, so no single source can break it.
+  sources: [vacant_indicators_land, vacant_indicators_bldg, opa_properties, pwd_parcels]
+  file: tiles/lots.pmtiles
+  source_layer: parcels
+  geometry: polygon
+  style: vacant_parcels
+  evidence: strong
+  default: {field: true, analysis: true}
+  settings:
+    - id: min_confidence
+      label: Show parcels we are at least this sure about
+      type: choice
+      options:
+        - {value: "1", label: Any signal}
+        - {value: "2", label: Medium or high}
+        - {value: "3", label: High only}
+      default: "2"
+    - id: kinds
+      label: Show
+      type: choice
+      options:
+        - {value: both, label: Lots and buildings}
+        - {value: lots, label: Lots only}
+        - {value: buildings, label: Buildings only}
+      default: both
+  release: v0.1
+- id: hin_2025
+  label: High Injury Network
+  group: streets
+  description: >-
+    The streets where most traffic deaths and serious injuries happen in Philadelphia, as mapped by
+    the City's Vision Zero program in 2025.
+  sources: [high_injury_network]
+  file: tiles/streets.pmtiles
+  source_layer: hin
+  geometry: line
+  style: hin
+  evidence: context
+  default: {field: true, analysis: true}
+  settings: []
+  release: v0.1
+- id: shootings_hex
+  label: Shootings, counted by area
+  group: safety_context
+  description: >-
+    Shooting victims in the chosen time window, counted per hexagon about two blocks across. Shown
+    to point care where it helps most, not to label places as dangerous.
+  sources: [shootings]
+  file: tiles/context.pmtiles
+  source_layer: h3
+  geometry: polygon
+  style: shootings_hex
+  evidence: context
+  default: {field: false, analysis: true}
+  settings:
+    - id: window
+      label: Time window
+      type: choice
+      options:
+        - {value: m12, label: Last 12 months}
+        - {value: m36, label: Last 3 years}
+      default: m12
+  release: v0.1

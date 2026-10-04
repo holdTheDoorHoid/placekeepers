@@ -1,0 +1,51 @@
+# Legal routes. Content comes from docs/ROUTES.md; keep last_checked current.
+- id: land_bank_garden_agreement
+  label: Garden agreement or license from the Land Bank
+  who: Anyone for a $1 Urban Garden Agreement; groups with a nonprofit sponsor for a Community Garden License
+  steps:
+    - Check that the Land Bank or City owns the lot.
+    - Read Grounded in Philly's guide to getting permission to use City land.
+    - Apply to the Land Bank, or join one of its free webinars first.
+  cost: "$1 (Urban Garden Agreement), $25 a year (Individual Garden Agreement), or insurance and a sponsor (Community Garden License)"
+  timeline: Weeks for short agreements; months for a license
+  links:
+    - {label: Philadelphia Land Bank, url: "https://phillylandbank.org/"}
+    - {label: "Grounded in Philly: permission to use City land", url: "https://groundedinphilly.org/get-permission-to-use-land-city/"}
+  last_checked: 2026-10-04
+  status: confirm
+- id: ask_the_owner
+  label: Ask the owner for permission
+  who: Anyone
+  steps:
+    - Find the owner's mailing address on the lot page.
+    - Write to ask permission to clean and green the lot, and offer a simple written agreement.
+    - Ask the Garden Justice Legal Initiative to review any agreement before you sign.
+  cost: Free
+  timeline: Depends on the owner
+  links:
+    - {label: Garden Justice Legal Initiative, url: "https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/"}
+  last_checked: 2026-10-04
+  status: verified
+- id: community_landcare
+  label: Steward a lot with PHS Community LandCare
+  who: Resident groups
+  steps:
+    - Contact PHS about Community LandCare.
+  cost: To confirm with PHS
+  timeline: To confirm with PHS
+  links:
+    - {label: Pennsylvania Horticultural Society, url: "https://phsonline.org/"}
+  last_checked: 2026-10-04
+  status: confirm
+- id: report_to_311
+  label: Report it to Philly311
+  who: Anyone
+  steps:
+    - Report the open building, illegal dumping or dark streetlight to Philly311 online, by app, or by calling 311.
+    - Keep the service request number and check back.
+  cost: Free
+  timeline: Days to weeks
+  links:
+    - {label: Philly311, url: "https://www.phila.gov/services/property-lots-housing/submit-a-service-request-with-311/"}
+  last_checked: 2026-10-04
+  status: verified

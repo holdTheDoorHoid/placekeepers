@@ -1,0 +1,21 @@
+# Suggestions. Which places get which suggestion is decided in the pipeline. See docs/CONTRACTS.md.
+- id: clean_and_green
+  label: Clean and green this lot
+  applies_to: parcel
+  summary: Clear trash, grade, plant grass and a few trees, add a low post and rail fence, and mow regularly.
+  evidence: strong
+  cost: "About $1,100 to $1,500 up front and $150 to $300 a year (to confirm with PHS)"
+  routes: [land_bank_garden_agreement, ask_the_owner, community_landcare]
+  partners: [phs, gjli]
+  default_on: true
+  release: v0.1
+- id: seal_abandoned_building
+  label: Get this building sealed
+  applies_to: parcel
+  summary: Report an open abandoned building so the City seals its doors and windows.
+  evidence: strong
+  cost: Free to report
+  routes: [report_to_311]
+  partners: []
+  default_on: true
+  release: v0.1

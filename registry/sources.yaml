@@ -1,0 +1,61 @@
+# Data sources. Wave 1 seeds; later milestones add more. See docs/CONTRACTS.md and docs/DATA_SOURCES.md.
+- id: opa_properties
+  name: OPA properties
+  publisher: City of Philadelphia, Office of Property Assessment
+  homepage: https://opendataphilly.org/datasets/philadelphia-properties-and-assessment-history/
+  endpoint: {kind: carto, table: opa_properties_public}
+  license: city_terms
+  attribution: "Property data: City of Philadelphia, Office of Property Assessment"
+  cadence: daily
+  health: {min_rows: 550000, max_drop_pct: 5, newest_field: sale_date, max_age_days: 30}
+  release: v0.1
+- id: pwd_parcels
+  name: Water Department parcels
+  publisher: Philadelphia Water Department
+  homepage: https://opendataphilly.org/datasets/pwd-stormwater-billing-parcels/
+  endpoint: {kind: carto, table: pwd_parcels}
+  license: city_terms
+  attribution: "Parcel shapes: Philadelphia Water Department"
+  cadence: irregular
+  health: {min_rows: 520000, max_drop_pct: 5}
+  release: v0.1
+- id: vacant_indicators_land
+  name: Vacant Property Indicators, land
+  publisher: City of Philadelphia
+  homepage: https://opendataphilly.org/datasets/vacant-property-indicators/
+  endpoint: {kind: arcgis, service: Vacant_Indicators_Land, layer: 0}
+  license: city_terms
+  attribution: "Vacancy indicators: City of Philadelphia"
+  cadence: irregular
+  health: {min_rows: 20000, max_drop_pct: 20, newest_field: date_update, max_age_days: 400}
+  release: v0.1
+- id: vacant_indicators_bldg
+  name: Vacant Property Indicators, buildings
+  publisher: City of Philadelphia
+  homepage: https://opendataphilly.org/datasets/vacant-property-indicators/
+  endpoint: {kind: arcgis, service: Vacant_Indicators_Bldg, layer: 0}
+  license: city_terms
+  attribution: "Vacancy indicators: City of Philadelphia"
+  cadence: irregular
+  health: {min_rows: 8000, max_drop_pct: 20, newest_field: date_update, max_age_days: 400}
+  release: v0.1
+- id: shootings
+  name: Shooting victims
+  publisher: Philadelphia Police Department
+  homepage: https://opendataphilly.org/datasets/shooting-victims/
+  endpoint: {kind: carto, table: shootings}
+  license: city_terms
+  attribution: "Shooting data: Philadelphia Police Department via OpenDataPhilly"
+  cadence: daily
+  health: {min_rows: 15000, max_drop_pct: 5, newest_field: date_, max_age_days: 14}
+  release: v0.1
+- id: high_injury_network
+  name: Vision Zero High Injury Network 2025
+  publisher: City of Philadelphia, Office of Transportation and Infrastructure Systems
+  homepage: https://opendataphilly.org/datasets/vision-zero-high-injury-network/
+  endpoint: {kind: arcgis, service: high_injury_network_2025, layer: 0}
+  license: city_terms
+  attribution: "High Injury Network: City of Philadelphia Vision Zero"
+  cadence: irregular
+  health: {min_rows: 100, max_drop_pct: 10}
+  release: v0.1

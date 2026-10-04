@@ -1,0 +1,41 @@
+# Lenses. Scores are weighted averages of 0 to 100 factor fields, computed in the map style.
+# See docs/CONTRACTS.md and docs/EVIDENCE.md. Factors are added as their data arrives.
+- id: violence
+  label: Violence reduction
+  applies_to: parcel
+  description: >-
+    Where cleaning, greening or sealing would most likely reduce gun violence nearby, based on
+    randomized trials in Philadelphia.
+  factors:
+    - id: untreated_vacancy
+      label: Untreated vacant lot or open abandoned building
+      field: f_vacant
+      evidence: strong
+      default_weight: 3
+      explain: Randomized trials in Philadelphia found that greening vacant lots and sealing abandoned houses reduced gun violence nearby.
+    - id: shootings_nearby
+      label: Shootings nearby in the last three years
+      field: f_shoot
+      evidence: context
+      default_weight: 3
+      explain: The trials measured fewer shootings around treated places, so care helps most where shootings happen.
+    - id: poverty
+      label: Neighborhood poverty rate
+      field: f_poverty
+      evidence: strong
+      default_weight: 2
+      explain: In the citywide trial, the drop in gun violence was found in neighborhoods below the poverty line.
+    - id: canopy_gap
+      label: Few trees nearby
+      field: f_canopy
+      evidence: mixed
+      default_weight: 1
+      explain: Street trees are linked to less crime, but evidence is mixed and depends on placement.
+  presets:
+    - id: research
+      label: Research based
+      weights: {untreated_vacancy: 3, shootings_nearby: 3, poverty: 2, canopy_gap: 1}
+    - id: vacancy_only
+      label: Vacancy only
+      weights: {untreated_vacancy: 1, shootings_nearby: 0, poverty: 0, canopy_gap: 0}
+  release: v0.1

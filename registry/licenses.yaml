@@ -1,0 +1,21 @@
+# License shorthands used by sources. See docs/DATA_SOURCES.md.
+- id: city_terms
+  label: City of Philadelphia open data terms
+  url: https://metadata.phila.gov/#help/help-faqs/what-are-the-terms-of-use/
+  share_alike: false
+- id: odbl
+  label: Open Database License (OpenStreetMap)
+  url: https://opendatacommons.org/licenses/odbl/1-0/
+  share_alike: true
+- id: cc_by_4
+  label: Creative Commons Attribution 4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+  share_alike: false
+- id: public_domain
+  label: Public domain (United States government work or CC0)
+  url: https://creativecommons.org/publicdomain/zero/1.0/
+  share_alike: false
+- id: mit_cagp
+  label: MIT License (Clean & Green Philly, Code for Philly)
+  url: https://github.com/CodeForPhilly/clean-and-green-philly/blob/main/LICENSE
+  share_alike: false
