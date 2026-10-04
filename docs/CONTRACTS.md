@@ -152,6 +152,8 @@ data/
     lots.pmtiles          layer "parcels"   (vacancy candidates)
     streets.pmtiles       layers "hin", "segments", "crashes", "memorials"
     context.pmtiles       layer "h3"        (area cells, resolution 9)
+    care.pmtiles          layers "landcare", "gardens"
+    boundaries.pmtiles    layers "council_districts", "rcos", "neighborhoods"
   tables/
     parcels.json          compact columnar table for ranking and lists
   dossiers/
@@ -228,6 +230,26 @@ scooter).
 
 **`memorials` (streets.pmtiles)**: `id`, `d` (date), `m` (mode), `nm` (name, only when curated from a
 public memorial list and not suppressed), `src` (source url).
+
+Added 2026-10-04 by M1.1 (and `lc` in `parcels` is now filled from PHS LandCare):
+
+**`landcare` (care.pmtiles)**: `id` (OPA account, 9 digits, or empty when the site has none), `p`
+(program: 1 LandCare, 2 Community LandCare, 3 Land Bank lot, 4 PHDC lot, 0 other), `y` (year the
+lot joined, 0 when unknown).
+
+**`gardens` (care.pmtiles, points)**: `nm` (name), `src` (1 supported by PHS, 2 by the Neighborhood
+Gardens Trust, 3 by both, 4 registered with Parks and Recreation), `w` (website, only when known).
+
+**`council_districts` (boundaries.pmtiles)**: `d` (district number, 1 to 10), `nm` ("District 5").
+
+**`rcos` (boundaries.pmtiles)**: `id` (the City's L&I id for the organization), `nm` (organization
+name), `t` (type as the City records it: Ward, SSD, NID, Other; only when known), `w` (website, only
+when known). Areas overlap. Contact people's names, emails and phones are never published.
+
+**`neighborhoods` (boundaries.pmtiles)**: `id` (code name, such as `BRIDESBURG`), `nm` (name, such as
+`Bridesburg`).
+
+Every boundary layer has `nm`, so one style (`boundary`) can draw and label all three.
 
 ## 5. Dossier shards (`dossiers/<prefix>.json`)
 

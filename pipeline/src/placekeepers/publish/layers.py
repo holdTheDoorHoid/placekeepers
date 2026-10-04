@@ -8,13 +8,21 @@ docs/CONTRACTS.md section 4.
   person.
 * `parcels` (lots): `id` (OPA account), `k` (1 vacant lot, 2 vacant building), `vc` (confidence;
   2, medium, while the City's indicator is the only signal), `ot` (owner type; 0, unknown, until
-  owner types arrive), `lc` (LandCare; 0 until that source arrives).
+  owner types arrive), `lc` (1 when PHS LandCare maintains the parcel).
+* `landcare` (care): `id` (OPA account, or empty), `p` (program: 1 LandCare, 2 Community LandCare,
+  3 Land Bank lot, 4 PHDC lot, 0 other), `y` (year the lot joined, 0 when unknown).
+* `gardens` (care): `nm` (name), `src` (1 PHS, 2 Neighborhood Gardens Trust, 3 both, 4 registered
+  with Parks and Recreation), `w` (website, when there is one).
+* `council_districts`, `rcos` and `neighborhoods` (boundaries): `nm` (a name to label it with),
+  plus `d` (district number), `id` and `t` (the City's id and type for community organizations,
+  `w` their website) and `id` (the neighborhood's code name).
 """
 
 from __future__ import annotations
 
 import calendar
 import logging
+import re
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from datetime import date
@@ -55,8 +63,11 @@ class BuildResult:
 class LayerBuilder:
     file: str
     source_layer: str
+    #: at least one of these must have a usable snapshot
     sources: tuple[str, ...]
     build: Callable[[Context, dict[str, Path], Path, date], BuildResult]
+    #: used when available, never required
+    extras: tuple[str, ...] = ()
 
 
 # High Injury Network
@@ -136,15 +147,17 @@ def build_h3(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) -> Bu
 
 # Vacant parcels
 def opa_account(value: object) -> str | None:
-    """The 9 digit OPA account number, or None when the value is not one."""
+    """The 9 digit OPA account number, or None when the value holds none. Spaces and a second
+    account ("121099030/9130") are ignored; an 8 digit account gets its leading zero back."""
     if value is None:
         return None
     text = str(value).strip()
     if text.endswith(".0"):
         text = text[:-2]
-    if not text.isdigit() or len(text) > 9:
+    found = re.search(r"\d+", text)
+    if not found or not 8 <= len(found.group()) <= 9:
         return None
-    return text.zfill(9)
+    return found.group().zfill(9)
 
 
 PARCEL_SOURCES = (("vacant_indicators_land", 1), ("vacant_indicators_bldg", 2))
@@ -189,6 +202,7 @@ def build_parcels(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) 
             shapes.setdefault(account, wkb)
             if description:
                 descriptions.setdefault(account, description)
+    landcare = landcare_accounts(paths.get("phs_landcare"))
     notes = []
     if no_account:
         notes.append(
@@ -208,9 +222,120 @@ def build_parcels(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) 
     with GeoJSONWriter(out) as writer:
         for account in sorted(kinds):
             kind = parcel_kind(kinds[account], descriptions.get(account))
-            properties = {"id": account, "k": kind, "vc": 2, "ot": 0, "lc": 0}
+            lc = 1 if account in landcare else 0
+            properties = {"id": account, "k": kind, "vc": 2, "ot": 0, "lc": lc}
             writer.write(properties, geometry_json(shapes[account]))
     return BuildResult(writer.count, notes)
+
+
+def landcare_accounts(path: Path | None) -> set[str]:
+    if path is None:
+        return set()
+    table = pq.read_table(path, columns=["brt_id"])
+    return {
+        account for value in table.column("brt_id").to_pylist() if (account := opa_account(value))
+    }
+
+
+# Care already happening: PHS LandCare and gardens ----------------------------------------------
+
+LANDCARE_PROGRAMS = {"PLC": 1, "CLC": 2, "LANDBANK": 3, "PHDC": 4}
+
+
+def _year(value: object, as_of: date) -> int:
+    text = str(value or "").strip()
+    return int(text) if text.isdigit() and 1950 <= int(text) <= as_of.year + 1 else 0
+
+
+def build_landcare(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) -> BuildResult:
+    table = pq.read_table(paths["phs_landcare"], columns=["brt_id", "program", "year", "geometry"])
+    with GeoJSONWriter(out) as writer:
+        for brt_id, program, year, wkb in zip(
+            *(table.column(name).to_pylist() for name in table.column_names), strict=True
+        ):
+            properties = {
+                "id": opa_account(brt_id) or "",
+                "p": LANDCARE_PROGRAMS.get(str(program or "").strip().upper(), 0),
+                "y": _year(year, as_of),
+            }
+            writer.write(properties, geometry_json(wkb))
+    return BuildResult(writer.count, [])
+
+
+GARDEN_SUPPORT = {"PHS": 1, "NGT": 2, "PHS AND NGT": 3}
+
+
+def _with_website(properties: dict, website: object) -> dict:
+    text = str(website or "").strip()
+    if text:
+        properties["w"] = text
+    return properties
+
+
+def build_gardens(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) -> BuildResult:
+    with GeoJSONWriter(out) as writer:
+        if "gardens_phs_ngt" in paths:
+            table = pq.read_table(
+                paths["gardens_phs_ngt"], columns=["site_name", "supported", "website", "geometry"]
+            )
+            for name, supported, website, wkb in zip(
+                *(table.column(c).to_pylist() for c in table.column_names), strict=True
+            ):
+                src = GARDEN_SUPPORT.get(str(supported or "").strip().upper(), 1)
+                writer.write(_with_website({"nm": name, "src": src}, website), geometry_json(wkb))
+        if "gardens_registered" in paths:
+            table = pq.read_table(
+                paths["gardens_registered"], columns=["garden_name", "contact_website", "geometry"]
+            )
+            for name, website, wkb in zip(
+                *(table.column(c).to_pylist() for c in table.column_names), strict=True
+            ):
+                writer.write(_with_website({"nm": name, "src": 4}, website), geometry_json(wkb))
+    return BuildResult(writer.count, [])
+
+
+# Boundaries --------------------------------------------------------------------------------------
+
+
+def build_council_districts(
+    ctx: Context, paths: dict[str, Path], out: Path, as_of: date
+) -> BuildResult:
+    table = pq.read_table(paths["council_districts"], columns=["district", "geometry"])
+    with GeoJSONWriter(out) as writer:
+        for district, wkb in zip(
+            *(table.column(c).to_pylist() for c in table.column_names), strict=True
+        ):
+            number = int(str(district).strip())
+            writer.write({"d": number, "nm": f"District {number}"}, geometry_json(wkb, 6))
+    return BuildResult(writer.count, [])
+
+
+def build_rcos(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) -> BuildResult:
+    table = pq.read_table(
+        paths["community_organizations"],
+        columns=["lni_id", "organization_name", "org_type", "websites", "geometry"],
+    )
+    with GeoJSONWriter(out) as writer:
+        for lni_id, name, kind, website, wkb in zip(
+            *(table.column(c).to_pylist() for c in table.column_names), strict=True
+        ):
+            properties = {"id": int(lni_id) if lni_id is not None else 0, "nm": name}
+            if kind:
+                properties["t"] = kind
+            writer.write(_with_website(properties, website), geometry_json(wkb, 6))
+    return BuildResult(writer.count, [])
+
+
+def build_neighborhoods(
+    ctx: Context, paths: dict[str, Path], out: Path, as_of: date
+) -> BuildResult:
+    table = pq.read_table(paths["neighborhoods"], columns=["name", "listname", "geometry"])
+    with GeoJSONWriter(out) as writer:
+        for name, listname, wkb in zip(
+            *(table.column(c).to_pylist() for c in table.column_names), strict=True
+        ):
+            writer.write({"id": name, "nm": listname or name}, geometry_json(wkb, 6))
+    return BuildResult(writer.count, [])
 
 
 BUILDERS: tuple[LayerBuilder, ...] = (
@@ -219,9 +344,24 @@ BUILDERS: tuple[LayerBuilder, ...] = (
         "parcels",
         ("vacant_indicators_land", "vacant_indicators_bldg"),
         build_parcels,
+        extras=("phs_landcare",),
     ),
     LayerBuilder("tiles/streets.pmtiles", "hin", ("high_injury_network",), build_hin),
     LayerBuilder("tiles/context.pmtiles", "h3", ("shootings",), build_h3),
+    LayerBuilder("tiles/care.pmtiles", "landcare", ("phs_landcare",), build_landcare),
+    LayerBuilder(
+        "tiles/care.pmtiles", "gardens", ("gardens_phs_ngt", "gardens_registered"), build_gardens
+    ),
+    LayerBuilder(
+        "tiles/boundaries.pmtiles",
+        "council_districts",
+        ("council_districts",),
+        build_council_districts,
+    ),
+    LayerBuilder("tiles/boundaries.pmtiles", "rcos", ("community_organizations",), build_rcos),
+    LayerBuilder(
+        "tiles/boundaries.pmtiles", "neighborhoods", ("neighborhoods",), build_neighborhoods
+    ),
 )
 
 

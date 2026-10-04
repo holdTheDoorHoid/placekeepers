@@ -1,6 +1,6 @@
 """OPA properties: one row per property in the city (Carto table opa_properties_public).
 
-We keep a chosen set of columns rather than all of them. They feed the lot dossier (address, owner,
+We keep a chosen set of 35 columns rather than all 80. They feed the lot dossier (address, owner,
 mailing address, last sale, value, codes, zoning, exemptions, size, age) and the vacancy model
 (category and building codes, with the newer building code pair the City added in 2025):
 
@@ -20,6 +20,11 @@ mailing address, last sale, value, codes, zoning, exemptions, size, age) and the
     year_built                         as published (text; a few hundred are not plain years)
     census_tract, zip_code
     lat, lng                           the City's point for the parcel
+    exterior_condition, interior_condition, date_exterior_condition
+                                       the assessor's condition notes (6 vacant, 7 sealed or open
+                                       to the weather), a vacancy signal
+    total_livable_area, number_stories, unit
+                                       whether a building with living space stands on the parcel
 
 Verified against the live table on 2026-10-04 (583,783 rows, every parcel_number 9 digits).
 """
@@ -64,6 +69,12 @@ class OpaProperties(CartoAdapter):
         _text("zip_code"),
         Column("lat", "ST_Y(the_geom)", "DOUBLE"),
         Column("lng", "ST_X(the_geom)", "DOUBLE"),
+        _text("exterior_condition"),
+        _text("interior_condition"),
+        Column("date_exterior_condition", "date_exterior_condition", "DATE"),
+        Column("total_livable_area", "total_livable_area", "DOUBLE"),
+        Column("number_stories", "number_stories", "DOUBLE"),
+        _text("unit"),
     )
     required_columns = (
         "parcel_number",

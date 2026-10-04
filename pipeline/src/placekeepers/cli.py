@@ -30,6 +30,7 @@ from placekeepers.runner import (
     UsageError,
     all_statuses,
     fetch_source,
+    ordered,
     select_sources,
     validate_source,
 )
@@ -98,11 +99,11 @@ def cmd_registry_check(args: argparse.Namespace) -> int:
 def cmd_fetch(args: argparse.Namespace) -> int:
     ctx = _context(args)
     try:
-        sources = select_sources(ctx.registry, _ids(args))
+        sources = ordered(select_sources(ctx.registry, _ids(args)))
         if ctx.settings.offline:
             print("Offline: nothing downloaded.")
             return 0
-        _print_steps([fetch_source(ctx, source) for source in sources])
+        _print_steps([fetch_source(ctx, source, force=args.force) for source in sources])
     finally:
         ctx.close()
     return 0
@@ -110,7 +111,7 @@ def cmd_fetch(args: argparse.Namespace) -> int:
 
 def cmd_validate(args: argparse.Namespace) -> int:
     ctx = _context(args)
-    sources = select_sources(ctx.registry, _ids(args))
+    sources = ordered(select_sources(ctx.registry, _ids(args)))
     _print_steps([validate_source(ctx, source) for source in sources])
     return 0
 
@@ -158,14 +159,15 @@ def cmd_all(args: argparse.Namespace) -> int:
     ctx = _context(args)
     started = time.monotonic()
     try:
-        sources = select_sources(ctx.registry, _ids(args))
+        # Each source is downloaded and checked before the next, in an order where a source comes
+        # after the ones its download needs (the vacancy candidates, for example).
+        sources = ordered(select_sources(ctx.registry, _ids(args)))
         steps: list[StepResult] = []
         if ctx.settings.offline:
             print("Offline: using only what is already in the cache.")
-        else:
-            for source in sources:
-                steps.append(fetch_source(ctx, source))
         for source in sources:
+            if not ctx.settings.offline:
+                steps.append(fetch_source(ctx, source, force=args.force))
             steps.append(validate_source(ctx, source))
         print("Steps:")
         _print_steps(steps)
@@ -199,6 +201,13 @@ def build_parser() -> argparse.ArgumentParser:
         "--offline", action="store_true", help="use only the cache; download nothing"
     )
 
+    force = argparse.ArgumentParser(add_help=False)
+    force.add_argument(
+        "--force",
+        action="store_true",
+        help="download even frozen sources and yearly ones fetched in the last 30 days",
+    )
+
     out = argparse.ArgumentParser(add_help=False)
     out.add_argument("--out", default=None, help="data root to write (default: build/data)")
     out.add_argument("--as-of", help="build date for time windows, YYYY-MM-DD (default: today)")
@@ -214,7 +223,7 @@ def build_parser() -> argparse.ArgumentParser:
     check.set_defaults(func=cmd_registry_check)
 
     fetch = commands.add_parser(
-        "fetch", help="download sources", parents=[common, filters, offline]
+        "fetch", help="download sources", parents=[common, filters, offline, force]
     )
     fetch.add_argument("ids", nargs="*", help="source ids (default: all)")
     fetch.set_defaults(func=cmd_fetch)
@@ -243,7 +252,9 @@ def build_parser() -> argparse.ArgumentParser:
     health.set_defaults(func=cmd_health)
 
     run_all = commands.add_parser(
-        "all", help="fetch, validate, publish, report", parents=[common, filters, offline, out]
+        "all",
+        help="fetch, validate, publish, report",
+        parents=[common, filters, offline, force, out],
     )
     run_all.set_defaults(func=cmd_all)
     return parser

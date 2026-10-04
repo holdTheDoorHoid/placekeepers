@@ -5,7 +5,7 @@
   description: >-
     Parcels that are probably vacant, with how sure we are and why. Combines the City's vacancy
     indicator with other City records, so no single source can break it.
-  sources: [vacant_indicators_land, vacant_indicators_bldg, opa_properties, pwd_parcels]
+  sources: [vacant_indicators_land, vacant_indicators_bldg, opa_properties, pwd_parcels, phs_landcare]
   file: tiles/lots.pmtiles
   source_layer: parcels
   geometry: polygon
@@ -66,4 +66,78 @@
         - {value: m12, label: Last 12 months}
         - {value: m36, label: Last 3 years}
       default: m12
+  release: v0.1
+- id: landcare_lots
+  label: Lots kept up by PHS LandCare
+  group: care
+  description: >-
+    Vacant lots the Pennsylvania Horticultural Society has cleaned and greened and keeps mowing,
+    through LandCare and Community LandCare. This is the care the Philadelphia trials tested.
+  sources: [phs_landcare]
+  file: tiles/care.pmtiles
+  source_layer: landcare
+  geometry: polygon
+  style: landcare
+  evidence: strong
+  default: {field: false, analysis: true}
+  settings: []
+  release: v0.1
+- id: gardens
+  label: Community gardens
+  group: care
+  description: >-
+    Community gardens and farms supported by PHS or the Neighborhood Gardens Trust, and gardens
+    registered with Parks and Recreation. People already care for these places, so they are never
+    shown as vacant.
+  sources: [gardens_phs_ngt, gardens_registered]
+  file: tiles/care.pmtiles
+  source_layer: gardens
+  geometry: point
+  style: gardens
+  evidence: not_violence
+  default: {field: false, analysis: true}
+  settings: []
+  release: v0.1
+- id: council_districts
+  label: City Council districts
+  group: boundaries
+  description: >-
+    The ten City Council districts as drawn in 2024, so you can see whose office to contact.
+  sources: [council_districts]
+  file: tiles/boundaries.pmtiles
+  source_layer: council_districts
+  geometry: polygon
+  style: boundary
+  evidence: context
+  default: {field: false, analysis: false}
+  settings: []
+  release: v0.1
+- id: community_organizations
+  label: Registered Community Organizations
+  group: boundaries
+  description: >-
+    Neighborhood groups registered with the City, which hear about zoning changes in their area.
+    Their areas often overlap.
+  sources: [community_organizations]
+  file: tiles/boundaries.pmtiles
+  source_layer: rcos
+  geometry: polygon
+  style: boundary
+  evidence: context
+  default: {field: false, analysis: false}
+  settings: []
+  release: v0.1
+- id: neighborhoods
+  label: Neighborhoods
+  group: boundaries
+  description: >-
+    Neighborhood names and boundaries, from the OpenDataPhilly neighborhoods map by Abaca Labs.
+  sources: [neighborhoods]
+  file: tiles/boundaries.pmtiles
+  source_layer: neighborhoods
+  geometry: polygon
+  style: boundary
+  evidence: context
+  default: {field: false, analysis: false}
+  settings: []
   release: v0.1

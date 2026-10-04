@@ -19,3 +19,7 @@
   label: MIT License (Clean & Green Philly, Code for Philly)
   url: https://github.com/CodeForPhilly/clean-and-green-philly/blob/main/LICENSE
   share_alike: false
+- id: unstated
+  label: No license stated by the publisher (shared publicly; credited, and removed if the publisher asks)
+  url: https://github.com/holdTheDoorHoid/placekeepers/blob/main/docs/DATA_SOURCES.md
+  share_alike: false

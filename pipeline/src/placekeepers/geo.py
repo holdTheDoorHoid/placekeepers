@@ -106,3 +106,64 @@ class GeoJSONWriter:
         assert self._handle is not None
         self._handle.write("\n]}\n")
         self._handle.close()
+
+
+def wkb_types(array: pa.Array | pa.ChunkedArray) -> set[str]:
+    """The geometry type names present in a column of WKB values, read from their headers."""
+    import pyarrow.compute as pc
+
+    headers = pc.unique(pc.binary_slice(array.cast(pa.binary()), 0, 5)).to_pylist()
+    return {name for header in headers if header for name in [wkb_type_name(header)] if name}
+
+
+def geojson_to_geoparquet(
+    src: Path,
+    out: Path,
+    *,
+    keep: list[str] | None = None,
+    constants: dict[str, pa.Scalar] | None = None,
+    batch_size: int = 50_000,
+) -> int:
+    """Stream a GeoJSON file into GeoParquet, a batch at a time, so a file of hundreds of
+    megabytes never sits in memory whole. Field names become lower case; `keep` limits the fields
+    (names as in the file); `constants` adds columns with one value for every row. Returns the
+    number of rows written."""
+    from pyogrio.raw import open_arrow
+
+    rows = 0
+    kinds: set[str] = set()
+    writer: pq.ParquetWriter | None = None
+    try:
+        with open_arrow(src, columns=keep, batch_size=batch_size, use_pyarrow=True) as (
+            meta,
+            reader,
+        ):
+            geometry_name = meta.get("geometry_name") or "wkb_geometry"
+            for batch in reader:
+                table = pa.Table.from_batches([batch])
+                columns = []
+                fields = []
+                for name, column in zip(table.column_names, table.columns, strict=True):
+                    if name == geometry_name:
+                        # Drop the geoarrow field label; the geo metadata says it is WKB.
+                        fields.append(pa.field(GEOMETRY_COLUMN, pa.binary()))
+                        columns.append(column.cast(pa.binary()))
+                        kinds |= wkb_types(column)
+                    else:
+                        fields.append(pa.field(name.lower(), column.type))
+                        columns.append(column)
+                for name, value in (constants or {}).items():
+                    fields.append(pa.field(name, value.type))
+                    columns.append(pa.array([value.as_py()] * table.num_rows, type=value.type))
+                table = pa.Table.from_arrays(columns, schema=pa.schema(fields))
+                if writer is None:
+                    writer = pq.ParquetWriter(out, table.schema, compression="zstd")
+                writer.write_table(table)
+                rows += table.num_rows
+        if writer is None:
+            raise ValueError(f"{src.name} has no features")
+        writer.add_key_value_metadata({"geo": json.dumps(geo_metadata(sorted(kinds)))})
+    finally:
+        if writer is not None:
+            writer.close()
+    return rows
