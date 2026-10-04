@@ -227,33 +227,45 @@ today's buildings were already listed, so this is a real recalculation, not old 
 date. Placekeepers uses the indicator, but never alone: losing any one signal lowers confidence on the
 affected parcels instead of breaking the map.
 
-| Signal | Applies to | Confidence |
-|---|---|---|
-| City vacancy indicator, with its rank | Lots and buildings | Medium until our spot checks pass, then High |
-| OPA building code says vacant land | Lots | High |
-| No building footprint on the parcel, and the parcel is not a park, garden, parking lot, rail or utility | Lots | High |
-| L&I clean and seal, unsafe, or imminently dangerous, with no permit since | Buildings | High |
-| Demolition with no new construction permit since | Lots | Medium to High |
-| Vacancy related violations or complaints in the last two years | Both | Medium |
-| City vacant lot cleanup in the last two years | Lots | Medium |
-| Aerial vegetation trend across the City's orthophoto years (later) | Lots | Low |
+The vacancy method study (milestone M0.5, [VACANCY_METHOD.md](VACANCY_METHOD.md)) tested every
+signal against the City's lists, the churn since 2024, and 115 parcels in the City's 2023 aerial
+photos. Its rules are adopted (2026-10-04):
 
-Parks, registered and PHS or NGT gardens, and parcels with recent construction permits are excluded.
-LandCare lots stay in the vacant set, marked "already maintained".
+| Signal | How it counts |
+|---|---|
+| City vacancy indicator | A strong vote: a lot is high only when two independent records agree with it; alone it gives low (City only lots were empty in 5 of 13 checks) |
+| OPA category code says vacant land | One independent lot signal. Use the category code, not the description, which lags new construction by years |
+| No building footprint | One independent lot signal, ignored where OPA describes a lived in house |
+| Demolition with no new construction permit since | One independent lot signal; recent demolitions count even if OPA still says house. It is the only record that sees new lots promptly |
+| Clean and seal in the last five years; unsafe; imminently dangerous | Building signals (a footprint must stand) |
+| Vacancy specific violations and complaints | Signals. Weeds and rubbish violations are context only, because they mostly hit lived in homes |
+| Planning land use (2023) shows a use | A contradiction: lowers a lot one level (catches yards and parking) |
+| New construction permit | 2021 to early 2025 makes a lot low; since April 2025 caps it at medium |
+| City vacant lot cleanups | Context only (hexagon counts); not published per parcel since 2013 |
 
-**Output per parcel:** kind (lot or building), confidence (high, medium, low), the agreeing signals in
-plain words, and the signal count. The map shows confidence and reasons; filters can include low
-confidence parcels.
+The kind comes from the footprint, not from which City list a parcel is on: no footprint, or a
+demolition after the footprint was drawn, means lot. This moves 1,110 parcels from the City's building
+list to lots. LandCare lots stay in the vacant set, marked "already maintained".
 
-**Validation before the first release**, published on a "How we find vacant land" page:
-1. Agreement between the City indicator and our independent signals, by signal.
-2. Whether the churn since 2024 makes sense: newly listed lots should often have recent demolitions;
-   dropped parcels should often have new permits or sales.
-3. An aerial spot check of a stratified sample against the City's 2023 orthophotos (an agent can view
-   image crops), plus a smaller street level sample checked by people, recorded in
-   `data/curated/spot_checks.yaml`.
-4. If the City indicator disagrees badly with the spot checks, it drops to a medium signal and the
-   page says why.
+| Kind | High | Medium | Low |
+|---|---|---|---|
+| Lots (2026-10-04) | 24,166 | 6,147 | 10,465 |
+| Buildings (2026-10-04) | 6,553 | 2,876 | 8,503 |
+
+Parks, gardens, parking, rail, utilities, cemeteries, water and streets never show as vacant (1,727
+parcels). High and medium show by default; low sits behind the confidence filter. Where the City and
+two of our records agree, 24 of 26 lots checked in the aerial photos were empty and 2 were unclear.
+
+**Output per parcel:** kind (lot or building), confidence, the agreeing signals in plain words, and the
+signal count, shown on the map and in the dossier.
+
+**If the City indicator breaks again:** keep its last copy for twelve months, labeled with its date,
+then drop it. Without it, high lots become medium (about 29,000 lots stay on the map at medium) and
+2,936 buildings stay high. The health check also flags the City list as stale if its date stops
+advancing for six months while demolitions keep being recorded.
+
+**Still open:** buildings cannot be judged from the air. A person should check the 41 parcels in
+`research/vacancy/human_check.csv` at street level; results go into `data/curated/spot_checks.yaml`.
 
 ## 7. Data sources
 
