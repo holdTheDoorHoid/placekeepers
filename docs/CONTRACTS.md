@@ -157,6 +157,34 @@ A route may also carry `warning` (added 2026-10-04 by M1.3): a caution the web a
 steps wherever the route appears. The `conservatorship` route carries the abuse warning of
 docs/ETHICS.md in it, word for word.
 
+### `registry/options.yaml`
+
+Added 2026-10-04 by M1.6. App wide options: choices about how the whole site behaves, not tied to
+one map layer. Settings shows every one, under "Privacy and live data".
+
+```yaml
+- id: live_city_data
+  label: Fetch live City data
+  description: >-
+    When you open a lot page or search for an address, your browser asks the City of
+    Philadelphia's public servers for the newest records ...
+  type: toggle
+  default: true
+  release: v0.1
+```
+
+An option has the keys of a layer setting (`id`, `label`, `type`, `default`, and `options`, or
+`min`, `max` and `step`, by type, with the same rules) plus `description` (plain words, including
+any privacy note) and `release`. Options are personal: the web app keeps them only in the browser
+of the person who set them (under `placekeepers:v1:options`) and never puts them in a shared link,
+so opening someone's link can never turn on something a person turned off. "Reset to defaults"
+leaves them as they are. The pipeline checks the file like the others but does not use it.
+
+`live_city_data` (default on) lets the browser ask the City's servers for live data: the live refresh
+of a lot page (section 6), opening a parcel that has no dossier, and address search, which uses the
+City's address service (`https://api.phila.gov/ais/v1/search/<text>`). With it off, the site asks
+the City for nothing and lot pages show the weekly snapshot, labeled with its date.
+
 ## 2. Published data layout
 
 The pipeline writes everything under one data root (`--out`, default `build/data`). The site serves it
@@ -537,6 +565,24 @@ details beyond the owner names and mailing address the City publishes.
 
 The live refresh in the browser may update `owner`, `transfers`, `assessments` and `li` from the
 City's Carto API; anything it cannot refresh stays as in the shard, labeled with the shard's date.
+
+How the web app does it (added 2026-10-04 by M1.6, `web/src/dossier/`). Each part is one request to
+`https://phl.carto.com/api/v2/sql`, built only from the nine digit account (or, to find the parcel
+under a tap, a point inside the city), never from typed text, with a 10 second limit:
+`opa_properties_public` for the owner names, mailing address and the City's description;
+`rtt_summary` for every deed with the same fields as `transfers` (the recording date and the total
+consideration); `assessments`; and one query over `violations`, `permits`, `demolitions`, `unsafe`,
+`imm_dang` and `clean_seal` for the L&I timeline. A part that answers replaces the shard's part
+and is labeled live; one that fails or times out keeps the shard's, labeled with its date and the
+reason. The flags that depend on a live part are worked out again in the browser with the
+pipeline's rules (`absentee` and `possible_estate` from the owner, `sheriff_sales`,
+`years_since_sale` and `fast_resales` from the deeds, `open_violations`, `unsafe` and
+`imminently_dangerous` from L&I); `tax_debt_2025` and `many_parcels` stay as in the shard. When the
+City names different owners than the shard, the flags about the earlier owner are left out. A
+parcel with no dossier (its prefix is not in the manifest's `dossiers.prefixes`, or it is not in
+its shard) gets a page built only from these lookups, plus counts within 500 feet of its point
+(`shootings` in the last 12 and 36 months, and people killed in `fatal_crashes` since 2019). Text
+from City records is shown as published, except that a dash used as punctuation becomes a comma.
 
 ### `tables/owners.json`
 

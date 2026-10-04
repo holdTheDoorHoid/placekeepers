@@ -205,6 +205,42 @@ The dossier is built from the weekly snapshot and, when the setting "fetch live 
 (default on), refreshed from the City's public APIs when opened. Any parcel can be opened by clicking
 it, not only candidates.
 
+As built (M1.6, 2026-10-04):
+
+- **Opening a lot page.** Tapping a lot on the map, a search result, a card in "What you can do
+  nearby", or a link with the parcel in it opens its page: a full screen sheet on phones, the right
+  panel on larger screens. Close in (zoom 16 and up), tapping any other spot asks the City's parcel
+  map which parcel is there, outlines it, and opens its page, built live. With live data off, only
+  parcels on our list open, from the snapshot.
+- **Where each part comes from.** A line at the top and a line under each part say whether it is
+  live from the City (with the time), from the weekly snapshot (with its date), still loading, or
+  why a lookup failed (no answer within 10 seconds, the City could not be reached, or it answered
+  with an error), with a "Try the City again" button. A failed part shows the snapshot instead, or
+  says plainly that it cannot be shown. Parcels with no published dossier say so and show what the
+  City's servers say right now.
+- **Who owns it** shows the names and mailing address as the City publishes them, the kind of owner
+  and why, each flag in its three parts, the deed fraud notice wherever a person owns the parcel or
+  it may be an estate, help for families (the Tangled Title Fund and Fraud Guard) beside any flag on
+  a private owner, and taxes, always dated July 2025 with a link to the Tax Center. A many parcels
+  flag opens the owner's list. When the City names a different owner than the snapshot, the flags
+  about the earlier owner are left out.
+- **History** shows every deed newest first (the day the City recorded it, the document in plain
+  words, the price, from and to), the City's assessments as a small chart and the same numbers as a
+  table, and the L&I timeline (violations, permits, demolitions, unsafe and imminently dangerous
+  notices, clean and seal) when live, or the snapshot's L&I summary.
+- **Nearby** shows the snapshot's counts (shootings in the lot's hexagon, LandCare lots and gardens
+  within 500 feet), or for a parcel with no dossier, live counts within 500 feet, with buttons that
+  turn on the matching layers.
+- **Address search** (in the field view's search box and at the top of the analysis view's left
+  panel) uses the City's address service for addresses and intersections; a nine digit parcel number
+  opens that lot directly, even with live data off.
+- **Print** gives one page per lot: the summary, what you can do, who owns it, recent history and
+  sources, ending with "Not legal advice."
+- Known difference: the City's property page lists only plain deeds, dated by the document and
+  priced by the adjusted total; the lot page lists every deed (sheriff deeds and other kinds too),
+  dated by the day the City recorded it and priced by the total consideration, as the weekly snapshot
+  does. A date can differ by days to weeks, and the price of some deeds differs.
+
 **Owner information as built (M1.3, 2026-10-04).** What the owner will see, and the choices behind it:
 
 - Every parcel with a sign of vacancy, and every parcel on the map, has a ready made dossier (about

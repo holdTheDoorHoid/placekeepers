@@ -14,14 +14,21 @@ The map remembers your choices, like which layers you have turned on, only insid
 browser's storage, under keys that start with "placekeepers:v1:". That information never leaves
 your device and we never see it. Clearing your browser's data will erase it.
 
-## Live lookups to the City, once those features are ready
+## Live lookups to the City
 
-Placekeepers is still being built. Once features like address search and a detailed page for
-each lot are finished, opening them may ask the City of Philadelphia's own public map and address
-services directly from your browser, so you see the newest information. That request would go
-straight from your device to the City, never through a Placekeepers server, because there is not
-one. We plan to let you turn this off, so the map uses last week's saved copy of the data
-instead. This page will be updated to describe exactly how, once that setting exists.
+When you open a lot page or search for an address, your browser asks the City of Philadelphia's
+own public servers for the newest records: the owner and mailing address, sales, assessments and
+inspections, and, for a parcel that is not on our list, counts of what is nearby. These requests go
+straight from your device to the City, never through Placekeepers, because there is no Placekeepers
+server. The City's servers see them the way they would see a visit to the City's own property
+website: they see your internet address and the parcel or address you looked up. Your browser sends
+them without cookies.
+
+You can turn this off. Open Settings, and under "Privacy and live data" switch off "Fetch live City
+data". Lot pages then show only the weekly copy of the data that Placekeepers publishes, labeled
+with its date, and the search box works only with a nine digit parcel number. Your choice is kept
+in your own browser and is never put in a link you share, so a link someone sends you cannot turn
+it back on.
 
 ## If you have questions
 
