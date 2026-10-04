@@ -149,8 +149,15 @@ export class MapController {
       localIdeographFontFamily: 'sans-serif',
     });
     // Top right in both views, so the bottom sheet and drawer never cover the credits. The
-    // credits start open and fold into an "i" button once the map is moved.
+    // credits name every source on the map, which is a long list, so they fold into an "i" button
+    // once the map has loaded (MapLibre would keep them open until the first drag).
     this.map.addControl(new maplibregl.AttributionControl({ compact: true }), 'top-right');
+    this.map.once('idle', () => {
+      this.map
+        .getContainer()
+        .querySelector('.maplibregl-ctrl-attrib.maplibregl-compact-show')
+        ?.classList.remove('maplibregl-compact-show');
+    });
     this.map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), 'top-right');
     this.map.getCanvas().setAttribute('aria-label', strings.app.mapLabel);
 

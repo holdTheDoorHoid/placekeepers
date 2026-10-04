@@ -20,6 +20,7 @@ from typing import Any
 
 from placekeepers.cache import atomic_write_json
 from placekeepers.context import Context
+from placekeepers.publish.dossiers import DossierResult, build_dossiers
 from placekeepers.publish.layers import builder_for
 from placekeepers.publish.manifest import MANIFEST, build_manifest, git_short_hash
 from placekeepers.publish.tiles import (
@@ -46,6 +47,8 @@ class PublishResult:
     features: dict[str, int] = field(default_factory=dict)
     tiles_built: list[str] = field(default_factory=list)
     seconds: float = 0.0
+    #: the lot dossier shards and the owners table (publish/dossiers.py)
+    dossiers: DossierResult | None = None
 
 
 def geojson_name(file: str, source_layer: str) -> str:
@@ -150,6 +153,8 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
             )
 
         notes.extend(vacancy_notes(ctx))
+        result.dossiers = build_dossiers(ctx, statuses, staging, as_of)
+        notes.extend(result.dossiers.notes)
 
         exe = find_tippecanoe()
         if exe is None:
@@ -186,6 +191,7 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
             generated_at=generated_at,
             commit=git_short_hash(ctx.settings.repo_root),
             notes=notes,
+            dossiers=result.dossiers.manifest_block() if result.dossiers else None,
         )
         atomic_write_json(staging / MANIFEST, result.manifest)
         _swap_into_place(staging, out_dir)

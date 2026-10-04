@@ -205,6 +205,30 @@ The dossier is built from the weekly snapshot and, when the setting "fetch live 
 (default on), refreshed from the City's public APIs when opened. Any parcel can be opened by clicking
 it, not only candidates.
 
+**Owner information as built (M1.3, 2026-10-04).** What the owner will see, and the choices behind it:
+
+- Every parcel with a sign of vacancy, and every parcel on the map, has a ready made dossier (about
+  78,000). Owner type comes from the City's own list of public property first, then from the owner
+  name (an LLC is a company, "Philadelphia Land Bank" is the Land Bank, a church is a nonprofit).
+  The map's lots carry the same owner type, so the analysis view can filter by it.
+- Flags appear exactly as ETHICS.md words them, each with what it means, why to be careful and a
+  protective next step. Public owners get only the flags about the property (taxes, sheriff sales,
+  resales, violations); the flags about a person (mail elsewhere, possible estate, years since a
+  sale, many vacant parcels) are for private owners only.
+- An owner who gets mail on the parcel's own block (the house next door, across the street) is not
+  "absentee": many lots are side yards of the neighbor who owns them.
+- "Years since the last sale" counts only sales on the open market: token transfers of $100 or less
+  and sheriff sales are listed in the history but are not "sales". The City's deed records are
+  complete only from 2000; before that the assessor's last sale is used.
+- "Owner holds many vacant parcels" starts at five parcels the map calls vacant with high or medium
+  confidence. Owners are matched by their exact names, so one owner under two spellings counts
+  twice, but two different owners are never merged.
+- Conservatorship appears only for a private parcel the map calls vacant with high or medium
+  confidence, never for a parcel we are not sure about, which may be someone's home. Changed from
+  the first plan, which listed it for every private lot.
+- Every dossier of a private owner with a flag links to the Tangled Title Fund and Fraud Guard, and
+  every dossier of a person (or a possible estate) with a flag shows the deed fraud notice.
+
 ### 5.7 Street safety and memorials
 
 - High Injury Network (2025 version, 162 segments) as a line layer.

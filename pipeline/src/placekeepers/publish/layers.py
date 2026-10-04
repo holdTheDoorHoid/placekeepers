@@ -8,10 +8,11 @@ docs/CONTRACTS.md section 4.
   person.
 * `parcels` (lots): every parcel the vacancy model (placekeepers.derive.vacancy) shows: `id` (OPA
   account), `k` (1 vacant lot, 2 vacant building), `vc` (confidence: 3 high, 2 medium, 1 low),
-  `ot` (owner type; 0, unknown, until owner types arrive), `lc` (1 when PHS LandCare maintains the
-  parcel), `rs` (reason bits), `n` (independent signals that agree), and `dy`, `sy`, `ny` (the year
-  of a demolition, a City seal or a new construction permit, only when a reason uses it). When the
-  model has not run, the City's lists alone are shown at medium confidence instead.
+  `ot` (owner type, from the City owned property layer and OPA's owner names: see
+  placekeepers.derive.owners), `lc` (1 when PHS LandCare maintains the parcel), `rs` (reason
+  bits), `n` (independent signals that agree), and `dy`, `sy`, `ny` (the year of a demolition, a
+  City seal or a new construction permit, only when a reason uses it). When the model has not run,
+  the City's lists alone are shown at medium confidence instead.
 * `landcare` (care): `id` (OPA account, or empty), `p` (program: 1 LandCare, 2 Community LandCare,
   3 Land Bank lot, 4 PHDC lot, 0 other), `y` (year the lot joined, 0 when unknown).
 * `gardens` (care): `nm` (name), `src` (1 PHS, 2 Neighborhood Gardens Trust, 3 both, 4 registered
@@ -177,7 +178,7 @@ def build_parcels(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) 
     """The vacancy model's parcels, or the City's lists alone when the model has not run."""
     model = ctx.cache.root / "derived" / "vacancy.parquet"
     if model.is_file():
-        return build_parcels_from_model(model, out)
+        return build_parcels_from_model(model, out, paths)
     result = build_parcels_from_city_lists(ctx, paths, out, as_of)
     result.notes.append("The vacancy model has not run, so the map shows the City's lists alone")
     return result
@@ -188,15 +189,22 @@ PARCEL_LAYER_SOURCES = ("opa_properties", "vacant_indicators_land", "vacant_indi
 SHOWN_KINDS = ("lot", "lot_conflict", "building")
 
 
-def build_parcels_from_model(model: Path, out: Path) -> BuildResult:
+def build_parcels_from_model(
+    model: Path, out: Path, paths: dict[str, Path] | None = None
+) -> BuildResult:
     columns = ["opa", "kind", "k", "vc", "lc", "rs", "n", "dy", "sy", "ny", "geometry"]
     table = pq.read_table(model, columns=columns)
+    # Owner type (M1.3): from the City owned property layer and OPA's owner names.
+    from placekeepers.publish.dossiers import owner_type_codes
+
+    owner_types = owner_type_codes(paths or {}, set(table.column("opa").to_pylist()))
     rows = zip(*(table.column(name).to_pylist() for name in columns), strict=True)
     with GeoJSONWriter(out) as writer:
         for opa, kind, k, vc, lc, rs, n, dy, sy, ny, wkb in rows:
             if kind not in SHOWN_KINDS or wkb is None or vc is None:
                 continue
-            properties = {"id": opa, "k": k, "vc": vc, "ot": 0, "lc": lc, "rs": rs, "n": n}
+            ot = owner_types.get(opa, 0)
+            properties = {"id": opa, "k": k, "vc": vc, "ot": ot, "lc": lc, "rs": rs, "n": n}
             for key, year in (("dy", dy), ("sy", sy), ("ny", ny)):
                 if year is not None:
                     properties[key] = int(year)
@@ -232,6 +240,10 @@ def build_parcels_from_city_lists(
             if description:
                 descriptions.setdefault(account, description)
     landcare = landcare_accounts(paths.get("phs_landcare"))
+    # Owner type (M1.3): from the City owned property layer and OPA's owner names.
+    from placekeepers.publish.dossiers import owner_type_codes
+
+    owner_types = owner_type_codes(paths, set(kinds))
     notes = []
     if no_account:
         notes.append(
@@ -252,7 +264,8 @@ def build_parcels_from_city_lists(
         for account in sorted(kinds):
             kind = parcel_kind(kinds[account], descriptions.get(account))
             lc = 1 if account in landcare else 0
-            properties = {"id": account, "k": kind, "vc": 2, "ot": 0, "lc": lc}
+            ot = owner_types.get(account, 0)
+            properties = {"id": account, "k": kind, "vc": 2, "ot": ot, "lc": lc}
             writer.write(properties, geometry_json(shapes[account]))
     return BuildResult(writer.count, notes)
 
@@ -370,8 +383,12 @@ BUILDERS: tuple[LayerBuilder, ...] = (
         "parcels",
         PARCEL_LAYER_SOURCES,
         build_parcels,
-        # Every input of the vacancy model, so the tile file credits each one.
-        extras=tuple(s for s in VACANCY_SOURCES if s not in PARCEL_LAYER_SOURCES),
+        # Every input of the vacancy model, so the tile file credits each one, and the City owned
+        # property layer for the owner type.
+        extras=(
+            *(s for s in VACANCY_SOURCES if s not in PARCEL_LAYER_SOURCES),
+            "city_owned_property",
+        ),
     ),
     LayerBuilder("tiles/streets.pmtiles", "hin", ("high_injury_network",), build_hin),
     LayerBuilder("tiles/context.pmtiles", "h3", ("shootings",), build_h3),
