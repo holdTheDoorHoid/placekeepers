@@ -89,6 +89,8 @@ class ArcgisAdapter(Adapter):
     out_fields: ClassVar[tuple[str, ...] | None] = None
     #: an ArcGIS where clause that limits which features are downloaded (and counted)
     query_where: ClassVar[str] = "1=1"
+    #: more query parameters for each page, such as geometryPrecision to shrink a large download
+    query_params: ClassVar[dict[str, str]] = {}
 
     @property
     def endpoint(self) -> ArcgisEndpoint:
@@ -143,6 +145,7 @@ class ArcgisAdapter(Adapter):
                     "orderByFields": f"{object_id} ASC",
                     "resultOffset": str(total),
                     "resultRecordCount": str(page_size),
+                    **self.query_params,
                 },
                 check=check_arcgis,
             )

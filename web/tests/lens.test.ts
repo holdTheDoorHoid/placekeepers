@@ -1,7 +1,15 @@
+import { readFileSync } from 'node:fs';
 import { createPropertyExpression, latest } from '@maplibre/maplibre-gl-style-spec';
 import { describe, expect, it } from 'vitest';
 import { loadRegistry } from '../plugins/registry.ts';
-import { NO_SCORE, explainScore, lensColorExpression, lensScoreExpression, type ColorRamp } from '../src/map/lens.ts';
+import {
+  NO_SCORE,
+  displayedBreakdown,
+  explainScore,
+  lensColorExpression,
+  lensScoreExpression,
+  type ColorRamp,
+} from '../src/map/lens.ts';
 import type { Lens } from '../src/registry/types.ts';
 
 const reg = loadRegistry();
@@ -114,6 +122,43 @@ describe('the "why" breakdown', () => {
     const why = explainScore(violence, defaults, { f_vacant: 10, f_shoot: 95, f_poverty: 20, f_canopy: 5 });
     expect(why.main?.id).toBe('shootings_nearby');
     expect(why.main?.evidence).toBe('context');
+  });
+});
+
+describe('the breakdown as shown in the details panel', () => {
+  const parcels = JSON.parse(readFileSync(new URL('../fixtures/sources/parcels.geojson', import.meta.url), 'utf8'))
+    .features.map((f: { properties: Record<string, unknown> }) => f.properties) as Record<string, unknown>[];
+  const mixes = [
+    defaults,
+    { untreated_vacancy: 5, shootings_nearby: 1, poverty: 2, canopy_gap: 0 },
+    { untreated_vacancy: 1, shootings_nearby: 4, poverty: 3, canopy_gap: 5 },
+    { untreated_vacancy: 0, shootings_nearby: 0, poverty: 0, canopy_gap: 1 },
+  ];
+
+  it('adds up to the score for a parcel, as the pipeline publishes one', () => {
+    // A vacant lot with no LandCare, many shootings nearby, a poor tract and few trees.
+    const why = explainScore(violence, defaults, { f_vacant: 100, f_shoot: 87, f_poverty: 64, f_canopy: 71 });
+    expect(why.score).toBeCloseTo(760 / 9, 10);
+    expect(why.factors.reduce((acc, f) => acc + f.contribution, 0)).toBeCloseTo(why.score!, 10);
+    expect(displayedBreakdown(why)).toEqual({ contributions: [33.3, 29, 14.2, 7.9], score: 84.4 });
+    // A parcel outside every census tract has no poverty rank: it is left out, not counted as 0.
+    const outside = explainScore(violence, defaults, { f_vacant: 0, f_shoot: 50, f_canopy: 20 });
+    expect(outside.score).toBeCloseTo((3 * 0 + 3 * 50 + 1 * 20) / 7, 10);
+    expect(outside.missing).toEqual(['poverty']);
+  });
+
+  it('shows tenths that add up exactly to the shown score, for every sample parcel and weight mix', () => {
+    for (const props of parcels) {
+      for (const weights of mixes) {
+        const why = explainScore(violence, weights, props);
+        const shown = displayedBreakdown(why);
+        if (shown.score === null) continue;
+        const tenths = shown.contributions.map((c) => Math.round(c * 10));
+        expect(tenths.reduce((a, b) => a + b, 0)).toBe(Math.round(shown.score * 10));
+        why.factors.forEach((f, i) => expect(Math.abs(shown.contributions[i]! - f.contribution)).toBeLessThan(0.1 + 1e-9));
+        expect(Math.abs(shown.score - why.score!)).toBeLessThanOrEqual(0.05 + 1e-9);
+      }
+    }
   });
 });
 

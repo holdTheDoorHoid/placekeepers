@@ -42,7 +42,7 @@ of disk is free (`PK_MIN_FREE_GB`).
 
 ## Sources
 
-Thirty five sources, each with an entry in `registry/sources.yaml`. Field lists and the reasons
+Thirty seven sources, each with an entry in `registry/sources.yaml`. Field lists and the reasons
 for them are in each adapter's docstring.
 
 | Source | Where | What we keep |
@@ -73,6 +73,8 @@ for them are in each adapter's docstring.
 | `schools` | City ArcGIS `Schools` | Name, address, grades, type, point |
 | `street_centerlines` | City ArcGIS `Street_Centerline` | Segment id, street name, class, who maintains it, direction, length, end nodes, line |
 | `memorial_names` | `data/curated/memorials.yaml` (in the repository) | Checks every entry; the snapshot keeps ids, dates, modes, places and source links, never names |
+| `census_tracts_2020` | City ArcGIS `Census_Tracts_2020` (frozen) | Every field (tract id `geoid`, land and water area), with the shape |
+| `tree_canopy_2018` | City ArcGIS `TreeCanopyChange_2008_2018` (frozen; about 570 MB of pages, once) | Not the 665,748 canopy polygons: square meters of canopy in 2008 and 2018 per H3 resolution 9 cell, each polygon split exactly along the cell edges |
 
 **Candidate parcels.** Transfers, assessments and violations are too large to download for the
 whole city every week, so they come down for every parcel with any sign of vacancy (see
@@ -127,6 +129,19 @@ the lists' dates, and notes). `pk publish` builds the `parcels` layer from it; w
 not run, the layer shows the City's lists alone and the build notes say so. A full run takes about
 a minute and stays under 2 GB of memory (`PK_DERIVE_MEMORY`).
 
+## Lens factors
+
+After the vacancy model, `pk derive` computes the violence reduction lens factors for every parcel
+on the map, in `placekeepers/derive/lenses.py` (definitions in `docs/CONTRACTS.md` section 4 and
+in each factor's `explain` in `registry/lenses.yaml`): untreated vacancy (LandCare lots and
+buildings whose owner fixed the doors and windows count as treated), shootings in the last three
+years within about a quarter mile, the census tract's poverty rate, and how little tree canopy
+there is around the parcel. Each is a rank from 0 to 100 among the parcels on the map; a factor
+without data is left out. The result goes to `$PK_CACHE/derived/lens_factors.parquet` (the
+factors and the facts behind them: the hexagon, the shooting counts, the tract, its poverty rate
+and the canopy share) with a summary of each factor's spread in `lens_factors.json`, and `pk
+publish` adds the factors to the parcels. It takes under a minute.
+
 ## The shared cache
 
 Downloads and snapshots live in `$PK_CACHE` (default `~/.cache/placekeepers`), shared by every
@@ -142,6 +157,8 @@ snapshots/<source>/current.parquet    always the last good snapshot
 snapshots/<source>/state.json         the result of the latest attempt
 derived/vacancy.parquet               the vacancy model's parcels (pk derive)
 derived/vacancy.json                  its counts, the City lists' dates, and notes
+derived/lens_factors.parquet          the lens factors per parcel and the facts behind them
+derived/lens_factors.json             each factor's spread, and notes
 research/                             reserved for the vacancy study; the pipeline never writes here
 ```
 

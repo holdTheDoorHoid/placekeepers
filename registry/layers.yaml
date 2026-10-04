@@ -24,6 +24,11 @@
     - ppr_properties
     - gardens_phs_ngt
     - gardens_registered
+    # The violence reduction lens factors (M1.4)
+    - shootings
+    - acs_poverty
+    - census_tracts_2020
+    - tree_canopy_2018
   file: tiles/lots.pmtiles
   source_layer: parcels
   geometry: polygon

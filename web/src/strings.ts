@@ -199,10 +199,10 @@ export const strings = {
 
   why: {
     title: 'Why this score',
-    caption: 'Each factor\'s citywide rank, its weight, and the points it adds to the score',
-    intro: 'The score is a weighted average of these factors. Each factor is a citywide rank from 0 to 100.',
+    caption: "Each factor's value from 0 to 100, its weight, and the points it adds to the score",
+    intro: 'The score is a weighted average of these factors. Each runs from 0 to 100, where 100 means the most need.',
     factor: 'Factor',
-    value: 'Rank',
+    value: 'Out of 100',
     weight: 'Weight',
     adds: 'Adds',
     noData: 'no data',

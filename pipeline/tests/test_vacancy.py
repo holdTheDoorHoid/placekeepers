@@ -168,6 +168,18 @@ def test_a_permit_in_the_last_two_years_lowers_a_building_one_level() -> None:
         "building", "low")  # fmt: skip
 
 
+def test_the_land_use_doubt_is_shown_for_lots_only() -> None:
+    """Planning's land use map shows a use for nearly every building, so for a building it is
+    not a reason for doubt (the rules use it only for lots)."""
+    lot = classify(has_footprint=False, opa_vacant_land=True, no_footprint=True, lu_developed=True)
+    stands = classify(has_footprint=True, city_land=True, opa_vacant_land=True, lu_developed=True)
+    building = classify(has_footprint=True, city_bldg=True, cs_recent_no_permit=True,
+                        lu_developed=True)  # fmt: skip
+    assert lot[2] & BIT["land_use_shows_use"]
+    assert stands[0] == "lot_conflict" and stands[2] & BIT["land_use_shows_use"]
+    assert building[0] == "building" and not building[2] & BIT["land_use_shows_use"]
+
+
 def test_nothing_at_all_is_not_a_candidate() -> None:
     assert classify(has_footprint=True)[:2] == (None, None)
     assert classify(has_footprint=False, side_yard_likely=True)[:2] == (None, None)
@@ -554,6 +566,9 @@ def study_bits(reasons: str | None, kind: str) -> int:
         bits |= BIT[matches[0]]
     if kind == "lot_conflict":
         bits |= BIT["building_stands"]
+    if kind not in vacancy.REASON_KINDS["lu_developed"]:
+        # The map shows the land use doubt for lots only (vacancy.REASON_KINDS).
+        bits &= ~BIT["land_use_shows_use"]
     return bits
 
 

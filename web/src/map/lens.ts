@@ -154,3 +154,24 @@ export function explainScore(
     missing: rows.filter((r) => r.weight > 0 && r.value === null).map((r) => r.factor.id),
   };
 }
+
+/**
+ * Each factor's contribution in tenths of a point, for display, rounded so that they add up
+ * exactly to the displayed score (largest remainder rounding). Rounding each one on its own
+ * could leave the column a tenth away from the total. Returns the displayed score too.
+ */
+export function displayedBreakdown(why: ScoreExplanation): { contributions: number[]; score: number | null } {
+  if (why.score === null) return { contributions: why.factors.map(() => 0), score: null };
+  const tenths = why.factors.map((f) => f.contribution * 10);
+  const floors = tenths.map((t) => Math.floor(t + 1e-9));
+  const target = Math.round(why.score * 10);
+  let left = target - floors.reduce((a, b) => a + b, 0);
+  const order = tenths.map((t, i) => ({ i, rest: t - floors[i]! })).sort((a, b) => b.rest - a.rest || a.i - b.i);
+  for (const { i } of order) {
+    if (left <= 0) break;
+    if (why.factors[i]!.contribution <= 0) continue;
+    floors[i]! += 1;
+    left -= 1;
+  }
+  return { contributions: floors.map((f) => f / 10), score: target / 10 };
+}

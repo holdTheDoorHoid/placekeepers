@@ -308,7 +308,7 @@ never change meaning once published. The id names each reason in the pipeline
 | 12 | 4096 | `built_since` | A new construction permit in `ny`: a building may stand now | against |
 | 13 | 8192 | `construction_starting` | A new construction permit in `ny`: construction may be starting | against |
 | 14 | 16384 | `side_yard` | The owner of the lived in building next door also owns it: likely a side yard | against |
-| 15 | 32768 | `land_use_shows_use` | Planning's land use map shows a use other than vacant | against |
+| 15 | 32768 | `land_use_shows_use` | Planning's land use map shows a use other than vacant (lots only, from 2026-10-04 M1.4: the map shows a use for nearly every building) | against |
 | 16 | 65536 | `recent_permit` | A permit for building work (alterations, trades, new construction) or zoning in the last two years | against |
 | 17 | 131072 | `building_stands` | A building footprint stands although records say vacant land | against |
 
@@ -316,6 +316,20 @@ never change meaning once published. The id names each reason in the pipeline
 list of public property decides first (`PUB` 3, `PLB` 4, `PRA` 5, `PHDC` 8), then the owner names
 as OPA publishes them, by documented patterns (public bodies, company forms, nonprofit words, a
 person's name). The dossier's `owner.type` gives the same type by name (section 6).
+
+The violence reduction lens factors (added 2026-10-04 by M1.4, computed by `pk derive` in
+`placekeepers.derive.lenses`), each an integer from 0 to 100 and ranked among the parcels in this
+layer:
+
+| Property | Meaning |
+|---|---|
+| `f_vacant` | 100 for an untreated vacant lot or open abandoned building, 0 for a treated one: a lot PHS LandCare keeps up (`lc`), or a building whose owner fixed its doors and windows after an L&I citation (PM15-304.19V closed as "complied, owner repair", with no citation for an open building or its doors and windows since) |
+| `f_shoot` | people shot in the last 36 months in the parcel's H3 resolution 9 cell and the six around it (about a quarter mile), counted as for the `h3` layer; the share of parcels with a strictly lower count |
+| `f_poverty` | the poverty rate of the parcel's 2020 census tract (ACS five year estimates); the share of parcels with a strictly lower rate. Absent when the parcel is outside every tract or its tract has no estimate |
+| `f_canopy` | tree canopy (2018) over the land of the same seven cells, water and land outside the city left out; the share of parcels with strictly more canopy, so fewer trees rank higher. Absent when there is no land to measure |
+
+The parcel's place is a point on its shape (`point_on_surface`). A parcel's factors are left out of
+its properties when their data is missing, as for every factor.
 
 **`h3` (context.pmtiles)**: `h` (cell id), `s12` and `s36` (shooting victim counts), `f_*` (factor
 percentiles for cell level factors such as `f_poverty`).

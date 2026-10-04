@@ -3,10 +3,10 @@
     pk registry check            check every registry file and cross reference
     pk fetch [ids...]            download sources into the cache
     pk validate [ids...]         turn new downloads into snapshots, or keep the last good one
-    pk derive [--as-of DATE]     run the vacancy model on the current snapshots
+    pk derive [--as-of DATE]     run the vacancy model, then the lens factors, on the snapshots
     pk publish [--out DIR]       write manifest.json and the map layers
     pk health [ids...]           show each source's status
-    pk all                       fetch, validate, run the vacancy model, publish, then show health
+    pk all                       fetch, validate, derive, publish, then show health
 
 Common options: --sources a,b (limit to some sources), --offline (use only the cache),
 --cache DIR (instead of $PK_CACHE), -v (more detail).
@@ -30,6 +30,7 @@ from placekeepers.runner import (
     StepResult,
     UsageError,
     all_statuses,
+    derive_lenses,
     derive_vacancy,
     fetch_source,
     ordered,
@@ -124,9 +125,11 @@ def _as_of(args: argparse.Namespace) -> date | None:
 
 def cmd_derive(args: argparse.Namespace) -> int:
     ctx = _context(args)
-    step = derive_vacancy(ctx, _as_of(args))
-    _print_steps([step])
-    return 0 if step.outcome == "ok" else 1
+    steps = [derive_vacancy(ctx, _as_of(args))]
+    if steps[0].outcome == "ok":
+        steps.append(derive_lenses(ctx, _as_of(args)))
+    _print_steps(steps)
+    return 0 if all(step.outcome == "ok" for step in steps) else 1
 
 
 def _publish(ctx: Context, args: argparse.Namespace) -> int:
@@ -191,6 +194,8 @@ def cmd_all(args: argparse.Namespace) -> int:
                 steps.append(fetch_source(ctx, source, force=args.force))
             steps.append(validate_source(ctx, source))
         steps.append(derive_vacancy(ctx, _as_of(args)))
+        if steps[-1].outcome == "ok":
+            steps.append(derive_lenses(ctx, _as_of(args)))
         print("Steps:")
         _print_steps(steps)
         _publish(ctx, args)
@@ -259,7 +264,7 @@ def build_parser() -> argparse.ArgumentParser:
     validate.set_defaults(func=cmd_validate)
 
     derive = commands.add_parser(
-        "derive", help="run the vacancy model on the current snapshots", parents=[common]
+        "derive", help="run the vacancy model and the lens factors", parents=[common]
     )
     derive.add_argument("--as-of", help="build date for time windows, YYYY-MM-DD (default: today)")
     derive.set_defaults(func=cmd_derive)

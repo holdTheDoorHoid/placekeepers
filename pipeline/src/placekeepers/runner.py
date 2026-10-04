@@ -298,3 +298,21 @@ def derive_vacancy(ctx: Context, as_of: date | None = None) -> StepResult:
         f"{buildings['low']:,} low; {result.counts['excluded']:,} left out"
     )
     return StepResult("vacancy", "derive", "ok", detail, time.monotonic() - started)
+
+
+def derive_lenses(ctx: Context, as_of: date | None = None) -> StepResult:
+    """Compute the lens factors for the vacancy model's parcels. A failure is reported, never
+    raised: the map then shows the parcels without scores."""
+    from placekeepers.derive import lenses
+
+    started = time.monotonic()
+    try:
+        result = lenses.run(ctx, as_of)
+    except Exception as exc:  # the map must still publish
+        message = f"The lens factors could not be computed: {plain_error(exc)}"
+        log.error("derive: %s", message)
+        log.debug("derive: details", exc_info=True)
+        return StepResult("lenses", "derive", "failed", message, time.monotonic() - started)
+    missing = ", ".join(result.missing_sources)
+    detail = f"{result.parcels:,} parcels" + (f"; without {missing}" if missing else "")
+    return StepResult("lenses", "derive", "ok", detail, time.monotonic() - started)

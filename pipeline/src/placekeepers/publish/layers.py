@@ -38,6 +38,8 @@ from shapely.geometry.polygon import orient
 
 from placekeepers.context import Context
 from placekeepers.dates import months_before
+from placekeepers.derive.lenses import SOURCES as LENS_SOURCES
+from placekeepers.derive.lenses import load_factors
 from placekeepers.derive.vacancy import SOURCES as VACANCY_SOURCES
 from placekeepers.geo import GeoJSONWriter, geometry_json
 
@@ -198,6 +200,8 @@ def build_parcels_from_model(
     from placekeepers.publish.dossiers import owner_type_codes
 
     owner_types = owner_type_codes(paths or {}, set(table.column("opa").to_pylist()))
+    # The violence lens factors (M1.4), from pk derive.
+    factors = load_factors(model.with_name("lens_factors.parquet"))
     rows = zip(*(table.column(name).to_pylist() for name in columns), strict=True)
     with GeoJSONWriter(out) as writer:
         for opa, kind, k, vc, lc, rs, n, dy, sy, ny, wkb in rows:
@@ -208,6 +212,7 @@ def build_parcels_from_model(
             for key, year in (("dy", dy), ("sy", sy), ("ny", ny)):
                 if year is not None:
                     properties[key] = int(year)
+            properties.update(factors.get(opa, {}))
             writer.write(properties, geometry_json(wkb))
     return BuildResult(writer.count, [])
 
@@ -383,10 +388,14 @@ BUILDERS: tuple[LayerBuilder, ...] = (
         "parcels",
         PARCEL_LAYER_SOURCES,
         build_parcels,
-        # Every input of the vacancy model, so the tile file credits each one, and the City owned
-        # property layer for the owner type.
+        # Every input of the vacancy model and the lens factors, so the tile file credits each
+        # one, and the City owned property layer for the owner type.
         extras=(
-            *(s for s in VACANCY_SOURCES if s not in PARCEL_LAYER_SOURCES),
+            *(
+                s
+                for s in dict.fromkeys((*VACANCY_SOURCES, *LENS_SOURCES))
+                if s not in PARCEL_LAYER_SOURCES
+            ),
             "city_owned_property",
         ),
     ),
