@@ -509,7 +509,6 @@ export const strings = {
   pick: {
     looking: 'Looking up this parcel with the City',
     nothing: 'The City has no parcel at this spot. Tap a lot or a building.',
-    zoomIn: 'Zoom in closer to open the lot page for any parcel.',
     liveOff: 'To open a parcel that is not on our list, turn on "Fetch live City data" in Settings.',
     failed: (reason: string) => `The City's parcel map ${reason}. Try again in a moment.`,
   },
@@ -599,7 +598,6 @@ export const strings = {
       googleMaps: 'Google Maps',
       streetView: 'Google Street View',
       linksNote: 'These open other websites. Placekeepers links to street photos but never copies them.',
-      priorityTitle: 'Priority under your lens blend',
     },
 
     actions: {
@@ -711,7 +709,6 @@ export const strings = {
 
     flags: {
       absentee: {
-        lead: 'The owner gets mail somewhere else',
         outOfState: (where: string) => `The owner gets mail somewhere else: ${where} (out of state).`,
         outsidePennsylvania: 'The owner gets mail somewhere else: outside Pennsylvania.',
         outsideCity: (city: string) => `The owner gets mail somewhere else: ${city}, PA (outside Philadelphia).`,
@@ -876,7 +873,6 @@ export const strings = {
       snapshotNoDate: 'weekly snapshot',
       newest: (date: string) => `newest record ${date}`,
       taxSnapshot: 'Clean & Green Philly\'s final snapshot, July 9, 2025',
-      notUsed: 'not used for this parcel',
       by: (publisher: string) => `from ${publisher}`,
       correction: 'Report a correction',
       correctionHelp: 'Opens a form on GitHub, filled in with this parcel. Sending it needs a free GitHub account.',

@@ -16,7 +16,7 @@ import { parcelLensOf, placeSuggestions } from '../places/rank.ts';
 import { placeReasons, reasonContext, type PlaceReasons } from '../places/reasons.ts';
 import type { Lens, Partner, Registry, Route, Suggestion } from '../registry/types.ts';
 import type { AppState } from '../state/defaults.ts';
-import { formatDate, formatMoney, formatNumber, formatTime, sentenceCase, strings } from '../strings.ts';
+import { formatDate, formatMoney, formatTime, sentenceCase, strings } from '../strings.ts';
 import { today } from './dates.ts';
 import {
   FLAG_IDS,
@@ -723,5 +723,3 @@ export function buildDossier(input: DossierInput): DossierView {
   };
 }
 
-/** Number formatting for the chart, exported for the component. */
-export { formatMoney, formatNumber };
