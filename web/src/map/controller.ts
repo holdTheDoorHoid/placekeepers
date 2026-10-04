@@ -16,6 +16,7 @@ import maplibregl, {
 import type { Geometry } from 'geojson';
 import { Protocol } from 'pmtiles';
 import { resolveLayerData, type LayerData, type Manifest } from '../data/manifest.ts';
+import { registerArchive, styleArchives } from './pmtiles-source.ts';
 import type { Registry } from '../registry/types.ts';
 import type { AppState, MapPosition } from '../state/defaults.ts';
 import { strings } from '../strings.ts';
@@ -27,12 +28,13 @@ const MAX_BOUNDS: [[number, number], [number, number]] = [
   [-74.55, 40.35],
 ];
 
-let protocolAdded = false;
-function ensurePmtilesProtocol(): void {
-  if (protocolAdded) return;
-  const protocol = new Protocol({ metadata: false });
-  maplibregl.addProtocol('pmtiles', protocol.tile);
-  protocolAdded = true;
+let protocol: Protocol | null = null;
+function pmtilesProtocol(): Protocol {
+  if (!protocol) {
+    protocol = new Protocol({ metadata: false });
+    maplibregl.addProtocol('pmtiles', protocol.tile);
+  }
+  return protocol;
 }
 
 export type LayerStatus = 'ok' | 'unavailable' | 'error';
@@ -118,7 +120,7 @@ export class MapController {
   private inspected: { layerId: string; ids: (string | number)[] } | null = null;
 
   constructor(options: ControllerOptions) {
-    ensurePmtilesProtocol();
+    for (const url of styleArchives(options.style)) registerArchive(pmtilesProtocol(), url);
     this.registry = options.registry;
     this.dataBase = options.dataBase;
     this.events = options.events;
@@ -368,6 +370,7 @@ export class MapController {
     if (this.map.getSource(sourceId)) return sourceId;
     const attribution = this.attributionFor(data.path);
     if (data.kind === 'pmtiles') {
+      registerArchive(pmtilesProtocol(), data.url);
       this.map.addSource(sourceId, { type: 'vector', url: `pmtiles://${data.url}`, attribution });
     } else {
       this.map.addSource(sourceId, { type: 'geojson', data: data.url, attribution });

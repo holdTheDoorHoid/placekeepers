@@ -49,7 +49,9 @@ export function protomapsStyle(dataBase: string): StyleSpecification {
 /** True when the extract exists and starts like a PMTiles file. */
 export async function extractAvailable(dataBase: string, fetchImpl: typeof fetch = fetch): Promise<boolean> {
   try {
-    const response = await fetchImpl(basemapFiles(dataBase).tiles, { headers: { Range: 'bytes=0-6' } });
+    // Not from the browser cache: a cached range of an older copy of the file would make the server
+    // send the whole 45 MB file (see pmtiles-source.ts).
+    const response = await fetchImpl(basemapFiles(dataBase).tiles, { headers: { Range: 'bytes=0-6' }, cache: 'no-store' });
     if (!response.ok) return false;
     const head = new Uint8Array(await response.arrayBuffer()).slice(0, 7);
     return new TextDecoder().decode(head) === 'PMTiles';
