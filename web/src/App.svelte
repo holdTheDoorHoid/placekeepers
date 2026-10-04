@@ -33,7 +33,7 @@
   // Browser storage keeps personal settings, but only once the person changes something,
   // so opening someone else's link does not replace your own settings.
   $effect(() => {
-    const text = savedText(store.registry, $state.snapshot(store.state), store.viewPinned);
+    const text = savedText(store.registry, $state.snapshot(store.state), store.viewChosen);
     if (!store.touched) return;
     if (text) writeItem(PREFS_KEY, text);
     else removeItem(PREFS_KEY);
@@ -105,7 +105,9 @@
     flex-direction: column;
     height: 100vh;
     height: 100dvh;
+    /* clip, not hidden: a hidden overflow can still be scrolled by focus or scrollIntoView. */
     overflow: hidden;
+    overflow: clip;
   }
   .sample {
     margin: 0;
@@ -121,6 +123,8 @@
     min-height: 0;
     display: grid;
     position: relative;
+    overflow: hidden;
+    overflow: clip;
   }
   .stage.field {
     grid-template:

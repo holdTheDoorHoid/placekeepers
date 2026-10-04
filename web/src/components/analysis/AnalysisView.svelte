@@ -83,6 +83,7 @@
     border-bottom: 1px solid var(--pk-surface-2);
   }
   .panel {
+    position: relative;
     overflow-y: auto;
     padding: 12px 14px 20px;
     background: var(--pk-bg);
@@ -142,6 +143,7 @@
     color: var(--pk-muted);
   }
   .table-body {
+    position: relative;
     max-height: 38vh;
     overflow-y: auto;
     padding: 8px 14px 12px;

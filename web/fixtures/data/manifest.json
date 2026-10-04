@@ -12,6 +12,15 @@
       "newest_record": "2026-10-02",
       "message": null
     },
+    "pwd_parcels": {
+      "status": "missing",
+      "last_attempt": null,
+      "last_success": null,
+      "stale_since": null,
+      "rows": null,
+      "newest_record": null,
+      "message": null
+    },
     "vacant_indicators_land": {
       "status": "failing",
       "last_attempt": "2026-10-04T10:00:09Z",
@@ -61,7 +70,7 @@
       ]
     },
     "hin_2025": {
-      "file": "geojson/hin.geojson",
+      "file": "tiles/streets.pmtiles",
       "source_layer": "hin",
       "sources": [
         "high_injury_network"
@@ -76,25 +85,21 @@
     }
   },
   "files": {
-    "tiles/lots.pmtiles": {
-      "bytes": 10487,
-      "sha256": "00ece3894714020511fc08e1b59c9136fcaa5f31b37ad24e583cfb8423aa0ae4"
-    },
     "tiles/context.pmtiles": {
-      "bytes": 18671,
-      "sha256": "622afc896aa1194b4ff64358e344c089ea39576d07ade05dba16edc7dee04315"
+      "bytes": 18675,
+      "sha256": "1d746dd64887fc690edb3dbd6c056b1630ce99ec1cec269ad1ea21b9890d3717"
     },
-    "geojson/hin.geojson": {
+    "tiles/lots.pmtiles": {
+      "bytes": 10493,
+      "sha256": "0040acd7e70d59f4906d30b85464572ad1578a4cfb55206b181eb9a85a4bdae6"
+    },
+    "tiles/streets.hin.geojson": {
       "bytes": 668,
       "sha256": "7b12cb6d791ce59e1cf68aec9151841c6f521de4c2a4fff924aa8466e1523324"
-    },
-    "geojson/parcels.geojson": {
-      "bytes": 15922,
-      "sha256": "ed097e08be553fe7fe1ec2ca185e01c86133ee6f3d02929af86def8fcebe5a2f"
-    },
-    "geojson/h3.geojson": {
-      "bytes": 28964,
-      "sha256": "dc7f0e281906a4be946e189c79ce47711013ddb9cd83255503ba926a59724146"
     }
-  }
+  },
+  "notes": [
+    "This is synthetic sample data for testing the map.",
+    "Street tiles were skipped for this sample, so the High Injury Network is published as GeoJSON."
+  ]
 }

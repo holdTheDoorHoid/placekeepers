@@ -114,6 +114,7 @@ export const strings = {
     noLotsLayer: 'Turn on the Lots layer to see places nearby.',
     nothingHere: 'No vacant lots or buildings match your settings in this part of the map.',
     allOff: 'Every lens factor is turned off, so places are not ranked. Turn a factor back on in Settings.',
+    noScores: 'Priority scores are not published yet, so these places are listed by parcel number.',
     showOnMap: 'Show on map',
     preview: 'Preview. The full list with addresses and legal steps arrives in a later update.',
   },
@@ -125,7 +126,7 @@ export const strings = {
     parcel: (id: string) => `Parcel ${id}`,
     priority: (score: number, lens: string) => `Priority ${score} of 100 for ${lens.toLowerCase()}`,
     mainReason: (label: string) => `Main reason: ${label}.`,
-    noScore: 'No score: none of the lens factors has data for this place.',
+    noScore: 'No priority score yet for this place.',
     bestSuggestion: 'What you could do',
     firstStep: 'First legal step',
     cost: (cost: string) => `Cost: ${cost}`,
@@ -139,7 +140,7 @@ export const strings = {
     landcare: 'Already maintained by PHS LandCare',
     suggestionsTitle: 'Suggestions',
     dossierSoon: 'The full lot page, with owner, sale history and sources, arrives in a later update.',
-    clearSelection: 'Close details',
+    clearSelection: 'Clear selection',
     selectedTitle: 'Selected place',
   },
 
@@ -243,6 +244,7 @@ export const strings = {
     reason: 'Main reason',
     tablePlaceholder: 'Exports to CSV and GeoJSON and a printable report arrive in a later update.',
     tableEmpty: 'Nothing to rank in view.',
+    noScores: 'Priority scores are not published yet, so this list is in parcel number order.',
   },
 
   evidence: {
@@ -331,6 +333,7 @@ export const strings = {
       frozen: 'No longer updated by the publisher',
     } as Record<string, string>,
     problems: 'Problems in the status file',
+    notesTitle: 'Notes from the latest refresh',
   },
 } as const;
 

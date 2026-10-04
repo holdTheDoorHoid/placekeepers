@@ -188,6 +188,26 @@ describe('registry validation catches mistakes', () => {
     expect(errorsFor(files).some((e) => e.includes('file has an invalid value'))).toBe(true);
   });
 
+  it('accepts what the pipeline accepts: optional lists may be left out', () => {
+    const files = raw();
+    delete layer(files, 'hin_2025').settings;
+    delete files.lenses[0].presets;
+    delete files.suggestions[0].partners;
+    delete files.routes[0].links;
+    const { registry, errors } = validateRegistry(files, { styleIds: STYLE_IDS });
+    expect(errors).toEqual([]);
+    expect(registry?.layers.find((l) => l.id === 'hin_2025')?.settings).toEqual([]);
+    expect(registry?.lenses[0]?.presets).toEqual([]);
+    expect(registry?.suggestions[0]?.partners).toEqual([]);
+    expect(registry?.routes[0]?.links).toEqual([]);
+  });
+
+  it('rejects a suggestion with no legal route', () => {
+    const files = raw();
+    files.suggestions[0].routes = [];
+    expect(errorsFor(files).some((e) => e.includes('routes should not be empty'))).toBe(true);
+  });
+
   it('rejects an endpoint missing what its kind needs', () => {
     const files = raw();
     files.sources.find((s: { id: string }) => s.id === 'shootings').endpoint = { kind: 'carto' };

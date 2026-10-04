@@ -20,7 +20,10 @@ import { PREFS_KEY, removeItem } from './storage.ts';
 export class AppStore {
   readonly registry: Registry;
   state: AppState;
+  /** The view stays put instead of following the screen width (a link or the person chose it). */
   viewPinned: boolean;
+  /** The person chose the view themselves; only then is it saved in this browser. */
+  viewChosen: boolean;
   /** True once the person changes a setting, so a link they merely opened is not saved as theirs. */
   touched = $state(false);
 
@@ -36,10 +39,11 @@ export class AppStore {
   /** Short messages read out by screen readers and shown briefly on screen. */
   message = $state('');
 
-  constructor(registry: Registry, initial: { state: AppState; viewPinned: boolean }) {
+  constructor(registry: Registry, initial: { state: AppState; viewPinned: boolean; from?: string }) {
     this.registry = registry;
     this.state = $state(initial.state);
     this.viewPinned = $state(initial.viewPinned);
+    this.viewChosen = $state(initial.viewPinned && initial.from === 'saved');
   }
 
   private touch(): void {
@@ -59,12 +63,14 @@ export class AppStore {
     }
     if (byPerson) {
       this.viewPinned = true;
+      this.viewChosen = true;
       this.touch();
     }
   }
 
   unpinView(view: ViewName): void {
     this.viewPinned = false;
+    this.viewChosen = false;
     this.setView(view, false);
     this.touch();
   }

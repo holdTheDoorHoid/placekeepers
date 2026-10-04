@@ -7,7 +7,9 @@ import type { ColorRamp } from '../lens.ts';
 /** Lens priority for parcels, low to high. Green, because the answer is usually greening. */
 export const PRIORITY_RAMP: ColorRamp = {
   stops: ['#ffffcc', '#c2e699', '#78c679', '#31a354', '#006837'],
-  noData: '#d4d4d4',
+  // A plain mid gray: clearly visible on the base map, and clearly not part of the ramp.
+  // Every parcel looks like this until the pipeline publishes the lens factors (M1.4).
+  noData: '#a9afb3',
   allOff: '#9cb59a',
 };
 

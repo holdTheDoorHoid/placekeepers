@@ -7,7 +7,12 @@
   import EvidenceBadge from '../common/EvidenceBadge.svelte';
   import { kindLabel } from './labels.ts';
 
-  let { store, place, lensLabel }: { store: AppStore; place: RankedPlace; lensLabel: string } = $props();
+  let {
+    store,
+    place,
+    lensLabel,
+    onShow,
+  }: { store: AppStore; place: RankedPlace; lensLabel: string; onShow?: () => void } = $props();
   const suggestion = $derived(place.suggestions[0]);
 </script>
 
@@ -43,6 +48,7 @@
     onclick={() => {
       store.select(place.id, place.properties);
       store.controller?.flyTo(place.center);
+      onShow?.();
     }}>{strings.sheet.showOnMap}</button
   >
 </article>

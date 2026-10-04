@@ -30,7 +30,7 @@
       <path d="M16 6c-5 4-8 8-8 12a8 8 0 0 0 16 0c0-4-3-8-8-12z" fill="#c2e699" />
       <path d="M16 12v14" stroke="#1f5f8b" stroke-width="2" stroke-linecap="round" />
     </svg>
-    <span>{strings.app.name}</span>
+    <span class="name">{strings.app.name}</span>
   </h1>
   <ViewSwitch {store} />
   <div class="actions">
@@ -38,8 +38,10 @@
       <span class="dot" aria-hidden="true"></span>{fresh.text}<span class="sr-only">. {strings.header.dataStatus}</span>
     </a>
     <button class="button quiet small" type="button" onclick={share}>{strings.header.share}</button>
-    <button class="button primary small" type="button" aria-haspopup="dialog" onclick={onOpenSettings}>{strings.header.settings}</button>
   </div>
+  <button class="button primary small settings" type="button" aria-haspopup="dialog" onclick={onOpenSettings}
+    >{strings.header.settings}</button
+  >
 </header>
 
 <style>
@@ -113,13 +115,31 @@
   .freshness[data-kind='failing'] .dot {
     background: var(--pk-fail-ink);
   }
-  @media (max-width: 480px) {
-    .brand span {
-      font-size: 1rem;
+  .settings {
+    order: 4;
+  }
+  /* Phones: logo, view switch and Settings on the first row; data date and link below. */
+  @media (max-width: 560px) {
+    .topbar {
+      gap: 6px 8px;
+      padding: 6px 12px;
+    }
+    .brand .name {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+    }
+    .settings {
+      order: 2;
+      margin-left: auto;
     }
     .actions {
+      order: 3;
       width: 100%;
-      justify-content: flex-start;
+      justify-content: space-between;
       margin-left: 0;
     }
   }

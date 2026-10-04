@@ -1,10 +1,12 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { relative } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { loadRegistry } from '../plugins/registry.ts';
 import {
   dataKind,
   describeStatus,
   freshness,
+  geojsonFallbackPath,
   isSampleData,
   loadManifest,
   parseManifest,
@@ -78,6 +80,21 @@ describe('parsing manifest.json', () => {
     expect(error).toBeNull();
     expect(problems).toEqual([]);
     expect(isSampleData(manifest)).toBe(true);
+    expect(manifest?.notes.length).toBeGreaterThan(0);
+  });
+
+  it('reads the notes list, and tolerates it empty or missing', () => {
+    expect(parseManifest({ schema: 1, build_id: 'b', notes: ['8 shooting victims have no usable location'] }).manifest?.notes).toEqual([
+      '8 shooting victims have no usable location',
+    ]);
+    expect(parseManifest({ schema: 1, build_id: 'b', notes: [] }).manifest?.notes).toEqual([]);
+    const missing = parseManifest({ schema: 1, build_id: 'b' });
+    expect(missing.manifest?.notes).toEqual([]);
+    expect(missing.problems).toEqual([]);
+    const odd = parseManifest({ schema: 1, build_id: 'b', notes: ['ok', 7, ''] });
+    expect(odd.manifest?.notes).toEqual(['ok']);
+    expect(odd.problems.length).toBe(2);
+    expect(parseManifest({ schema: 1, build_id: 'b', notes: 'one' }).problems).toEqual(['notes should be a list']);
   });
 
   it('refuses a schema it cannot read, or something that is not an object', () => {
@@ -142,31 +159,69 @@ describe('finding each layer\'s file', () => {
     expect(dataKind('tiles/lots.mbtiles')).toBeNull();
   });
 
-  it('uses the manifest entry, which wins over the registry', () => {
-    const m = manifestWith({ layers: { hin_2025: { file: 'geojson/hin.geojson', source_layer: 'hin' } } });
-    expect(resolveLayerData(layer('hin_2025'), m, base)).toEqual({
-      ok: true,
-      data: { kind: 'geojson', path: 'geojson/hin.geojson', url: `${base}geojson/hin.geojson`, sourceLayer: null },
-    });
+  it('names the GeoJSON fallback the way the pipeline does', () => {
+    expect(geojsonFallbackPath('tiles/lots.pmtiles', 'parcels')).toBe('tiles/lots.parcels.geojson');
+    expect(geojsonFallbackPath('tiles/streets.pmtiles', 'memorials')).toBe('tiles/streets.memorials.geojson');
   });
 
-  it('falls back to the registry file when the manifest lists the file but not the layer', () => {
-    const m = manifestWith({ layers: {}, files: { 'tiles/streets.pmtiles': { bytes: 10 } } });
+  it('uses the tile file when files lists it', () => {
+    const m = manifestWith({
+      layers: { hin_2025: { file: 'tiles/streets.pmtiles', source_layer: 'hin' } },
+      files: { 'tiles/streets.pmtiles': { bytes: 10 } },
+    });
     expect(resolveLayerData(layer('hin_2025'), m, base)).toEqual({
       ok: true,
       data: { kind: 'pmtiles', path: 'tiles/streets.pmtiles', url: `${base}tiles/streets.pmtiles`, sourceLayer: 'hin' },
     });
   });
 
-  it('says when a layer is not published or there is no manifest', () => {
-    const m = manifestWith({ layers: {}, files: {} });
-    expect(resolveLayerData(layer('vacant_parcels'), m, base)).toEqual({ ok: false, reason: 'not_published', path: 'tiles/lots.pmtiles' });
+  it('uses the GeoJSON written beside a skipped tile file', () => {
+    const m = manifestWith({
+      layers: { vacant_parcels: { file: 'tiles/lots.pmtiles', source_layer: 'parcels' } },
+      files: { 'tiles/lots.parcels.geojson': { bytes: 10 } },
+    });
+    expect(resolveLayerData(layer('vacant_parcels'), m, base)).toEqual({
+      ok: true,
+      data: { kind: 'geojson', path: 'tiles/lots.parcels.geojson', url: `${base}tiles/lots.parcels.geojson`, sourceLayer: null },
+    });
+  });
+
+  it('follows the manifest entry over the registry, with the registry file as a last resort', () => {
+    const moved = manifestWith({
+      layers: { hin_2025: { file: 'tiles/streets2.pmtiles', source_layer: 'hin2' } },
+      files: { 'tiles/streets2.pmtiles': { bytes: 10 } },
+    });
+    expect(resolveLayerData(layer('hin_2025'), moved, base)).toMatchObject({ ok: true, data: { path: 'tiles/streets2.pmtiles', sourceLayer: 'hin2' } });
+    const notInLayers = manifestWith({ layers: {}, files: { 'tiles/streets.pmtiles': { bytes: 10 } } });
+    expect(resolveLayerData(layer('hin_2025'), notInLayers, base)).toMatchObject({ ok: true, data: { path: 'tiles/streets.pmtiles', sourceLayer: 'hin' } });
+  });
+
+  it('treats a layer as unavailable unless files lists its file', () => {
+    const listedButMissing = manifestWith({
+      layers: { vacant_parcels: { file: 'tiles/lots.pmtiles', source_layer: 'parcels' } },
+      files: { 'tiles/context.pmtiles': { bytes: 10 } },
+    });
+    expect(resolveLayerData(layer('vacant_parcels'), listedButMissing, base)).toEqual({
+      ok: false,
+      reason: 'not_published',
+      path: 'tiles/lots.pmtiles',
+    });
     expect(resolveLayerData(layer('vacant_parcels'), null, base)).toEqual({ ok: false, reason: 'no_manifest', path: 'tiles/lots.pmtiles' });
   });
 
   it('refuses file types it cannot draw', () => {
-    const m = manifestWith({ layers: { hin_2025: { file: 'tiles/streets.mbtiles' } } });
+    const m = manifestWith({ layers: { hin_2025: { file: 'tiles/streets.mbtiles' } }, files: { 'tiles/streets.mbtiles': { bytes: 1 } } });
     expect(resolveLayerData(layer('hin_2025'), m, base)).toMatchObject({ ok: false, reason: 'unsupported' });
+  });
+
+  it('lists exactly the files in the fixture data root', () => {
+    const { manifest } = parseManifest(fixtureJson);
+    const onDisk = readdirSync(FIXTURE_ROOT, { recursive: true, withFileTypes: true })
+      .filter((d) => d.isFile())
+      .map((d) => relative(FIXTURE_ROOT.pathname, `${d.parentPath}/${d.name}`))
+      .filter((p) => p !== 'manifest.json')
+      .sort();
+    expect(Object.keys(manifest!.files).sort()).toEqual(onDisk);
   });
 
   it('points every fixture layer at a file that exists, using both file types', () => {

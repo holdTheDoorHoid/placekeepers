@@ -46,7 +46,8 @@ export const shootingsHex: StyleModule = {
         filter: ['>', count(spec), 0],
         paint: {
           'fill-color': ['step', count(spec), c0, b1, c1, b2, c2, b3, c3, b4, c4],
-          'fill-opacity': COUNT_OPACITY,
+          // Fainter up close, so streets and lots stay readable through the context layer.
+          'fill-opacity': ['interpolate', ['linear'], ['zoom'], 13, COUNT_OPACITY, 17, COUNT_OPACITY * 0.5],
           'fill-outline-color': 'rgba(255, 255, 255, 0.7)',
         },
       },

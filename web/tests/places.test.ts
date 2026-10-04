@@ -7,7 +7,7 @@ import { initialState, savedText } from '../src/state/init.ts';
 import { encodeState } from '../src/state/url.ts';
 
 const reg = loadRegistry();
-const fixture = JSON.parse(readFileSync(new URL('../fixtures/data/geojson/parcels.geojson', import.meta.url), 'utf8'));
+const fixture = JSON.parse(readFileSync(new URL('../fixtures/sources/parcels.geojson', import.meta.url), 'utf8'));
 const places: PlaceInput[] = fixture.features.map((f: { properties: Record<string, unknown> }) => ({
   id: String(f.properties.id),
   properties: f.properties,

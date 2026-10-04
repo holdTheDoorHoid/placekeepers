@@ -34,6 +34,7 @@
   const nearby = $derived(store.state.map.zoom >= NEARBY_MIN_ZOOM);
   const places = $derived(nearby ? rankPlaces(registry, store.state, store.parcelsInView, 5) : []);
   const allOff = $derived(places.length > 0 && places.every((p) => p.why?.allOff));
+  const noScores = $derived(!allOff && places.length > 0 && places.every((p) => p.score === null));
 
   function nearMe() {
     if (!('geolocation' in navigator)) {
@@ -73,7 +74,17 @@
     >
       <label class="sr-only" for="pk-search">{strings.field.searchLabel}</label>
       <input id="pk-search" type="search" placeholder={strings.field.searchPlaceholder} />
-      <button class="button small" type="submit">{strings.field.searchButton}</button>
+      <button class="button small search-button" type="submit">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"
+          ><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4" /><path
+            d="M15.5 15.5 21 21"
+            stroke="currentColor"
+            stroke-width="2.4"
+            stroke-linecap="round"
+          /></svg
+        >
+        <span class="sr-only">{strings.field.searchButton}</span>
+      </button>
     </form>
     <button class="button small primary" type="button" onclick={nearMe} disabled={locating} aria-describedby="pk-near-me-note">
       {locating ? strings.field.nearMeBusy : strings.field.nearMe}
@@ -114,9 +125,10 @@
       <p>{strings.sheet.nothingHere}</p>
     {:else}
       {#if allOff}<p class="notice">{strings.sheet.allOff}</p>{/if}
+      {#if noScores}<p class="notice">{strings.sheet.noScores}</p>{/if}
       <div class="cards">
         {#each places as place (place.id)}
-          <PlaceCard {store} {place} lensLabel={lens?.label ?? ''} />
+          <PlaceCard {store} {place} lensLabel={lens?.label ?? ''} onShow={() => (sheetOpen = false)} />
         {/each}
       </div>
       <p class="muted small">{strings.sheet.preview}</p>
@@ -158,6 +170,9 @@
     border: 1px solid var(--pk-border);
     border-radius: var(--pk-radius);
     font: inherit;
+  }
+  .search-button {
+    padding: 6px 10px;
   }
   .chips {
     display: flex;
@@ -214,6 +229,7 @@
     color: var(--pk-muted);
   }
   .body {
+    position: relative;
     overflow-y: auto;
     padding: 0 16px 16px;
   }

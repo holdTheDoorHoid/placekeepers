@@ -17,15 +17,10 @@
 </script>
 
 <section class="details" aria-labelledby="pk-place-title">
-  <div class="top">
-    <h2 id="pk-place-title">
-      {kindLabel(place.kind)}
-      <span class="id">{strings.place.parcel(place.id)}</span>
-    </h2>
-    <button class="icon-button" type="button" aria-label={strings.place.clearSelection} onclick={() => store.select(null)}
-      >&times;</button
-    >
-  </div>
+  <h2 id="pk-place-title">
+    {kindLabel(place.kind)}
+    <span class="id">{strings.place.parcel(place.id)}</span>
+  </h2>
   <dl>
     <dt>{strings.place.confidenceTitle}</dt>
     <dd>{strings.place.confidence[place.confidence] ?? strings.why.noData}</dd>
@@ -58,15 +53,10 @@
     <WhyBreakdown why={place.why} idPrefix="details" />
   {/if}
   <p class="muted small">{strings.place.dossierSoon}</p>
+  <button class="button quiet small" type="button" onclick={() => store.select(null)}>{strings.place.clearSelection}</button>
 </section>
 
 <style>
-  .top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 8px;
-  }
   .id {
     display: block;
     font-weight: 400;

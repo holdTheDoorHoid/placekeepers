@@ -127,8 +127,9 @@ export class MapController {
       attributionControl: false,
       localIdeographFontFamily: 'sans-serif',
     });
-    // Top right in both views, so the bottom sheet and drawer never cover the credits.
-    this.map.addControl(new maplibregl.AttributionControl(), 'top-right');
+    // Top right in both views, so the bottom sheet and drawer never cover the credits. The
+    // credits start open and fold into an "i" button once the map is moved.
+    this.map.addControl(new maplibregl.AttributionControl({ compact: true }), 'top-right');
     this.map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), 'top-right');
     this.map.getCanvas().setAttribute('aria-label', strings.app.mapLabel);
 

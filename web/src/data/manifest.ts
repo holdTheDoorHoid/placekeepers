@@ -42,7 +42,10 @@ export interface Manifest {
   generated_at: string | null;
   sources: Record<string, ManifestSource>;
   layers: Record<string, ManifestLayer>;
+  /** Exactly the files present under the data root (manifest.json aside). */
   files: Record<string, ManifestFile>;
+  /** Plain sentences about the build, possibly none. */
+  notes: string[];
 }
 
 export interface ParseResult {
@@ -131,6 +134,13 @@ export function parseManifest(json: unknown): ParseResult {
     files[path] = { bytes: count(entry, 'bytes', `files.${path}`, problems), sha256: text(entry, 'sha256', `files.${path}`, problems) };
   }
 
+  const notes: string[] = [];
+  if (json.notes !== undefined && json.notes !== null && !Array.isArray(json.notes)) problems.push('notes should be a list');
+  for (const note of Array.isArray(json.notes) ? json.notes : []) {
+    if (typeof note === 'string' && note.trim() !== '') notes.push(note);
+    else problems.push('notes should hold only sentences');
+  }
+
   return {
     manifest: {
       schema: MANIFEST_SCHEMA,
@@ -139,6 +149,7 @@ export function parseManifest(json: unknown): ParseResult {
       sources,
       layers,
       files,
+      notes,
     },
     problems,
     error: null,
@@ -194,24 +205,43 @@ export function dataKind(path: string): DataKind | null {
 }
 
 /**
- * Where a layer's features live. The manifest says what was actually published and wins
- * over the registry. A ".geojson" path is loaded as GeoJSON (the pipeline writes GeoJSON
- * when it cannot build tiles), a ".pmtiles" path as vector tiles.
+ * Where the pipeline writes a layer as GeoJSON when it cannot build tiles: beside the tile
+ * file, named <tile file stem>.<source layer>.geojson (docs/CONTRACTS.md, section 3).
+ */
+export function geojsonFallbackPath(tileFile: string, sourceLayer: string): string {
+  return tileFile.replace(/\.pmtiles$/i, `.${sourceLayer}.geojson`);
+}
+
+/**
+ * Where a layer's features live. A layer is available only when the manifest's `files`
+ * lists its file. The manifest's own entry for the layer wins over the registry. If the
+ * tile file is missing but its GeoJSON fallback is listed, the GeoJSON is used. A
+ * ".geojson" path loads as GeoJSON, a ".pmtiles" path as vector tiles.
  */
 export function resolveLayerData(layer: Layer, manifest: Manifest | null, dataBase: string): LayerDataResult {
   const published = manifest?.layers[layer.id];
-  const path = published?.file ?? layer.file;
-  if (!manifest) return { ok: false, reason: 'no_manifest', path };
-  if (!published && !(path in manifest.files)) return { ok: false, reason: 'not_published', path };
-  const kind = dataKind(path);
-  if (!kind) return { ok: false, reason: 'unsupported', path };
+  const file = published?.file ?? layer.file;
+  if (!manifest) return { ok: false, reason: 'no_manifest', path: file };
+
+  const candidates: { path: string; sourceLayer: string }[] = [];
+  const add = (path: string, sourceLayer: string) => {
+    candidates.push({ path, sourceLayer });
+    if (/\.pmtiles$/i.test(path)) candidates.push({ path: geojsonFallbackPath(path, sourceLayer), sourceLayer });
+  };
+  add(file, published?.source_layer ?? layer.source_layer);
+  if (layer.file !== file) add(layer.file, layer.source_layer);
+
+  const found = candidates.find((c) => c.path in manifest.files);
+  if (!found) return { ok: false, reason: 'not_published', path: file };
+  const kind = dataKind(found.path);
+  if (!kind) return { ok: false, reason: 'unsupported', path: found.path };
   return {
     ok: true,
     data: {
       kind,
-      path,
-      url: `${dataBase}${path}`,
-      sourceLayer: kind === 'pmtiles' ? (published?.source_layer ?? layer.source_layer) : null,
+      path: found.path,
+      url: `${dataBase}${found.path}`,
+      sourceLayer: kind === 'pmtiles' ? found.sourceLayer : null,
     },
   };
 }

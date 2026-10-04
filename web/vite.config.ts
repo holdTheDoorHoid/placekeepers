@@ -7,6 +7,8 @@ import { registryPlugin } from './plugins/registry.ts';
 export default defineConfig({
   // The site is published on GitHub Pages at https://<owner>.github.io/placekeepers/.
   base: '/placekeepers/',
+  // Two pages (the map and the data status page) and real 404s for missing files, as on Pages.
+  appType: 'mpa',
   plugins: [registryPlugin(), dataRootPlugin(), svelte()],
   build: {
     target: 'es2022',

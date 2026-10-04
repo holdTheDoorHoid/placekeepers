@@ -11,7 +11,7 @@
 
   let { store, open = $bindable(false) }: { store: AppStore; open?: boolean } = $props();
 
-  const viewChoice = $derived(store.viewPinned ? store.state.view : 'auto');
+  const viewChoice = $derived(store.viewChosen ? store.state.view : 'auto');
   const choices = [
     { value: 'field', label: strings.views.fieldLong, hint: strings.views.fieldHint },
     { value: 'analysis', label: strings.views.analysisLong, hint: strings.views.analysisHint },

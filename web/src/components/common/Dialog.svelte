@@ -74,6 +74,7 @@
     font-size: 1.15rem;
   }
   .body {
+    position: relative;
     flex: 1;
     overflow-y: auto;
     padding: 12px 16px 24px;

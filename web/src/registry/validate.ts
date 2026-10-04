@@ -25,8 +25,10 @@ export const ID_PATTERN = /^[a-z][a-z0-9_]*$/;
 const RELEASE_PATTERN = /^v\d+\.\d+$/;
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const FIELD_PATTERN = /^f_[a-z0-9_]+$/;
-const URL_PATTERN = /^https:\/\/\S+$/;
-const DATA_PATH_PATTERN = /^(?!\/)(?!.*\.\.)[A-Za-z0-9_./-]+$/;
+// The same rules the pipeline applies (pipeline/src/placekeepers/registry.py), so a registry
+// one side accepts never breaks the other.
+const URL_PATTERN = /^https?:\/\/\S+$/;
+const DATA_PATH_PATTERN = /^[A-Za-z0-9_][A-Za-z0-9_.-]*(\/[A-Za-z0-9_][A-Za-z0-9_.-]*)*$/;
 
 type Spec =
   | { t: 'string'; optional?: boolean; pattern?: RegExp; oneOf?: readonly string[]; allowEmpty?: boolean }
@@ -96,6 +98,7 @@ const SCHEMAS: Record<keyof Registry, Fields> = {
     default: { t: 'object', fields: { field: { t: 'boolean' }, analysis: { t: 'boolean' } } },
     settings: {
       t: 'objects',
+      optional: true,
       fields: {
         id: id(),
         label: text(),
@@ -105,7 +108,7 @@ const SCHEMAS: Record<keyof Registry, Fields> = {
           t: 'objects',
           optional: true,
           nonEmpty: true,
-          fields: { value: str({ pattern: /^[A-Za-z0-9_.-]+$/ }), label: text() },
+          fields: { value: str({ allowEmpty: true }), label: text() },
         },
         min: { t: 'number', optional: true },
         max: { t: 'number', optional: true },
@@ -133,6 +136,7 @@ const SCHEMAS: Record<keyof Registry, Fields> = {
     },
     presets: {
       t: 'objects',
+      optional: true,
       fields: { id: id(), label: text(), weights: { t: 'weights' } },
     },
     release: release(),
@@ -144,8 +148,8 @@ const SCHEMAS: Record<keyof Registry, Fields> = {
     summary: text(),
     evidence: evidence(),
     cost: text(),
-    routes: ids(),
-    partners: ids(),
+    routes: ids({ nonEmpty: true }),
+    partners: { t: 'strings', pattern: ID_PATTERN, optional: true },
     default_on: { t: 'boolean' },
     release: release(),
   },
@@ -156,7 +160,7 @@ const SCHEMAS: Record<keyof Registry, Fields> = {
     steps: { t: 'strings', nonEmpty: true },
     cost: text(),
     timeline: text(),
-    links: { t: 'objects', fields: { label: text(), url: url() } },
+    links: { t: 'objects', optional: true, fields: { label: text(), url: url() } },
     last_checked: str({ pattern: DATE_PATTERN }),
     status: str({ oneOf: ROUTE_STATUSES }),
   },
@@ -353,8 +357,12 @@ export function validateRegistry(raw: RawRegistryFiles, options: ValidateOptions
   }
   if (errors.length > 0) return { registry: null, errors };
 
-  // The shapes are right from here on, so the cast is safe.
+  // The shapes are right from here on, so the cast is safe once optional lists are filled in.
   const reg = structuredClone(raw) as unknown as Registry;
+  for (const layer of reg.layers) layer.settings ??= [];
+  for (const lens of reg.lenses) lens.presets ??= [];
+  for (const suggestion of reg.suggestions) suggestion.partners ??= [];
+  for (const route of reg.routes) route.links ??= [];
   const idsOf = (list: { id: string }[]) => new Set(list.map((x) => x.id));
   const groups = idsOf(reg.groups);
   const sources = idsOf(reg.sources);

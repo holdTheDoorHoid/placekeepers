@@ -86,6 +86,15 @@
         {/each}
       </ul>
 
+      {#if manifest.notes.length}
+        <section class="notes" aria-labelledby="pk-notes-title">
+          <h2 id="pk-notes-title">{s.notesTitle}</h2>
+          <ul>
+            {#each manifest.notes as note, i (i)}<li>{note}</li>{/each}
+          </ul>
+        </section>
+      {/if}
+
       {#if result?.problems.length}
         <details>
           <summary>{s.problems}</summary>
@@ -186,6 +195,15 @@
   }
   .notice {
     margin-bottom: 12px;
+  }
+  .notes {
+    margin-top: 20px;
+  }
+  .notes h2 {
+    font-size: 1.1rem;
+  }
+  .notes ul {
+    padding-left: 20px;
   }
   footer {
     margin-top: 24px;

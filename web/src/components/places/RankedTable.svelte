@@ -12,6 +12,7 @@
 {#if places.length === 0}
   <p class="muted">{strings.analysis.tableEmpty}</p>
 {:else}
+  {#if places.every((p) => p.score === null && !p.why?.allOff)}<p class="notice">{strings.analysis.noScores}</p>{/if}
   <div class="scroll">
     <table>
       <caption>{strings.analysis.tableCaption}</caption>
@@ -54,6 +55,7 @@
 
 <style>
   .scroll {
+    position: relative;
     overflow-x: auto;
   }
   table {

@@ -5,19 +5,23 @@
 // generated from a fixed seed so the output never changes unless this script does. The
 // manifest's build_id starts with "fixture", which makes the site show a "sample data" note.
 //
-// Two layers are published as PMTiles (the path production uses) and one as GeoJSON (the
-// fallback the pipeline uses when it cannot build tiles), so development exercises both.
+// Two layers are published as PMTiles (the path production uses) and one as GeoJSON, named
+// the way the pipeline names it when it cannot build tiles (<tile stem>.<layer>.geojson, see
+// docs/CONTRACTS.md section 3), so development exercises both loaders. The GeoJSON inputs for
+// the tiles live in fixtures/sources/, outside the data root, because the manifest's `files`
+// must list exactly what the data root holds.
 //
 // Needs h3-js and tippecanoe. From web/:
 //   npm install --no-save h3-js@4 && node scripts/make-fixtures.mjs
 
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { cellToBoundary, gridDisk, latLngToCell } from 'h3-js';
 
-const ROOT = new URL('../fixtures/data/', import.meta.url);
-const path = (p) => new URL(p, ROOT).pathname;
+const FIXTURES = new URL('../fixtures/', import.meta.url);
+const ROOT = new URL('data/', FIXTURES);
+const path = (p) => new URL(p, FIXTURES).pathname;
 
 // A small seeded random number generator (mulberry32), so the fixtures are reproducible.
 let seed = 20261004;
@@ -122,25 +126,26 @@ const lines = [
 }));
 
 const collection = (features) => JSON.stringify({ type: 'FeatureCollection', features }) + '\n';
-mkdirSync(path('geojson'), { recursive: true });
-mkdirSync(path('tiles'), { recursive: true });
-writeFileSync(path('geojson/parcels.geojson'), collection(parcels));
-writeFileSync(path('geojson/h3.geojson'), collection(cells));
-writeFileSync(path('geojson/hin.geojson'), collection(lines));
+rmSync(ROOT, { recursive: true, force: true });
+mkdirSync(path('sources'), { recursive: true });
+mkdirSync(path('data/tiles'), { recursive: true });
+writeFileSync(path('sources/parcels.geojson'), collection(parcels));
+writeFileSync(path('sources/h3.geojson'), collection(cells));
+writeFileSync(path('data/tiles/streets.hin.geojson'), collection(lines));
 
-// Run from inside the data root with relative paths, because tippecanoe records its command
+// Run from the fixtures folder with relative paths, because tippecanoe records its command
 // line in the file's metadata and local folder names do not belong in committed files.
 const tippecanoe = (out, layer, input, name, extra) =>
   execFileSync(
     'tippecanoe',
     ['-q', '-f', '-o', out, '-l', layer, '-n', name, '-N', 'Synthetic test data for Placekeepers', '--no-feature-limit', '--no-tile-size-limit', ...extra, input],
-    { stdio: 'inherit', cwd: ROOT.pathname },
+    { stdio: 'inherit', cwd: FIXTURES.pathname },
   );
-tippecanoe('tiles/lots.pmtiles', 'parcels', 'geojson/parcels.geojson', 'Sample parcels', ['-Z', '12', '-z', '16', '--no-tiny-polygon-reduction']);
-tippecanoe('tiles/context.pmtiles', 'h3', 'geojson/h3.geojson', 'Sample area cells', ['-Z', '9', '-z', '14', '--detect-shared-borders']);
+tippecanoe('data/tiles/lots.pmtiles', 'parcels', 'sources/parcels.geojson', 'Sample parcels', ['-Z', '12', '-z', '16', '--no-tiny-polygon-reduction']);
+tippecanoe('data/tiles/context.pmtiles', 'h3', 'sources/h3.geojson', 'Sample area cells', ['-Z', '9', '-z', '14', '--detect-shared-borders']);
 
 const fileInfo = (p) => {
-  const bytes = readFileSync(path(p));
+  const bytes = readFileSync(new URL(p, ROOT));
   return { bytes: bytes.length, sha256: createHash('sha256').update(bytes).digest('hex') };
 };
 
@@ -160,7 +165,15 @@ const manifest = {
   generated_at: '2026-10-04T10:03:12Z',
   sources: {
     opa_properties: ok(583412, '2026-10-02'),
-    // pwd_parcels is left out on purpose: the status page shows it as "not fetched yet".
+    pwd_parcels: {
+      status: 'missing',
+      last_attempt: null,
+      last_success: null,
+      stale_since: null,
+      rows: null,
+      newest_record: null,
+      message: null,
+    },
     vacant_indicators_land: {
       status: 'failing',
       last_attempt: '2026-10-04T10:00:09Z',
@@ -188,14 +201,16 @@ const manifest = {
       source_layer: 'parcels',
       sources: ['vacant_indicators_land', 'vacant_indicators_bldg', 'opa_properties', 'pwd_parcels'],
     },
-    hin_2025: { file: 'geojson/hin.geojson', source_layer: 'hin', sources: ['high_injury_network'] },
+    hin_2025: { file: 'tiles/streets.pmtiles', source_layer: 'hin', sources: ['high_injury_network'] },
     shootings_hex: { file: 'tiles/context.pmtiles', source_layer: 'h3', sources: ['shootings'] },
   },
   files: Object.fromEntries(
-    ['tiles/lots.pmtiles', 'tiles/context.pmtiles', 'geojson/hin.geojson', 'geojson/parcels.geojson', 'geojson/h3.geojson'].map(
-      (p) => [p, fileInfo(p)],
-    ),
+    ['tiles/context.pmtiles', 'tiles/lots.pmtiles', 'tiles/streets.hin.geojson'].map((p) => [p, fileInfo(p)]),
   ),
+  notes: [
+    'This is synthetic sample data for testing the map.',
+    'Street tiles were skipped for this sample, so the High Injury Network is published as GeoJSON.',
+  ],
 };
-writeFileSync(path('manifest.json'), JSON.stringify(manifest, null, 2) + '\n');
+writeFileSync(new URL('manifest.json', ROOT), JSON.stringify(manifest, null, 2) + '\n');
 console.log(`Wrote ${parcels.length} parcels, ${cells.length} cells and ${lines.length} lines to ${ROOT.pathname}`);
