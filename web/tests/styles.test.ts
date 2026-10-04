@@ -111,6 +111,21 @@ describe('vacant parcels style', () => {
     expect(shown(state, { vc: 3, k: 1, ot: 4 })).toBe(false);
   });
 
+  it('applies the LandCare and first step filters by their tile properties', () => {
+    const state = defaultState(reg, 'analysis');
+    state.filters.landcare = ['0'];
+    expect(shown(state, { vc: 3, k: 1, ot: 1, lc: 0, rt: 5 })).toBe(true);
+    expect(shown(state, { vc: 3, k: 1, ot: 1, lc: 1, rt: 1 })).toBe(false);
+    state.filters.landcare = ['0', '1'];
+    state.filters.first_step = ['2', '3'];
+    expect(shown(state, { vc: 3, k: 1, ot: 4, lc: 0, rt: 2 })).toBe(true);
+    expect(shown(state, { vc: 3, k: 1, ot: 1, lc: 0, rt: 5 })).toBe(false);
+    // Tiles from before rt existed are hidden only while the filter narrows.
+    expect(shown(state, { vc: 3, k: 1, ot: 1, lc: 0 })).toBe(false);
+    state.filters.first_step = ['0', '1', '2', '3', '4', '5'];
+    expect(shown(state, { vc: 3, k: 1, ot: 1, lc: 0 })).toBe(true);
+  });
+
   it('recolors with the lens weights alone (a paint change, not a data change)', () => {
     const a = defaultState(reg, 'analysis');
     const b = defaultState(reg, 'analysis');

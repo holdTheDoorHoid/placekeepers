@@ -217,6 +217,49 @@ a:hover {
   font-size: 0.8rem;
 }
 
+/* Filter chips: a native checkbox or radio button, hidden but focusable, inside a chip label. */
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip-choice {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 4px 12px;
+  border: 1px solid var(--pk-border);
+  border-radius: 999px;
+  background: var(--pk-bg);
+  color: var(--pk-text);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.chip-choice:hover {
+  background: var(--pk-surface);
+}
+
+.chip-choice:has(input:checked) {
+  background: var(--pk-accent);
+  border-color: var(--pk-accent);
+  color: var(--pk-accent-ink);
+}
+
+.chip-choice:has(input:checked)::before {
+  content: '\2713';
+  font-weight: 700;
+}
+
+.chip-choice:has(input:focus-visible) {
+  outline: 3px solid var(--pk-focus);
+  outline-offset: 2px;
+}
+
 /* Notes and notices */
 .notice {
   margin: 0;

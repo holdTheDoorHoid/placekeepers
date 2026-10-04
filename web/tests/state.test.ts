@@ -162,6 +162,15 @@ describe('address bar state', () => {
     expect(back.layers).toEqual([]);
   });
 
+  it('carries the LandCare and first step filters in the link', () => {
+    const state = defaultState(reg, 'analysis');
+    state.filters.first_step = ['2', '5'];
+    state.filters.landcare = ['0'];
+    const text = encodeState(reg, state);
+    expect(text).toContain('f=landcare:0,first_step:2+5');
+    expect(decodeState(reg, text, 'field').state.filters).toEqual(state.filters);
+  });
+
   it('keeps an empty filter as "nothing selected"', () => {
     const state = defaultState(reg, 'analysis');
     state.filters.owner_type = [];

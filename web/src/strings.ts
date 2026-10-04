@@ -270,10 +270,46 @@ export const strings = {
 
   filters: {
     title: 'Filters',
+    intro:
+      'Choose chips to narrow the lots on the map, the ranked list and the plot. A group with no chip chosen shows everything.',
     ownerType: 'Owner type',
-    all: 'All',
-    none: 'None',
-    noneSelected: 'No owner types are selected, so no lots are shown.',
+    landcare: 'Already in LandCare',
+    inLandcare: 'Kept up by PHS LandCare',
+    notInLandcare: 'Not in LandCare',
+    confidence: 'How sure we are',
+    kind: 'Lot or building',
+    clear: 'Clear filters',
+    showAll: 'Show all',
+    noneSelected: (group: string) => `Nothing is chosen under "${group}", so no lots are shown.`,
+    narrowedNote: (n: number) =>
+      n === 1 ? 'A filter from the analysis view is narrowing these places.' : `${formatNumber(n)} filters from the analysis view are narrowing these places.`,
+  },
+
+  // The first lawful step to get permission (`rt`, src/config/permission.ts). A category, never a
+  // score: never call it easy or hard, and never use words about buying or acquiring land.
+  permission: {
+    title: 'First step to get permission',
+    short: {
+      0: 'No clear route yet',
+      1: 'Community LandCare',
+      2: 'Garden agreement or license',
+      3: 'Ask PHDC',
+      4: 'Ask the public agency',
+      5: 'Ask the owner',
+    } satisfies Record<0 | 1 | 2 | 3 | 4 | 5, string>,
+    long: {
+      0: 'No clear route yet: City records give no owner name',
+      1: 'PHS LandCare already cares for it: Community LandCare stewardship',
+      2: 'The City or the Land Bank owns it: a garden agreement or license',
+      3: 'The Redevelopment Authority or PHDC owns it: ask PHDC',
+      4: 'The housing authority or another public body owns it: ask the agency',
+      5: 'A private owner: ask the owner',
+    } satisfies Record<0 | 1 | 2 | 3 | 4 | 5, string>,
+    notPublished: 'Not published yet',
+    filterHelp:
+      'Who to ask first, from the owner City records name. It is a kind of step, not a measure of how likely anyone is to say yes.',
+    noRoute: 'No clear route yet: City records give no owner name. The lot page shows what we know.',
+    seeLotPage: 'The lot page lists the lawful routes for this place.',
   },
 
   layers: {

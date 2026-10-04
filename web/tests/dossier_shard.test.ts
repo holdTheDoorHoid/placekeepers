@@ -4,6 +4,7 @@
 
 import { readFileSync } from 'node:fs';
 import { describe, expect, it, vi } from 'vitest';
+import { PERMISSION_ROUTE, type PermissionCode } from '../src/config/permission.ts';
 import { parseManifest } from '../src/data/manifest.ts';
 import { clearOwnersTable, loadOwnerList, parseOwnersTable } from '../src/dossier/owners-table.ts';
 import { isOpaAccount, normalizeAccount, shardPath, shardPrefix } from '../src/dossier/opa.ts';
@@ -180,6 +181,8 @@ describe('reading a shard', () => {
       expect(parcel.vacancy?.rs).toBe(tile.rs);
       expect(parcel.vacancy?.n).toBe(tile.n);
       for (const key of ['dy', 'sy', 'ny'] as const) expect(parcel.vacancy?.[key] ?? undefined).toBe(tile[key]);
+      // The map's first step to get permission is the dossier's first route, as in the pipeline.
+      expect(PERMISSION_ROUTE[tile.rt as PermissionCode], opa).toBe(parcel.routes[0] ?? null);
     }
   });
 
