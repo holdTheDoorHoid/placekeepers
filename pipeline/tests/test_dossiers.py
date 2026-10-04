@@ -495,24 +495,30 @@ def common(out: Path) -> dict[str, Any]:
     return json.loads((out / "dossiers" / "common.json").read_text(encoding="utf-8"))
 
 
-def test_one_shard_per_four_digit_prefix_listed_in_the_manifest(built) -> None:
+def test_one_shard_per_four_digit_prefix_summarized_in_the_manifest(built) -> None:
     result, out = built
     files = sorted(p.name for p in (out / "dossiers").iterdir())
-    assert files == [
-        "3710.json",
-        "3720.json",
-        "3730.json",
-        "3740.json",
-        "3750.json",
-        "8850.json",
-        "common.json",
-    ]
-    for name in files:
-        assert f"dossiers/{name}" in result.manifest["files"]
-    assert "tables/owners.json" in result.manifest["files"]
+    shards = ["3710.json", "3720.json", "3730.json", "3740.json", "3750.json", "8850.json"]
+    assert files == [*shards, "common.json"]
+    manifest = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest == result.manifest
+    # The shards are summarized, not listed: the manifest every visitor fetches stays small.
+    sizes = [(out / "dossiers" / name).stat().st_size for name in shards]
+    assert manifest["dossiers"] == {
+        "prefix_digits": 4,
+        "prefixes": ["3710", "3720", "3730", "3740", "3750", "8850"],
+        "files": 6,
+        "bytes": sum(sizes),
+    }
+    assert not any(re.fullmatch(r"dossiers/\d+\.json", name) for name in manifest["files"])
+    assert "dossiers/common.json" in manifest["files"]
+    assert "tables/owners.json" in manifest["files"]
+    # Everything on disk is either listed in `files` or a shard the block names.
+    on_disk = sorted(p.relative_to(out).as_posix() for p in out.rglob("*") if p.is_file())
+    named = [f"dossiers/{prefix}.json" for prefix in manifest["dossiers"]["prefixes"]]
+    assert on_disk == sorted([*manifest["files"], *named, "manifest.json"])
     assert result.dossiers.parcels == 12
     assert result.dossiers.shards == 6
-    sizes = [(out / "dossiers" / name).stat().st_size for name in files if name != "common.json"]
     assert result.dossiers.largest == max(sizes)
     assert result.dossiers.common_bytes == (out / "dossiers" / "common.json").stat().st_size
     # 376000001 is known only to an old L&I record: no dossier, so no 3760 shard.
@@ -809,6 +815,8 @@ def test_without_opa_there_are_no_dossiers(context_factory, tmp_path: Path) -> N
     result = publish(ctx, tmp_path / "data")
     assert "lot dossiers have no usable data yet (no OPA properties)" in result.manifest["notes"]
     assert not any(name.startswith("dossiers/") for name in result.manifest["files"])
+    assert result.manifest["dossiers"] is None
+    assert not (tmp_path / "data" / "dossiers").exists()
 
 
 def write_model(ctx, rows: list[tuple]) -> None:

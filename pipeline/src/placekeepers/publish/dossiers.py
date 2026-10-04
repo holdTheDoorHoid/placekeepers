@@ -141,10 +141,24 @@ class DossierResult:
     owners_bytes: int = 0
     owners_listed: int = 0
     notes: list[str] = field(default_factory=list)
+    #: the account prefixes that have a shard, sorted
+    prefixes: list[str] = field(default_factory=list)
     #: counts for the report: owner types, flags, routes
     owner_types: Counter = field(default_factory=Counter)
     flags: Counter = field(default_factory=Counter)
     routes: Counter = field(default_factory=Counter)
+
+    def manifest_block(self) -> dict[str, Any] | None:
+        """The manifest's `dossiers` summary (docs/CONTRACTS.md section 3), or None when no
+        dossiers were written."""
+        if not self.shards:
+            return None
+        return {
+            "prefix_digits": SHARD_DIGITS,
+            "prefixes": self.prefixes,
+            "files": self.shards,
+            "bytes": self.bytes,
+        }
 
 
 def snapshot_paths(
@@ -932,6 +946,7 @@ def write_shards(
         result.largest = max(result.largest, size)
         result.parcels += len(shards[prefix])
     result.shards = len(shards)
+    result.prefixes = sorted(shards)
 
 
 def write_common(result: DossierResult, out_root: Path, generated_at: str) -> None:

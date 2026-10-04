@@ -191,6 +191,7 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
             generated_at=generated_at,
             commit=git_short_hash(ctx.settings.repo_root),
             notes=notes,
+            dossiers=result.dossiers.manifest_block() if result.dossiers else None,
         )
         atomic_write_json(staging / MANIFEST, result.manifest)
         _swap_into_place(staging, out_dir)

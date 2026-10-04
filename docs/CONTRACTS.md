@@ -211,6 +211,7 @@ M0.4).
   "files": {
     "tiles/context.pmtiles": {"bytes": 1234567, "sha256": "..."}
   },
+  "dossiers": {"prefix_digits": 4, "prefixes": ["0011", "0012", "8850"], "files": 929, "bytes": 108300000},
   "notes": ["8 shooting victims in the last 36 months have no usable location"]
 }
 ```
@@ -218,8 +219,16 @@ M0.4).
 `status` is one of `ok`, `stale` (using the last good snapshot), `failing` (no usable snapshot), or
 `missing` (never fetched). `stale_since` is the date of the last good snapshot when stale.
 `sources` lists every source in the registry and `layers` every layer, whether or not it was built.
-`files` lists exactly the files present under the data root (except `manifest.json` itself), so a
-layer is available only when `files` lists its `file`.
+`files` lists every file under the data root except `manifest.json` itself and the dossier shards,
+which `dossiers` summarizes, so a layer is available only when `files` lists its `file`.
+
+`dossiers` (added 2026-10-04 by M1.3, as the orchestrator decided, so the manifest every visitor
+fetches before the map draws stays small) summarizes the lot dossier shards (section 6) instead of
+listing about 930 files: `prefix_digits` (4, the leading digits of the OPA account that name a
+shard), `prefixes` (sorted, only the prefixes that have a file; the shard for prefix `3710` is
+`dossiers/3710.json`), `files` (how many shards) and `bytes` (their total size). It is `null` when
+no dossiers were written. `dossiers/common.json` and `tables/owners.json` are listed in `files` as
+usual. On 2026-10-04 the manifest is about 28 kB (5 kB compressed).
 
 `notes` (added 2026-10-04 by M0.2) is a list of plain sentences about the build, possibly empty:
 data quality remarks, a layer with no usable data yet, or `tiles skipped: tippecanoe not installed`.
@@ -389,7 +398,8 @@ parcels. The parts of each flag that are the same for every parcel, and the noti
 file, `dossiers/common.json`, which the browser fetches once. On 2026-10-04: 77,866 parcels in 929
 files, 108.3 MB on disk and 14.5 MB as served compressed; the largest file (`8715.json`, 810
 parcels) is 1.2 MB, 178 kB compressed; the median file holds 52 parcels (74 kB). `common.json` is
-5.2 kB. The manifest lists every file, which brings `manifest.json` to about 120 kB.
+5.2 kB. The manifest's `dossiers` block (section 3) names the prefixes that have a file; a parcel
+whose prefix is not there has no dossier and is looked up live.
 
 A shard, `dossiers/3710.json`:
 
