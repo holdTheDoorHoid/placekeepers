@@ -365,3 +365,18 @@ def test_the_streets_tiles_keep_every_point(streets_ctx, tmp_path, monkeypatch) 
     }
     # Even zoomed all the way out, every memorial is there.
     assert len(memorial_ids) == 6
+
+
+def test_point_layers_are_never_thinned() -> None:
+    """tippecanoe thins points below its base zoom unless told otherwise, which would make
+    memorials, crashes and gardens vanish when the map is zoomed out."""
+    from placekeepers.registry import load_registry
+
+    from .conftest import REPO_ROOT
+
+    registry = load_registry(REPO_ROOT / "registry", repo_root=REPO_ROOT)
+    files = {layer.file for layer in registry.layers.values() if layer.geometry == "point"}
+    assert "tiles/streets.pmtiles" in files
+    for file in files:
+        options = TILE_OPTIONS[file]
+        assert any(option.startswith("--base-zoom=") for option in options), file

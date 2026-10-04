@@ -69,6 +69,9 @@ TILE_OPTIONS: dict[str, list[str]] = {
     "tiles/care.pmtiles": [
         "--minimum-zoom=10",
         "--maximum-zoom=16",
+        # Every garden point at every zoom: without a base zoom tippecanoe keeps only a few of
+        # them below zoom 16 (7 of 239 at zoom 10 on 2026-10-04).
+        "--base-zoom=10",
         "--drop-densest-as-needed",
         "--extend-zooms-if-still-dropping",
         "--no-tiny-polygon-reduction-at-maximum-zoom",
