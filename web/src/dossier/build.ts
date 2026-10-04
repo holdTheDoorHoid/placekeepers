@@ -35,6 +35,7 @@ import {
 } from './flags.ts';
 import type { FailReason } from './http.ts';
 import { isPrivate, ownerTypeFromNames, sameOwners } from './owners.ts';
+import { plain } from './plain.ts';
 import { isSheriff } from './transfers.ts';
 import type {
   Assessment,
@@ -310,7 +311,7 @@ export function documentLabel(type: string): string {
 }
 
 function namesText(names: string[], more: number): string {
-  const list = names.join('; ');
+  const list = names.map((name) => plain(name)).join('; ');
   return more > 0 ? `${list} ${strings.dossier.history.more(more)}` : list;
 }
 
@@ -335,8 +336,8 @@ export function liRow(e: LiEvent): LiRow {
   return {
     date: e.date ? (formatDate(e.date, 'short') ?? e.date) : h.noDate,
     kind: h.kinds[e.kind] ?? sentenceCase(e.kind),
-    what: [title, detail].filter(Boolean).join(': '),
-    status: e.status ? sentenceCase(e.status) : null,
+    what: plain([title, detail].filter(Boolean).join(': ')),
+    status: e.status ? plain(sentenceCase(e.status)) : null,
     open: e.open,
   };
 }
@@ -362,7 +363,7 @@ export function cityOwnedText(owned: CityOwned | null): string | null {
   const o = strings.dossier.owner;
   const agency = owned.agency ? (o.agencies[owned.agency.toUpperCase()] ?? null) : null;
   const parts = [agency ? o.cityListNames(agency) : o.cityList];
-  if (owned.status) parts.push(o.cityListStatus(sentenceCase(owned.status)));
+  if (owned.status) parts.push(o.cityListStatus(plain(sentenceCase(owned.status))));
   if (owned.sideYardEligible) parts.push(o.sideYard);
   return parts.join(' ');
 }
@@ -391,7 +392,7 @@ export function buildDossier(input: DossierInput): DossierView {
   // Summary ---------------------------------------------------------------------------------------
   const kind: VacancyKind | null = parcel?.vacancy?.kind ?? KIND_BY_CODE[int(tile?.k) ?? -1] ?? null;
   const confidence: Confidence | null = parcel?.vacancy?.confidence ?? CONFIDENCE_BY_CODE[int(tile?.vc) ?? -1] ?? null;
-  const address = property?.address ?? parcel?.address ?? null;
+  const address = plain(property?.address ?? parcel?.address ?? null);
   const care: string[] = [];
   if (parcel?.landcare) care.push(parcel.landcare.year ? s.summary.landcareSince(parcel.landcare.year) : s.summary.landcare);
   else if (int(tile?.lc) === 1) care.push(s.summary.landcare);
@@ -457,7 +458,7 @@ export function buildDossier(input: DossierInput): DossierView {
     ownerType = OWNER_TYPE_BY_CODE[int(tile?.ot) ?? 0] ?? 'unknown';
     typeReason = null;
   }
-  const names = property ? property.names : (shardOwner?.names ?? []);
+  const names = (property ? property.names : (shardOwner?.names ?? [])).map((name) => plain(name));
   const privateOwner = isPrivate(ownerType, names.length > 0 || (!property && !shardOwner && ownerType !== 'unknown'));
   const snapshotProvenance: Provenance = {
     tone: 'snapshot',
@@ -481,7 +482,9 @@ export function buildDossier(input: DossierInput): DossierView {
       .map((r) => ({ label: r.label, url: r.links[0]!.url }));
   const complete = (flag: OwnerFlag): OwnerFlag => {
     const note = notes?.flags[flag.id] ?? null;
-    return completeFlag(flag, note, routeLinks(note?.routes ?? []));
+    const whole = completeFlag(flag, note, routeLinks(note?.routes ?? []));
+    // A flag's text can quote a City record, such as a violation title.
+    return { ...whole, text: plain(whole.text) };
   };
   const shardFlags = (shardOwner?.flags ?? []).map(complete);
   const flagViews: FlagView[] = [];
@@ -664,7 +667,7 @@ export function buildDossier(input: DossierInput): DossierView {
       reasonProperties,
       reasons,
       signals: signalCount !== null && signalCount > 0 ? s.summary.signals(signalCount) : null,
-      cityCalls: property?.category ? s.summary.cityCalls(sentenceCase(property.category)) : null,
+      cityCalls: property?.category ? s.summary.cityCalls(plain(sentenceCase(property.category))) : null,
       care,
       lens,
       why,
@@ -674,7 +677,7 @@ export function buildDossier(input: DossierInput): DossierView {
     actions: { listed, suggestions: suggestionViews, otherRoutes },
     owner: {
       names,
-      mailing: property ? property.mailing : (shardOwner?.mailing ?? null),
+      mailing: plain(property ? property.mailing : (shardOwner?.mailing ?? null)),
       typeLabel,
       typeReason,
       cityOwned: ownerChanged ? null : cityOwnedText(shardOwner?.cityOwned ?? null),
