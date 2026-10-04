@@ -1,0 +1,6 @@
+rule,near_certain_lots,pct_lots_called_built,near_certain_houses,pct_houses_called_built
+raw overlap: piece of 15 m2 or more and 10 percent cover,17463,15.9,28404,98.5
+raw overlap: footprints cover 20 percent of the parcel,17463,13.1,28404,95.3
+a footprint lies mostly inside the parcel,17463,4.9,28404,96.0
+the City links a footprint to the parcel,17463,4.6,28404,97.2
+"chosen: mostly inside, or linked and overlapping 10 m2 or more",17463,5.3,28404,97.6

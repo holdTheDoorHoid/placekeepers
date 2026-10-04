@@ -1,0 +1,116 @@
+round,opa_account,kind,stratum,label,note,address,crop_code,city_land,city_bldg,footprint_present
+1,112324100,building,both,building present,end of row house with intact roof,3404 JUDSON ST,c07,False,True,True
+1,122250400,building,both,building present,rowhouse at the street with an overgrown rear yard,5533 BOYER ST,c08,False,True,True
+1,192078700,building,both,building present,light roof rowhouse,2757 N PHILIP ST,c51,False,True,True
+1,273089100,building,both,building present,long dark roof rowhouse; neighbors' yards full of debris,1341 DIVINITY ST,c22,False,True,True
+1,331182900,building,both,building present,rowhouse with a black flat roof and a treed rear yard (zoom checked),939 E RUSSELL ST,c39,False,True,True
+1,381064100,building,both,building present,dark roof rowhouse next to a dirt lot,2934 N 25TH ST,c43,False,True,True
+1,391101800,building,both,building present,corner rowhouse with a gray flat roof attached to the row (zoom checked),101 WOLF ST,c42,False,True,True
+1,452124000,building,both,building present,rowhouse with a gray roof,1915 CLARENCE ST,c68,False,True,True
+1,453371100,building,both,building present,rowhouse with front and rear gardens,2244 PRATT ST,c48,False,True,True
+1,512084500,building,both,building present,dark roof rowhouse with a treed rear yard,1825 S 54TH ST,c54,False,True,True
+1,591090400,building,both,building present,rowhouse with front and rear yards,953 E PRICE ST,c05,False,True,True
+1,776008300,building,both,building present,large industrial building with a dark roof beside a junk yard,228 SHEDAKER ST,c77,False,True,True
+1,871506930,building,both,building present,corner building with a white roof; a tree on the side strip,400 S 62ND ST,c75,False,True,True
+1,041296200,building,city_only,building present,dark roof rowhouse,1418 N CONESTOGA ST,c29,False,True,True
+1,042209700,building,city_only,empty or green lot,"gap between two rowhouses in the shadow of the south building; ground vegetation, no roof (zoom checked)",227 N CECIL ST,c45,True,True,True
+1,131103100,building,city_only,building present,rowhouse with a light gray roof,1850 W HUNTING PARK AVE,c64,False,True,True
+1,182233700,building,city_only,building present,building at the street end with a tree in the rear yard,1528 N 4TH ST,c23,False,True,True
+1,232313900,building,city_only,building present,south half of a twin house with a wooded side yard (zoom checked),4936 MULBERRY ST,c33,False,True,True
+1,252102300,building,city_only,building present,white roof rowhouse; rear yard with debris,2011 E CAMBRIA ST,c66,False,True,True
+1,252441805,building,city_only,building present,small building at the street with a rear yard full of debris and a round tank,3153-55 AMBER ST,c06,False,True,True
+1,311255100,building,city_only,building present,light gray roof rowhouse,2644 TULIP ST,c55,False,True,True
+1,314013000,building,city_only,building present,rowhouse with a cluttered rear yard,2212 E CUMBERLAND ST,c58,False,True,True
+1,491386200,building,city_only,empty or green lot,grass and trees between two rowhouses,4920 N WARNOCK ST,c80,False,True,False
+1,492201900,building,city_only,building present,white roof rowhouse,5615 N WARNOCK ST,c27,False,True,True
+1,511108600,building,city_only,building present,dark roof rowhouse with a green rear yard,5326 HADFIELD ST,c78,False,True,True
+1,604117500,building,city_only,empty or green lot,dirt and weed strip in a gap of the row; a tree at the back (zoom checked),5652 OSAGE AVE,c65,True,True,False
+1,042240750,building,indep_only,building present,flat roof rowhouse with intact roof,431 N 59TH ST,c02,False,False,True
+1,072002700,building,indep_only,building present,white roof rowhouse beside a large empty paved lot,3324 N FRONT ST,c35,False,False,True
+1,262129700,building,indep_only,building present,corner building with a grass side yard; the roof lies well inside the parcel (zoom checked),3198 S UBER ST,c41,False,False,True
+1,364042600,building,indep_only,building present,dark roof rowhouse next to a green side lot,2319 GREENWICH ST,c46,False,False,True
+1,371120700,building,indep_only,building present,commercial building with dark and white roofs next to a demolition site,2337-39 N 9TH ST,c72,False,False,True
+1,381091600,building,indep_only,building present,dark roof corner building,3241 N STILLMAN ST,c47,False,False,True
+1,421167200,building,indep_only,building present,dark roof rowhouse near a corner,205 E SHELDON ST,c16,False,False,True
+1,442023510,building,indep_only,building present,rowhouse with a gray roof and a treed rear yard,5019 OGDEN ST,c61,False,False,True
+1,603136700,building,indep_only,building present,rowhouse with a ribbed gray roof next to a large green lot,8 S RUBY ST,c21,False,False,True
+1,774053000,building,indep_only,building present,large church building with a slate roof and a dome,4036-50 ASPEN ST,c28,False,False,True
+1,871569480,building,indep_only,unclear,roofless shell with rubble and partly standing walls; vacant for certain but neither a lot nor a usable building (zoom checked),868 N 49TH ST,c09,False,False,False
+1,881551183,building,indep_only,building present,building complex with dark flat roofs,1701-03 N 20TH ST,c31,False,False,True
+1,882390196,building,indep_only,building present,large commercial building with a flat white roof,2020-22 CHESTNUT ST,c44,False,False,True
+1,884002005,building,indep_only,building present,very large commercial building complex,1300 S FRONT ST,c74,False,False,True
+1,071474300,lot,both,empty or green lot,edge of a large open dirt lot used for informal parking; no structure,2727 BOUDINOT ST,c62,True,False,False
+1,111192100,lot,both,empty or green lot,wooded and overgrown lot beside a building; no roof,3121 N 16TH ST,c79,True,False,False
+1,141046110,lot,both,empty or green lot,grassy strip with a few objects between two buildings,1313 N 7TH ST,c32,True,False,False
+1,161283000,lot,both,empty or green lot,overgrown with trees and brush; no roof,1510 W BOSTON ST,c34,True,False,True
+1,162093001,lot,both,empty or green lot,weeds and dark debris; no regular roof; possibly rubble after a demolition,2520 N 19TH ST,c40,True,False,False
+1,171242500,lot,both,empty or green lot,large overgrown lot with brush,1631 CHURCH LN,c76,True,False,False
+1,172514415,lot,both,empty or green lot,grass in shadow between two rowhouses; no roof,5954 N BEECHWOOD ST,c17,True,False,False
+1,191212900,lot,both,unclear,parcel line straddles a bare dirt gap and a neighbor roof about half and half; parcel lines in this block sit about 10 degrees off the photo (zoom checked),2415 N 4TH ST,c11,True,False,False
+1,191232201,lot,both,empty or green lot,dirt lot inside a larger fenced yard; possible low wall or shed edge on the south side,2341 N LEITHGOW ST,c14,True,False,False
+1,191375001,lot,both,empty or green lot,car parked at the street end and an overgrown rear; no roof,2343 N 6TH ST,c50,True,False,False
+1,192038900,lot,both,empty or green lot,grassy strip at the edge of a large green lot beside a paved lot,2614 MASCHER ST,c04,True,False,False
+1,281186200,lot,both,empty or green lot,corner of a larger grassy lot,2537 W FLETCHER ST,c60,True,False,False
+1,431086700,lot,both,empty or green lot,inside a large grassy field next to a playground,730 W SCHILLER ST,c56,True,False,False
+1,071198510,lot,city_only,parking,car parked on a paved front pad; a garage or shed roof covers the back half,41 E SOMERSET ST,c18,True,False,True
+1,183190510,lot,city_only,building present,rowhouse with a gray roof,450 W HEWSON ST,c25,True,False,True
+1,191196100,lot,city_only,empty or green lot,open lot with blue tarps and debris on the ground; no roof (zoom checked),2355 N ORIANNA ST,c19,True,False,True
+1,192103201,lot,city_only,building present,rowhouse; roof looks patched or damaged,2551 N ORIANNA ST,c59,True,False,True
+1,192237700,lot,city_only,parking,cars parked at the street end; a low gray roof (probably a garage) covers the back half,2835 N REESE ST,c26,True,False,True
+1,243170300,lot,city_only,empty or green lot,narrow green side lot between buildings,3803 PENNSGROVE ST,c24,True,False,False
+1,282271320,lot,city_only,garden or park,basketball court and a wooded area; a playground,3369 RIDGE AVE,c10,True,False,False
+1,344188000,lot,city_only,building present,large wooded lot with a small house or garage near the back,6918 CITY AVE,c63,True,False,True
+1,372151100,lot,city_only,empty or green lot,open strip between rowhouses with bare trees and bare ground; no roof,3030 N 9TH ST,c01,True,False,True
+1,372153000,lot,city_only,empty or green lot,open dirt or paved strip with a small dark object (container or shed); no house,3104 N 9TH ST,c73,True,False,True
+1,552205400,lot,city_only,empty or green lot,tiny triangular sliver of grass beside a highway; not a usable lot,6019 HARBISON AVE,c30,True,False,False
+1,882000279,lot,city_only,building present,corner building with a light roof,200 E WISHART ST,c49,True,False,True
+1,885572840,lot,city_only,building present,commercial corner buildings with a paved yard,802 S 52ND ST,c53,True,False,True
+1,214265100,lot,indep_only_1,building present,detached house with a driveway and a wooded back yard,8722 SAGAMORE RD,c57,False,False,False
+1,292030100,lot,indep_only_1,building present,narrow rowhouse with a light roof,2844 W STILES ST,c69,False,False,True
+1,301286500,lot,indep_only_1,building present,building at the end of a parking lot,711 S MOLE ST,c37,False,False,True
+1,583196000,lot,indep_only_1,unclear,strip between two houses or one half of a twin; image lean makes the boundary uncertain (zoom checked),15072 CARTER RD,c15,False,False,False
+1,641198900,lot,indep_only_1,unclear,strip between two pairs of twins with small garden beds at the back; a neighbor roof edge overlaps; could be a side yard or half a twin (zoom checked),3119 WINDISH ST,c12,False,False,False
+1,881450750,lot,indep_only_1,building present,building with a clean white flat roof and roof deck; looks recently built,3933 POWELTON AVE,c03,False,False,True
+1,885915720,lot,indep_only_1,empty or green lot,large wooded strip between a highway and a creek; not a neighborhood lot,4301 N DELAWARE AVE,c67,False,False,False
+1,092000033,lot,indep_only_2plus,building present,townhouse in a new row,8215 SHAWNEE ST,c71,False,False,False
+1,191270801,lot,indep_only_2plus,empty or green lot,open lot with a parked car and a blue tarp; weeds at the back; no roof,2450 N LAWRENCE ST,c13,False,False,False
+1,251000028,lot,indep_only_2plus,unclear,L shaped parcel; half on a flat building roof and half on an open dirt strip (zoom checked),2507 E ELKHART ST,c20,False,False,False
+1,252176500,lot,indep_only_2plus,building present,new white roof rowhouses; recent construction,2133 E ORLEANS ST,c52,False,False,False
+1,364000016,lot,indep_only_2plus,parking,inside a large surface parking lot,1626 S DOVER ST,c38,False,False,False
+1,403141400,lot,indep_only_2plus,unclear,a large container or open dumpster fills the small parcel in a storage yard (zoom checked),6658R YOCUM ST,c70,False,False,False
+1,411396510,lot,indep_only_2plus,parking,lot packed with parked cars (auto lot or storage),6426 EDMUND ST,c36,False,False,False
+2,041323000,building,city_building_without_footprint,empty or green lot,mostly open ground with a tree; a neighbor's roof covers a fifth (zoom checked),1420 N VOGDES ST,v14,True,True,False
+2,122153700,building,city_building_without_footprint,empty or green lot,large weedy lot with old slabs and a parked truck,5604-06 UTAH ST,v16,True,True,False
+2,172354715,building,city_building_without_footprint,empty or green lot,strip between two buildings in shadow with bare trees; no roof,4949 N UBER ST,v11,True,True,False
+2,191248801,building,city_building_without_footprint,empty or green lot,grass lot with a parked car,2456 N LEITHGOW ST,v15,True,True,False
+2,231018000,building,city_building_without_footprint,empty or green lot,long weedy strip with debris between two buildings,2368 ORTHODOX ST,v09,True,True,False
+2,371342300,building,city_building_without_footprint,empty or green lot,narrow weedy strip between buildings,919 W DAKOTA ST,v25,True,True,False
+2,591081800,building,city_building_without_footprint,empty or green lot,grassy side yard beside a house with trees at the back,447 E PRICE ST,v13,True,True,False
+2,041125650,lot,city_lot_with_recent_newcon,empty or green lot,open lot with a parked car; a neighbor's roof covers a third (zoom checked),648 N YEWDALL ST,v35,True,False,False
+2,121092500,lot,city_lot_with_recent_newcon,empty or green lot,wooded and brushy lot,67 E ASHMEAD ST,v24,True,False,False
+2,152305910,lot,city_lot_with_recent_newcon,empty or green lot,narrow grassy strip between new buildings,1610 OGDEN ST,v34,True,False,False
+2,242073310,lot,city_lot_with_recent_newcon,empty or green lot,dirt strip with a parked car and trees at the back,3517 MOUNT VERNON ST,v30,True,False,False
+2,243047210,lot,city_lot_with_recent_newcon,empty or green lot,narrow gap between two buildings with brush at the back and grass at the street,3855 ASPEN ST,v10,True,False,False
+2,361186410,lot,city_lot_with_recent_newcon,empty or green lot,treed strip between buildings in a dense block,1317 S 20TH ST,v22,True,True,False
+2,364204300,lot,city_lot_with_recent_newcon,unclear,parcel line straddles a dark open strip and a neighbor's gray roof about half and half (zoom checked),1549 S BAMBREY ST,v05,True,False,False
+2,451000024,lot,city_lot_with_recent_newcon,empty or green lot,dirt and debris lot beside a highway,2835 KINGSTON ST,v12,True,True,False
+2,111160400,lot,lot_high,empty or green lot,mostly open ground with trees; a neighbor's roof covers a small part (zoom checked),2736 N 15TH ST,v03,True,False,False
+2,231043600,lot,lot_high,empty or green lot,narrow side strip with plants and small items; used as a side garden,4568 MILNOR ST,v20,True,False,False
+2,232105601,lot,lot_high,empty or green lot,grass lot with some brush at the back,2003 ORTHODOX ST,v27,True,False,False
+2,371212901,lot,lot_high,unclear,parcel line straddles an open strip and a neighbor's gray roof about half and half (zoom checked),2617 N SARTAIN ST,v01,True,False,False
+2,786483100,lot,lot_high,empty or green lot,open paved or dirt lot with a few objects and an umbrella; used as a yard or patio,2517 SALMON ST,v04,True,False,False
+2,043223450,lot,lot_medium_not_on_city_list,empty or green lot,treed lot at the street corner of a paved yard; no roof,5720 HADDINGTON LN,v02,False,False,False
+2,073096800,lot,lot_medium_not_on_city_list,building present,small dark roof building at the street with a patio and yard behind (zoom checked),3417 KIP ST,v28,False,False,False
+2,151033220,lot,lot_medium_not_on_city_list,empty or green lot,row of flowering trees on a strip beside a building; may be a pocket park,650 N 17TH ST,v23,False,False,False
+2,182235701,lot,lot_medium_not_on_city_list,empty or green lot,part of a larger green lot between buildings,1223 N LEITHGOW ST,v29,False,False,False
+2,331169100,lot,lot_medium_not_on_city_list,empty or green lot,side yard with grass and a round above ground pool,849 E ONTARIO ST,v21,False,False,False
+2,332426500,lot,lot_medium_not_on_city_list,empty or green lot,part of a large treed and grassy lot,4345 DUNGAN ST,v31,False,False,False
+2,341093000,lot,lot_medium_not_on_city_list,empty or green lot,mostly open ground with vegetation in shadow; a neighbor's roof covers a third (zoom checked),147 N EDGEWOOD ST,v08,False,False,False
+2,362045405,lot,lot_medium_not_on_city_list,unclear,black strip that may be a shaded gap or a black roof; half on a neighbor's dark roof (zoom checked),2721 OAKFORD ST,v18,False,False,False
+2,365131600,lot,lot_medium_not_on_city_list,unclear,fenced rear garden plus a black area that may be a black roof or deep shadow (zoom checked),1308 S 16TH ST,v26,False,False,False
+2,405100036,lot,lot_medium_not_on_city_list,empty or green lot,large grassy lot,8017 MADISON AVE,v07,False,False,False
+2,471059010,lot,lot_medium_not_on_city_list,empty or green lot,open gravel lot with a parked van and debris,1837-39 W CABOT ST,v17,False,False,False
+2,572022110,lot,lot_medium_not_on_city_list,empty or green lot,large wooded parcel beside a rail line; not a neighborhood lot,3052R HOLME AVE,v33,False,False,False
+2,581434700,lot,lot_medium_not_on_city_list,empty or green lot,grass and trees beside a house; a small shed at the back,9874 CLARK ST,v19,False,False,False
+2,621169410,lot,lot_medium_not_on_city_list,empty or green lot,overgrown with trees and brush,2758R LARDNER ST,v06,False,False,False
+2,885141520,lot,lot_medium_not_on_city_list,parking,small paved parking lot full of cars,1819-21 BRANDYWINE ST,v32,False,False,False
