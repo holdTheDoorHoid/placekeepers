@@ -37,6 +37,7 @@ from shapely.geometry.polygon import orient
 
 from placekeepers.context import Context
 from placekeepers.dates import months_before
+from placekeepers.derive.vacancy import SOURCES as VACANCY_SOURCES
 from placekeepers.geo import GeoJSONWriter, geometry_json
 
 log = logging.getLogger(__name__)
@@ -181,6 +182,8 @@ def build_parcels(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) 
     result.notes.append("The vacancy model has not run, so the map shows the City's lists alone")
     return result
 
+
+PARCEL_LAYER_SOURCES = ("opa_properties", "vacant_indicators_land", "vacant_indicators_bldg")
 
 SHOWN_KINDS = ("lot", "lot_conflict", "building")
 
@@ -365,9 +368,10 @@ BUILDERS: tuple[LayerBuilder, ...] = (
     LayerBuilder(
         "tiles/lots.pmtiles",
         "parcels",
-        ("opa_properties", "vacant_indicators_land", "vacant_indicators_bldg"),
+        PARCEL_LAYER_SOURCES,
         build_parcels,
-        extras=("phs_landcare",),
+        # Every input of the vacancy model, so the tile file credits each one.
+        extras=tuple(s for s in VACANCY_SOURCES if s not in PARCEL_LAYER_SOURCES),
     ),
     LayerBuilder("tiles/streets.pmtiles", "hin", ("high_injury_network",), build_hin),
     LayerBuilder("tiles/context.pmtiles", "h3", ("shootings",), build_h3),
