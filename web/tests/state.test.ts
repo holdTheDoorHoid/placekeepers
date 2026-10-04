@@ -35,7 +35,7 @@ function customized(): AppState {
 describe('defaults per view', () => {
   it('turns layers on according to each view in the registry', () => {
     expect(defaultLayers(reg, 'field')).toEqual(['vacant_parcels', 'hin_2025']);
-    expect(defaultLayers(reg, 'analysis')).toEqual(['vacant_parcels', 'hin_2025', 'shootings_hex']);
+    expect(defaultLayers(reg, 'analysis')).toEqual(['vacant_parcels', 'hin_2025', 'shootings_hex', 'landcare_lots', 'gardens']);
   });
 
   it('follows the registry for every layer, whatever it contains', () => {

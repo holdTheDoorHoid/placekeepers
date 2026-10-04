@@ -56,6 +56,60 @@
       "rows": 162,
       "newest_record": null,
       "message": null
+    },
+    "phs_landcare": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 12459,
+      "newest_record": null,
+      "message": null
+    },
+    "gardens_phs_ngt": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 216,
+      "newest_record": null,
+      "message": null
+    },
+    "gardens_registered": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 23,
+      "newest_record": null,
+      "message": null
+    },
+    "council_districts": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 10,
+      "newest_record": null,
+      "message": null
+    },
+    "community_organizations": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 240,
+      "newest_record": null,
+      "message": null
+    },
+    "neighborhoods": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 159,
+      "newest_record": null,
+      "message": null
     }
   },
   "layers": {
@@ -82,9 +136,61 @@
       "sources": [
         "shootings"
       ]
+    },
+    "landcare_lots": {
+      "file": "tiles/care.pmtiles",
+      "source_layer": "landcare",
+      "sources": [
+        "phs_landcare"
+      ]
+    },
+    "gardens": {
+      "file": "tiles/care.pmtiles",
+      "source_layer": "gardens",
+      "sources": [
+        "gardens_phs_ngt",
+        "gardens_registered"
+      ]
+    },
+    "council_districts": {
+      "file": "tiles/boundaries.pmtiles",
+      "source_layer": "council_districts",
+      "sources": [
+        "council_districts"
+      ]
+    },
+    "community_organizations": {
+      "file": "tiles/boundaries.pmtiles",
+      "source_layer": "rcos",
+      "sources": [
+        "community_organizations"
+      ]
+    },
+    "neighborhoods": {
+      "file": "tiles/boundaries.pmtiles",
+      "source_layer": "neighborhoods",
+      "sources": [
+        "neighborhoods"
+      ]
     }
   },
   "files": {
+    "tiles/boundaries.council_districts.geojson": {
+      "bytes": 482,
+      "sha256": "cef6c5a74a15b569d88b8f5f2643bd436849145a62971e62ade98d6978f8cade"
+    },
+    "tiles/boundaries.neighborhoods.geojson": {
+      "bytes": 510,
+      "sha256": "f65ad6641edc131feeab0a3579b823abeba3ebb5e401321c3fdc4355a4e93dc1"
+    },
+    "tiles/boundaries.rcos.geojson": {
+      "bytes": 572,
+      "sha256": "202f05b030adc4172c462fac8f82d6b07003212f7d18bb1899681d86edae8780"
+    },
+    "tiles/care.pmtiles": {
+      "bytes": 3261,
+      "sha256": "f5423a84183d7499e7a3d32fe1001f5ae367d3aeb3a9a3922f81ffad60f34fd7"
+    },
     "tiles/context.pmtiles": {
       "bytes": 18675,
       "sha256": "1d746dd64887fc690edb3dbd6c056b1630ce99ec1cec269ad1ea21b9890d3717"
@@ -100,6 +206,6 @@
   },
   "notes": [
     "This is synthetic sample data for testing the map.",
-    "Street tiles were skipped for this sample, so the High Injury Network is published as GeoJSON."
+    "Street and boundary tiles were skipped for this sample, so those layers are published as GeoJSON."
   ]
 }

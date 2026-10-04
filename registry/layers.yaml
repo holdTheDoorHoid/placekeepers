@@ -110,7 +110,11 @@
   style: boundary
   evidence: context
   default: {field: false, analysis: false}
-  settings: []
+  settings:
+    - id: names
+      label: Show names
+      type: toggle
+      default: true
   release: v0.1
 - id: community_organizations
   label: Registered Community Organizations
@@ -125,7 +129,11 @@
   style: boundary
   evidence: context
   default: {field: false, analysis: false}
-  settings: []
+  settings:
+    - id: names
+      label: Show names
+      type: toggle
+      default: false
   release: v0.1
 - id: neighborhoods
   label: Neighborhoods
@@ -139,5 +147,9 @@
   style: boundary
   evidence: context
   default: {field: false, analysis: false}
-  settings: []
+  settings:
+    - id: names
+      label: Show names
+      type: toggle
+      default: true
   release: v0.1

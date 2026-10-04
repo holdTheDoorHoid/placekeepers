@@ -5,9 +5,11 @@
 // generated from a fixed seed so the output never changes unless this script does. The
 // manifest's build_id starts with "fixture", which makes the site show a "sample data" note.
 //
-// Two layers are published as PMTiles (the path production uses) and one as GeoJSON, named
-// the way the pipeline names it when it cannot build tiles (<tile stem>.<layer>.geojson, see
-// docs/CONTRACTS.md section 3), so development exercises both loaders. The GeoJSON inputs for
+// Lots, context cells and care (LandCare lots and gardens, two layers in one file) are
+// published as PMTiles (the path production uses); the High Injury Network and the three
+// boundary layers as GeoJSON, named the way the pipeline names them when it cannot build tiles
+// (<tile stem>.<layer>.geojson, see docs/CONTRACTS.md section 3), so development exercises both
+// loaders. The GeoJSON inputs for
 // the tiles live in fixtures/sources/, outside the data root, because the manifest's `files`
 // must list exactly what the data root holds.
 //
@@ -125,6 +127,45 @@ const lines = [
   geometry: { type: 'LineString', coordinates: coords },
 }));
 
+// Care already happening: every parcel marked lc = 1 is also a LandCare lot, and a few gardens
+// sit near the parcels. Names are made up.
+const landcareLots = parcels
+  .filter((f) => f.properties.lc === 1)
+  .map((f) => ({
+    type: 'Feature',
+    properties: { id: f.properties.id, p: pick([[1, 3], [2, 2], [3, 1]]), y: between(2008, 2025) },
+    geometry: f.geometry,
+  }));
+const gardenPoints = [
+  ['Sample Community Garden', 3, 'https://example.org/sample-garden'],
+  ['Sample Farm', 1, null],
+  ['Sample Trust Garden', 2, null],
+  ['Sample Park Garden', 4, null],
+].map(([nm, src, w], i) => ({
+  type: 'Feature',
+  properties: w ? { nm, src, w } : { nm, src },
+  geometry: { type: 'Point', coordinates: [round6(LNG0 + dLng(120 + i * 190)), round6(LAT0 + dLat(between(60, 200)))] },
+}));
+
+// Boundaries: two council districts side by side, two overlapping community organizations and
+// two neighborhoods, all made up, around the parcels.
+const box = (west, south, east, north) => ({
+  type: 'Polygon',
+  coordinates: [[[west, south], [east, south], [east, north], [west, north], [west, south]].map(([x, y]) => [round6(LNG0 + dLng(x)), round6(LAT0 + dLat(y))])],
+});
+const councilDistricts = [
+  { type: 'Feature', properties: { d: 5, nm: 'District 5' }, geometry: box(-200, -150, 420, 420) },
+  { type: 'Feature', properties: { d: 7, nm: 'District 7' }, geometry: box(420, -150, 1050, 420) },
+];
+const communityOrganizations = [
+  { type: 'Feature', properties: { id: 9001, nm: 'Sample Civic Association', t: 'Other', w: 'https://example.org/civic' }, geometry: box(-100, -60, 600, 330) },
+  { type: 'Feature', properties: { id: 9002, nm: 'Sample Ward Committee', t: 'Ward' }, geometry: box(300, -40, 950, 360) },
+];
+const neighborhoods = [
+  { type: 'Feature', properties: { id: 'SAMPLE_WEST', nm: 'Sample West' }, geometry: box(-200, -150, 380, 420) },
+  { type: 'Feature', properties: { id: 'SAMPLE_EAST', nm: 'Sample East' }, geometry: box(380, -150, 1050, 420) },
+];
+
 const collection = (features) => JSON.stringify({ type: 'FeatureCollection', features }) + '\n';
 rmSync(ROOT, { recursive: true, force: true });
 mkdirSync(path('sources'), { recursive: true });
@@ -132,6 +173,11 @@ mkdirSync(path('data/tiles'), { recursive: true });
 writeFileSync(path('sources/parcels.geojson'), collection(parcels));
 writeFileSync(path('sources/h3.geojson'), collection(cells));
 writeFileSync(path('data/tiles/streets.hin.geojson'), collection(lines));
+writeFileSync(path('sources/landcare.geojson'), collection(landcareLots));
+writeFileSync(path('sources/gardens.geojson'), collection(gardenPoints));
+writeFileSync(path('data/tiles/boundaries.council_districts.geojson'), collection(councilDistricts));
+writeFileSync(path('data/tiles/boundaries.rcos.geojson'), collection(communityOrganizations));
+writeFileSync(path('data/tiles/boundaries.neighborhoods.geojson'), collection(neighborhoods));
 
 // Run from the fixtures folder with relative paths, because tippecanoe records its command
 // line in the file's metadata and local folder names do not belong in committed files.
@@ -143,6 +189,11 @@ const tippecanoe = (out, layer, input, name, extra) =>
   );
 tippecanoe('data/tiles/lots.pmtiles', 'parcels', 'sources/parcels.geojson', 'Sample parcels', ['-Z', '12', '-z', '16', '--no-tiny-polygon-reduction']);
 tippecanoe('data/tiles/context.pmtiles', 'h3', 'sources/h3.geojson', 'Sample area cells', ['-Z', '9', '-z', '14', '--detect-shared-borders']);
+execFileSync(
+  'tippecanoe',
+  ['-q', '-f', '-o', 'data/tiles/care.pmtiles', '-n', 'Sample care', '-N', 'Synthetic test data for Placekeepers', '--no-feature-limit', '--no-tile-size-limit', '-Z', '12', '-z', '16', '--no-tiny-polygon-reduction', '-L', 'landcare:sources/landcare.geojson', '-L', 'gardens:sources/gardens.geojson'],
+  { stdio: 'inherit', cwd: FIXTURES.pathname },
+);
 
 const fileInfo = (p) => {
   const bytes = readFileSync(new URL(p, ROOT));
@@ -194,6 +245,12 @@ const manifest = {
     },
     shootings: ok(17973, '2026-10-01'),
     high_injury_network: ok(162, null),
+    phs_landcare: ok(12459, null),
+    gardens_phs_ngt: ok(216, null),
+    gardens_registered: ok(23, null),
+    council_districts: ok(10, null),
+    community_organizations: ok(240, null),
+    neighborhoods: ok(159, null),
   },
   layers: {
     vacant_parcels: {
@@ -203,14 +260,30 @@ const manifest = {
     },
     hin_2025: { file: 'tiles/streets.pmtiles', source_layer: 'hin', sources: ['high_injury_network'] },
     shootings_hex: { file: 'tiles/context.pmtiles', source_layer: 'h3', sources: ['shootings'] },
+    landcare_lots: { file: 'tiles/care.pmtiles', source_layer: 'landcare', sources: ['phs_landcare'] },
+    gardens: { file: 'tiles/care.pmtiles', source_layer: 'gardens', sources: ['gardens_phs_ngt', 'gardens_registered'] },
+    council_districts: { file: 'tiles/boundaries.pmtiles', source_layer: 'council_districts', sources: ['council_districts'] },
+    community_organizations: { file: 'tiles/boundaries.pmtiles', source_layer: 'rcos', sources: ['community_organizations'] },
+    neighborhoods: { file: 'tiles/boundaries.pmtiles', source_layer: 'neighborhoods', sources: ['neighborhoods'] },
   },
   files: Object.fromEntries(
-    ['tiles/context.pmtiles', 'tiles/lots.pmtiles', 'tiles/streets.hin.geojson'].map((p) => [p, fileInfo(p)]),
+    [
+      'tiles/boundaries.council_districts.geojson',
+      'tiles/boundaries.neighborhoods.geojson',
+      'tiles/boundaries.rcos.geojson',
+      'tiles/care.pmtiles',
+      'tiles/context.pmtiles',
+      'tiles/lots.pmtiles',
+      'tiles/streets.hin.geojson',
+    ].map((p) => [p, fileInfo(p)]),
   ),
   notes: [
     'This is synthetic sample data for testing the map.',
-    'Street tiles were skipped for this sample, so the High Injury Network is published as GeoJSON.',
+    'Street and boundary tiles were skipped for this sample, so those layers are published as GeoJSON.',
   ],
 };
 writeFileSync(new URL('manifest.json', ROOT), JSON.stringify(manifest, null, 2) + '\n');
-console.log(`Wrote ${parcels.length} parcels, ${cells.length} cells and ${lines.length} lines to ${ROOT.pathname}`);
+console.log(
+  `Wrote ${parcels.length} parcels, ${cells.length} cells, ${lines.length} lines, ${landcareLots.length} LandCare lots, ` +
+    `${gardenPoints.length} gardens and ${councilDistricts.length + communityOrganizations.length + neighborhoods.length} boundaries to ${ROOT.pathname}`,
+);
