@@ -1,0 +1,15 @@
+kind,confidence_today,confidence_without_city,parcels
+building,high,high,2936
+building,high,low,2217
+building,high,medium,1400
+building,low,(dropped),157
+building,low,low,8496
+building,medium,(dropped),1917
+building,medium,low,355
+building,medium,medium,611
+lot,high,low,15
+lot,high,medium,24119
+lot,low,(dropped),77
+lot,low,low,7289
+lot,medium,low,1158
+lot,medium,medium,3911

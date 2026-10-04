@@ -1,0 +1,8 @@
+kind,stratum,parcels,empty or green lot,building present,parking,garden or park,unclear
+building,both,13,0,13,0,0,0
+building,city_only,13,3,10,0,0,0
+building,indep_only,14,0,13,0,0,1
+lot,both,13,13,0,0,0,0
+lot,city_only,13,5,5,2,1,0
+lot,indep_only_1,7,1,4,0,0,2
+lot,indep_only_2plus,7,1,2,2,0,2
