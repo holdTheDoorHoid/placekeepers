@@ -45,6 +45,10 @@ export const strings = {
     mapLabel: 'Map of Philadelphia. The list of places below the map shows the same places as text.',
     loadingMap: 'Loading the map',
     sampleData: 'Sample data for testing. These are not real places.',
+    earlyPreview:
+      'Early preview: the map shows real City data, but lot pages, scores and legal steps are still being built.',
+    followAlong: 'Follow along',
+    repoUrl: 'https://github.com/holdTheDoorHoid/placekeepers',
     skipToList: 'Skip to the list of places',
     close: 'Close',
     notAffiliated: 'Not affiliated with the City of Philadelphia. Not legal advice.',

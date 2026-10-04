@@ -227,33 +227,45 @@ today's buildings were already listed, so this is a real recalculation, not old 
 date. Placekeepers uses the indicator, but never alone: losing any one signal lowers confidence on the
 affected parcels instead of breaking the map.
 
-| Signal | Applies to | Confidence |
-|---|---|---|
-| City vacancy indicator, with its rank | Lots and buildings | Medium until our spot checks pass, then High |
-| OPA building code says vacant land | Lots | High |
-| No building footprint on the parcel, and the parcel is not a park, garden, parking lot, rail or utility | Lots | High |
-| L&I clean and seal, unsafe, or imminently dangerous, with no permit since | Buildings | High |
-| Demolition with no new construction permit since | Lots | Medium to High |
-| Vacancy related violations or complaints in the last two years | Both | Medium |
-| City vacant lot cleanup in the last two years | Lots | Medium |
-| Aerial vegetation trend across the City's orthophoto years (later) | Lots | Low |
+The vacancy method study (milestone M0.5, [VACANCY_METHOD.md](VACANCY_METHOD.md)) tested every
+signal against the City's lists, the churn since 2024, and 115 parcels in the City's 2023 aerial
+photos. Its rules are adopted (2026-10-04):
 
-Parks, registered and PHS or NGT gardens, and parcels with recent construction permits are excluded.
-LandCare lots stay in the vacant set, marked "already maintained".
+| Signal | How it counts |
+|---|---|
+| City vacancy indicator | A strong vote: a lot is high only when two independent records agree with it; alone it gives low (City only lots were empty in 5 of 13 checks) |
+| OPA category code says vacant land | One independent lot signal. Use the category code, not the description, which lags new construction by years |
+| No building footprint | One independent lot signal, ignored where OPA describes a lived in house |
+| Demolition with no new construction permit since | One independent lot signal; recent demolitions count even if OPA still says house. It is the only record that sees new lots promptly |
+| Clean and seal in the last five years; unsafe; imminently dangerous | Building signals (a footprint must stand) |
+| Vacancy specific violations and complaints | Signals. Weeds and rubbish violations are context only, because they mostly hit lived in homes |
+| Planning land use (2023) shows a use | A contradiction: lowers a lot one level (catches yards and parking) |
+| New construction permit | 2021 to early 2025 makes a lot low; since April 2025 caps it at medium |
+| City vacant lot cleanups | Context only (hexagon counts); not published per parcel since 2013 |
 
-**Output per parcel:** kind (lot or building), confidence (high, medium, low), the agreeing signals in
-plain words, and the signal count. The map shows confidence and reasons; filters can include low
-confidence parcels.
+The kind comes from the footprint, not from which City list a parcel is on: no footprint, or a
+demolition after the footprint was drawn, means lot. This moves 1,110 parcels from the City's building
+list to lots. LandCare lots stay in the vacant set, marked "already maintained".
 
-**Validation before the first release**, published on a "How we find vacant land" page:
-1. Agreement between the City indicator and our independent signals, by signal.
-2. Whether the churn since 2024 makes sense: newly listed lots should often have recent demolitions;
-   dropped parcels should often have new permits or sales.
-3. An aerial spot check of a stratified sample against the City's 2023 orthophotos (an agent can view
-   image crops), plus a smaller street level sample checked by people, recorded in
-   `data/curated/spot_checks.yaml`.
-4. If the City indicator disagrees badly with the spot checks, it drops to a medium signal and the
-   page says why.
+| Kind | High | Medium | Low |
+|---|---|---|---|
+| Lots (2026-10-04) | 24,166 | 6,147 | 10,465 |
+| Buildings (2026-10-04) | 6,553 | 2,876 | 8,503 |
+
+Parks, gardens, parking, rail, utilities, cemeteries, water and streets never show as vacant (1,727
+parcels). High and medium show by default; low sits behind the confidence filter. Where the City and
+two of our records agree, 24 of 26 lots checked in the aerial photos were empty and 2 were unclear.
+
+**Output per parcel:** kind (lot or building), confidence, the agreeing signals in plain words, and the
+signal count, shown on the map and in the dossier.
+
+**If the City indicator breaks again:** keep its last copy for twelve months, labeled with its date,
+then drop it. Without it, high lots become medium (about 29,000 lots stay on the map at medium) and
+2,936 buildings stay high. The health check also flags the City list as stale if its date stops
+advancing for six months while demolitions keep being recorded.
+
+**Still open:** buildings cannot be judged from the air. A person should check the 41 parcels in
+`research/vacancy/human_check.csv` at street level; results go into `data/curated/spot_checks.yaml`.
 
 ## 7. Data sources
 
@@ -298,8 +310,8 @@ Every source has an adapter, a registry entry, a license note, an expected caden
   record date against the expected cadence.
 - **Snapshots**: every validated source is saved as GeoParquet with metadata (fetched at, rows, hash,
   newest record). If validation fails, the last good snapshot is used and the source is marked stale.
-  Weekly snapshots are attached to a GitHub release so history survives even if a source vanishes,
-  which is exactly what the original project lacked.
+  The last good snapshot of every source is kept on a rolling GitHub release (see 8.4), so the map
+  survives even if a source vanishes, which is exactly what the original project lacked.
 - **Derive**: vacancy model, owner flags, legal routes, lens factors, suggestions, hexagon aggregates.
 - **Publish**: PMTiles per layer group, ranked tables for the analysis view, dossier shards for
   candidate parcels, and `manifest.json` (build id, per source status, per layer file and size).
@@ -322,10 +334,38 @@ Every source has an adapter, a registry entry, a license note, an expected caden
 
 ### 8.4 Automation and health
 
-- `ci.yml`: on every pull request, pipeline tests on small fixtures, web tests, lint, and a build.
-- `refresh.yml`: weekly (and on demand): fetch, validate, derive, publish, attach snapshots to the
-  rolling release, deploy Pages. When a source fails two runs in a row the workflow opens or updates a
-  GitHub issue labeled `data-source`, so the owner is notified instead of the site silently rotting.
+Built in M0.4 (2026-10-04). Changes from the original plan are marked.
+
+- `ci.yml`: on every pull request and every push to `main`: pipeline lint, registry check and tests
+  (with tippecanoe), the tests of the workflow helper `.github/scripts/refresh.py`, and the web app's
+  tests, type check and build, all on small fixtures.
+- `refresh.yml`: every Monday at 10:00 UTC, and on demand from the Actions tab. Five jobs:
+  - `pipeline` restores the last good snapshot of every source from the rolling `data-snapshots`
+    release, runs `pk all` with tippecanoe, and packs the new good snapshots. It reuses the base map
+    extract (a release asset named after its Protomaps build date) for up to 30 days, then makes a
+    new one; if that fails, the saved one is used.
+  - `save` puts the new snapshots, the new manifest and any new base map on the release, and removes
+    what they replace for good (never emptying it).
+  - `site` builds the web app and copies the published data and the base map into `dist/data/`,
+    after checking the GitHub Pages limits (no file over 100 MB, site under 1 GB).
+  - `deploy` publishes the site with GitHub Pages.
+  - `issues` opens one issue per source labeled `data-source` when the source is stale or failing in
+    this run and was also stale or failing in the previous run. The issue says, in plain words, which
+    source, since when, the error, and what the map does meanwhile. Each week it stays broken the
+    issue gets a comment; when the source is ok again the issue closes itself.
+- To test the alarm, a manual run can make one source's download fail on purpose (the
+  `break_source` input); the source keeps its last good copy, exactly as in a real outage.
+- Least privilege: the jobs that install or run packages (`pipeline`, `site`) only ever hold a read
+  token. The jobs that can write (`save` for release assets, `issues` for issues) install nothing and
+  run only `gh` and the repository's standard library helper, so a compromised package can never
+  reach a token that writes. `deploy` alone can publish Pages.
+- If the `pipeline` or `site` job fails, nothing is deployed and the site keeps its previous version.
+  If only `save` fails, the site still updates and next week starts from the older saved copies.
+  GitHub tells the account that last changed the workflow's schedule about failed scheduled runs (by
+  email, depending on that account's notification settings).
+- Changed from the plan: the rolling release keeps only the latest good copy of each source (about
+  100 MB) and the base map, not every week's copy, so it stays small. Week by week history can be
+  added later as dated releases if it proves useful.
 - The public **Data status** page shows each source's last success, staleness, and row counts.
 
 ### 8.5 Hosting and cost

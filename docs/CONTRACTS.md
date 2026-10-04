@@ -162,6 +162,11 @@ data/
     philly.pmtiles        Protomaps basemap extract
 ```
 
+`basemap/` (the extract, its fonts and its icons) is not written by the pipeline: the web side makes it
+with `web/scripts/make-basemap.sh`, and the weekly refresh adds it beside the pipeline's output when it
+assembles the site. It is therefore not listed in the manifest's `files` (clarified 2026-10-04 by
+M0.4).
+
 ## 3. `manifest.json`
 
 ```json

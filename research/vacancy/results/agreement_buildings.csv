@@ -1,0 +1,11 @@
+Signal (parcels where a building stands),Role,Parcels with signal,On City building list,Share on City building list,On City land list,Share of the City's 8311 standing buildings with this signal
+"Clean and seal in the last five years, no permit since",core,2733,1515,55%,17,18%
+"On the City's open unsafe list, no permit since",core,2689,2465,92%,9,30%
+"On the City's open imminently dangerous list, no permit since",core,83,74,89%,1,1%
+"Vacant building violation or vacant property complaint, last two years",core,9725,4092,42%,80,49%
+"OPA exterior condition: vacant, sealed, or open to the weather",core,5572,1287,23%,61,15%
+"Clean and seal before October 2021, no permit since",context,18515,813,4%,801,10%
+"Clean and seal, then a permit",context,10031,362,4%,207,4%
+"Vacant structure or land violation (PM15-301), last two years",context,4570,2583,57%,316,31%
+"Unsafe, imminently dangerous or unfit violation, last two years",context,3403,1707,50%,69,21%
+"Weeds, rubbish, sanitation or dumping violation, or high weeds complaint, last two years",context,32837,3416,10%,422,41%

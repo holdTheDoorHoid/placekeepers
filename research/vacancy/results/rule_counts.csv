@@ -1,0 +1,16 @@
+scenario,kind,confidence,parcels
+today,building,high,6553
+today,building,low,8503
+today,building,medium,2876
+today,excluded,(not shown),1727
+today,lot,high,24166
+today,lot,low,6682
+today,lot,medium,6147
+today,lot_conflict,low,3783
+no_city,building,high,2936
+no_city,building,low,10855
+no_city,building,medium,2006
+no_city,excluded,(not shown),1688
+no_city,lot,low,7889
+no_city,lot,medium,29049
+no_city,lot_conflict,low,3826
