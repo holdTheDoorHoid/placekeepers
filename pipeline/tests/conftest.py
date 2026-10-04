@@ -65,6 +65,15 @@ class FakeCarto:
     fail_status: int | None = None
     #: extra rows the count query reports for account chunks (to simulate a short download)
     count_offset: int = 0
+    #: row filters for SQL fragments the fake understands (keyed by the fragment)
+    where_filters: dict[str, Callable[[dict[str, Any]], bool]] = field(
+        default_factory=lambda: {
+            "violationcodetitle ILIKE '%VACAN%'": lambda row: (
+                row.get("violationcode") == "9-3904"
+                or "VACAN" in str(row.get("violationcodetitle") or "").upper()
+            ),
+        }
+    )
 
     @staticmethod
     def query_of(request: httpx.Request) -> str:
@@ -86,6 +95,12 @@ class FakeCarto:
         if join:
             accounts = set(re.findall(r"'(\d+)'", join.group(1)))
             rows = [row for row in rows if row.get(join.group(2)) in accounts]
+        for fragment, keep in self.where_filters.items():
+            if fragment in query:
+                rows = [row for row in rows if keep(row)]
+        # Date floors such as violationdate >= '2016-01-01' (ISO dates compare as text).
+        for column, floor in re.findall(r"(\w+) >= '(\d{4}-\d{2}-\d{2})'", query):
+            rows = [row for row in rows if column not in row or str(row[column] or "") >= floor]
         if query.startswith("SELECT count(*)"):
             extra = self.count_offset if join else 0
             return httpx.Response(200, json={"rows": [{"n": len(rows) + extra}]})

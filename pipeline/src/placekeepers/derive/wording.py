@@ -78,7 +78,7 @@ ABSENTEE_NEXT_STEP = (
 
 
 def absentee_text(scope: str, city: str | None, state: str | None) -> str:
-    """ "The owner gets mail somewhere else" with the place, as ETHICS.md asks."""
+    """The ETHICS.md form, "The owner gets mail somewhere else", with the place."""
     if scope == "out_of_state":
         where = ", ".join(part for part in (city and place_name(city), state) if part)
         return (
@@ -138,8 +138,8 @@ SHERIFF_NEXT_STEP = (
 
 
 def sheriff_text(sales: list[tuple[date, float | None]]) -> str:
-    """"Sold at sheriff sale on May 14, 2019, for $12,300." Several sales are separated by
-    semicolons, since each date already holds a comma."""
+    """Such as "Sold at sheriff sale on May 14, 2019, for $12,300." Several sales are separated
+    by semicolons, since each date already holds a comma."""
 
     def one(day: date, price: float | None) -> str:
         return long_date(day) + (f", for {money(price)}" if price else "")

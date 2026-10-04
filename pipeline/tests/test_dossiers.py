@@ -17,6 +17,7 @@ The made up parcels, all near Fairhill (every name and record is invented):
     375000001  CEDAR HOLDINGS LLC, a lot with a community garden on it, in Community LandCare
     376000001  an account only an old L&I record knows (no dossier)
     885000001  OWENS TERRENCE, a vacant lot with a different account prefix
+    372000006  KENSINGTON LOTS LLC again, a lot only the vacancy model finds (the model test)
 """
 
 from __future__ import annotations
@@ -28,6 +29,7 @@ from pathlib import Path
 from typing import Any
 
 import pyarrow as pa
+import pyarrow.parquet as pq
 import pytest
 import shapely
 from shapely.geometry import Point, box
@@ -57,6 +59,7 @@ PLACES = {
     "374000002": (3, 1),
     "375000001": (4, 1),
     "885000001": (5, 1),
+    "372000006": (6, 0),
 }
 
 
@@ -103,9 +106,9 @@ OPA_ROWS = [
             "19102",
             "2025-01-15",
             61000,
-            "6",
+            "6" if i < 6 else "1",  # the sixth only the vacancy model finds
         )
-        for i in range(1, 6)
+        for i in range(1, 7)
     ],
     (
         "373000001",
@@ -530,11 +533,8 @@ def test_a_private_vacant_lot(built) -> None:
     _, out = built
     record = parcel(out, "371000001")
     assert record["address"] == "2931 N LAWRENCE ST"
-    assert record["vacancy"] == {
-        "kind": "lot",
-        "confidence": "medium",
-        "reasons": ["City lists it as vacant land"],
-    }
+    # No vacancy model has run here: like the map, the City's land list alone (reason bit 0).
+    assert record["vacancy"] == {"kind": "lot", "confidence": "medium", "rs": 1, "n": 0}
     owner = record["owner"]
     assert owner["names"] == ["MORALES ROSA"]
     assert owner["mailing"] == "41 ORCHARD RD, CHERRY HILL NJ 08002"
@@ -779,3 +779,97 @@ def test_without_opa_there_are_no_dossiers(context_factory, tmp_path: Path) -> N
     result = publish(ctx, tmp_path / "data")
     assert "lot dossiers have no usable data yet (no OPA properties)" in result.manifest["notes"]
     assert not any(name.startswith("dossiers/") for name in result.manifest["files"])
+
+
+def write_model(ctx, rows: list[tuple]) -> None:
+    """A vacancy model output (derived/vacancy.parquet) with the columns the lots layer and the
+    dossiers read: opa, kind, k, confidence, vc, lc, rs, n, dy, sy, ny and the parcel shape."""
+    names = ["opa", "kind", "k", "confidence", "vc", "lc", "rs", "n", "dy", "sy", "ny"]
+    columns: dict[str, list[Any]] = {name: [] for name in names}
+    for row in rows:
+        for name, value in zip(names, row, strict=True):
+            columns[name].append(value)
+    table = pa.table(
+        {
+            **{name: columns[name] for name in ("opa", "kind", "confidence")},
+            **{
+                name: pa.array(columns[name], pa.int32())
+                for name in ("k", "vc", "lc", "rs", "n", "dy", "sy", "ny")
+            },
+            "geometry": [wkb(parcel_box(row[0])) for row in rows],
+        }
+    )
+    path = ctx.cache.root / "derived" / "vacancy.parquet"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    pq.write_table(table, path)
+
+
+def test_the_dossier_and_the_map_follow_the_vacancy_model(context_factory, tmp_path) -> None:
+    ctx = context_factory(now=NOW)
+    install_everything(ctx)
+    write_model(
+        ctx,
+        [
+            # opa, kind, k, confidence, vc, lc, rs, n, dy, sy, ny
+            ("371000001", "lot", 1, "high", 3, 0, 1 | 4 | 8, 2, None, None, None),
+            *[
+                (f"37200000{i}", "lot", 1, "high", 3, 0, 1 | 8, 1, None, None, None)
+                for i in range(1, 5)
+            ],
+            ("372000005", "lot", 1, "low", 1, 0, 16, 1, 2017, None, None),
+            ("372000006", "lot", 1, "medium", 2, 0, 4 | 8, 2, None, None, None),
+            ("373000001", "lot", 1, "high", 3, 1, 1 | 64, 2, None, None, None),
+            ("374000002", "building", 2, "low", 1, 0, 128 | 2048, 1, None, 2019, None),
+            ("885000001", "excluded", None, None, None, 0, 0, 0, None, None, None),
+        ],
+    )
+    out = tmp_path / "data"
+    publish(ctx, out)
+
+    assert parcel(out, "371000001")["vacancy"] == {
+        "kind": "lot",
+        "confidence": "high",
+        "rs": 13,
+        "n": 2,
+    }
+    sealed = parcel(out, "374000002")
+    assert sealed["vacancy"] == {
+        "kind": "building",
+        "confidence": "low",
+        "rs": 2176,
+        "n": 1,
+        "sy": 2019,
+    }
+    assert sealed["suggestions"] == ["seal_abandoned_building"]
+    # Low confidence: it may be someone's home, so no conservatorship.
+    assert sealed["routes"] == ["ask_the_owner"]
+    left_out = parcel(out, "885000001")
+    assert left_out["vacancy"] is None and left_out["suggestions"] == []
+    assert left_out["routes"] == ["ask_the_owner"]
+    # The vacancy model's own parcels get dossiers too, even outside the candidates.
+    assert parcel(out, "372000006")["vacancy"]["confidence"] == "medium"
+    # Five parcels called vacant with high or medium confidence; the low one does not count.
+    flags = {flag["id"]: flag for flag in parcel(out, "372000001")["owner"]["flags"]}
+    assert flags["many_parcels"]["text"] == "This owner holds 5 vacant parcels in the city."
+    table = json.loads((out / "tables" / "owners.json").read_text(encoding="utf-8"))
+    assert table["owners"][flags["many_parcels"]["data"]["list"]]["parcels"] == [
+        "372000001",
+        "372000002",
+        "372000003",
+        "372000004",
+        "372000006",
+    ]
+    # The map's lots carry the owner type from the model's path as well.
+    layer = json.loads((out / "tiles" / "lots.parcels.geojson").read_text(encoding="utf-8"))
+    ot = {f["properties"]["id"]: f["properties"]["ot"] for f in layer["features"]}
+    assert ot == {
+        "371000001": 1,
+        "372000001": 2,
+        "372000002": 2,
+        "372000003": 2,
+        "372000004": 2,
+        "372000005": 2,
+        "372000006": 2,
+        "373000001": 4,
+        "374000002": 1,
+    }

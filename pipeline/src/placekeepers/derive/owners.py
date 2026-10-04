@@ -398,7 +398,7 @@ def parse_address(text: str | None) -> Address | None:
 
 
 def compare_addresses(parcel: str | None, mailing: str | None) -> str:
-    """ "same" (mail goes to the parcel), "same_block" (the same street and hundred, such as the
+    """One of "same" (mail goes to the parcel), "same_block" (the same street and hundred, as the
     house next door), "different", "po_box", or "unknown" when either cannot be read."""
     if mailing and PO_BOX.search(mailing.upper()):
         return "po_box"

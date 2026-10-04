@@ -3,10 +3,10 @@
 For every candidate parcel (placekeepers.candidates: on either City vacancy list, owned by the
 City, the Land Bank, the Redevelopment Authority or PHDC, in PHS LandCare, vacant land or a vacant
 exterior to the assessor, cleaned and sealed or demolished since 2016, or on the unsafe or
-imminently dangerous lists), the pipeline writes what the lot dossier shows: the address, the
-vacancy call, the owner (names and mailing address as the City publishes them, the owner type and
-the flags of docs/ETHICS.md), every deed newest first, the assessments by year, an L&I summary,
-the legal routes, the suggestions, and a few nearby counts.
+imminently dangerous lists) and every parcel the map shows, the pipeline writes what the lot
+dossier shows: the address, the vacancy call, the owner (names and mailing address as the City
+publishes them, the owner type and the flags of docs/ETHICS.md), every deed newest first, the
+assessments by year, an L&I summary, the legal routes, the suggestions, and a few nearby counts.
 
 Written under the data root:
 
@@ -14,13 +14,13 @@ Written under the data root:
     tables/owners.json    every private owner holding many vacant parcels, with the parcels, so a
                           flag can link to "this owner's list"
 
+The vacancy call is the vacancy model's (placekeepers.derive.vacancy), read from the same file
+the lots layer reads, so the dossier and the map always agree; without the model, both show the
+City's lists alone.
+
 Nothing that docs/ETHICS.md rules out is ever written: no acquisition price estimate, no score or
 order of how easy a parcel would be to take, no letters (tests/test_dossiers.py checks every key).
 Case numbers, contractor and applicant names never reach the dossiers either.
-
-Until the vacancy model (milestone M1.2) is merged, the vacancy call is the one the map shows: a
-parcel on the City's land list is a lot, on its building list a building (both lists: the City's
-own description decides), with medium confidence. `vacancy_calls` is the one place to replace.
 """
 
 from __future__ import annotations
@@ -37,6 +37,7 @@ from typing import Any
 
 import h3
 import numpy as np
+import pyarrow as pa
 import pyarrow.dataset as ds
 import pyarrow.parquet as pq
 import shapely
@@ -59,10 +60,12 @@ from placekeepers.derive.flags import (
     shows_deed_fraud_notice,
 )
 from placekeepers.derive.routes import routes_for, suggestions_for
+from placekeepers.derive.vacancy import output_path as vacancy_output
 from placekeepers.health import SourceStatus
 from placekeepers.publish.layers import (
     H3_RESOLUTION,
     PARCEL_SOURCES,
+    SHOWN_KINDS,
     aggregate_shootings,
     opa_account,
     parcel_kind,
@@ -149,19 +152,71 @@ def _rows(con: Any, sql: str) -> list[tuple]:
     return con.execute(sql).fetchall()
 
 
-def _source(path: Path) -> str:
-    return f"read_parquet({quote_literal(str(path))})"
+def _source(path: Path, wanted: Iterable[str]) -> str:
+    """SQL for a snapshot with exactly the `wanted` columns; a column the snapshot lacks reads as
+    NULL, so a source that drops an optional column cannot break the dossiers."""
+    names = set(pq.read_schema(path).names)
+    select = ", ".join(name if name in names else f"NULL AS {name}" for name in wanted)
+    return f"(SELECT {select} FROM read_parquet({quote_literal(str(path))}))"
 
 
-def vacancy_calls(paths: dict[str, Path]) -> dict[str, dict[str, Any]]:
-    """The vacancy call for each parcel the map shows today: kind, confidence and reasons. The
-    City's lists are the only signal until the vacancy model is merged (milestone M1.2)."""
+def read_columns(path: Path, wanted: list[str], where: tuple[str, Any] | None = None) -> pa.Table:
+    """A snapshot's `wanted` columns, a missing one as nulls. `where` is a column and a pyarrow
+    filter on it; when the snapshot lacks that column, no rows are kept."""
+    names = set(pq.read_schema(path).names)
+    if where is not None and where[0] not in names:
+        return pa.table({name: pa.nulls(0) for name in wanted})
+    present = [name for name in wanted if name in names]
+    table = ds.dataset(path).to_table(
+        columns=present, filter=where[1] if where is not None else None
+    )
+    for name in wanted:
+        if name not in names:
+            table = table.append_column(name, pa.nulls(table.num_rows))
+    return table.select(wanted)
+
+
+#: confidence levels at which we call a parcel vacant for the owner's count of vacant parcels and
+#: for conservatorship; a low confidence parcel may be someone's home
+CONFIDENT = frozenset({"high", "medium"})
+CITY_LIST_BITS = {1: 1, 2: 2}  # reason bits 0 (city_land) and 1 (city_building)
+
+
+def vacancy_calls(ctx: Context, paths: dict[str, Path]) -> dict[str, dict[str, Any]]:
+    """The vacancy block of every parcel the map shows, from the vacancy model's output (the file
+    the lots layer reads), so the dossier and the map always agree: kind, confidence, the reason
+    bits `rs`, the agreeing signals `n`, and the years `dy`, `sy` and `ny` when present. A parcel
+    the model leaves out (parks, gardens, parking and the like) has none.
+
+    When the model has not run, the map shows the City's lists alone, and so do the dossiers:
+    medium confidence, the list bits in `rs`, `n` 0."""
+    model = vacancy_output(ctx)
+    calls: dict[str, dict[str, Any]] = {}
+    if model.is_file():
+        names = ["opa", "kind", "k", "confidence", "rs", "n", "dy", "sy", "ny"]
+        table = read_columns(model, names)
+        for opa, kind, k, confidence, rs, n, dy, sy, ny in zip(
+            *(table.column(name).to_pylist() for name in names), strict=True
+        ):
+            if kind not in SHOWN_KINDS or confidence is None or opa is None:
+                continue
+            block: dict[str, Any] = {
+                "kind": "lot" if k == 1 else "building",
+                "confidence": confidence,
+                "rs": int(rs or 0),
+                "n": int(n or 0),
+            }
+            for key, year in (("dy", dy), ("sy", sy), ("ny", ny)):
+                if year is not None:
+                    block[key] = int(year)
+            calls[opa] = block
+        return calls
     kinds: dict[str, set[int]] = defaultdict(set)
     descriptions: dict[str, str] = {}
     for source_id, kind in PARCEL_SOURCES:
         if source_id not in paths:
             continue
-        table = pq.read_table(paths[source_id], columns=["opa_id", "bldg_desc"])
+        table = read_columns(paths[source_id], ["opa_id", "bldg_desc"])
         for opa_id, description in zip(
             table.column("opa_id").to_pylist(), table.column("bldg_desc").to_pylist(), strict=True
         ):
@@ -171,15 +226,10 @@ def vacancy_calls(paths: dict[str, Path]) -> dict[str, dict[str, Any]]:
             kinds[account].add(kind)
             if description:
                 descriptions.setdefault(account, description)
-    calls = {}
     for account, found in kinds.items():
-        reasons = []
-        if 1 in found:
-            reasons.append("City lists it as vacant land")
-        if 2 in found:
-            reasons.append("City lists it as a vacant building")
         kind = "lot" if parcel_kind(found, descriptions.get(account)) == 1 else "building"
-        calls[account] = {"kind": kind, "confidence": "medium", "reasons": reasons}
+        rs = sum(CITY_LIST_BITS[k] for k in found)
+        calls[account] = {"kind": kind, "confidence": "medium", "rs": rs, "n": 0}
     return calls
 
 
@@ -197,13 +247,29 @@ class Opa:
     lng: float | None
 
 
+OPA_COLUMNS = (
+    "parcel_number",
+    "location",
+    "owner_1",
+    "owner_2",
+    "mailing_care_of",
+    "mailing_address_1",
+    "mailing_address_2",
+    "mailing_street",
+    "mailing_city_state",
+    "mailing_zip",
+    "sale_date",
+    "sale_price",
+    "lat",
+    "lng",
+)
+
+
 def read_opa(con: Any, path: Path) -> dict[str, Opa]:
     rows = _rows(
         con,
-        f"""SELECT parcel_number, location, owner_1, owner_2, mailing_care_of, mailing_address_1,
-                   mailing_address_2, mailing_street, mailing_city_state, mailing_zip, sale_date,
-                   sale_price, lat, lng
-            FROM {_source(path)} WHERE parcel_number IN (SELECT a FROM acc)""",
+        f"""SELECT {", ".join(OPA_COLUMNS)}
+            FROM {_source(path, OPA_COLUMNS)} WHERE parcel_number IN (SELECT a FROM acc)""",
     )
     out = {}
     for (
@@ -244,12 +310,25 @@ def read_city_owned(con: Any, path: Path) -> dict[str, dict[str, Any]]:
         con,
         f"""SELECT {account} AS a, min(agency), min(status_1),
                    bool_or(upper(trim(sideyardeligible)) = 'YES'), min(location)
-            FROM {_source(path)} WHERE {account} IS NOT NULL GROUP BY 1""",
+            FROM {_source(path, ["opabrt", "agency", "status_1", "sideyardeligible", "location"])}
+            WHERE {account} IS NOT NULL GROUP BY 1""",
     )
     return {
         a: {"agency": agency, "status": status, "side_yard": bool(side), "location": location}
         for a, agency, status, side, location in rows
     }
+
+
+TRANSFER_COLUMNS = (
+    "opa_account_num",
+    "document_id",
+    "document_type",
+    "recording_date",
+    "grantors",
+    "grantees",
+    "total_consideration",
+    "property_count",
+)
 
 
 def read_transfers(con: Any, path: Path) -> dict[str, list[tr.Transfer]]:
@@ -258,7 +337,7 @@ def read_transfers(con: Any, path: Path) -> dict[str, list[tr.Transfer]]:
         con,
         f"""SELECT {account} AS a, document_id, document_type, recording_date, grantors, grantees,
                    total_consideration, property_count
-            FROM {_source(path)}
+            FROM {_source(path, TRANSFER_COLUMNS)}
             WHERE recording_date IS NOT NULL
               AND (document_type LIKE '%DEED%' OR document_type = 'CERTIFICATE OF STOCK TRANSFER')
               AND {account} IN (SELECT a FROM acc)""",
@@ -285,7 +364,7 @@ def read_assessments(con: Any, path: Path) -> dict[str, list[list[int | None]]]:
     rows = _rows(
         con,
         f"""SELECT {account} AS a, year, max(market_value)
-            FROM {_source(path)}
+            FROM {_source(path, ["parcel_number", "year", "market_value"])}
             WHERE year IS NOT NULL AND {account} IN (SELECT a FROM acc)
             GROUP BY 1, 2 ORDER BY 1, 2 DESC""",
     )
@@ -293,6 +372,15 @@ def read_assessments(con: Any, path: Path) -> dict[str, list[list[int | None]]]:
     for a, year, value in rows:
         out[a].append([int(year), None if value is None else int(value)])
     return out
+
+
+VIOLATION_COLUMNS = (
+    "opa_account_num",
+    "violationnumber",
+    "violationstatus",
+    "violationdate",
+    "violationcodetitle",
+)
 
 
 def read_violations(con: Any, path: Path) -> dict[str, LiSummary]:
@@ -306,7 +394,8 @@ def read_violations(con: Any, path: Path) -> dict[str, LiSummary]:
                    max(violationdate) FILTER (WHERE violationstatus = 'OPEN'),
                    arg_max(violationcodetitle, violationdate)
                        FILTER (WHERE violationstatus = 'OPEN')
-            FROM {_source(path)} WHERE {account} IN (SELECT a FROM acc) GROUP BY 1""",
+            FROM {_source(path, VIOLATION_COLUMNS)}
+            WHERE {account} IN (SELECT a FROM acc) GROUP BY 1""",
     )
     return {
         a: LiSummary(
@@ -320,23 +409,31 @@ def read_violations(con: Any, path: Path) -> dict[str, LiSummary]:
     }
 
 
-def read_first_dates(con: Any, path: Path, column: str, where: str = "true") -> dict[str, date]:
+def read_first_dates(
+    con: Any, path: Path, column: str, where: str = "true", extra: tuple[str, ...] = ()
+) -> dict[str, date]:
     """The earliest date in `column` per account (for the unsafe and imminently dangerous lists,
-    whose rows are the open cases)."""
+    whose rows are the open cases). `extra` names the other columns `where` uses."""
     account = account_sql("opa_account_num")
+    source = _source(path, ["opa_account_num", column, *extra])
     rows = _rows(
         con,
-        f"""SELECT {account} AS a, min({column}) FROM {_source(path)}
+        f"""SELECT {account} AS a, min({column}) FROM {source}
             WHERE {where} AND {account} IN (SELECT a FROM acc) GROUP BY 1""",
     )
     return {a: day for a, day in rows}
 
 
-def read_last_dates(con: Any, path: Path, column: str, where: str) -> dict[str, date]:
+def read_last_dates(
+    con: Any, path: Path, column: str, where: str, extra: tuple[str, ...] = ()
+) -> dict[str, date]:
+    """The latest date in `column` per account, among rows meeting `where` (which may use the
+    columns named in `extra`)."""
     account = account_sql("opa_account_num")
+    source = _source(path, ["opa_account_num", column, *extra])
     rows = _rows(
         con,
-        f"""SELECT {account} AS a, max({column}) FROM {_source(path)}
+        f"""SELECT {account} AS a, max({column}) FROM {source}
             WHERE {where} AND {column} IS NOT NULL AND {account} IN (SELECT a FROM acc)
             GROUP BY 1""",
     )
@@ -346,7 +443,8 @@ def read_last_dates(con: Any, path: Path, column: str, where: str) -> dict[str, 
 def read_tax(con: Any, path: Path) -> dict[str, TaxDebt]:
     rows = _rows(
         con,
-        f"""SELECT opa_id, total_due, num_years_owed FROM {_source(path)}
+        f"""SELECT opa_id, total_due, num_years_owed
+            FROM {_source(path, ["opa_id", "total_due", "num_years_owed"])}
             WHERE total_due > 0 AND opa_id IN (SELECT a FROM acc)""",
     )
     return {a: TaxDebt(float(total), int(years) if years else None) for a, total, years in rows}
@@ -364,7 +462,7 @@ def wkb_column(table: Any, name: str = "geometry") -> Any:
 
 def read_landcare(path: Path) -> tuple[dict[str, dict[str, Any]], Any]:
     """LandCare lots by account (program and year joined), and the centroid of every lot."""
-    table = pq.read_table(path, columns=["brt_id", "program", "year", "geometry"])
+    table = read_columns(path, ["brt_id", "program", "year", "geometry"])
     shapes = wkb_column(table)
     lots = {}
     for brt_id, program, year in zip(
@@ -393,25 +491,23 @@ def read_garden_points(paths: dict[str, Path]) -> Any:
     points: list[Any] = []
     for source_id in ("gardens_phs_ngt", "gardens_registered"):
         if source_id in paths:
-            shapes = wkb_column(pq.read_table(paths[source_id], columns=["geometry"]))
+            shapes = wkb_column(read_columns(paths[source_id], ["geometry"]))
             points.extend(shapes[~shapely.is_missing(shapes) & ~shapely.is_empty(shapes)])
     return shapely.centroid(np.asarray(points, dtype=object))
 
 
 def read_community_agriculture(path: Path) -> list[Any]:
     """The Planning Commission's community garden and farm areas (land use code 712)."""
-    dataset = ds.dataset(path)
-    table = dataset.to_table(
-        columns=["geometry"], filter=ds.field("c_dig3") == COMMUNITY_AGRICULTURE
+    table = read_columns(
+        path, ["geometry"], ("c_dig3", ds.field("c_dig3") == COMMUNITY_AGRICULTURE)
     )
     shapes = wkb_column(table)
     return list(shapes[~shapely.is_missing(shapes) & ~shapely.is_empty(shapes)])
 
 
 def read_parcel_shapes(path: Path, accounts: set[str]) -> dict[str, Any]:
-    dataset = ds.dataset(path)
-    table = dataset.to_table(
-        columns=["brt_id", "geometry"], filter=ds.field("brt_id").isin(sorted(accounts))
+    table = read_columns(
+        path, ["brt_id", "geometry"], ("brt_id", ds.field("brt_id").isin(sorted(accounts)))
     )
     out = {}
     for brt_id, shape in zip(table.column("brt_id").to_pylist(), wkb_column(table), strict=True):
@@ -474,7 +570,7 @@ def point_grid(points: Any) -> PointGrid | None:
 
 
 def shooting_cells(path: Path, as_of: date) -> dict[str, list[int]]:
-    table = pq.read_table(path, columns=["lat", "lng", "date_"])
+    table = read_columns(path, ["lat", "lng", "date_"])
     rows = zip(
         table.column("lat").to_pylist(),
         table.column("lng").to_pylist(),
@@ -491,7 +587,7 @@ def owner_type_codes(paths: dict[str, Path], accounts: set[str]) -> dict[str, in
     the City owned property layer; accounts with neither are left out (0, unknown)."""
     agencies: dict[str, str] = {}
     if "city_owned_property" in paths:
-        table = pq.read_table(paths["city_owned_property"], columns=["opabrt", "agency"])
+        table = read_columns(paths["city_owned_property"], ["opabrt", "agency"])
         for opabrt, agency in zip(
             table.column("opabrt").to_pylist(), table.column("agency").to_pylist(), strict=True
         ):
@@ -500,10 +596,10 @@ def owner_type_codes(paths: dict[str, Path], accounts: set[str]) -> dict[str, in
                 agencies[account] = min(agencies.get(account, agency), agency)
     names: dict[str, list[str]] = {}
     if "opa_properties" in paths:
-        dataset = ds.dataset(paths["opa_properties"])
-        table = dataset.to_table(
-            columns=["parcel_number", "owner_1", "owner_2"],
-            filter=ds.field("parcel_number").isin(sorted(accounts)),
+        table = read_columns(
+            paths["opa_properties"],
+            ["parcel_number", "owner_1", "owner_2"],
+            ("parcel_number", ds.field("parcel_number").isin(sorted(accounts))),
         )
         for account, owner_1, owner_2 in zip(
             *(table.column(c).to_pylist() for c in table.column_names), strict=True
@@ -516,6 +612,57 @@ def owner_type_codes(paths: dict[str, Path], accounts: set[str]) -> dict[str, in
 
 
 # Building the dossiers
+def read_records(con: Any, paths: dict[str, Path]) -> dict[str, dict[str, Any]]:
+    """Every per parcel record the dossiers use, read for the accounts in the table `acc`."""
+    has = paths.__contains__
+    return {
+        "opa": read_opa(con, paths["opa_properties"]),
+        "city": read_city_owned(con, paths["city_owned_property"])
+        if has("city_owned_property")
+        else {},
+        "deeds": read_transfers(con, paths["real_estate_transfers"])
+        if has("real_estate_transfers")
+        else {},
+        "assessments": read_assessments(con, paths["assessment_history"])
+        if has("assessment_history")
+        else {},
+        "violations": read_violations(con, paths["li_violations"]) if has("li_violations") else {},
+        "unsafe": read_first_dates(
+            con,
+            paths["li_unsafe"],
+            "violationdate",
+            "violationresolutiondate IS NULL",
+            ("violationresolutiondate",),
+        )
+        if has("li_unsafe")
+        else {},
+        "dangerous": read_first_dates(
+            con,
+            paths["li_imminently_dangerous"],
+            "violationdate",
+            "violationresolutiondate IS NULL",
+            ("violationresolutiondate",),
+        )
+        if has("li_imminently_dangerous")
+        else {},
+        "sealed": read_last_dates(
+            con,
+            paths["li_clean_and_seal"],
+            "workordercompleteddate",
+            "workorderstatus IN ('Approved', 'CLOSED', 'Conditional Approval')",
+            ("workorderstatus",),
+        )
+        if has("li_clean_and_seal")
+        else {},
+        "demolished": read_last_dates(
+            con, paths["li_demolitions"], "completed_date", "status = 'COMPLETED'", ("status",)
+        )
+        if has("li_demolitions")
+        else {},
+        "tax": read_tax(con, paths["cagp_tax_2025"]) if has("cagp_tax_2025") else {},
+    }
+
+
 def build_dossiers(
     ctx: Context, statuses: dict[str, SourceStatus], out_root: Path, as_of: date
 ) -> DossierResult:
@@ -527,8 +674,11 @@ def build_dossiers(
         result.notes.append("lot dossiers have no usable data yet (no OPA properties)")
         log.warning("dossiers: no snapshot of %s", ", ".join(missing))
         return result
+    # Every candidate parcel, and every parcel the map shows (the vacancy model reads records,
+    # such as citywide complaints, that can reach beyond the candidates).
+    vacancy = vacancy_calls(ctx, paths)
     candidates = candidate_accounts(ctx)
-    accounts = sorted(candidates.accounts)
+    accounts = sorted(set(candidates.accounts) | set(vacancy))
     if not accounts:
         result.notes.append("lot dossiers have no candidate parcels yet")
         return result
@@ -537,60 +687,11 @@ def build_dossiers(
     con = ctx.duckdb()
     try:
         con.execute("CREATE TABLE acc AS SELECT unnest($1::VARCHAR[]) AS a", [accounts])
-        opa = read_opa(con, paths["opa_properties"])
-        city = (
-            read_city_owned(con, paths["city_owned_property"])
-            if "city_owned_property" in paths
-            else {}
-        )
-        deeds = (
-            read_transfers(con, paths["real_estate_transfers"])
-            if "real_estate_transfers" in paths
-            else {}
-        )
-        assessments = (
-            read_assessments(con, paths["assessment_history"])
-            if "assessment_history" in paths
-            else {}
-        )
-        violations = (
-            read_violations(con, paths["li_violations"]) if "li_violations" in paths else {}
-        )
-        unsafe = (
-            read_first_dates(
-                con, paths["li_unsafe"], "violationdate", "violationresolutiondate IS NULL"
-            )
-            if "li_unsafe" in paths
-            else {}
-        )
-        dangerous = (
-            read_first_dates(
-                con,
-                paths["li_imminently_dangerous"],
-                "violationdate",
-                "violationresolutiondate IS NULL",
-            )
-            if "li_imminently_dangerous" in paths
-            else {}
-        )
-        sealed = (
-            read_last_dates(
-                con,
-                paths["li_clean_and_seal"],
-                "workordercompleteddate",
-                "workorderstatus IN ('Approved', 'CLOSED', 'Conditional Approval')",
-            )
-            if "li_clean_and_seal" in paths
-            else {}
-        )
-        demolished = (
-            read_last_dates(con, paths["li_demolitions"], "completed_date", "status = 'COMPLETED'")
-            if "li_demolitions" in paths
-            else {}
-        )
-        tax = read_tax(con, paths["cagp_tax_2025"]) if "cagp_tax_2025" in paths else {}
+        records = read_records(con, paths)
     finally:
         con.close()
+    opa: dict[str, Opa] = records["opa"]
+    city: dict[str, dict[str, Any]] = records["city"]
 
     # An account neither OPA nor the City's property list knows is retired (merged or split
     # parcels in older L&I records): it has no address or owner to show.
@@ -601,7 +702,6 @@ def build_dossiers(
             f"{len(retired):,} candidate accounts are no longer in OPA's records and get no "
             "lot dossier"
         )
-    vacancy = vacancy_calls(paths)
     landcare, landcare_points = (
         read_landcare(paths["phs_landcare"]) if "phs_landcare" in paths else ({}, None)
     )
@@ -620,6 +720,10 @@ def build_dossiers(
         kind = types[account].type
         return not types[account].public and (kind != "unknown" or bool(record and record.names))
 
+    def confident(account: str) -> bool:
+        call = vacancy.get(account)
+        return call is not None and call["confidence"] in CONFIDENT
+
     private = {a for a in accounts if is_private(a)}
     points = {
         a: (record.lng, record.lat)
@@ -634,7 +738,8 @@ def build_dossiers(
     landcare_grid = point_grid(landcare_points)
     garden_grid = point_grid(garden_points)
 
-    # Owners with many vacant parcels: counted over the parcels we call vacant.
+    # Owners with many vacant parcels: counted over the parcels we call vacant with high or
+    # medium confidence.
     holdings: dict[str, list[str]] = defaultdict(list)
     keys: dict[str, str] = {}
     for account in accounts:
@@ -643,7 +748,7 @@ def build_dossiers(
             key = ow.owner_key(record.names)
             if key:
                 keys[account] = key
-                if account in vacancy:
+                if confident(account):
                     holdings[key].append(account)
     listed = {key: found for key, found in holdings.items() if len(found) >= MANY_PARCELS_MIN}
 
@@ -654,16 +759,16 @@ def build_dossiers(
         record = opa.get(account)
         owned = city.get(account)
         owner_type = types[account]
-        history = deeds.get(account, [])
+        history = records["deeds"].get(account, [])
         facts = OwnerFacts(
             owner_type=owner_type,
             has_names=bool(record and record.names),
             history=history,
-            tax=tax.get(account),
-            li=violations.get(account, LiSummary()),
+            tax=records["tax"].get(account),
+            li=records["violations"].get(account, LiSummary()),
         )
-        facts.li.unsafe_since = unsafe.get(account)
-        facts.li.dangerous_since = dangerous.get(account)
+        facts.li.unsafe_since = records["unsafe"].get(account)
+        facts.li.dangerous_since = records["dangerous"].get(account)
         if record is not None:
             facts.absentee = ow.absentee(
                 record.location,
@@ -706,37 +811,22 @@ def build_dossiers(
             for route in routes_for(
                 owner_type,
                 has_names=facts.has_names,
-                vacant=call is not None,
+                vacant=confident(account),
                 side_yard_eligible=bool(owned and owned["side_yard"]),
                 in_landcare=account in landcare,
                 gardened=account in gardened,
             )
             if route in known_routes
         ]
-        li = facts.li
-        li_out: dict[str, Any] = {
-            "open_violations": li.open_violations,
-            "last_violation": li.last_violation.isoformat() if li.last_violation else None,
-            "unsafe": li.unsafe_since is not None,
-            "imminently_dangerous": li.dangerous_since is not None,
-            "violations": li.violations,
-        }
-        if li.unsafe_since:
-            li_out["unsafe_since"] = li.unsafe_since.isoformat()
-        if li.dangerous_since:
-            li_out["imminently_dangerous_since"] = li.dangerous_since.isoformat()
-        if account in sealed:
-            li_out["sealed"] = sealed[account].isoformat()
-        if account in demolished:
-            li_out["demolished"] = demolished[account].isoformat()
-
         dossier: dict[str, Any] = {
             "address": (record.location if record else None) or (owned or {}).get("location"),
             "vacancy": call,
             "owner": owner,
             "transfers": [t.to_json() for t in history],
-            "assessments": assessments.get(account, []),
-            "li": li_out,
+            "assessments": records["assessments"].get(account, []),
+            "li": li_summary(
+                facts.li, records["sealed"].get(account), records["demolished"].get(account)
+            ),
             "routes": routes,
             "suggestions": suggestions_for(call["kind"] if call else None, known_suggestions),
         }
@@ -744,19 +834,9 @@ def build_dossiers(
             dossier["landcare"] = landcare[account]
         if account in gardened:
             dossier["garden"] = True
-        nearby: dict[str, int] = {}
-        if account in points:
-            lng, lat = points[account]
-            if shootings is not None:
-                cell = h3.latlng_to_cell(lat, lng, H3_RESOLUTION)
-                s12, s36 = shootings.get(cell, [0, 0])
-                nearby["s12"], nearby["s36"] = s12, s36
-            x, y = to_xy(lng, lat)
-            if landcare_grid is not None:
-                nearby["landcare_within_500ft"] = landcare_grid.count(x, y)
-            if garden_grid is not None:
-                nearby["gardens_within_500ft"] = garden_grid.count(x, y)
-        dossier["nearby"] = nearby
+        dossier["nearby"] = nearby_counts(
+            points.get(account), shootings, landcare_grid, garden_grid
+        )
         shards[account[:3]][account] = dossier
 
         result.owner_types[owner_type.type] += 1
@@ -767,7 +847,67 @@ def build_dossiers(
         for route in routes:
             result.routes[route] += 1
 
-    generated_at = iso_z(ctx.now())
+    write_shards(result, out_root, shards, iso_z(ctx.now()))
+    write_owners_table(result, out_root, listed, opa, iso_z(ctx.now()))
+    if candidates.missing:
+        result.notes.append(
+            "lot dossiers were built without " + ", ".join(sorted(candidates.missing))
+        )
+    log.info(
+        "dossiers: %s parcels in %s files (%.1f MB), %s owners with many vacant parcels",
+        f"{result.parcels:,}",
+        result.shards,
+        result.bytes / 1e6,
+        result.owners_listed,
+    )
+    return result
+
+
+def li_summary(li: LiSummary, sealed: date | None, demolished: date | None) -> dict[str, Any]:
+    out: dict[str, Any] = {
+        "open_violations": li.open_violations,
+        "last_violation": li.last_violation.isoformat() if li.last_violation else None,
+        "unsafe": li.unsafe_since is not None,
+        "imminently_dangerous": li.dangerous_since is not None,
+        "violations": li.violations,
+    }
+    if li.unsafe_since:
+        out["unsafe_since"] = li.unsafe_since.isoformat()
+    if li.dangerous_since:
+        out["imminently_dangerous_since"] = li.dangerous_since.isoformat()
+    if sealed:
+        out["sealed"] = sealed.isoformat()
+    if demolished:
+        out["demolished"] = demolished.isoformat()
+    return out
+
+
+def nearby_counts(
+    point: tuple[float, float] | None,
+    shootings: dict[str, list[int]] | None,
+    landcare_grid: PointGrid | None,
+    garden_grid: PointGrid | None,
+) -> dict[str, int]:
+    """Shooting victims in the parcel's hexagon (12 and 36 months), and LandCare lots and gardens
+    within 500 feet. Empty when the parcel has no point."""
+    if point is None:
+        return {}
+    lng, lat = point
+    out: dict[str, int] = {}
+    if shootings is not None:
+        s12, s36 = shootings.get(h3.latlng_to_cell(lat, lng, H3_RESOLUTION), [0, 0])
+        out["s12"], out["s36"] = s12, s36
+    x, y = to_xy(lng, lat)
+    if landcare_grid is not None:
+        out["landcare_within_500ft"] = landcare_grid.count(x, y)
+    if garden_grid is not None:
+        out["gardens_within_500ft"] = garden_grid.count(x, y)
+    return out
+
+
+def write_shards(
+    result: DossierResult, out_root: Path, shards: dict[str, dict[str, Any]], generated_at: str
+) -> None:
     folder = out_root / DOSSIER_DIR
     folder.mkdir(parents=True, exist_ok=True)
     for prefix in sorted(shards):
@@ -781,38 +921,31 @@ def build_dossiers(
         }
         target.write_text(dump(body), encoding="utf-8")
         result.bytes += target.stat().st_size
-    result.parcels = len(accounts)
+        result.parcels += len(shards[prefix])
     result.shards = len(shards)
 
+
+def write_owners_table(
+    result: DossierResult,
+    out_root: Path,
+    listed: dict[str, list[str]],
+    opa: dict[str, Opa],
+    generated_at: str,
+) -> None:
     table = out_root / OWNERS_TABLE
     table.parent.mkdir(parents=True, exist_ok=True)
-    owners_body = {
+    owners = {
+        ow.owner_list_id(key): {"names": opa[found[0]].names, "parcels": sorted(found)}
+        for key, found in listed.items()
+    }
+    body = {
         "schema": SCHEMA,
         "generated_at": generated_at,
         "min_parcels": MANY_PARCELS_MIN,
-        "owners": {
-            ow.owner_list_id(key): {
-                "names": opa[found[0]].names,
-                "parcels": sorted(found),
-            }
-            for key, found in sorted(listed.items(), key=lambda item: ow.owner_list_id(item[0]))
-        },
+        "owners": dict(sorted(owners.items())),
     }
-    table.write_text(dump(owners_body), encoding="utf-8")
+    table.write_text(dump(body), encoding="utf-8")
     result.owners_listed = len(listed)
-
-    if candidates.missing:
-        result.notes.append(
-            "lot dossiers were built without " + ", ".join(sorted(candidates.missing))
-        )
-    log.info(
-        "dossiers: %s parcels in %s files (%.1f MB), %s owners with many vacant parcels",
-        f"{result.parcels:,}",
-        result.shards,
-        result.bytes / 1e6,
-        result.owners_listed,
-    )
-    return result
 
 
 def dump(body: Any) -> str:
