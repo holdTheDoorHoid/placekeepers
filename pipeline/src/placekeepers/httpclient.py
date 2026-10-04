@@ -50,6 +50,8 @@ class DownloadResult:
     path: Path
     bytes: int
     sha256: str
+    #: the server's Last-Modified header, when it sent one
+    last_modified: str | None = None
 
 
 def _short(url: str | httpx.URL) -> str:
@@ -154,9 +156,14 @@ class PoliteClient:
         raise HttpError(f"{_short(url)}: gave up after {self.max_attempts} attempts: {last}")
 
     # Requests
-    def _send(self, url: str, params: dict[str, Any] | None) -> httpx.Response:
+    def _send(
+        self, url: str, params: dict[str, Any] | None, data: dict[str, Any] | None = None
+    ) -> httpx.Response:
         try:
-            response = self.http.get(url, params=params)
+            if data is None:
+                response = self.http.get(url, params=params)
+            else:
+                response = self.http.post(url, params=params, data=data)
         except httpx.TransportError as exc:
             raise RetryableError(f"network problem ({type(exc).__name__}: {exc})") from exc
         finally:
@@ -172,19 +179,21 @@ class PoliteClient:
         url: str,
         params: dict[str, Any] | None = None,
         *,
+        data: dict[str, Any] | None = None,
         check: Callable[[Any], None] | None = None,
     ) -> Any:
-        """GET and decode JSON. `check` may raise RetryableError for error pages sent with 200."""
+        """GET (or POST, when `data` is given) and decode JSON. `check` may raise RetryableError
+        for error pages sent with HTTP 200."""
 
         def call() -> Any:
-            response = self._send(url, params)
+            response = self._send(url, params, data)
             try:
-                data = response.json()
+                payload = response.json()
             except ValueError as exc:
                 raise RetryableError(f"{_short(url)} did not send valid JSON") from exc
             if check is not None:
-                check(data)
-            return data
+                check(payload)
+            return payload
 
         return self._with_retries(url, call)
 
@@ -194,17 +203,21 @@ class PoliteClient:
         dest: Path,
         params: dict[str, Any] | None = None,
         *,
+        data: dict[str, Any] | None = None,
         check_file: Callable[[Path], None] | None = None,
     ) -> DownloadResult:
-        """Stream a response body to `dest`, atomically. `check_file` may inspect the finished
-        temporary file and raise RetryableError (for example, when it holds an error message)."""
+        """Stream a response body to `dest`, atomically. A POST is sent when `data` is given (long
+        queries). `check_file` may inspect the finished temporary file and raise RetryableError
+        (for example, when it holds an error message)."""
 
         def call() -> DownloadResult:
             dest.parent.mkdir(parents=True, exist_ok=True)
             tmp = dest.with_name(f".{dest.name}.{uuid.uuid4().hex[:8]}.part")
+            method = "GET" if data is None else "POST"
             try:
                 try:
-                    with self.http.stream("GET", url, params=params) as response:
+                    with self.http.stream(method, url, params=params, data=data) as response:
+                        last_modified = response.headers.get("Last-Modified")
                         if response.status_code >= 400:
                             response.read()
                             self._check_status(response)
@@ -224,7 +237,7 @@ class PoliteClient:
                 if check_file is not None:
                     check_file(tmp)
                 os.replace(tmp, dest)
-                return DownloadResult(dest, size, digest.hexdigest())
+                return DownloadResult(dest, size, digest.hexdigest(), last_modified)
             finally:
                 tmp.unlink(missing_ok=True)
 
