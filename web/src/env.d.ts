@@ -6,6 +6,12 @@ declare module 'virtual:placekeepers/registry' {
   export default registry;
 }
 
+declare module 'virtual:placekeepers/content' {
+  /** Every content page's slug (its file name without ".md") mapped to its rendered HTML. */
+  const pages: Record<string, string>;
+  export default pages;
+}
+
 interface ImportMetaEnv {
   /** Where the published data lives. Relative paths resolve against the site base. Default "./data/". */
   readonly VITE_DATA_BASE?: string;
