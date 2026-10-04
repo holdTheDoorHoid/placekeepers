@@ -105,7 +105,8 @@ def test_account_sources_from_fixtures(source_id: str, context_factory, monkeypa
     meta = run(ctx, source).current()
     assert meta.rows == 3
     assert set(adapter.required_columns) <= set(meta.columns)
-    assert set(fake.methods) == {"POST"}
+    chunk_methods = {m for m, q in zip(fake.methods, fake.queries, strict=True) if "VALUES" in q}
+    assert chunk_methods == {"POST"}
 
 
 def test_account_sources_go_in_chunks_and_check_each(context_factory, monkeypatch) -> None:
@@ -134,6 +135,33 @@ def test_account_sources_go_in_chunks_and_check_each(context_factory, monkeypatc
     other.mkdir()
     with pytest.raises(Exception, match="Chunk 1 has 2 rows but the table reports 3"):
         SmallChunks(source, ctx).fetch(other)
+
+
+def test_vacancy_violations_come_for_the_whole_city_without_repeats(
+    context_factory, monkeypatch
+) -> None:
+    """A vacant lot or vacant building violation can be the only sign a parcel is vacant, so those
+    two kinds come for every parcel; a violation found both ways is kept once."""
+    monkeypatch.setattr(
+        "placekeepers.adapters.carto.candidate_accounts",
+        lambda ctx: Candidates(accounts=["370000001"]),
+    )
+    adapter = ADAPTERS["li_violations"]
+    rows = carto_rows(adapter, 4)
+    rows[0].update(violationcode="9-3904")  # a candidate parcel: found twice, kept once
+    rows[1].update(violationcodetitle="VACANT STRUCTURE LICENSE")  # elsewhere in the city
+    rows[2].update(violationcode="9-3904", violationdate="2020-01-01")  # too old for citywide
+    ctx = context_factory(now=NOW)
+    source = relaxed(ctx.registry.sources["li_violations"])
+    fake = FakeCarto(tables={"violations": rows})
+    ctx = context_factory(handler=fake, now=NOW)
+    store = run(ctx, source)
+    accounts = sorted(
+        pq.read_table(store.path_for(store.current())).column("opa_account_num").to_pylist()
+    )
+    assert accounts == ["370000001", "370000002"]
+    citywide = [q for q in fake.queries if "ILIKE '%VACAN%'" in q]
+    assert citywide and all("violationdate >= '2024-08-04'" in q for q in citywide)
 
 
 # ArcGIS

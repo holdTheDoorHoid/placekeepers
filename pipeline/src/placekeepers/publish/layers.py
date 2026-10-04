@@ -20,7 +20,6 @@ docs/CONTRACTS.md section 4.
 
 from __future__ import annotations
 
-import calendar
 import logging
 import re
 from collections.abc import Callable, Iterable
@@ -34,6 +33,7 @@ from shapely.geometry import Polygon
 from shapely.geometry.polygon import orient
 
 from placekeepers.context import Context
+from placekeepers.dates import months_before
 from placekeepers.geo import GeoJSONWriter, geometry_json
 
 log = logging.getLogger(__name__)
@@ -43,14 +43,6 @@ H3_RESOLUTION = 9
 # Generous box around Philadelphia. Points outside it are data errors (for example 0, 0).
 PHILLY_LAT = (39.80, 40.20)
 PHILLY_LNG = (-75.35, -74.90)
-
-
-def months_before(day: date, months: int) -> date:
-    """The same calendar day `months` earlier, clamped to the end of shorter months."""
-    index = day.year * 12 + (day.month - 1) - months
-    year, month = divmod(index, 12)
-    month += 1
-    return date(year, month, min(day.day, calendar.monthrange(year, month)[1]))
 
 
 @dataclass

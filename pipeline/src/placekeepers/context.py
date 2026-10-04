@@ -53,6 +53,8 @@ class Context:
         # Dates in the City's data are calendar days; read every timestamp in UTC so a midnight
         # record never slides to the previous day.
         con.execute("SET TimeZone = 'UTC'")
+        # No progress bars in logs.
+        con.execute("SET enable_progress_bar = false")
         return con
 
     def now(self) -> datetime:
