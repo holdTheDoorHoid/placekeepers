@@ -78,6 +78,32 @@ def main() -> None:
     for r in rows:
         print("| " + " | ".join(str(x) for x in r) + " |")
 
+    # Every checked parcel under the final rules (rules.py), both rounds together.
+    cand = OUT / "candidates.parquet"
+    if cand.exists():
+        from common import connect
+        con = connect(memory="800MB")
+        cls = {o: (k, c) for o, k, c in con.execute(f"SELECT opa, kind, confidence FROM read_parquet('{cand}')").fetchall()}
+        tab = defaultdict(Counter)
+        for r in out:
+            kind, conf = cls.get(r["opa_account"], ("not a candidate", None))
+            tab[(kind, conf or "")][r["label"]] += 1
+        rows2 = []
+        for (kind, conf), c in sorted(tab.items()):
+            n = sum(c.values())
+            if kind.startswith("lot"):
+                k, k_hi = c["empty or green lot"], c["empty or green lot"] + c["unclear"]
+                rows2.append([kind, conf, n] + [c[lab] for lab in LABELS] + [f"{k} to {k_hi} of {n}", wilson(k, n), wilson(k_hi, n)])
+            else:
+                rows2.append([kind, conf, n] + [c[lab] for lab in LABELS] + ["", "", ""])
+        with open(RESULTS / "spot_check_by_rule.csv", "w", newline="") as f:
+            w = csv.writer(f)
+            w.writerow(["kind", "confidence", "parcels"] + LABELS + ["empty lots (unclear against, then for)", "95% interval, unclear against", "95% interval, unclear for"])
+            w.writerows(rows2)
+        print()
+        for r in rows2:
+            print("| " + " | ".join(str(x) for x in r) + " |")
+
 
 if __name__ == "__main__":
     main()
