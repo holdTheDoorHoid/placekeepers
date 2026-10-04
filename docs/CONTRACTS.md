@@ -280,7 +280,7 @@ never change meaning once published. The id names each reason in the pipeline
 | 12 | 4096 | `built_since` | A new construction permit in `ny`: a building may stand now | against |
 | 13 | 8192 | `construction_starting` | A new construction permit in `ny`: construction may be starting | against |
 | 14 | 16384 | `side_yard` | The owner of the lived in building next door also owns it: likely a side yard | against |
-| 15 | 32768 | `land_use_shows_use` | Planning's land use map shows a use other than vacant | against |
+| 15 | 32768 | `land_use_shows_use` | Planning's land use map shows a use other than vacant (lots only, from 2026-10-04 M1.4: the map shows a use for nearly every building) | against |
 | 16 | 65536 | `recent_permit` | A permit for building work (alterations, trades, new construction) or zoning in the last two years | against |
 | 17 | 131072 | `building_stands` | A building footprint stands although records say vacant land | against |
 

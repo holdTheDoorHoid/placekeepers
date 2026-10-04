@@ -786,12 +786,23 @@ def classify_sql(city_land: str = "city_land", city_bldg: str = "city_bldg") -> 
     """
 
 
+#: Reasons shown only for some kinds. The land use map is a contradiction only for a lot: it shows
+#: a use for nearly every building (99 percent on 2026-10-04), vacant or not, and the rules never
+#: use it for buildings, so it is not shown as a doubt there. (The study listed it for buildings
+#: too; this is the one place the map's reasons differ from the study's.)
+REASON_KINDS = {"lu_developed": ("lot", "lot_conflict")}
+
+
 def reasons_sql() -> str:
     """The reason bits (`rs`) and the signal count (`n`) from a classified row."""
     terms = []
     for reason in REASONS:
         flag = "kind = 'lot_conflict'" if reason.flag == "footprint_conflict" else reason.flag
-        terms.append(f"CASE WHEN coalesce({flag}, false) THEN {1 << reason.bit} ELSE 0 END")
+        condition = f"coalesce({flag}, false)"
+        if reason.flag in REASON_KINDS:
+            kinds = ", ".join(f"'{k}'" for k in REASON_KINDS[reason.flag])
+            condition += f" AND kind IN ({kinds})"
+        terms.append(f"CASE WHEN {condition} THEN {1 << reason.bit} ELSE 0 END")
     return " + ".join(terms)
 
 
