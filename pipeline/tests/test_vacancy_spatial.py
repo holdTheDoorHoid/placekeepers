@@ -478,6 +478,7 @@ def test_the_map_shows_the_models_parcels_with_their_reasons(run_ctx, tmp_path) 
         "k": 2,
         "vc": 3,
         "ot": 0,
+        "rt": 5,  # an owner name we could not type: ask the owner
         "lc": 0,
         "rs": bits("city_building", "sealed"),
         "n": 1,
@@ -486,6 +487,8 @@ def test_the_map_shows_the_models_parcels_with_their_reasons(run_ctx, tmp_path) 
     assert properties["400000003"]["dy"] == 2024
     assert properties["400000004"]["k"] == 1  # a lot, though a footprint stands
     assert properties["400000007"]["lc"] == 1
+    # LandCare by its shape (no account on PHS's record): Community LandCare comes first.
+    assert properties["400000007"]["rt"] == 1
     notes = published.manifest["notes"]
     assert (
         "Vacancy model as of 2026-10-04: lots 1 very likely vacant, 2 probably, 3 not sure; "

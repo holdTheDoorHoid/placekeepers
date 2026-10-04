@@ -9,7 +9,9 @@ docs/CONTRACTS.md section 4.
 * `parcels` (lots): every parcel the vacancy model (placekeepers.derive.vacancy) shows: `id` (OPA
   account), `k` (1 vacant lot, 2 vacant building), `vc` (confidence: 3 high, 2 medium, 1 low),
   `ot` (owner type, from the City owned property layer and OPA's owner names: see
-  placekeepers.derive.owners), `lc` (1 when PHS LandCare maintains the parcel), `rs` (reason
+  placekeepers.derive.owners), `rt` (the first lawful step to get permission, a category: the
+  first route of the parcel's dossier, see placekeepers.derive.routes), `lc` (1 when PHS LandCare
+  maintains the parcel), `rs` (reason
   bits), `n` (independent signals that agree), and `dy`, `sy`, `ny` (the year of a demolition, a
   City seal or a new construction permit, only when a reason uses it). When the model has not run,
   the City's lists alone are shown at medium confidence instead.
@@ -180,7 +182,7 @@ def build_parcels(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) 
     """The vacancy model's parcels, or the City's lists alone when the model has not run."""
     model = ctx.cache.root / "derived" / "vacancy.parquet"
     if model.is_file():
-        return build_parcels_from_model(model, out, paths)
+        return build_parcels_from_model(model, out, paths, set(ctx.registry.routes))
     result = build_parcels_from_city_lists(ctx, paths, out, as_of)
     result.notes.append("The vacancy model has not run, so the map shows the City's lists alone")
     return result
@@ -192,14 +194,26 @@ SHOWN_KINDS = ("lot", "lot_conflict", "building")
 
 
 def build_parcels_from_model(
-    model: Path, out: Path, paths: dict[str, Path] | None = None
+    model: Path,
+    out: Path,
+    paths: dict[str, Path] | None = None,
+    known_routes: set[str] | None = None,
 ) -> BuildResult:
     columns = ["opa", "kind", "k", "vc", "lc", "rs", "n", "dy", "sy", "ny", "geometry"]
     table = pq.read_table(model, columns=columns)
     # Owner type (M1.3): from the City owned property layer and OPA's owner names.
-    from placekeepers.publish.dossiers import owner_type_codes
+    from placekeepers.publish.dossiers import owner_type_codes, route_codes
 
-    owner_types = owner_type_codes(paths or {}, set(table.column("opa").to_pylist()))
+    accounts = set(table.column("opa").to_pylist())
+    owner_types = owner_type_codes(paths or {}, accounts)
+    # The first route, as the dossier lists it (rt, a category).
+    calls = {
+        a: {"rs": r or 0}
+        for a, r in zip(
+            table.column("opa").to_pylist(), table.column("rs").to_pylist(), strict=True
+        )
+    }
+    routes = route_codes(paths or {}, accounts, known_routes, calls)
     # The violence lens factors (M1.4), from pk derive.
     factors = load_factors(model.with_name("lens_factors.parquet"))
     rows = zip(*(table.column(name).to_pylist() for name in columns), strict=True)
@@ -208,7 +222,9 @@ def build_parcels_from_model(
             if kind not in SHOWN_KINDS or wkb is None or vc is None:
                 continue
             ot = owner_types.get(opa, 0)
-            properties = {"id": opa, "k": k, "vc": vc, "ot": ot, "lc": lc, "rs": rs, "n": n}
+            rt = routes.get(opa, 0)
+            properties = {"id": opa, "k": k, "vc": vc, "ot": ot, "rt": rt, "lc": lc, "rs": rs}
+            properties["n"] = n
             for key, year in (("dy", dy), ("sy", sy), ("ny", ny)):
                 if year is not None:
                     properties[key] = int(year)
@@ -246,9 +262,10 @@ def build_parcels_from_city_lists(
                 descriptions.setdefault(account, description)
     landcare = landcare_accounts(paths.get("phs_landcare"))
     # Owner type (M1.3): from the City owned property layer and OPA's owner names.
-    from placekeepers.publish.dossiers import owner_type_codes
+    from placekeepers.publish.dossiers import owner_type_codes, route_codes
 
     owner_types = owner_type_codes(paths, set(kinds))
+    routes = route_codes(paths, set(kinds), set(ctx.registry.routes))
     notes = []
     if no_account:
         notes.append(
@@ -270,7 +287,8 @@ def build_parcels_from_city_lists(
             kind = parcel_kind(kinds[account], descriptions.get(account))
             lc = 1 if account in landcare else 0
             ot = owner_types.get(account, 0)
-            properties = {"id": account, "k": kind, "vc": 2, "ot": ot, "lc": lc}
+            rt = routes.get(account, 0)
+            properties = {"id": account, "k": kind, "vc": 2, "ot": ot, "rt": rt, "lc": lc}
             writer.write(properties, geometry_json(shapes[account]))
     return BuildResult(writer.count, notes)
 

@@ -8,7 +8,12 @@ import pytest
 
 from placekeepers.derive import owners as ow
 from placekeepers.derive.flags import FLAG_NOTES, HELP_ROUTES, NOTICES
-from placekeepers.derive.routes import SUGGESTIONS_BY_KIND, routes_for, suggestions_for
+from placekeepers.derive.routes import (
+    SUGGESTIONS_BY_KIND,
+    first_route_code,
+    routes_for,
+    suggestions_for,
+)
 from placekeepers.registry import load_registry
 
 from .conftest import REPO_ROOT
@@ -79,6 +84,46 @@ def test_landcare_lots_get_community_landcare_first() -> None:
 def test_no_owner_route_without_an_owner() -> None:
     assert routes([], vacant=True) == []
     assert routes([], vacant=True, in_landcare=True) == ["community_landcare"]
+
+
+def code(names: list[str], agency: str | None = None, **context) -> int:
+    found = ow.owner_type(names, agency)
+    listed = routes_for(found, has_names=bool(names), **context)
+    return first_route_code(listed, found.type)
+
+
+@pytest.mark.parametrize(
+    ("names", "agency", "context", "expected"),
+    [
+        ([], None, {}, 0),  # an unknown owner with no name: no clear route yet
+        ([], None, {"in_landcare": True}, 1),
+        (["MORALES ROSA"], None, {"in_landcare": True, "vacant": True}, 1),
+        (["PHILADELPHIA LAND BANK"], "PLB", {"in_landcare": True}, 1),
+        (["PHILADELPHIA LAND BANK"], "PLB", {}, 2),
+        (["CITY OF PHILA"], None, {"side_yard_eligible": True}, 2),
+        (["REDEVELOPMENT AUTHORITY", "OF PHILADELPHIA"], "PRA", {}, 3),
+        (["PHILA HOUSING DEV CORP"], None, {}, 3),
+        (["PHILADELPHIA HOUSING AUTH"], None, {"vacant": True}, 4),
+        (["SCHOOL DISTRICT OF PHILA"], None, {}, 4),
+        (["MORALES ROSA"], None, {"vacant": True, "gardened": True}, 5),
+        (["KENSINGTON LOTS LLC"], None, {}, 5),
+        (["GRACE BAPTIST CHURCH"], None, {}, 5),
+        (["HACE"], None, {}, 5),  # a name we could not type
+    ],
+)
+def test_the_map_route_code_is_the_first_route_as_a_category(
+    names, agency, context, expected
+) -> None:
+    assert code(names, agency, **context) == expected
+
+
+def test_route_codes_follow_the_first_route_left_after_the_registry() -> None:
+    # A route the registry no longer has is skipped, by the dossier and the map alike.
+    assert first_route_code(["ask_the_owner", "conservatorship"], "individual") == 5
+    assert first_route_code(["conservatorship"], "individual") == 5
+    assert first_route_code(["ask_the_owner"], "housing_authority") == 4
+    assert first_route_code(["land_bank_side_yard"], "land_bank") == 2
+    assert first_route_code([], "land_bank") == 0
 
 
 def test_suggestions_follow_the_vacancy_call() -> None:
