@@ -10,7 +10,8 @@ and must be checked against the paper before they appear on the site.
 Philadelphia is the best studied city in the world on this question. Two randomized trials here
 found that fixing neglected places reduces nearby gun violence: cleaning and greening vacant lots,
 and repairing the doors and windows of abandoned houses. Both are cheap, and in both trials the
-violence did not simply move next door. The effect was strongest in the poorest neighborhoods.
+violence did not simply move next door. The greening trial found its effect in neighborhoods below
+the poverty line, and the house repair trial took place in low income neighborhoods.
 
 Evidence for street lighting is also good. Evidence for trees is real but depends on placement.
 Evidence that murals, public art, walkability, or population density reduce violence does not exist
