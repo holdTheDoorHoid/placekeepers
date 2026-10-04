@@ -5,8 +5,9 @@ import type { RawRegistryFiles } from '../src/registry/types.ts';
 import { validateRegistry } from '../src/registry/validate.ts';
 
 /** A fresh, mutable copy of the real registry YAML for each test. */
-function raw(): RawRegistryFiles & Record<string, any> {
-  return structuredClone(readRegistryFiles()) as RawRegistryFiles & Record<string, any>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function raw(): any {
+  return structuredClone(readRegistryFiles());
 }
 
 function errorsFor(files: RawRegistryFiles): string[] {

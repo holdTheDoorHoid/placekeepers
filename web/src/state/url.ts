@@ -37,6 +37,8 @@ export interface EncodeOptions {
   includeView?: boolean;
   includeMap?: boolean;
   includeSelection?: boolean;
+  /** "ifChanged" leaves out the layer list when it equals the view's defaults. */
+  layers?: 'always' | 'ifChanged';
 }
 
 function enc(value: string): string {
@@ -82,13 +84,14 @@ function encodeSettingValue(value: SettingValue): string {
 }
 
 export function encodeState(reg: Registry, state: AppState, options: EncodeOptions = {}): string {
-  const { includeView = true, includeMap = true, includeSelection = true } = options;
+  const { includeView = true, includeMap = true, includeSelection = true, layers = 'always' } = options;
   const defaults = defaultState(reg, state.view);
   const params: string[] = [];
 
   if (includeView) params.push(`v=${VIEW_CODES[state.view]}`);
   if (includeMap) params.push(`m=${encodeMap(state.map)}`);
-  params.push(`l=${orderLayers(reg, state.layers).join(',')}`);
+  const visible = orderLayers(reg, state.layers);
+  if (layers === 'always' || visible.join(',') !== defaults.layers.join(',')) params.push(`l=${visible.join(',')}`);
 
   const settings: string[] = [];
   for (const layer of reg.layers) {
