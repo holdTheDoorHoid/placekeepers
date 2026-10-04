@@ -80,11 +80,17 @@ function links(v: unknown): Link[] {
   return out;
 }
 
+function year(v: unknown): number | null {
+  const n = int(v);
+  return n !== null && n >= 1800 && n <= 2200 ? n : null;
+}
+
+/** The vacancy block, or null when the model leaves the parcel out (no block, or null). */
 function vacancy(v: unknown): Vacancy | null {
   if (!isObj(v)) return null;
   const kind = v.kind === 'lot' || v.kind === 'building' ? (v.kind as VacancyKind) : null;
   const confidence = v.confidence === 'high' || v.confidence === 'medium' || v.confidence === 'low' ? (v.confidence as Confidence) : null;
-  return { kind, confidence, reasons: texts(v.reasons) };
+  return { kind, confidence, rs: count(v.rs), n: count(v.n), dy: year(v.dy), sy: year(v.sy), ny: year(v.ny) };
 }
 
 function flag(v: unknown): OwnerFlag | null {

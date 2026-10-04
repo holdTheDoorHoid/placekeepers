@@ -5,11 +5,12 @@
   import { rankPlaces } from '../../places/rank.ts';
   import type { AppStore } from '../../state/store.svelte.ts';
   import { strings } from '../../strings.ts';
+  import DossierPanel from '../dossier/DossierPanel.svelte';
   import LayerList from '../layers/LayerList.svelte';
   import LensPanel from '../lens/LensPanel.svelte';
   import AreaSummary from '../places/AreaSummary.svelte';
-  import PlaceDetails from '../places/PlaceDetails.svelte';
   import RankedTable from '../places/RankedTable.svelte';
+  import AddressSearch from '../search/AddressSearch.svelte';
   import FeatureDetails from '../streets/FeatureDetails.svelte';
   import Filters from './Filters.svelte';
 
@@ -41,6 +42,7 @@
   <div class="panel-close narrow-only">
     <button class="icon-button" type="button" aria-label={strings.analysis.closePanel} onclick={() => (leftOpen = false)}>&times;</button>
   </div>
+  <div class="search"><AddressSearch {store} idPrefix="pk-analysis" /></div>
   {#each store.registry.lenses as lens (lens.id)}
     <LensPanel {store} {lens} idPrefix="left" />
   {/each}
@@ -62,8 +64,13 @@
       heading={strings.streets.detailsTitle(store.registry.layers.find((l) => l.id === store.inspected?.layerId)?.style ?? '')}
       onClose={() => store.inspect(null)}
     />
-  {:else if store.state.selected && store.selectedProperties}
-    <PlaceDetails {store} properties={store.selectedProperties} />
+  {:else if store.dossierView}
+    <DossierPanel
+      {store}
+      showTitle
+      idPrefix="pk-analysis-dossier"
+      onShowOnMap={store.dossier.center ? () => store.controller?.flyTo(store.dossier.center!) : undefined}
+    />
   {:else}
     <AreaSummary places={ranked} />
   {/if}
@@ -114,6 +121,9 @@
   }
   .layers {
     margin-top: 12px;
+  }
+  .search {
+    margin-bottom: 12px;
   }
   .drawer {
     grid-area: drawer;

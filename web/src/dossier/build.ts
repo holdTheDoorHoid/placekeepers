@@ -13,6 +13,7 @@ import { correctionUrl, propertyPageUrl, atlasUrl, googleMapsUrl, streetViewUrl,
 import type { Manifest } from '../data/manifest.ts';
 import { explainScore, type ScoreExplanation } from '../map/lens.ts';
 import { parcelLensOf, placeSuggestions } from '../places/rank.ts';
+import { placeReasons, reasonContext, type PlaceReasons } from '../places/reasons.ts';
 import type { Lens, Partner, Registry, Route, Suggestion } from '../registry/types.ts';
 import type { AppState } from '../state/defaults.ts';
 import { formatDate, formatMoney, formatNumber, formatTime, sentenceCase, strings } from '../strings.ts';
@@ -128,8 +129,12 @@ export interface RouteView {
   route: Route;
   lastChecked: string;
   confirm: boolean;
-  /** The conservatorship route: always shown with the abuse warning of docs/ETHICS.md. */
-  conservatorship: boolean;
+  /**
+   * A caution shown before the steps: the route's own `warning` from the registry. The
+   * conservatorship route always has one (the abuse warning of docs/ETHICS.md); if its registry
+   * entry ever lacks it, the page adds the ETHICS.md wording itself.
+   */
+  warning: string | null;
 }
 
 export interface SuggestionView {
@@ -189,8 +194,12 @@ export interface DossierView {
     kindLabel: string;
     kindHelp: string | null;
     confidence: string | null;
-    reasons: string[];
-    reasonsNote: string | null;
+    /** The vacancy model's fields behind the reasons (`rs`, `dy`, `sy`, `ny`), for src/places/reasons.ts. */
+    reasonProperties: Record<string, unknown> | null;
+    /** The reasons as sentences, or null when none are published. */
+    reasons: PlaceReasons | null;
+    /** How many independent records agree that it is vacant. */
+    signals: string | null;
     cityCalls: string | null;
     care: string[];
     lens: Lens | null;
@@ -333,12 +342,13 @@ function liSummaryLines(li: LiSummary): string[] {
   return lines;
 }
 
-function routeView(route: Route): RouteView {
+export function routeView(route: Route): RouteView {
+  const own = route.warning?.trim() || null;
   return {
     route,
     lastChecked: formatDate(route.last_checked) ?? route.last_checked,
     confirm: route.status === 'confirm',
-    conservatorship: route.id.includes('conservatorship'),
+    warning: own ?? (route.id.includes('conservatorship') ? strings.dossier.actions.conservatorshipWarning : null),
   };
 }
 
@@ -372,7 +382,14 @@ export function buildDossier(input: DossierInput): DossierView {
     links.push({ label: s.summary.streetView, url: streetViewUrl(point[0], point[1]) });
     links.push({ label: s.summary.googleMaps, url: googleMapsUrl(point[0], point[1]) });
   }
-  const reasons = parcel?.vacancy?.reasons ?? [];
+  const vacancy = parcel?.vacancy ?? null;
+  const reasonProperties: Record<string, unknown> | null = vacancy
+    ? { rs: vacancy.rs, dy: vacancy.dy, sy: vacancy.sy, ny: vacancy.ny }
+    : tile && tile.rs !== undefined
+      ? { rs: tile.rs, dy: tile.dy, sy: tile.sy, ny: tile.ny }
+      : null;
+  const reasons = reasonProperties ? placeReasons(reasonProperties, reasonContext(manifest)) : null;
+  const signalCount = vacancy?.n ?? int(tile?.n);
 
   // What you can do ------------------------------------------------------------------------------
   const suggestionIds = parcel ? parcel.suggestions : typeof tile?.sg === 'string' ? tile.sg : '';
@@ -531,7 +548,7 @@ export function buildDossier(input: DossierInput): DossierView {
     part.status === 'ok' ? src.live(formatTime(part.at)) : inSnapshot ? snapshotWhen : null;
   const ownerWhen = whenFor(live.property, !!shardOwner || !!parcel?.address);
   if (ownerWhen) addSource('opa_properties', ownerWhen);
-  if (parcel?.vacancy) {
+  if (vacancy) {
     addSource('vacant_indicators_land', snapshotWhen);
     addSource('vacant_indicators_bldg', snapshotWhen);
   }
@@ -596,8 +613,9 @@ export function buildDossier(input: DossierInput): DossierView {
       kindLabel: kind ? (s.summary.kind[kind] ?? s.summary.notListed) : listed ? strings.place.kindUnknown : s.summary.notListed,
       kindHelp: listed ? null : s.summary.notListedHelp,
       confidence: confidence ? (s.summary.confidence[confidence] ?? null) : null,
+      reasonProperties,
       reasons,
-      reasonsNote: listed && reasons.length === 0 && !parcel ? s.summary.noReasons : null,
+      signals: signalCount !== null && signalCount > 0 ? s.summary.signals(signalCount) : null,
       cityCalls: property?.category ? s.summary.cityCalls(sentenceCase(property.category)) : null,
       care,
       lens,

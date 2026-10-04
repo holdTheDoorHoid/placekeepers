@@ -301,6 +301,9 @@ class Route(Strict):
     id: Id
     label: Text
     who: Text
+    #: a caution shown before the steps whenever the route appears (docs/ETHICS.md), such as the
+    #: conservatorship abuse warning
+    warning: Text | None = None
     steps: Annotated[list[Text], Field(min_length=1)]
     cost: Text
     timeline: Text

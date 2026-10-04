@@ -126,10 +126,6 @@ export const strings = {
   },
 
   field: {
-    searchLabel: 'Search for an address or intersection',
-    searchPlaceholder: 'Address or intersection',
-    searchButton: 'Search',
-    searchSoon: 'Address search is coming soon. For now, move the map or use Near me.',
     nearMe: 'Near me',
     nearMeBusy: 'Finding you',
     nearMeDenied: 'Location is turned off for this site. You can still move the map by hand.',
@@ -161,6 +157,7 @@ export const strings = {
     allOff: 'Every lens factor is turned off, so places are not ranked. Turn a factor back on in Settings.',
     noScores: 'Priority scores are not published yet, so these places are listed by parcel number.',
     showOnMap: 'Show on map',
+    openLotPage: 'Open lot page',
     preview: 'Preview. The full list with addresses and legal steps arrives in a later update.',
   },
 
@@ -184,7 +181,6 @@ export const strings = {
     ownerTitle: 'Owner type',
     landcare: 'Already maintained by PHS LandCare',
     suggestionsTitle: 'Suggestions',
-    dossierSoon: 'The full lot page, with owner, sale history and sources, arrives in a later update.',
     clearSelection: 'Clear selection',
     selectedTitle: 'Selected place',
   },
@@ -538,7 +534,7 @@ export const strings = {
     pageTitle: 'Lot page',
     loading: 'Loading the lot page',
     parcel: (opa: string) => `OPA account ${opa}`,
-    print: 'Print this lot page',
+    printButton: 'Print this lot page',
     showOnMap: 'Show on map',
     close: 'Close the lot page',
     clear: 'Clear selection',
@@ -589,8 +585,7 @@ export const strings = {
         low: 'We are not very sure it is vacant',
       } as Record<string, string>,
       confidenceTitle: 'How sure we are',
-      reasonsTitle: 'Why we think so',
-      noReasons: 'The reasons arrive with the weekly snapshot of City records.',
+      signals: (n: number) => `${plural(n, 'independent City record agrees', 'independent City records agree')} that it is vacant.`,
       cityCalls: (category: string) => `City property records call it: ${category}.`,
       landcare: 'Already maintained by PHS LandCare.',
       landcareSince: (year: number) => `Already maintained by PHS LandCare since ${year}.`,
@@ -807,6 +802,7 @@ export const strings = {
         `Chart of the City's assessment from ${first} to ${last}, between ${low} and ${high}. The same numbers are in the table below.`,
       liTitle: 'Permits, violations and demolitions',
       liCaption: 'L&I records for this property, newest first',
+      liRecord: 'What L&I recorded',
       kinds: {
         violation: 'Violation',
         permit: 'Permit',

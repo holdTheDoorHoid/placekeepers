@@ -42,10 +42,19 @@ export const OWNER_TYPE_CODES: Record<OwnerType, number> = {
   other_public: 8,
 };
 
+/**
+ * The vacancy model's call for a parcel, with the same fields as its map tile (docs/CONTRACTS.md
+ * section 4): the reasons as bits in `rs`, how many independent records agree in `n`, and the
+ * years that go with some reasons. src/places/reasons.ts turns them into sentences.
+ */
 export interface Vacancy {
   kind: VacancyKind | null;
   confidence: Confidence | null;
-  reasons: string[];
+  rs: number | null;
+  n: number | null;
+  dy: number | null;
+  sy: number | null;
+  ny: number | null;
 }
 
 export interface Link {

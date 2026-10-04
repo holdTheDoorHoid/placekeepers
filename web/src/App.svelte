@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, untrack } from 'svelte';
   import { config } from './config/index.ts';
   import { isSampleData, loadManifest } from './data/manifest.ts';
   import { FIELD_VIEW_MAX_WIDTH, autoView } from './state/defaults.ts';
@@ -8,7 +8,9 @@
   import type { AppStore } from './state/store.svelte.ts';
   import { decodeState, encodeState } from './state/url.ts';
   import { strings } from './strings.ts';
+  import { isOpaAccount } from './dossier/opa.ts';
   import AnalysisView from './components/analysis/AnalysisView.svelte';
+  import DossierPrint from './components/dossier/DossierPrint.svelte';
   import FieldView from './components/field/FieldView.svelte';
   import Header from './components/Header.svelte';
   import MapView from './components/MapView.svelte';
@@ -47,11 +49,26 @@
     messageTimer = setTimeout(() => (store.message = ''), 7000);
   });
 
+  // The lot page follows the selection, wherever it came from: a tap, a search, or a link. When
+  // the map finds the selected parcel in its lots layer later, the page gets its tile data too.
+  $effect(() => {
+    const id = store.state.selected;
+    const tile = store.selectedProperties;
+    untrack(() => {
+      if (id && isOpaAccount(id)) store.dossier.open(id, { tile });
+      else if (store.dossier.opa) store.dossier.close();
+    });
+  });
+
+  // The browser tab and a printed page carry the lot's address.
+  $effect(() => {
+    const title = store.dossierView?.title;
+    document.title = title ? `${title} | ${strings.app.name}` : strings.app.name;
+  });
+
   onMount(() => {
     loadManifest(config.dataBase).then((result) => {
-      store.manifest = result.manifest;
-      store.manifestError = result.error;
-      store.manifestLoaded = true;
+      store.setManifest(result);
       if (result.error) console.warn('Placekeepers data:', result.error);
       if (result.problems.length) console.warn('Placekeepers manifest problems:', result.problems);
     });
@@ -98,7 +115,7 @@
       {strings.app.earlyPreview}
       <a href={strings.app.repoUrl}>{strings.app.followAlong}</a>
     </p>{/if}
-  <main class="stage {store.state.view}">
+  <main class="stage {store.state.view}" class:with-dossier={store.dossierView !== null && !store.inspected}>
     <div class="map-area"><MapView {store} /></div>
     {#if store.state.view === 'field'}
       <FieldView {store} />
@@ -109,6 +126,10 @@
   <SettingsDrawer {store} bind:open={settingsOpen} />
   <div class="toast" class:shown={store.message !== ''} role="status" aria-live="polite">{store.message}</div>
 </div>
+{#if store.dossierView && !store.dossierView.loading && !store.dossierView.empty}
+  <!-- Printed instead of the map while a lot page is open (see app.css). -->
+  <div class="pk-print"><DossierPrint view={store.dossierView} /></div>
+{/if}
 
 <style>
   .app {
@@ -149,7 +170,12 @@
       'left drawer right' auto
       / minmax(290px, 340px) minmax(0, 1fr) minmax(290px, 340px);
   }
+  /* A lot page needs more room than the area summary: its tables have five columns. */
+  .stage.analysis.with-dossier {
+    grid-template-columns: minmax(290px, 340px) minmax(0, 1fr) minmax(320px, 440px);
+  }
   @media (max-width: 1099px) {
+    .stage.analysis.with-dossier,
     .stage.analysis {
       grid-template:
         'left toolbar' auto
@@ -159,6 +185,7 @@
     }
   }
   @media (max-width: 767px) {
+    .stage.analysis.with-dossier,
     .stage.analysis {
       grid-template:
         'toolbar' auto

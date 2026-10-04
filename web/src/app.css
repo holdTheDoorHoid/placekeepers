@@ -310,3 +310,27 @@ caption {
     animation: none !important;
   }
 }
+
+/* Printing: while a lot page is open, only its one page print layout is printed
+   (src/components/dossier/DossierPrint.svelte). Without one, the page prints as it is. */
+.pk-print {
+  display: none;
+}
+
+@media print {
+  @page {
+    margin: 12mm;
+  }
+  body:has(.pk-print) .app,
+  body:has(.pk-print) dialog {
+    display: none !important;
+  }
+  .pk-print {
+    display: block;
+  }
+  html,
+  body {
+    height: auto;
+    background: #ffffff;
+  }
+}

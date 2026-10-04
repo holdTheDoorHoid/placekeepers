@@ -172,6 +172,8 @@ export interface Route {
   id: string;
   label: string;
   who: string;
+  /** A caution shown before the steps wherever the route appears (docs/ETHICS.md). */
+  warning?: string;
   steps: string[];
   cost: string;
   timeline: string;

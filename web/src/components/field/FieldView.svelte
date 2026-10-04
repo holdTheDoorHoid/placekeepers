@@ -8,8 +8,10 @@
   import type { AppStore } from '../../state/store.svelte.ts';
   import { strings } from '../../strings.ts';
   import Dialog from '../common/Dialog.svelte';
+  import DossierPanel from '../dossier/DossierPanel.svelte';
   import LayerList from '../layers/LayerList.svelte';
   import PlaceCard from '../places/PlaceCard.svelte';
+  import AddressSearch from '../search/AddressSearch.svelte';
   import FeatureDetails from '../streets/FeatureDetails.svelte';
 
   let { store }: { store: AppStore } = $props();
@@ -65,29 +67,8 @@
 
 <div class="field-controls">
   <div class="row">
-    <form
-      class="search"
-      role="search"
-      onsubmit={(e) => {
-        e.preventDefault();
-        store.say(strings.field.searchSoon);
-      }}
-    >
-      <label class="sr-only" for="pk-search">{strings.field.searchLabel}</label>
-      <input id="pk-search" type="search" placeholder={strings.field.searchPlaceholder} />
-      <button class="button small search-button" type="submit">
-        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"
-          ><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4" /><path
-            d="M15.5 15.5 21 21"
-            stroke="currentColor"
-            stroke-width="2.4"
-            stroke-linecap="round"
-          /></svg
-        >
-        <span class="sr-only">{strings.field.searchButton}</span>
-      </button>
-    </form>
-    <button class="button small primary" type="button" onclick={nearMe} disabled={locating} aria-describedby="pk-near-me-note">
+    <AddressSearch {store} idPrefix="pk-field" />
+    <button class="button small primary near-me" type="button" onclick={nearMe} disabled={locating} aria-describedby="pk-near-me-note">
       {locating ? strings.field.nearMeBusy : strings.field.nearMe}
     </button>
     <span id="pk-near-me-note" class="sr-only">{strings.field.nearMePrivacy}</span>
@@ -141,6 +122,23 @@
   <LayerList {store} idPrefix="field" />
 </Dialog>
 
+<!-- The lot page: a full screen sheet on phones. Closing it keeps the parcel marked on the map. -->
+<Dialog
+  bind:open={() => store.dossierOpen && store.dossierView !== null, (open) => !open && (store.dossierOpen = false)}
+  title={store.dossierView?.title ?? strings.dossier.pageTitle}
+  id="pk-field-dossier"
+>
+  <DossierPanel
+    {store}
+    idPrefix="pk-field-dossier"
+    onShowOnMap={() => {
+      store.dossierOpen = false;
+      sheetOpen = false;
+      if (store.dossier.center) store.controller?.flyTo(store.dossier.center);
+    }}
+  />
+</Dialog>
+
 <Dialog
   bind:open={() => store.inspected !== null, (open) => !open && store.inspect(null)}
   title={strings.streets.detailsTitle(store.registry.layers.find((l) => l.id === store.inspected?.layerId)?.style ?? '')}
@@ -165,23 +163,12 @@
     gap: 8px;
     min-width: 0;
   }
-  .search {
-    display: flex;
-    flex: 1;
-    gap: 6px;
-    min-width: 0;
+  .row {
+    align-items: flex-start;
   }
-  .search input {
-    flex: 1;
-    min-width: 0;
+  .near-me {
+    flex: none;
     min-height: 40px;
-    padding: 6px 10px;
-    border: 1px solid var(--pk-border);
-    border-radius: var(--pk-radius);
-    font: inherit;
-  }
-  .search-button {
-    padding: 6px 10px;
   }
   .chips {
     display: flex;

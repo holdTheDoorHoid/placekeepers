@@ -5,7 +5,11 @@
   import { placeReasons, reasonContext } from '../../places/reasons.ts';
   import { strings } from '../../strings.ts';
 
-  let { properties, manifest }: { properties: Record<string, unknown>; manifest: Manifest | null } = $props();
+  let {
+    properties,
+    manifest,
+    level = 3,
+  }: { properties: Record<string, unknown>; manifest: Manifest | null; level?: 3 | 4 } = $props();
 
   const reasons = $derived(placeReasons(properties, reasonContext(manifest)));
 </script>
@@ -14,13 +18,13 @@
   <p class="muted small">{strings.reasons.notPublished}</p>
 {:else}
   {#if reasons.agree.length}
-    <h3>{strings.reasons.title}</h3>
+    <svelte:element this={`h${level}`}>{strings.reasons.title}</svelte:element>
     <ul class="reasons">
       {#each reasons.agree as text (text)}<li>{text}.</li>{/each}
     </ul>
   {/if}
   {#if reasons.doubt.length}
-    <h3>{strings.reasons.againstTitle}</h3>
+    <svelte:element this={`h${level}`}>{strings.reasons.againstTitle}</svelte:element>
     <ul class="reasons doubt">
       {#each reasons.doubt as text (text)}<li>{text}.</li>{/each}
     </ul>

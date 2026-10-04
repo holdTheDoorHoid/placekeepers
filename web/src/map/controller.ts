@@ -19,7 +19,12 @@ import { resolveLayerData, type LayerData, type Manifest } from '../data/manifes
 import type { Registry } from '../registry/types.ts';
 import type { AppState, MapPosition } from '../state/defaults.ts';
 import { strings } from '../strings.ts';
+import { SELECTED, SELECTED_CASING } from './styles/palette.ts';
 import { STYLES, partId, styleFor, type StyleModule } from './styles/index.ts';
+
+/** The outline of a parcel opened by a lookup (not from the lots layer), drawn above everything. */
+const PICKED_SOURCE = 'pk-picked-parcel';
+const PICKED_LAYERS = ['pk-picked-parcel:casing', 'pk-picked-parcel:line'];
 
 /** The map may wander a little beyond the city, but not far. */
 const MAX_BOUNDS: [[number, number], [number, number]] = [
@@ -53,7 +58,10 @@ export interface InspectTarget {
 
 export interface MapEvents {
   move(position: MapPosition): void;
-  select(id: string | null, properties: Record<string, unknown> | null): void;
+  /** A tap on a parcel of the lots layer, with where it was tapped. */
+  select(id: string | null, properties: Record<string, unknown> | null, lngLat?: [number, number]): void;
+  /** A tap that hit nothing on the data layers: the app may look up the parcel there. */
+  pick?(lngLat: [number, number]): void;
   /** A tap on a memorial, crash or street block, or null when nothing of the kind was tapped. */
   inspect(target: InspectTarget | null): void;
   /** The map finished drawing after a move or a data change. */
@@ -116,6 +124,8 @@ export class MapController {
   private marker: maplibregl.Marker | null = null;
   /** The features someone opened, drawn as selected by their layer's style. */
   private inspected: { layerId: string; ids: (string | number)[] } | null = null;
+  /** The outline of a parcel opened by a lookup, waiting for the map to load. */
+  private pickedShape: Geometry | null = null;
 
   constructor(options: ControllerOptions) {
     ensurePmtilesProtocol();
@@ -148,6 +158,7 @@ export class MapController {
       this.loaded = true;
       this.labelAnchor = this.map.getStyle().layers.find((l) => l.type === 'symbol')?.id;
       this.sync();
+      this.drawPickedShape();
     });
     this.map.on('moveend', () => this.events.move(this.position()));
     this.map.on('idle', () => this.events.idle());
@@ -171,6 +182,39 @@ export class MapController {
     if (!this.loaded) return;
     if (before) this.syncLayer(before);
     if (this.inspected && this.inspected.layerId !== before) this.syncLayer(this.inspected.layerId);
+  }
+
+  /** Outlines a parcel that was opened by a lookup rather than from the lots layer, or clears it. */
+  setSelectedShape(shape: Geometry | null): void {
+    if (shape === this.pickedShape) return;
+    this.pickedShape = shape;
+    this.drawPickedShape();
+  }
+
+  private drawPickedShape(): void {
+    if (!this.loaded) return;
+    const data = { type: 'FeatureCollection' as const, features: this.pickedShape ? [{ type: 'Feature' as const, properties: {}, geometry: this.pickedShape }] : [] };
+    const source = this.map.getSource(PICKED_SOURCE) as maplibregl.GeoJSONSource | undefined;
+    if (source) {
+      source.setData(data);
+      return;
+    }
+    if (!this.pickedShape) return;
+    this.map.addSource(PICKED_SOURCE, { type: 'geojson', data });
+    this.map.addLayer({
+      id: PICKED_LAYERS[0]!,
+      type: 'line',
+      source: PICKED_SOURCE,
+      layout: { 'line-join': 'round' },
+      paint: { 'line-color': SELECTED_CASING, 'line-width': 7 },
+    });
+    this.map.addLayer({
+      id: PICKED_LAYERS[1]!,
+      type: 'line',
+      source: PICKED_SOURCE,
+      layout: { 'line-join': 'round' },
+      paint: { 'line-color': SELECTED, 'line-width': 3.5 },
+    });
   }
 
   setManifest(manifest: Manifest | null): void {
@@ -415,10 +459,12 @@ export class MapController {
     const top = hits[0];
     const layerId = top ? this.layerOf(top.layer.id) : null;
     const applied = layerId ? this.applied.get(layerId) : undefined;
+    const lngLat: [number, number] = [e.lngLat.lng, e.lngLat.lat];
     if (!top || !layerId || !applied || applied.style === STYLES.vacant_parcels) {
       this.events.inspect(null);
       const id = top?.properties?.id;
-      if (top && id !== undefined && id !== null) this.events.select(String(id), { ...top.properties });
+      if (top && id !== undefined && id !== null) this.events.select(String(id), { ...top.properties }, lngLat);
+      else if (this.events.pick) this.events.pick(lngLat);
       else this.events.select(null, null);
       return;
     }
