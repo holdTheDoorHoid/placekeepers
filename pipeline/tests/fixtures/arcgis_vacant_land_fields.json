@@ -1,0 +1,16 @@
+[
+  {"name": "objectid", "type": "esriFieldTypeOID"},
+  {"name": "address", "type": "esriFieldTypeString"},
+  {"name": "owner1", "type": "esriFieldTypeString"},
+  {"name": "owner2", "type": "esriFieldTypeString"},
+  {"name": "bldg_desc", "type": "esriFieldTypeString"},
+  {"name": "opa_id", "type": "esriFieldTypeString"},
+  {"name": "lniaddresskey", "type": "esriFieldTypeString"},
+  {"name": "councildistrict", "type": "esriFieldTypeString"},
+  {"name": "zoningbasedistrict", "type": "esriFieldTypeString"},
+  {"name": "zipcode", "type": "esriFieldTypeString"},
+  {"name": "land_rank", "type": "esriFieldTypeDouble"},
+  {"name": "date_update", "type": "esriFieldTypeDate"},
+  {"name": "Shape__Area", "type": "esriFieldTypeDouble"},
+  {"name": "Shape__Length", "type": "esriFieldTypeDouble"}
+]

@@ -1,0 +1,515 @@
+"""Load the shared registry (registry/*.yaml) and check it.
+
+The registry is the single list of every source, layer, lens, suggestion, legal route and partner.
+The web app reads the same files, so the rules here follow docs/CONTRACTS.md section 1:
+
+* unknown keys are errors, so a typo fails instead of being ignored;
+* ids are lowercase with underscores and unique within their file;
+* every cross reference resolves (layer sources and groups, source licenses, suggestion routes and
+  partners, lens presets and factor fields);
+* every layer has a plain description and at least one source, and every source has a license and
+  an attribution line.
+
+Every problem found is collected, so one run shows the whole list.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from datetime import date
+from pathlib import Path
+from typing import Annotated, Any, Literal
+
+import yaml
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StringConstraints,
+    ValidationError,
+    model_validator,
+)
+
+REGISTRY_FILES = (
+    "licenses",
+    "groups",
+    "sources",
+    "layers",
+    "lenses",
+    "suggestions",
+    "routes",
+    "partners",
+)
+
+ID_PATTERN = r"^[a-z][a-z0-9_]*$"
+
+Id = Annotated[str, StringConstraints(pattern=ID_PATTERN)]
+Text = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
+Url = Annotated[str, StringConstraints(pattern=r"^https?://\S+$")]
+Release = Annotated[str, StringConstraints(pattern=r"^v\d+\.\d+$")]
+Weight = Annotated[int, Field(strict=True, ge=0, le=5)]
+Evidence = Literal["strong", "moderate", "mixed", "weak", "not_violence", "context"]
+Cadence = Literal["daily", "weekly", "monthly", "yearly", "irregular", "frozen"]
+AppliesTo = Literal["parcel", "segment", "stop", "cell"]
+EndpointKind = Literal["carto", "arcgis", "url", "osm_extract", "curated"]
+
+
+class Strict(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+
+# ---------------------------------------------------------------------------------------------
+# licenses.yaml, groups.yaml, partners.yaml
+
+
+class License(Strict):
+    id: Id
+    label: Text
+    url: Url
+    share_alike: bool
+
+
+class Group(Strict):
+    id: Id
+    label: Text
+    description: Text
+
+
+class Partner(Strict):
+    id: Id
+    name: Text
+    url: Url
+    one_line: Text
+
+
+# ---------------------------------------------------------------------------------------------
+# sources.yaml
+
+
+class CartoEndpoint(Strict):
+    """A table on the City's Carto SQL API, with an optional SQL filter."""
+
+    kind: Literal["carto"]
+    table: Annotated[str, StringConstraints(pattern=ID_PATTERN)]
+    where: Text | None = None
+
+
+class ArcgisEndpoint(Strict):
+    """A layer of a City ArcGIS Online feature service."""
+
+    kind: Literal["arcgis"]
+    service: Annotated[str, StringConstraints(pattern=r"^[^/?#&\s][^/?#&]*$")]
+    layer: Annotated[int, Field(strict=True, ge=0)]
+
+
+class UrlEndpoint(Strict):
+    """A single file at a fixed https link."""
+
+    kind: Literal["url"]
+    url: Url
+    format: Literal["csv", "geojson", "parquet", "zip"]
+
+
+class OsmExtractEndpoint(Strict):
+    """An OpenStreetMap extract. Its keys are defined by the milestone that adds the first one."""
+
+    kind: Literal["osm_extract"]
+
+
+class CuratedEndpoint(Strict):
+    """A hand edited file in data/curated/."""
+
+    kind: Literal["curated"]
+    path: Annotated[str, StringConstraints(pattern=r"^data/curated/[A-Za-z0-9_.-]+\.ya?ml$")]
+
+
+Endpoint = Annotated[
+    CartoEndpoint | ArcgisEndpoint | UrlEndpoint | OsmExtractEndpoint | CuratedEndpoint,
+    Field(discriminator="kind"),
+]
+
+
+class Health(Strict):
+    min_rows: Annotated[int, Field(strict=True, ge=0)]
+    max_drop_pct: Annotated[float, Field(ge=0, le=100)]
+    newest_field: Annotated[str, StringConstraints(pattern=r"^[a-z_][a-z0-9_]*$")] | None = None
+    max_age_days: Annotated[int, Field(strict=True, gt=0)] | None = None
+
+    @model_validator(mode="after")
+    def _age_needs_a_field(self) -> Health:
+        if self.max_age_days is not None and self.newest_field is None:
+            raise ValueError("max_age_days needs newest_field (which field holds the record date?)")
+        return self
+
+
+class Source(Strict):
+    id: Id
+    name: Text
+    publisher: Text
+    homepage: Url
+    endpoint: Endpoint
+    license: Id
+    attribution: Text
+    cadence: Cadence
+    health: Health
+    release: Release
+
+
+# ---------------------------------------------------------------------------------------------
+# layers.yaml
+
+
+class Option(Strict):
+    value: str
+    label: Text
+
+
+class Setting(Strict):
+    id: Id
+    label: Text
+    type: Literal["toggle", "choice", "range"]
+    options: list[Option] = []
+    default: str | bool | int | float
+
+    @model_validator(mode="after")
+    def _default_fits_type(self) -> Setting:
+        if self.type == "choice":
+            values = [option.value for option in self.options]
+            if not values:
+                raise ValueError("a choice setting needs options")
+            if len(set(values)) != len(values):
+                raise ValueError(f"option values repeat: {values}")
+            if not isinstance(self.default, str) or self.default not in values:
+                raise ValueError(f"default {self.default!r} is not one of the options {values}")
+        elif self.type == "toggle":
+            if self.options:
+                raise ValueError("a toggle setting takes no options")
+            if not isinstance(self.default, bool):
+                raise ValueError("a toggle default must be true or false")
+        else:
+            if self.options:
+                raise ValueError("a range setting takes no options")
+            if isinstance(self.default, bool) or not isinstance(self.default, int | float):
+                raise ValueError("a range default must be a number")
+        return self
+
+
+class LayerDefault(Strict):
+    field: bool
+    analysis: bool
+
+
+class Layer(Strict):
+    id: Id
+    label: Text
+    group: Id
+    description: Text
+    sources: Annotated[list[Id], Field(min_length=1)]
+    # A relative path under the data root. Segments cannot start with a dot or a slash.
+    file: Annotated[
+        str, StringConstraints(pattern=r"^[A-Za-z0-9_][A-Za-z0-9_.-]*(/[A-Za-z0-9_][A-Za-z0-9_.-]*)*$")
+    ]
+    source_layer: Id
+    geometry: Literal["point", "line", "polygon"]
+    style: Id
+    evidence: Evidence
+    default: LayerDefault
+    settings: list[Setting] = []
+    release: Release
+
+
+# ---------------------------------------------------------------------------------------------
+# lenses.yaml
+
+
+class Factor(Strict):
+    id: Id
+    label: Text
+    field: Annotated[str, StringConstraints(pattern=r"^f_[a-z][a-z0-9_]*$")]
+    evidence: Evidence
+    default_weight: Weight
+    explain: Text
+
+
+class Preset(Strict):
+    id: Id
+    label: Text
+    weights: dict[Id, Weight]
+
+
+class Lens(Strict):
+    id: Id
+    label: Text
+    applies_to: AppliesTo
+    description: Text
+    factors: Annotated[list[Factor], Field(min_length=1)]
+    presets: list[Preset] = []
+    release: Release
+
+
+# ---------------------------------------------------------------------------------------------
+# suggestions.yaml and routes.yaml
+
+
+class Suggestion(Strict):
+    id: Id
+    label: Text
+    applies_to: AppliesTo
+    summary: Text
+    evidence: Evidence
+    cost: Text
+    # Legal route first: every suggestion names at least one lawful route.
+    routes: Annotated[list[Id], Field(min_length=1)]
+    partners: list[Id] = []
+    default_on: bool
+    release: Release
+
+
+class Link(Strict):
+    label: Text
+    url: Url
+
+
+class Route(Strict):
+    id: Id
+    label: Text
+    who: Text
+    steps: Annotated[list[Text], Field(min_length=1)]
+    cost: Text
+    timeline: Text
+    links: list[Link] = []
+    last_checked: date
+    status: Literal["verified", "confirm"]
+
+
+MODELS: dict[str, type[Strict]] = {
+    "licenses": License,
+    "groups": Group,
+    "sources": Source,
+    "layers": Layer,
+    "lenses": Lens,
+    "suggestions": Suggestion,
+    "routes": Route,
+    "partners": Partner,
+}
+
+
+# ---------------------------------------------------------------------------------------------
+# Loading
+
+
+class RegistryError(Exception):
+    """The registry has problems. `problems` lists each one as a readable line."""
+
+    def __init__(self, problems: list[str]):
+        self.problems = problems
+        super().__init__(f"{len(problems)} registry problem(s):\n" + "\n".join(problems))
+
+
+@dataclass(frozen=True)
+class Registry:
+    root: Path
+    licenses: dict[str, License]
+    groups: dict[str, Group]
+    sources: dict[str, Source]
+    layers: dict[str, Layer]
+    lenses: dict[str, Lens]
+    suggestions: dict[str, Suggestion]
+    routes: dict[str, Route]
+    partners: dict[str, Partner]
+
+    def summary(self) -> str:
+        parts = [f"{len(getattr(self, name))} {name}" for name in REGISTRY_FILES]
+        return ", ".join(parts)
+
+
+class _UniqueKeyLoader(yaml.SafeLoader):
+    """A YAML loader that refuses a key repeated in one mapping (a common silent typo)."""
+
+
+def _mapping_without_repeats(loader: _UniqueKeyLoader, node: yaml.MappingNode) -> dict:
+    loader.flatten_mapping(node)
+    seen: set[Any] = set()
+    for key_node, _ in node.value:
+        key = loader.construct_object(key_node, deep=True)
+        if key in seen:
+            raise yaml.constructor.ConstructorError(
+                None, None, f"key {key!r} appears twice", key_node.start_mark
+            )
+        seen.add(key)
+    return loader.construct_mapping(node, deep=True)
+
+
+_UniqueKeyLoader.add_constructor(
+    yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, _mapping_without_repeats
+)
+
+
+def read_yaml(path: Path) -> Any:
+    with path.open(encoding="utf-8") as handle:
+        return yaml.load(handle, Loader=_UniqueKeyLoader)  # noqa: S506 (safe loader subclass)
+
+
+def _describe(error: dict[str, Any]) -> str:
+    loc = [str(part) for part in error["loc"]]
+    kind = error["type"]
+    if kind == "extra_forbidden":
+        where = ".".join(loc[:-1])
+        return f"{where + ': ' if where else ''}unknown key '{loc[-1]}'"
+    if kind == "missing":
+        where = ".".join(loc[:-1])
+        return f"{where + ': ' if where else ''}missing key '{loc[-1]}'"
+    where = ".".join(loc)
+    prefix = f"{where}: " if where else ""
+    if kind == "string_too_short":
+        return f"{prefix}must not be empty"
+    if kind == "string_pattern_mismatch":
+        pattern = error.get("ctx", {}).get("pattern", "")
+        return f"{prefix}{error['input']!r} does not match the expected form {pattern}"
+    if kind == "literal_error":
+        expected = error.get("ctx", {}).get("expected", "")
+        return f"{prefix}{error['input']!r} is not one of {expected}"
+    if kind == "union_tag_invalid":
+        ctx = error.get("ctx", {})
+        return f"{prefix}unknown kind {ctx.get('tag')!r}; expected one of {ctx.get('expected_tags')}"
+    message = error["msg"]
+    if message.startswith("Value error, "):
+        message = message[len("Value error, ") :]
+    return f"{prefix}{message}"
+
+
+def _label(entry: Any, index: int) -> str:
+    if isinstance(entry, dict) and isinstance(entry.get("id"), str):
+        return f"entry {index + 1} ({entry['id']})"
+    return f"entry {index + 1}"
+
+
+def _parse_file(
+    path: Path, model: type[Strict], problems: list[str], invalid: set[str]
+) -> dict[str, Any]:
+    """Parse one registry file into {id: model}, appending readable problems. Ids of entries
+    that fail are added to `invalid`, so references to them do not repeat the problem."""
+    rel = f"registry/{path.name}"
+    if not path.is_file():
+        problems.append(f"{rel}: file is missing")
+        return {}
+    try:
+        data = read_yaml(path)
+    except yaml.YAMLError as exc:
+        problems.append(f"{rel}: not valid YAML: {exc}".replace("\n", " "))
+        return {}
+    if data is None:
+        data = []
+    if not isinstance(data, list):
+        problems.append(f"{rel}: the file must be a list of entries")
+        return {}
+    parsed: dict[str, Any] = {}
+    for index, entry in enumerate(data):
+        label = _label(entry, index)
+        if not isinstance(entry, dict):
+            problems.append(f"{rel}: {label}: each entry must be a mapping of keys to values")
+            continue
+        try:
+            item = model.model_validate(entry)
+        except ValidationError as exc:
+            for error in exc.errors():
+                problems.append(f"{rel}: {label}: {_describe(error)}")
+            if isinstance(entry.get("id"), str):
+                invalid.add(entry["id"])
+            continue
+        if item.id in parsed:
+            problems.append(f"{rel}: {label}: id '{item.id}' is used more than once")
+            continue
+        parsed[item.id] = item
+    return parsed
+
+
+def _cross_check(
+    reg: dict[str, dict[str, Any]],
+    invalid: dict[str, set[str]],
+    repo_root: Path | None,
+    problems: list[str],
+) -> None:
+    # An entry that failed its own checks is already reported; count its id as present here.
+    licenses = reg["licenses"].keys() | invalid["licenses"]
+    groups = reg["groups"].keys() | invalid["groups"]
+    sources = reg["sources"].keys() | invalid["sources"]
+    routes = reg["routes"].keys() | invalid["routes"]
+    partners = reg["partners"].keys() | invalid["partners"]
+
+    for source in reg["sources"].values():
+        where = f"registry/sources.yaml: {source.id}"
+        if source.license not in licenses:
+            problems.append(f"{where}: license '{source.license}' is not in registry/licenses.yaml")
+        if isinstance(source.endpoint, CuratedEndpoint) and repo_root is not None:
+            if not (repo_root / source.endpoint.path).is_file():
+                problems.append(f"{where}: curated file {source.endpoint.path} does not exist")
+
+    for layer in reg["layers"].values():
+        where = f"registry/layers.yaml: {layer.id}"
+        if layer.group not in groups:
+            problems.append(f"{where}: group '{layer.group}' is not in registry/groups.yaml")
+        for source_id in layer.sources:
+            if source_id not in sources:
+                problems.append(f"{where}: source '{source_id}' is not in registry/sources.yaml")
+        if len(set(layer.sources)) != len(layer.sources):
+            problems.append(f"{where}: a source is listed twice")
+        setting_ids = [setting.id for setting in layer.settings]
+        if len(set(setting_ids)) != len(setting_ids):
+            problems.append(f"{where}: setting ids repeat: {setting_ids}")
+
+    for lens in reg["lenses"].values():
+        where = f"registry/lenses.yaml: {lens.id}"
+        factor_ids = [factor.id for factor in lens.factors]
+        fields = [factor.field for factor in lens.factors]
+        if len(set(factor_ids)) != len(factor_ids):
+            problems.append(f"{where}: factor ids repeat: {factor_ids}")
+        if len(set(fields)) != len(fields):
+            problems.append(f"{where}: factor fields repeat: {fields}")
+        if lens.id == "violence":
+            for factor in lens.factors:
+                if factor.evidence == "not_violence":
+                    problems.append(
+                        f"{where}: factor '{factor.id}' has no violence evidence and cannot be in "
+                        "the violence lens"
+                    )
+        preset_ids = [preset.id for preset in lens.presets]
+        if len(set(preset_ids)) != len(preset_ids):
+            problems.append(f"{where}: preset ids repeat: {preset_ids}")
+        for preset in lens.presets:
+            for factor_id in preset.weights:
+                if factor_id not in factor_ids:
+                    problems.append(
+                        f"{where}: preset '{preset.id}' weights unknown factor '{factor_id}'"
+                    )
+
+    for suggestion in reg["suggestions"].values():
+        where = f"registry/suggestions.yaml: {suggestion.id}"
+        for route_id in suggestion.routes:
+            if route_id not in routes:
+                problems.append(f"{where}: route '{route_id}' is not in registry/routes.yaml")
+        for partner_id in suggestion.partners:
+            if partner_id not in partners:
+                problems.append(f"{where}: partner '{partner_id}' is not in registry/partners.yaml")
+
+
+def load_registry(registry_dir: Path, *, repo_root: Path | None = None) -> Registry:
+    """Load and check every registry file. Raises RegistryError listing all problems."""
+    problems: list[str] = []
+    if not registry_dir.is_dir():
+        raise RegistryError([f"{registry_dir}: registry folder not found"])
+    expected = {f"{name}.yaml" for name in REGISTRY_FILES}
+    for path in sorted(registry_dir.iterdir()):
+        if path.suffix in {".yaml", ".yml"} and path.name not in expected:
+            problems.append(
+                f"registry/{path.name}: unknown registry file (expected one of {sorted(expected)})"
+            )
+    invalid: dict[str, set[str]] = {name: set() for name in REGISTRY_FILES}
+    parsed = {
+        name: _parse_file(registry_dir / f"{name}.yaml", MODELS[name], problems, invalid[name])
+        for name in REGISTRY_FILES
+    }
+    _cross_check(parsed, invalid, repo_root, problems)
+    if problems:
+        raise RegistryError(problems)
+    return Registry(root=registry_dir, **parsed)

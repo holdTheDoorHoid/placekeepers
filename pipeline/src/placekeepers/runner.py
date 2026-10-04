@@ -1,0 +1,209 @@
+"""Fetch and validate sources, keeping the last good snapshot whenever anything goes wrong.
+
+`fetch_source` only downloads. `validate_source` normalizes the newest download into a snapshot,
+checks it against the source's health rules, and either makes it current or rejects it. A failed
+download, an unreadable download and a rejected snapshot all leave the last good snapshot in place;
+the source then reports `stale`, or `failing` when there was never a good one.
+"""
+
+from __future__ import annotations
+
+import logging
+import time
+from dataclasses import dataclass
+
+from placekeepers.adapters import ADAPTERS, adapter_for
+from placekeepers.cache import RawFetch, RawStore, atomic_output, new_fetch_id, sha256_file
+from placekeepers.config import iso_z, local_date, parse_iso_z
+from placekeepers.context import Context
+from placekeepers.geo import is_geoparquet
+from placekeepers.health import SourceStatus, failed_summary, source_status
+from placekeepers.registry import Registry, Source
+from placekeepers.snapshots import SnapshotMeta, SnapshotStore
+
+log = logging.getLogger(__name__)
+
+
+class UsageError(RuntimeError):
+    pass
+
+
+@dataclass
+class StepResult:
+    source: str
+    step: str
+    outcome: str
+    detail: str
+    seconds: float
+
+
+def plain_error(exc: BaseException) -> str:
+    text = " ".join(str(exc).split()) or type(exc).__name__
+    return text if len(text) <= 300 else text[:297] + "..."
+
+
+def select_sources(registry: Registry, ids: list[str] | None) -> list[Source]:
+    if not ids:
+        return list(registry.sources.values())
+    unknown = [source_id for source_id in ids if source_id not in registry.sources]
+    if unknown:
+        raise UsageError(
+            f"Unknown source id(s): {', '.join(unknown)}. Known: {', '.join(registry.sources)}"
+        )
+    return [registry.sources[source_id] for source_id in dict.fromkeys(ids)]
+
+
+def _unique_fetch_id(ctx: Context, source_id: str) -> str:
+    base = new_fetch_id(ctx.now())
+    store = SnapshotStore(ctx.cache, source_id)
+    raws = RawStore(ctx.cache, source_id)
+    candidate, n = base, 1
+    while store.get(candidate) is not None or raws.get(candidate) is not None:
+        n += 1
+        candidate = f"{base}-{n:02d}"
+    return candidate
+
+
+def fetch_source(ctx: Context, source: Source) -> StepResult:
+    started = time.monotonic()
+
+    def result(outcome: str, detail: str) -> StepResult:
+        return StepResult(source.id, "fetch", outcome, detail, time.monotonic() - started)
+
+    adapter = adapter_for(source, ctx)
+    if adapter is None:
+        return result("no_adapter", "No adapter yet")
+    if ctx.settings.offline:
+        return result("skipped", "Offline run: using the cache")
+
+    raws = RawStore(ctx.cache, source.id)
+    store = SnapshotStore(ctx.cache, source.id)
+    with ctx.cache.lock(source.id):
+        state = store.state()
+        moment = ctx.now()
+        fetch_id = _unique_fetch_id(ctx, source.id)
+        partial = raws.begin(fetch_id)
+        state.last_attempt = iso_z(moment)
+        log.info("%s: downloading", source.id)
+        try:
+            info = adapter.fetch(partial)
+        except Exception as exc:  # every failure leaves the last good snapshot in place
+            raws.abort(partial)
+            message = f"Download failed: {plain_error(exc)}"
+            state.fail("fetch_failed", message)
+            store.save_state(state)
+            log.error("%s: %s", source.id, message)
+            log.debug("%s: details", source.id, exc_info=True)
+            return result("failed", message)
+        files = sorted(path.name for path in partial.iterdir())
+        raw = RawFetch(source=source.id, fetch_id=fetch_id, fetched_at=iso_z(moment),
+                       files=files, info=info)
+        raws.commit(partial, raw)
+        raws.prune(keep=fetch_id)
+        state.pending_fetch = fetch_id
+        store.save_state(state)
+    rows = info.get("rows")
+    return result("downloaded", f"{rows:,} rows" if isinstance(rows, int) else "downloaded")
+
+
+def _pending(raws: RawStore, store: SnapshotStore) -> RawFetch | None:
+    state = store.state()
+    if state.pending_fetch:
+        raw = raws.get(state.pending_fetch)
+        if raw is not None:
+            return raw
+    raw = raws.latest()
+    if raw is not None and store.get(raw.fetch_id) is None:
+        return raw
+    return None
+
+
+def validate_source(ctx: Context, source: Source) -> StepResult:
+    started = time.monotonic()
+
+    def result(outcome: str, detail: str) -> StepResult:
+        return StepResult(source.id, "validate", outcome, detail, time.monotonic() - started)
+
+    adapter = adapter_for(source, ctx)
+    if adapter is None:
+        return result("no_adapter", "No adapter yet")
+
+    raws = RawStore(ctx.cache, source.id)
+    store = SnapshotStore(ctx.cache, source.id)
+    with ctx.cache.lock(source.id):
+        state = store.state()
+        raw = _pending(raws, store)
+        if raw is None:
+            if state.pending_fetch:
+                state.pending_fetch = None
+                store.save_state(state)
+            return result("nothing_new", "No new download to check")
+
+        path = store.snapshot_path(raw.fetch_id)
+        last_good = store.current()
+        try:
+            log.info("%s: normalizing download %s", source.id, raw.fetch_id)
+            with atomic_output(path) as tmp:
+                adapter.normalize(raw, tmp)
+            validation = adapter.validate(path, last_good)
+        except Exception as exc:  # an unreadable download is a failure, not a crash
+            path.unlink(missing_ok=True)
+            message = f"Could not read the download: {plain_error(exc)}"
+            state.fail("error", message)
+            state.pending_fetch = None
+            store.save_state(state)
+            raws.remove(raw.fetch_id)
+            log.error("%s: %s", source.id, message)
+            log.debug("%s: details", source.id, exc_info=True)
+            return result("error", message)
+
+        meta = SnapshotMeta(
+            source=source.id,
+            snapshot_id=raw.fetch_id,
+            file=path.name,
+            format="geoparquet" if is_geoparquet(path) else "parquet",
+            fetched_at=raw.fetched_at,
+            rows=validation.rows,
+            sha256=sha256_file(path),
+            bytes=path.stat().st_size,
+            newest_record=validation.newest.isoformat() if validation.newest else None,
+            status="good" if validation.ok else "rejected",
+            checks=[check.to_json() for check in validation.checks],
+            message=failed_summary(validation.checks),
+            columns=validation.columns,
+            notes=list(adapter.notes),
+            raw_fetch_id=raw.fetch_id,
+        )
+        store.record(meta)
+        if validation.ok:
+            store.promote(meta)
+            state.current = meta.snapshot_id
+            state.last_result = "ok"
+            state.message = None
+            state.consecutive_failures = 0
+            newest = f", newest record {meta.newest_record}" if meta.newest_record else ""
+            outcome, detail = "ok", f"{meta.rows:,} rows{newest}"
+            log.info("%s: snapshot %s is good (%s)", source.id, meta.snapshot_id, detail)
+        else:
+            state.fail("rejected", meta.message or "The new download failed its checks")
+            if last_good is not None:
+                since = local_date(parse_iso_z(last_good.fetched_at)).isoformat()
+                fallback = f"Keeping the copy from {since}"
+            else:
+                fallback = "There is no earlier good copy"
+            outcome, detail = "rejected", f"{meta.message}. {fallback}"
+            log.error("%s: new download rejected: %s", source.id, detail)
+        state.pending_fetch = None
+        store.save_state(state)
+        store.prune(keep_good=ctx.settings.keep_snapshots)
+        raws.remove(raw.fetch_id)
+    return result(outcome, detail)
+
+
+def all_statuses(ctx: Context, sources: list[Source] | None = None) -> list[SourceStatus]:
+    chosen = sources if sources is not None else list(ctx.registry.sources.values())
+    return [
+        source_status(source.id, SnapshotStore(ctx.cache, source.id),
+                      has_adapter=source.id in ADAPTERS)
+        for source in chosen
+    ]
