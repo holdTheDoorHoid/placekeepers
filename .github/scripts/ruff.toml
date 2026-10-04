@@ -1,0 +1,6 @@
+# Same rules as pipeline/pyproject.toml, for the workflow helper scripts.
+line-length = 100
+target-version = "py312"
+
+[lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
