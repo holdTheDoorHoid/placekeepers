@@ -128,6 +128,25 @@ describe('vacant parcels style', () => {
     const fill = parts(state).find((l) => l.id.endsWith(':fill')) as { paint: Record<string, unknown> };
     expect(fill.paint['fill-color']).toBe(PRIORITY_RAMP.allOff);
   });
+
+  it('draws parcels with no shape as circles, under the same filters, color and clicks', () => {
+    const state = defaultState(reg, 'analysis');
+    const all = parts(state);
+    const point = all.find((l) => l.id.endsWith(':point')) as { type: string; filter: unknown; paint: Record<string, unknown> };
+    const fill = all.find((l) => l.id.endsWith(':fill')) as { filter: unknown; paint: Record<string, unknown> };
+    expect(point.type).toBe('circle');
+    expect(point.paint['circle-color']).toEqual(fill.paint['fill-color']);
+    expect(styleFor(layer)!.clickable).toEqual(expect.arrayContaining(['fill', 'point']));
+    const on = (properties: Record<string, unknown>, type: 1 | 3) =>
+      featureFilter(point.filter as never).filter({ zoom: 15 } as never, { type, properties } as never);
+    // A point shows by the same rules as a polygon, and a polygon never draws as a circle.
+    expect(on({ vc: 2, k: 1, ot: 1 }, 1)).toBe(true);
+    expect(on({ vc: 1, k: 1, ot: 1 }, 1)).toBe(false);
+    expect(on({ vc: 3, k: 1, ot: 1 }, 3)).toBe(false);
+    state.settings.vacant_parcels!.kinds = 'buildings';
+    const narrowed = parts(state).find((l) => l.id.endsWith(':point')) as { filter: unknown };
+    expect(featureFilter(narrowed.filter as never).filter({ zoom: 15 } as never, { type: 1, properties: { vc: 3, k: 1, ot: 1 } } as never)).toBe(false);
+  });
 });
 
 describe('shootings style', () => {

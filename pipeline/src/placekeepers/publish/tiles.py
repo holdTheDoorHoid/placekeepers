@@ -29,6 +29,9 @@ TILE_OPTIONS: dict[str, list[str]] = {
     "tiles/lots.pmtiles": [
         "--minimum-zoom=10",
         "--maximum-zoom=16",
+        # Parcels with no shape are points (issue #22); keep every one at every zoom, as the
+        # polygons are, instead of thinning points below the maximum zoom.
+        "--base-zoom=10",
         "--drop-densest-as-needed",
         "--extend-zooms-if-still-dropping",
         "--no-tiny-polygon-reduction-at-maximum-zoom",

@@ -286,8 +286,11 @@ Short property names keep tiles small. Integers are preferred to strings.
 | `sg` | string | suggestion ids, comma separated |
 
 The layer holds every parcel the vacancy model (DESIGN section 6) shows: lots and buildings at high,
-medium and low confidence. The kind comes from the building footprint, so a parcel on the City's
-building list with no building standing is a lot. Bits of `rs` (test with `rs & (1 << bit)`); bits
+medium and low confidence. A parcel is its Water Department parcel shape, else the City's polygon,
+else (added 2026-10-04, issue #22) a Point at the assessor's location (`lat`, `lng` in OPA), with
+the same properties; a unit inside a larger parcel (an OPA `unit`) with no shape is left out.
+Styles must draw both polygons and points. The kind comes from the building footprint, so a parcel
+on the City's building list with no building standing is a lot. Bits of `rs` (test with `rs & (1 << bit)`); bits
 never change meaning once published. The id names each reason in the pipeline
 (`placekeepers.derive.vacancy.REASONS`), the web app (`web/src/places/reasons.ts`) and its sentences
 (`strings.reasons`); tests on both sides check them against this table:

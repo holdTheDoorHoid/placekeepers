@@ -3,6 +3,8 @@
 //   very likely: solid thick outline, strong fill
 //   probably:    solid thin outline, medium fill
 //   not sure:    dashed outline, faint fill
+// A parcel with no mapped shape is a point at the assessor's location (issue #22), drawn as a
+// circle with the same color and the same strength for how sure we are.
 // Settings: min_confidence (hide parcels below a confidence) and kinds (lots, buildings or
 // both). The owner type filter from the analysis view applies here too.
 
@@ -15,6 +17,7 @@ import { partId, settingValue, sourceKeys, type LegendContext, type StyleContext
 
 const vc: ExpressionSpecification = ['to-number', ['get', 'vc'], 0];
 const kind: ExpressionSpecification = ['to-number', ['get', 'k'], 0];
+const isPoint: ExpressionSpecification = ['==', ['geometry-type'], 'Point'];
 
 /** The lens that colors parcels: the first registry lens that applies to parcels. */
 export function parcelLens(ctx: LegendContext) {
@@ -51,10 +54,15 @@ const outlineWidth: ExpressionSpecification = [
   ['match', vc, 3, 2.2, 1.2],
 ];
 
+/** Circles for parcels with no shape: small when zoomed out, about a lot wide up close. */
+const pointRadius: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 10, 2, 14, 4, 17, 7];
+/** The ring around a selected point, a little wider than the point. */
+const selectedRadius: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 10, 5, 14, 7, 17, 10];
+
 export const vacantParcels: StyleModule = {
   zIndex: 20,
   settings: ['min_confidence', 'kinds'],
-  clickable: ['fill'],
+  clickable: ['fill', 'point'],
 
   layers(ctx: StyleContext): LayerSpecification[] {
     const id = ctx.layer.id;
@@ -87,6 +95,20 @@ export const vacantParcels: StyleModule = {
         paint: { 'line-color': PARCEL_OUTLINE, 'line-width': outlineWidth, 'line-dasharray': [2, 1.5] },
       },
       {
+        id: partId(id, 'point'),
+        type: 'circle',
+        ...sourceKeys(ctx),
+        filter: ['all', filter, isPoint],
+        paint: {
+          'circle-color': fillColor(ctx),
+          'circle-opacity': ['match', vc, 3, 0.9, 2, 0.72, 0.45],
+          'circle-radius': pointRadius,
+          'circle-stroke-color': PARCEL_OUTLINE,
+          'circle-stroke-width': ['match', vc, 3, 1.6, 2, 1, 0.75],
+          'circle-stroke-opacity': ['match', vc, 3, 1, 2, 1, 0.6],
+        },
+      },
+      {
         id: partId(id, 'selected-casing'),
         type: 'line',
         ...sourceKeys(ctx),
@@ -101,6 +123,18 @@ export const vacantParcels: StyleModule = {
         filter: isSelected,
         layout: { 'line-join': 'round' },
         paint: { 'line-color': SELECTED, 'line-width': 3.5 },
+      },
+      {
+        id: partId(id, 'selected-point'),
+        type: 'circle',
+        ...sourceKeys(ctx),
+        filter: ['all', isSelected, isPoint],
+        paint: {
+          'circle-radius': selectedRadius,
+          'circle-opacity': 0,
+          'circle-stroke-color': SELECTED,
+          'circle-stroke-width': 3.5,
+        },
       },
     ];
   },
@@ -121,6 +155,7 @@ export const vacantParcels: StyleModule = {
       { kind: 'swatch', label: l.sureHigh, fill: swatch, fillOpacity: 0.9, stroke: PARCEL_OUTLINE, strokeWidth: 2.2 },
       { kind: 'swatch', label: l.sureMedium, fill: swatch, fillOpacity: 0.72, stroke: PARCEL_OUTLINE, strokeWidth: 1.2 },
       { kind: 'swatch', label: l.sureLow, fill: swatch, fillOpacity: 0.45, stroke: PARCEL_OUTLINE, strokeWidth: 1.2, dashed: true },
+      { kind: 'circle', label: l.parcelPoint, fill: swatch, stroke: PARCEL_OUTLINE, radius: 4 },
       { kind: 'swatch', label: l.selected, fill: 'transparent', stroke: SELECTED, strokeWidth: 3 },
     );
     return entries;
