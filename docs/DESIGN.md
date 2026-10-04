@@ -310,8 +310,8 @@ Every source has an adapter, a registry entry, a license note, an expected caden
   record date against the expected cadence.
 - **Snapshots**: every validated source is saved as GeoParquet with metadata (fetched at, rows, hash,
   newest record). If validation fails, the last good snapshot is used and the source is marked stale.
-  Weekly snapshots are attached to a GitHub release so history survives even if a source vanishes,
-  which is exactly what the original project lacked.
+  The last good snapshot of every source is kept on a rolling GitHub release (see 8.4), so the map
+  survives even if a source vanishes, which is exactly what the original project lacked.
 - **Derive**: vacancy model, owner flags, legal routes, lens factors, suggestions, hexagon aggregates.
 - **Publish**: PMTiles per layer group, ranked tables for the analysis view, dossier shards for
   candidate parcels, and `manifest.json` (build id, per source status, per layer file and size).
@@ -334,10 +334,38 @@ Every source has an adapter, a registry entry, a license note, an expected caden
 
 ### 8.4 Automation and health
 
-- `ci.yml`: on every pull request, pipeline tests on small fixtures, web tests, lint, and a build.
-- `refresh.yml`: weekly (and on demand): fetch, validate, derive, publish, attach snapshots to the
-  rolling release, deploy Pages. When a source fails two runs in a row the workflow opens or updates a
-  GitHub issue labeled `data-source`, so the owner is notified instead of the site silently rotting.
+Built in M0.4 (2026-10-04). Changes from the original plan are marked.
+
+- `ci.yml`: on every pull request and every push to `main`: pipeline lint, registry check and tests
+  (with tippecanoe), the tests of the workflow helper `.github/scripts/refresh.py`, and the web app's
+  tests, type check and build, all on small fixtures.
+- `refresh.yml`: every Monday at 10:00 UTC, and on demand from the Actions tab. Five jobs:
+  - `pipeline` restores the last good snapshot of every source from the rolling `data-snapshots`
+    release, runs `pk all` with tippecanoe, and packs the new good snapshots. It reuses the base map
+    extract (a release asset named after its Protomaps build date) for up to 30 days, then makes a
+    new one; if that fails, the saved one is used.
+  - `save` puts the new snapshots, the new manifest and any new base map on the release, and removes
+    what they replace for good (never emptying it).
+  - `site` builds the web app and copies the published data and the base map into `dist/data/`,
+    after checking the GitHub Pages limits (no file over 100 MB, site under 1 GB).
+  - `deploy` publishes the site with GitHub Pages.
+  - `issues` opens one issue per source labeled `data-source` when the source is stale or failing in
+    this run and was also stale or failing in the previous run. The issue says, in plain words, which
+    source, since when, the error, and what the map does meanwhile. Each week it stays broken the
+    issue gets a comment; when the source is ok again the issue closes itself.
+- To test the alarm, a manual run can make one source's download fail on purpose (the
+  `break_source` input); the source keeps its last good copy, exactly as in a real outage.
+- Least privilege: the jobs that install or run packages (`pipeline`, `site`) only ever hold a read
+  token. The jobs that can write (`save` for release assets, `issues` for issues) install nothing and
+  run only `gh` and the repository's standard library helper, so a compromised package can never
+  reach a token that writes. `deploy` alone can publish Pages.
+- If the `pipeline` or `site` job fails, nothing is deployed and the site keeps its previous version.
+  If only `save` fails, the site still updates and next week starts from the older saved copies.
+  GitHub tells the account that last changed the workflow's schedule about failed scheduled runs (by
+  email, depending on that account's notification settings).
+- Changed from the plan: the rolling release keeps only the latest good copy of each source (about
+  100 MB) and the base map, not every week's copy, so it stays small. Week by week history can be
+  added later as dated releases if it proves useful.
 - The public **Data status** page shows each source's last success, staleness, and row counts.
 
 ### 8.5 Hosting and cost
