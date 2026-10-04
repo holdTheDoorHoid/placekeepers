@@ -29,10 +29,8 @@ from __future__ import annotations
 
 import bisect
 import calendar
-import logging
 import math
 import re
-from collections import Counter
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
 from datetime import date
@@ -42,8 +40,6 @@ import pyarrow as pa
 import shapely
 from pyproj import Transformer
 from shapely import STRtree
-
-log = logging.getLogger(__name__)
 
 # Severity codes (CONTRACTS.md, crashes.sev)
 SEV_NONE, SEV_INJURY, SEV_SERIOUS, SEV_FATAL = 0, 1, 2, 3
@@ -601,12 +597,3 @@ def describe_years(years: Sequence[int]) -> str:
     if len(years) == 1:
         return str(years[0])
     return f"{min(years)} to {max(years)}"
-
-
-def summarize_modes(values: Iterable[int]) -> Counter:
-    counts: Counter = Counter()
-    for modes in values:
-        for bit in (MODE_WALK, MODE_BIKE, MODE_MOTORCYCLE, MODE_SCOOTER):
-            if modes & bit:
-                counts[bit] += 1
-    return counts

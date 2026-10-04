@@ -87,8 +87,9 @@ export const streetSegments: StyleModule = {
         layout,
         paint: {
           'line-color': color,
-          'line-width': ['interpolate', ['linear'], ['zoom'], 10, byScore(0.8, 2.4), 14, byScore(1.4, 4), 17, byScore(2.5, 7)],
-          'line-opacity': ['interpolate', ['linear'], value, 0, 0.45, 50, 0.8, 100, 0.95],
+          // Quieter citywide, clearer up close: thinner and fainter lines when zoomed out.
+          'line-width': ['interpolate', ['linear'], ['zoom'], 10, byScore(0.6, 1.8), 14, byScore(1.4, 4), 17, byScore(2.5, 7)],
+          'line-opacity': ['interpolate', ['linear'], ['zoom'], 10, byScore(0.3, 0.75), 14, byScore(0.45, 0.95)],
         },
       },
     ];

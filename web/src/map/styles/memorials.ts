@@ -37,9 +37,9 @@ export function memorialFilter(ctx: LegendContext): FilterSpecification {
   return (everyone(ctx) ? ['all'] : VULNERABLE) as FilterSpecification;
 }
 
-const radius: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 10, 3.5, 14, 5, 17, 7.5];
-const glowRadius: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 10, 6, 14, 9, 17, 13];
-const selectedRadius: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 10, 7.5, 14, 9, 17, 11.5];
+const radius: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 10, 2.5, 14, 5, 17, 7.5];
+const glowRadius: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 10, 4.5, 14, 9, 17, 13];
+const selectedRadius: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 10, 6.5, 14, 9, 17, 11.5];
 
 export const memorials: StyleModule = {
   zIndex: 50,
