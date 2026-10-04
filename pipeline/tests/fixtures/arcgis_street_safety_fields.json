@@ -1,0 +1,1741 @@
+{
+ "crashes_2020_2024": {
+  "service": "collision_crash_2020_2024",
+  "objectIdField": "objectid",
+  "geometryType": "esriGeometryPoint",
+  "fields": [
+   {
+    "name": "objectid",
+    "type": "esriFieldTypeOID"
+   },
+   {
+    "name": "crn",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "arrival_tm",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "automobile_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "belted_death_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "belted_susp_serious_inj_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "bicycle_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "bicycle_death_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "bicycle_susp_serious_inj_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "bus_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "chldpas_death_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "chldpas_susp_serious_inj_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "collision_type",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "comm_veh_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "cons_zone_spd_lim",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "county",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "crash_month",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "crash_year",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "day_of_week",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "dec_latitude",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "dec_longitude",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "dispatch_tm",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "district",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "driver_count_16yr",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "driver_count_17yr",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "driver_count_18yr",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "driver_count_19yr",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "driver_count_20yr",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "driver_count_50_64yr",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "driver_count_65_74yr",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "driver_count_75plus",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "est_hrs_closed",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "fatal_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "heavy_truck_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "horse_buggy_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "hour_of_day",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "illumination",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "injury_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "intersection_related_x",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "intersect_type",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "lane_closed",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "latitude",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "ln_close_dir",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "location_type",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "longitude",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "max_severity_level",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "mcycle_death_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "mcycle_susp_serious_inj_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "motorcycle_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "municipality",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "nonmotr_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "nonmotr_death_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "nonmotr_susp_serious_inj_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "ntfy_hiwy_maint",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "ped_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "ped_death_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "ped_susp_serious_inj_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "person_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "police_agcy",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "possible_inj_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "rdwy_surf_type_cd",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "relation_to_road",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "roadway_cleared",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "road_condition",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "sch_bus_ind",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "sch_zone_ind",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "secondary_crash",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "small_truck_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "spec_juris_cd",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "susp_minor_inj_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "susp_serious_inj_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "suv_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "tcd_func_cd",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "tcd_type",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "tfc_detour_ind",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "time_of_day",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "total_units",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "tot_inj_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "unbelted_occ_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "unb_death_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "unb_susp_serious_inj_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "unk_inj_deg_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "unk_inj_per_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "urban_rural",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "van_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "vehicle_count",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "weather1",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "weather2",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "workers_pres",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "work_zone_ind",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "work_zone_loc",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "work_zone_type",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "wz_close_detour",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "wz_flagger",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "wz_law_offcr_ind",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "wz_ln_closure",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "wz_moving",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "wz_other",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "wz_shlder_mdn",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "wz_workers_inj_killed",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "aggressive_driving",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "alcohol_related",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "angle_crash",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "atv",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "atv_route",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "backup_congestion",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "backup_nonrecurring",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "backup_prior",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "bicycle",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "cell_phone",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "child_passenger",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "comm_vehicle",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "core_network",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "cross_median",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "curved_road",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "curve_dvr_error",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "deer_related",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "distracted",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "drinking_driver",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "driver_16yr",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "driver_17yr",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "driver_18yr",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "driver_19yr",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "driver_20yr",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "driver_50_64yr",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "driver_65_74yr",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "driver_75plus",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "drugged_driver",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "drug_related",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "fatal",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "fatal_or_susp_serious_inj",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "fatigue_asleep",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "federal_aid_route",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "fire_in_vehicle",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "hazardous_truck",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "hit_barrier",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "hit_bridge",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "hit_deer",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "hit_embankment",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "hit_fixed_object",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "hit_gdrail",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "hit_gdrail_end",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "hit_parked_vehicle",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "hit_pole",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "hit_roadway_equipment",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "hit_run",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "hit_temp_construction_barrier",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "hit_traffic_island",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "hit_tree_shrub",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "hit_utility_pole",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "horse_buggy",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "ho_oppdir_sdswp",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "hvy_truck_related",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "icy_road",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "illegal_drug_related",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "illumination_dark",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "impaired_driver",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "impaired_nonmotorist",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "injury",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "injury_or_fatal",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "intersection",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "intersection_related_y",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "interstate",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "lane_departure",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "left_turn",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "limit_65mph",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "limit_70mph",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "local_road",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "local_road_only",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "marijuana_drugged_driver",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "marijuana_related",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "mature_driver",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "mc_drinking_driver",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "motorcycle",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "multiple_vehicle",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "nhtsa_agg_driving",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "non_intersection",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "no_clearance",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "opioid_related",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "other_freeway_expressway",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "overturned",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "pedestrian",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "phantom_vehicle",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "possible_injury",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "property_damage_only",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "psp_reported",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "ramp",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "ramp_segment",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "ramp_terminal",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "rear_end",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "roundabout",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "running_red_lt",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "running_stop_sign",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "rural",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "school_bus",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "school_bus_related",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "school_bus_unit",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "school_zone",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "shldr_related",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "signalized_int",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "single_vehicle",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "snowmobile",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "snow_slush_road",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "speeding",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "speeding_related",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "speed_change_lane",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "state_road",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "stop_controlled_int",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "sudden_deer",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "suspected_minor_injury",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "suspected_serious_injury",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "sv_run_off_rd",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "tailgating",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "train",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "train_trolley",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "trolley",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "turnpike",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "unbelted",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "underage_drnk_drv",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "unlicensed",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "unsignalized_int",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "urban",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "vehicle_failure",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "vehicle_towed",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "vulnerable_road_user",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "vulnerable_road_user_fatal",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "wet_road",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "work_zone",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "young_driver",
+    "type": "esriFieldTypeDouble"
+   }
+  ]
+ },
+ "crashes_2016_2020": {
+  "service": "COLLISION_CRASH_2016_2020",
+  "objectIdField": "OBJECTID",
+  "geometryType": "esriGeometryPoint",
+  "fields": [
+   {
+    "name": "OBJECTID",
+    "type": "esriFieldTypeOID"
+   },
+   {
+    "name": "CRN",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "DISTRICT",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "COUNTY",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "MUNICIPALI",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "CRASH_YEAR",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "CRASH_MONT",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "DAY_OF_WEE",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "TIME_OF_DA",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "HOUR_OF_DA",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "ILLUMINATI",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "WEATHER",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "ROAD_CONDI",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "COLLISION_",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "RELATION_T",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "INTERSECT_",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "TCD_TYPE",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "LOCATION_T",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "URBAN_RURA",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "FATAL_COUN",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "INJURY_COU",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "PERSON_COU",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "TOTAL_UNIT",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "LATITUDE",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "LONGITUDE",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "TCD_FUNC_C",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "VEHICLE_CO",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "AUTOMOBILE",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "MOTORCYCLE",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "BUS_COUNT",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "SMALL_TRUC",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "HEAVY_TRUC",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "SUV_COUNT",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "VAN_COUNT",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "BICYCLE_CO",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "SUSP_SERIO",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "SUSP_MINOR",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "POSSIBLE_I",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "TOT_INJ_CO",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "UNK_INJ_DE",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "UNK_INJ_PE",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "DRIVER_COU",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "DRIVER_C_1",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "DRIVER_C_2",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "DRIVER_C_3",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "DRIVER_C_4",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "DRIVER_C_5",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "DRIVER_C_6",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "DRIVER_C_7",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "UNBELTED_O",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "UNB_DEATH_",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "BELTED_DEA",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "MCYCLE_DEA",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "MCYCLE_SUS",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "BICYCLE_DE",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "BICYCLE_SU",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "PED_COUNT",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "PED_DEATH_",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "PED_SUSP_S",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "MAX_SEVERI",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "COMM_VEH_C",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "DEC_LAT",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "DEC_LONG",
+    "type": "esriFieldTypeDouble"
+   }
+  ]
+ },
+ "crashes_2007_2017": {
+  "service": "COLLISION_CRASH_2007_2017",
+  "objectIdField": "objectid",
+  "geometryType": "esriGeometryPoint",
+  "fields": [
+   {
+    "name": "objectid",
+    "type": "esriFieldTypeOID"
+   },
+   {
+    "name": "crn",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "district",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "county",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "municipality",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "crash_year",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "crash_month",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "day_of_week",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "time_of_day",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "hour_of_day",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "illumination",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "weather",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "road_condition",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "collision_type",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "relation_to_road",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "work_zone_type",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "work_zone_loc",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "work_zone_ind",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "intersect_type",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "tcd_type",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "location_type",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "urban_rural",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "fatal_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "injury_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "person_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "total_units",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "sch_bus_ind",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "sch_zone_ind",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "latitude",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "longitude",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "arrival_tm",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "cons_zone_spd_lim",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "dispatch_tm",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "est_hrs_closed",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "lane_closed",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "ln_close_dir",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "ntfy_hiwy_maint",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "spec_juris_cd",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "tcd_func_cd",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "tfc_detour_ind",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "workers_pres",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "wz_close_detour",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "wz_flagger",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "wz_law_offcr_ind",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "wz_ln_closure",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "wz_moving",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "wz_other",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "wz_shlder_mdn",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "vehicle_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "automobile_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "motorcycle_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "bus_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "small_truck_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "heavy_truck_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "suv_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "van_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "bicycle_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "maj_inj_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "mod_inj_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "min_inj_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "tot_inj_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "unk_inj_deg_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "unk_inj_per_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "driver_count_16yr",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "driver_count_17yr",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "driver_count_18yr",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "driver_count_19yr",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "driver_count_20yr",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "driver_count_50_64yr",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "driver_count_65_74yr",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "driver_count_75plus",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "unbelted_occ_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "unb_death_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "unb_maj_inj_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "belted_death_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "belted_maj_inj_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "mcycle_death_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "mcycle_maj_inj_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "bicycle_death_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "bicycle_maj_inj_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "ped_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "ped_death_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "ped_maj_inj_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "max_severity_level",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "comm_veh_count",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "dec_lat",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "dec_long",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "rdwy_surf_type_cd",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "county_name",
+    "type": "esriFieldTypeString"
+   }
+  ]
+ },
+ "schools": {
+  "service": "Schools",
+  "objectIdField": "objectid",
+  "geometryType": "esriGeometryPoint",
+  "fields": [
+   {
+    "name": "aun",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "school_num",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "location_id",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "school_name",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "school_name_label",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "street_address",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "zip_code",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "phone_number",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "grade_level",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "grade_org",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "enrollment",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "type",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "type_specific",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "objectid",
+    "type": "esriFieldTypeOID"
+   }
+  ]
+ },
+ "street_centerlines": {
+  "service": "Street_Centerline",
+  "objectIdField": "objectid",
+  "geometryType": "esriGeometryPolyline",
+  "fields": [
+   {
+    "name": "fnode_",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "tnode_",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "lpoly_",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "rpoly_",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "length",
+    "type": "esriFieldTypeDouble"
+   },
+   {
+    "name": "stcl2_",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "stcl2_id",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "pre_dir",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "st_name",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "st_type",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "suf_dir",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "zip_left",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "zip_right",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "l_f_add",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "l_t_add",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "r_f_add",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "r_t_add",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "st_code",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "l_hundred",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "r_hundred",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "seg_id",
+    "type": "esriFieldTypeInteger"
+   },
+   {
+    "name": "oneway",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "class",
+    "type": "esriFieldTypeSmallInteger"
+   },
+   {
+    "name": "responsibl",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "update_",
+    "type": "esriFieldTypeDate"
+   },
+   {
+    "name": "newsegdate",
+    "type": "esriFieldTypeDate"
+   },
+   {
+    "name": "multi_rep",
+    "type": "esriFieldTypeSmallInteger"
+   },
+   {
+    "name": "streetlabe",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "stname",
+    "type": "esriFieldTypeString"
+   },
+   {
+    "name": "objectid",
+    "type": "esriFieldTypeOID"
+   },
+   {
+    "name": "Shape__Length",
+    "type": "esriFieldTypeDouble"
+   }
+  ]
+ }
+}
