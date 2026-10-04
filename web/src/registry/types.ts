@@ -188,6 +188,15 @@ export interface Partner {
   one_line: string;
 }
 
+/**
+ * An app wide option (registry/options.yaml): a setting that is not tied to one map layer, with
+ * a plain description. Options are personal: kept only in this browser, never in a shared link.
+ */
+export type AppOption = LayerSetting & {
+  description: string;
+  release: string;
+};
+
 export interface Registry {
   groups: Group[];
   licenses: License[];
@@ -197,6 +206,7 @@ export interface Registry {
   suggestions: Suggestion[];
   routes: Route[];
   partners: Partner[];
+  options: AppOption[];
 }
 
 /** The registry files, in the order they are read. Each file is a YAML list. */
@@ -209,6 +219,7 @@ export const REGISTRY_FILES = [
   'suggestions',
   'routes',
   'partners',
+  'options',
 ] as const satisfies readonly (keyof Registry)[];
 
 export type RawRegistryFiles = Record<keyof Registry, unknown>;

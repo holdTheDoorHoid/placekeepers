@@ -34,6 +34,31 @@ export function formatNumber(n: number): string {
   return numberFormat.format(n);
 }
 
+const moneyFormat = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+const timeFormat = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' });
+
+/** Whole dollars, for example "$1,500". */
+export function formatMoney(n: number): string {
+  return moneyFormat.format(Math.round(n));
+}
+
+/** A time of day in Philadelphia, for example "2:14 PM". */
+export function formatTime(ms: number): string {
+  return timeFormat.format(new Date(ms));
+}
+
+/** "a", "a and b", "a, b and c". */
+export function joinAnd(items: string[]): string {
+  if (items.length <= 1) return items.join('');
+  return `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`;
+}
+
+/** CITY WORDS become "City words": for descriptions the City writes in capitals. */
+export function sentenceCase(text: string): string {
+  const lower = text.toLowerCase().replace(/\s+/g, ' ').trim();
+  return lower ? lower[0]!.toUpperCase() + lower.slice(1) : lower;
+}
+
 function plural(n: number, one: string, many: string): string {
   return `${formatNumber(n)} ${n === 1 ? one : many}`;
 }
@@ -423,6 +448,381 @@ export const strings = {
     } as Record<string, string>,
     problems: 'Problems in the status file',
     notesTitle: 'Notes from the latest refresh',
+  },
+
+  search: {
+    label: 'Search for an address, an intersection or a parcel number',
+    placeholder: 'Address, intersection or parcel number',
+    button: 'Search',
+    searching: 'Searching',
+    tooShort: 'Type an address, such as 1234 Market St, or two streets that cross, such as Broad and Girard.',
+    notFound:
+      'The City could not find that place. Try a house number and street, two streets that cross, or a nine digit parcel number.',
+    failed: (reason: string) => `The City's address service ${reason}. Try again in a moment.`,
+    liveOff:
+      'Address search asks the City\'s address service, and live City data is turned off in Settings. You can still search by a nine digit parcel number.',
+    resultsTitle: 'Choose a place',
+    resultsCount: (n: number) => plural(n, 'place matches', 'places match'),
+    intersection: 'Intersection',
+    showing: (label: string) => `Showing ${label} on the map.`,
+    noParcel: (label: string) => `Showing ${label} on the map. The City has no parcel record for this exact address.`,
+    privacy: 'Searches go from your browser straight to the City of Philadelphia.',
+  },
+
+  pick: {
+    looking: 'Looking up this parcel with the City',
+    nothing: 'The City has no parcel at this spot. Tap a lot or a building.',
+    zoomIn: 'Zoom in closer to open the lot page for any parcel.',
+    liveOff: 'To open a parcel that is not on our list, turn on "Fetch live City data" in Settings.',
+    failed: (reason: string) => `The City's parcel map ${reason}. Try again in a moment.`,
+  },
+
+  options: {
+    title: 'Privacy and live data',
+    privacyLink: 'How Placekeepers handles your privacy',
+    turnOn: 'Turn on live City data',
+    resetNote: 'Your choice about live City data stays as it is.',
+  },
+
+  /** Why a live lookup did not work, as the end of a sentence about a City server. */
+  failure: {
+    timeout: 'did not answer in time',
+    network: 'could not be reached',
+    http: 'answered with an error',
+    bad_data: 'sent an answer we could not read',
+    not_found: 'has no record of it',
+    aborted: 'was not asked',
+    empty: 'was not asked',
+  } as Record<string, string>,
+
+  dossier: {
+    pageTitle: 'Lot page',
+    loading: 'Loading the lot page',
+    parcel: (opa: string) => `OPA account ${opa}`,
+    print: 'Print this lot page',
+    showOnMap: 'Show on map',
+    close: 'Close the lot page',
+    clear: 'Clear selection',
+    retry: 'Try the City again',
+    notFound: 'We could not find this parcel in City records or in our weekly snapshot.',
+    noData:
+      'This parcel is not in our weekly snapshot, and live City data is turned off, so there is nothing to show yet.',
+    sections: {
+      summary: 'Summary',
+      actions: 'What you can do',
+      owner: 'Who owns it',
+      history: 'History',
+      nearby: 'Nearby',
+      sources: 'Sources and freshness',
+    },
+    contents: 'On this page',
+
+    provenance: {
+      live: (time: string) => `Live from the City at ${time}.`,
+      snapshot: (date: string) => `From the weekly snapshot of ${date}.`,
+      snapshotNoDate: 'From the weekly snapshot.',
+      map: 'From the map\'s weekly data.',
+      checking: 'Checking the City for newer records.',
+      asking: 'Asking the City.',
+      failedSnapshot: (reason: string, date: string) => `The City's servers ${reason}, so this is the weekly snapshot of ${date}.`,
+      failedNothing: (reason: string) => `The City's servers ${reason}, so this part cannot be shown right now.`,
+      offSnapshot: (date: string) => `Live City data is off, so this is the weekly snapshot of ${date}.`,
+      offNothing: 'Live City data is off, and our weekly snapshot does not cover this part.',
+      none: 'No records to show.',
+    },
+    banner: {
+      live: 'Live from the City of Philadelphia.',
+      loading: 'Checking with the City for the newest records.',
+      off: (date: string) => `Live City data is off. This page shows the weekly snapshot of ${date}.`,
+      offNoDate: 'Live City data is off. This page shows the weekly snapshot.',
+      partial: 'Some City lookups did not work. Those parts show the weekly snapshot, or nothing, and say so.',
+      failed: 'The City\'s servers did not answer. This page shows what our weekly snapshot has.',
+    },
+
+    summary: {
+      kind: { lot: 'Vacant lot', building: 'Vacant building' } as Record<string, string>,
+      notListed: 'Not on our list of vacant lots and buildings',
+      notListedHelp:
+        'Our weekly check of City records did not find signs that this parcel is vacant. If you think it is, report a correction below.',
+      confidence: {
+        high: 'Very likely vacant',
+        medium: 'Probably vacant',
+        low: 'We are not very sure it is vacant',
+      } as Record<string, string>,
+      confidenceTitle: 'How sure we are',
+      reasonsTitle: 'Why we think so',
+      noReasons: 'The reasons arrive with the weekly snapshot of City records.',
+      cityCalls: (category: string) => `City property records call it: ${category}.`,
+      landcare: 'Already maintained by PHS LandCare.',
+      landcareSince: (year: number) => `Already maintained by PHS LandCare since ${year}.`,
+      garden: 'People already garden here. Ask them before you plan anything.',
+      linksTitle: 'See it on other sites',
+      propertyPage: 'The City\'s property page',
+      atlas: 'Atlas, the City\'s map of this address',
+      googleMaps: 'Google Maps',
+      streetView: 'Google Street View',
+      linksNote: 'These open other websites. Placekeepers links to street photos but never copies them.',
+      priorityTitle: 'Priority under your lens blend',
+    },
+
+    actions: {
+      intro: 'Start with the lawful route. Each one says who can do it and who can help.',
+      route: 'The lawful route',
+      steps: 'Steps',
+      who: 'Who can do it',
+      cost: 'Cost',
+      timeline: 'How long it takes',
+      lastChecked: (date: string) => `Last checked ${date}.`,
+      toConfirm: 'Still to be confirmed with the organization named here.',
+      partners: 'Who can help',
+      otherRoutes: 'Other lawful routes for this parcel',
+      none: 'No suggestion for this place yet.',
+      notListed:
+        'This parcel is not on our list of likely vacant lots and buildings, so we have no suggestion for it. The How to do it page explains the lawful routes for any lot.',
+      howTo: 'How to do it',
+      conservatorshipWarning:
+        'Conservatorship can take a property away from its owner. Researchers found it is used disproportionately in neighborhoods facing gentrification. Talk to the Garden Justice Legal Initiative before you consider it.',
+      notLegalAdvice: 'Placekeepers is not legal advice. Check with the organizations named here before you act.',
+    },
+
+    ownerType: {
+      noName: 'City records give no owner name.',
+      unclear: 'We could not tell what kind of owner this is from the name.',
+      individual: 'The owner name looks like a person\'s name.',
+      publicName: (label: string) => `City records name ${label} as the owner.`,
+      markerReason: (marker: string) => `The owner name includes "${marker}".`,
+      markers: {
+        TR: 'TR, short for trustee',
+        TRS: 'TRS, short for trustees',
+        TRST: 'TRST, short for trust',
+        'T U W': 'T/U/W, a trust set up by a will',
+        FBO: 'FBO, for the benefit of',
+        CO: 'CO, short for company',
+        LP: 'LP, a limited partnership',
+        LLP: 'LLP, a limited liability partnership',
+        LTD: 'LTD, short for limited',
+        LL: 'LL, a shortened LLC',
+        GP: 'GP, a general partner',
+        'N A': 'N A, a national bank',
+        FB: 'FB, a shortened FBO',
+        CDC: 'CDC, a community development corporation',
+      } as Record<string, string>,
+      labels: {
+        individual: 'A person',
+        company: 'A company',
+        city: 'The City of Philadelphia',
+        land_bank: 'The Philadelphia Land Bank',
+        redevelopment_authority: 'The Philadelphia Redevelopment Authority',
+        housing_authority: 'A housing authority',
+        nonprofit: 'A nonprofit',
+        other_public: 'Another public agency',
+        unknown: 'Not clear from City records',
+      } as Record<string, string>,
+    },
+
+    owner: {
+      names: 'Owner, as the City publishes it',
+      noNames: 'City records give no owner name.',
+      mailing: 'Mailing address, as the City publishes it',
+      noMailing: 'No mailing address on record.',
+      type: 'Kind of owner',
+      flagsTitle: 'What City records suggest',
+      noFlags: 'Nothing in City records calls for a note about this owner.',
+      ownerChanged:
+        'City records name a different owner than our weekly snapshot did, so notes that were about the earlier owner are left out.',
+      parts: { meaning: 'What it means', careful: 'Be careful', next: 'A careful next step' },
+      flagTitles: {
+        absentee: 'The owner gets mail somewhere else',
+        possible_estate: 'Possible estate',
+        tax_debt_2025: 'Tax debt as of July 2025',
+        sheriff_sales: 'Past sheriff sales',
+        years_since_sale: 'Years since the last sale',
+        many_parcels: 'An owner of many vacant parcels',
+        fast_resales: 'Fast resales',
+        open_violations: 'Open L&I violations',
+        unsafe: 'Unsafe building',
+        imminently_dangerous: 'Imminently dangerous building',
+      } as Record<string, string>,
+      otherFlag: 'A note from City records',
+      taxTitle: 'Taxes',
+      taxNoDebt:
+        'The City no longer publishes each property\'s tax balance as open data. The July 2025 snapshot we have does not show unpaid taxes here.',
+      taxUnknown: 'The City no longer publishes each property\'s tax balance as open data.',
+      taxCenter: 'Check today\'s balance on the City\'s Tax Center',
+      deedFraudTitle: 'Protect this property from deed theft',
+      deedFraud:
+        'Deed theft happens when someone files a fake deed to take a property, often one whose owner has died or lives elsewhere. Owners and families can sign up for the City\'s free Fraud Guard alerts, which send an email when a document naming them is recorded. Since November 2025 the City also automatically blocks deeds whose seller had already died when they supposedly signed.',
+      fraudGuard: 'Sign up for the City\'s free Fraud Guard alerts',
+      deedCheck: 'The City\'s automated check that stops deed fraud',
+      helpTitle: 'Help for owners and families',
+      tangledTitle: 'The Tangled Title Fund, run by Philadelphia VIP',
+      sheriffGuide: 'Grounded in Philly: sheriff sales',
+      gjli: 'The Garden Justice Legal Initiative, for free legal help',
+    },
+
+    flags: {
+      absentee: {
+        lead: 'The owner gets mail somewhere else',
+        outOfState: (where: string) => `The owner gets mail somewhere else: ${where} (out of state).`,
+        outsidePennsylvania: 'The owner gets mail somewhere else: outside Pennsylvania.',
+        outsideCity: (city: string) => `The owner gets mail somewhere else: ${city}, PA (outside Philadelphia).`,
+        outsideCityUnknown: 'The owner gets mail somewhere else: outside Philadelphia.',
+        poBox: 'The owner gets mail somewhere else: a post office box in Philadelphia.',
+        elsewhere: 'The owner gets mail somewhere else: another address in Philadelphia.',
+        careful:
+          'This is the address where the City sends tax bills. It can be out of date, or belong to a relative, a lawyer or a manager, and an owner who lives elsewhere may not know how the property looks today.',
+        next: 'Write to the owner at this address to ask before you do anything on the property, and ask the Garden Justice Legal Initiative to review any agreement before you sign it.',
+      },
+      possible_estate: {
+        text: 'The owner of record may have died.',
+        careful: 'Family members may still have a right to this property and may not know it.',
+        next: 'If you know the family, the Tangled Title Fund (up to $6,500 in legal help) and Philadelphia VIP can help them keep it. Families can also sign up for the City\'s free Fraud Guard alerts.',
+      },
+      tax_debt_2025: {
+        careful:
+          'This is the last public record, from July 9, 2025, not today\'s balance: the owner may have paid since, or owe more. About three or more years of unpaid taxes can lead to a sheriff sale, where a lot neighbors care for can be sold to an outside buyer.',
+        next: 'Check today\'s balance on the City\'s Tax Center before you rely on this. If your block cares for this lot, Grounded in Philly\'s guide to sheriff sales explains the risk and what you can do.',
+      },
+      sheriff_sales: {
+        one: (sale: string) => `Sold at sheriff sale on ${sale}.`,
+        many: (n: number, sales: string) => `Sold at sheriff sale ${n} times: ${sales}.`,
+        sale: (date: string, price: string | null) => (price ? `${date} for ${price}` : date),
+        careful:
+          'At a sheriff sale the winning bid clears old debts on the property, so a lot neighbors have cared for can pass to an outside buyer. A past sale does not mean the property is for sale now.',
+        next: 'If your block cares for this lot, read Grounded in Philly\'s guide to sheriff sales and ask the Garden Justice Legal Initiative for free legal help.',
+      },
+      years_since_sale: {
+        lastSold: (year: number) => `Last sold in ${year}.`,
+        notSoldSince: (year: number) => `Not sold for a price since at least ${year}.`,
+        careful:
+          'Sales for a token price and sheriff sales are left out here; the full history is below. Many homes pass down in families without a new sale, so a long time since a sale does not mean the owner has given the property up.',
+        next: 'If a family has inherited the property without a new deed, the Tangled Title Fund and Philadelphia VIP can help them clear the title and keep it.',
+      },
+      many_parcels: {
+        text: (n: number) => `This owner holds ${formatNumber(n)} vacant parcels in the city.`,
+        careful:
+          'We match owners by their exact name in City records, so one owner can appear under several spellings and two owners can share a name. Holding vacant land is not wrongdoing by itself.',
+        next: 'Use the list to see this owner\'s other parcels, then ask permission the lawful way: write to the owner, and have the Garden Justice Legal Initiative review any agreement.',
+      },
+      fast_resales: {
+        since: (n: number, year: number) => `Sold ${n} times since ${year}.`,
+        inYear: (n: number, year: number) => `Sold ${n} times in ${year}.`,
+        between: (n: number, first: number, last: number) => `Sold ${n} times from ${first} to ${last}.`,
+        careful:
+          'Quick resales can mean investors trading the property, and sometimes a forged deed. They can also be ordinary, such as an estate sale followed by a renovation sale.',
+        next: 'Look at who sold and who bought in the history below. Owners and families can sign up for the City\'s free Fraud Guard alerts to learn when a document naming them is recorded.',
+      },
+      open_violations: {
+        one: (when: string | null, what: string | null) =>
+          `L&I lists 1 open violation${when ? `, from ${when}` : ''}${what ? ` for ${what}` : ''}.`,
+        many: (n: number) => `L&I lists ${n} open violations.`,
+        mostRecent: (when: string, what: string | null) => (what ? `The most recent, from ${when}, is for ${what}.` : `The most recent is from ${when}.`),
+        careful:
+          'A violation is a notice to the owner, who may not have the means to fix it, and the condition may have changed since the inspection.',
+        next: 'Report physical problems, such as dumping or an open building, to Philly311. If you know the owner, let them know: they may not have seen the notice.',
+      },
+      unsafe: {
+        text: (since: string | null) => (since ? `L&I lists this building as unsafe, since ${since}.` : 'L&I lists this building as unsafe.'),
+        careful: 'Keep out and keep children away: L&I found the structure unsafe. Do not enter it or try to secure it yourself.',
+        next: 'If it is open to entry, report it to Philly311 so the City can seal it.',
+      },
+      imminently_dangerous: {
+        text: (since: string | null) =>
+          since ? `L&I lists this building as imminently dangerous, since ${since}.` : 'L&I lists this building as imminently dangerous.',
+        careful: 'L&I found the structure could fail at any time. Keep away from it, and keep others away.',
+        next: 'Report any change, such as falling bricks or an open door, to Philly311.',
+      },
+    },
+
+    history: {
+      transfersTitle: 'Sales and transfers',
+      transfersCaption: 'Every recorded sale and transfer of this property, newest first',
+      date: 'Date',
+      document: 'Document',
+      price: 'Price',
+      from: 'From',
+      to: 'To',
+      noDate: 'No date',
+      noPrice: 'None recorded',
+      together: (n: number) => `for ${n} properties together`,
+      more: (n: number) => `and ${plural(n, 'other', 'others')}`,
+      noTransfers: 'No deeds on record.',
+      recordsNote: 'City deed records are complete from 2000 on. Older sales may be missing.',
+      documents: {
+        DEED: 'Deed',
+        'DEED SHERIFF': 'Sheriff\'s deed',
+        "SHERIFF'S DEED": 'Sheriff\'s deed',
+        'MISCELLANEOUS DEED': 'Miscellaneous deed',
+        'DEED LAND BANK': 'Deed from the Land Bank',
+        'DEED OF CONDEMNATION': 'Deed of condemnation',
+        'CERTIFICATE OF STOCK TRANSFER': 'Certificate of stock transfer',
+      } as Record<string, string>,
+      assessmentsTitle: 'City assessments',
+      assessmentsCaption: 'The City\'s assessment of market value, by year',
+      year: 'Year',
+      marketValue: 'Assessed market value',
+      noValue: 'Not recorded',
+      noAssessments: 'No assessments on record.',
+      assessmentNote: 'An assessment is the City\'s estimate of market value for property taxes. It is not a sale price.',
+      chartLabel: (first: number, last: number, low: string, high: string) =>
+        `Chart of the City's assessment from ${first} to ${last}, between ${low} and ${high}. The same numbers are in the table below.`,
+      liTitle: 'Permits, violations and demolitions',
+      liCaption: 'L&I records for this property, newest first',
+      kinds: {
+        violation: 'Violation',
+        permit: 'Permit',
+        demolition: 'Demolition',
+        unsafe: 'Unsafe building notice',
+        imminently_dangerous: 'Imminently dangerous building notice',
+        clean_seal: 'Clean and seal',
+      } as Record<string, string>,
+      open: 'Open',
+      showAll: (n: number) => `Show all ${formatNumber(n)} records`,
+      showFewer: 'Show fewer',
+      noLi: 'No L&I records for this property.',
+      truncated: 'The City has more records than one lookup returns; these are the most recent.',
+      liSummaryOpen: (n: number) => plural(n, 'open violation', 'open violations'),
+      liSummaryLast: (date: string) => `Most recent violation: ${date}.`,
+      liUnsafe: 'L&I lists this building as unsafe.',
+      liDangerous: 'L&I lists this building as imminently dangerous.',
+      liNeither: 'Not listed as unsafe or imminently dangerous.',
+      liLiveForTimeline: 'The full timeline of permits, violations and demolitions comes from the City when live City data is on.',
+    },
+
+    nearby: {
+      intro: 'What is around this lot, so care can go where it helps most.',
+      careNote: 'These counts show where care is needed most. They say nothing about the people who live here.',
+      areaSnapshot: 'In the area around this lot, about two blocks across',
+      within500: 'Within 500 feet of this lot',
+      s12: (n: number) => `${plural(n, 'person', 'people')} shot in the last 12 months`,
+      s36: (n: number) => `${plural(n, 'person', 'people')} shot in the last 3 years`,
+      killed: (n: number) => `${plural(n, 'person', 'people')} killed in traffic crashes since 2019`,
+      landcare: (n: number) => `${plural(n, 'lot', 'lots')} kept up by PHS LandCare`,
+      gardens: (n: number) => `${plural(n, 'community garden', 'community gardens')}`,
+      none: 'No nearby counts for this place yet.',
+      showLayer: (label: string) => `Show ${label} on the map`,
+    },
+
+    sources: {
+      intro: 'Where each part of this page comes from, and how fresh it is.',
+      live: (time: string) => `live from the City at ${time}`,
+      snapshot: (date: string) => `weekly snapshot of ${date}`,
+      snapshotNoDate: 'weekly snapshot',
+      newest: (date: string) => `newest record ${date}`,
+      taxSnapshot: 'Clean & Green Philly\'s final snapshot, July 9, 2025',
+      notUsed: 'not used for this parcel',
+      correction: 'Report a correction',
+      correctionHelp: 'Opens a form on GitHub, filled in with this parcel. Sending it needs a free GitHub account.',
+      ownerNote:
+        'If you own this property and a City record about it is wrong, the City office that keeps the record can fix it at the source: the Office of Property Assessment for owner names, mailing addresses and assessments, the Department of Records for deeds, and Licenses and Inspections for violations and permits.',
+    },
+
+    print: {
+      printed: (date: string) => `Printed from Placekeepers on ${date}.`,
+      recent: 'Recent history',
+      moreOnline: (n: number) => `${plural(n, 'more record', 'more records')} on the lot page online.`,
+      lastAssessment: (year: number, value: string) => `City assessment for ${year}: ${value}.`,
+    },
   },
 } as const;
 

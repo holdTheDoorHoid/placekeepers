@@ -41,6 +41,7 @@ REGISTRY_FILES = (
     "suggestions",
     "routes",
     "partners",
+    "options",
 )
 
 ID_PATTERN = r"^[a-z][a-z0-9_]*$"
@@ -308,6 +309,20 @@ class Route(Strict):
     status: Literal["verified", "confirm"]
 
 
+# ---------------------------------------------------------------------------------------------
+# options.yaml
+
+
+class AppOption(Setting):
+    """An app wide option (docs/CONTRACTS.md section 1): a setting that is not tied to one map
+    layer, such as whether the browser may ask the City's servers for live data. It has the keys
+    of a layer setting plus a plain description. The pipeline does not use options; it only
+    checks them, so a registry the web app accepts never breaks the pipeline."""
+
+    description: Text
+    release: Release
+
+
 MODELS: dict[str, type[Strict]] = {
     "licenses": License,
     "groups": Group,
@@ -317,6 +332,7 @@ MODELS: dict[str, type[Strict]] = {
     "suggestions": Suggestion,
     "routes": Route,
     "partners": Partner,
+    "options": AppOption,
 }
 
 
@@ -343,6 +359,7 @@ class Registry:
     suggestions: dict[str, Suggestion]
     routes: dict[str, Route]
     partners: dict[str, Partner]
+    options: dict[str, AppOption]
 
     def summary(self) -> str:
         parts = [f"{len(getattr(self, name))} {name}" for name in REGISTRY_FILES]
