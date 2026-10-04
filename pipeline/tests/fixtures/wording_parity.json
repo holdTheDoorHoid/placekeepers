@@ -1,0 +1,1050 @@
+{
+  "as_of": "2026-10-04",
+  "notes": {
+    "absentee": {
+      "careful": "This is the address where the City sends tax bills. It can be out of date, or belong to a relative, a lawyer or a manager, and an owner who lives elsewhere may not know how the property looks today.",
+      "next_step": "Write to the owner at this address to ask before you do anything on the property, and ask the Garden Justice Legal Initiative to review any agreement before you sign it."
+    },
+    "possible_estate": {
+      "careful": "Family members may still have a right to this property and may not know it.",
+      "next_step": "If you know the family, the Tangled Title Fund (up to $6,500 in legal help) and Philadelphia VIP can help them keep it. Families can also sign up for the City's free Fraud Guard alerts."
+    },
+    "tax_debt_2025": {
+      "careful": "This is the last public record, from July 9, 2025, not today's balance: the owner may have paid since, or owe more. About three or more years of unpaid taxes can lead to a sheriff sale, where a lot neighbors care for can be sold to an outside buyer.",
+      "next_step": "Check today's balance on the City's Tax Center before you rely on this. If your block cares for this lot, Grounded in Philly's guide to sheriff sales explains the risk and what you can do."
+    },
+    "sheriff_sales": {
+      "careful": "At a sheriff sale the winning bid clears old debts on the property, so a lot neighbors have cared for can pass to an outside buyer. A past sale does not mean the property is for sale now.",
+      "next_step": "If your block cares for this lot, read Grounded in Philly's guide to sheriff sales and ask the Garden Justice Legal Initiative for free legal help."
+    },
+    "years_since_sale": {
+      "careful": "Sales for a token price and sheriff sales are left out here; the full history is below. Many homes pass down in families without a new sale, so a long time since a sale does not mean the owner has given the property up.",
+      "next_step": "If a family has inherited the property without a new deed, the Tangled Title Fund and Philadelphia VIP can help them clear the title and keep it."
+    },
+    "many_parcels": {
+      "careful": "We match owners by their exact name in City records, so one owner can appear under several spellings and two owners can share a name. Holding vacant land is not wrongdoing by itself.",
+      "next_step": "Use the list to see this owner's other parcels, then ask permission the lawful way: write to the owner, and have the Garden Justice Legal Initiative review any agreement."
+    },
+    "fast_resales": {
+      "careful": "Quick resales can mean the property is being traded for profit, and sometimes a forged deed. They can also be ordinary, such as a family selling an inherited house and the buyer reselling it after repairs.",
+      "next_step": "Look at who sold and who bought in the history below. Owners and families can sign up for the City's free Fraud Guard alerts to learn when a document names them."
+    },
+    "open_violations": {
+      "careful": "A violation is a notice to the owner, who may not have the means to fix it, and the condition may have changed since the inspection.",
+      "next_step": "Report physical problems, such as dumping or an open building, to Philly311. If you know the owner, let them know: they may not have seen the notice."
+    },
+    "unsafe": {
+      "careful": "Keep out and keep children away: L&I found the structure unsafe. Do not enter it or try to secure it yourself.",
+      "next_step": "If it is open to entry, report it to Philly311 so the City can seal it."
+    },
+    "imminently_dangerous": {
+      "careful": "L&I found the structure could fail at any time. Keep away from it, and keep others away.",
+      "next_step": "Report any change, such as falling bricks or an open door, to Philly311."
+    }
+  },
+  "possible_estate_text": "The owner of record may have died.",
+  "deed_fraud_notice": "Deed theft happens when someone files a fake deed to take a property, often one whose owner has died or lives elsewhere. Owners and families can sign up for the City's free Fraud Guard alerts, which send an email when a document naming them is recorded. Since November 2025 the City also automatically blocks deeds whose seller had already died when they supposedly signed.",
+  "absentee_text": [
+    {
+      "scope": "out_of_state",
+      "city": "CHERRY HILL",
+      "state": "NJ",
+      "text": "The owner gets mail somewhere else: Cherry Hill, NJ (out of state)."
+    },
+    {
+      "scope": "out_of_state",
+      "city": "LONDON",
+      "state": null,
+      "text": "The owner gets mail somewhere else: London (out of state)."
+    },
+    {
+      "scope": "out_of_state",
+      "city": null,
+      "state": "NY",
+      "text": "The owner gets mail somewhere else: NY (out of state)."
+    },
+    {
+      "scope": "out_of_state",
+      "city": null,
+      "state": null,
+      "text": "The owner gets mail somewhere else: outside Pennsylvania."
+    },
+    {
+      "scope": "outside_city",
+      "city": "BLUE BELL",
+      "state": "PA",
+      "text": "The owner gets mail somewhere else: Blue Bell, PA (outside Philadelphia)."
+    },
+    {
+      "scope": "outside_city",
+      "city": "KING OF PRUSSIA",
+      "state": "PA",
+      "text": "The owner gets mail somewhere else: King of Prussia, PA (outside Philadelphia)."
+    },
+    {
+      "scope": "outside_city",
+      "city": "WILKES - BARRE",
+      "state": "PA",
+      "text": "The owner gets mail somewhere else: Wilkes, Barre, PA (outside Philadelphia)."
+    },
+    {
+      "scope": "outside_city",
+      "city": null,
+      "state": null,
+      "text": "The owner gets mail somewhere else: outside Philadelphia."
+    },
+    {
+      "scope": "po_box_in_city",
+      "city": "PHILADELPHIA",
+      "state": "PA",
+      "text": "The owner gets mail somewhere else: a post office box in Philadelphia."
+    },
+    {
+      "scope": "elsewhere_in_city",
+      "city": "PHILADELPHIA",
+      "state": "PA",
+      "text": "The owner gets mail somewhere else: another address in Philadelphia."
+    }
+  ],
+  "sheriff_text": [
+    {
+      "sales": [
+        [
+          "2019-03-14",
+          1600
+        ]
+      ],
+      "text": "Sold at sheriff sale on March 14, 2019, for $1,600."
+    },
+    {
+      "sales": [
+        [
+          "2019-03-14",
+          null
+        ]
+      ],
+      "text": "Sold at sheriff sale on March 14, 2019."
+    },
+    {
+      "sales": [
+        [
+          "2003-05-05",
+          800
+        ],
+        [
+          "2019-03-14",
+          1600
+        ]
+      ],
+      "text": "Sold at sheriff sale 2 times: May 5, 2003, for $800; and March 14, 2019, for $1,600."
+    },
+    {
+      "sales": [
+        [
+          "2006-09-21",
+          4100
+        ],
+        [
+          "2015-12-17",
+          1599.5
+        ],
+        [
+          "2026-05-20",
+          6600
+        ]
+      ],
+      "text": "Sold at sheriff sale 3 times: September 21, 2006, for $4,100; December 17, 2015, for $1,600; and May 20, 2026, for $6,600."
+    },
+    {
+      "sales": [
+        [
+          "2010-10-25",
+          1234567.49
+        ]
+      ],
+      "text": "Sold at sheriff sale on October 25, 2010, for $1,234,567."
+    }
+  ],
+  "last_sale_text": [
+    {
+      "year": 1987,
+      "text": "Last sold in 1987."
+    },
+    {
+      "year": 2025,
+      "text": "Last sold in 2025."
+    }
+  ],
+  "no_sale_text": [
+    {
+      "year": 2000,
+      "text": "Not sold on the open market since at least 2000."
+    },
+    {
+      "year": 1995,
+      "text": "Not sold on the open market since at least 1995."
+    }
+  ],
+  "resale_text": [
+    {
+      "count": 3,
+      "first": "2024-03-15",
+      "last": "2025-06-10",
+      "recent": true,
+      "text": "Sold 3 times since 2024."
+    },
+    {
+      "count": 2,
+      "first": "2011-01-05",
+      "last": "2011-08-01",
+      "recent": false,
+      "text": "Sold 2 times in 2011."
+    },
+    {
+      "count": 2,
+      "first": "2010-12-05",
+      "last": "2011-08-01",
+      "recent": false,
+      "text": "Sold 2 times from 2010 to 2011."
+    }
+  ],
+  "violations_text": [
+    {
+      "count": 1,
+      "last": "2025-04-09",
+      "title": "NEW USE",
+      "text": "L&I lists 1 open violation, for new use, from April 9, 2025."
+    },
+    {
+      "count": 1,
+      "last": null,
+      "title": "EXTERIOR AREA WEEDS",
+      "text": "L&I lists 1 open violation, for exterior area weeds."
+    },
+    {
+      "count": 1,
+      "last": "2025-04-09",
+      "title": null,
+      "text": "L&I lists 1 open violation, from April 9, 2025."
+    },
+    {
+      "count": 1,
+      "last": null,
+      "title": null,
+      "text": "L&I lists 1 open violation."
+    },
+    {
+      "count": 1,
+      "last": "2020-05-01",
+      "title": "DUMPING - PRIVATE LOT",
+      "text": "L&I lists 1 open violation, for dumping, private lot, from May 1, 2020."
+    },
+    {
+      "count": 2,
+      "last": "2025-08-01",
+      "title": "VACANT STRUCTURE AND LAND",
+      "text": "L&I lists 2 open violations. The most recent, from August 1, 2025, is for vacant structure and land."
+    },
+    {
+      "count": 11,
+      "last": "2026-06-15",
+      "title": null,
+      "text": "L&I lists 11 open violations. The most recent is from June 15, 2026."
+    },
+    {
+      "count": 3,
+      "last": null,
+      "title": "ROOF",
+      "text": "L&I lists 3 open violations."
+    }
+  ],
+  "unsafe_text": [
+    {
+      "since": "2023-05-02",
+      "text": "L&I lists this building as unsafe, since May 2, 2023."
+    },
+    {
+      "since": null,
+      "text": "L&I lists this building as unsafe."
+    }
+  ],
+  "dangerous_text": [
+    {
+      "since": "2025-12-03",
+      "text": "L&I lists this building as imminently dangerous, since December 3, 2025."
+    },
+    {
+      "since": null,
+      "text": "L&I lists this building as imminently dangerous."
+    }
+  ],
+  "owner_type": [
+    {
+      "names": [
+        "SMITH JOHN"
+      ],
+      "type": "individual",
+      "reason": "The owner name looks like a person's name."
+    },
+    {
+      "names": [
+        "SMITH JOHN",
+        "SMITH MARY"
+      ],
+      "type": "individual",
+      "reason": "The owner name looks like a person's name."
+    },
+    {
+      "names": [
+        "JONES ROBERT JR",
+        "JONES LISA 2ND"
+      ],
+      "type": "individual",
+      "reason": "The owner name looks like a person's name."
+    },
+    {
+      "names": [
+        "SAMPLE HOLDINGS LLC"
+      ],
+      "type": "company",
+      "reason": "The owner name includes \"LLC\"."
+    },
+    {
+      "names": [
+        "SAMPLE L.L.C."
+      ],
+      "type": "company",
+      "reason": "The owner name includes \"LLC\"."
+    },
+    {
+      "names": [
+        "ACME INC"
+      ],
+      "type": "company",
+      "reason": "The owner name includes \"INC\"."
+    },
+    {
+      "names": [
+        "SAMPLE REALTY TRUST"
+      ],
+      "type": "company",
+      "reason": "The owner name includes \"REALTY\"."
+    },
+    {
+      "names": [
+        "SAMPLE TR"
+      ],
+      "type": "company",
+      "reason": "The owner name includes \"TR, short for trustee\"."
+    },
+    {
+      "names": [
+        "SAMPLE BANK N A"
+      ],
+      "type": "company",
+      "reason": "The owner name includes \"BANK\"."
+    },
+    {
+      "names": [
+        "MT ZION BAPTIST CHURCH"
+      ],
+      "type": "nonprofit",
+      "reason": "The owner name includes \"BAPTIST\"."
+    },
+    {
+      "names": [
+        "UNIVERSITY CITY HOMES LLC"
+      ],
+      "type": "company",
+      "reason": "The owner name includes \"LLC\"."
+    },
+    {
+      "names": [
+        "CITY OF PHILA"
+      ],
+      "type": "city",
+      "reason": "City records name the City of Philadelphia as the owner."
+    },
+    {
+      "names": [
+        "PHILADELPHIA LAND BANK"
+      ],
+      "type": "land_bank",
+      "reason": "City records name the Philadelphia Land Bank as the owner."
+    },
+    {
+      "names": [
+        "PHILADELPHIA REDEVELOPMEN"
+      ],
+      "type": "redevelopment_authority",
+      "reason": "City records name the Philadelphia Redevelopment Authority as the owner."
+    },
+    {
+      "names": [
+        "REDEVELOPMENT AUTHORITY",
+        "OF PHILADELPHIA"
+      ],
+      "type": "redevelopment_authority",
+      "reason": "City records name the Philadelphia Redevelopment Authority as the owner."
+    },
+    {
+      "names": [
+        "PHILADELPHIA HOUSING AUTH"
+      ],
+      "type": "housing_authority",
+      "reason": "City records name the Philadelphia Housing Authority as the owner."
+    },
+    {
+      "names": [
+        "PHILADELPHIA HOUSING"
+      ],
+      "type": "other_public",
+      "reason": "City records name the Philadelphia Housing Authority or PHDC (the name is cut short) as the owner."
+    },
+    {
+      "names": [
+        "SEPTA"
+      ],
+      "type": "other_public",
+      "reason": "City records name SEPTA as the owner."
+    },
+    {
+      "names": [],
+      "type": "unknown",
+      "reason": "City records give no owner name."
+    },
+    {
+      "names": [
+        "UNKNOWN"
+      ],
+      "type": "unknown",
+      "reason": "We could not tell what kind of owner this is from the name."
+    },
+    {
+      "names": [
+        "1234 SAMPLE"
+      ],
+      "type": "unknown",
+      "reason": "We could not tell what kind of owner this is from the name."
+    },
+    {
+      "names": [
+        "MADONNA"
+      ],
+      "type": "unknown",
+      "reason": "We could not tell what kind of owner this is from the name."
+    },
+    {
+      "names": [
+        "ILADELPHIA CHARTER SCHOOL"
+      ],
+      "type": "nonprofit",
+      "reason": "The owner name includes \"CHARTER SCHOOL\"."
+    },
+    {
+      "names": [
+        "KIPP PHILADELPHIA CHARTER"
+      ],
+      "type": "nonprofit",
+      "reason": "The owner name includes \"CHARTER\"."
+    },
+    {
+      "names": [
+        "FRANKLIN TOWNE CHARTER HI"
+      ],
+      "type": "nonprofit",
+      "reason": "The owner name includes \"CHARTER HI\"."
+    },
+    {
+      "names": [
+        "MASTERY CHARTER SCHOOLS F"
+      ],
+      "type": "nonprofit",
+      "reason": "The owner name includes \"CHARTER SCHOOLS\"."
+    },
+    {
+      "names": [
+        "PHILADELPHIA YOUTH FOR CHANGE CHARTER SC"
+      ],
+      "type": "nonprofit",
+      "reason": "The owner name includes \"CHARTER SC\"."
+    },
+    {
+      "names": [
+        "GERMANTOWN FRIENDS SCHOOL"
+      ],
+      "type": "nonprofit",
+      "reason": "The owner name includes \"SCHOOL\"."
+    },
+    {
+      "names": [
+        "GESU SCHOOL INC"
+      ],
+      "type": "nonprofit",
+      "reason": "The owner name includes \"SCHOOL\"."
+    },
+    {
+      "names": [
+        "ST JOSEPH'S PREPARATORY",
+        "SCHOOL"
+      ],
+      "type": "nonprofit",
+      "reason": "The owner name includes \"PREPARATORY\"."
+    },
+    {
+      "names": [
+        "CORNERSTONE CHRISTIAN ACADEMY"
+      ],
+      "type": "nonprofit",
+      "reason": "The owner name includes \"ACADEMY\"."
+    },
+    {
+      "names": [
+        "LA SALLE COLLEGE"
+      ],
+      "type": "nonprofit",
+      "reason": "The owner name includes \"COLLEGE\"."
+    },
+    {
+      "names": [
+        "SCHOOL DISTRICT OF PHILA"
+      ],
+      "type": "other_public",
+      "reason": "City records name the School District of Philadelphia as the owner."
+    },
+    {
+      "names": [
+        "SCHOOL DISTRICT",
+        "OF PHILA"
+      ],
+      "type": "other_public",
+      "reason": "City records name the School District of Philadelphia as the owner."
+    },
+    {
+      "names": [
+        "PHILADELPHIA SCHOOL DISTRICT"
+      ],
+      "type": "other_public",
+      "reason": "City records name the School District of Philadelphia as the owner."
+    },
+    {
+      "names": [
+        "COMMUNITY COLLEGE OF PHIL"
+      ],
+      "type": "other_public",
+      "reason": "City records name the Community College of Philadelphia as the owner."
+    },
+    {
+      "names": [
+        "COMM COLLEGE OF PHILA"
+      ],
+      "type": "other_public",
+      "reason": "City records name the Community College of Philadelphia as the owner."
+    },
+    {
+      "names": [
+        "WOODS CHARTER SCHOOL DEVELOPMENT LLC"
+      ],
+      "type": "company",
+      "reason": "The owner name includes \"LLC\"."
+    },
+    {
+      "names": [
+        "CHARTER ADVERTISING",
+        "GROUP INC"
+      ],
+      "type": "company",
+      "reason": "The owner name includes \"GROUP\"."
+    },
+    {
+      "names": [
+        "420 W SCHOOL HOUSE LANE"
+      ],
+      "type": "unknown",
+      "reason": "We could not tell what kind of owner this is from the name."
+    },
+    {
+      "names": [
+        "SCHOOLHOUSE PROPERTY INVESTMENTS LLC"
+      ],
+      "type": "company",
+      "reason": "The owner name includes \"LLC\"."
+    },
+    {
+      "names": [
+        "ACADEMIC PROPERTIES INC"
+      ],
+      "type": "company",
+      "reason": "The owner name includes \"PROPERTIES\"."
+    }
+  ],
+  "possible_estate": [
+    {
+      "names": [
+        "SMITH JOHN EST OF"
+      ],
+      "estate": true
+    },
+    {
+      "names": [
+        "SMITH JOHN ESTATE OF"
+      ],
+      "estate": true
+    },
+    {
+      "names": [
+        "HEIRS OF SMITH ROSE"
+      ],
+      "estate": true
+    },
+    {
+      "names": [
+        "SMITH JOHN",
+        "SMITH MARY EXECUTRIX"
+      ],
+      "estate": true
+    },
+    {
+      "names": [
+        "SMITH JOHN DEC'D"
+      ],
+      "estate": true
+    },
+    {
+      "names": [
+        "SAMPLE REAL ESTATE LLC"
+      ],
+      "estate": false
+    },
+    {
+      "names": [
+        "Z ESTATE GROUP LLC"
+      ],
+      "estate": false
+    },
+    {
+      "names": [
+        "SMITH MARY LIFE ESTATE"
+      ],
+      "estate": false
+    },
+    {
+      "names": [
+        "SMITH MARY LF TENANT"
+      ],
+      "estate": false
+    },
+    {
+      "names": [
+        "THE TRUSTEES OF THE",
+        "ESTATE OF STEPHEN GIRARD"
+      ],
+      "estate": false
+    },
+    {
+      "names": [
+        "SAMPLE CHARTER SCHOOL EST"
+      ],
+      "estate": false
+    },
+    {
+      "names": [
+        "CITY OF PHILA"
+      ],
+      "estate": false
+    },
+    {
+      "names": [
+        "SMITH JOHN"
+      ],
+      "estate": false
+    }
+  ],
+  "absentee": [
+    {
+      "location": "1305 N EXAMPLE AVE",
+      "mailing_street": "455 EXAMPLE AVE",
+      "mailing_city_state": "CHERRY HILL NJ",
+      "mailing_zip": "08002",
+      "scope": "out_of_state",
+      "text": "The owner gets mail somewhere else: Cherry Hill, NJ (out of state)."
+    },
+    {
+      "location": "1305 N EXAMPLE AVE",
+      "mailing_street": "9 OAK LN",
+      "mailing_city_state": "BLUE BELL PA",
+      "mailing_zip": "19422",
+      "scope": "outside_city",
+      "text": "The owner gets mail somewhere else: Blue Bell, PA (outside Philadelphia)."
+    },
+    {
+      "location": "1305 N EXAMPLE AVE",
+      "mailing_street": "PO BOX 5183",
+      "mailing_city_state": "PHILADELPHIA PA",
+      "mailing_zip": "19141",
+      "scope": "po_box_in_city",
+      "text": "The owner gets mail somewhere else: a post office box in Philadelphia."
+    },
+    {
+      "location": "1305 N EXAMPLE AVE",
+      "mailing_street": "22 S BROAD ST",
+      "mailing_city_state": "PHILADELPHIA PA",
+      "mailing_zip": "19107",
+      "scope": "elsewhere_in_city",
+      "text": "The owner gets mail somewhere else: another address in Philadelphia."
+    },
+    {
+      "location": "1305 N EXAMPLE AVE",
+      "mailing_street": "22 S BROAD ST",
+      "mailing_city_state": "ROXBOROUGH",
+      "mailing_zip": "19128",
+      "scope": "elsewhere_in_city",
+      "text": "The owner gets mail somewhere else: another address in Philadelphia."
+    },
+    {
+      "location": "1305 N EXAMPLE AVE",
+      "mailing_street": "1 RUE DE RIVOLI",
+      "mailing_city_state": "PARIS FRANCE",
+      "mailing_zip": null,
+      "scope": "out_of_state",
+      "text": "The owner gets mail somewhere else: Paris France (out of state)."
+    },
+    {
+      "location": "3134 N 8TH ST",
+      "mailing_street": "3132 N 08TH ST",
+      "mailing_city_state": "PHILADELPHIA PA",
+      "mailing_zip": "19133",
+      "scope": null,
+      "text": null
+    },
+    {
+      "location": "3134 N 8TH ST",
+      "mailing_street": "3134 N EIGHTH ST",
+      "mailing_city_state": "PHILADELPHIA PA",
+      "mailing_zip": "19133",
+      "scope": null,
+      "text": null
+    },
+    {
+      "location": "1304-08 E PASSYUNK AVE",
+      "mailing_street": "1306 E PASSYUNK AVE UNIT 2",
+      "mailing_city_state": "PHILADELPHIA PA",
+      "mailing_zip": "19147",
+      "scope": null,
+      "text": null
+    },
+    {
+      "location": "3134 N 8TH ST",
+      "mailing_street": null,
+      "mailing_city_state": null,
+      "mailing_zip": null,
+      "scope": null,
+      "text": null
+    }
+  ],
+  "parcels": [
+    {
+      "names": [
+        "SAMPLE ROSE M EST OF"
+      ],
+      "location": "1305 N EXAMPLE AVE",
+      "mailing": [
+        "455 EXAMPLE AVE",
+        "CHERRY HILL NJ",
+        "08002"
+      ],
+      "opa_sale": [
+        "1987-06-12",
+        15000
+      ],
+      "deeds": [],
+      "li": {
+        "open_violations": 1,
+        "last_open": "2025-04-09",
+        "last_open_title": "NEW USE"
+      },
+      "type": "individual",
+      "flags": [
+        {
+          "id": "absentee",
+          "text": "The owner gets mail somewhere else: Cherry Hill, NJ (out of state)."
+        },
+        {
+          "id": "possible_estate",
+          "text": "The owner of record may have died."
+        },
+        {
+          "id": "years_since_sale",
+          "text": "Last sold in 1987."
+        },
+        {
+          "id": "open_violations",
+          "text": "L&I lists 1 open violation, for new use, from April 9, 2025."
+        }
+      ]
+    },
+    {
+      "names": [
+        "EXAMPLE DARNELL",
+        "EXAMPLE TINA"
+      ],
+      "location": "1201 N SAMPLE ST",
+      "mailing": [
+        "1201 N SAMPLE ST",
+        "PHILADELPHIA PA",
+        "19122"
+      ],
+      "opa_sale": [
+        "2025-06-10",
+        95000
+      ],
+      "deeds": [
+        [
+          "2025-06-10",
+          "DEED",
+          95000
+        ],
+        [
+          "2024-11-02",
+          "DEED",
+          41000
+        ],
+        [
+          "2024-03-15",
+          "DEED",
+          18000
+        ],
+        [
+          "2019-03-14",
+          "DEED SHERIFF",
+          1600
+        ],
+        [
+          "2004-05-17",
+          "DEED - DECEASED",
+          1500
+        ]
+      ],
+      "li": {
+        "open_violations": 2,
+        "last_open": "2025-08-01",
+        "last_open_title": "VACANT STRUCTURE AND LAND",
+        "unsafe_since": "2023-05-02"
+      },
+      "type": "individual",
+      "flags": [
+        {
+          "id": "sheriff_sales",
+          "text": "Sold at sheriff sale on March 14, 2019, for $1,600."
+        },
+        {
+          "id": "years_since_sale",
+          "text": "Last sold in 2025."
+        },
+        {
+          "id": "fast_resales",
+          "text": "Sold 3 times since 2024."
+        },
+        {
+          "id": "open_violations",
+          "text": "L&I lists 2 open violations. The most recent, from August 1, 2025, is for vacant structure and land."
+        },
+        {
+          "id": "unsafe",
+          "text": "L&I lists this building as unsafe, since May 2, 2023."
+        }
+      ]
+    },
+    {
+      "names": [
+        "EXAMPLE HOLDINGS LLC"
+      ],
+      "location": "1301 N EXAMPLE AVE",
+      "mailing": [
+        "PO BOX 5183",
+        "PHILADELPHIA PA",
+        "19141"
+      ],
+      "opa_sale": [
+        "2021-09-30",
+        30000
+      ],
+      "deeds": [
+        [
+          "2021-09-30",
+          "DEED",
+          15000.5
+        ],
+        [
+          "2010-10-25",
+          "SHERIFF'S DEED",
+          4000
+        ]
+      ],
+      "li": {
+        "imminently_dangerous_since": "2025-12-03"
+      },
+      "type": "company",
+      "flags": [
+        {
+          "id": "absentee",
+          "text": "The owner gets mail somewhere else: a post office box in Philadelphia."
+        },
+        {
+          "id": "sheriff_sales",
+          "text": "Sold at sheriff sale on October 25, 2010, for $4,000."
+        },
+        {
+          "id": "years_since_sale",
+          "text": "Last sold in 2021."
+        },
+        {
+          "id": "imminently_dangerous",
+          "text": "L&I lists this building as imminently dangerous, since December 3, 2025."
+        }
+      ]
+    },
+    {
+      "names": [
+        "CITY OF PHILA"
+      ],
+      "location": "1203 N SAMPLE ST",
+      "mailing": [
+        "1515 ARCH ST",
+        "PHILADELPHIA PA",
+        "19102"
+      ],
+      "opa_sale": [
+        "2006-02-01",
+        900
+      ],
+      "deeds": [
+        [
+          "2006-02-01",
+          "SHERIFF'S DEED",
+          900
+        ],
+        [
+          "2005-01-01",
+          "DEED",
+          1
+        ]
+      ],
+      "li": {},
+      "type": "city",
+      "flags": [
+        {
+          "id": "sheriff_sales",
+          "text": "Sold at sheriff sale on February 1, 2006, for $900."
+        }
+      ]
+    },
+    {
+      "names": [
+        "SAMPLE COMMUNITY CHURCH"
+      ],
+      "location": "1507 N EXAMPLE AVE",
+      "mailing": [
+        "1509 N EXAMPLE AVE",
+        "PHILADELPHIA PA",
+        "19121"
+      ],
+      "opa_sale": [
+        "1998-11-12",
+        2500
+      ],
+      "deeds": [
+        [
+          "2015-01-01",
+          "DEED",
+          10
+        ]
+      ],
+      "li": {
+        "open_violations": 11,
+        "last_open": "2026-06-15"
+      },
+      "type": "nonprofit",
+      "flags": [
+        {
+          "id": "years_since_sale",
+          "text": "Last sold in 1998."
+        },
+        {
+          "id": "open_violations",
+          "text": "L&I lists 11 open violations. The most recent is from June 15, 2026."
+        }
+      ]
+    },
+    {
+      "names": [
+        "ILADELPHIA CHARTER SCHOOL"
+      ],
+      "location": "1523-49 W CUMBERLAND ST",
+      "mailing": [
+        "5900 BALTIMORE AVE",
+        "PHILADELPHIA PA",
+        "19143"
+      ],
+      "opa_sale": [
+        "2016-05-02",
+        2000000
+      ],
+      "deeds": [
+        [
+          "2016-05-02",
+          "DEED",
+          2000000
+        ],
+        [
+          "2014-08-01",
+          "DEED",
+          1500000
+        ],
+        [
+          "2014-01-15",
+          "DEED",
+          1200000
+        ]
+      ],
+      "li": {
+        "open_violations": 1,
+        "last_open": "2020-05-01",
+        "last_open_title": "DUMPING - PRIVATE LOT"
+      },
+      "type": "nonprofit",
+      "flags": [
+        {
+          "id": "absentee",
+          "text": "The owner gets mail somewhere else: another address in Philadelphia."
+        },
+        {
+          "id": "years_since_sale",
+          "text": "Last sold in 2016."
+        },
+        {
+          "id": "fast_resales",
+          "text": "Sold 3 times from 2014 to 2016."
+        },
+        {
+          "id": "open_violations",
+          "text": "L&I lists 1 open violation, for dumping, private lot, from May 1, 2020."
+        }
+      ]
+    },
+    {
+      "names": [],
+      "location": "1401 N SAMPLE ST",
+      "mailing": [
+        null,
+        null,
+        null
+      ],
+      "opa_sale": null,
+      "deeds": [],
+      "li": {},
+      "type": "unknown",
+      "flags": []
+    }
+  ]
+}

@@ -35,7 +35,7 @@ from typing import Any
 
 from placekeepers.derive import wording
 from placekeepers.derive.owners import Absentee, OwnerType
-from placekeepers.derive.transfers import LastSale, Resales, Transfer
+from placekeepers.derive.transfers import LastSale, Resales, Transfer, dollars
 
 #: "many" vacant parcels: an owner with at least this many gets the flag
 MANY_PARCELS_MIN = 5
@@ -218,7 +218,7 @@ def sheriff_flag(sales: list[Transfer]) -> dict[str, Any]:
         wording.sheriff_text([(t.date, t.price) for t in sales]),
         {
             "sales": [
-                {"date": t.date.isoformat(), "price": None if t.price is None else round(t.price)}
+                {"date": t.date.isoformat(), "price": None if t.price is None else dollars(t.price)}
                 for t in sales
             ]
         },
@@ -231,7 +231,7 @@ def sale_flag(found: LastSale) -> dict[str, Any]:
         if found.date:
             data["date"] = found.date.isoformat()
         if found.price is not None:
-            data["price"] = round(found.price)
+            data["price"] = dollars(found.price)
         if found.source == "opa":
             # From the assessor's record rather than the City's deed records.
             data["source"] = "opa_properties"

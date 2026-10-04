@@ -79,8 +79,8 @@
       ]
     },
     "fast_resales": {
-      "careful": "Quick resales can mean investors trading the property, and sometimes a forged deed. They can also be ordinary, such as an estate sale followed by a renovation sale.",
-      "next_step": "Look at who sold and who bought in the history below. Owners and families can sign up for the City's free Fraud Guard alerts to learn when a document naming them is recorded.",
+      "careful": "Quick resales can mean the property is being traded for profit, and sometimes a forged deed. They can also be ordinary, such as a family selling an inherited house and the buyer reselling it after repairs.",
+      "next_step": "Look at who sold and who bought in the history below. Owners and families can sign up for the City's free Fraud Guard alerts to learn when a document names them.",
       "routes": [
         "fraud_guard"
       ],
