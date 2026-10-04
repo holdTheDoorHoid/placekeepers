@@ -6,9 +6,11 @@
   import {
     describeStatus,
     isSampleData,
+    loadBaseMapInfo,
     loadManifest,
     statusRows,
     statusSummary,
+    type BaseMapInfo,
     type ParseResult,
   } from '../data/manifest.ts';
   import type { Registry } from '../registry/types.ts';
@@ -19,19 +21,20 @@
   let { registry }: { registry: Registry } = $props();
 
   let result = $state<ParseResult | null>(null);
+  let basemap = $state<BaseMapInfo | undefined>(undefined);
   let loading = $state(true);
   let menuOpen = $state(false);
 
   async function load() {
     loading = true;
-    result = await loadManifest(config.dataBase);
+    [result, basemap] = await Promise.all([loadManifest(config.dataBase), loadBaseMapInfo(config.dataBase)]);
     loading = false;
   }
 
   onMount(load);
 
   const manifest = $derived(result?.manifest ?? null);
-  const rows = $derived(manifest ? statusRows(registry, manifest) : []);
+  const rows = $derived(manifest ? statusRows(registry, manifest, basemap) : []);
   const built = $derived(formatDate(manifest?.generated_at));
   const s = strings.status;
 

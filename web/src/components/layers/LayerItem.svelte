@@ -39,7 +39,7 @@
   </div>
 
   {#if visible && status === 'unavailable'}
-    <p class="status">{strings.layers.noData}</p>
+    <p class="status">{styleFor(layer)?.base ? strings.basemap.unavailable : strings.layers.noData}</p>
   {:else if visible && status === 'error'}
     <p class="status">{strings.layers.dataError}</p>
   {/if}

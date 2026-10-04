@@ -8,7 +8,9 @@
 //
 //   v  view: f (field) or a (analysis)
 //   m  map: zoom/latitude/longitude, plus /bearing/pitch when the map is turned or tilted
-//   l  visible layers, listed in full (an empty value means none)
+//   l  visible layers, listed in full (an empty value means none). The base map is the one
+//      exception: it follows its default unless the list names it, as "basemap" (on) or
+//      "-basemap" (off), so links made before it had a switch still show it.
 //   s  layer settings that differ from the registry default: layer.setting:value
 //   w  lens weights that differ from the registry default: lens.factor:weight
 //   g  suggestion types that differ from the default: suggestion:1 or suggestion:0
@@ -25,6 +27,7 @@ import {
   clampWeight,
   defaultFilters,
   defaultState,
+  isBaseLayer,
   orderLayers,
   type AppState,
   type MapPosition,
@@ -78,6 +81,28 @@ export function decodeMap(text: string): MapPosition | null {
   return { zoom, lat, lng, bearing: normalizedBearing, pitch };
 }
 
+/** The `l` list: every visible layer, and the base map only when it differs from its default. */
+export function encodeLayers(reg: Registry, layers: readonly string[], view: ViewName): string {
+  const parts: string[] = [];
+  for (const layer of reg.layers) {
+    const on = layers.includes(layer.id);
+    if (!isBaseLayer(layer)) {
+      if (on) parts.push(layer.id);
+    } else if (on !== layer.default[view]) parts.push(on ? layer.id : `-${layer.id}`);
+  }
+  return parts.join(',');
+}
+
+/** Reads the `l` list back; a base map the list does not name takes its default. */
+export function decodeLayers(reg: Registry, text: string, view: ViewName): string[] {
+  const named = new Set(text.split(',').filter(Boolean));
+  const on = new Set([...named].filter((id) => !id.startsWith('-')));
+  for (const layer of reg.layers) {
+    if (isBaseLayer(layer) && !named.has(layer.id) && !named.has(`-${layer.id}`) && layer.default[view]) on.add(layer.id);
+  }
+  return orderLayers(reg, on);
+}
+
 function encodeSettingValue(value: SettingValue): string {
   if (typeof value === 'boolean') return value ? '1' : '0';
   return enc(String(value));
@@ -91,7 +116,7 @@ export function encodeState(reg: Registry, state: AppState, options: EncodeOptio
   if (includeView) params.push(`v=${VIEW_CODES[state.view]}`);
   if (includeMap) params.push(`m=${encodeMap(state.map)}`);
   const visible = orderLayers(reg, state.layers);
-  if (layers === 'always' || visible.join(',') !== defaults.layers.join(',')) params.push(`l=${visible.join(',')}`);
+  if (layers === 'always' || visible.join(',') !== defaults.layers.join(',')) params.push(`l=${encodeLayers(reg, visible, state.view)}`);
 
   const settings: string[] = [];
   for (const layer of reg.layers) {
@@ -185,7 +210,7 @@ export function decodeState(reg: Registry, text: string, fallbackView: ViewName,
   if (map !== undefined) state.map = decodeMap(map) ?? state.map;
 
   const layers = params.get('l');
-  if (layers !== undefined) state.layers = orderLayers(reg, layers.split(',').filter(Boolean));
+  if (layers !== undefined) state.layers = decodeLayers(reg, layers, state.view);
 
   for (const item of (params.get('s') ?? '').split(',')) {
     const parts = splitItem(item);

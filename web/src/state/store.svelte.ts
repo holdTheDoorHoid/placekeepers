@@ -61,6 +61,8 @@ export class AppStore {
   basemapMissing = $state(false);
 
   controller = $state.raw<MapController | null>(null);
+  /** The map has drawn for the first time, with its data. */
+  mapReady = $state(false);
   parcelsInView = $state.raw<ParcelInView[]>([]);
   selectedProperties = $state.raw<Record<string, unknown> | null>(null);
   /** A memorial, crash or street block someone tapped, shown in the details panel. */

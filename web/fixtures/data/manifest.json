@@ -173,6 +173,15 @@
       "rows": 0,
       "newest_record": null,
       "message": null
+    },
+    "basemap_openstreetmap": {
+      "status": "missing",
+      "last_attempt": null,
+      "last_success": null,
+      "stale_since": null,
+      "rows": null,
+      "newest_record": null,
+      "message": "Not collected yet"
     }
   },
   "layers": {
@@ -262,6 +271,13 @@
       "sources": [
         "fatal_crashes",
         "memorial_names"
+      ]
+    },
+    "basemap": {
+      "file": "basemap/philly.pmtiles",
+      "source_layer": "earth",
+      "sources": [
+        "basemap_openstreetmap"
       ]
     }
   },

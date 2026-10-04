@@ -2,6 +2,7 @@
 // TypeScript checks that this map covers exactly the ids in STYLE_IDS.
 
 import type { Layer } from '../../registry/types.ts';
+import { basemap } from './basemap.ts';
 import { boundary } from './boundary.ts';
 import { crashes } from './crashes.ts';
 import { gardens } from './gardens.ts';
@@ -24,6 +25,7 @@ export const STYLES: Record<StyleId, StyleModule> = {
   street_segments: streetSegments,
   crashes,
   memorials,
+  basemap,
 };
 
 export function styleFor(layer: Layer): StyleModule | null {

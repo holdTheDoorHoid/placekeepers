@@ -408,6 +408,16 @@ const manifest = {
     schools: ok(490, null),
     street_centerlines: ok(41252, null),
     memorial_names: ok(0, null),
+    // The pipeline lists the base map's source but never fetches it: the site makes the base map.
+    basemap_openstreetmap: {
+      status: 'missing',
+      last_attempt: null,
+      last_success: null,
+      stale_since: null,
+      rows: null,
+      newest_record: null,
+      message: 'Not collected yet',
+    },
   },
   layers: {
     vacant_parcels: {
@@ -433,6 +443,7 @@ const manifest = {
       sources: ['crashes_2020_2024', 'crashes_2016_2020', 'crashes_2007_2017'],
     },
     memorials: { file: 'tiles/streets.pmtiles', source_layer: 'memorials', sources: ['fatal_crashes', 'memorial_names'] },
+    basemap: { file: 'basemap/philly.pmtiles', source_layer: 'earth', sources: ['basemap_openstreetmap'] },
   },
   files: Object.fromEntries(
     [

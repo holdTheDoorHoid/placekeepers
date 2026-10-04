@@ -37,6 +37,11 @@ export interface StyleModule {
   legend(ctx: LegendContext): LegendEntry[];
   /** Parts (see partId) that select a place when clicked. */
   clickable: string[];
+  /**
+   * True for the base map: it adds no layers of its own (layers() gives none) but restyles the
+   * base map's layers, which come with the map's starting style (src/map/basemap.ts).
+   */
+  base?: boolean;
 }
 
 /** MapLibre layer id for one part of a registry layer. */

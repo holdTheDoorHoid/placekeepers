@@ -69,6 +69,7 @@ export const strings = {
     tagline: 'A free map for Philadelphia neighbors who care for their blocks.',
     mapLabel: 'Map of Philadelphia. The list of places below the map shows the same places as text.',
     loadingMap: 'Loading the map',
+    mapFailed: 'The map could not start in this browser. Try another browser, or update this one.',
     sampleData: 'Sample data for testing. These are not real places.',
     earlyPreview:
       'Early preview: the map shows real City data, but lot pages, scores and legal steps are still being built.',
@@ -467,9 +468,18 @@ export const strings = {
   },
 
   basemap: {
-    attribution:
-      '<a href="https://protomaps.com">Protomaps</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> (ODbL)',
     missing: 'The base map is not available, so streets and place names are hidden. The data layers still work.',
+    unavailable: 'The base map is not available here, so the map shows a plain background.',
+    legend: 'Streets, buildings, parks, water and place names, in color.',
+    legendMuted: 'Streets, buildings, parks, water and place names, in gray, so the data stands out.',
+  },
+
+  // The short credits line on the map (HTML). The full list of sources, each with its license, is on
+  // the Data status page and in each layer's "About this layer".
+  credits: {
+    basemap:
+      '<a href="https://protomaps.com" target="_blank" rel="noopener noreferrer">Protomaps</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>',
+    data: (statusUrl: string) => `Data: City of Philadelphia and <a href="${statusUrl}">others</a>`,
   },
 
   status: {
@@ -521,6 +531,11 @@ export const strings = {
     } as Record<string, string>,
     problems: 'Problems in the status file',
     notesTitle: 'Notes from the latest refresh',
+    basemapLabel: { ok: 'Up to date', failing: 'Not available' } as Record<string, string>,
+    basemapMade: (date: string) =>
+      `The weekly refresh makes a new copy of the base map about once a month. This copy was made from OpenStreetMap on ${date}.`,
+    basemapNoDate: 'The weekly refresh makes a new copy of the base map about once a month.',
+    basemapMissing: 'The base map is not available on this copy of the site, so the map shows a plain background. The data layers still work.',
   },
 
   search: {

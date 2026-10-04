@@ -370,3 +370,17 @@
   cadence: frozen
   health: {min_rows: 3000, max_drop_pct: 2}
   release: v0.1
+- id: basemap_openstreetmap
+  name: Base map from OpenStreetMap
+  publisher: OpenStreetMap contributors, in a map file built by Protomaps
+  homepage: https://www.openstreetmap.org/copyright
+  # Made by the site, not by the pipeline: web/scripts/make-basemap.sh cuts the Philadelphia area
+  # out of a daily Protomaps build of OpenStreetMap, and the weekly refresh makes a new copy about
+  # once a month (docs/CONTRACTS.md section 2). The pipeline never fetches it, so the manifest calls
+  # it missing; the Data status page shows the base map's own build date instead.
+  endpoint: {kind: osm_extract}
+  license: odbl
+  attribution: "Base map: Protomaps, © OpenStreetMap contributors"
+  cadence: daily
+  health: {min_rows: 0, max_drop_pct: 100}
+  release: v0.1

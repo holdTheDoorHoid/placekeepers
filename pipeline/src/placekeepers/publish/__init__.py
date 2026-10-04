@@ -35,6 +35,11 @@ from placekeepers.snapshots import SnapshotStore
 
 log = logging.getLogger(__name__)
 
+#: The base map's folder under the data root. The site makes it (web/scripts/make-basemap.sh) and
+#: the weekly refresh adds it beside these files, so publish leaves its registry layer alone
+#: (docs/CONTRACTS.md section 2).
+BASEMAP_DIR = "basemap/"
+
 
 class PublishError(RuntimeError):
     pass
@@ -122,6 +127,9 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
         attributions: dict[str, list[str]] = {}
         seen: set[tuple[str, str]] = set()
         for layer in registry.layers.values():
+            if layer.file.startswith(BASEMAP_DIR):
+                # The base map is made by the site (web/scripts/make-basemap.sh), never here.
+                continue
             key = (layer.file, layer.source_layer)
             if key in seen:
                 continue

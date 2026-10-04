@@ -3,11 +3,13 @@ import { relative } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { loadRegistry } from '../plugins/registry.ts';
 import {
+  baseMapSources,
   dataKind,
   describeStatus,
   freshness,
   geojsonFallbackPath,
   isSampleData,
+  loadBaseMapInfo,
   loadManifest,
   parseManifest,
   resolveDataBase,
@@ -230,7 +232,8 @@ describe('finding each layer\'s file', () => {
   it('points every fixture layer at a file that exists, using both file types', () => {
     const { manifest } = parseManifest(fixtureJson);
     const kinds = new Set<string>();
-    for (const l of reg.layers) {
+    // The base map is made by the site, not published in the data root (CONTRACTS.md section 2).
+    for (const l of reg.layers.filter((layer) => !layer.file.startsWith('basemap/'))) {
       const result = resolveLayerData(l, manifest, FIXTURE_ROOT.href);
       expect(result.ok, l.id).toBe(true);
       if (!result.ok) continue;
@@ -263,7 +266,7 @@ describe('status in plain words', () => {
   it('lists every registry source, marking absent ones as not fetched', () => {
     const m = manifestWith({ sources: {} });
     const rows = statusRows(reg, m);
-    expect(rows.map((r) => r.id)).toEqual(reg.sources.map((s) => s.id));
+    expect(rows.map((r) => r.id)).toEqual(reg.sources.map((s) => s.id).filter((id) => id !== 'basemap_openstreetmap'));
     expect(rows.every((r) => r.status === 'missing')).toBe(true);
     expect(describeStatus(rows[0]!)).toEqual({ label: 'Not fetched yet', summary: 'This source has not been fetched yet.', details: [] });
   });
@@ -325,6 +328,35 @@ describe('status in plain words', () => {
     delete m.sources.opa_properties;
     delete m.sources.pwd_parcels;
     expect(statusSummary(statusRows(reg, m))).toBe('1 source is out of date, 2 sources have not been fetched yet.');
+  });
+
+  it('judges the base map by its own file, never by the pipeline, which does not fetch it', () => {
+    expect([...baseMapSources(reg)]).toEqual(['basemap_openstreetmap']);
+    const m = manifestWith();
+    m.sources.basemap_openstreetmap = { status: 'missing', last_attempt: null, last_success: null, stale_since: null, rows: null, newest_record: null, message: 'Not collected yet' };
+    // The header badge leaves it out: the map says so itself when the base map is missing.
+    expect(freshness(reg, m).kind).toBe('ok');
+    const made = statusRows(reg, m, { available: true, built: '2026-10-04' }).find((r) => r.id === 'basemap_openstreetmap')!;
+    expect(made.status).toBe('ok');
+    expect(describeStatus(made)).toEqual({
+      label: 'Up to date',
+      summary: 'The weekly refresh makes a new copy of the base map about once a month. This copy was made from OpenStreetMap on October 4, 2026.',
+      details: [],
+    });
+    const missing = statusRows(reg, m, { available: false, built: null }).find((r) => r.id === 'basemap_openstreetmap')!;
+    expect(describeStatus(missing).label).toBe('Not available');
+    expect(statusSummary(statusRows(reg, m, { available: true, built: null }))).toBe('Every source is up to date.');
+  });
+
+  it('reads the base map build date beside the base map', async () => {
+    const answer = (body: string, ok = true) => (async () => new Response(body, { status: ok ? 200 : 404 })) as typeof fetch;
+    expect(await loadBaseMapInfo('https://x.test/data/', answer('20261004\n'))).toEqual({ available: true, built: '2026-10-04' });
+    expect(await loadBaseMapInfo('https://x.test/data/', answer('soon'))).toEqual({ available: true, built: null });
+    expect(await loadBaseMapInfo('https://x.test/data/', answer('', false))).toEqual({ available: false, built: null });
+    const broken = (async () => {
+      throw new Error('offline');
+    }) as typeof fetch;
+    expect(await loadBaseMapInfo('https://x.test/data/', broken)).toEqual({ available: false, built: null });
   });
 
   it('gives the header badge the data date, or a warning', () => {

@@ -11,5 +11,6 @@ export const STYLE_IDS = [
   'street_segments',
   'crashes',
   'memorials',
+  'basemap',
 ] as const;
 export type StyleId = (typeof STYLE_IDS)[number];

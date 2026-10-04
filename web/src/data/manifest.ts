@@ -299,6 +299,42 @@ export function resolveDataBase(configured: string | undefined, siteBase: string
   return resolved.endsWith('/') ? resolved : `${resolved}/`;
 }
 
+// The base map ------------------------------------------------------------------------------
+
+/** The base map's folder under the data root: made by the site, never by the pipeline. */
+export const BASEMAP_DIR = 'basemap/';
+
+/**
+ * Sources behind the base map alone. The pipeline never fetches them (the manifest calls them
+ * missing), so the site judges them by the base map file itself.
+ */
+export function baseMapSources(reg: Registry): Set<string> {
+  const base = new Set<string>();
+  const other = new Set<string>();
+  for (const layer of reg.layers) {
+    for (const id of layer.sources) (layer.file.startsWith(BASEMAP_DIR) ? base : other).add(id);
+  }
+  return new Set([...base].filter((id) => !other.has(id)));
+}
+
+export interface BaseMapInfo {
+  available: boolean;
+  /** The day the base map was made from OpenStreetMap, as YYYY-MM-DD, when known. */
+  built: string | null;
+}
+
+/** Reads basemap/BUILD (the Protomaps build date, such as 20261004) beside the base map. Never throws. */
+export async function loadBaseMapInfo(dataBase: string, fetchImpl: typeof fetch = fetch): Promise<BaseMapInfo> {
+  try {
+    const response = await fetchImpl(`${dataBase}${BASEMAP_DIR}BUILD`, { cache: 'no-cache' });
+    if (!response.ok) return { available: false, built: null };
+    const match = /^(\d{4})(\d{2})(\d{2})\s*$/.exec(await response.text());
+    return { available: true, built: match ? `${match[1]}-${match[2]}-${match[3]}` : null };
+  } catch {
+    return { available: false, built: null };
+  }
+}
+
 // Status in plain words --------------------------------------------------------------------
 
 export interface StatusRow {
@@ -308,13 +344,24 @@ export interface StatusRow {
   name: string;
   status: DisplayStatus;
   entry: ManifestSource | null;
+  /** For the base map's source: what the base map file says, in place of the manifest. */
+  basemap?: BaseMapInfo;
 }
 
-/** One row per registry source (in registry order), then any extra sources in the manifest. */
-export function statusRows(reg: Registry, manifest: Manifest | null): StatusRow[] {
-  const rows: StatusRow[] = reg.sources.map((source) => {
+/**
+ * One row per registry source (in registry order), then any extra sources in the manifest. The
+ * base map's source is judged by `basemap` (its file), not by the manifest; without that
+ * information it is left out.
+ */
+export function statusRows(reg: Registry, manifest: Manifest | null, basemap?: BaseMapInfo): StatusRow[] {
+  const base = baseMapSources(reg);
+  const rows: StatusRow[] = reg.sources.flatMap((source): StatusRow[] => {
+    if (base.has(source.id)) {
+      if (!basemap) return [];
+      return [{ id: source.id, source, name: source.name, status: basemap.available ? 'ok' : 'failing', entry: null, basemap }];
+    }
     const entry = manifest?.sources[source.id] ?? null;
-    return { id: source.id, source, name: source.name, status: entry?.status ?? 'missing', entry };
+    return [{ id: source.id, source, name: source.name, status: entry?.status ?? 'missing', entry }];
   });
   for (const [id, entry] of Object.entries(manifest?.sources ?? {})) {
     if (!reg.sources.some((s) => s.id === id)) rows.push({ id, source: null, name: id, status: entry.status, entry });
@@ -331,6 +378,11 @@ export interface StatusText {
 
 export function describeStatus(row: StatusRow): StatusText {
   const s = strings.status;
+  if (row.basemap) {
+    const built = formatDate(row.basemap.built);
+    const summary = !row.basemap.available ? s.basemapMissing : built ? s.basemapMade(built) : s.basemapNoDate;
+    return { label: s.basemapLabel[row.status] ?? s.statusLabel[row.status], summary, details: [] };
+  }
   const e = row.entry;
   let summary: string | null = null;
   if (row.status === 'stale') {

@@ -3,7 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { loadRegistry } from '../plugins/registry.ts';
 import { STYLE_IDS } from '../src/map/styles/ids.ts';
 import { STYLES, styleFor } from '../src/map/styles/index.ts';
-import { COUNT_BINS, HIN_COLOR, PRIORITY_RAMP } from '../src/map/styles/palette.ts';
+import { restyleBase } from '../src/map/styles/basemap.ts';
+import { COUNT_BINS, HIN_COLOR, PLAIN_BACKGROUND, PRIORITY_RAMP } from '../src/map/styles/palette.ts';
 import { WINDOWS } from '../src/map/styles/shootings_hex.ts';
 import { defaultState, type AppState } from '../src/state/defaults.ts';
 import { collectStrings, strings } from '../src/strings.ts';
@@ -32,6 +33,9 @@ function states(): AppState[] {
 function validate(layers: unknown[]): string[] {
   const style = {
     version: 8,
+    // The base map's labels and icons need fonts and a sprite, as the real base map has.
+    glyphs: 'https://example.test/data/basemap/fonts/{fontstack}/{range}.pbf',
+    sprite: 'https://example.test/data/basemap/sprites/v4/light',
     sources: {
       tiles: { type: 'vector', url: 'pmtiles://https://example.test/data/tiles/lots.pmtiles' },
       json: { type: 'geojson', data: 'https://example.test/data/geojson/hin.geojson' },
@@ -62,6 +66,11 @@ describe('map styles', () => {
       for (const layer of reg.layers) {
         const style = styleFor(layer)!;
         const tiles = style.layers({ layer, registry: reg, state, sourceId: 'tiles', sourceLayer: layer.source_layer });
+        if (style.base) {
+          // The base map restyles its own layers, named as in its file, and is only ever tiles.
+          expect(validate(tiles), `${layer.id} as tiles`).toEqual([]);
+          continue;
+        }
         const json = style.layers({ layer, registry: reg, state, sourceId: 'json', sourceLayer: null });
         expect(validate(tiles), `${layer.id} as tiles`).toEqual([]);
         expect(validate(json), `${layer.id} as GeoJSON`).toEqual([]);
@@ -173,5 +182,43 @@ describe('interface text', () => {
   it('never uses a dash as punctuation', () => {
     const offenders = collectStrings(strings).filter(([, text]) => /[‒–—―]|\s-\s|\s--?\s/.test(text));
     expect(offenders).toEqual([]);
+  });
+});
+
+describe('base map style', () => {
+  const layer = reg.layers.find((l) => l.style === 'basemap')!;
+  const draw = (state: AppState) => styleFor(layer)!.layers({ layer, registry: reg, state, sourceId: 'protomaps', sourceLayer: null });
+  const visibility = (spec: { layout?: Record<string, unknown> }) => spec.layout?.visibility;
+
+  it('is a registry layer with a switch and a look, on in both views', () => {
+    expect(layer.group).toBe('basemap');
+    expect(layer.default).toEqual({ field: true, analysis: true });
+    expect(layer.settings.map((s) => s.id)).toEqual(['look']);
+  });
+
+  it('turns gray for the muted look, hiding what the gray look does not draw', () => {
+    const light = draw(defaultState(reg, 'analysis'));
+    const state = defaultState(reg, 'analysis');
+    state.settings.basemap!.look = 'muted';
+    const muted = draw(state);
+    expect(muted.map((l) => l.id)).toEqual(light.map((l) => l.id));
+    const roads = (specs: typeof light) => specs.find((l) => l.id === 'roads_major') as { paint: unknown };
+    expect(roads(muted).paint).not.toEqual(roads(light).paint);
+    expect(visibility(muted.find((l) => l.id === 'pois')!)).toBe('none');
+    expect(light.every((l) => visibility(l) === 'visible')).toBe(true);
+  });
+
+  it('leaves only a plain background when turned off', () => {
+    const state = defaultState(reg, 'analysis');
+    state.layers = state.layers.filter((id) => id !== 'basemap');
+    const off = draw(state);
+    expect(off.filter((l) => visibility(l) === 'visible').map((l) => l.id)).toEqual(['background']);
+    expect((off.find((l) => l.id === 'background') as { paint: Record<string, unknown> }).paint['background-color']).toBe(PLAIN_BACKGROUND);
+  });
+
+  it('can only show or hide a base map that is not the Protomaps extract', () => {
+    const plain = [{ id: 'pk:background', type: 'background', paint: { 'background-color': '#eee' } }, { id: 'water', type: 'fill', source: 'x', 'source-layer': 'water', paint: { 'fill-color': '#00f' } }] as never[];
+    expect(restyleBase(plain, 'muted', true, false).map((l) => (l as { paint: unknown }).paint)).toEqual([{ 'background-color': '#eee' }, { 'fill-color': '#00f' }]);
+    expect(restyleBase(plain, 'light', false, false).map((l) => visibility(l))).toEqual(['visible', 'none']);
   });
 });

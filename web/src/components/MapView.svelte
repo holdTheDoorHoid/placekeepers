@@ -9,7 +9,9 @@
 
   let { store }: { store: AppStore } = $props();
   let container: HTMLDivElement;
-  let loading = $state(true);
+  /** Until the map has drawn once with its data, a loading note covers it. */
+  let ready = $state(false);
+  let failed = $state(false);
 
   function refreshFromMap() {
     const controller = store.controller;
@@ -34,6 +36,7 @@
         container,
         registry: store.registry,
         dataBase: config.dataBase,
+        siteBase: config.siteBase,
         style: basemap.style,
         state: $state.snapshot(store.state),
         manifest: store.manifest,
@@ -43,12 +46,19 @@
           pick: (lngLat) => void store.pickAt(lngLat),
           inspect: (target) => store.inspect(target),
           idle: refreshFromMap,
+          ready: () => {
+            ready = true;
+            store.mapReady = true;
+          },
           layerStatus: (id, status) => (store.layerStatus = { ...store.layerStatus, [id]: status }),
         },
       });
       store.controller = controller;
-      loading = false;
-    })();
+    })().catch((error: unknown) => {
+      // Most often a browser or device without WebGL, which MapLibre needs to draw.
+      console.warn('Placekeepers map:', error);
+      failed = true;
+    });
     return () => {
       disposed = true;
       controller?.destroy();
@@ -86,9 +96,13 @@
   });
 </script>
 
-<div class="map-wrap">
+<div class="map-wrap" data-map-ready={ready ? 'true' : 'false'}>
   <div class="map" bind:this={container}></div>
-  {#if loading}<p class="loading" role="status">{strings.app.loadingMap}</p>{/if}
+  {#if failed}
+    <p class="loading failed" role="alert">{strings.app.mapFailed}</p>
+  {:else if !ready}
+    <div class="loading" role="status"><span class="spinner" aria-hidden="true"></span>{strings.app.loadingMap}</div>
+  {/if}
   {#if store.picking}<p class="notice picking" role="status">{strings.pick.looking}</p>{/if}
   {#if store.basemapMissing}<p class="notice basemap-note">{strings.basemap.missing}</p>{/if}
 </div>
@@ -108,10 +122,31 @@
   .loading {
     position: absolute;
     inset: 0;
-    display: grid;
-    place-items: center;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
     margin: 0;
-    color: var(--pk-muted);
+    padding: 16px;
+    background: rgba(236, 235, 228, 0.85);
+    color: var(--pk-text);
+    font-weight: 600;
+    text-align: center;
+  }
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 4px solid var(--pk-surface-2);
+    border-top-color: var(--pk-accent);
+    border-radius: 50%;
+    animation: pk-spin 0.9s linear infinite;
+  }
+  @keyframes pk-spin {
+    to {
+      transform: rotate(360deg);
+    }
   }
   .picking {
     position: absolute;
