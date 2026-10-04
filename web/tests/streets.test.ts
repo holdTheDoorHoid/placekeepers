@@ -210,6 +210,24 @@ describe('street segments style', () => {
   });
 });
 
+describe('the place someone opened', () => {
+  function selected(id: string, highlight: (string | number)[], properties: Record<string, unknown>, type = 1): boolean {
+    const l = layer(id);
+    const all = styleFor(l)!.layers({ layer: l, registry: reg, state: defaultState(reg, 'analysis'), sourceId: 'tiles', sourceLayer: l.source_layer, highlight });
+    const p = all.find((x) => x.id === `pk:${id}:selected`) as { filter: unknown };
+    return featureFilter(p.filter as never).filter({ zoom: 15 } as never, { type, properties } as never);
+  }
+
+  it('gets a ring in the selection color, and nothing else does', () => {
+    expect(selected('memorials', ['fc20260820_1000'], { id: 'fc20260820_1000', m: 1 })).toBe(true);
+    expect(selected('memorials', ['fc20260820_1000'], { id: 'fc20250101_0000', m: 1 })).toBe(false);
+    expect(selected('memorials', [], { id: 'fc20260820_1000', m: 1 })).toBe(false);
+    expect(selected('crashes', [2024000001], { id: 2024000001, ya: 0, sev: 3 })).toBe(true);
+    expect(selected('segments', [900001], { id: 900001 }, 2)).toBe(true);
+    expect(selected('segments', [900001], { id: 900002 }, 2)).toBe(false);
+  });
+});
+
 describe('street safety colors', () => {
   it('uses no alarm reds', () => {
     for (const color of [...STREET_RAMP.stops, ...CRASH_COLORS, MEMORIAL_FILL, MEMORIAL_RING, MEMORIAL_GLOW]) {
