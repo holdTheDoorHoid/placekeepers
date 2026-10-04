@@ -10,7 +10,8 @@ Routes, by owner, the lawful route first:
 * The housing authority and other public bodies: ask the owner (the body named in City records).
 * Private lots (a person, a company, a nonprofit, or a name we could not type): ask the owner;
   where the lot is already a garden, garden adverse possession (2024 law, still to confirm with
-  legal aid); and conservatorship, which always carries the abuse warning in its registry entry.
+  legal aid); and, only where we call the parcel vacant, conservatorship, which always carries
+  the abuse warning in its registry entry. A parcel we do not call vacant may be someone's home.
 * LandCare lots, whoever owns them: Community LandCare first, since PHS already cares for them.
 
 Suggestions come from the vacancy call: a vacant lot gets "clean and green", a vacant building
@@ -28,6 +29,7 @@ def routes_for(
     owner_type: OwnerType,
     *,
     has_names: bool,
+    vacant: bool = False,
     side_yard_eligible: bool = False,
     in_landcare: bool = False,
     gardened: bool = False,
@@ -49,7 +51,8 @@ def routes_for(
         routes.append("ask_the_owner")
         if gardened:
             routes.append("garden_adverse_possession")
-        routes.append("conservatorship")
+        if vacant:
+            routes.append("conservatorship")
     return routes
 
 

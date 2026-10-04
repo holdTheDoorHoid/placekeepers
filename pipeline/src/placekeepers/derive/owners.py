@@ -184,8 +184,9 @@ COMPANY = re.compile(
     r"|AMTRAK|BNY|MELLON)\b|\b(FB|N A)$"
 )
 UNKNOWN_NAME = re.compile(r"\bUNKNOWN\b|\bNOT AVAILABLE\b|\bNONE\b")
-# Generational suffixes are part of a person's name: JR, SR, 2ND, 03RD, III.
-GENERATION = re.compile(r"\b0?\d(ST|ND|RD|TH)\b")
+# Generational suffixes and shares of ownership are part of a person's name: JR, SR, 2ND, 03RD,
+# III, "1/2 INT".
+GENERATION = re.compile(r"\b0?\d(ST|ND|RD|TH)\b|\b\d+ \d+ INT(EREST)?\b")
 
 ESTATE_IGNORE = re.compile(r"\b(LIFE|LF) (EST(ATE)?|TENANT)\b|\bREAL EST(ATE)?\b")
 ESTATE = re.compile(
@@ -404,7 +405,8 @@ def compare_addresses(parcel: str | None, mailing: str | None) -> str:
     a, b = parse_address(parcel), parse_address(mailing)
     if a is None or b is None:
         return "unknown"
-    if a.street != b.street:
+    # "MC CLELLAN" and "MCCLELLAN" are one street.
+    if "".join(a.street) != "".join(b.street):
         return "different"
     if a.low <= b.low <= a.high or b.low <= a.low <= b.high:
         return "same"

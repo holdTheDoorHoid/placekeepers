@@ -49,13 +49,6 @@ def plural(count: int, one: str, many: str) -> str:
     return f"{count} {one if count == 1 else many}"
 
 
-def join_and(items: list[str]) -> str:
-    """'a', 'a and b', 'a, b and c'."""
-    if len(items) <= 1:
-        return "".join(items)
-    return ", ".join(items[:-1]) + " and " + items[-1]
-
-
 SMALL_WORDS = {"OF", "THE", "AND", "ON", "IN", "AT", "BY", "DE", "LA", "DEL"}
 
 
@@ -145,12 +138,16 @@ SHERIFF_NEXT_STEP = (
 
 
 def sheriff_text(sales: list[tuple[date, float | None]]) -> str:
+    """"Sold at sheriff sale on May 14, 2019, for $12,300." Several sales are separated by
+    semicolons, since each date already holds a comma."""
+
     def one(day: date, price: float | None) -> str:
-        return long_date(day) + (f" for {money(price)}" if price else "")
+        return long_date(day) + (f", for {money(price)}" if price else "")
 
     if len(sales) == 1:
         return f"Sold at sheriff sale on {one(*sales[0])}."
-    listed = join_and([one(day, price) for day, price in sales])
+    items = [one(day, price) for day, price in sales]
+    listed = "; ".join(items[:-1]) + "; and " + items[-1]
     return f"Sold at sheriff sale {len(sales)} times: {listed}."
 
 
@@ -171,7 +168,7 @@ def last_sale_text(year: int) -> str:
 
 
 def no_sale_text(since_year: int) -> str:
-    return f"Not sold for a price since at least {since_year}."
+    return f"Not sold on the open market since at least {since_year}."
 
 
 # Owner holds many vacant parcels
@@ -191,8 +188,9 @@ def many_parcels_text(count: int) -> str:
 
 # Fast resales
 RESALE_CAREFUL = (
-    "Quick resales can mean investors trading the property, and sometimes a forged deed. They can "
-    "also be ordinary, such as an estate sale followed by a renovation sale."
+    "Quick resales can mean the property is being traded for profit, and sometimes a forged deed. "
+    "They can also be ordinary, such as a family selling an inherited house and the buyer "
+    "reselling it after repairs."
 )
 RESALE_NEXT_STEP = (
     "Look at who sold and who bought in the history below. Owners and families can sign up for "
@@ -222,8 +220,8 @@ VIOLATIONS_NEXT_STEP = (
 def violations_text(count: int, last: date | None, title: str | None) -> str:
     what = f" for {title.lower()}" if title else ""
     if count == 1:
-        when = f", from {long_date(last)}" if last else ""
-        return f"L&I lists 1 open violation{when}{what}."
+        parts = [part for part in (what.strip(), last and f"from {long_date(last)}") if part]
+        return "L&I lists 1 open violation" + "".join(f", {part}" for part in parts) + "."
     text = f"L&I lists {count} open violations."
     if last and title:
         text += f" The most recent, from {long_date(last)}, is{what}."

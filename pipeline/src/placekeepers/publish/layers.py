@@ -7,8 +7,9 @@ docs/CONTRACTS.md section 4.
   victim in the 36 month window are written. Counts only: no dates, no points, nothing about any
   person.
 * `parcels` (lots): `id` (OPA account), `k` (1 vacant lot, 2 vacant building), `vc` (confidence;
-  2, medium, while the City's indicator is the only signal), `ot` (owner type; 0, unknown, until
-  owner types arrive), `lc` (1 when PHS LandCare maintains the parcel).
+  2, medium, while the City's indicator is the only signal), `ot` (owner type, from the City owned
+  property layer and OPA's owner names: see placekeepers.derive.owners), `lc` (1 when PHS LandCare
+  maintains the parcel).
 * `landcare` (care): `id` (OPA account, or empty), `p` (program: 1 LandCare, 2 Community LandCare,
   3 Land Bank lot, 4 PHDC lot, 0 other), `y` (year the lot joined, 0 when unknown).
 * `gardens` (care): `nm` (name), `src` (1 PHS, 2 Neighborhood Gardens Trust, 3 both, 4 registered
@@ -203,6 +204,10 @@ def build_parcels(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) 
             if description:
                 descriptions.setdefault(account, description)
     landcare = landcare_accounts(paths.get("phs_landcare"))
+    # Owner type (M1.3): from the City owned property layer and OPA's owner names.
+    from placekeepers.publish.dossiers import owner_type_codes
+
+    owner_types = owner_type_codes(paths, set(kinds))
     notes = []
     if no_account:
         notes.append(
@@ -223,7 +228,8 @@ def build_parcels(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) 
         for account in sorted(kinds):
             kind = parcel_kind(kinds[account], descriptions.get(account))
             lc = 1 if account in landcare else 0
-            properties = {"id": account, "k": kind, "vc": 2, "ot": 0, "lc": lc}
+            ot = owner_types.get(account, 0)
+            properties = {"id": account, "k": kind, "vc": 2, "ot": ot, "lc": lc}
             writer.write(properties, geometry_json(shapes[account]))
     return BuildResult(writer.count, notes)
 
@@ -341,7 +347,7 @@ BUILDERS: tuple[LayerBuilder, ...] = (
         "parcels",
         ("vacant_indicators_land", "vacant_indicators_bldg"),
         build_parcels,
-        extras=("phs_landcare",),
+        extras=("phs_landcare", "opa_properties", "city_owned_property"),
     ),
     LayerBuilder("tiles/streets.pmtiles", "hin", ("high_injury_network",), build_hin),
     LayerBuilder("tiles/context.pmtiles", "h3", ("shootings",), build_h3),

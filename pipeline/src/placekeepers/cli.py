@@ -127,6 +127,12 @@ def _publish(ctx: Context, args: argparse.Namespace) -> int:
     )
     for name, count in result.features.items():
         print(f"  {name}: {count:,} features")
+    if result.dossiers is not None and result.dossiers.parcels:
+        print(
+            f"  dossiers: {result.dossiers.parcels:,} parcels in {result.dossiers.shards:,} files "
+            f"({result.dossiers.bytes / 1e6:.1f} MB), {result.dossiers.owners_listed:,} owners "
+            "listed with many vacant parcels"
+        )
     for file in result.tiles_built:
         print(f"  built {file}")
     for note in result.manifest["notes"]:

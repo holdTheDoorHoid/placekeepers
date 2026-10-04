@@ -1,14 +1,16 @@
 """The owner flags of one parcel (docs/ETHICS.md, "Owner information").
 
-Each flag is a dict with the three parts ETHICS.md asks for and the facts behind it:
+Every flag has the three parts ETHICS.md asks for: what it means (`text`), why to be careful
+(`careful`) and a protective next step (`next_step`). The careful note and the next step are the
+same for every parcel with that flag, so they live once in `FLAG_NOTES` (and once per dossier
+shard, docs/CONTRACTS.md section 6), together with the routes, links and sources behind the flag.
+What differs from parcel to parcel travels with the parcel:
 
     {"id": "absentee",
      "text": "The owner gets mail somewhere else: Cherry Hill, NJ (out of state).",
-     "careful": "...", "next_step": "...",
-     "routes": ["ask_the_owner"],                 registry/routes.yaml ids, when a route helps
-     "links": [{"label": "...", "url": "..."}],   other links, when the flag names one
-     "sources": ["opa_properties"],               registry/sources.yaml ids behind the flag
      "data": {"scope": "out_of_state", "place": "Cherry Hill, NJ"}}
+
+`full_flag` puts the two halves back together.
 
 Which owners get which flags:
 
@@ -20,8 +22,8 @@ Which owners get which flags:
   City itself.
 
 A dossier whose private owner has any flag also carries `help` (the Tangled Title Fund and Fraud
-Guard routes, ETHICS.md "Fraud Guard and Tangled Title links on every flagged dossier"), and one
-whose owner is a person, or may be an estate, carries the deed fraud notice.
+Guard routes: ETHICS.md puts "Fraud Guard and Tangled Title links on every flagged dossier"), and
+one whose owner is a person, or may be an estate, carries the deed fraud notice.
 """
 
 from __future__ import annotations
@@ -34,21 +36,100 @@ from placekeepers.derive import wording
 from placekeepers.derive.owners import Absentee, OwnerType
 from placekeepers.derive.transfers import LastSale, Resales, Transfer
 
-FLAG_IDS = (
-    "absentee",
-    "possible_estate",
-    "tax_debt_2025",
-    "sheriff_sales",
-    "years_since_sale",
-    "many_parcels",
-    "fast_resales",
-    "open_violations",
-    "unsafe",
-    "imminently_dangerous",
-)
 #: "many" vacant parcels: an owner with at least this many gets the flag
 MANY_PARCELS_MIN = 5
 HELP_ROUTES = ["tangled_title_help", "fraud_guard"]
+
+
+def _notes(
+    careful: str,
+    next_step: str,
+    sources: list[str],
+    routes: list[str] | None = None,
+    links: list[dict[str, str]] | None = None,
+) -> dict[str, Any]:
+    notes: dict[str, Any] = {"careful": careful, "next_step": next_step}
+    if routes:
+        notes["routes"] = routes
+    if links:
+        notes["links"] = links
+    notes["sources"] = sources
+    return notes
+
+
+#: The parts of each flag that are the same for every parcel, in the order flags are listed.
+FLAG_NOTES: dict[str, dict[str, Any]] = {
+    "absentee": _notes(
+        wording.ABSENTEE_CAREFUL,
+        wording.ABSENTEE_NEXT_STEP,
+        ["opa_properties"],
+        routes=["ask_the_owner"],
+    ),
+    "possible_estate": _notes(
+        wording.ESTATE_CAREFUL,
+        wording.ESTATE_NEXT_STEP,
+        ["opa_properties"],
+        routes=["tangled_title_help", "fraud_guard"],
+    ),
+    "tax_debt_2025": _notes(
+        wording.TAX_CAREFUL,
+        wording.TAX_NEXT_STEP,
+        ["cagp_tax_2025"],
+        links=[wording.TAX_CENTER, wording.SHERIFF_SALE_GUIDE],
+    ),
+    "sheriff_sales": _notes(
+        wording.SHERIFF_CAREFUL,
+        wording.SHERIFF_NEXT_STEP,
+        ["real_estate_transfers"],
+        links=[wording.SHERIFF_SALE_GUIDE, wording.GJLI],
+    ),
+    "years_since_sale": _notes(
+        wording.SALE_CAREFUL,
+        wording.SALE_NEXT_STEP,
+        ["real_estate_transfers", "opa_properties"],
+        routes=["tangled_title_help"],
+    ),
+    "many_parcels": _notes(
+        wording.MANY_CAREFUL,
+        wording.MANY_NEXT_STEP,
+        ["opa_properties"],
+        routes=["ask_the_owner"],
+    ),
+    "fast_resales": _notes(
+        wording.RESALE_CAREFUL,
+        wording.RESALE_NEXT_STEP,
+        ["real_estate_transfers"],
+        routes=["fraud_guard"],
+    ),
+    "open_violations": _notes(
+        wording.VIOLATIONS_CAREFUL,
+        wording.VIOLATIONS_NEXT_STEP,
+        ["li_violations"],
+        routes=["report_to_311"],
+    ),
+    "unsafe": _notes(
+        wording.UNSAFE_CAREFUL,
+        wording.UNSAFE_NEXT_STEP,
+        ["li_unsafe"],
+        routes=["report_to_311"],
+    ),
+    "imminently_dangerous": _notes(
+        wording.DANGEROUS_CAREFUL,
+        wording.DANGEROUS_NEXT_STEP,
+        ["li_imminently_dangerous"],
+        routes=["report_to_311"],
+    ),
+}
+FLAG_IDS = tuple(FLAG_NOTES)
+
+#: Notices shown beside the flags, by id.
+NOTICES: dict[str, dict[str, Any]] = {
+    "deed_fraud": {
+        "text": wording.DEED_FRAUD_NOTICE,
+        "routes": ["fraud_guard"],
+        "links": [wording.DEED_FRAUD_CHECK],
+    },
+}
 
 
 @dataclass
@@ -88,56 +169,36 @@ class OwnerFacts:
         return not self.owner_type.public and (self.owner_type.type != "unknown" or self.has_names)
 
 
-def make_flag(
-    flag_id: str,
-    text: str,
-    careful: str,
-    next_step: str,
-    *,
-    sources: list[str],
-    routes: list[str] | None = None,
-    links: list[dict[str, str]] | None = None,
-    data: dict[str, Any] | None = None,
-) -> dict[str, Any]:
-    flag: dict[str, Any] = {"id": flag_id, "text": text, "careful": careful, "next_step": next_step}
-    if routes:
-        flag["routes"] = routes
-    if links:
-        flag["links"] = links
-    flag["sources"] = sources
+def make_flag(flag_id: str, text: str, data: dict[str, Any] | None = None) -> dict[str, Any]:
+    """The part of a flag that belongs to one parcel."""
+    if flag_id not in FLAG_NOTES:
+        raise ValueError(f"unknown flag {flag_id!r}")
+    flag: dict[str, Any] = {"id": flag_id, "text": text}
     if data:
         flag["data"] = data
     return flag
 
 
+def full_flag(flag: dict[str, Any]) -> dict[str, Any]:
+    """A parcel's flag with its shared notes: id, text, careful, next_step, routes, links,
+    sources and data."""
+    notes = FLAG_NOTES[flag["id"]]
+    out = {"id": flag["id"], "text": flag["text"], **notes}
+    if "data" in flag:
+        out["data"] = flag["data"]
+    return out
+
+
 def absentee_flag(found: Absentee) -> dict[str, Any]:
-    place = None
+    data: dict[str, Any] = {"scope": found.scope}
     if found.scope in {"out_of_state", "outside_city"} and (found.city or found.state):
         parts = [wording.place_name(found.city) if found.city else None, found.state]
-        place = ", ".join(part for part in parts if part)
-    data = {"scope": found.scope}
-    if place:
-        data["place"] = place
-    return make_flag(
-        "absentee",
-        found.text,
-        wording.ABSENTEE_CAREFUL,
-        wording.ABSENTEE_NEXT_STEP,
-        sources=["opa_properties"],
-        routes=["ask_the_owner"],
-        data=data,
-    )
+        data["place"] = ", ".join(part for part in parts if part)
+    return make_flag("absentee", found.text, data)
 
 
 def estate_flag() -> dict[str, Any]:
-    return make_flag(
-        "possible_estate",
-        wording.ESTATE_TEXT,
-        wording.ESTATE_CAREFUL,
-        wording.ESTATE_NEXT_STEP,
-        sources=["opa_properties"],
-        routes=["tangled_title_help", "fraud_guard"],
-    )
+    return make_flag("possible_estate", wording.ESTATE_TEXT)
 
 
 def tax_flag(tax: TaxDebt) -> dict[str, Any]:
@@ -147,26 +208,14 @@ def tax_flag(tax: TaxDebt) -> dict[str, Any]:
     }
     if tax.years:
         data["years"] = tax.years
-    return make_flag(
-        "tax_debt_2025",
-        wording.tax_text(tax.total_due, tax.years),
-        wording.TAX_CAREFUL,
-        wording.TAX_NEXT_STEP,
-        sources=["cagp_tax_2025"],
-        links=[wording.TAX_CENTER, wording.SHERIFF_SALE_GUIDE],
-        data=data,
-    )
+    return make_flag("tax_debt_2025", wording.tax_text(tax.total_due, tax.years), data)
 
 
 def sheriff_flag(sales: list[Transfer]) -> dict[str, Any]:
     return make_flag(
         "sheriff_sales",
         wording.sheriff_text([(t.date, t.price) for t in sales]),
-        wording.SHERIFF_CAREFUL,
-        wording.SHERIFF_NEXT_STEP,
-        sources=["real_estate_transfers"],
-        links=[wording.SHERIFF_SALE_GUIDE, wording.GJLI],
-        data={
+        {
             "sales": [
                 {"date": t.date.isoformat(), "price": None if t.price is None else round(t.price)}
                 for t in sales
@@ -175,27 +224,19 @@ def sheriff_flag(sales: list[Transfer]) -> dict[str, Any]:
     )
 
 
-def sale_flag(found: LastSale, as_of: date) -> dict[str, Any]:
-    data: dict[str, Any] = {"year": found.year, "years": as_of.year - found.year}
+def sale_flag(found: LastSale) -> dict[str, Any]:
     if found.known:
-        text = wording.last_sale_text(found.year)
+        data: dict[str, Any] = {"year": found.year}
         if found.date:
             data["date"] = found.date.isoformat()
         if found.price is not None:
             data["price"] = round(found.price)
-        sources = ["real_estate_transfers"] if found.source == "transfers" else ["opa_properties"]
-    else:
-        text = wording.no_sale_text(found.year)
-        data["sold"] = False
-        sources = ["real_estate_transfers", "opa_properties"]
+        if found.source == "opa":
+            # From the assessor's record rather than the City's deed records.
+            data["source"] = "opa_properties"
+        return make_flag("years_since_sale", wording.last_sale_text(found.year), data)
     return make_flag(
-        "years_since_sale",
-        text,
-        wording.SALE_CAREFUL,
-        wording.SALE_NEXT_STEP,
-        sources=sources,
-        routes=["tangled_title_help"],
-        data=data,
+        "years_since_sale", wording.no_sale_text(found.year), {"year": found.year, "sold": False}
     )
 
 
@@ -203,26 +244,14 @@ def many_parcels_flag(count: int, list_id: str | None) -> dict[str, Any]:
     data: dict[str, Any] = {"count": count}
     if list_id:
         data["list"] = list_id
-    return make_flag(
-        "many_parcels",
-        wording.many_parcels_text(count),
-        wording.MANY_CAREFUL,
-        wording.MANY_NEXT_STEP,
-        sources=["opa_properties"],
-        routes=["ask_the_owner"],
-        data=data,
-    )
+    return make_flag("many_parcels", wording.many_parcels_text(count), data)
 
 
 def resale_flag(found: Resales) -> dict[str, Any]:
     return make_flag(
         "fast_resales",
         wording.resale_text(found.count, found.first, found.last, found.recent),
-        wording.RESALE_CAREFUL,
-        wording.RESALE_NEXT_STEP,
-        sources=["real_estate_transfers"],
-        routes=["fraud_guard"],
-        data={"count": found.count, "dates": [day.isoformat() for day in found.dates]},
+        {"count": found.count, "dates": [day.isoformat() for day in found.dates]},
     )
 
 
@@ -235,36 +264,18 @@ def violations_flag(li: LiSummary) -> dict[str, Any]:
     return make_flag(
         "open_violations",
         wording.violations_text(li.open_violations, li.last_open, li.last_open_title),
-        wording.VIOLATIONS_CAREFUL,
-        wording.VIOLATIONS_NEXT_STEP,
-        sources=["li_violations"],
-        routes=["report_to_311"],
-        data=data,
+        data,
     )
 
 
 def unsafe_flag(since: date | None) -> dict[str, Any]:
-    return make_flag(
-        "unsafe",
-        wording.unsafe_text(since),
-        wording.UNSAFE_CAREFUL,
-        wording.UNSAFE_NEXT_STEP,
-        sources=["li_unsafe"],
-        routes=["report_to_311"],
-        data={"since": since.isoformat()} if since else None,
-    )
+    data = {"since": since.isoformat()} if since else None
+    return make_flag("unsafe", wording.unsafe_text(since), data)
 
 
 def dangerous_flag(since: date | None) -> dict[str, Any]:
-    return make_flag(
-        "imminently_dangerous",
-        wording.dangerous_text(since),
-        wording.DANGEROUS_CAREFUL,
-        wording.DANGEROUS_NEXT_STEP,
-        sources=["li_imminently_dangerous"],
-        routes=["report_to_311"],
-        data={"since": since.isoformat()} if since else None,
-    )
+    data = {"since": since.isoformat()} if since else None
+    return make_flag("imminently_dangerous", wording.dangerous_text(since), data)
 
 
 def owner_flags(facts: OwnerFacts, as_of: date) -> list[dict[str, Any]]:
@@ -281,7 +292,7 @@ def owner_flags(facts: OwnerFacts, as_of: date) -> list[dict[str, Any]]:
     if sheriff:
         flags.append(sheriff_flag(sorted(sheriff, key=lambda t: t.date)))
     if private and facts.last_sale is not None:
-        flags.append(sale_flag(facts.last_sale, as_of))
+        flags.append(sale_flag(facts.last_sale))
     if private and facts.holdings >= MANY_PARCELS_MIN:
         flags.append(many_parcels_flag(facts.holdings, facts.holdings_list))
     if facts.resales is not None:
@@ -293,15 +304,6 @@ def owner_flags(facts: OwnerFacts, as_of: date) -> list[dict[str, Any]]:
     if facts.li.dangerous_since is not None:
         flags.append(dangerous_flag(facts.li.dangerous_since))
     return flags
-
-
-def deed_fraud_notice() -> dict[str, Any]:
-    return {
-        "id": "deed_fraud",
-        "text": wording.DEED_FRAUD_NOTICE,
-        "routes": ["fraud_guard"],
-        "links": [wording.DEED_FRAUD_CHECK],
-    }
 
 
 def shows_deed_fraud_notice(facts: OwnerFacts, flags: list[dict[str, Any]]) -> bool:
