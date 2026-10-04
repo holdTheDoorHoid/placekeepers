@@ -16,7 +16,7 @@ import { parcelLensOf, placeSuggestions } from '../places/rank.ts';
 import { placeReasons, reasonContext, type PlaceReasons } from '../places/reasons.ts';
 import type { Lens, Partner, Registry, Route, Suggestion } from '../registry/types.ts';
 import type { AppState } from '../state/defaults.ts';
-import { formatDate, formatMoney, formatTime, sentenceCase, strings } from '../strings.ts';
+import { formatDate, formatMoney, formatPrice, formatTime, sentenceCase, strings } from '../strings.ts';
 import { today } from './dates.ts';
 import {
   FLAG_IDS,
@@ -317,8 +317,8 @@ function namesText(names: string[], more: number): string {
 
 export function transferRow(t: Transfer): TransferRow {
   const h = strings.dossier.history;
-  let price = t.price === null ? h.noPrice : formatMoney(t.price);
-  if (t.price !== null && t.properties > 1) price = `${price} ${h.together(t.properties)}`;
+  let price = t.price === null ? h.noPrice : formatPrice(t.price);
+  if (t.price !== null && t.properties > 1) price = `${price}, ${h.share(t.properties)}`;
   return {
     date: t.date ? (formatDate(t.date, 'short') ?? t.date) : h.noDate,
     document: documentLabel(t.type),

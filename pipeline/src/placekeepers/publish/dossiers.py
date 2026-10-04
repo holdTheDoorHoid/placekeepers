@@ -348,22 +348,31 @@ TRANSFER_COLUMNS = (
     "opa_account_num",
     "document_id",
     "document_type",
+    "display_date",
+    "document_date",
     "recording_date",
     "grantors",
     "grantees",
+    "adjusted_total_consideration",
     "total_consideration",
     "property_count",
 )
 
 
 def read_transfers(con: Any, path: Path) -> dict[str, list[tr.Transfer]]:
+    """Deeds with the date and price the City's property page shows: the date on the deed (its
+    `display_date`, else the document date, else the recording date) and the adjusted total (this
+    property's share when one deed covered several), else the total consideration. A snapshot made
+    before those columns were fetched reads as the older ones."""
     account = account_sql("opa_account_num")
+    day = "COALESCE(display_date, document_date, recording_date)"
     rows = _rows(
         con,
-        f"""SELECT {account} AS a, document_id, document_type, recording_date, grantors, grantees,
-                   total_consideration, property_count
+        f"""SELECT {account} AS a, document_id, document_type, {day} AS day, grantors, grantees,
+                   COALESCE(adjusted_total_consideration, total_consideration) AS price,
+                   property_count
             FROM {_source(path, TRANSFER_COLUMNS)}
-            WHERE recording_date IS NOT NULL
+            WHERE {day} IS NOT NULL
               AND (document_type LIKE '%DEED%' OR document_type = 'CERTIFICATE OF STOCK TRANSFER')
               AND {account} IN (SELECT a FROM acc)""",
     )

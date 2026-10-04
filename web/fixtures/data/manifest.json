@@ -307,8 +307,8 @@
       "sha256": "7dacd780736a10a2f3c8a2a3f28839491aa326d4936ae139bcf825c55d5d3c35"
     },
     "dossiers/common.json": {
-      "bytes": 6245,
-      "sha256": "25c0ce8076335787e813edca97d94214f650832dd87fe9199e239d2c92ef8ecd"
+      "bytes": 6273,
+      "sha256": "0d67d9dff15bd839a6a612255281d43b1267e03d123f7a77540d26503ff5537e"
     },
     "tables/owners.json": {
       "bytes": 1279,
@@ -321,7 +321,7 @@
       "9900"
     ],
     "files": 1,
-    "bytes": 21907
+    "bytes": 21910
   },
   "notes": [
     "This is synthetic sample data for testing the map.",

@@ -919,3 +919,59 @@ def test_the_dossier_and_the_map_follow_the_vacancy_model(context_factory, tmp_p
         "373000001": 4,
         "374000002": 1,
     }
+
+
+def test_deeds_carry_the_date_and_price_the_city_page_shows(tmp_path: Path) -> None:
+    """The date on the deed (else the document date, else the recording date) and the adjusted
+    total (this property's share), else the total consideration, as the City's property page
+    shows them; a snapshot made before those columns were fetched still reads."""
+    import duckdb
+
+    from placekeepers.publish.dossiers import read_transfers
+
+    path = tmp_path / "transfers.parquet"
+    pq.write_table(
+        pa.table(
+            {
+                "opa_account_num": ["372000001", "372000001", "372000001"],
+                "document_id": [1, 2, 3],
+                "document_type": ["DEED", "DEED", "SHERIFF'S DEED"],
+                "display_date": dates(["2023-12-28", None, None]),
+                "document_date": dates(["2023-12-28", "2019-03-01", None]),
+                "recording_date": dates(["2024-01-03", "2019-03-20", "2016-08-09"]),
+                "grantors": ["A", "B", "C"],
+                "grantees": ["D", "E", "F"],
+                "adjusted_total_consideration": pa.array([17500.25, None, None], pa.float64()),
+                "total_consideration": pa.array([70001.0, 40000.0, 12300.0], pa.float64()),
+                "property_count": [4, 1, 1],
+            }
+        ),
+        path,
+    )
+    older = tmp_path / "older.parquet"
+    pq.write_table(
+        pa.table(
+            {
+                "opa_account_num": ["372000001"],
+                "document_id": [9],
+                "document_type": ["DEED"],
+                "recording_date": dates(["2010-05-05"]),
+                "grantors": ["G"],
+                "grantees": ["H"],
+                "total_consideration": pa.array([5000.0], pa.float64()),
+                "property_count": [1],
+            }
+        ),
+        older,
+    )
+    con = duckdb.connect()
+    con.execute("CREATE TABLE acc AS SELECT '372000001' AS a")
+    [deeds] = read_transfers(con, path).values()
+    assert [(t.date.isoformat(), t.price) for t in deeds] == [
+        ("2023-12-28", 17500.25),
+        ("2019-03-01", 40000.0),
+        ("2016-08-09", 12300.0),
+    ]
+    assert deeds[0].to_json()["price"] == 17500.25
+    [old] = read_transfers(con, older).values()
+    assert [(t.date.isoformat(), t.price) for t in old] == [("2010-05-05", 5000.0)]

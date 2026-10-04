@@ -14,7 +14,11 @@ from placekeepers.adapters.carto import CartoAccountsAdapter, Column
 class RealEstateTransfers(CartoAccountsAdapter):
     """Every recorded deed, sheriff deed, mortgage and other document for the candidate parcels:
     who granted it to whom, when, and for how much. `property_count` above 1 means one price
-    covered several properties."""
+    covered several properties.
+
+    `display_date` (the date on the deed, or the recording date when the deed has none, as a day
+    in Philadelphia) and `adjusted_total_consideration` (this property's share of the price) are
+    what the City's property page shows; the lot dossier shows them too."""
 
     account_column = "opa_account_num"
     columns = (
@@ -22,12 +26,14 @@ class RealEstateTransfers(CartoAccountsAdapter):
         Column("document_type", "document_type"),
         Column("recording_date", "recording_date", "DATE"),
         Column("document_date", "document_date", "DATE"),
+        Column("display_date", "display_date", "LOCAL_DATE"),
         Column("opa_account_num", "opa_account_num"),
         Column("street_address", "street_address"),
         Column("grantors", "grantors"),
         Column("grantees", "grantees"),
         Column("cash_consideration", "cash_consideration", "DOUBLE"),
         Column("total_consideration", "total_consideration", "DOUBLE"),
+        Column("adjusted_total_consideration", "adjusted_total_consideration", "DOUBLE"),
         Column("property_count", "property_count", "INTEGER"),
     )
     required_columns = (

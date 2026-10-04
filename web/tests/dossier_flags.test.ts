@@ -138,8 +138,8 @@ describe('the deed history', () => {
 
   it('lists sheriff sales oldest first with their dates and prices', () => {
     const sales = sheriffSales([deed('2019-03-14', 1600, 'DEED SHERIFF'), deed('2003-05-05', 800, "SHERIFF'S DEED"), deed('2010-01-01', 5000)], asOf);
-    expect(sheriffText(sales.slice(1))).toBe('Sold at sheriff sale on March 14, 2019 for $1,600.');
-    expect(sheriffText(sales)).toBe('Sold at sheriff sale 2 times: May 5, 2003 for $800 and March 14, 2019 for $1,600.');
+    expect(sheriffText(sales.slice(1))).toBe('Sold at sheriff sale on March 14, 2019, for $1,600.');
+    expect(sheriffText(sales)).toBe('Sold at sheriff sale 2 times: May 5, 2003, for $800; and March 14, 2019, for $1,600.');
   });
 });
 
@@ -157,7 +157,7 @@ describe('flags from live City records', () => {
   it('works out sheriff sales, years since the last sale and fast resales from the deeds', () => {
     const history = [deed('2025-06-10', 95000), deed('2024-11-02', 41000), deed('2024-03-15', 18000), deed('2019-03-14', 1600, 'DEED SHERIFF')];
     expect(transferFlags(history, null, true, '2026-10-04').map((f) => [f.id, f.text])).toEqual([
-      ['sheriff_sales', 'Sold at sheriff sale on March 14, 2019 for $1,600.'],
+      ['sheriff_sales', 'Sold at sheriff sale on March 14, 2019, for $1,600.'],
       ['years_since_sale', 'Last sold in 2025.'],
       ['fast_resales', 'Sold 3 times since 2024.'],
     ]);
@@ -168,7 +168,7 @@ describe('flags from live City records', () => {
   it('works out open violations, unsafe and imminently dangerous from the L&I timeline', () => {
     const e = (kind: LiEvent['kind'], date: string, open: boolean, title: string | null = null): LiEvent => ({ kind, date, title, status: open ? 'OPEN' : 'COMPLIED', detail: null, open });
     const one = liFlags([e('violation', '2025-08-01', true, 'EXTERIOR AREA WEEDS'), e('violation', '2020-01-01', false)]);
-    expect(one.map((f) => f.text)).toEqual(['L&I lists 1 open violation, from August 1, 2025 for exterior area weeds.']);
+    expect(one.map((f) => f.text)).toEqual(['L&I lists 1 open violation, for exterior area weeds, from August 1, 2025.']);
     const many = liFlags([
       e('violation', '2025-08-01', true, 'VACANT STRUCTURE AND LAND'),
       e('violation', '2024-02-01', true, 'ROOF'),

@@ -11,7 +11,12 @@ From the City's transfer records (Carto `rtt_summary`, source `real_estate_trans
   possession deeds are not sales in the "last sold" sense, but every one of them stays in the full
   history.
 * **Fast resales** are two or more deeds for a price (sheriff sales included) within 24 months of
-  each other. Deeds recorded on the same day count as one sale.
+  each other. Deeds dated the same day count as one sale.
+
+Each deed's date and price are the ones the City's property page shows (decided 2026-10-04 by the
+orchestrator): the date on the deed (the City's `display_date`, a day in Philadelphia; the
+recording date when the deed has none) and the adjusted total (this property's share when one
+deed covered several properties; the total consideration when there is no adjusted total).
 
 The records are complete only from 2000 on: the candidate parcels have about 4,000 deeds a year
 from 2000 and a few dozen a year before 1999 (checked 2026-10-04). OPA's own last sale date and
@@ -33,6 +38,13 @@ FULL_RECORDS_FROM = date(2000, 1, 1)
 RESALE_MONTHS = 24
 #: names listed per side of a transfer in a dossier; the rest are counted
 MAX_NAMES = 10
+
+
+def dollars(amount: float) -> int | float:
+    """A price for the dossier: whole dollars as a whole number, else to the cent (an adjusted
+    total can be a share such as $17,500.25)."""
+    cents = round(amount * 100)
+    return cents // 100 if cents % 100 == 0 else cents / 100
 
 
 def add_months(day: date, months: int) -> date:
@@ -79,11 +91,11 @@ class Transfer:
         return self.priced and not self.sheriff and self.type not in NOT_SALES
 
     def to_json(self) -> dict:
-        """The dossier's form (docs/CONTRACTS.md section 5)."""
+        """The dossier's form (docs/CONTRACTS.md section 6)."""
         out: dict = {
             "date": self.date.isoformat(),
             "type": self.type,
-            "price": None if self.price is None else round(self.price),
+            "price": None if self.price is None else dollars(self.price),
             "from": list(self.grantors[:MAX_NAMES]),
             "to": list(self.grantees[:MAX_NAMES]),
         }

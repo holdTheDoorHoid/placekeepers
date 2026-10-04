@@ -37,20 +37,21 @@ export function formatNumber(n: number): string {
 const moneyFormat = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 const timeFormat = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' });
 
-/** Whole dollars, for example "$1,500". */
+/** Whole dollars, for example "$1,500"; half a dollar rounds up. */
 export function formatMoney(n: number): string {
   return moneyFormat.format(Math.round(n));
+}
+
+const centsFormat = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+/** A price as the City records it: "$1,500", or "$17,500.25" when it has cents. */
+export function formatPrice(n: number): string {
+  return Number.isInteger(Math.round(n * 100) / 100) ? moneyFormat.format(n) : centsFormat.format(n);
 }
 
 /** A time of day in Philadelphia, for example "2:14 PM". */
 export function formatTime(ms: number): string {
   return timeFormat.format(new Date(ms));
-}
-
-/** "a", "a and b", "a, b and c". */
-export function joinAnd(items: string[]): string {
-  if (items.length <= 1) return items.join('');
-  return `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`;
 }
 
 /** CITY WORDS become "City words": for descriptions the City writes in capitals. */
@@ -730,22 +731,23 @@ export const strings = {
         next: 'Check today\'s balance on the City\'s Tax Center before you rely on this. If your block cares for this lot, Grounded in Philly\'s guide to sheriff sales explains the risk and what you can do.',
       },
       sheriff_sales: {
+        // Several sales are separated by semicolons, since each date already holds a comma.
         one: (sale: string) => `Sold at sheriff sale on ${sale}.`,
         many: (n: number, sales: string) => `Sold at sheriff sale ${n} times: ${sales}.`,
-        sale: (date: string, price: string | null) => (price ? `${date} for ${price}` : date),
+        sale: (date: string, price: string | null) => (price ? `${date}, for ${price}` : date),
         careful:
           'At a sheriff sale the winning bid clears old debts on the property, so a lot neighbors have cared for can pass to an outside buyer. A past sale does not mean the property is for sale now.',
         next: 'If your block cares for this lot, read Grounded in Philly\'s guide to sheriff sales and ask the Garden Justice Legal Initiative for free legal help.',
       },
       years_since_sale: {
         lastSold: (year: number) => `Last sold in ${year}.`,
-        notSoldSince: (year: number) => `Not sold for a price since at least ${year}.`,
+        notSoldSince: (year: number) => `Not sold on the open market since at least ${year}.`,
         careful:
           'Sales for a token price and sheriff sales are left out here; the full history is below. Many homes pass down in families without a new sale, so a long time since a sale does not mean the owner has given the property up.',
         next: 'If a family has inherited the property without a new deed, the Tangled Title Fund and Philadelphia VIP can help them clear the title and keep it.',
       },
       many_parcels: {
-        text: (n: number) => `This owner holds ${formatNumber(n)} vacant parcels in the city.`,
+        text: (n: number) => `This owner holds ${n} vacant parcels in the city.`,
         careful:
           'We match owners by their exact name in City records, so one owner can appear under several spellings and two owners can share a name. Holding vacant land is not wrongdoing by itself.',
         next: 'Use the list to see this owner\'s other parcels, then ask permission the lawful way: write to the owner, and have the Garden Justice Legal Initiative review any agreement.',
@@ -755,12 +757,12 @@ export const strings = {
         inYear: (n: number, year: number) => `Sold ${n} times in ${year}.`,
         between: (n: number, first: number, last: number) => `Sold ${n} times from ${first} to ${last}.`,
         careful:
-          'Quick resales can mean investors trading the property, and sometimes a forged deed. They can also be ordinary, such as an estate sale followed by a renovation sale.',
-        next: 'Look at who sold and who bought in the history below. Owners and families can sign up for the City\'s free Fraud Guard alerts to learn when a document naming them is recorded.',
+          'Quick resales can mean the property is being traded for profit, and sometimes a forged deed. They can also be ordinary, such as a family selling an inherited house and the buyer reselling it after repairs.',
+        next: 'Look at who sold and who bought in the history below. Owners and families can sign up for the City\'s free Fraud Guard alerts to learn when a document names them.',
       },
       open_violations: {
         one: (when: string | null, what: string | null) =>
-          `L&I lists 1 open violation${when ? `, from ${when}` : ''}${what ? ` for ${what}` : ''}.`,
+          `L&I lists 1 open violation${what ? `, for ${what}` : ''}${when ? `, from ${when}` : ''}.`,
         many: (n: number) => `L&I lists ${n} open violations.`,
         mostRecent: (when: string, what: string | null) => (what ? `The most recent, from ${when}, is for ${what}.` : `The most recent is from ${when}.`),
         careful:
@@ -784,7 +786,6 @@ export const strings = {
       transfersTitle: 'Sales and transfers',
       transfersCaption: 'Every recorded sale and transfer of this property, newest first',
       date: 'Date',
-      recorded: 'Recorded',
       document: 'Document',
       documentAndPrice: 'Document and price',
       fromAndTo: 'From and to',
@@ -793,10 +794,12 @@ export const strings = {
       to: 'To',
       noDate: 'No date',
       noPrice: 'None recorded',
-      together: (n: number) => `for ${n} properties together`,
+      share: (n: number) => `this property's share of one deed for ${n} properties`,
       more: (n: number) => `and ${plural(n, 'other', 'others')}`,
       noTransfers: 'No deeds on record.',
       recordsNote: 'City deed records are complete from 2000 on. Older sales may be missing.',
+      datesNote:
+        'Each date is the date on the deed, as the City\'s property page shows it; the City records a deed days or weeks later. When one deed covered several properties, the price is this property\'s share.',
       // The City's deed types in plain words. A type not listed here is shown in sentence case,
       // with any dash replaced by a comma.
       documents: {

@@ -12,10 +12,12 @@ Corporation (PHDC, typed as other public). Otherwise the owner names as OPA publ
 by the patterns below, tried in this order:
 
 1. public bodies: the Land Bank, the Redevelopment Authority, a housing authority, PHDC, the City,
-   the School District, SEPTA, the Commonwealth, federal agencies and public authorities;
+   the School District, the Community College, SEPTA, the Commonwealth, federal agencies and
+   public authorities;
 2. company forms a nonprofit almost never uses: LLC, LP, LLP, LTD, LIMITED;
 3. nonprofit words: church, ministries, congregation, foundation, charitable, community
-   development corporation, land trust, Neighborhood Gardens, university, hospital and similar;
+   development corporation, land trust, Neighborhood Gardens, university, hospital, school,
+   charter school, academy, college and similar;
 4. other company words: INC, CORP, CO, TRUST and TR (trustee), HOLDINGS, PROPERTIES, REALTY,
    INVESTMENTS, GROUP, BANK, FBO and similar;
 5. a person's name: at least two words and no digits;
@@ -126,8 +128,14 @@ PUBLIC_PATTERNS: tuple[PublicPattern, ...] = (
     ),
     _p(
         "other_public",
-        r"\bSCHOOL DIST(RICT)? OF PHILA|\bBOARD OF (PUBLIC )?EDUCATION\b",
+        r"\bSCHOOL DIST(RICT)? OF PHILA|\bPHILA(DELPHIA)? SCHOOL DIST"
+        r"|\bBOARD OF (PUBLIC )?EDUCATION\b",
         "the School District of Philadelphia",
+    ),
+    _p(
+        "other_public",
+        r"\bCOMM(UNITY)? COLLEGE OF PHIL",
+        "the Community College of Philadelphia",
     ),
     _p("other_public", r"\bSEPTA\b|\bSOUTHEASTERN PENN\w* TRANS", "SEPTA"),
     _p(
@@ -172,7 +180,11 @@ NONPROFIT = re.compile(
     r"|KINGDOM HALL|EVANGELICAL|APOSTOLIC|CATHOLIC|NON ?PROFIT|CHARIT(Y|IES|ABLE)|FOUNDATION"
     r"|COMMUNITY DEV\w* CORP\w*|CDC|LAND TRUST|NEIGHBORHOOD GARDENS|HABITAT FOR HUMANITY|YMCA"
     r"|YWCA|UNIVERSITY(?! CITY)|HOSPITAL|HORTICULTURAL SOCIETY|CIVIC ASS\w*|COMMUNITY ASS\w*"
-    r"|NEIGHBORHOOD ASS\w*|TOWN WATCH|AMERICAN LEGION)\b"
+    r"|NEIGHBORHOOD ASS\w*|TOWN WATCH|AMERICAN LEGION"
+    # Schools, including charter schools whose names OPA cut short ("ILADELPHIA CHARTER SCHOOL",
+    # "FRANKLIN TOWNE CHARTER HI"); a "SCHOOL HOUSE" in an address is not a school.
+    r"|SCHOOLS?(?! ?HOUSE)|CHARTER (SCH\w*|SC|HI\w*|ACADEM\w*)|CHARTER$|ACADEMY|ACADEMIES|COLLEGE"
+    r"|SEMINARY|MONTESSORI|PREPARATORY)\b"
 )
 COMPANY = re.compile(
     r"\b(INC|INCORPORATED|CORP|CORPORATION|CO|COMPANY|COMPANIES|PARTNERS|PARTNERSHIP"

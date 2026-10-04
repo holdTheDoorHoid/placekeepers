@@ -9,14 +9,21 @@ checked against docs/ETHICS.md by the tests (tests/test_wording.py). The rules:
   owner gets mail somewhere else" with the place, "Last sold in 1987", "This owner holds 41 vacant
   parcels in the city" and "Sold 3 times since 2024". The conservatorship warning lives with its
   route in registry/routes.yaml.
-* Never "owner deceased" or "no heirs", nothing about police, and no dashes as punctuation.
+* Never "owner deceased" or "no heirs", nothing about police, and no dashes as punctuation, not
+  even in text quoted from City records (`plain`).
 * Tax debt always carries its date, July 2025, and a link to the City's Tax Center.
+
+The web app builds the same sentences when it refreshes a lot page from the City's live records
+(web/src/dossier/flags.ts). pipeline/tests/fixtures/wording_parity.json holds cases and the
+sentences this module gives for them; tests on both sides check them, so the two never drift.
 """
 
 from __future__ import annotations
 
 import calendar
+import re
 from datetime import date
+from decimal import ROUND_HALF_UP, Decimal
 
 # Links named by several flags. Each was checked on 2026-10-04 (docs/research/05).
 TAX_CENTER = {"label": "City of Philadelphia Tax Center", "url": "https://tax-services.phila.gov/"}
@@ -36,8 +43,21 @@ DEED_FRAUD_CHECK = {
 
 # Formatting
 def money(amount: float) -> str:
-    """$35,198: whole dollars with thousands separators."""
-    return f"${round(amount):,}"
+    """$35,198: whole dollars with thousands separators, half a dollar rounding up (as the web
+    app rounds it)."""
+    whole = int(Decimal(str(amount)).quantize(Decimal("1"), rounding=ROUND_HALF_UP))
+    return f"${whole:,}"
+
+
+SPACED_DASH = re.compile(r"\s+[-\u2013\u2014]+\s+")
+LONE_DASH = re.compile(r"[\u2013\u2014]+")
+
+
+def plain(text: str) -> str:
+    """Text from City records with its dashes used as punctuation turned into commas, so a
+    sentence quoting it keeps the house style: "DUMPING - PRIVATE LOT" reads "DUMPING, PRIVATE
+    LOT". Hyphens inside words stay."""
+    return re.sub(r"\s+,", ",", LONE_DASH.sub(", ", SPACED_DASH.sub(", ", text)))
 
 
 def long_date(day: date) -> str:
@@ -79,6 +99,7 @@ ABSENTEE_NEXT_STEP = (
 
 def absentee_text(scope: str, city: str | None, state: str | None) -> str:
     """The ETHICS.md form, "The owner gets mail somewhere else", with the place."""
+    city = plain(city) if city else city
     if scope == "out_of_state":
         where = ", ".join(part for part in (city and place_name(city), state) if part)
         return (
@@ -218,7 +239,7 @@ VIOLATIONS_NEXT_STEP = (
 
 
 def violations_text(count: int, last: date | None, title: str | None) -> str:
-    what = f" for {title.lower()}" if title else ""
+    what = f" for {plain(title).lower()}" if title else ""
     if count == 1:
         parts = [part for part in (what.strip(), last and f"from {long_date(last)}") if part]
         return "L&I lists 1 open violation" + "".join(f", {part}" for part in parts) + "."

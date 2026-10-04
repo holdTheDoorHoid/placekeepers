@@ -544,11 +544,17 @@ flag is computed is in `pipeline/src/placekeepers/derive/` (`owners.py`, `transf
 `flags.py`); every sentence is in `wording.py`.
 
 **`transfers`**: every deed, newest first: every document type that names a deed, and certificates
-of stock transfer. Mortgages and other filings are left out. `date` is the day the City recorded it;
-`type` is the City's document type as published; `price` the total consideration in dollars (`null`
-when the record has none); `from` and `to` up to 10 names each, with `from_more` and `to_more`
-counting the rest; `properties` when one price covered several properties. Sales for a token price
-($100 or less) and sheriff deeds are listed here but are not "sales" for `years_since_sale`.
+of stock transfer. Mortgages and other filings are left out. Changed 2026-10-04 by M1.6b, as the
+orchestrator decided, so the dossier matches the City's property page: `date` is the date on the
+deed as that page shows it (the City's `display_date`, a day in Philadelphia; the recording date
+when the deed has none); `price` is the adjusted total in dollars, to the cent when it has cents
+(this property's share when one deed covered several properties; the total consideration when there
+is no adjusted total; `null` when the record has neither). `type` is the City's document type as
+published; `from` and `to` up to 10 names each, with `from_more` and `to_more` counting the rest;
+`properties` when one price covered several properties. Sales for a token price ($100 or less) and
+sheriff deeds are listed here but are not "sales" for `years_since_sale`. The flags built from the
+deeds (`sheriff_sales`, `years_since_sale`, `fast_resales`) use the same dates and prices. The City's
+property page lists only plain deeds; the dossier also lists sheriff and other deeds.
 
 **`assessments`** (changed 2026-10-04 by M1.3 from objects, to keep the files small): `[year,
 market value]` pairs, newest year first.
@@ -584,14 +590,17 @@ How the web app does it (added 2026-10-04 by M1.6, `web/src/dossier/`). Each par
 `https://phl.carto.com/api/v2/sql`, built only from the nine digit account (or, to find the parcel
 under a tap, a point inside the city), never from typed text, with a 10 second limit:
 `opa_properties_public` for the owner names, mailing address and the City's description;
-`rtt_summary` for every deed with the same fields as `transfers` (the recording date and the total
-consideration); `assessments`; and one query over `violations`, `permits`, `demolitions`, `unsafe`,
+`rtt_summary` for every deed with the same fields as `transfers` (the date on the deed and the
+adjusted total, with the same fallbacks); `assessments`; and one query over `violations`, `permits`, `demolitions`, `unsafe`,
 `imm_dang` and `clean_seal` for the L&I timeline. A part that answers replaces the shard's part
 and is labeled live; one that fails or times out keeps the shard's, labeled with its date and the
 reason. The flags that depend on a live part are worked out again in the browser with the
 pipeline's rules (`absentee` and `possible_estate` from the owner, `sheriff_sales`,
 `years_since_sale` and `fast_resales` from the deeds, `open_violations`, `unsafe` and
-`imminently_dangerous` from L&I); `tax_debt_2025` and `many_parcels` stay as in the shard. When the
+`imminently_dangerous` from L&I), giving exactly the pipeline's sentences:
+`pipeline/tests/fixtures/wording_parity.json`, written by `pipeline/tests/wording_cases.py`, holds
+cases with the pipeline's answers, and the pipeline's and the web app's tests both check it.
+`tax_debt_2025` and `many_parcels` stay as in the shard. When the
 City names different owners than the shard, the flags about the earlier owner are left out. A
 parcel with no dossier (its prefix is not in the manifest's `dossiers.prefixes`, or it is not in
 its shard) gets a page built only from these lookups, plus counts within 500 feet of its point

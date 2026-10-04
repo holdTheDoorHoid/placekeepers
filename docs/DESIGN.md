@@ -224,7 +224,7 @@ As built (M1.6, 2026-10-04):
   a private owner, and taxes, always dated July 2025 with a link to the Tax Center. A many parcels
   flag opens the owner's list. When the City names a different owner than the snapshot, the flags
   about the earlier owner are left out.
-- **History** shows every deed newest first (the day the City recorded it, the document in plain
+- **History** shows every deed newest first (the date on the deed, the document in plain
   words, the price, from and to), the City's assessments as a small chart and the same numbers as a
   table, and the L&I timeline (violations, permits, demolitions, unsafe and imminently dangerous
   notices, clean and seal) when live, or the snapshot's L&I summary.
@@ -236,10 +236,12 @@ As built (M1.6, 2026-10-04):
   opens that lot directly, even with live data off.
 - **Print** gives one page per lot: the summary, what you can do, who owns it, recent history and
   sources, ending with "Not legal advice."
-- Known difference: the City's property page lists only plain deeds, dated by the document and
-  priced by the adjusted total; the lot page lists every deed (sheriff deeds and other kinds too),
-  dated by the day the City recorded it and priced by the total consideration, as the weekly snapshot
-  does. A date can differ by days to weeks, and the price of some deeds differs.
+- Deeds show the date on the deed and the adjusted price (this property's share when one deed
+  covered several), as the City's property page does, in the snapshot and live alike. The City's
+  page lists only plain deeds; the lot page lists every deed, sheriff deeds and other kinds too.
+- The browser builds exactly the pipeline's flag sentences: a shared set of cases with the
+  pipeline's answers (`pipeline/tests/fixtures/wording_parity.json`) is checked by both test
+  suites, so the two cannot drift apart.
 
 **Owner information as built (M1.3, 2026-10-04).** What the owner will see, and the choices behind it:
 

@@ -271,7 +271,7 @@ describe('details', () => {
 
   it('marks sheriff deeds and deeds that covered several properties', () => {
     const view = buildDossier(input('990000004', { liveOn: false }));
-    expect(view.history.transfers![0]).toMatchObject({ price: '$30,000 for 2 properties together', sheriff: false });
+    expect(view.history.transfers![0]).toMatchObject({ price: "$30,000, this property's share of one deed for 2 properties", sheriff: false });
     const sheriff = buildDossier(input('990000001', { liveOn: false })).history.transfers!.find((t) => t.sheriff)!;
     expect(sheriff).toMatchObject({ document: "Sheriff's deed", price: '$1,600' });
   });

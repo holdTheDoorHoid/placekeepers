@@ -23,7 +23,7 @@
       <caption id="{idPrefix}-transfers-caption">{h.transfersCaption}</caption>
       <thead>
         <tr>
-          <th scope="col">{h.recorded}</th>
+          <th scope="col">{h.date}</th>
           <th scope="col">{h.documentAndPrice}</th>
           <th scope="col">{h.fromAndTo}</th>
         </tr>
@@ -42,7 +42,7 @@
       </tbody>
     </table>
   </div>
-  <p class="muted small">{h.recordsNote}</p>
+  <p class="muted small">{h.datesNote} {h.recordsNote}</p>
 {:else if history.transfers}
   <p class="muted small">{h.noTransfers} {h.recordsNote}</p>
 {/if}
