@@ -193,3 +193,33 @@ def test_column_types_are_known() -> None:
                 "DATE",
                 "WKB",
             }
+
+
+def test_a_url_source_becomes_a_snapshot(context_factory, tmp_path: Path) -> None:
+    import httpx
+
+    from placekeepers.adapters import UrlAdapter
+    from placekeepers.registry import UrlEndpoint
+
+    body = "id,name,opened\n1,Fairmount,2020-05-01\n2,Clark,2021-06-02\n"
+    ctx = context_factory(handler=lambda request: httpx.Response(200, text=body))
+    source = ctx.registry.sources["shootings"].model_copy(
+        update={
+            "endpoint": UrlEndpoint(kind="url", url="https://example.org/parks.csv", format="csv")
+        }
+    )
+    adapter = UrlAdapter(source, ctx)
+    dest = tmp_path / "raw"
+    dest.mkdir()
+    info = adapter.fetch(dest)
+    raw = RawFetch(
+        source=source.id,
+        fetch_id="x",
+        fetched_at="2026-10-04T15:00:00Z",
+        files=["data.csv"],
+        info=info,
+        dir=dest,
+    )
+    out = tmp_path / "parks.parquet"
+    adapter.normalize(raw, out)
+    assert pq.read_table(out).column("name").to_pylist() == ["Fairmount", "Clark"]

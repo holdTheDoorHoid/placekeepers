@@ -81,8 +81,7 @@ class SnapshotStore:
         self.source_id = source_id
         self.dir = cache.snapshot_dir(source_id)
 
-    # -- state ---------------------------------------------------------------------------------
-
+    # State
     def state(self) -> SourceState:
         path = self.dir / STATE_FILE
         if not path.is_file():
@@ -94,8 +93,7 @@ class SnapshotStore:
     def save_state(self, state: SourceState) -> None:
         atomic_write_json(self.dir / STATE_FILE, state.to_json())
 
-    # -- snapshots -----------------------------------------------------------------------------
-
+    # Snapshots
     def path_for(self, meta: SnapshotMeta) -> Path:
         return self.dir / meta.file
 

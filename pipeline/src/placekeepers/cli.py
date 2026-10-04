@@ -87,9 +87,7 @@ def format_health(statuses: list[SourceStatus]) -> str:
     return "\n".join(lines)
 
 
-# -- commands --------------------------------------------------------------------------------
-
-
+# Commands
 def cmd_registry_check(args: argparse.Namespace) -> int:
     settings = Settings.from_env(cache_root=Path(args.cache) if args.cache else None)
     registry = load_registry(settings.registry_dir, repo_root=settings.repo_root)
@@ -180,9 +178,7 @@ def cmd_all(args: argparse.Namespace) -> int:
     return 0
 
 
-# -- parser ----------------------------------------------------------------------------------
-
-
+# Parser
 def build_parser() -> argparse.ArgumentParser:
     common = argparse.ArgumentParser(add_help=False)
     common.add_argument(

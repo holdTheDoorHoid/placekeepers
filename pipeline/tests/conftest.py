@@ -45,9 +45,7 @@ def repo_copy(tmp_path: Path) -> Path:
     return root
 
 
-# -- fake servers ---------------------------------------------------------------------------------
-
-
+# Fake servers
 @dataclass
 class FakeCarto:
     """Answers count and keyset page queries for in memory tables of rows.
@@ -157,9 +155,7 @@ class Router:
         return handler(request)
 
 
-# -- contexts -------------------------------------------------------------------------------------
-
-
+# Contexts
 def make_context(
     repo_root: Path,
     cache_root: Path,

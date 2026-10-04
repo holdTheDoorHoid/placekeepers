@@ -109,8 +109,7 @@ class CartoAdapter(Adapter):
         assert isinstance(self.source.endpoint, CartoEndpoint)
         return self.source.endpoint
 
-    # -- queries -------------------------------------------------------------------------------
-
+    # Queries
     def _filters(self, after: int | None = None) -> str:
         parts = []
         if self.endpoint.where:
@@ -135,8 +134,7 @@ class CartoAdapter(Adapter):
         )
         return int(data["rows"][0]["n"])
 
-    # -- fetch ---------------------------------------------------------------------------------
-
+    # Fetch
     def fetch(self, dest: Path) -> dict[str, Any]:
         expected = self.count()
         log.info(
@@ -190,8 +188,7 @@ class CartoAdapter(Adapter):
             "expected_rows": expected,
         }
 
-    # -- normalize -----------------------------------------------------------------------------
-
+    # Normalize
     def normalize(self, raw: RawFetch, out: Path) -> None:
         assert raw.dir is not None
         files = sorted(raw.dir.glob("chunk-*.csv"))

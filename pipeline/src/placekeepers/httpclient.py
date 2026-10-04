@@ -88,8 +88,7 @@ class PoliteClient:
         self.requests_sent = 0
         self._last_request: dict[str, float] = {}
 
-    # -- context manager -----------------------------------------------------------------------
-
+    # Context manager
     def close(self) -> None:
         self.http.close()
 
@@ -99,8 +98,7 @@ class PoliteClient:
     def __exit__(self, *exc: object) -> None:
         self.close()
 
-    # -- politeness ----------------------------------------------------------------------------
-
+    # Politeness
     def _wait_turn(self, url: str) -> None:
         host = httpx.URL(url).host
         last = self._last_request.get(host)
@@ -155,8 +153,7 @@ class PoliteClient:
                 self.sleep(delay)
         raise HttpError(f"{_short(url)}: gave up after {self.max_attempts} attempts: {last}")
 
-    # -- requests ------------------------------------------------------------------------------
-
+    # Requests
     def _send(self, url: str, params: dict[str, Any] | None) -> httpx.Response:
         try:
             response = self.http.get(url, params=params)

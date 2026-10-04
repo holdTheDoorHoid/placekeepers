@@ -59,9 +59,7 @@ class LayerBuilder:
     build: Callable[[Context, dict[str, Path], Path, date], BuildResult]
 
 
-# -- High Injury Network ----------------------------------------------------------------------
-
-
+# High Injury Network
 def build_hin(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) -> BuildResult:
     table = pq.read_table(
         paths["high_injury_network"], columns=["objectid", "stname", "length_ft", "geometry"]
@@ -79,9 +77,7 @@ def build_hin(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) -> B
     return BuildResult(writer.count, [])
 
 
-# -- Shooting victims per H3 cell ----------------------------------------------------------------
-
-
+# Shooting victims per H3 cell
 def aggregate_shootings(
     rows: Iterable[tuple[float | None, float | None, date | None]],
     as_of: date,
@@ -138,9 +134,7 @@ def build_h3(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) -> Bu
     return BuildResult(writer.count, notes)
 
 
-# -- Vacant parcels -------------------------------------------------------------------------------
-
-
+# Vacant parcels
 def opa_account(value: object) -> str | None:
     """The 9 digit OPA account number, or None when the value is not one."""
     if value is None:

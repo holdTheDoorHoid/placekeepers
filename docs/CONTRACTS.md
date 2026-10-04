@@ -163,12 +163,23 @@ data/
   },
   "files": {
     "tiles/context.pmtiles": {"bytes": 1234567, "sha256": "..."}
-  }
+  },
+  "notes": ["8 shooting victims in the last 36 months have no usable location"]
 }
 ```
 
 `status` is one of `ok`, `stale` (using the last good snapshot), `failing` (no usable snapshot), or
 `missing` (never fetched). `stale_since` is the date of the last good snapshot when stale.
+`sources` lists every source in the registry and `layers` every layer, whether or not it was built.
+`files` lists exactly the files present under the data root (except `manifest.json` itself), so a
+layer is available only when `files` lists its `file`.
+
+`notes` (added 2026-10-04 by M0.2) is a list of plain sentences about the build, possibly empty:
+data quality remarks, a layer with no usable data yet, or `tiles skipped: tippecanoe not installed`.
+Readers must tolerate an empty list. When tiles are skipped (tippecanoe missing) or a tile build
+fails, each layer is written as GeoJSON beside where its tile file would go, named
+`<tile file stem>.<source layer>.geojson`, for example `tiles/lots.parcels.geojson`, with the same
+feature properties as the tiles; those files are listed in `files` and the `.pmtiles` file is not.
 
 ## 4. Tile feature properties (first release)
 
