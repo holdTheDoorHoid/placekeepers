@@ -102,8 +102,13 @@ class PprProperties(ArcgisAdapter):
 
 
 class ZoningBaseDistricts(ArcgisAdapter):
-    """Current zoning base districts (`long_code`, such as RSA-5), with pending changes."""
+    """Current zoning base districts (`long_code`, such as RSA-5), with pending changes.
 
+    Pages of 2,000 of these detailed shapes made the service answer with errors on 2026-10-04;
+    pages of 1,000 come back in about half a second. ArcGIS Hub's bulk copy was three weeks old,
+    and zoning changes often, so the live service is used."""
+
+    page_size = 1000
     required_columns = ("long_code", "zoninggroup", "geometry")
 
 

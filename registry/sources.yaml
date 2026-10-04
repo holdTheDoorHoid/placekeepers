@@ -68,7 +68,7 @@
   license: city_terms
   attribution: "Real estate transfers: City of Philadelphia, Department of Records"
   cadence: weekly
-  health: {min_rows: 100000, max_drop_pct: 25, newest_field: recording_date, max_age_days: 120}
+  health: {min_rows: 150000, max_drop_pct: 25, newest_field: recording_date, max_age_days: 120}
   release: v0.1
 - id: assessment_history
   name: Assessment history
@@ -78,7 +78,7 @@
   license: city_terms
   attribution: "Assessment history: City of Philadelphia, Office of Property Assessment"
   cadence: daily
-  health: {min_rows: 300000, max_drop_pct: 25}
+  health: {min_rows: 450000, max_drop_pct: 25}
   release: v0.1
 - id: li_violations
   name: L&I code violations
@@ -88,7 +88,7 @@
   license: city_terms
   attribution: "Code violations: City of Philadelphia, Department of Licenses and Inspections"
   cadence: daily
-  health: {min_rows: 50000, max_drop_pct: 25, newest_field: violationdate, max_age_days: 14}
+  health: {min_rows: 220000, max_drop_pct: 25, newest_field: violationdate, max_age_days: 14}
   release: v0.1
 - id: li_complaints
   name: L&I complaints
