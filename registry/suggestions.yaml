@@ -20,12 +20,11 @@
   default_on: true
   release: v0.1
 - id: memorial_or_ghost_bike
-  label: A memorial or a ghost bike, only with the family's blessing
+  label: A memorial or a ghost bike
   applies_to: crash
   summary: >-
     A memorial honors the person who died and reminds everyone passing to slow down. For a person
     killed while cycling, the Bicycle Coalition can place a ghost bike, a bicycle painted white.
-    Only with the family's blessing. Families for Safe Streets supports families after a crash.
   evidence: not_violence
   cost: Low; a ghost bike request is free
   routes: [ghost_bike_request]

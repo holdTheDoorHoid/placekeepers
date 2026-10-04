@@ -1,12 +1,11 @@
 <script lang="ts">
   // Hosts the MapLibre map. The map code is loaded after the page appears, so the panels
   // and text show up first on slow connections.
-  import { mount, onMount, unmount } from 'svelte';
+  import { onMount } from 'svelte';
   import { config } from '../config/index.ts';
-  import type { InspectTarget, MapController } from '../map/controller.ts';
+  import type { MapController } from '../map/controller.ts';
   import type { AppStore } from '../state/store.svelte.ts';
   import { strings } from '../strings.ts';
-  import FeaturePopup from './map/FeaturePopup.svelte';
 
   let { store }: { store: AppStore } = $props();
   let container: HTMLDivElement;
@@ -18,18 +17,6 @@
     store.parcelsInView = controller.parcelsInView();
     const selected = store.state.selected;
     if (selected && !store.selectedProperties) store.selectedProperties = controller.findParcel(selected);
-  }
-
-  /** Opens a popup for a tapped memorial, crash or street block, or closes it. */
-  function inspect(controller: MapController | null, target: InspectTarget | null) {
-    if (!controller) return;
-    if (!target || target.features.length === 0) {
-      controller.closePopup();
-      return;
-    }
-    const element = document.createElement('div');
-    const app = mount(FeaturePopup, { target: element, props: { store, target } });
-    controller.showPopup(target.lngLat, element, () => void unmount(app));
   }
 
   onMount(() => {
@@ -53,7 +40,7 @@
         events: {
           move: (position) => store.setMap(position),
           select: (id, properties) => store.select(id, properties),
-          inspect: (target) => inspect(controller, target),
+          inspect: (target) => store.inspect(target),
           idle: refreshFromMap,
           layerStatus: (id, status) => (store.layerStatus = { ...store.layerStatus, [id]: status }),
         },
@@ -76,6 +63,11 @@
   $effect(() => {
     const manifest = store.manifest;
     store.controller?.setManifest(manifest);
+  });
+
+  $effect(() => {
+    const inspected = store.inspected;
+    store.controller?.setInspected(inspected);
   });
 </script>
 

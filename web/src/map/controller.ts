@@ -43,7 +43,7 @@ export interface ParcelInView {
   center: [number, number];
 }
 
-/** A memorial, crash or street block someone tapped: shown in a popup, not as the selection. */
+/** A memorial, crash or street block someone tapped: shown in the details panel. */
 export interface InspectTarget {
   layerId: string;
   /** Properties of the features of that layer under the pointer, top first, without repeats. */
@@ -54,7 +54,7 @@ export interface InspectTarget {
 export interface MapEvents {
   move(position: MapPosition): void;
   select(id: string | null, properties: Record<string, unknown> | null): void;
-  /** A tap on a memorial, crash or street block, or null when the popup should close. */
+  /** A tap on a memorial, crash or street block, or null when nothing of the kind was tapped. */
   inspect(target: InspectTarget | null): void;
   /** The map finished drawing after a move or a data change. */
   idle(): void;
@@ -114,7 +114,8 @@ export class MapController {
   private loaded = false;
   private labelAnchor: string | undefined;
   private marker: maplibregl.Marker | null = null;
-  private popup: maplibregl.Popup | null = null;
+  /** The features someone opened, drawn as selected by their layer's style. */
+  private inspected: { layerId: string; ids: (string | number)[] } | null = null;
 
   constructor(options: ControllerOptions) {
     ensurePmtilesProtocol();
@@ -158,6 +159,18 @@ export class MapController {
   setState(state: AppState): void {
     this.state = state;
     this.sync();
+  }
+
+  /** Draws the memorial, crash or street block someone opened as selected, or clears it. */
+  setInspected(target: InspectTarget | null): void {
+    const before = this.inspected?.layerId;
+    const ids = (target?.features ?? [])
+      .map((f) => f.id)
+      .filter((id): id is string | number => typeof id === 'string' || typeof id === 'number');
+    this.inspected = target && ids.length ? { layerId: target.layerId, ids } : null;
+    if (!this.loaded) return;
+    if (before) this.syncLayer(before);
+    if (this.inspected && this.inspected.layerId !== before) this.syncLayer(this.inspected.layerId);
   }
 
   setManifest(manifest: Manifest | null): void {
@@ -205,24 +218,6 @@ export class MapController {
   flyTo(center: [number, number], zoom = 17): void {
     // Not essential, so MapLibre skips the animation for people who prefer reduced motion.
     this.map.flyTo({ center, zoom: Math.max(this.map.getZoom(), zoom), essential: false });
-  }
-
-  /** Opens a popup at a place with the given content; `onClose` runs once when it closes. */
-  showPopup(lngLat: [number, number], content: HTMLElement, onClose: () => void): void {
-    this.closePopup();
-    const popup = new maplibregl.Popup({ closeButton: true, closeOnClick: false, maxWidth: '340px', className: 'pk-popup' });
-    popup.on('close', () => {
-      if (this.popup === popup) this.popup = null;
-      onClose();
-    });
-    popup.setLngLat(lngLat).setDOMContent(content).addTo(this.map);
-    this.popup = popup;
-  }
-
-  closePopup(): void {
-    const popup = this.popup;
-    this.popup = null;
-    popup?.remove();
   }
 
   showUserLocation(lng: number, lat: number): void {
@@ -280,7 +275,14 @@ export class MapController {
       }
       const sourceId = this.ensureSource(resolved.data);
       const specs = this.withVisibility(
-        style.layers({ layer, registry: this.registry, state: this.state, sourceId, sourceLayer: resolved.data.sourceLayer }),
+        style.layers({
+          layer,
+          registry: this.registry,
+          state: this.state,
+          sourceId,
+          sourceLayer: resolved.data.sourceLayer,
+          highlight: this.highlightFor(layerId),
+        }),
         true,
       );
       const before = this.beforeId(style.zIndex);
@@ -291,7 +293,14 @@ export class MapController {
     }
 
     const next = this.withVisibility(
-      style.layers({ layer, registry: this.registry, state: this.state, sourceId: applied.sourceId, sourceLayer: applied.sourceLayer }),
+      style.layers({
+        layer,
+        registry: this.registry,
+        state: this.state,
+        sourceId: applied.sourceId,
+        sourceLayer: applied.sourceLayer,
+        highlight: this.highlightFor(layerId),
+      }),
       visible,
     );
     next.forEach((spec, i) => {
@@ -299,6 +308,10 @@ export class MapController {
       if (prev?.id === spec.id) this.updateLayer(prev, spec);
     });
     applied.specs = next;
+  }
+
+  private highlightFor(layerId: string): (string | number)[] {
+    return this.inspected?.layerId === layerId ? this.inspected.ids : [];
   }
 
   private withVisibility(specs: LayerSpecification[], visible: boolean): LayerSpecification[] {
@@ -402,8 +415,8 @@ export class MapController {
       else this.events.select(null, null);
       return;
     }
-    // Memorials, crashes and street blocks open a popup; two people remembered at one place are
-    // both listed.
+    // Memorials, crashes and street blocks open in the details panel; two people remembered at
+    // one place are both listed.
     const seen = new Set<string>();
     const features: Record<string, unknown>[] = [];
     for (const hit of hits) {

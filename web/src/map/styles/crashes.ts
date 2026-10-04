@@ -8,8 +8,16 @@
 
 import type { ExpressionSpecification, FilterSpecification, LayerSpecification } from 'maplibre-gl';
 import { strings } from '../../strings.ts';
-import { CRASH_COLORS, CRASH_STROKE } from './palette.ts';
-import { partId, settingValue, sourceKeys, type LegendContext, type StyleContext, type StyleModule } from './types.ts';
+import { CRASH_COLORS, CRASH_STROKE, SELECTED } from './palette.ts';
+import {
+  highlightFilter,
+  partId,
+  settingValue,
+  sourceKeys,
+  type LegendContext,
+  type StyleContext,
+  type StyleModule,
+} from './types.ts';
 
 const sev: ExpressionSpecification = ['to-number', ['get', 'sev'], 0];
 const modes: ExpressionSpecification = ['to-number', ['get', 'm'], 0];
@@ -67,6 +75,18 @@ export const crashes: StyleModule = {
           'circle-stroke-color': CRASH_STROKE,
           'circle-stroke-width': ['interpolate', ['linear'], ['zoom'], 10, 0.5, 16, 1.2],
           'circle-opacity': 0.92,
+        },
+      },
+      {
+        id: partId(ctx.layer.id, 'selected'),
+        type: 'circle',
+        ...sourceKeys(ctx),
+        filter: ['all', crashFilter(ctx), highlightFilter(ctx)] as FilterSpecification,
+        paint: {
+          'circle-color': 'rgba(0, 0, 0, 0)',
+          'circle-radius': ['interpolate', ['linear'], ['zoom'], 10, 6, 16, 11],
+          'circle-stroke-color': SELECTED,
+          'circle-stroke-width': 2.5,
         },
       },
     ];

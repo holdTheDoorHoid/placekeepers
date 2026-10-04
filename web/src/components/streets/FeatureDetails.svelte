@@ -1,10 +1,11 @@
 <script lang="ts">
-  // What opens when someone taps a memorial, a crash or a street block on the map. Memorials
-  // are quiet: the name only from a public memorial list and only while "show names" is on, the
+  // What the map shows about a memorial, a crash or a street block someone tapped: in the
+  // analysis view's details panel, and in a panel over the map in the field view. Memorials are
+  // quiet: the name only from a public memorial list and only while "show names" is on, the
   // date, how the person was traveling, the place, the public memorial page, "request removal",
   // and the family's blessing beside every memorial suggestion (docs/ETHICS.md).
   import { config } from '../../config/index.ts';
-  import { FAMILIES_FOR_SAFE_STREETS_URL, REPO_URL } from '../../config/links.ts';
+  import { REPO_URL } from '../../config/links.ts';
   import type { InspectTarget } from '../../map/controller.ts';
   import { STYLES, styleFor } from '../../map/styles/index.ts';
   import { showNames } from '../../map/styles/memorials.ts';
@@ -13,8 +14,9 @@
   import { strings } from '../../strings.ts';
   import EvidenceBadge from '../common/EvidenceBadge.svelte';
   import WhyBreakdown from '../lens/WhyBreakdown.svelte';
+  import BlessingNote from './BlessingNote.svelte';
 
-  let { store, target }: { store: AppStore; target: InspectTarget } = $props();
+  let { store, target, onClose }: { store: AppStore; target: InspectTarget; onClose?: () => void } = $props();
 
   const layer = $derived(store.registry.layers.find((l) => l.id === target.layerId));
   const style = $derived(layer ? styleFor(layer) : null);
@@ -51,12 +53,7 @@
           <li>
             <strong>{view.suggestion.label}</strong>
             <EvidenceBadge level={view.suggestion.evidence} />
-            {#if view.memorial}
-              <p class="blessing">
-                {s.blessing}
-                <a href={FAMILIES_FOR_SAFE_STREETS_URL} target="_blank" rel="noopener noreferrer">{s.families}</a>
-              </p>
-            {/if}
+            <BlessingNote suggestionId={view.suggestion.id} />
             <p class="small">{view.suggestion.summary}</p>
             <p class="small">{s.cost(view.suggestion.cost)}</p>
             {#if view.firstStep}
@@ -89,16 +86,16 @@
     <ul class="facts">
       {#each segment.facts as fact (fact)}<li>{fact}</li>{/each}
     </ul>
-    {#if segment.why}<WhyBreakdown why={segment.why} idPrefix="popup" />{/if}
+    {#if segment.why}<WhyBreakdown why={segment.why} idPrefix="feature" />{/if}
+  {/if}
+  {#if onClose}
+    <button class="button quiet small" type="button" onclick={onClose}>{strings.place.clearSelection}</button>
   {/if}
 </section>
 
 <style>
   .pk-feature {
-    max-height: min(60vh, 460px);
-    overflow-y: auto;
-    padding-right: 4px;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
   }
   h3 {
     margin-bottom: 2px;
@@ -123,9 +120,6 @@
   }
   .suggestions p {
     margin: 2px 0;
-  }
-  .blessing {
-    font-weight: 600;
   }
   .crashes span {
     display: block;

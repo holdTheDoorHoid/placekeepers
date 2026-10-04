@@ -10,6 +10,7 @@
   import AreaSummary from '../places/AreaSummary.svelte';
   import PlaceDetails from '../places/PlaceDetails.svelte';
   import RankedTable from '../places/RankedTable.svelte';
+  import FeatureDetails from '../streets/FeatureDetails.svelte';
   import Filters from './Filters.svelte';
 
   let { store }: { store: AppStore } = $props();
@@ -20,9 +21,10 @@
 
   const ranked = $derived(rankPlaces(store.registry, store.state, store.parcelsInView));
 
-  // Selecting a place opens the details panel on screens where it is hidden.
+  // Selecting a place, or tapping a memorial, crash or street block, opens the details panel on
+  // screens where it is hidden.
   $effect(() => {
-    if (store.state.selected) rightOpen = true;
+    if (store.state.selected || store.inspected) rightOpen = true;
   });
 </script>
 
@@ -53,7 +55,9 @@
   <div class="panel-close not-wide">
     <button class="icon-button" type="button" aria-label={strings.analysis.closePanel} onclick={() => (rightOpen = false)}>&times;</button>
   </div>
-  {#if store.state.selected && store.selectedProperties}
+  {#if store.inspected}
+    <FeatureDetails {store} target={store.inspected} onClose={() => store.inspect(null)} />
+  {:else if store.state.selected && store.selectedProperties}
     <PlaceDetails {store} properties={store.selectedProperties} />
   {:else}
     <AreaSummary places={ranked} />

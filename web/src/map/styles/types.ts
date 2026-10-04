@@ -1,7 +1,7 @@
 // What a style module provides for one registry layer: the MapLibre layers that draw it,
 // the legend that explains it, and which of its parts respond to clicks.
 
-import type { LayerSpecification } from 'maplibre-gl';
+import type { FilterSpecification, LayerSpecification } from 'maplibre-gl';
 import type { Layer, Registry } from '../../registry/types.ts';
 import type { AppState } from '../../state/defaults.ts';
 
@@ -12,6 +12,8 @@ export interface StyleContext {
   sourceId: string;
   /** Layer name inside a tile file; null for GeoJSON. */
   sourceLayer: string | null;
+  /** Ids of this layer's features that someone opened, to draw them as selected. */
+  highlight?: readonly (string | number)[];
 }
 
 export type LegendContext = Omit<StyleContext, 'sourceId' | 'sourceLayer'>;
@@ -43,6 +45,13 @@ export function partId(layerId: string, part: string): string {
 /** Source keys shared by every part: the source, and the layer inside it for tiles. */
 export function sourceKeys(ctx: StyleContext): { source: string; 'source-layer'?: string } {
   return ctx.sourceLayer ? { source: ctx.sourceId, 'source-layer': ctx.sourceLayer } : { source: ctx.sourceId };
+}
+
+/** A filter for the features someone opened (`highlight`), or one that matches nothing. */
+export function highlightFilter(ctx: StyleContext): FilterSpecification {
+  const ids = ctx.highlight ?? [];
+  if (ids.length === 0) return ['==', ['literal', 1], 0];
+  return ['in', ['get', 'id'], ['literal', [...ids]]];
 }
 
 export function settingValue(ctx: LegendContext, id: string): unknown {

@@ -300,6 +300,8 @@ export const strings = {
 
   streets: {
     popupLabel: 'About this place on the map',
+    detailsTitle: (style: string) =>
+      style === 'memorials' ? 'Memorial' : style === 'crashes' ? 'Crash' : style === 'street_segments' ? 'Street block' : 'Details',
     memorialTitle: 'In memory',
     peopleHere: (n: number) => `${plural(n, 'person is', 'people are')} remembered here`,
     killed: {
