@@ -76,7 +76,7 @@ nearby is the strongest violence reduction opportunity Placekeepers can show.
 abandoned houses in 63 clusters, mostly in Black, low income neighborhoods, were randomly assigned to
 full remediation (working doors and windows plus cleanup), cleanup only, or nothing. Full remediation
 cut gun assaults by 13.1% and weapons violations by 8.4%. Shootings fell 7.0%, which was not
-statistically significant. Cleanup alone did nothing measurable. No displacement found.
+statistically significant. Cleanup alone did nothing measurable. No sign that violence moved to nearby blocks.
 
 **The Doors and Windows ordinance** (Kondo and colleagues, *PLOS ONE* 2015,
 [doi:10.1371/journal.pone.0129582](https://doi.org/10.1371/journal.pone.0129582)): enforcing the
@@ -98,7 +98,7 @@ neighbors seeing visible investment, not only better visibility. A randomized tr
 public housing (Chalfin and colleagues, *Journal of Quantitative Criminology* 2022,
 [doi:10.1007/s10940-020-09490-6](https://doi.org/10.1007/s10940-020-09490-6)) found a significant drop
 in nighttime outdoor crime *(size to confirm; secondary sources say about a third)*. Philadelphia
-does not publish streetlight locations; outage reports to 311 are the closest signal.
+publishes its street pole locations, and outage reports to 311 show where lights are out.
 
 ## Trees and green space: Mixed
 
