@@ -15,16 +15,21 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+from urllib.parse import parse_qs
 
 import httpx
+import pyarrow as pa
+import pyarrow.parquet as pq
 import pytest
 import shapely
 from shapely.geometry import mapping
 
 from placekeepers.config import Settings, find_repo_root
 from placekeepers.context import Context
+from placekeepers.geo import write_geoparquet
 from placekeepers.httpclient import PoliteClient
 from placekeepers.registry import load_registry
+from placekeepers.snapshots import SnapshotMeta, SnapshotStore
 
 FIXTURES = Path(__file__).parent / "fixtures"
 REPO_ROOT = find_repo_root(Path(__file__).parent)
@@ -48,29 +53,48 @@ def repo_copy(tmp_path: Path) -> Path:
 # Fake servers
 @dataclass
 class FakeCarto:
-    """Answers count and keyset page queries for in memory tables of rows.
+    """Answers count queries, keyset page queries and account (VALUES join) queries for in memory
+    tables of rows, sent by GET or POST.
 
     Each row is a dict keyed by the adapter's output column names, plus `cartodb_id`.
     """
 
     tables: dict[str, list[dict[str, Any]]] = field(default_factory=dict)
     queries: list[str] = field(default_factory=list)
+    methods: list[str] = field(default_factory=list)
     fail_status: int | None = None
+    #: extra rows the count query reports for account chunks (to simulate a short download)
+    count_offset: int = 0
+
+    @staticmethod
+    def query_of(request: httpx.Request) -> str:
+        if request.method == "POST":
+            return parse_qs(request.content.decode())["q"][0]
+        return request.url.params["q"]
 
     def __call__(self, request: httpx.Request) -> httpx.Response:
         if self.fail_status:
             return httpx.Response(self.fail_status, text="busy")
-        query = request.url.params["q"]
+        query = self.query_of(request)
         self.queries.append(query)
+        self.methods.append(request.method)
         table_name = re.search(r"FROM (\w+)", query).group(1)
         rows = sorted(self.tables[table_name], key=lambda row: row["cartodb_id"])
+        join = re.search(
+            r"JOIN \(VALUES (.*?)\) AS chosen\(chosen_account\) ON \w+\.(\w+) =", query
+        )
+        if join:
+            accounts = set(re.findall(r"'(\d+)'", join.group(1)))
+            rows = [row for row in rows if row.get(join.group(2)) in accounts]
         if query.startswith("SELECT count(*)"):
-            return httpx.Response(200, json={"rows": [{"n": len(rows)}]})
-        after = re.search(r"cartodb_id > (\d+)", query)
-        limit = int(re.search(r"LIMIT (\d+)", query).group(1))
-        if after:
-            rows = [row for row in rows if row["cartodb_id"] > int(after.group(1))]
-        rows = rows[:limit]
+            extra = self.count_offset if join else 0
+            return httpx.Response(200, json={"rows": [{"n": len(rows) + extra}]})
+        if not join:
+            after = re.search(r"cartodb_id > (\d+)", query)
+            limit = int(re.search(r"LIMIT (\d+)", query).group(1))
+            if after:
+                rows = [row for row in rows if row["cartodb_id"] > int(after.group(1))]
+            rows = rows[:limit]
         select = query[len("SELECT ") : query.index(" FROM ")]
         names = re.findall(r" AS (\w+)", select)
         buffer = io.StringIO()
@@ -98,6 +122,7 @@ class FakeArcgis:
     max_records: int = 2
     errors_before_success: int = 0
     error_code: int = 400
+    geometry_type: str = "esriGeometryPolygon"
     requests: list[httpx.Request] = field(default_factory=list)
 
     def __call__(self, request: httpx.Request) -> httpx.Response:
@@ -112,9 +137,12 @@ class FakeArcgis:
             return httpx.Response(
                 200,
                 json={
-                    "objectIdField": "objectid",
+                    "objectIdField": next(
+                        (f["name"] for f in self.fields if f["type"] == "esriFieldTypeOID"),
+                        "objectid",
+                    ),
                     "maxRecordCount": self.max_records,
-                    "geometryType": "esriGeometryPolygon",
+                    "geometryType": self.geometry_type,
                     "fields": self.fields,
                     "editingInfo": {"dataLastEditDate": 1790523183650},
                 },
@@ -124,6 +152,12 @@ class FakeArcgis:
         offset = int(params["resultOffset"])
         count = int(params["resultRecordCount"])
         page = self.features[offset : offset + count]
+        if params.get("outFields", "*") != "*":
+            wanted = params["outFields"].split(",")
+            page = [
+                {**f, "properties": {k: v for k, v in f["properties"].items() if k in wanted}}
+                for f in page
+            ]
         more = offset + count < len(self.features)
         body = {
             "type": "FeatureCollection",
@@ -190,6 +224,48 @@ def context_factory(tmp_path: Path) -> Callable[..., Context]:
         return make_context(kwargs.pop("repo_root", REPO_ROOT), tmp_path / "cache", **kwargs)
 
     return build
+
+
+def install_snapshot(
+    ctx,
+    source_id: str,
+    table: pa.Table,
+    *,
+    geometry: bool,
+    fetched_at: str,
+    result: str = "ok",
+    message: str | None = None,
+    geometry_types: list[str] | None = None,
+) -> None:
+    """Put a good snapshot in the cache, as a successful run would have."""
+    store = SnapshotStore(ctx.cache, source_id)
+    snapshot_id = fetched_at.replace("-", "").replace(":", "")
+    path = store.snapshot_path(snapshot_id)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if geometry:
+        write_geoparquet(table, path, geometry_types or ["Polygon"])
+    else:
+        pq.write_table(table, path)
+    meta = SnapshotMeta(
+        source=source_id,
+        snapshot_id=snapshot_id,
+        file=path.name,
+        format="geoparquet" if geometry else "parquet",
+        fetched_at=fetched_at,
+        rows=table.num_rows,
+        sha256="x",
+        bytes=path.stat().st_size,
+        newest_record="2026-09-27",
+        status="good",
+    )
+    store.record(meta)
+    store.promote(meta)
+    state = store.state()
+    state.current = snapshot_id
+    state.last_attempt = "2026-10-04T14:00:00Z"
+    state.last_result = result
+    state.message = message
+    store.save_state(state)
 
 
 def load_fixture(name: str) -> Any:

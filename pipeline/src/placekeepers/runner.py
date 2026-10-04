@@ -9,8 +9,11 @@ the source then reports `stale`, or `failing` when there was never a good one.
 from __future__ import annotations
 
 import logging
+import os
+import shutil
 import time
 from dataclasses import dataclass
+from datetime import timedelta
 
 from placekeepers.adapters import ADAPTERS, adapter_for
 from placekeepers.cache import RawFetch, RawStore, atomic_output, new_fetch_id, sha256_file
@@ -53,6 +56,58 @@ def select_sources(registry: Registry, ids: list[str] | None) -> list[Source]:
     return [registry.sources[source_id] for source_id in dict.fromkeys(ids)]
 
 
+# How long a good snapshot is kept before fetching again, by the source's registry cadence. A frozen
+# source is fetched once; a yearly one at most monthly. Everything else is fetched on every run.
+REFETCH_AFTER = {"frozen": None, "yearly": timedelta(days=30)}
+
+
+def free_disk_gb(ctx: Context) -> float:
+    target = ctx.cache.root if ctx.cache.root.exists() else ctx.cache.root.parent
+    return shutil.disk_usage(target).free / 1e9
+
+
+def min_free_gb() -> float:
+    """The disk space every download leaves free (CLAUDE.md: keep at least 10 GB free)."""
+    return float(os.environ.get("PK_MIN_FREE_GB", "10"))
+
+
+def refetch_due(ctx: Context, source: Source) -> str | None:
+    """None when the source should be fetched now, or the reason it does not need to be."""
+    if source.cadence not in REFETCH_AFTER:
+        return None
+    current = SnapshotStore(ctx.cache, source.id).current()
+    if current is None:
+        return None
+    wait = REFETCH_AFTER[source.cadence]
+    since = local_date(parse_iso_z(current.fetched_at)).isoformat()
+    if wait is None:
+        return f"Frozen source, kept from {since}"
+    if ctx.now() - parse_iso_z(current.fetched_at) < wait:
+        return f"Changes yearly; the copy from {since} is recent enough"
+    return None
+
+
+def ordered(sources: list[Source]) -> list[Source]:
+    """Sources in an order where each comes after the sources its download needs."""
+    by_id = {source.id: source for source in sources}
+    done: dict[str, Source] = {}
+
+    def visit(source: Source, path: tuple[str, ...]) -> None:
+        if source.id in done:
+            return
+        if source.id in path:
+            raise UsageError(f"Sources depend on each other in a circle: {' > '.join(path)}")
+        adapter = ADAPTERS.get(source.id)
+        for needed in adapter.depends_on if adapter else ():
+            if needed in by_id:
+                visit(by_id[needed], (*path, source.id))
+        done[source.id] = source
+
+    for source in sources:
+        visit(source, ())
+    return list(done.values())
+
+
 def _unique_fetch_id(ctx: Context, source_id: str) -> str:
     base = new_fetch_id(ctx.now())
     store = SnapshotStore(ctx.cache, source_id)
@@ -64,7 +119,7 @@ def _unique_fetch_id(ctx: Context, source_id: str) -> str:
     return candidate
 
 
-def fetch_source(ctx: Context, source: Source) -> StepResult:
+def fetch_source(ctx: Context, source: Source, *, force: bool = False) -> StepResult:
     started = time.monotonic()
 
     def result(outcome: str, detail: str) -> StepResult:
@@ -75,6 +130,18 @@ def fetch_source(ctx: Context, source: Source) -> StepResult:
         return result("no_adapter", "No adapter yet")
     if ctx.settings.offline:
         return result("skipped", "Offline run: using the cache")
+    if not force:
+        reason = refetch_due(ctx, source)
+        if reason:
+            return result("skipped", reason)
+    free = free_disk_gb(ctx)
+    if free < min_free_gb():
+        message = (
+            f"Download skipped: only {free:.1f} GB of disk is free and Placekeepers keeps at least "
+            f"{min_free_gb():g} GB free"
+        )
+        log.error("%s: %s", source.id, message)
+        return result("failed", message)
 
     raws = RawStore(ctx.cache, source.id)
     store = SnapshotStore(ctx.cache, source.id)

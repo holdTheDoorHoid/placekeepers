@@ -6,11 +6,14 @@ Standard library only, so any job can run it with a plain Python 3.12. Commands:
     refresh.py pack --cache DIR --out DIR
         One tar per source holding what the next run needs: the source's state (which carries
         the count of failed attempts in a row) and its last good snapshot. These become the
-        assets of the rolling `data-snapshots` release.
+        assets of the rolling `data-snapshots` release. A source whose files are exactly as they
+        were restored (a frozen source, or a yearly one not due again) is not packed; its asset
+        name goes in unchanged.txt instead, so the release keeps last week's copy.
 
     refresh.py restore --cache DIR --from DIR
         Unpacks those tars into a fresh cache, so a source that fails this week falls back to
-        last week's good copy instead of to nothing.
+        last week's good copy instead of to nothing, and notes a fingerprint of each source's
+        files so pack can tell which ones did not change.
 
     refresh.py pick-basemap --assets FILE [--today YYYY-MM-DD] [--max-age-days 30]
         Given the release's asset names (one per line), prints the base map asset that is still
@@ -18,8 +21,10 @@ Standard library only, so any job can run it with a plain Python 3.12. Commands:
 
     refresh.py release-plan --dir DIR --assets FILE
         Decides what the save job does with the data-snapshots release: prints "upload NAME" for
-        each expected file in DIR, "delete NAME" for assets it replaces for good (snapshots of
-        sources that are gone, older base maps), and "skip NAME" for anything unexpected.
+        each expected file in DIR, "keep NAME" for unchanged snapshots (listed in DIR's
+        unchanged.txt) that stay as they are, "delete NAME" for assets it replaces for good
+        (snapshots of sources that are gone, older base maps), "missing NAME" for an unchanged
+        snapshot the release no longer has, and "skip NAME" for anything unexpected.
 
     refresh.py sources --registry DIR --out FILE
         Writes each source's name, publisher and homepage from registry/sources.yaml as JSON
@@ -37,6 +42,7 @@ Standard library only, so any job can run it with a plain Python 3.12. Commands:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import subprocess
@@ -53,6 +59,10 @@ SNAPSHOTS = "snapshots"
 STATE_FILE = "state.json"
 CURRENT_LINK = "current.parquet"
 ASSET_PREFIX = "snapshot-"
+SNAPSHOT_ASSET = re.compile(r"^snapshot-[a-z][a-z0-9_]*\.tar$")
+# Written by restore beside each source's files; the pipeline ignores names starting with a dot.
+FINGERPRINT = ".restored-fingerprint"
+UNCHANGED_LIST = "unchanged.txt"
 BASEMAP_ASSET = re.compile(r"^basemap-(\d{8})\.tar$")
 LABEL = "data-source"
 MARKER = "placekeepers-data-source"
@@ -79,20 +89,51 @@ def snapshot_files(source_dir: Path) -> list[Path]:
     return files
 
 
+def fingerprint(source_dir: Path) -> str:
+    """A digest of the files pack would put in a source's tar: names, contents, link targets."""
+    digest = hashlib.sha256()
+    for path in sorted(snapshot_files(source_dir), key=lambda p: p.name):
+        digest.update(path.name.encode() + b"\0")
+        if path.is_symlink():
+            digest.update(b"link " + str(path.readlink()).encode())
+        else:
+            digest.update(b"file " + hashlib.sha256(path.read_bytes()).hexdigest().encode())
+        digest.update(b"\n")
+    return digest.hexdigest()
+
+
+def unchanged_since_restore(source_dir: Path) -> bool:
+    stored = source_dir / FINGERPRINT
+    if not stored.is_file():
+        return False
+    return stored.read_text(encoding="utf-8").strip() == fingerprint(source_dir)
+
+
 def pack(cache: Path, out: Path) -> list[Path]:
-    """Write snapshot-<source>.tar for every source folder in the cache. Returns the tars."""
+    """Write snapshot-<source>.tar for every source folder in the cache whose files changed since
+    they were restored. Unchanged sources are listed in out/unchanged.txt instead (the release
+    keeps last week's copy of them). Returns the tars written."""
     out.mkdir(parents=True, exist_ok=True)
     written = []
+    unchanged = []
     root = cache / SNAPSHOTS
     for source_dir in sorted(p for p in root.iterdir() if p.is_dir()) if root.is_dir() else []:
         files = snapshot_files(source_dir)
         if not files:
             continue
         tar_path = out / f"{ASSET_PREFIX}{source_dir.name}.tar"
+        if unchanged_since_restore(source_dir):
+            unchanged.append(tar_path.name)
+            continue
         with tarfile.open(tar_path, "w") as tar:
             for path in files:
                 tar.add(path, arcname=f"{source_dir.name}/{path.name}", recursive=False)
         written.append(tar_path)
+    listing = out / UNCHANGED_LIST
+    if unchanged:
+        listing.write_text("".join(f"{name}\n" for name in unchanged), encoding="utf-8")
+    else:
+        listing.unlink(missing_ok=True)
     return written
 
 
@@ -114,6 +155,8 @@ def restore(cache: Path, from_dir: Path) -> list[str]:
                     raise ValueError(f"{tar_path.name} links outside its folder: {member.name}")
             # The "data" filter also refuses absolute paths, devices and links leaving the folder.
             tar.extractall(root, filter="data")
+        source_dir = root / source_id
+        (source_dir / FINGERPRINT).write_text(fingerprint(source_dir) + "\n", encoding="utf-8")
         restored.append(source_id)
     return restored
 
@@ -146,26 +189,36 @@ def pick_basemap(names: Iterable[str], today: date, max_age_days: int = 30) -> s
 RELEASE_FILE = re.compile(r"^(snapshot-[a-z][a-z0-9_]*\.tar|manifest\.json|basemap-\d{8}\.tar)$")
 
 
-def plan_release(files: Iterable[str], existing: Iterable[str]) -> list[tuple[str, str]]:
-    """What to upload, delete and skip. Snapshots of sources that are no longer produced are
-    deleted only when this run produced snapshots at all, and older base maps only when a new one
-    is uploaded, so a broken run can never empty the release."""
+def plan_release(
+    files: Iterable[str], existing: Iterable[str], unchanged: Iterable[str] = ()
+) -> list[tuple[str, str]]:
+    """What to upload, keep, delete and skip. Unchanged snapshots (listed by pack) keep their
+    existing asset instead of being uploaded again. Snapshots of sources that are no longer
+    produced are deleted only when this run produced or kept snapshots at all, and older base maps
+    only when a new one is uploaded, so a broken run can never empty the release."""
+    files = [name for name in files if name != UNCHANGED_LIST]
+    existing = set(existing)
     uploads = sorted(name for name in files if RELEASE_FILE.match(name))
     skipped = sorted(name for name in files if not RELEASE_FILE.match(name))
-    new_snapshots = {name for name in uploads if name.startswith("snapshot-")}
+    listed = sorted({name for name in unchanged if SNAPSHOT_ASSET.match(name)} - set(uploads))
+    kept = [name for name in listed if name in existing]
+    missing = [name for name in listed if name not in existing]
+    produced = {name for name in uploads if name.startswith("snapshot-")} | set(kept)
     new_basemaps = {name for name in uploads if name.startswith("basemap-")}
 
     def replaced(name: str) -> bool:
         if name.startswith("snapshot-"):
-            return bool(new_snapshots) and name not in new_snapshots
+            return bool(produced) and name not in produced
         if BASEMAP_ASSET.match(name):
             return bool(new_basemaps) and name not in new_basemaps
         return False
 
-    deletes = [name for name in sorted(set(existing)) if replaced(name)]
+    deletes = [name for name in sorted(existing) if replaced(name)]
     return (
         [("upload", name) for name in uploads]
+        + [("keep", name) for name in kept]
         + [("delete", name) for name in deletes]
+        + [("missing", name) for name in missing]
         + [("skip", name) for name in skipped]
     )
 
@@ -485,8 +538,14 @@ def main(argv: list[str] | None = None) -> int:
     today = getattr(args, "today", None) or datetime.now(LOCAL_TZ).date()
 
     if args.command == "pack":
-        for tar_path in pack(args.cache, args.out):
+        written = pack(args.cache, args.out)
+        for tar_path in written:
             print(f"packed {tar_path.name} ({tar_path.stat().st_size / 1e6:.1f} MB)")
+        listing = args.out / UNCHANGED_LIST
+        for name in listing.read_text(encoding="utf-8").split() if listing.is_file() else []:
+            print(f"unchanged {name} (the release keeps last week's copy)")
+        total = sum(path.stat().st_size for path in written)
+        print(f"{len(written)} snapshot(s) to upload, {total / 1e6:.1f} MB in all")
         return 0
     if args.command == "restore":
         if not args.from_dir.is_dir():
@@ -509,7 +568,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "release-plan":
         files = [path.name for path in args.dir.iterdir() if path.is_file()]
         existing = args.assets.read_text(encoding="utf-8").split() if args.assets.is_file() else []
-        for action, name in plan_release(files, existing):
+        listing = args.dir / UNCHANGED_LIST
+        unchanged = listing.read_text(encoding="utf-8").split() if listing.is_file() else []
+        for action, name in plan_release(files, existing, unchanged):
             print(f"{action} {name}")
         return 0
     if args.command == "sources":

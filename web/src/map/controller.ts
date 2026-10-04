@@ -251,7 +251,7 @@ export class MapController {
       }
       const sourceId = this.ensureSource(resolved.data);
       const specs = this.withVisibility(
-        style.layers({ layer, registry: this.registry, state: this.state, sourceId, sourceLayer: resolved.data.sourceLayer }),
+        style.layers({ layer, registry: this.registry, state: this.state, sourceId, sourceLayer: resolved.data.sourceLayer, glyphs: this.hasGlyphs() }),
         true,
       );
       const before = this.beforeId(style.zIndex);
@@ -262,7 +262,7 @@ export class MapController {
     }
 
     const next = this.withVisibility(
-      style.layers({ layer, registry: this.registry, state: this.state, sourceId: applied.sourceId, sourceLayer: applied.sourceLayer }),
+      style.layers({ layer, registry: this.registry, state: this.state, sourceId: applied.sourceId, sourceLayer: applied.sourceLayer, glyphs: this.hasGlyphs() }),
       visible,
     );
     next.forEach((spec, i) => {
@@ -296,6 +296,11 @@ export class MapController {
   }
 
   /** Data layers sit under the base map's labels, ordered by their style's zIndex. */
+  /** Whether the base map brought label fonts; without them no text layer may be added. */
+  private hasGlyphs(): boolean {
+    return Boolean(this.map.getStyle()?.glyphs);
+  }
+
   private beforeId(zIndex: number): string | undefined {
     let best: { z: number; id: string } | null = null;
     for (const applied of this.applied.values()) {

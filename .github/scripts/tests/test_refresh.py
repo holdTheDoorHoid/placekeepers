@@ -122,6 +122,40 @@ def test_restore_rebuilds_a_cache_the_pipeline_can_read(tmp_path: Path) -> None:
     assert failing.state().consecutive_failures == 2
 
 
+def test_pack_leaves_out_sources_unchanged_since_restore(tmp_path: Path) -> None:
+    refresh.pack(make_cache(tmp_path / "cache"), tmp_path / "assets")
+    fresh = tmp_path / "fresh"
+    refresh.restore(fresh, tmp_path / "assets")
+    # A frozen or not yet due source: nothing about it changed during the run.
+    assert refresh.pack(fresh, tmp_path / "out") == []
+    assert (tmp_path / "out" / "unchanged.txt").read_text(encoding="utf-8").split() == [
+        "snapshot-high_injury_network.tar",
+        "snapshot-shootings.tar",
+    ]
+    # A new attempt changes the state, so that source is packed again.
+    state = fresh / "snapshots" / "shootings" / "state.json"
+    state.write_text(
+        state.read_text(encoding="utf-8").replace(
+            '"consecutive_failures": 1', '"consecutive_failures": 2'
+        )
+    )
+    tars = refresh.pack(fresh, tmp_path / "out2")
+    assert [t.name for t in tars] == ["snapshot-shootings.tar"]
+    assert (tmp_path / "out2" / "unchanged.txt").read_text(encoding="utf-8").split() == [
+        "snapshot-high_injury_network.tar"
+    ]
+    with tarfile.open(tars[0]) as tar:
+        assert ".restored-fingerprint" not in " ".join(tar.getnames())
+
+
+def test_a_cache_that_was_never_restored_is_packed_whole(tmp_path: Path) -> None:
+    out = tmp_path / "out"
+    (out).mkdir()
+    (out / "unchanged.txt").write_text("snapshot-old.tar\n", encoding="utf-8")
+    assert len(refresh.pack(make_cache(tmp_path / "cache"), out)) == 2
+    assert not (out / "unchanged.txt").exists()
+
+
 def test_restore_without_assets_is_a_fresh_start(tmp_path: Path) -> None:
     (tmp_path / "assets").mkdir()
     assert refresh.restore(tmp_path / "cache", tmp_path / "assets") == []
@@ -501,4 +535,44 @@ def test_release_plan_skips_anything_unexpected(tmp_path: Path, capsys) -> None:
         "delete snapshot-old.tar",
         "skip evil.sh",
         "skip manifest.json.bak",
+    ]
+
+
+def test_release_plan_keeps_unchanged_snapshots_instead_of_uploading_them() -> None:
+    files = ["snapshot-shootings.tar", "manifest.json", "unchanged.txt"]
+    existing = [
+        "snapshot-shootings.tar",
+        "snapshot-cagp_tax_2025.tar",
+        "snapshot-retired_source.tar",
+        "manifest.json",
+    ]
+    unchanged = ["snapshot-cagp_tax_2025.tar", "snapshot-land_use.tar", "not-a-snapshot.sh"]
+    assert refresh.plan_release(files, existing, unchanged) == [
+        ("upload", "manifest.json"),
+        ("upload", "snapshot-shootings.tar"),
+        ("keep", "snapshot-cagp_tax_2025.tar"),
+        ("delete", "snapshot-retired_source.tar"),
+        ("missing", "snapshot-land_use.tar"),
+    ]
+
+
+def test_a_week_where_every_source_is_unchanged_still_keeps_them_all() -> None:
+    existing = ["snapshot-cagp_tax_2025.tar", "snapshot-acs_poverty.tar", "manifest.json"]
+    plan = refresh.plan_release(["manifest.json"], existing, existing[:2])
+    assert plan == [
+        ("upload", "manifest.json"),
+        ("keep", "snapshot-acs_poverty.tar"),
+        ("keep", "snapshot-cagp_tax_2025.tar"),
+    ]
+
+
+def test_release_plan_command_reads_the_unchanged_list(tmp_path: Path, capsys) -> None:
+    (tmp_path / "snapshot-shootings.tar").write_text("x", encoding="utf-8")
+    (tmp_path / "unchanged.txt").write_text("snapshot-cagp_tax_2025.tar\n", encoding="utf-8")
+    assets = tmp_path.parent / "assets-unchanged.txt"
+    assets.write_text("snapshot-shootings.tar\nsnapshot-cagp_tax_2025.tar\n", encoding="utf-8")
+    assert refresh.main(["release-plan", "--dir", str(tmp_path), "--assets", str(assets)]) == 0
+    assert capsys.readouterr().out.splitlines() == [
+        "upload snapshot-shootings.tar",
+        "keep snapshot-cagp_tax_2025.tar",
     ]

@@ -101,11 +101,11 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
                 log.warning("publish: no builder yet for layer %s", layer.id)
                 continue
             paths = {}
-            for source_id in builder.sources:
+            for source_id in (*builder.sources, *builder.extras):
                 status = statuses.get(source_id)
                 if status is not None and status.snapshot is not None:
                     paths[source_id] = SnapshotStore(ctx.cache, source_id).path_for(status.snapshot)
-            if not paths:
+            if not any(source_id in paths for source_id in builder.sources):
                 notes.append(f"{layer.id} has no usable data yet")
                 log.warning(
                     "publish: %s has no usable snapshot in %s", layer.id, ", ".join(builder.sources)

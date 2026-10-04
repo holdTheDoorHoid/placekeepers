@@ -22,6 +22,7 @@ from typing import Any, ClassVar
 
 from placekeepers.adapters.base import Adapter, FetchError, quote_ident, quote_literal
 from placekeepers.cache import RawFetch
+from placekeepers.candidates import CANDIDATE_SOURCES, candidate_accounts
 from placekeepers.geo import GEOMETRY_COLUMN, geo_metadata, wkb_type_name
 from placekeepers.httpclient import HttpError
 from placekeepers.registry import CartoEndpoint
@@ -67,19 +68,20 @@ def _cast(column: Column) -> str:
     raise ValueError(f"unknown column type {kind} for {column.name}")
 
 
-def scan_csv(path: Path, key: str) -> tuple[int, int | None]:
+def scan_csv(path: Path, key: str | None) -> tuple[int, int | None]:
     """Count the data rows of a CSV file and return the last value of its `key` column."""
     with path.open(newline="", encoding="utf-8") as handle:
         reader = csv.reader(handle)
         header = next(reader, None)
         if header is None:
             return 0, None
-        index = header.index(key)
+        index = header.index(key) if key else None
         rows = 0
         last = None
         for row in reader:
             rows += 1
-            last = row[index]
+            if index is not None:
+                last = row[index]
     return rows, (int(float(last)) if last else None)
 
 
@@ -189,12 +191,16 @@ class CartoAdapter(Adapter):
         }
 
     # Normalize
+    def csv_names(self) -> list[str]:
+        """The columns of each downloaded CSV chunk, in order."""
+        return [column.name for column in self.columns] + [KEY_ALIAS]
+
     def normalize(self, raw: RawFetch, out: Path) -> None:
         assert raw.dir is not None
         files = sorted(raw.dir.glob("chunk-*.csv"))
         if not files:
             raise FetchError("The download has no data files")
-        names = [column.name for column in self.columns] + [KEY_ALIAS]
+        names = self.csv_names()
         types = ", ".join(f"{quote_literal(name)}: 'VARCHAR'" for name in names)
         file_list = "[" + ", ".join(quote_literal(str(path)) for path in files) + "]"
         source = (
@@ -253,3 +259,98 @@ class CartoAdapter(Adapter):
             if name:
                 names.add(name)
         return sorted(names)
+
+
+class CartoAccountsAdapter(CartoAdapter):
+    """A Carto table fetched only for the vacancy candidate parcels (see placekeepers.candidates),
+    in chunks of OPA account numbers.
+
+    Each chunk's accounts travel in the body of a POST as a VALUES list joined to the table, which
+    Carto answers from its index in under a second for thousands of accounts. (An IN list of the
+    same accounts took over a minute on the assessments table.) Every chunk is checked against a
+    count of the same join.
+    """
+
+    account_column: ClassVar[str] = "opa_account_num"
+    accounts_per_chunk: ClassVar[int] = 5000
+    depends_on = CANDIDATE_SOURCES
+
+    def accounts(self) -> list[str]:
+        found = candidate_accounts(self.ctx)
+        self.candidate_info = {"by_source": found.by_source, "missing": found.missing}
+        return found.accounts
+
+    def _join(self, accounts: list[str]) -> str:
+        for account in accounts:
+            if not (len(account) == 9 and account.isdigit()):
+                raise FetchError(f"{account!r} is not a 9 digit OPA account")
+        values = ", ".join(f"('{account}')" for account in accounts)
+        table = self.endpoint.table
+        where = f" WHERE ({self.endpoint.where})" if self.endpoint.where else ""
+        return (
+            f"FROM {table} JOIN (VALUES {values}) AS chosen(chosen_account) "
+            f"ON {table}.{self.account_column} = chosen.chosen_account{where}"
+        )
+
+    def chunk_query(self, accounts: list[str]) -> str:
+        select = ", ".join(f"{column.sql} AS {column.name}" for column in self.columns)
+        return f"SELECT {select} {self._join(accounts)}"
+
+    def chunk_count_query(self, accounts: list[str]) -> str:
+        return f"SELECT count(*) AS n {self._join(accounts)}"
+
+    def csv_names(self) -> list[str]:
+        return [column.name for column in self.columns]
+
+    def fetch(self, dest: Path) -> dict[str, Any]:
+        chosen = self.accounts()
+        if not chosen:
+            raise FetchError(
+                "There are no candidate parcels yet; fetch the vacancy indicators and OPA first"
+            )
+        size = self.accounts_per_chunk
+        chunks = [chosen[start : start + size] for start in range(0, len(chosen), size)]
+        log.info(
+            "%s: %s rows from Carto table %s for %s candidate parcels, in %d chunks",
+            self.id,
+            "fetching",
+            self.endpoint.table,
+            f"{len(chosen):,}",
+            len(chunks),
+        )
+        total = 0
+        for number, accounts in enumerate(chunks, 1):
+            path = dest / f"chunk-{number:05d}.csv"
+            result = self.ctx.http.download(
+                self.api_url,
+                path,
+                data={"q": self.chunk_query(accounts), "format": "csv"},
+                check_file=_check_carto_csv,
+            )
+            rows, _ = scan_csv(path, None)
+            reply = self.ctx.http.get_json(
+                self.api_url, data={"q": self.chunk_count_query(accounts)}, check=_check_carto_json
+            )
+            expected = int(reply["rows"][0]["n"])
+            if rows != expected:
+                raise FetchError(
+                    f"Chunk {number} has {rows:,} rows but the table reports {expected:,}; "
+                    "trying again next run"
+                )
+            total += rows
+            log.info(
+                "%s: chunk %d of %d, %s rows (%s so far), %.1f MB",
+                self.id,
+                number,
+                len(chunks),
+                f"{rows:,}",
+                f"{total:,}",
+                result.bytes / 1e6,
+            )
+        return {
+            "rows": total,
+            "chunks": len(chunks),
+            "table": self.endpoint.table,
+            "accounts": len(chosen),
+            "candidates": getattr(self, "candidate_info", {}),
+        }

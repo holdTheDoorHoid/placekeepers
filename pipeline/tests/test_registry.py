@@ -192,3 +192,45 @@ def test_pk_registry_check_exits_non_zero_with_the_problems(
     error = capsys.readouterr().err
     assert "The registry has 1 problem(s):" in error
     assert "hin_2025): description: must not be empty" in error
+
+
+SETTING_CASES = [
+    ({"type": "toggle", "default": True}, None),
+    ({"type": "range", "min": 0, "max": 10, "default": 5, "step": 0.5}, None),
+    ({"type": "choice", "default": "", "options": [{"value": "", "label": "None"}]}, None),
+    (
+        {"type": "toggle", "default": True, "options": [{"value": "x", "label": "X"}]},
+        "a toggle setting cannot have options",
+    ),
+    ({"type": "toggle", "default": "yes"}, "a toggle default must be true or false"),
+    ({"type": "range", "max": 10, "default": 1}, "a range setting needs min and max"),
+    ({"type": "range", "min": 10, "max": 10, "default": 10}, "a range setting needs min below max"),
+    ({"type": "range", "min": 0, "max": 10, "default": 11}, "default 11 is outside 0 to 10"),
+    ({"type": "range", "min": 0, "max": 10, "default": 1, "step": 0}, "step must be above 0"),
+    ({"type": "range", "min": 0, "max": 9, "default": 1, "options": []}, "List should have"),
+    (
+        {"type": "choice", "default": "x", "options": [{"value": "x", "label": "X"}], "min": 1},
+        "a choice setting cannot have min",
+    ),
+    ({"type": "choice", "default": "x"}, "a choice setting needs options"),
+]
+
+
+@pytest.mark.parametrize(("setting", "problem"), SETTING_CASES)
+def test_setting_keys_follow_their_type(
+    repo_copy: Path, setting: dict, problem: str | None
+) -> None:
+    """The same rules as the web app's check (docs/CONTRACTS.md section 1)."""
+    edit(
+        repo_copy,
+        "layers",
+        lambda layers: by_id(layers, "hin_2025").update(
+            settings=[{"id": "test", "label": "Test", **setting}]
+        ),
+    )
+    if problem is None:
+        load_registry(repo_copy / "registry", repo_root=repo_copy)
+    else:
+        [found] = problems(repo_copy)
+        assert found.startswith("registry/layers.yaml: entry 2 (hin_2025): settings.0")
+        assert problem in found

@@ -276,6 +276,8 @@ export const strings = {
     sureMedium: 'Probably vacant',
     sureLow: 'Not very sure',
     selected: 'Selected place',
+    landcare: 'Lot kept up by PHS LandCare: already cared for',
+    garden: 'Community garden or farm',
     hin: 'Street on the High Injury Network',
     hexIntro: (window: string) => `People shot, per hexagon, ${window.toLowerCase()}`,
     hexNone: 'Hexagons with no shootings are left clear.',

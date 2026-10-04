@@ -60,3 +60,22 @@ def test_the_high_injury_network_end_to_end(live: Context) -> None:
     current = SnapshotStore(live.cache, source.id).current()
     assert current.rows >= 100
     assert set(HighInjuryNetwork.required_columns) <= set(current.columns)
+
+
+def test_an_account_chunk_comes_back_by_post(live: Context) -> None:
+    from placekeepers.adapters.property_records import RealEstateTransfers
+
+    adapter = RealEstateTransfers(live.registry.sources["real_estate_transfers"], live)
+    query = adapter.chunk_query(["371188801", "562313830"])
+    rows = live.http.get_json(adapter.api_url, data={"q": query})["rows"]
+    assert {row["opa_account_num"] for row in rows} <= {"371188801", "562313830"}
+    if rows:
+        assert list(rows[0]) == [c.name for c in adapter.columns]
+
+
+def test_the_partner_garden_layer_answers(live: Context) -> None:
+    from placekeepers.adapters.places import GardensPhsNgt
+
+    adapter = GardensPhsNgt(live.registry.sources["gardens_phs_ngt"], live)
+    assert adapter.layer_url.startswith("https://services2.arcgis.com/qjOOiLCYeUtwT7x7/")
+    assert adapter.count() >= 150

@@ -184,10 +184,14 @@ None of these block Phase 0.
 3. Send, edit or skip the outreach drafts in `docs/outreach/` (Clean & Green Philly founders, Bicycle
    Coalition and Families for Safe Streets, PHS, Garden Justice Legal Initiative, OTIS, Land Bank,
    art data holders).
-4. Optional: a free Census API key, stored as a repository secret.
+4. Optional: a free Census API key, stored as a repository secret. Not needed for the poverty
+   rate, which comes from the Census Bureau's bulk table files without a key.
 5. Later: a Cloudflare account and R2 bucket when tiles outgrow GitHub Pages.
 6. Optional: a Right to Know request to OTIS for the bus shelter inventory (draft provided).
 7. Optional: check a few dozen lots in person or on street imagery for the vacancy spot check.
+8. Ask PHS about reuse terms for its map of gardens it and the Neighborhood Gardens Trust support
+   (the `PHS_NGT_Supported_Current_view` layer states no license). The map shows these gardens with
+   credit in the meantime, and removes them if PHS asks.
 
 ## Waves
 

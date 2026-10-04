@@ -28,7 +28,7 @@ Both allow browser requests without a key.
 | Sheriff sales | No dataset. `rtt_summary` document types "DEED SHERIFF" (69,682) and "SHERIFF'S DEED" (19,370) give history | Past sheriff sales | n/a | History only; phillysheriff.com is browse only and is not scraped |
 | Address search | `https://api.phila.gov/ais/v1/search/<address>` | Search box, address to OPA account | Live | Live, no key |
 | Zoning base districts | OpenDataPhilly, yearly vintages 2020 to 2025 plus current | Zoning context for suggestions | Yearly | Live |
-| Land use | OpenDataPhilly, current plus 2012 to 2018 | Context, vacancy signal | Not stated | Live |
+| Land use | City ArcGIS `Land_Use` (559,077; 2023 with 2025 updates), read as ArcGIS Hub's bulk GeoJSON; 2012 to 2018 also published | Context, vacancy signal | Yearly | Live (pipeline source `land_use`) |
 
 ### Vacancy signals
 
@@ -38,14 +38,14 @@ Both allow browser requests without a key.
 | Vacant Property Indicators, buildings | City ArcGIS `Vacant_Indicators_Bldg` (9,519) | Strong signal, with `build_rank` | Irregular | Recalculated 2026-09-27; only 39% overlap with the original's self collected 2024 list |
 | June 2024 vacancy lists | Clean & Green Philly `land_backup_2024_06_24.parquet` (25,663 rows, from L&I) and `buildings_backup_2024_06_24.parquet` (9,955, self collected) | Validation labels and history | Frozen | Downloaded and checked 2026-10-04 |
 | L&I violations | Carto `violations` (2.02 million, 2007 onward) | Vacancy related violations per parcel | Daily | Live. Use `violations`, not the smaller `li_violations` |
-| L&I complaints | Carto `public_cases_fc` (5.96 million) | Complaint density | Daily | Live |
+| L&I complaints | Carto `complaints` (1,065,777; 2014 onward). `public_cases_fc` is the larger 311 request table | Complaint density, vacant lot complaints | Daily | Live |
 | L&I permits | Carto `permits` (937,116, 2007 onward) | A permit after sealing or demolition suggests reuse | Daily | Live |
 | Unsafe buildings | Carto `unsafe` (3,048) | Strong building signal | Daily | Live |
 | Imminently dangerous buildings | Carto `imm_dang` (123) | Strong building signal | Daily | Live |
-| Clean and seal | OpenDataPhilly "L&I Clean and Seal" (since 2016) | Strong building signal | Daily | Live; Carto table name to confirm |
-| Demolitions | OpenDataPhilly "Building Demolitions" (since 2017) | Lot created by demolition | Daily | Live |
+| Clean and seal | Carto `clean_seal` (107,228; 2006 onward) | Strong building signal | Daily | Live |
+| Demolitions | Carto `demolitions` (14,325; 2007 onward) | Lot created by demolition | Daily | Live |
 | L&I property history | OpenDataPhilly (since 2023) | Consolidated timeline per parcel | Daily | Live; not yet explored |
-| Building footprints | City ArcGIS `LI_BUILDING_FOOTPRINTS` | "No building on this parcel" | Not stated | Live |
+| Building footprints | City ArcGIS `LI_BUILDING_FOOTPRINTS` (546,049), read as ArcGIS Hub's bulk GeoJSON | "No building on this parcel" | Weekly | Live |
 | Vacant lot cleanups | OpenDataPhilly "Vacant Lot Cleanups" (Community Life Improvement Program) | City cleaned this lot | Not stated | Live |
 | Aerial photography | OpenDataPhilly, vintages 1996 to 2023 | Later: vegetation trend per lot | Every 1 to 3 years | Live |
 | USPS vacancy via HUD | huduser.gov (login for registered agencies and nonprofits) | Tract level context | Quarterly | Not used: needs a registered partner |
@@ -55,8 +55,8 @@ Both allow browser requests without a key.
 | Source | Endpoint | Use | Status |
 |---|---|---|---|
 | PHS LandCare | City ArcGIS `phs_landcare` (12,459) | Lots already cleaned and maintained | Live. The two older layer names in the original's docs are dead |
-| PHS and NGT supported gardens | `services2.arcgis.com/qjOOiLCYeUtwT7x7/.../PHS_NGT_Supported_Current_view` (216) | Gardens, never targeted as vacant | Live |
-| Registered community gardens | OpenDataPhilly (Parks and Recreation) | Gardens, cross checked with the above | Live |
+| PHS and NGT supported gardens | `services2.arcgis.com/qjOOiLCYeUtwT7x7/.../PHS_NGT_Supported_Current_view` (216) | Gardens, never targeted as vacant | Live. No license stated on PHS's item; credited, and worth confirming with PHS |
+| Registered community gardens | City ArcGIS `Registered_Community_Gardens` (23, Parks and Recreation) | Gardens, cross checked with the above | Live. Contact emails are not downloaded |
 | Parks and Recreation properties | City ArcGIS `PPR_Properties` (507) | Park land, never vacant | Live |
 | Green stormwater infrastructure | City ArcGIS `GSI_Public_Projects_Point` and related layers | Context | Live |
 
@@ -87,9 +87,9 @@ Both allow browser requests without a key.
 |---|---|---|---|
 | Council districts 2024 (City ArcGIS `Council_Districts_2024`) | Filters, contacts | City terms | Live |
 | Registered Community Organizations (City ArcGIS `Zoning_RCO`, 240) | Filters, who to talk to | City terms | Live |
-| Philadelphia neighborhoods (OpenDataPhilly GitHub, 150+) | Filters, names | CC BY 4.0 | Live |
+| Philadelphia neighborhoods (OpenDataPhilly GitHub, 159, by Abaca Labs) | Filters, names | CC BY 4.0 | Live |
 | Census tracts and block groups | Aggregation | Public domain | Live |
-| ACS 5 year 2020 to 2024 (`api.census.gov/data/2024/acs/acs5`) | Poverty rate (violence lens), renter share | CC0 | Live; a free Census API key is recommended |
+| ACS 5 year 2020 to 2024, table B17001 from the Census Bureau's table based summary file (`www2.census.gov`, 119 MB, no key) | Poverty rate (violence lens), renter share | CC0 | Live. The Census API now refuses requests without a key (checked 2026-10-04); a free key is an owner action if the API is wanted |
 | Tree canopy change 2008 to 2018 (City ArcGIS `TreeCanopyChange_2008_2018`) | Canopy deficit | City terms | Live, but old |
 | Tree Equity Score (American Forests) | Canopy gap per block group | Not stated | Stale since 2021 |
 | Market Value Analysis 2023 (City ArcGIS `mva_2023`, Reinvestment Fund) | Displacement watch | City terms | Live |

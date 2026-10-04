@@ -26,8 +26,19 @@ from placekeepers.context import Context
 from placekeepers.health import Check, evaluate
 from placekeepers.registry import Source
 from placekeepers.snapshots import SnapshotMeta
+from placekeepers.sql import quote_ident, quote_literal
 
 log = logging.getLogger(__name__)
+
+__all__ = [
+    "Adapter",
+    "AdapterMismatch",
+    "FetchError",
+    "Validation",
+    "measure",
+    "quote_ident",
+    "quote_literal",
+]
 
 
 class FetchError(RuntimeError):
@@ -48,14 +59,6 @@ class Validation:
     @property
     def ok(self) -> bool:
         return all(check.ok for check in self.checks)
-
-
-def quote_ident(name: str) -> str:
-    return '"' + name.replace('"', '""') + '"'
-
-
-def quote_literal(text: str) -> str:
-    return "'" + text.replace("'", "''") + "'"
 
 
 def measure(
@@ -81,6 +84,8 @@ class Adapter(ABC):
     kind: ClassVar[str]
     #: columns the snapshot must have before the map may use it
     required_columns: ClassVar[tuple[str, ...]] = ()
+    #: sources whose current snapshots this one's download needs (they are refreshed first)
+    depends_on: ClassVar[tuple[str, ...]] = ()
 
     def __init__(self, source: Source, ctx: Context):
         if source.endpoint.kind != self.kind:

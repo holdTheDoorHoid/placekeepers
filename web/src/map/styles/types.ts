@@ -12,6 +12,8 @@ export interface StyleContext {
   sourceId: string;
   /** Layer name inside a tile file; null for GeoJSON. */
   sourceLayer: string | null;
+  /** True when the map has label fonts (a base map with glyphs). Text labels need them. */
+  glyphs?: boolean;
 }
 
 export type LegendContext = Omit<StyleContext, 'sourceId' | 'sourceLayer'>;
