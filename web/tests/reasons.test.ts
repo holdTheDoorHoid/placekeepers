@@ -77,7 +77,7 @@ describe('the reasons a place shows', () => {
     ]);
     expect(placeReasons({ rs: bit('sealed') + bit('recent_permit'), sy: 2025 }, ctx)).toEqual({
       agree: ['Sealed by the City in 2025, with no permit since'],
-      doubt: ['A building permit was issued in the last two years'],
+      doubt: ['A permit for building work or zoning was issued in the last two years'],
     });
     expect(placeReasons({ rs: bit('built_since'), ny: '2023' }, ctx)!.doubt).toEqual([
       'A new construction permit was issued in 2023, so a building may stand there now',

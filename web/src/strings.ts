@@ -224,7 +224,7 @@ export const strings = {
         : 'A new construction permit was issued, so building may be starting',
     side_yard: 'The owner of the lived in house next door also owns it, so it may be a side yard',
     land_use_shows_use: "The City's land use map shows it in use",
-    recent_permit: 'A building permit was issued in the last two years',
+    recent_permit: 'A permit for building work or zoning was issued in the last two years',
     building_stands: 'A building footprint stands on it, although the records say vacant land',
   },
 

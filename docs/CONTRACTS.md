@@ -266,7 +266,7 @@ never change meaning once published. The id names each reason in the pipeline
 | 13 | 8192 | `construction_starting` | A new construction permit in `ny`: construction may be starting | against |
 | 14 | 16384 | `side_yard` | The owner of the lived in building next door also owns it: likely a side yard | against |
 | 15 | 32768 | `land_use_shows_use` | Planning's land use map shows a use other than vacant | against |
-| 16 | 65536 | `recent_permit` | A building, trade or zoning permit in the last two years | against |
+| 16 | 65536 | `recent_permit` | A permit for building work (alterations, trades, new construction) or zoning in the last two years | against |
 | 17 | 131072 | `building_stands` | A building footprint stands although records say vacant land | against |
 
 **`h3` (context.pmtiles)**: `h` (cell id), `s12` and `s36` (shooting victim counts), `f_*` (factor
