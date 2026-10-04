@@ -1,7 +1,7 @@
 Signal,Role,Parcels with signal,On City land list,Share on City land list,On City building list,Share of the City's 28531 lots with this signal
-OPA code says vacant land,core,46472,28166,61%,1167,99%
-"No building footprint (parks, gardens, parking, rail, utilities left out)",core,42640,25560,60%,1153,90%
-"Demolished, no new construction permit since",core,8356,4611,55%,242,16%
+OPA code says vacant land,core,39414,28085,71%,1162,98%
+"No building footprint (parks, gardens, parking, rail, utilities left out)",core,32099,25342,79%,1033,89%
+"Demolished, no new construction permit since",core,6949,4504,65%,226,16%
 "Vacant lot license violation or vacant lot complaint, last two years",core,9036,5412,60%,757,19%
 PHS LandCare lot,core,12068,11262,93%,207,39%
 Planning land use map (2023) says vacant,context,34690,26928,78%,1100,94%
@@ -9,5 +9,5 @@ Planning land use map (2023) says vacant,context,34690,26928,78%,1100,94%
 "Weeds, rubbish, sanitation or dumping violation, or high weeds complaint, last two years",context,37858,3886,10%,3852,14%
 "Demolished, new construction permit since",context,2218,326,15%,17,1%
 "Garden (PHS, NGT, registered or Parks and Recreation)",context,254,105,41%,1,0%
-Park (Parks and Recreation property),context,801,132,16%,8,0%
+Park (Parks and Recreation property),context,800,132,16%,8,0%
 Parking lot,context,532,41,8%,28,0%

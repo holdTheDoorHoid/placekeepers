@@ -1,8 +1,11 @@
 """The recommended vacancy rule set: kind, confidence and plain reasons for every parcel.
 
-Reads out/signals.parquet. Writes out/candidates.parquet and results/rule_counts.csv, including the
-counts if the City's indicator disappeared (scenario "no_city") and if Placekeepers kept the last
-City list it saw (scenario "last_copy").
+Reads out/signals.parquet. Writes out/candidates.parquet, results/rule_counts.csv (today, and the
+scenario "no_city" where the City's indicator has disappeared) and
+results/rule_transitions_without_city.csv (how each of today's parcels would move).
+
+If the indicator disappears, the recommendation is to keep the last City list for twelve months,
+labeled with its date, and then switch to the "no_city" rules.
 
 Rule summary (see docs/VACANCY_METHOD.md for the evidence behind each line):
 
@@ -12,7 +15,8 @@ Lots (no building on the parcel)
           or not on the City list but two or more independent signals including a physical one
           (no footprint or a demolition), nothing contradicting
   low     everything else with some lot evidence: the City list with at most one agreeing signal,
-          a single independent signal, or a new construction permit in the last five years
+          a single independent signal, or a new construction permit from October 2021 to March 2025
+          (a building probably stands now). A permit since April 2025 caps a lot at medium.
   never   parks, gardens, parking, rail, transportation, utilities, cemeteries, water and streets
 
 Buildings (a footprint stands on the parcel)
@@ -54,8 +58,9 @@ def classify_sql(city_land: str = "city_land", city_bldg: str = "city_bldg") -> 
         WHEN excluded_use IS NOT NULL THEN NULL
         -- lots
         WHEN {lot_kind} AND {lot_any} THEN CASE
-          WHEN coalesce(recent_newcon, false) THEN 'low'
-          WHEN {city_land} AND n_lot_signals >= 2 AND NOT coalesce(lu_developed, false) THEN 'high'
+          WHEN coalesce(newcon_probably_built, false) THEN 'low'
+          WHEN {city_land} AND n_lot_signals >= 2 AND NOT coalesce(lu_developed, false)
+               AND NOT coalesce(newcon_planned, false) THEN 'high'
           WHEN {city_land} AND n_lot_signals >= 2 THEN 'medium'
           WHEN NOT {city_land} AND n_lot_signals >= 2 AND {PHYSICAL_LOT} AND NOT coalesce(lu_developed, false) THEN 'medium'
           ELSE 'low' END
@@ -89,7 +94,9 @@ REASONS_SQL = """
     CASE WHEN idang_no_permit THEN 'declared imminently dangerous' END,
     CASE WHEN bldg_li_2y THEN 'vacant property violation or complaint since October 2024' END,
     CASE WHEN opa_ext_vacant THEN 'the assessor noted a vacant or sealed exterior' END,
-    CASE WHEN recent_newcon THEN 'new construction permit since October 2021' END,
+    CASE WHEN newcon_probably_built THEN 'new construction permit in ' || year(newcon_last) || ', a building may stand now' END,
+    CASE WHEN newcon_planned THEN 'new construction permit in ' || year(newcon_last) || ', construction may be starting' END,
+    CASE WHEN side_yard_likely THEN 'the owner of the lived in building next door also owns it, likely a side yard' END,
     CASE WHEN lu_developed THEN 'the 2023 land use map shows a use other than vacant' END,
     CASE WHEN recent_permit THEN 'a building or trade permit since October 2024' END
   ) AS reasons
@@ -102,7 +109,7 @@ def main() -> None:
     con.execute(f"""
         CREATE TABLE c AS
         SELECT opa, address, lat, lon, opa_lat, opa_lon, city_land, city_bldg, land_rank, build_rank,
-               n_lot_signals, n_bldg_signals, excluded_use, has_footprint,
+               n_lot_signals, n_bldg_signals, excluded_use, has_footprint, side_yard_likely,
                {classify_sql()},
                {REASONS_SQL}
         FROM s

@@ -1,8 +1,12 @@
-kind,stratum,parcels,empty or green lot,building present,parking,garden or park,unclear
-building,both,13,0,13,0,0,0
-building,city_only,13,3,10,0,0,0
-building,indep_only,14,0,13,0,0,1
-lot,both,13,13,0,0,0,0
-lot,city_only,13,5,5,2,1,0
-lot,indep_only_1,7,1,4,0,0,2
-lot,indep_only_2plus,7,1,2,2,0,2
+round,kind,stratum,parcels,empty or green lot,building present,parking,garden or park,unclear,expected look,"matches (unclear counted against, then for)","95% interval, unclear against","95% interval, unclear for"
+1,building,both,13,0,13,0,0,0,building present,13 to 13 of 13,77 to 100%,77 to 100%
+1,building,city_only,13,3,10,0,0,0,building present,10 to 10 of 13,50 to 92%,50 to 92%
+1,building,indep_only,14,0,13,0,0,1,building present,13 to 14 of 14,69 to 99%,78 to 100%
+1,lot,both,13,12,0,0,0,1,empty or green lot,12 to 13 of 13,67 to 99%,77 to 100%
+1,lot,city_only,13,5,5,2,1,0,empty or green lot,5 to 5 of 13,18 to 64%,18 to 64%
+1,lot,indep_only_1,7,1,4,0,0,2,empty or green lot,1 to 3 of 7,3 to 51%,16 to 75%
+1,lot,indep_only_2plus,7,1,2,2,0,2,empty or green lot,1 to 3 of 7,3 to 51%,16 to 75%
+2,building,city_building_without_footprint,7,7,0,0,0,0,empty or green lot,7 to 7 of 7,65 to 100%,65 to 100%
+2,lot,city_lot_with_recent_newcon,8,7,0,0,0,1,empty or green lot,7 to 8 of 8,53 to 98%,68 to 100%
+2,lot,lot_high,5,4,0,0,0,1,empty or green lot,4 to 5 of 5,38 to 96%,57 to 100%
+2,lot,lot_medium_not_on_city_list,15,11,1,1,0,2,empty or green lot,11 to 13 of 15,48 to 89%,62 to 96%

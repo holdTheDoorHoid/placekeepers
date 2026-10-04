@@ -17,6 +17,8 @@ from common import CACHE, LIST_2024_DATE, OUT, TODAY, TWO_YEARS_AGO, connect, op
 FP_LINKED_MIN_M2 = 10.0
 
 CS_RECENT_SINCE = "2021-10-04"  # five years before the study date
+DEMO_TRUST_SINCE = "2023-01-01"  # demolitions since then count even if OPA still describes a building
+NEWCON_PLANNED_SINCE = "2025-04-04"  # eighteen months before the study date
 
 # The independent signals counted for each kind. The City's own lists are not in these sets.
 LOT_SIGNALS = ["opa_vacant_land", "no_footprint", "demo_no_newcon", "lot_li_2y", "in_landcare"]
@@ -206,6 +208,40 @@ def main() -> None:
         GROUP BY 1
     """)
 
+    # --- likely side yards: a private owner who also owns the lived in building next door ----------
+    # Philadelphia numbers each side of a street by twos, so the neighbors of 1234 are 1232 and 1236.
+    # Ranges such as 1837-39 cover every number in between.
+    q(f"""
+        CREATE TABLE addr AS
+        WITH parsed AS (
+          SELECT opa, upper(trim(owner_1)) AS own, coalesce(livable_sqft, 0) > 0 AS lived_in,
+                 regexp_extract(address, '^([0-9]+)(-[0-9]+)?[A-Z]? +(.+)$', 3) AS street,
+                 TRY_CAST(regexp_extract(address, '^([0-9]+)', 1) AS INT) AS lo,
+                 regexp_extract(address, '^[0-9]+-([0-9]+)', 1) AS hi_tail
+          FROM opa WHERE address IS NOT NULL AND unit IS NULL
+        )
+        SELECT opa, own, lived_in, street, lo,
+               CASE WHEN hi_tail = '' OR hi_tail IS NULL THEN lo
+                    ELSE TRY_CAST(left(CAST(lo AS VARCHAR), length(CAST(lo AS VARCHAR)) - length(hi_tail)) || hi_tail AS INT)
+               END AS hi
+        FROM parsed WHERE street <> '' AND lo IS NOT NULL
+    """)
+    q("""
+        CREATE TABLE addr_n AS
+        SELECT opa, own, lived_in, street, unnest(generate_series(lo, greatest(lo, coalesce(hi, lo)), 2)) AS n
+        FROM addr WHERE coalesce(hi, lo) - lo BETWEEN 0 AND 40
+    """)
+    q("""
+        CREATE TABLE side_yard AS
+        SELECT a.opa, true AS side_yard_likely
+        FROM addr a JOIN addr_n b
+          ON b.street = a.street AND (b.n = a.lo - 2 OR b.n = coalesce(a.hi, a.lo) + 2)
+         AND b.opa <> a.opa AND b.own = a.own AND b.lived_in
+        WHERE a.own IS NOT NULL
+          AND NOT regexp_matches(a.own, 'CITY OF PHILA|LAND BANK|REDEVELOPMENT|HOUSING AUTH|PHILA HOUSING|PHDC|PHILADELPHIA HOUSING DEV|COMMONWEALTH|SCHOOL DIST')
+        GROUP BY a.opa
+    """)
+
     # --- assemble one row per OPA account ---------------------------------------------------------
     q("""
         CREATE TABLE s AS
@@ -216,7 +252,8 @@ def main() -> None:
                la.lc_program_attr,
                cs.cs_last, cs.cs_n, demo.demo_last, demo.demo_city, demo.demo_types,
                un.unsafe_since, idg.idang_since,
-               pm_by.* EXCLUDE (opa), v_by.* EXCLUDE (opa), c_by.* EXCLUDE (opa), deeds_by.* EXCLUDE (opa)
+               pm_by.* EXCLUDE (opa), v_by.* EXCLUDE (opa), c_by.* EXCLUDE (opa), deeds_by.* EXCLUDE (opa),
+               coalesce(sy.side_yard_likely, false) AS side_yard_likely
         FROM opa o
         LEFT JOIN sp USING (opa)
         LEFT JOIN city_land cl USING (opa)
@@ -232,6 +269,7 @@ def main() -> None:
         LEFT JOIN v_by USING (opa)
         LEFT JOIN c_by USING (opa)
         LEFT JOIN deeds_by USING (opa)
+        LEFT JOIN side_yard sy USING (opa)
     """)
     missing = q("""
         SELECT count(*) FROM (SELECT opa FROM city_land UNION SELECT opa FROM city_bldg
@@ -282,11 +320,19 @@ def main() -> None:
           -- no footprint counts only where OPA does not describe a lived in building, because the
           -- footprint layer has gaps under some occupied houses (spot check round 1)
           (has_footprint = false AND excluded_use IS NULL AND area_m2 >= 20 AND NOT opa_says_building) AS no_footprint,
-          -- a demolition counts only if nothing was built after it
+          -- a demolition counts only if nothing was built after it. OPA is slow to recode demolished
+          -- houses (41 percent of 2024 City demolitions are still described as houses), so a recent
+          -- demolition counts even when OPA still describes a building; an older one does not.
           (demo_last IS NOT NULL AND (newcon_last IS NULL OR newcon_last < demo_last)
-             AND NOT coalesce(year_built >= year(demo_last), false) AND NOT opa_says_building) AS demo_no_newcon,
+             AND NOT coalesce(year_built >= year(demo_last), false)
+             AND (demo_last >= DATE '{DEMO_TRUST_SINCE}' OR NOT opa_says_building)) AS demo_no_newcon,
           -- contradictions that lower confidence
           (newcon_last >= DATE '{CS_RECENT_SINCE}' AND (demo_last IS NULL OR newcon_last >= demo_last)) AS recent_newcon,
+          -- a new construction permit from October 2021 to March 2025 probably has a building by now
+          -- (spot check round 1); one from April 2025 on means construction is planned or starting
+          (newcon_last >= DATE '{CS_RECENT_SINCE}' AND newcon_last < DATE '{NEWCON_PLANNED_SINCE}'
+             AND (demo_last IS NULL OR newcon_last >= demo_last)) AS newcon_probably_built,
+          (newcon_last >= DATE '{NEWCON_PLANNED_SINCE}' AND (demo_last IS NULL OR newcon_last >= demo_last)) AS newcon_planned,
           (lu_c2 IS NOT NULL AND lu_c2 NOT IN (91, 92)) AS lu_developed,
           (activity_last >= DATE '{TWO_YEARS_AGO}') AS recent_permit,
           (demo_last IS NOT NULL AND newcon_last >= demo_last) AS demo_then_newcon,

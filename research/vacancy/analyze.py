@@ -160,6 +160,22 @@ def main() -> None:
     rows.append(["Standing building with at least one independent building signal", n])
     write("not_on_city_lists", ["Independent evidence, parcel on neither City list", "Parcels"], rows)
 
+    # ---------------------------------------------------------------- freshness: recent demolitions
+    # A lot created by demolition since June 2024 should appear on a fresh land list. Does it, and
+    # does that track OPA recoding the parcel as vacant land?
+    rows = []
+    for half, n, on_land, on_bldg, opa_vl, fp in con.execute("""
+        SELECT year(demo_last) || CASE WHEN month(demo_last) <= 6 THEN ' first half' ELSE ' second half' END,
+               count(*), count(*) FILTER (WHERE city_land), count(*) FILTER (WHERE city_bldg),
+               count(*) FILTER (WHERE opa_vacant_land), count(*) FILTER (WHERE has_footprint)
+        FROM s WHERE demo_last >= DATE '2024-01-01' AND demo_last IS NOT NULL
+             AND (newcon_last IS NULL OR newcon_last < demo_last)
+        GROUP BY 1 ORDER BY 1""").fetchall():
+        rows.append([half, n, f"{on_land} ({pct(on_land, n)})", on_bldg, f"{opa_vl} ({pct(opa_vl, n)})", f"{fp} ({pct(fp, n)})"])
+    write("freshness_recent_demolitions",
+          ["Demolished", "Parcels (no new construction permit since)", "On City land list 2026",
+           "On City building list 2026", "OPA says vacant land now", "Footprint still in the footprint layer"], rows)
+
     # ---------------------------------------------------------------- churn since June 2024
     since = f"DATE '{LIST_2024_DATE}'"
     measures = [

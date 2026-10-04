@@ -17,18 +17,28 @@ from common import OUT, connect
 
 
 def main(codes: list[str]) -> None:
-    key = {r["crop"].removesuffix(".jpg"): r["opa"] for r in csv.DictReader(open(OUT / "spot_sample.csv"))}
+    key = {}
+    for name in ("spot_sample.csv", "spot_sample_round2.csv"):
+        if (OUT / name).exists():
+            key.update({r["crop"].removesuffix(".jpg"): r["opa"] for r in csv.DictReader(open(OUT / name))})
     con = connect(memory="800MB")
     for code in codes:
         opa = key[code]
         blobs = con.execute(
             f"SELECT wkb FROM read_parquet('{OUT / 'parcel_spatial.parquet'}') WHERE opa = ?", [opa]).fetchall()
         geom = unary_union([shapely_wkb.loads(bytes(b[0])) for b in blobs])
-        info = crop_tight(geom, OUT / "crops" / f"zoom_{code}.jpg")
+        # neighboring parcel lines, drawn thin in cyan, to show how the parcel grid sits on the roofs
+        minx, miny, maxx, maxy = geom.bounds
+        pad = 0.0006
+        neighbors = [shapely_wkb.loads(bytes(b[0])) for b in con.execute(
+            f"""SELECT wkb FROM read_parquet('{OUT / 'parcel_spatial.parquet'}')
+                WHERE lon BETWEEN ? AND ? AND lat BETWEEN ? AND ? AND coalesce(opa, '') <> ?""",
+            [minx - pad, maxx + pad, miny - pad, maxy + pad, opa]).fetchall()]
+        info = crop_tight(geom, OUT / "crops" / f"zoom_{code}.jpg", neighbors)
         print(code, info)
 
 
-def crop_tight(geom, path):
+def crop_tight(geom, path, neighbors=()):
     # Same as spot_sample.crop_for, but a tighter frame at zoom 21.
     import math
     from PIL import Image, ImageDraw
@@ -48,6 +58,10 @@ def crop_tight(geom, path):
             mosaic.paste(ss.fetch_tile(z, tx, ty), ((tx - tx0) * 256, (ty - ty0) * 256))
     img = mosaic.crop((int(px0 - tx0 * 256), int(py0 - ty0 * 256), int(px1 - tx0 * 256), int(py1 - ty0 * 256)))
     draw = ImageDraw.Draw(img)
+    for n in neighbors:
+        for poly in (list(n.geoms) if n.geom_type == "MultiPolygon" else [n]):
+            pts = [ss.lonlat_to_px(x, y, z) for x, y in poly.exterior.coords]
+            draw.line([(x - px0, y - py0) for x, y in pts], fill=(0, 230, 255), width=1)
     for poly in (list(geom.geoms) if geom.geom_type == "MultiPolygon" else [geom]):
         pts = [ss.lonlat_to_px(x, y, z) for x, y in poly.exterior.coords]
         draw.line([(x - px0, y - py0) for x, y in pts], fill=(255, 220, 0), width=2)
