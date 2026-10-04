@@ -16,5 +16,5 @@ export interface ChipDef {
 export const FIELD_CHIPS: ChipDef[] = [
   { id: 'lots', label: strings.chips.lots, layers: ['vacant_parcels'] },
   { id: 'streets', label: strings.chips.streets, layers: ['hin_2025'] },
-  { id: 'memorials', label: strings.chips.memorials, layers: ['memorials'], soon: strings.chips.memorialsSoon },
+  { id: 'memorials', label: strings.chips.memorials, layers: ['memorials'] },
 ];

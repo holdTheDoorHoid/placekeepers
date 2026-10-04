@@ -131,6 +131,12 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
             target = staging / geojson_name(layer.file, layer.source_layer)
             built = builder.build(ctx, paths, target, as_of)
             notes.extend(built.notes)
+            if built.features == 0:
+                # An empty layer would make tippecanoe leave it out and fail the whole tile file.
+                target.unlink(missing_ok=True)
+                notes.append(f"{layer.id} has nothing to show yet")
+                log.warning("publish: %s has no features", layer.id)
+                continue
             result.features[f"{layer.file} {layer.source_layer}"] = built.features
             log.info(
                 "publish: %s layer %s has %s features",

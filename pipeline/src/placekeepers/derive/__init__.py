@@ -1,1 +1,2 @@
-"""Derived data: what the pipeline concludes from the sources (the vacancy model first)."""
+"""Derive: turn snapshots into the facts the map shows (the vacancy model, street safety, memorials,
+lens factors, suggestions, aggregates)."""

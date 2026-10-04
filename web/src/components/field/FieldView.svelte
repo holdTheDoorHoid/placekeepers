@@ -10,6 +10,7 @@
   import Dialog from '../common/Dialog.svelte';
   import LayerList from '../layers/LayerList.svelte';
   import PlaceCard from '../places/PlaceCard.svelte';
+  import FeatureDetails from '../streets/FeatureDetails.svelte';
 
   let { store }: { store: AppStore } = $props();
 
@@ -138,6 +139,14 @@
 
 <Dialog bind:open={layersOpen} title={strings.field.layersTitle} id="pk-field-layers">
   <LayerList {store} idPrefix="field" />
+</Dialog>
+
+<Dialog
+  bind:open={() => store.inspected !== null, (open) => !open && store.inspect(null)}
+  title={strings.streets.detailsTitle(store.registry.layers.find((l) => l.id === store.inspected?.layerId)?.style ?? '')}
+  id="pk-field-feature"
+>
+  {#if store.inspected}<FeatureDetails {store} target={store.inspected} />{/if}
 </Dialog>
 
 <style>

@@ -167,6 +167,10 @@ def test_vacancy_violations_come_for_the_whole_city_without_repeats(
 # ArcGIS
 def arcgis_value(name: str, kind: str, n: int) -> object:
     lower = name.lower()
+    if lower == "crash_year":
+        return 2024
+    if lower in ("crash_month", "crash_mont"):
+        return 12
     if kind in ("OID", "Integer", "SmallInteger"):
         return n
     if kind == "Double":

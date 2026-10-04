@@ -171,3 +171,98 @@
       type: toggle
       default: true
   release: v0.1
+- id: segments
+  label: Street safety, block by block
+  group: streets
+  description: >-
+    Each street block colored by the street safety lens: whether it is on the High Injury Network,
+    how many people were killed or seriously injured there while walking or cycling in the five
+    most recent years of PennDOT records, whether someone was killed there in the last two years,
+    and whether a school is within 400 meters. Move the lens sliders to change the blend.
+  sources: [street_centerlines, high_injury_network, crashes_2020_2024, fatal_crashes, schools]
+  file: tiles/streets.pmtiles
+  source_layer: segments
+  geometry: line
+  style: street_segments
+  evidence: context
+  default: {field: false, analysis: true}
+  settings:
+    - id: min_score
+      label: Show blocks that score at least
+      type: choice
+      options:
+        - {value: "1", label: Any score above zero}
+        - {value: "20", label: 20 out of 100}
+        - {value: "40", label: 40 out of 100}
+        - {value: "60", label: 60 out of 100}
+      default: "20"
+  release: v0.1
+- id: crashes
+  label: Crashes
+  group: streets
+  description: >-
+    Crashes reported to PennDOT in Philadelphia from 2015 to 2024, colored by how badly people
+    were hurt. Choose the years, how badly people were hurt, and who was involved. PennDOT's
+    records arrive about a year after the crashes, so the most recent deaths appear as memorials
+    instead.
+  sources: [crashes_2020_2024, crashes_2016_2020, crashes_2007_2017]
+  file: tiles/streets.pmtiles
+  source_layer: crashes
+  geometry: point
+  style: crashes
+  evidence: context
+  default: {field: false, analysis: false}
+  settings:
+    - id: years
+      label: Years
+      type: choice
+      options:
+        - {value: latest, label: The most recent year of records}
+        - {value: recent, label: The most recent five years}
+        - {value: all, label: Every year since 2015}
+      default: recent
+    - id: severity
+      label: How badly people were hurt
+      type: choice
+      options:
+        - {value: "3", label: Someone was killed}
+        - {value: "2", label: Someone was killed or seriously injured}
+        - {value: "1", label: Someone was injured}
+        - {value: "0", label: Every crash}
+      default: "2"
+    - id: mode
+      label: Who was involved
+      type: choice
+      options:
+        - {value: all, label: Everyone}
+        - {value: walk_cycle, label: People walking or cycling}
+        - {value: walk, label: People walking}
+        - {value: cycle, label: People cycling}
+        - {value: motorcycle, label: People on motorcycles}
+      default: all
+  release: v0.1
+- id: memorials
+  label: Memorials
+  group: streets
+  description: >-
+    People killed on our streets while walking, cycling or riding a scooter, from the Police
+    Department's records of deaths in traffic crashes since 2019, each marked quietly where it
+    happened. A name appears only when a public memorial list already shares it, and anyone can
+    ask for a name or a marker to be removed.
+  sources: [fatal_crashes, memorial_names]
+  file: tiles/streets.pmtiles
+  source_layer: memorials
+  geometry: point
+  style: memorials
+  evidence: context
+  default: {field: true, analysis: true}
+  settings:
+    - id: show_names
+      label: Show names
+      type: toggle
+      default: true
+    - id: all_fatal
+      label: Also remember people killed in cars and on motorcycles
+      type: toggle
+      default: false
+  release: v0.1

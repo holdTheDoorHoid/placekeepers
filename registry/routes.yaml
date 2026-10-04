@@ -49,3 +49,44 @@
     - {label: Philly311, url: "https://www.phila.gov/services/property-lots-housing/submit-a-service-request-with-311/"}
   last_checked: 2026-10-04
   status: verified
+- id: ghost_bike_request
+  label: Ask the Bicycle Coalition about a ghost bike or memorial
+  who: The family, or friends with the family's blessing
+  steps:
+    - Talk with the family first. A memorial goes up only with their blessing.
+    - For a person killed while cycling, fill in the Bicycle Coalition's ghost bike request form. The same form asks for a ghost bike to be repaired or replaced.
+    - Families for Safe Streets, run by the Bicycle Coalition, supports families after a crash and shares a post crash resource guide.
+    - Plan who will care for the memorial over time.
+  cost: Free to request
+  timeline: Not stated
+  links:
+    - {label: "Bicycle Coalition: what is a ghost bike", url: "https://bicyclecoalition.org/what-is-a-ghost-bike/"}
+    - {label: Ghost bike request form, url: "https://forms.gle/HBtY1hG4xcdVJKNb8"}
+    - {label: Families for Safe Streets Greater Philadelphia, url: "https://bicyclecoalition.org/programs/families-for-safe-streets/"}
+  last_checked: 2026-10-04
+  status: verified
+- id: traffic_calming_request
+  label: Request traffic calming for a residential street
+  who: Residents of the block, mainly for the street where they live
+  steps:
+    - Check whether the street qualifies on the City's traffic calming map, or by calling 311.
+    - Send the City's online traffic calming request.
+    - If the City selects the request, collect signatures from 60 percent of the households on the block, one per household.
+  cost: Free to request
+  timeline: The City scores requests three times a year and usually installs speed cushions from May to October
+  links:
+    - {label: "City of Philadelphia: request traffic calming", url: "https://www.phila.gov/services/streets-sidewalks-alleys/request-traffic-calming-for-a-residential-street/"}
+  last_checked: 2026-10-04
+  status: verified
+- id: otis_contact
+  label: Ask the City's transportation office (OTIS)
+  who: Anyone
+  steps:
+    - Write to the Office of Transportation and Infrastructure Systems at otis@phila.gov, naming the corner and what you see there.
+    - Ask what the City allows at this corner and how to request it.
+  cost: Free
+  timeline: Not stated
+  links:
+    - {label: Vision Zero Philadelphia, url: "https://visionzerophl.com/"}
+  last_checked: 2026-10-04
+  status: confirm

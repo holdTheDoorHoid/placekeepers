@@ -87,6 +87,8 @@ class ArcgisAdapter(Adapter):
     #: when set, only these fields (exact service names) are requested and kept, so fields we must
     #: not hold, such as personal phone numbers, are never downloaded
     out_fields: ClassVar[tuple[str, ...] | None] = None
+    #: an ArcGIS where clause that limits which features are downloaded (and counted)
+    query_where: ClassVar[str] = "1=1"
 
     @property
     def endpoint(self) -> ArcgisEndpoint:
@@ -101,7 +103,7 @@ class ArcgisAdapter(Adapter):
     def count(self) -> int:
         data = self.ctx.http.get_json(
             f"{self.layer_url}/query",
-            {"where": "1=1", "returnCountOnly": "true", "f": "json"},
+            {"where": self.query_where, "returnCountOnly": "true", "f": "json"},
             check=check_arcgis,
         )
         return int(data["count"])
@@ -133,7 +135,7 @@ class ArcgisAdapter(Adapter):
             data = http.get_json(
                 f"{self.layer_url}/query",
                 {
-                    "where": "1=1",
+                    "where": self.query_where,
                     "outFields": ",".join(self.out_fields) if self.out_fields else "*",
                     "returnGeometry": "true",
                     "outSR": "4326",

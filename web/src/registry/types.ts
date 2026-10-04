@@ -17,7 +17,7 @@ export type EndpointKind = (typeof ENDPOINT_KINDS)[number];
 export const URL_FORMATS = ['csv', 'geojson', 'parquet', 'zip'] as const;
 export type UrlFormat = (typeof URL_FORMATS)[number];
 
-export const APPLIES_TO = ['parcel', 'segment', 'stop', 'cell'] as const;
+export const APPLIES_TO = ['parcel', 'segment', 'crash', 'stop', 'cell'] as const;
 export type AppliesTo = (typeof APPLIES_TO)[number];
 
 export const SETTING_TYPES = ['toggle', 'choice', 'range'] as const;

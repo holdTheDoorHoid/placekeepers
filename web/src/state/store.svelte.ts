@@ -2,7 +2,7 @@
 // fields marked $state, so the map, the panels and the address bar all follow changes.
 
 import type { Manifest } from '../data/manifest.ts';
-import type { LayerStatus, MapController, ParcelInView } from '../map/controller.ts';
+import type { InspectTarget, LayerStatus, MapController, ParcelInView } from '../map/controller.ts';
 import type { Registry, SettingValue, ViewName } from '../registry/types.ts';
 import {
   clampWeight,
@@ -36,6 +36,8 @@ export class AppStore {
   controller = $state.raw<MapController | null>(null);
   parcelsInView = $state.raw<ParcelInView[]>([]);
   selectedProperties = $state.raw<Record<string, unknown> | null>(null);
+  /** A memorial, crash or street block someone tapped, shown in the details panel. */
+  inspected = $state.raw<InspectTarget | null>(null);
   /** Short messages read out by screen readers and shown briefly on screen. */
   message = $state('');
 
@@ -135,6 +137,13 @@ export class AppStore {
   select(id: string | null, properties: Record<string, unknown> | null = null): void {
     this.state.selected = id;
     this.selectedProperties = properties;
+    if (id) this.inspected = null;
+  }
+
+  /** Shows a tapped memorial, crash or street block, or clears it. A parcel selection gives way. */
+  inspect(target: InspectTarget | null): void {
+    this.inspected = target && target.features.length ? target : null;
+    if (this.inspected) this.select(null);
   }
 
   /** Replaces everything at once, for a link pasted into an open tab. */

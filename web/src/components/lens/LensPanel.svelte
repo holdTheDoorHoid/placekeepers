@@ -31,7 +31,7 @@
     </div>
   {/if}
 
-  {#if allOff}<p class="notice" role="status">{strings.lens.allOff}</p>{/if}
+  {#if allOff}<p class="notice" role="status">{strings.lens.allOffFor(lens.applies_to)}</p>{/if}
 
   {#each lens.factors as factor (factor.id)}
     {@const w = weights[factor.id] ?? factor.default_weight}
