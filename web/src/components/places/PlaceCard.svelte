@@ -42,15 +42,25 @@
   {:else}
     <p class="muted">{strings.place.noSuggestion}</p>
   {/if}
-  <button
-    class="button small"
-    type="button"
-    onclick={() => {
-      store.select(place.id, place.properties);
-      store.controller?.flyTo(place.center);
-      onShow?.();
-    }}>{strings.sheet.showOnMap}</button
-  >
+  <div class="buttons">
+    <button
+      class="button small primary"
+      type="button"
+      onclick={() => {
+        store.select(place.id, place.properties, { center: place.center });
+        store.controller?.flyTo(place.center);
+      }}>{strings.sheet.openLotPage}</button
+    >
+    <button
+      class="button small"
+      type="button"
+      onclick={() => {
+        store.select(place.id, place.properties, { center: place.center, open: false });
+        store.controller?.flyTo(place.center);
+        onShow?.();
+      }}>{strings.sheet.showOnMap}</button
+    >
+  </div>
 </article>
 
 <style>
@@ -79,5 +89,10 @@
   }
   p {
     font-size: 0.95rem;
+  }
+  .buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
   }
 </style>

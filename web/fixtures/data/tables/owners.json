@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "generated_at": "2026-10-04T10:03:12Z",
+  "min_parcels": 5,
+  "owners": {
+    "3f2a9c1b7d04": {
+      "names": [
+        "EXAMPLE HOLDINGS LLC"
+      ],
+      "parcels": [
+        {
+          "id": "990000004",
+          "address": "1301 N EXAMPLE AVE",
+          "kind": "building",
+          "confidence": "medium"
+        },
+        {
+          "id": "990000008",
+          "address": "1305 N EXAMPLE AVE",
+          "kind": "building",
+          "confidence": "high"
+        },
+        {
+          "id": "990000017",
+          "address": "1307 N EXAMPLE AVE",
+          "kind": "lot",
+          "confidence": "medium"
+        },
+        {
+          "id": "990000019",
+          "address": "1309 N EXAMPLE AVE",
+          "kind": "building",
+          "confidence": "high"
+        },
+        {
+          "id": "990000021",
+          "address": "1311 N EXAMPLE AVE",
+          "kind": "lot",
+          "confidence": "medium"
+        },
+        {
+          "id": "990000024",
+          "address": "1313 N EXAMPLE AVE",
+          "kind": "building",
+          "confidence": "high"
+        },
+        {
+          "id": "990000028",
+          "address": "1315 N EXAMPLE AVE",
+          "kind": "lot",
+          "confidence": "high"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,16 @@
+# App wide options: choices about how the whole site behaves, not tied to one map layer. Every
+# option appears in Settings. Options are personal: each is kept only in the browser of the person
+# who set it and is never put in a shared link, so a link can never turn on something a person
+# turned off. See docs/CONTRACTS.md section 1.
+- id: live_city_data
+  label: Fetch live City data
+  description: >-
+    When you open a lot page or search for an address, your browser asks the City of
+    Philadelphia's public servers for the newest records: the owner, sales, assessments and
+    inspections. These requests go straight from your device to the City, never through
+    Placekeepers, and the City's servers see them as they would see a visit to the City's own
+    property website. Turn this off to use only the weekly copy of the data that Placekeepers
+    publishes. Address search and opening a parcel that is not on our list need it on.
+  type: toggle
+  default: true
+  release: v0.1

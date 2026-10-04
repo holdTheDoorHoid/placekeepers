@@ -39,7 +39,8 @@
         manifest: store.manifest,
         events: {
           move: (position) => store.setMap(position),
-          select: (id, properties) => store.select(id, properties),
+          select: (id, properties, lngLat) => store.select(id, properties, { center: lngLat ?? null }),
+          pick: (lngLat) => void store.pickAt(lngLat),
           inspect: (target) => store.inspect(target),
           idle: refreshFromMap,
           layerStatus: (id, status) => (store.layerStatus = { ...store.layerStatus, [id]: status }),
@@ -69,11 +70,26 @@
     const inspected = store.inspected;
     store.controller?.setInspected(inspected);
   });
+
+  // After a search by parcel number, fly there once the parcel's place is known.
+  $effect(() => {
+    const center = store.dossier.center;
+    if (!store.flyToSelection || !center || !store.controller) return;
+    store.flyToSelection = false;
+    store.controller.flyTo(center);
+  });
+
+  // A parcel opened by a lookup (not from the lots layer) is outlined from its City shape.
+  $effect(() => {
+    const shape = store.dossier.opa && !store.dossier.tile ? store.dossier.shape : null;
+    store.controller?.setSelectedShape(shape);
+  });
 </script>
 
 <div class="map-wrap">
   <div class="map" bind:this={container}></div>
   {#if loading}<p class="loading" role="status">{strings.app.loadingMap}</p>{/if}
+  {#if store.picking}<p class="notice picking" role="status">{strings.pick.looking}</p>{/if}
   {#if store.basemapMissing}<p class="notice basemap-note">{strings.basemap.missing}</p>{/if}
 </div>
 
@@ -96,6 +112,14 @@
     place-items: center;
     margin: 0;
     color: var(--pk-muted);
+  }
+  .picking {
+    position: absolute;
+    left: 50%;
+    top: 8px;
+    transform: translateX(-50%);
+    z-index: 2;
+    box-shadow: var(--pk-shadow);
   }
   .basemap-note {
     position: absolute;

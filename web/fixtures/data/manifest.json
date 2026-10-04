@@ -305,7 +305,23 @@
     "tiles/streets.segments.geojson": {
       "bytes": 6870,
       "sha256": "7dacd780736a10a2f3c8a2a3f28839491aa326d4936ae139bcf825c55d5d3c35"
+    },
+    "dossiers/common.json": {
+      "bytes": 6245,
+      "sha256": "25c0ce8076335787e813edca97d94214f650832dd87fe9199e239d2c92ef8ecd"
+    },
+    "tables/owners.json": {
+      "bytes": 1279,
+      "sha256": "14ee4ed8f01714f174c4c98afb31c045d9577bdeeb1e7f3159a7d54377363ace"
     }
+  },
+  "dossiers": {
+    "prefix_digits": 4,
+    "prefixes": [
+      "9900"
+    ],
+    "files": 1,
+    "bytes": 21907
   },
   "notes": [
     "This is synthetic sample data for testing the map.",

@@ -166,6 +166,23 @@ const SCHEMAS: Record<keyof Registry, Fields> = {
     status: str({ oneOf: ROUTE_STATUSES }),
   },
   partners: { id: id(), name: text(), url: url(), one_line: text() },
+  options: {
+    id: id(),
+    label: text(),
+    description: text(),
+    type: str({ oneOf: SETTING_TYPES }),
+    default: { t: 'any' },
+    options: {
+      t: 'objects',
+      optional: true,
+      nonEmpty: true,
+      fields: { value: str({ allowEmpty: true }), label: text() },
+    },
+    min: { t: 'number', optional: true },
+    max: { t: 'number', optional: true },
+    step: { t: 'number', optional: true, min: 0 },
+    release: release(),
+  },
 };
 
 const ENDPOINT_REQUIRED: Record<string, string[]> = {
@@ -418,6 +435,12 @@ export function validateRegistry(raw: RawRegistryFiles, options: ValidateOptions
         if (!factorIds.has(factor)) errors.push(`${where} preset "${preset.id}" names an unknown factor "${factor}"`);
       }
     }
+  }
+
+  for (const option of reg.options) {
+    // An app wide option follows the same rules for each type as a layer setting.
+    checkSetting(option as unknown as Record<string, unknown>, `options.yaml entry "${option.id}"`, errors);
+    if (option.type === 'range' && option.step === undefined) option.step = 1;
   }
 
   for (const suggestion of reg.suggestions) {

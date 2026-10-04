@@ -214,14 +214,17 @@ describe('finding each layer\'s file', () => {
     expect(resolveLayerData(layer('hin_2025'), m, base)).toMatchObject({ ok: false, reason: 'unsupported' });
   });
 
-  it('lists exactly the files in the fixture data root', () => {
+  it('lists exactly the files in the fixture data root, the dossier shards by prefix', () => {
     const { manifest } = parseManifest(fixtureJson);
     const onDisk = readdirSync(FIXTURE_ROOT, { recursive: true, withFileTypes: true })
       .filter((d) => d.isFile())
       .map((d) => relative(FIXTURE_ROOT.pathname, `${d.parentPath}/${d.name}`))
       .filter((p) => p !== 'manifest.json')
       .sort();
-    expect(Object.keys(manifest!.files).sort()).toEqual(onDisk);
+    const shard = /^dossiers\/(\d+)\.json$/;
+    expect(Object.keys(manifest!.files).sort()).toEqual(onDisk.filter((p) => !shard.test(p)));
+    const prefixes = onDisk.map((p) => shard.exec(p)?.[1]).filter((p): p is string => !!p);
+    expect([...manifest!.dossiers!.prefixes].sort()).toEqual(prefixes);
   });
 
   it('points every fixture layer at a file that exists, using both file types', () => {

@@ -234,3 +234,17 @@ def test_setting_keys_follow_their_type(
         [found] = problems(repo_copy)
         assert found.startswith("registry/layers.yaml: entry 2 (hin_2025): settings.0")
         assert problem in found
+
+
+def test_app_options_are_checked_like_settings(repo_copy: Path) -> None:
+    """registry/options.yaml: app wide options with a description (docs/CONTRACTS.md section 1)."""
+    registry = load_registry(repo_copy / "registry", repo_root=repo_copy)
+    assert registry.options["live_city_data"].default is True
+
+    edit(repo_copy, "options", lambda options: options[0].update(default="on", colour="red"))
+    found = problems(repo_copy)
+    assert "registry/options.yaml: entry 1 (live_city_data): unknown key 'colour'" in found
+
+    edit(repo_copy, "options", lambda options: options[0].pop("colour"))
+    [found] = problems(repo_copy)
+    assert "a toggle default must be true or false" in found

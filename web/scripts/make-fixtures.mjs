@@ -18,7 +18,7 @@
 
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { cellToBoundary, gridDisk, latLngToCell } from 'h3-js';
 
 const FIXTURES = new URL('../fixtures/', import.meta.url);
@@ -275,7 +275,26 @@ const memorials = MEMORIAL_SAMPLES.map(([d, m, sg], i) => {
 });
 
 const collection = (features) => JSON.stringify({ type: 'FeatureCollection', features }) + '\n';
+// The lot dossier files in data/dossiers/ (a shard and common.json) and the owners table in
+// data/tables/ are written by hand (docs/CONTRACTS.md section 6: every flag type, and parcels the
+// vacancy model leaves out), so they are kept as they are.
+const kept = (folder) => {
+  const dir = new URL(`data/${folder}/`, FIXTURES);
+  return existsSync(dir)
+    ? readdirSync(dir)
+        .filter((name) => name.endsWith('.json'))
+        .sort()
+        .map((name) => [`${folder}/${name}`, readFileSync(new URL(name, dir))])
+    : [];
+};
+const handWritten = [...kept('dossiers'), ...kept('tables')];
 rmSync(ROOT, { recursive: true, force: true });
+for (const [name, bytes] of handWritten) {
+  mkdirSync(new URL(name.slice(0, name.lastIndexOf('/') + 1), ROOT), { recursive: true });
+  writeFileSync(new URL(name, ROOT), bytes);
+}
+// Shards are named by digits and listed in the manifest's dossiers block, not in files.
+const shardFiles = handWritten.filter(([name]) => /^dossiers\/\d+\.json$/.test(name));
 mkdirSync(path('sources'), { recursive: true });
 mkdirSync(path('data/tiles'), { recursive: true });
 writeFileSync(path('sources/parcels.geojson'), collection(parcels));
@@ -407,8 +426,17 @@ const manifest = {
       'tiles/streets.hin.geojson',
       'tiles/streets.memorials.geojson',
       'tiles/streets.segments.geojson',
+      ...handWritten.map(([name]) => name).filter((name) => !shardFiles.some(([shard]) => shard === name)),
     ].map((p) => [p, fileInfo(p)]),
   ),
+  dossiers: shardFiles.length
+    ? {
+        prefix_digits: 4,
+        prefixes: shardFiles.map(([name]) => name.slice('dossiers/'.length, -'.json'.length)),
+        files: shardFiles.length,
+        bytes: shardFiles.reduce((sum, [, bytes]) => sum + bytes.length, 0),
+      }
+    : null,
   notes: [
     'This is synthetic sample data for testing the map.',
     'Street and boundary tiles were skipped for this sample, so those layers are published as GeoJSON.',

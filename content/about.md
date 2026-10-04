@@ -59,6 +59,13 @@ live there, without pushing them out. Every suggestion on this site tries to fol
 including a warning wherever a project might raise nearby prices and rents. Read more on
 [Use this responsibly](https://holdthedoorhoid.github.io/placekeepers/responsibly/).
 
+## Your privacy
+
+Placekeepers has no accounts, no cookies and no tracking. When you open a lot page or search for an
+address, your browser asks the City of Philadelphia's own servers for the newest records, straight
+from your device. You can turn that off in Settings. Read how on
+[Privacy](https://holdthedoorhoid.github.io/placekeepers/privacy/).
+
 ## Open source
 
 Placekeepers is free, public, and open source. Anyone can read the code, the data rules, and the

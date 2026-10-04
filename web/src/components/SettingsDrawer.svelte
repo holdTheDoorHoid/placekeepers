@@ -1,6 +1,7 @@
 <script lang="ts">
   // The settings drawer, generated from the registry: the view, every layer with its own
   // settings, the lens weights, which suggestion types to show, and "Reset to defaults".
+  import { config } from '../config/index.ts';
   import { autoView } from '../state/defaults.ts';
   import type { AppStore } from '../state/store.svelte.ts';
   import { strings } from '../strings.ts';
@@ -41,6 +42,51 @@
     </fieldset>
   </section>
 
+  <section aria-labelledby="pk-settings-options">
+    <h3 id="pk-settings-options">{strings.options.title}</h3>
+    {#each store.registry.options as option (option.id)}
+      <div class="option-setting">
+        {#if option.type === 'toggle'}
+          <div class="head">
+            <input
+              id="pk-option-{option.id}"
+              type="checkbox"
+              role="switch"
+              checked={store.options[option.id] === true}
+              aria-describedby="pk-option-{option.id}-about"
+              onchange={(e) => store.setOption(option.id, e.currentTarget.checked)}
+            />
+            <label for="pk-option-{option.id}">{option.label}</label>
+          </div>
+        {:else if option.type === 'choice'}
+          <label for="pk-option-{option.id}">{option.label}</label>
+          <select
+            id="pk-option-{option.id}"
+            aria-describedby="pk-option-{option.id}-about"
+            value={String(store.options[option.id])}
+            onchange={(e) => store.setOption(option.id, e.currentTarget.value)}
+          >
+            {#each option.options as choice (choice.value)}<option value={choice.value}>{choice.label}</option>{/each}
+          </select>
+        {:else}
+          <label for="pk-option-{option.id}">{option.label}</label>
+          <input
+            id="pk-option-{option.id}"
+            type="range"
+            min={option.min}
+            max={option.max}
+            step={option.step}
+            value={Number(store.options[option.id])}
+            aria-describedby="pk-option-{option.id}-about"
+            onchange={(e) => store.setOption(option.id, Number(e.currentTarget.value))}
+          />
+        {/if}
+        <p id="pk-option-{option.id}-about" class="muted small">{option.description}</p>
+      </div>
+    {/each}
+    <p class="small"><a href="{config.siteBase}privacy/">{strings.options.privacyLink}</a></p>
+  </section>
+
   <section aria-labelledby="pk-settings-layers">
     <h3 id="pk-settings-layers">{strings.settings.layersTitle}</h3>
     <LayerList {store} idPrefix="settings" showReset={false} />
@@ -76,7 +122,7 @@
 
   <section aria-labelledby="pk-settings-reset">
     <h3 id="pk-settings-reset">{strings.settings.resetTitle}</h3>
-    <p class="small">{strings.settings.resetHelp}</p>
+    <p class="small">{strings.settings.resetHelp} {strings.options.resetNote}</p>
     <button
       class="button"
       type="button"
@@ -110,6 +156,20 @@
     display: block;
     font-size: 0.875rem;
     color: var(--pk-muted);
+  }
+  .option-setting {
+    padding: 6px 0;
+  }
+  .option-setting .head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .option-setting label {
+    font-weight: 600;
+  }
+  .option-setting p {
+    margin: 4px 0 0 28px;
   }
   .suggestion {
     padding: 6px 0;

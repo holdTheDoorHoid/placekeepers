@@ -5,17 +5,18 @@
   import { strings } from '../../strings.ts';
   import EvidenceBadge from '../common/EvidenceBadge.svelte';
 
-  let { why, idPrefix }: { why: ScoreExplanation; idPrefix: string } = $props();
+  let { why, idPrefix, level = 3 }: { why: ScoreExplanation; idPrefix: string; level?: 3 | 4 } = $props();
   const max = $derived(Math.max(1, ...why.factors.map((f) => f.contribution)));
 </script>
 
 <section class="why" aria-labelledby="{idPrefix}-why">
-  <h3 id="{idPrefix}-why">{strings.why.title}</h3>
+  <svelte:element this={`h${level}`} id="{idPrefix}-why">{strings.why.title}</svelte:element>
   {#if why.allOff}
     <p class="notice">{strings.lens.allOff}</p>
   {:else}
     <p class="muted small">{strings.why.intro}</p>
     <table>
+      <caption class="sr-only">{strings.why.caption}</caption>
       <thead>
         <tr>
           <th scope="col">{strings.why.factor}</th>
