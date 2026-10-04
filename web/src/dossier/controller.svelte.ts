@@ -65,6 +65,8 @@ export class DossierController {
   private run = 0;
   private abort: AbortController | null = null;
   private readonly cache = new Map<string, { at: number; part: Part<unknown> }>();
+  /** The parcel whose outline was already asked for, so a retry does not ask again. */
+  private shapeAskedFor: string | null = null;
 
   constructor(deps: DossierDeps) {
     this.deps = deps;
@@ -219,7 +221,8 @@ export class DossierController {
 
     // The parcel's outline for the map, when it did not come from the lots layer.
     void shardDone.then(() => {
-      if (!current() || this.shape || this.tile) return;
+      if (!current() || this.shape || this.tile || this.shapeAskedFor === opa) return;
+      this.shapeAskedFor = opa;
       fetchParcelShape(opa, options).then((result) => {
         if (current() && result.ok && result.data.shape) this.shape = result.data.shape;
       });
