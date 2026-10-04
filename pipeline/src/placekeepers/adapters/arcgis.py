@@ -84,9 +84,10 @@ class ArcgisAdapter(Adapter):
     page_size: ClassVar[int] = 2000
     #: ArcGIS bookkeeping fields we do not keep (lower case)
     skip_fields: ClassVar[frozenset[str]] = frozenset({"shape__area", "shape__length"})
-    #: fields to download, spelled as the layer spells them (None downloads every field)
-    query_fields: ClassVar[tuple[str, ...] | None] = None
-    #: an ArcGIS where clause that limits which features are downloaded
+    #: when set, only these fields (exact service names) are requested and kept, so fields we must
+    #: not hold, such as personal phone numbers, are never downloaded
+    out_fields: ClassVar[tuple[str, ...] | None] = None
+    #: an ArcGIS where clause that limits which features are downloaded (and counted)
     query_where: ClassVar[str] = "1=1"
 
     @property
@@ -96,7 +97,8 @@ class ArcgisAdapter(Adapter):
 
     @property
     def layer_url(self) -> str:
-        return f"{self.root}/{quote(self.endpoint.service)}/FeatureServer/{self.endpoint.layer}"
+        root = self.endpoint.url or self.root
+        return f"{root}/{quote(self.endpoint.service)}/FeatureServer/{self.endpoint.layer}"
 
     def count(self) -> int:
         data = self.ctx.http.get_json(
@@ -110,8 +112,12 @@ class ArcgisAdapter(Adapter):
         http = self.ctx.http
         layer = http.get_json(self.layer_url, {"f": "json"}, check=check_arcgis)
         fields = [{"name": f["name"], "type": f["type"]} for f in layer.get("fields") or []]
-        if self.query_fields is not None:
-            fields = [f for f in fields if f["name"] in self.query_fields]
+        if self.out_fields is not None:
+            known = {f["name"] for f in fields}
+            missing = [name for name in self.out_fields if name not in known]
+            if missing:
+                raise FetchError(f"The layer no longer has the fields {', '.join(missing)}")
+            fields = [f for f in fields if f["name"] in self.out_fields]
         object_id = layer.get("objectIdField") or next(
             (f["name"] for f in fields if f["type"] == "esriFieldTypeOID"), None
         )
@@ -130,7 +136,7 @@ class ArcgisAdapter(Adapter):
                 f"{self.layer_url}/query",
                 {
                     "where": self.query_where,
-                    "outFields": ",".join(self.query_fields) if self.query_fields else "*",
+                    "outFields": ",".join(self.out_fields) if self.out_fields else "*",
                     "returnGeometry": "true",
                     "outSR": "4326",
                     "f": "geojson",

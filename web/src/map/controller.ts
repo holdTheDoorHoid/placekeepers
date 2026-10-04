@@ -281,6 +281,7 @@ export class MapController {
           state: this.state,
           sourceId,
           sourceLayer: resolved.data.sourceLayer,
+          glyphs: this.hasGlyphs(),
           highlight: this.highlightFor(layerId),
         }),
         true,
@@ -299,6 +300,7 @@ export class MapController {
         state: this.state,
         sourceId: applied.sourceId,
         sourceLayer: applied.sourceLayer,
+        glyphs: this.hasGlyphs(),
         highlight: this.highlightFor(layerId),
       }),
       visible,
@@ -338,6 +340,11 @@ export class MapController {
   }
 
   /** Data layers sit under the base map's labels, ordered by their style's zIndex. */
+  /** Whether the base map brought label fonts; without them no text layer may be added. */
+  private hasGlyphs(): boolean {
+    return Boolean(this.map.getStyle()?.glyphs);
+  }
+
   private beforeId(zIndex: number): string | undefined {
     let best: { z: number; id: string } | null = null;
     for (const applied of this.applied.values()) {

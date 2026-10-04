@@ -123,7 +123,7 @@ class CrashSlice(ArcgisAdapter):
             missing = set(COLUMNS) - set(cls.field_map)
             if missing:
                 raise TypeError(f"{cls.__name__} does not map {sorted(missing)}")
-            cls.query_fields = (
+            cls.out_fields = (
                 cls.object_id_field,
                 *cls.field_map.values(),
                 cls.lat_field,

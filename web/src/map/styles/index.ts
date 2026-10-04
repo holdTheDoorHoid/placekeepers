@@ -2,9 +2,12 @@
 // TypeScript checks that this map covers exactly the ids in STYLE_IDS.
 
 import type { Layer } from '../../registry/types.ts';
+import { boundary } from './boundary.ts';
 import { crashes } from './crashes.ts';
+import { gardens } from './gardens.ts';
 import { hin } from './hin.ts';
 import type { StyleId } from './ids.ts';
+import { landcare } from './landcare.ts';
 import { memorials } from './memorials.ts';
 import { shootingsHex } from './shootings_hex.ts';
 import { streetSegments } from './street_segments.ts';
@@ -15,6 +18,9 @@ export const STYLES: Record<StyleId, StyleModule> = {
   vacant_parcels: vacantParcels,
   hin,
   shootings_hex: shootingsHex,
+  landcare,
+  gardens,
+  boundary,
   street_segments: streetSegments,
   crashes,
   memorials,

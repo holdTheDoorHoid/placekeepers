@@ -13,11 +13,14 @@
   } from '../data/manifest.ts';
   import type { Registry } from '../registry/types.ts';
   import { formatDate, strings } from '../strings.ts';
+  import Dialog from '../components/common/Dialog.svelte';
+  import SiteNav from '../components/common/SiteNav.svelte';
 
   let { registry }: { registry: Registry } = $props();
 
   let result = $state<ParseResult | null>(null);
   let loading = $state(true);
+  let menuOpen = $state(false);
 
   async function load() {
     loading = true;
@@ -40,9 +43,16 @@
 <div class="page">
   <header>
     <a class="back" href={config.siteBase}>{s.back}</a>
+    <button class="button quiet small menu" type="button" aria-haspopup="dialog" onclick={() => (menuOpen = true)}
+      >{strings.nav.menu}</button
+    >
     <h1>{s.pageTitle}</h1>
     <p>{s.intro}</p>
   </header>
+
+  <Dialog bind:open={menuOpen} title={strings.nav.menuTitle} id="pk-menu">
+    <SiteNav current="status" />
+  </Dialog>
 
   <main>
     {#if loading}
@@ -105,7 +115,7 @@
       {/if}
     {/if}
   </main>
-  <footer class="muted small">{strings.app.notAffiliated}</footer>
+  <footer class="muted small">{strings.app.notAffiliated} {strings.app.licenses}</footer>
 </div>
 
 <style>
@@ -115,7 +125,15 @@
     padding: 16px;
   }
   header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
     margin-bottom: 16px;
+  }
+  header h1,
+  header p {
+    flex-basis: 100%;
   }
   h1 {
     font-size: 1.6rem;
@@ -123,6 +141,9 @@
   }
   .back {
     font-weight: 600;
+  }
+  .menu {
+    margin-left: auto;
   }
   .summary {
     display: flex;

@@ -28,8 +28,7 @@ from placekeepers.publish import publish
 from placekeepers.publish.tiles import TILE_OPTIONS, pmtiles_layer_names
 
 from . import streets_fixtures as fx
-from .conftest import FakeArcgis, FakeCarto, arcgis_feature, load_fixture
-from .test_publish import install
+from .conftest import FakeArcgis, FakeCarto, arcgis_feature, install_snapshot, load_fixture
 
 NOW = datetime(2026, 10, 4, 15, 0, tzinfo=UTC)
 FORBIDDEN = ("age", "sex", "dc_number", "dc_key", "arrest_yes", "investigat", "crash_type", "hit")
@@ -80,9 +79,14 @@ def test_fatal_crashes_never_asks_for_or_keeps_personal_details(context_factory,
 
 
 # The PennDOT crash slices ---------------------------------------------------------------------
+def live_fields(source_id: str) -> list[dict]:
+    """The layer's fields as the live service described them (tests/fixtures/arcgis_layers.json)."""
+    spec = load_fixture("arcgis_layers.json")[source_id]
+    return [{"name": name, "type": f"esriFieldType{kind}"} for name, kind in spec["fields"]]
+
+
 def slice_server(source_id: str, features: list[dict]) -> FakeArcgis:
-    fields = load_fixture("arcgis_street_safety_fields.json")[source_id]["fields"]
-    return FakeArcgis(fields=fields, features=features, max_records=2)
+    return FakeArcgis(fields=live_fields(source_id), features=features, max_records=2)
 
 
 def slice_features(adapter_class, rows: list[dict]) -> list[dict]:
@@ -129,12 +133,10 @@ def test_each_slice_is_read_into_the_same_columns(
         "2023-01-01",
     ]
     # Every field the adapter asks for exists in the live layer (saved in the fixture).
-    live = {
-        f["name"] for f in load_fixture("arcgis_street_safety_fields.json")[source_id]["fields"]
-    }
-    assert set(adapter.query_fields) <= live
+    live = {f["name"] for f in live_fields(source_id)}
+    assert set(adapter.out_fields) <= live
     pages = [r.url.params for r in fake.requests if "resultOffset" in r.url.params]
-    assert pages and all(p["outFields"] == ",".join(adapter.query_fields) for p in pages)
+    assert pages and all(p["outFields"] == ",".join(adapter.out_fields) for p in pages)
     counts = [r.url.params for r in fake.requests if r.url.params.get("returnCountOnly")]
     assert all(p["where"] == adapter.query_where for p in pages + counts)
     if adapter_class is Crashes20072017:
@@ -150,7 +152,7 @@ def test_street_centerlines_ask_only_for_what_the_lens_needs(context_factory, tm
         )
         for n, r in enumerate(rows, start=1)
     ]
-    fields = load_fixture("arcgis_street_safety_fields.json")["street_centerlines"]["fields"]
+    fields = live_fields("street_centerlines")
     ctx = context_factory(handler=FakeArcgis(fields=fields, features=features, max_records=5))
     adapter = StreetCenterlines(ctx.registry.sources["street_centerlines"], ctx)
     _, out = run(adapter, tmp_path)
@@ -205,13 +207,33 @@ def streets_ctx(context_factory, repo_copy):
     write_curated(repo_copy, [INVENTED, REMOVED], ["m2023_0001"])
     ctx = context_factory(repo_root=repo_copy, now=NOW)
     at = "2026-10-04T14:00:00Z"
-    install(ctx, "street_centerlines", fx.centerlines(), geometry=True, fetched_at=at)
-    install(ctx, "high_injury_network", fx.high_injury_network(), geometry=True, fetched_at=at)
-    install(ctx, "crashes_2020_2024", fx.newest_slice(), geometry=True, fetched_at=at)
-    install(ctx, "crashes_2016_2020", fx.older_slice(), geometry=True, fetched_at=at)
-    install(ctx, "crashes_2007_2017", fx.oldest_slice(), geometry=True, fetched_at=at)
-    install(ctx, "fatal_crashes", fx.fatal_table(), geometry=False, fetched_at=at)
-    install(ctx, "schools", fx.schools(), geometry=True, fetched_at=at)
+    lines, points = ["LineString"], ["Point"]
+    install_snapshot(
+        ctx,
+        "street_centerlines",
+        fx.centerlines(),
+        geometry=True,
+        fetched_at=at,
+        geometry_types=lines,
+    )
+    install_snapshot(
+        ctx,
+        "high_injury_network",
+        fx.high_injury_network(),
+        geometry=True,
+        fetched_at=at,
+        geometry_types=["MultiLineString"],
+    )
+    for source, table in (
+        ("crashes_2020_2024", fx.newest_slice()),
+        ("crashes_2016_2020", fx.older_slice()),
+        ("crashes_2007_2017", fx.oldest_slice()),
+    ):
+        install_snapshot(ctx, source, table, geometry=True, fetched_at=at, geometry_types=points)
+    install_snapshot(ctx, "fatal_crashes", fx.fatal_table(), geometry=False, fetched_at=at)
+    install_snapshot(
+        ctx, "schools", fx.schools(), geometry=True, fetched_at=at, geometry_types=points
+    )
     return ctx
 
 

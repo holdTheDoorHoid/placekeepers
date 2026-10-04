@@ -1,0 +1,368 @@
+# The weekly data refresh. Every Monday (and whenever someone starts it by hand):
+#
+#   pipeline  restores last week's good copy of every source from the data-snapshots release,
+#             runs the pipeline (fetch, check, publish) and prepares the base map, which is
+#             reused for a month before a new extract is made;
+#   save      puts the new good copies, the manifest and any new base map on the release;
+#   site      builds the map with the new data in dist/data/;
+#   deploy    publishes it on GitHub Pages;
+#   issues    opens an issue for a source that failed this week and last week, and closes it
+#             once the source works again.
+#
+# A source that fails keeps last week's copy, so the map never goes dark. If a job fails, nothing
+# is deployed and the site keeps its previous version.
+#
+# Permissions: jobs that install or run packages (pipeline, site) only ever hold a read token.
+# The jobs that can write (save: release assets, issues: issues) run nothing but gh and this
+# repository's standard library helper, so a compromised package can never reach a write token.
+
+name: Weekly data refresh
+
+on:
+  schedule:
+    # Mondays at 10:00 UTC, early morning in Philadelphia.
+    - cron: "0 10 * * 1"
+  workflow_dispatch:
+    inputs:
+      rebuild_basemap:
+        description: Make a new base map extract even if the saved one is less than a month old
+        type: boolean
+        default: false
+      break_source:
+        description: >-
+          Leave empty. Only to test the failure alarm: the id of one source whose download should
+          fail on purpose this run (for example high_injury_network). It keeps last week's copy.
+        type: string
+        default: ""
+
+permissions: {}
+
+concurrency:
+  group: refresh
+  cancel-in-progress: false
+
+env:
+  RELEASE_TAG: data-snapshots
+
+jobs:
+  pipeline:
+    name: Fetch, check and publish the data
+    runs-on: ubuntu-24.04
+    # A full run took about 11 minutes on a laptop on 2026-10-04 (28 sources, two bulk files of
+    # about 500 MB each); 90 minutes leaves room for slow City servers and the base map.
+    timeout-minutes: 90
+    permissions:
+      contents: read # read the data-snapshots release
+    env:
+      # The runner has about 14 GB free, so the laptop's 10 GB floor would skip every download
+      # and quietly serve last week's data. A run needs about 2 GB at its peak (the restored
+      # snapshots, one bulk GeoJSON file of about 600 MB while it is read, the new snapshots and
+      # their tars), so 3 GB still stops a runaway before the disk fills.
+      PK_MIN_FREE_GB: "3"
+      # Keep only the newest good snapshot of each source on the runner (the release holds it).
+      PK_KEEP_SNAPSHOTS: "1"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pipeline/pyproject.toml
+
+      - name: Install tippecanoe
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq tippecanoe
+          tippecanoe --version
+
+      - name: Install the pipeline
+        run: pip install -e pipeline
+
+      - name: Prepare folders
+        run: |
+          {
+            echo "PK_CACHE=$RUNNER_TEMP/pk-cache"
+            echo "WORK=$RUNNER_TEMP/work"
+          } >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TEMP/work/assets" build/site build/release build/manifests
+
+      - name: Restore last week's snapshots
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          if ! gh release view "$RELEASE_TAG" --json assets --jq '.assets[].name' \
+              > "$WORK/assets.txt" 2> "$WORK/view-error.txt"; then
+            if grep -qi "not found" "$WORK/view-error.txt"; then
+              echo "No $RELEASE_TAG release yet, so this run starts without earlier snapshots."
+              : > "$WORK/assets.txt"
+            else
+              # Better to stop than to publish a map without last week's fallbacks.
+              cat "$WORK/view-error.txt"
+              exit 1
+            fi
+          fi
+          if grep -q '^snapshot-' "$WORK/assets.txt"; then
+            gh release download "$RELEASE_TAG" --dir "$WORK/assets" --pattern 'snapshot-*.tar'
+          fi
+          if grep -qx 'manifest.json' "$WORK/assets.txt"; then
+            gh release download "$RELEASE_TAG" --dir "$WORK" --pattern 'manifest.json'
+            cp "$WORK/manifest.json" build/manifests/previous-manifest.json
+          fi
+          python .github/scripts/refresh.py restore --cache "$PK_CACHE" --from "$WORK/assets"
+          # Unpacked now; free the space before the downloads.
+          rm -f "$WORK"/assets/snapshot-*.tar
+
+      - name: Fetch, check and publish
+        env:
+          BREAK_SOURCE: ${{ inputs.break_source || '' }}
+        run: |
+          out="$GITHUB_WORKSPACE/build/site/data"
+          echo "Disk before the pipeline:"
+          df -h /
+          trap 'echo "Disk after the pipeline:"; df -h /' EXIT
+          if [ -z "$BREAK_SOURCE" ]; then
+            pk all --out "$out"
+            exit 0
+          fi
+          # A test of the failure alarm: this one source downloads through a proxy that does not
+          # exist, so its download fails and it keeps its last good copy, like a real outage.
+          echo "::warning::The download of $BREAK_SOURCE fails on purpose in this run."
+          others=$(pk health --json | python -c 'import json, sys
+          print(",".join(s for s in json.load(sys.stdin) if s != sys.argv[1]))' "$BREAK_SOURCE")
+          pk fetch --sources "$others"
+          HTTP_PROXY=http://127.0.0.1:9 HTTPS_PROXY=http://127.0.0.1:9 pk fetch "$BREAK_SOURCE"
+          pk validate
+          pk publish --out "$out"
+
+      - name: Source health
+        run: pk health
+
+      - name: Pack the snapshots
+        run: |
+          python .github/scripts/refresh.py pack --cache "$PK_CACHE" --out build/release
+          cp build/site/data/manifest.json build/release/manifest.json
+          cp build/site/data/manifest.json build/manifests/manifest.json
+          python .github/scripts/refresh.py sources --registry registry \
+            --out build/manifests/sources.json
+
+      - name: Base map
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          REBUILD: ${{ inputs.rebuild_basemap || false }}
+        run: |
+          reuse=""
+          if [ "$REBUILD" != "true" ]; then
+            reuse=$(python .github/scripts/refresh.py pick-basemap --assets "$WORK/assets.txt")
+          fi
+          if [ -z "$reuse" ]; then
+            if PK_BASEMAP_OUT="$GITHUB_WORKSPACE/build/site/basemap" bash web/scripts/make-basemap.sh; then
+              built=$(cat build/site/basemap/BUILD)
+              tar -cf "build/release/basemap-$built.tar" -C build/site basemap
+            else
+              rm -rf build/site/basemap
+              echo "::warning::A new base map extract failed, so the saved one is used if there is one."
+              reuse=$(python .github/scripts/refresh.py pick-basemap --assets "$WORK/assets.txt" \
+                --max-age-days 100000)
+            fi
+          fi
+          if [ -n "$reuse" ]; then
+            gh release download "$RELEASE_TAG" --dir "$WORK" --pattern "$reuse"
+            tar -xf "$WORK/$reuse" -C build/site
+            echo "Using the saved base map $reuse."
+          fi
+          if [ ! -s build/site/basemap/philly.pmtiles ]; then
+            echo "::warning::No base map this week. The map still works, with a plain background."
+          fi
+
+      - name: Hand over the files for the release
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-files
+          path: build/release
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: Hand over the site data
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: site-data
+          path: build/site
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: Hand over the manifests
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: manifests
+          path: build/manifests
+          retention-days: 30
+          if-no-files-found: error
+
+  save:
+    name: Save the snapshots to the release
+    needs: pipeline
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write # create the data-snapshots release and replace its assets
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: .github/scripts
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release-files
+          path: ${{ runner.temp }}/release
+
+      - name: Replace the release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          if ! gh release view "$RELEASE_TAG" --json assets --jq '.assets[].name' \
+              > "$RUNNER_TEMP/assets.txt" 2> "$RUNNER_TEMP/view-error.txt"; then
+            if grep -qi "not found" "$RUNNER_TEMP/view-error.txt"; then
+              gh release create "$RELEASE_TAG" --prerelease --target "$GITHUB_SHA" \
+                --title "Data snapshots" \
+                --notes "The last good copy of every data source, the manifest of the last refresh, and the base map extract. The weekly refresh replaces these files; this is not a software release."
+              : > "$RUNNER_TEMP/assets.txt"
+            else
+              cat "$RUNNER_TEMP/view-error.txt"
+              exit 1
+            fi
+          fi
+          # Only the standard library helper from this repository runs here, never anything from
+          # the artifact: it names the files to upload and the assets they replace for good.
+          /usr/bin/python3 -I .github/scripts/refresh.py release-plan \
+            --dir "$RUNNER_TEMP/release" --assets "$RUNNER_TEMP/assets.txt" > "$RUNNER_TEMP/plan.txt"
+          cat "$RUNNER_TEMP/plan.txt"
+          uploads=()
+          while read -r action name; do
+            if [ "$action" = upload ]; then
+              uploads+=("$RUNNER_TEMP/release/$name")
+            fi
+          done < "$RUNNER_TEMP/plan.txt"
+          if [ "${#uploads[@]}" -eq 0 ]; then
+            echo "::error::The pipeline produced nothing to save."
+            exit 1
+          fi
+          gh release upload "$RELEASE_TAG" "${uploads[@]}" --clobber
+          while read -r action name; do
+            if [ "$action" = delete ]; then
+              gh release delete-asset "$RELEASE_TAG" "$name" --yes
+            elif [ "$action" = keep ]; then
+              echo "Unchanged since last week, kept as it is: $name"
+            elif [ "$action" = missing ]; then
+              echo "::warning::$name did not change this week but is no longer on the release; that source downloads again next week."
+            elif [ "$action" = skip ]; then
+              echo "::warning::Not saving an unexpected file: $name"
+            fi
+          done < "$RUNNER_TEMP/plan.txt"
+
+  site:
+    name: Build the site
+    needs: pipeline
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Build the map
+        working-directory: web
+        run: |
+          npm ci
+          npm run build
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: site-data
+          path: ${{ runner.temp }}/site-data
+
+      - name: Add the data to the site
+        run: |
+          mkdir -p web/dist/data
+          cp -R "$RUNNER_TEMP/site-data/data/." web/dist/data/
+          if [ -d "$RUNNER_TEMP/site-data/basemap" ]; then
+            cp -R "$RUNNER_TEMP/site-data/basemap" web/dist/data/basemap
+          fi
+          test -s web/dist/data/manifest.json
+          # GitHub Pages refuses files over 100 MB and sites over 1 GB.
+          big=$(find web/dist -type f -size +95M)
+          if [ -n "$big" ]; then
+            echo "::error::Files too large for GitHub Pages (move them to Cloudflare R2): $big"
+            exit 1
+          fi
+          total=$(du -sm web/dist | cut -f1)
+          echo "Site size: ${total} MB"
+          if [ "$total" -gt 950 ]; then
+            echo "::error::The site is ${total} MB, close to the 1 GB GitHub Pages limit."
+            exit 1
+          fi
+
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: web/dist
+
+  deploy:
+    name: Publish on GitHub Pages
+    needs: site
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+
+  issues:
+    name: Open or close data source issues
+    needs: pipeline
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: .github/scripts
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: manifests
+          path: ${{ runner.temp }}/manifests
+
+      # The runner's own Python 3.12 and the standard library: nothing is installed here.
+      - name: Open, update or close issues
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          /usr/bin/python3 -I .github/scripts/refresh.py issues \
+            --current "$RUNNER_TEMP/manifests/manifest.json" \
+            --previous "$RUNNER_TEMP/manifests/previous-manifest.json" \
+            --sources "$RUNNER_TEMP/manifests/sources.json" \
+            --run-url "$RUN_URL"

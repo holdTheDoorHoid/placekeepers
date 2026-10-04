@@ -77,19 +77,22 @@ export function suggestionViews(reg: Registry, state: AppState, properties: Reco
 }
 
 export interface LinkOptions {
-  /** Where removal requests go; empty means a prefilled GitHub issue. */
-  takedownEmail: string;
-  repoUrl: string;
+  /** The dedicated removal address (web/src/content/removal-email.ts), or null until it exists. */
+  removalEmail: string | null;
+  /** The Contact page, which says how to ask for a removal. */
+  contactUrl: string;
 }
 
-/** The "request removal" link. It names the memorial by id only, never by name. */
+/**
+ * The "request removal" link: an email naming the memorial by id only, never by name. A removal
+ * request is personal, so it never goes to a public form; until the owner sets up the address,
+ * the link opens the Contact page, which says how to reach us.
+ */
 export function removalHref(id: string, options: LinkOptions): string {
-  const subject = strings.streets.removalSubject(id);
-  const body = strings.streets.removalBody(id);
-  if (options.takedownEmail) {
-    return `mailto:${options.takedownEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  }
-  return `${options.repoUrl}/issues/new?title=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  if (!options.removalEmail) return options.contactUrl;
+  const subject = encodeURIComponent(strings.streets.removalSubject(id));
+  const body = encodeURIComponent(strings.streets.removalBody(id));
+  return `mailto:${options.removalEmail}?subject=${subject}&body=${body}`;
 }
 
 export interface MemorialView {

@@ -24,10 +24,11 @@ import { strings } from '../src/strings.ts';
 
 const reg = loadRegistry();
 const layer = (id: string) => reg.layers.find((l) => l.id === id)!;
-const LINKS = { takedownEmail: '', repoUrl: 'https://github.com/holdTheDoorHoid/placekeepers' };
+const LINKS = { removalEmail: null, contactUrl: '/placekeepers/contact/' };
 
+/** A layer's parts, on a map whose base map has label fonts (so label settings show too). */
 function parts(l: Layer, state: AppState) {
-  return styleFor(l)!.layers({ layer: l, registry: reg, state, sourceId: 'tiles', sourceLayer: l.source_layer });
+  return styleFor(l)!.layers({ layer: l, registry: reg, state, sourceId: 'tiles', sourceLayer: l.source_layer, glyphs: true });
 }
 
 function part(l: Layer, state: AppState, name: string) {
@@ -235,13 +236,16 @@ describe('what a memorial says', () => {
     expect(describeMemorial({ id: 'x', d: '2025-01-02', m: 1 }, true, LINKS).sentence).toBe('Killed while walking on January 2, 2025.');
   });
 
-  it('always offers removal, by id and never by name', () => {
+  it('always offers removal, privately, by id and never by name', () => {
+    // Until the owner sets up the removal address, the link opens the Contact page; a removal
+    // request never goes to a public form.
     const view = describeMemorial({ id: 'fc20260820_1000', d: '2026-08-20', m: 1, nm: 'Alex Example' }, true, LINKS);
-    expect(view.removalHref.startsWith('https://github.com/holdTheDoorHoid/placekeepers/issues/new?')).toBe(true);
-    expect(view.removalHref).toContain('fc20260820_1000');
-    expect(decodeURIComponent(view.removalHref)).not.toContain('Alex');
-    const mail = removalHref('fc20260820_1000', { takedownEmail: 'remove@example.org', repoUrl: LINKS.repoUrl });
+    expect(view.removalHref).toBe('/placekeepers/contact/');
+    const mail = removalHref('fc20260820_1000', { removalEmail: 'remove@example.org', contactUrl: LINKS.contactUrl });
     expect(mail.startsWith('mailto:remove@example.org?subject=')).toBe(true);
+    expect(decodeURIComponent(mail)).toContain('fc20260820_1000');
+    expect(decodeURIComponent(mail)).not.toContain('Alex');
+    expect(mail).not.toContain('github.com');
   });
 
   it('puts the family blessing beside every memorial suggestion', () => {

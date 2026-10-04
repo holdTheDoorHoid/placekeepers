@@ -45,9 +45,14 @@ export const strings = {
     mapLabel: 'Map of Philadelphia. The list of places below the map shows the same places as text.',
     loadingMap: 'Loading the map',
     sampleData: 'Sample data for testing. These are not real places.',
+    earlyPreview:
+      'Early preview: the map shows real City data, but lot pages, scores and legal steps are still being built.',
+    followAlong: 'Follow along',
+    repoUrl: 'https://github.com/holdTheDoorHoid/placekeepers',
     skipToList: 'Skip to the list of places',
     close: 'Close',
     notAffiliated: 'Not affiliated with the City of Philadelphia. Not legal advice.',
+    licenses: 'Code: GPL-3.0. Data: each source has its own license. Writing: Creative Commons BY-SA 4.0.',
   },
 
   header: {
@@ -56,6 +61,23 @@ export const strings = {
     shareDone: 'Link copied. Anyone who opens it sees this same map.',
     shareFailed: 'Could not copy the link. Copy the address from your browser instead.',
     dataStatus: 'Data status',
+  },
+
+  nav: {
+    menu: 'Menu',
+    menuTitle: 'Site menu',
+    menuLabel: 'Site pages',
+    map: 'Map',
+    pages: [
+      { slug: 'about', label: 'About' },
+      { slug: 'why', label: 'Why this works' },
+      { slug: 'how', label: 'How to do it' },
+      { slug: 'responsibly', label: 'Use this responsibly' },
+      { slug: 'vacant-land', label: 'How we find vacant land' },
+      { slug: 'terms', label: 'Terms' },
+      { slug: 'privacy', label: 'Privacy' },
+      { slug: 'contact', label: 'Contact' },
+    ] as { slug: string; label: string }[],
   },
 
   views: {
@@ -274,6 +296,8 @@ export const strings = {
     sureMedium: 'Probably vacant',
     sureLow: 'Not very sure',
     selected: 'Selected place',
+    landcare: 'Lot kept up by PHS LandCare: already cared for',
+    garden: 'Community garden or farm',
     hin: 'Street on the High Injury Network',
     hexIntro: (window: string) => `People shot, per hexagon, ${window.toLowerCase()}`,
     hexNone: 'Hexagons with no shootings are left clear.',

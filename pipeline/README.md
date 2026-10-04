@@ -23,22 +23,53 @@ tippecanoe`). Without it, publish writes GeoJSON instead and says so in `manifes
 | `pk validate [ids...]` | Turns new downloads into snapshots, or rejects them and keeps the last good one |
 | `pk publish [--out DIR]` | Writes `manifest.json` and the map layers (default `build/data`) |
 | `pk health [ids...]` | Shows each source's status (`--json` for machines, `--strict` to fail when any source is not ok) |
-| `pk all` | Fetch, validate, publish, then show health |
+| `pk all` | Fetch and validate each source in turn, publish, then show health |
 
 Options: `--sources a,b` limits a command to some sources, `--offline` uses only the cache,
-`--cache DIR` uses another cache, `--as-of YYYY-MM-DD` sets the build date for time windows, and
-`-v` shows more detail.
+`--force` downloads frozen and recently fetched yearly sources again, `--cache DIR` uses another
+cache, `--as-of YYYY-MM-DD` sets the build date for time windows, and `-v` shows more detail.
 
-## Sources in this milestone
+`pk all` finishes each source (download, then check) before starting the next, in an order where
+a source comes after the ones its download needs: transfers, assessments and violations wait for
+the sources that define the vacancy candidate parcels. A source whose registry cadence is `frozen`
+is downloaded once; a `yearly` one at most every 30 days. No download starts while less than 10 GB
+of disk is free (`PK_MIN_FREE_GB`).
+
+## Sources
+
+Twenty eight sources, each with an entry in `registry/sources.yaml`. Field lists and the reasons
+for them are in each adapter's docstring.
 
 | Source | Where | What we keep |
 |---|---|---|
-| `opa_properties` | Carto `opa_properties_public` | A chosen set of 29 columns: account number, address, owners, mailing address, last sale, value, category and building codes, zoning, exemptions, size, year built, tract, ZIP, point (listed in `adapters/opa_properties.py`) |
+| `opa_properties` | Carto `opa_properties_public` | A chosen set of 35 columns: account number, address, owners, mailing address, last sale, value, category and building codes, zoning, exemptions, size, year built, condition notes, livable area, tract, ZIP, point |
 | `pwd_parcels` | Carto `pwd_parcels` | Parcel polygons with the OPA account number (`brt_id`), address and building code |
-| `vacant_indicators_land` | City ArcGIS `Vacant_Indicators_Land` | Every field, with the parcel polygon |
-| `vacant_indicators_bldg` | City ArcGIS `Vacant_Indicators_Bldg` | Every field, with the parcel polygon |
+| `vacant_indicators_land`, `vacant_indicators_bldg` | City ArcGIS | Every field, with the parcel polygon |
 | `shootings` | Carto `shootings` | Only the date, whether it was fatal, and the City's block level point. Case numbers and each victim's race, sex and age are never downloaded |
 | `high_injury_network` | City ArcGIS `high_injury_network_2025` | Street name, length and line |
+| `real_estate_transfers` | Carto `rtt_summary`, candidate parcels | Document type and id, recording and document dates, grantors, grantees, cash and total consideration, property count |
+| `assessment_history` | Carto `assessments`, candidate parcels | Value, taxable and exempt amounts for every year |
+| `li_violations` | Carto `violations`, candidate parcels, since 2016 | Every code and status, with case, dates and point |
+| `li_complaints` | Carto `complaints`, citywide, since 2023 | Code, dates, status, account and point |
+| `li_permits` | Carto `permits`, citywide, since 2016 | Number, account, type, work, issue and completion dates, status |
+| `li_unsafe`, `li_imminently_dangerous`, `li_clean_and_seal`, `li_demolitions` | Carto `unsafe`, `imm_dang`, `clean_seal`, `demolitions` | The whole tables, without owner, applicant or contractor names |
+| `building_footprints`, `land_use` | ArcGIS Hub bulk GeoJSON | Footprints with building and parcel ids; land use codes at three levels; the file's date |
+| `city_owned_property` | City ArcGIS `LAMAAssets` | Agency, status, side yard eligibility, OPA account |
+| `phs_landcare` | City ArcGIS `phs_landcare` | Program, year joined, OPA account |
+| `gardens_phs_ngt` | PHS ArcGIS `PHS_NGT_Supported_Current_view` | Name, who supports it, website |
+| `gardens_registered` | City ArcGIS `Registered_Community_Gardens` | Name, park, address, website, status (never contact emails) |
+| `ppr_properties`, `zoning_base_districts`, `council_districts` | City ArcGIS | Every field, with the shape |
+| `community_organizations` | City ArcGIS `Zoning_RCO` | Name, type, website, registration dates (never contact people) |
+| `neighborhoods` | OpenDataPhilly GitHub (Abaca Labs, CC BY 4.0) | Names and boundaries |
+| `acs_poverty` | Census Bureau bulk table B17001, 2020 to 2024 | People below the poverty line per tract, with margins of error |
+| `cagp_tax_2025` | Clean & Green Philly's July 2025 snapshot (frozen) | OPA account and tax fields only, dated 2025-07-09 |
+
+**Candidate parcels.** Transfers, assessments and violations are too large to download for the
+whole city every week, so they come down for every parcel with any sign of vacancy (see
+`candidates.py`): either City vacancy list, City owned, in LandCare, OPA vacant land or a vacant or
+sealed exterior note, cleaned and sealed or demolished since 2016, or on the unsafe or imminently
+dangerous lists. The accounts go to Carto in chunks of 5,000, by POST, joined as a VALUES list, and
+each chunk is checked against a count.
 
 Every request carries the User-Agent `Placekeepers/0.1 (+https://github.com/holdTheDoorHoid/placekeepers)`,
 waits at least a second between requests to the same server, and retries busy or failed replies
@@ -81,9 +112,10 @@ DuckDB: `SELECT * FROM '~/.cache/placekeepers/snapshots/opa_properties/current.p
 ## Published files
 
 `pk publish` follows `docs/CONTRACTS.md`: `manifest.json`, `tiles/lots.pmtiles` (layer `parcels`),
-`tiles/streets.pmtiles` (layer `hin`) and `tiles/context.pmtiles` (layer `h3`). It builds in a
-hidden folder and swaps it into place at the end, and it refuses to replace a folder that is not an
-earlier data root.
+`tiles/streets.pmtiles` (layer `hin`), `tiles/context.pmtiles` (layer `h3`), `tiles/care.pmtiles`
+(layers `landcare` and `gardens`) and `tiles/boundaries.pmtiles` (layers `council_districts`,
+`rcos` and `neighborhoods`). It builds in a hidden folder and swaps it into place at the end, and it
+refuses to replace a folder that is not an earlier data root.
 
 ## Tests
 
@@ -102,3 +134,4 @@ pipeline/.venv/bin/ruff check pipeline
 | `PK_KEEP_SNAPSHOTS` | Good snapshots kept per source (default 3) |
 | `PK_DUCKDB_MEMORY`, `PK_DUCKDB_THREADS` | DuckDB limits (default 1GB and 4) |
 | `PK_TIPPECANOE` | A specific tippecanoe binary; empty means build no tiles |
+| `PK_MIN_FREE_GB` | Disk space every download leaves free (default 10; the weekly refresh on GitHub, whose runners have about 14 GB, uses 3) |

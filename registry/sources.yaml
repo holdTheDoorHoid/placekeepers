@@ -59,6 +59,227 @@
   cadence: irregular
   health: {min_rows: 100, max_drop_pct: 10}
   release: v0.1
+# Milestone M1.1: property records, L&I records, land, care, boundaries and context.
+- id: real_estate_transfers
+  name: Real estate transfers
+  publisher: City of Philadelphia, Department of Records
+  homepage: https://opendataphilly.org/datasets/real-estate-transfers/
+  endpoint: {kind: carto, table: rtt_summary}
+  license: city_terms
+  attribution: "Real estate transfers: City of Philadelphia, Department of Records"
+  cadence: weekly
+  health: {min_rows: 150000, max_drop_pct: 25, newest_field: recording_date, max_age_days: 120}
+  release: v0.1
+- id: assessment_history
+  name: Assessment history
+  publisher: City of Philadelphia, Office of Property Assessment
+  homepage: https://opendataphilly.org/datasets/philadelphia-properties-and-assessment-history/
+  endpoint: {kind: carto, table: assessments}
+  license: city_terms
+  attribution: "Assessment history: City of Philadelphia, Office of Property Assessment"
+  cadence: daily
+  health: {min_rows: 450000, max_drop_pct: 25}
+  release: v0.1
+- id: li_violations
+  name: L&I code violations
+  publisher: City of Philadelphia, Department of Licenses and Inspections
+  homepage: https://opendataphilly.org/datasets/licenses-and-inspections-code-violations/
+  endpoint: {kind: carto, table: violations, where: "violationdate >= '2016-01-01'"}
+  license: city_terms
+  attribution: "Code violations: City of Philadelphia, Department of Licenses and Inspections"
+  cadence: daily
+  health: {min_rows: 220000, max_drop_pct: 25, newest_field: violationdate, max_age_days: 14}
+  release: v0.1
+- id: li_complaints
+  name: L&I complaints
+  publisher: City of Philadelphia, Department of Licenses and Inspections
+  homepage: https://opendataphilly.org/datasets/licenses-and-inspections-complaints/
+  endpoint: {kind: carto, table: complaints, where: "complaintdate >= '2023-01-01'"}
+  license: city_terms
+  attribution: "Complaints: City of Philadelphia, Department of Licenses and Inspections"
+  cadence: daily
+  health: {min_rows: 150000, max_drop_pct: 10, newest_field: complaintdate, max_age_days: 14}
+  release: v0.1
+- id: li_permits
+  name: L&I building and zoning permits
+  publisher: City of Philadelphia, Department of Licenses and Inspections
+  homepage: https://opendataphilly.org/datasets/licenses-and-inspections-building-and-zoning-permits/
+  endpoint: {kind: carto, table: permits, where: "permitissuedate >= '2016-01-01'"}
+  license: city_terms
+  attribution: "Permits: City of Philadelphia, Department of Licenses and Inspections"
+  cadence: daily
+  health: {min_rows: 400000, max_drop_pct: 5, newest_field: permitissuedate, max_age_days: 14}
+  release: v0.1
+- id: li_unsafe
+  name: Unsafe buildings
+  publisher: City of Philadelphia, Department of Licenses and Inspections
+  homepage: https://opendataphilly.org/datasets/licenses-and-inspections-code-violations/
+  endpoint: {kind: carto, table: unsafe}
+  license: city_terms
+  attribution: "Unsafe buildings: City of Philadelphia, Department of Licenses and Inspections"
+  cadence: daily
+  health: {min_rows: 2000, max_drop_pct: 25, newest_field: violationdate, max_age_days: 45}
+  release: v0.1
+- id: li_imminently_dangerous
+  name: Imminently dangerous buildings
+  publisher: City of Philadelphia, Department of Licenses and Inspections
+  homepage: https://opendataphilly.org/datasets/licenses-and-inspections-code-violations/
+  endpoint: {kind: carto, table: imm_dang}
+  license: city_terms
+  attribution: "Imminently dangerous buildings: City of Philadelphia, Department of Licenses and Inspections"
+  cadence: daily
+  health: {min_rows: 50, max_drop_pct: 50, newest_field: violationdate, max_age_days: 120}
+  release: v0.1
+- id: li_clean_and_seal
+  name: Clean and seal work orders
+  publisher: City of Philadelphia, Department of Licenses and Inspections
+  homepage: https://opendataphilly.org/datasets/licenses-and-inspections-clean-and-seal/
+  endpoint: {kind: carto, table: clean_seal}
+  license: city_terms
+  attribution: "Clean and seal: City of Philadelphia, Department of Licenses and Inspections"
+  cadence: daily
+  health: {min_rows: 95000, max_drop_pct: 5, newest_field: casecreateddate, max_age_days: 30}
+  release: v0.1
+- id: li_demolitions
+  name: Building demolitions
+  publisher: City of Philadelphia, Department of Licenses and Inspections
+  homepage: https://opendataphilly.org/datasets/building-demolitions/
+  endpoint: {kind: carto, table: demolitions}
+  license: city_terms
+  attribution: "Demolitions: City of Philadelphia, Department of Licenses and Inspections"
+  cadence: daily
+  health: {min_rows: 12000, max_drop_pct: 5, newest_field: start_date, max_age_days: 45}
+  release: v0.1
+- id: building_footprints
+  name: Building footprints
+  publisher: City of Philadelphia, Department of Licenses and Inspections
+  homepage: https://opendataphilly.org/datasets/building-footprints/
+  endpoint: {kind: url, url: "https://hub.arcgis.com/api/v3/datasets/ab9e89e1273f445bb265846c90b38a96_0/downloads/data?format=geojson&spatialRefId=4326&where=1%3D1", format: geojson}
+  license: city_terms
+  attribution: "Building footprints: City of Philadelphia, Department of Licenses and Inspections"
+  cadence: weekly
+  health: {min_rows: 500000, max_drop_pct: 5, newest_field: source_date, max_age_days: 120}
+  release: v0.1
+- id: land_use
+  name: Land use
+  publisher: Philadelphia City Planning Commission
+  homepage: https://opendataphilly.org/datasets/land-use/
+  endpoint: {kind: url, url: "https://hub.arcgis.com/api/v3/datasets/e433504739bd41049de5d8f4a22d34ba_0/downloads/data?format=geojson&spatialRefId=4326&where=1%3D1", format: geojson}
+  license: city_terms
+  attribution: "Land use: Philadelphia City Planning Commission"
+  cadence: yearly
+  health: {min_rows: 520000, max_drop_pct: 5, newest_field: source_date, max_age_days: 730}
+  release: v0.1
+- id: city_owned_property
+  name: City owned property
+  publisher: City of Philadelphia, Department of Planning and Development
+  homepage: https://www.arcgis.com/home/item.html?id=81cf9be934d94c73b847a0027efa3675
+  endpoint: {kind: arcgis, service: LAMAAssets, layer: 0}
+  license: city_terms
+  attribution: "City owned property: City of Philadelphia, Department of Planning and Development"
+  cadence: weekly
+  health: {min_rows: 5000, max_drop_pct: 25}
+  release: v0.1
+- id: phs_landcare
+  name: PHS LandCare lots
+  publisher: Pennsylvania Horticultural Society, via the City of Philadelphia
+  homepage: https://opendataphilly.org/datasets/landcare-program/
+  endpoint: {kind: arcgis, service: phs_landcare, layer: 0}
+  license: city_terms
+  attribution: "LandCare lots: Pennsylvania Horticultural Society via the City of Philadelphia"
+  cadence: irregular
+  health: {min_rows: 10000, max_drop_pct: 15}
+  release: v0.1
+- id: gardens_phs_ngt
+  name: Gardens supported by PHS and the Neighborhood Gardens Trust
+  publisher: Pennsylvania Horticultural Society and Neighborhood Gardens Trust
+  homepage: https://www.arcgis.com/home/item.html?id=1f4ef32948d64b8280bf78e308c4dead
+  endpoint: {kind: arcgis, service: PHS_NGT_Supported_Current_view, layer: 0, url: "https://services2.arcgis.com/qjOOiLCYeUtwT7x7/arcgis/rest/services"}
+  license: unstated
+  attribution: "Gardens: Pennsylvania Horticultural Society and Neighborhood Gardens Trust"
+  cadence: irregular
+  health: {min_rows: 150, max_drop_pct: 20}
+  release: v0.1
+- id: gardens_registered
+  name: Registered community gardens
+  publisher: Philadelphia Parks and Recreation
+  homepage: https://opendataphilly.org/datasets/registered-community-gardens/
+  endpoint: {kind: arcgis, service: Registered_Community_Gardens, layer: 0}
+  license: city_terms
+  attribution: "Registered community gardens: Philadelphia Parks and Recreation"
+  cadence: irregular
+  health: {min_rows: 15, max_drop_pct: 30}
+  release: v0.1
+- id: ppr_properties
+  name: Parks and Recreation properties
+  publisher: Philadelphia Parks and Recreation
+  homepage: https://opendataphilly.org/datasets/ppr-properties/
+  endpoint: {kind: arcgis, service: PPR_Properties, layer: 0}
+  license: city_terms
+  attribution: "Park properties: Philadelphia Parks and Recreation"
+  cadence: irregular
+  health: {min_rows: 450, max_drop_pct: 10}
+  release: v0.1
+- id: zoning_base_districts
+  name: Zoning base districts
+  publisher: Philadelphia City Planning Commission
+  homepage: https://opendataphilly.org/datasets/zoning-base-districts/
+  endpoint: {kind: arcgis, service: Zoning_BaseDistricts, layer: 0}
+  license: city_terms
+  attribution: "Zoning: Philadelphia City Planning Commission"
+  cadence: weekly
+  health: {min_rows: 27000, max_drop_pct: 5}
+  release: v0.1
+- id: council_districts
+  name: City Council districts 2024
+  publisher: City of Philadelphia
+  homepage: https://opendataphilly.org/datasets/city-council-districts/
+  endpoint: {kind: arcgis, service: Council_Districts_2024, layer: 0}
+  license: city_terms
+  attribution: "Council districts: City of Philadelphia"
+  cadence: irregular
+  health: {min_rows: 10, max_drop_pct: 0}
+  release: v0.1
+- id: community_organizations
+  name: Registered Community Organizations
+  publisher: Philadelphia City Planning Commission
+  homepage: https://opendataphilly.org/datasets/registered-community-organizations-rco-boundaries/
+  endpoint: {kind: arcgis, service: Zoning_RCO, layer: 0}
+  license: city_terms
+  attribution: "Registered Community Organizations: Philadelphia City Planning Commission"
+  cadence: yearly
+  health: {min_rows: 200, max_drop_pct: 15}
+  release: v0.1
+- id: neighborhoods
+  name: Philadelphia neighborhoods
+  publisher: Abaca Labs, via OpenDataPhilly
+  homepage: https://opendataphilly.org/datasets/philadelphia-neighborhoods/
+  endpoint: {kind: url, url: "https://raw.githubusercontent.com/opendataphilly/odp-data-storage/master/philadelphia-neighborhoods/philadelphia-neighborhoods.geojson", format: geojson}
+  license: cc_by_4
+  attribution: "Neighborhoods: Abaca Labs via OpenDataPhilly (CC BY 4.0)"
+  cadence: irregular
+  health: {min_rows: 150, max_drop_pct: 0}
+  release: v0.1
+- id: acs_poverty
+  name: Poverty rate by census tract (ACS 2020 to 2024)
+  publisher: U.S. Census Bureau, American Community Survey
+  homepage: https://www.census.gov/programs-surveys/acs/data/summary-file.html
+  endpoint: {kind: url, url: "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b17001.dat", format: csv}
+  license: public_domain
+  attribution: "Poverty rates: U.S. Census Bureau, American Community Survey 2020 to 2024 five year estimates"
+  cadence: yearly
+  health: {min_rows: 380, max_drop_pct: 5}
+  release: v0.1
+- id: cagp_tax_2025
+  name: Tax debt as of July 2025 (Clean & Green Philly)
+  publisher: Clean & Green Philly, Code for Philly
+  homepage: https://github.com/CodeForPhilly/clean-and-green-philly
+  endpoint: {kind: url, url: "https://media.githubusercontent.com/media/CodeForPhilly/clean-and-green-philly/main/data/backup_data/all_properties_2025_07_09.parquet", format: parquet}
+  license: mit_cagp
+  attribution: "Tax debt as of July 2025: Clean & Green Philly (Code for Philly)"
+  cadence: frozen
+  health: {min_rows: 570000, max_drop_pct: 0, newest_field: snapshot_date}
+  release: v0.1
 - id: crashes_2020_2024
   name: Crashes, 2020 to 2024 (PennDOT data, City copy)
   publisher: City of Philadelphia, from Pennsylvania Department of Transportation crash records

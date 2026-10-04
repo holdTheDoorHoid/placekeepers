@@ -94,7 +94,10 @@
     }}>{strings.app.skipToList}</a
   >
   <Header {store} onOpenSettings={() => (settingsOpen = true)} />
-  {#if sample}<p class="sample" role="note">{strings.app.sampleData}</p>{/if}
+  {#if sample}<p class="sample" role="note">{strings.app.sampleData}</p>{:else}<p class="sample" role="note">
+      {strings.app.earlyPreview}
+      <a href={strings.app.repoUrl}>{strings.app.followAlong}</a>
+    </p>{/if}
   <main class="stage {store.state.view}">
     <div class="map-area"><MapView {store} /></div>
     {#if store.state.view === 'field'}

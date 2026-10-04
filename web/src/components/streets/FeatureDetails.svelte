@@ -5,7 +5,7 @@
   // date, how the person was traveling, the place, the public memorial page, "request removal",
   // and the family's blessing beside every memorial suggestion (docs/ETHICS.md).
   import { config } from '../../config/index.ts';
-  import { REPO_URL } from '../../config/links.ts';
+  import { REMOVAL_EMAIL } from '../../content/removal-email.ts';
   import type { InspectTarget } from '../../map/controller.ts';
   import { STYLES, styleFor } from '../../map/styles/index.ts';
   import { showNames } from '../../map/styles/memorials.ts';
@@ -24,7 +24,7 @@
   const first = $derived(target.features[0] ?? {});
   const views = $derived(style === STYLES.memorials ? suggestionViews(store.registry, store.state, first) : []);
   const segment = $derived(style === STYLES.street_segments ? describeSegment(store.registry, store.state, first) : null);
-  const links = { takedownEmail: config.takedownEmail, repoUrl: REPO_URL };
+  const links = { removalEmail: REMOVAL_EMAIL, contactUrl: `${config.siteBase}contact/` };
   const s = strings.streets;
 </script>
 
@@ -41,7 +41,7 @@
           <p><a href={memorial.source} target="_blank" rel="noopener noreferrer">{s.memorialSource}</a></p>
         {/if}
         <p class="small">
-          <a href={memorial.removalHref} target="_blank" rel="noopener noreferrer">{s.removal}</a>
+          <a href={memorial.removalHref}>{s.removal}</a>
           <span class="muted">{s.removalNote}</span>
         </p>
       </section>

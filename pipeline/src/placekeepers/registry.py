@@ -25,6 +25,8 @@ from pydantic import (
     BaseModel,
     ConfigDict,
     Field,
+    StrictFloat,
+    StrictInt,
     StringConstraints,
     ValidationError,
     model_validator,
@@ -95,11 +97,13 @@ class CartoEndpoint(Strict):
 
 
 class ArcgisEndpoint(Strict):
-    """A layer of a City ArcGIS Online feature service."""
+    """A layer of an ArcGIS feature service: the City's ArcGIS Online services unless `url` names
+    another REST services root (for example a partner organization's)."""
 
     kind: Literal["arcgis"]
     service: Annotated[str, StringConstraints(pattern=r"^[^/?#&\s][^/?#&]*$")]
     layer: Annotated[int, Field(strict=True, ge=0)]
+    url: Annotated[str, StringConstraints(pattern=r"^https://\S+/rest/services$")] | None = None
 
 
 class UrlEndpoint(Strict):
@@ -164,33 +168,54 @@ class Option(Strict):
     label: Text
 
 
+Number = StrictInt | StrictFloat
+
+
 class Setting(Strict):
+    """A layer setting. Keys by type (docs/CONTRACTS.md section 1): a choice has `options`; a
+    toggle has no other keys; a range has `min`, `max` and an optional `step` (default 1). Keys
+    that do not belong to the type are an error, exactly as in the web app's check."""
+
     id: Id
     label: Text
     type: Literal["toggle", "choice", "range"]
-    options: list[Option] = []
     default: str | bool | int | float
+    options: Annotated[list[Option], Field(min_length=1)] | None = None
+    min: Number | None = None
+    max: Number | None = None
+    step: Number | None = None
 
     @model_validator(mode="after")
-    def _default_fits_type(self) -> Setting:
+    def _keys_fit_the_type(self) -> Setting:
+        present = {
+            key for key in ("options", "min", "max", "step") if getattr(self, key) is not None
+        }
+        allowed = {"choice": {"options"}, "toggle": set(), "range": {"min", "max", "step"}}
+        extra = sorted(present - allowed[self.type])
+        if extra:
+            raise ValueError(f"a {self.type} setting cannot have {', '.join(extra)}")
         if self.type == "choice":
-            values = [option.value for option in self.options]
-            if not values:
+            if self.options is None:
                 raise ValueError("a choice setting needs options")
+            values = [option.value for option in self.options]
             if len(set(values)) != len(values):
                 raise ValueError(f"option values repeat: {values}")
             if not isinstance(self.default, str) or self.default not in values:
                 raise ValueError(f"default {self.default!r} is not one of the options {values}")
         elif self.type == "toggle":
-            if self.options:
-                raise ValueError("a toggle setting takes no options")
             if not isinstance(self.default, bool):
                 raise ValueError("a toggle default must be true or false")
         else:
-            if self.options:
-                raise ValueError("a range setting takes no options")
+            if self.min is None or self.max is None:
+                raise ValueError("a range setting needs min and max")
+            if self.min >= self.max:
+                raise ValueError("a range setting needs min below max")
             if isinstance(self.default, bool) or not isinstance(self.default, int | float):
                 raise ValueError("a range default must be a number")
+            if not self.min <= self.default <= self.max:
+                raise ValueError(f"default {self.default} is outside {self.min} to {self.max}")
+            if self.step is not None and self.step <= 0:
+                raise ValueError("a range step must be above 0")
         return self
 
 

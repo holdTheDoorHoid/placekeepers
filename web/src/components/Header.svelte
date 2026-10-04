@@ -4,9 +4,13 @@
   import type { AppStore } from '../state/store.svelte.ts';
   import { encodeState } from '../state/url.ts';
   import { strings } from '../strings.ts';
+  import Dialog from './common/Dialog.svelte';
+  import SiteNav from './common/SiteNav.svelte';
   import ViewSwitch from './ViewSwitch.svelte';
 
   let { store, onOpenSettings }: { store: AppStore; onOpenSettings: () => void } = $props();
+
+  let menuOpen = $state(false);
 
   const fresh = $derived(
     store.manifestLoaded ? freshness(store.registry, store.manifest) : { kind: 'unknown' as const, text: strings.freshness.checking },
@@ -34,6 +38,9 @@
   </h1>
   <ViewSwitch {store} />
   <div class="actions">
+    <button class="button quiet small" type="button" aria-haspopup="dialog" onclick={() => (menuOpen = true)}
+      >{strings.nav.menu}</button
+    >
     <a class="freshness" data-kind={fresh.kind} href="{config.siteBase}status/">
       <span class="dot" aria-hidden="true"></span>{fresh.text}<span class="sr-only">. {strings.header.dataStatus}</span>
     </a>
@@ -43,6 +50,10 @@
     >{strings.header.settings}</button
   >
 </header>
+
+<Dialog bind:open={menuOpen} title={strings.nav.menuTitle} id="pk-menu">
+  <SiteNav current="map" />
+</Dialog>
 
 <style>
   .topbar {

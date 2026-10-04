@@ -34,6 +34,27 @@ routes.
 - Never go dark: if a data source breaks, the map keeps its last good copy and says so.
 - Placekeeping: improve places for the people who live there now.
 
+## How the site stays up to date
+
+The map is published at https://holdthedoorhoid.github.io/placekeepers/ by GitHub, for free.
+
+Every Monday morning GitHub runs the weekly refresh on its own computers:
+
+1. It downloads every data source again and checks it: enough records, no sudden drop, and records
+   recent enough for that source.
+2. A source that passes replaces last week's copy. A source that fails keeps last week's good copy,
+   and the map says how old it is. These good copies are saved with the project on GitHub (the
+   `data-snapshots` release), so nothing depends on any one computer.
+3. It rebuilds the map files, adds the base map of streets and place names (refreshed once a month),
+   and publishes the site.
+4. If a source fails two weeks in a row, it opens an issue labeled `data-source` that says which
+   source, since when, what went wrong, and what the map is doing meanwhile. The issue gets a note
+   each week it stays broken and closes itself once the source works again.
+
+The site's **Data status** page shows where every source stands. A refresh can also be started by
+hand: in the repository's Actions tab, choose "Weekly data refresh" and "Run workflow". Every change
+to the code is checked by the tests in `.github/workflows/ci.yml` before it is merged.
+
 ## Documents
 
 | Document | What it covers |

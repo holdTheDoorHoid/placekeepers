@@ -21,7 +21,7 @@ from placekeepers.adapters.arcgis import ArcgisAdapter
 
 
 class StreetCenterlines(ArcgisAdapter):
-    query_fields = (
+    out_fields = (
         "objectid",
         "seg_id",
         "stname",

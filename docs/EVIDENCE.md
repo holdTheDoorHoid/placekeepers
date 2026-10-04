@@ -10,7 +10,8 @@ and must be checked against the paper before they appear on the site.
 Philadelphia is the best studied city in the world on this question. Two randomized trials here
 found that fixing neglected places reduces nearby gun violence: cleaning and greening vacant lots,
 and repairing the doors and windows of abandoned houses. Both are cheap, and in both trials the
-violence did not simply move next door. The effect was strongest in the poorest neighborhoods.
+violence did not simply move next door. The greening trial found its effect in neighborhoods below
+the poverty line, and the house repair trial took place in low income neighborhoods.
 
 Evidence for street lighting is also good. Evidence for trees is real but depends on placement.
 Evidence that murals, public art, walkability, or population density reduce violence does not exist
@@ -75,7 +76,7 @@ nearby is the strongest violence reduction opportunity Placekeepers can show.
 abandoned houses in 63 clusters, mostly in Black, low income neighborhoods, were randomly assigned to
 full remediation (working doors and windows plus cleanup), cleanup only, or nothing. Full remediation
 cut gun assaults by 13.1% and weapons violations by 8.4%. Shootings fell 7.0%, which was not
-statistically significant. Cleanup alone did nothing measurable. No displacement found.
+statistically significant. Cleanup alone did nothing measurable. No sign that violence moved to nearby blocks.
 
 **The Doors and Windows ordinance** (Kondo and colleagues, *PLOS ONE* 2015,
 [doi:10.1371/journal.pone.0129582](https://doi.org/10.1371/journal.pone.0129582)): enforcing the
@@ -97,7 +98,7 @@ neighbors seeing visible investment, not only better visibility. A randomized tr
 public housing (Chalfin and colleagues, *Journal of Quantitative Criminology* 2022,
 [doi:10.1007/s10940-020-09490-6](https://doi.org/10.1007/s10940-020-09490-6)) found a significant drop
 in nighttime outdoor crime *(size to confirm; secondary sources say about a third)*. Philadelphia
-does not publish streetlight locations; outage reports to 311 are the closest signal.
+publishes its street pole locations, and outage reports to 311 show where lights are out.
 
 ## Trees and green space: Mixed
 

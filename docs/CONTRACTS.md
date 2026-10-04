@@ -20,7 +20,7 @@ change once published, because saved links contain them.
   endpoint:
     kind: carto                       # carto | arcgis | url | osm_extract | curated
     table: shootings                  # carto: table (and optional where)
-    # arcgis: service: <name>, layer: 0
+    # arcgis: service: <name>, layer: 0 (and optional url, see below)
     # url: url: <https link>, format: csv | geojson | parquet | zip
     # curated: path: data/curated/<file>.yaml
   license: city_terms                 # key into registry/licenses.yaml
@@ -33,6 +33,13 @@ change once published, because saved links contain them.
     max_age_days: 14                  # stale if the newest record is older than this
   release: v0.1                       # first release that uses it
 ```
+
+An `arcgis` endpoint names a service in the City's ArcGIS Online organization
+(`https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services`). For a service in another
+organization it adds `url`, the REST services root ending in `/rest/services` (added 2026-10-04 by
+M1.1), for example `url: https://services2.arcgis.com/qjOOiLCYeUtwT7x7/arcgis/rest/services` for the
+gardens PHS and the Neighborhood Gardens Trust support. A `csv` file may use another delimiter (the
+Census Bureau's tables use `|`); the source's adapter reads it.
 
 ### `registry/licenses.yaml`
 
@@ -145,6 +152,8 @@ data/
     lots.pmtiles          layer "parcels"   (vacancy candidates)
     streets.pmtiles       layers "hin", "segments", "crashes", "memorials"
     context.pmtiles       layer "h3"        (area cells, resolution 9)
+    care.pmtiles          layers "landcare", "gardens"
+    boundaries.pmtiles    layers "council_districts", "rcos", "neighborhoods"
   tables/
     parcels.json          compact columnar table for ranking and lists
   dossiers/
@@ -152,6 +161,11 @@ data/
   basemap/
     philly.pmtiles        Protomaps basemap extract
 ```
+
+`basemap/` (the extract, its fonts and its icons) is not written by the pipeline: the web side makes it
+with `web/scripts/make-basemap.sh`, and the weekly refresh adds it beside the pipeline's output when it
+assembles the site. It is therefore not listed in the manifest's `files` (clarified 2026-10-04 by
+M0.4).
 
 ## 3. `manifest.json`
 
@@ -221,6 +235,26 @@ scooter).
 
 **`memorials` (streets.pmtiles)**: `id`, `d` (date), `m` (mode), `nm` (name, only when curated from a
 public memorial list and not suppressed), `src` (source url).
+
+Added 2026-10-04 by M1.1 (and `lc` in `parcels` is now filled from PHS LandCare):
+
+**`landcare` (care.pmtiles)**: `id` (OPA account, 9 digits, or empty when the site has none), `p`
+(program: 1 LandCare, 2 Community LandCare, 3 Land Bank lot, 4 PHDC lot, 0 other), `y` (year the
+lot joined, 0 when unknown).
+
+**`gardens` (care.pmtiles, points)**: `nm` (name), `src` (1 supported by PHS, 2 by the Neighborhood
+Gardens Trust, 3 by both, 4 registered with Parks and Recreation), `w` (website, only when known).
+
+**`council_districts` (boundaries.pmtiles)**: `d` (district number, 1 to 10), `nm` ("District 5").
+
+**`rcos` (boundaries.pmtiles)**: `id` (the City's L&I id for the organization), `nm` (organization
+name), `t` (type as the City records it: Ward, SSD, NID, Other; only when known), `w` (website, only
+when known). Areas overlap. Contact people's names, emails and phones are never published.
+
+**`neighborhoods` (boundaries.pmtiles)**: `id` (code name, such as `BRIDESBURG`), `nm` (name, such as
+`Bridesburg`).
+
+Every boundary layer has `nm`, so one style (`boundary`) can draw and label all three.
 
 ## 5. Dossier shards (`dossiers/<prefix>.json`)
 

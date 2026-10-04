@@ -14,7 +14,7 @@ from placekeepers.adapters.arcgis import ArcgisAdapter
 
 
 class Schools(ArcgisAdapter):
-    query_fields = (
+    out_fields = (
         "objectid",
         "school_name",
         "school_name_label",
