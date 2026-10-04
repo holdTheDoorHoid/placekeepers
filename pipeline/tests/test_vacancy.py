@@ -483,22 +483,9 @@ def test_every_exclusion_rule(spatial: dict, description: str | None, expected: 
 
 def vacancy_exclusion_sql() -> str:
     """The exclusion part of build_signals, run on the table `s`."""
-    import inspect
-
-    source = inspect.getsource(vacancy.build_signals)
-    start = source.index(
-        "(bdesc ILIKE '%PKG%' OR bdesc ILIKE '%PARKING%' OR bdesc ILIKE '%CAR LOT%'"
-    )
-    end = source.index("ext_cond IN ('6', '7') AS opa_ext_vacant")
-    flags = source[start:end].strip().rstrip(",")
     return f"""
-        WITH sig AS (SELECT *, {flags} FROM s)
-        SELECT CASE
-            WHEN is_park THEN 'park' WHEN is_garden THEN 'garden' WHEN is_parking THEN 'parking'
-            WHEN is_rail THEN 'rail' WHEN is_transport THEN 'transportation'
-            WHEN is_utility THEN 'utility' WHEN is_cemetery THEN 'cemetery'
-            WHEN is_water_or_row THEN 'water or street' END
-        FROM sig
+        WITH sig AS (SELECT *, {vacancy.EXCLUSION_FLAGS_SQL} FROM s)
+        SELECT {vacancy.EXCLUDED_USE_SQL} FROM sig
     """
 
 

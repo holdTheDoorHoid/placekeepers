@@ -3,9 +3,10 @@
     pk registry check            check every registry file and cross reference
     pk fetch [ids...]            download sources into the cache
     pk validate [ids...]         turn new downloads into snapshots, or keep the last good one
+    pk derive [--as-of DATE]     run the vacancy model on the current snapshots
     pk publish [--out DIR]       write manifest.json and the map layers
     pk health [ids...]           show each source's status
-    pk all                       fetch, validate, publish, then show health
+    pk all                       fetch, validate, run the vacancy model, publish, then show health
 
 Common options: --sources a,b (limit to some sources), --offline (use only the cache),
 --cache DIR (instead of $PK_CACHE), -v (more detail).

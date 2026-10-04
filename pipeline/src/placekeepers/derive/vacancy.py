@@ -626,6 +626,29 @@ def build_records(con: duckdb.DuckDBPyConnection, w: Windows, lists: CityLists) 
     """)
 
 
+# Uses that keep a parcel off the map, from the assessor's description, the land use map, the
+# parks and the gardens. Land use codes: c2 51 transportation, 52 greened right of way, 71 park or
+# open space (c3 712 community agriculture), 72 cemetery, 81 water, 91 vacant.
+EXCLUSION_FLAGS_SQL = """
+  (bdesc ILIKE '%PKG%' OR bdesc ILIKE '%PARKING%' OR bdesc ILIKE '%CAR LOT%'
+    OR lu_c3 = 514) AS is_parking,
+  (ppr_name IS NOT NULL OR bdesc ILIKE '%PARK'
+    OR (lu_c2 = 71 AND coalesce(lu_c3, 0) <> 712)) AS is_park,
+  (garden_src IS NOT NULL OR lu_c3 = 712) AS is_garden,
+  (bdesc ILIKE '%RAILROAD%' OR bdesc ILIKE '%RAIL %' OR lu_c3 = 512) AS is_rail,
+  (lu_c2 = 51 AND coalesce(lu_c3, 0) NOT IN (512, 514)) AS is_transport,
+  (bdesc ILIKE '%UTIL%' OR lu_c3 = 314) AS is_utility,
+  (bdesc ILIKE '%CEMETER%' OR lu_c2 = 72) AS is_cemetery,
+  (lu_c2 IN (52, 81) OR lu_c3 = 511) AS is_water_or_row"""
+
+# The use a parcel is excluded as, checked in the study's order.
+EXCLUDED_USE_SQL = """CASE
+    WHEN is_park THEN 'park' WHEN is_garden THEN 'garden' WHEN is_parking THEN 'parking'
+    WHEN is_rail THEN 'rail' WHEN is_transport THEN 'transportation'
+    WHEN is_utility THEN 'utility' WHEN is_cemetery THEN 'cemetery'
+    WHEN is_water_or_row THEN 'water or street' END"""
+
+
 def build_signals(con: duckdb.DuckDBPyConnection, w: Windows) -> None:
     """The signal flags per account (research/vacancy/build_signals.py)."""
     con.execute("""
@@ -650,7 +673,7 @@ def build_signals(con: duckdb.DuckDBPyConnection, w: Windows) -> None:
         LEFT JOIN c_by USING (opa)
         LEFT JOIN side_yard sy USING (opa)
     """)
-    con.execute("""
+    con.execute(f"""
         CREATE TABLE sig AS
         SELECT *,
           -- The assessor's category code, not the description, which lags new construction.
@@ -658,30 +681,13 @@ def build_signals(con: duckdb.DuckDBPyConnection, w: Windows) -> None:
             AND NOT (bdesc ILIKE '%PKG%' OR bdesc ILIKE '%PARKING%' OR bdesc ILIKE '%PARK'
                      OR bdesc ILIKE '%CAR LOT%') AS opa_vacant_land,
           cat NOT IN ('6', '12', '13') AND coalesce(livable_sqft, 0) > 0 AS opa_says_building,
-          -- Land use codes: c2 51 transportation, 52 greened right of way, 71 park or open space
-          -- (c3 712 community agriculture), 72 cemetery, 81 water, 91 vacant.
-          (bdesc ILIKE '%PKG%' OR bdesc ILIKE '%PARKING%' OR bdesc ILIKE '%CAR LOT%'
-            OR lu_c3 = 514) AS is_parking,
-          (ppr_name IS NOT NULL OR bdesc ILIKE '%PARK'
-            OR (lu_c2 = 71 AND coalesce(lu_c3, 0) <> 712)) AS is_park,
-          (garden_src IS NOT NULL OR lu_c3 = 712) AS is_garden,
-          (bdesc ILIKE '%RAILROAD%' OR bdesc ILIKE '%RAIL %' OR lu_c3 = 512) AS is_rail,
-          (lu_c2 = 51 AND coalesce(lu_c3, 0) NOT IN (512, 514)) AS is_transport,
-          (bdesc ILIKE '%UTIL%' OR lu_c3 = 314) AS is_utility,
-          (bdesc ILIKE '%CEMETER%' OR lu_c2 = 72) AS is_cemetery,
-          (lu_c2 IN (52, 81) OR lu_c3 = 511) AS is_water_or_row,
+          {EXCLUSION_FLAGS_SQL},
           ext_cond IN ('6', '7') AS opa_ext_vacant,
           coalesce(lc_program, lc_program_attr) AS landcare
         FROM s
     """)
     con.execute("ALTER TABLE sig ADD COLUMN excluded_use VARCHAR")
-    con.execute("""
-        UPDATE sig SET excluded_use = CASE
-            WHEN is_park THEN 'park' WHEN is_garden THEN 'garden' WHEN is_parking THEN 'parking'
-            WHEN is_rail THEN 'rail' WHEN is_transport THEN 'transportation'
-            WHEN is_utility THEN 'utility' WHEN is_cemetery THEN 'cemetery'
-            WHEN is_water_or_row THEN 'water or street' END
-    """)
+    con.execute(f"UPDATE sig SET excluded_use = {EXCLUDED_USE_SQL}")
     con.execute(f"""
         CREATE TABLE signals AS
         SELECT *,

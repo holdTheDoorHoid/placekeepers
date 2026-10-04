@@ -81,6 +81,10 @@ jobs:
       - name: Install the pipeline
         run: pip install -e pipeline
 
+      # The vacancy model joins parcels, footprints and land use with DuckDB's spatial extension.
+      - name: Install the DuckDB spatial extension
+        run: python -c "import duckdb; duckdb.connect().install_extension('spatial')"
+
       - name: Prepare folders
         run: |
           {
@@ -136,6 +140,9 @@ jobs:
           pk fetch --sources "$others"
           HTTP_PROXY=http://127.0.0.1:9 HTTPS_PROXY=http://127.0.0.1:9 pk fetch "$BREAK_SOURCE"
           pk validate
+          # As in pk all, the map still publishes if the vacancy model fails (it then shows the
+          # City's lists alone and says so).
+          pk derive || echo "::warning::The vacancy model could not run."
           pk publish --out "$out"
 
       - name: Source health

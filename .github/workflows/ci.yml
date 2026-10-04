@@ -42,6 +42,10 @@ jobs:
       - name: Install the pipeline
         run: pip install -e "pipeline[dev]"
 
+      # The vacancy model's spatial tests need DuckDB's spatial extension; without it they skip.
+      - name: Install the DuckDB spatial extension
+        run: python -c "import duckdb; duckdb.connect().install_extension('spatial')"
+
       - name: Lint
         run: ruff check pipeline .github/scripts
 

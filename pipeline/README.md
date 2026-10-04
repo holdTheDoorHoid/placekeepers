@@ -14,6 +14,10 @@ pipeline/.venv/bin/pip install -e "pipeline[dev]"
 Map tiles need [tippecanoe](https://github.com/felt/tippecanoe) 2.17 or newer (`sudo apt install
 tippecanoe`). Without it, publish writes GeoJSON instead and says so in `manifest.json`.
 
+The vacancy model needs DuckDB's spatial extension. `pk derive` installs it the first time; to
+install it ahead (CI does), run
+`pipeline/.venv/bin/python -c "import duckdb; duckdb.connect().install_extension('spatial')"`.
+
 ## Commands
 
 | Command | What it does |
@@ -21,9 +25,10 @@ tippecanoe`). Without it, publish writes GeoJSON instead and says so in `manifes
 | `pk registry check` | Checks every file in `registry/`: unknown keys, missing descriptions, licenses and attributions, and every cross reference |
 | `pk fetch [ids...]` | Downloads sources into the shared cache |
 | `pk validate [ids...]` | Turns new downloads into snapshots, or rejects them and keeps the last good one |
+| `pk derive [--as-of DATE]` | Runs the vacancy model on the current snapshots (see below) |
 | `pk publish [--out DIR]` | Writes `manifest.json` and the map layers (default `build/data`) |
 | `pk health [ids...]` | Shows each source's status (`--json` for machines, `--strict` to fail when any source is not ok) |
-| `pk all` | Fetch and validate each source in turn, publish, then show health |
+| `pk all` | Fetch and validate each source in turn, run the vacancy model, publish, then show health |
 
 Options: `--sources a,b` limits a command to some sources, `--offline` uses only the cache,
 `--force` downloads frozen and recently fetched yearly sources again, `--cache DIR` uses another
@@ -49,7 +54,7 @@ for them are in each adapter's docstring.
 | `high_injury_network` | City ArcGIS `high_injury_network_2025` | Street name, length and line |
 | `real_estate_transfers` | Carto `rtt_summary`, candidate parcels | Document type and id, recording and document dates, grantors, grantees, cash and total consideration, property count |
 | `assessment_history` | Carto `assessments`, candidate parcels | Value, taxable and exempt amounts for every year |
-| `li_violations` | Carto `violations`, candidate parcels, since 2016 | Every code and status, with case, dates and point |
+| `li_violations` | Carto `violations`: candidate parcels since 2016, and vacancy violations (code 9-3904 or a title naming vacancy) citywide for the last 26 months | Every code and status, with case, dates and point |
 | `li_complaints` | Carto `complaints`, citywide, since 2023 | Code, dates, status, account and point |
 | `li_permits` | Carto `permits`, citywide, since 2016 | Number, account, type, work, issue and completion dates, status |
 | `li_unsafe`, `li_imminently_dangerous`, `li_clean_and_seal`, `li_demolitions` | Carto `unsafe`, `imm_dang`, `clean_seal`, `demolitions` | The whole tables, without owner, applicant or contractor names |
@@ -89,6 +94,34 @@ If a download fails or breaks a rule, the last good snapshot stays in use and th
 `stale` (or `failing` when there has never been a good one). `pk health --json` also reports
 `consecutive_failures`, for the weekly workflow to open an issue after two failures in a row.
 
+The City's two vacancy lists have one more rule: the City dates every record with the day it last
+recalculated the list, and if that date is more than six months old while ten or more demolitions
+have been recorded since, the list is no longer keeping up, so a new download is rejected and the
+source shows as `stale`.
+
+## The vacancy model
+
+`pk derive` (and `pk all`, before publishing) runs the rules of the vacancy study
+(`docs/VACANCY_METHOD.md`, adopted in `docs/DESIGN.md` section 6) on the current snapshots, in
+`placekeepers/derive/vacancy.py`. For every parcel with any sign of vacancy it decides:
+
+* the kind: a lot when no building footprint stands on it (or it was demolished with nothing built
+  since), a building when one does;
+* the confidence, high, medium or low, from how many independent records agree and whether any
+  contradict them;
+* the reasons for and against, which the map explains in plain sentences.
+
+Parks, gardens, parking, rail, transportation, utilities, cemeteries, water and streets never show
+as vacant. LandCare lots stay in, marked as maintained. The City's lists are a strong vote that is
+never enough alone for high; each is used for twelve months after its own date, then dropped, and
+the build notes say so. Time windows count back from the build date (`--as-of`).
+
+The result goes to `$PK_CACHE/derived/vacancy.parquet` (one row per parcel, with its shape) and a
+summary beside it, `vacancy.json` (counts by kind and confidence, with and without the City's lists,
+the lists' dates, and notes). `pk publish` builds the `parcels` layer from it; when the model has
+not run, the layer shows the City's lists alone and the build notes say so. A full run takes about
+a minute and stays under 2 GB of memory (`PK_DERIVE_MEMORY`).
+
 ## The shared cache
 
 Downloads and snapshots live in `$PK_CACHE` (default `~/.cache/placekeepers`), shared by every
@@ -102,6 +135,8 @@ snapshots/<source>/<id>.json          what we know about each snapshot (rows, sh
                                       record, status good or rejected, every check, notes)
 snapshots/<source>/current.parquet    always the last good snapshot
 snapshots/<source>/state.json         the result of the latest attempt
+derived/vacancy.parquet               the vacancy model's parcels (pk derive)
+derived/vacancy.json                  its counts, the City lists' dates, and notes
 research/                             reserved for the vacancy study; the pipeline never writes here
 ```
 
@@ -121,7 +156,8 @@ refuses to replace a folder that is not an earlier data root.
 
 ```
 pipeline/.venv/bin/pytest pipeline          # unit tests, no network
-pipeline/.venv/bin/pytest pipeline -m live  # a few tiny requests to the real City services
+pipeline/.venv/bin/pytest pipeline -m live  # a few tiny requests to the real City services, and
+                                            # the vacancy model on the real cache against the study
 pipeline/.venv/bin/ruff check pipeline
 ```
 
@@ -133,5 +169,6 @@ pipeline/.venv/bin/ruff check pipeline
 | `PK_REPO` | The repository root, if `pk` runs from outside it |
 | `PK_KEEP_SNAPSHOTS` | Good snapshots kept per source (default 3) |
 | `PK_DUCKDB_MEMORY`, `PK_DUCKDB_THREADS` | DuckDB limits (default 1GB and 4) |
+| `PK_DERIVE_MEMORY` | DuckDB memory for the vacancy model (default 2GB) |
 | `PK_TIPPECANOE` | A specific tippecanoe binary; empty means build no tiles |
 | `PK_MIN_FREE_GB` | Disk space every download leaves free (default 10; the weekly refresh on GitHub, whose runners have about 14 GB, uses 3) |
