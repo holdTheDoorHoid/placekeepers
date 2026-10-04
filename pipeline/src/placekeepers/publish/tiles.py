@@ -22,7 +22,8 @@ log = logging.getLogger(__name__)
 
 TILES_SKIPPED_NOTE = "tiles skipped: tippecanoe not installed"
 
-# Zoom ranges and options per tile file. Parcels keep every feature at the highest zooms; context
+# Zoom ranges and options per tile file. Parcels may be thinned at low zooms, but at the highest
+# zoom every parcel is kept, even slivers of a few square feet, so each one can be clicked. Context
 # hexagons and street lines are few, so no feature is ever dropped.
 TILE_OPTIONS: dict[str, list[str]] = {
     "tiles/lots.pmtiles": [
@@ -30,6 +31,7 @@ TILE_OPTIONS: dict[str, list[str]] = {
         "--maximum-zoom=16",
         "--drop-densest-as-needed",
         "--extend-zooms-if-still-dropping",
+        "--no-tiny-polygon-reduction-at-maximum-zoom",
     ],
     "tiles/streets.pmtiles": [
         "--minimum-zoom=8",
