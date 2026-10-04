@@ -185,11 +185,12 @@ def test_parcels_carry_the_contract_properties(ctx, tmp_path: Path) -> None:
     out = tmp_path / "data"
     result = publish(ctx, out)
     parcels = features(out / "tiles" / "lots.parcels.geojson")
-    assert [list(f["properties"]) for f in parcels] == [["id", "k", "vc", "ot", "lc"]] * 3
+    assert [list(f["properties"]) for f in parcels] == [["id", "k", "vc", "ot", "rt", "lc"]] * 3
+    # No owner records in this fixture: unknown owners with no name, so no clear route yet.
     assert [f["properties"] for f in parcels] == [
-        {"id": "370000001", "k": 1, "vc": 2, "ot": 0, "lc": 0},
-        {"id": "370000002", "k": 1, "vc": 2, "ot": 0, "lc": 0},  # on both lists, vacant land
-        {"id": "380000003", "k": 2, "vc": 2, "ot": 0, "lc": 0},
+        {"id": "370000001", "k": 1, "vc": 2, "ot": 0, "rt": 0, "lc": 0},
+        {"id": "370000002", "k": 1, "vc": 2, "ot": 0, "rt": 0, "lc": 0},  # both lists, vacant land
+        {"id": "380000003", "k": 2, "vc": 2, "ot": 0, "rt": 0, "lc": 0},
     ]
     assert (
         "1 vacancy indicator features have no OPA account number and are not shown"

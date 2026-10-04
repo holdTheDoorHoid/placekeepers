@@ -713,6 +713,121 @@ def test_the_lots_layer_carries_the_owner_type(built) -> None:
     assert ot["374000001"] == 1
 
 
+# The map's first step (`rt`) and the dossier's first route always agree.
+FIRST_STEP = {
+    "community_landcare": 1,
+    "land_bank_garden_agreement": 2,
+    "land_bank_side_yard": 2,
+    "contact_phdc": 3,
+}
+
+
+def expected_rt(dossier: dict[str, Any]) -> int:
+    """The rt code docs/CONTRACTS.md gives for the dossier's first route and owner type."""
+    routes = dossier["routes"]
+    if not routes:
+        return 0
+    if routes[0] in FIRST_STEP:
+        return FIRST_STEP[routes[0]]
+    return 4 if dossier["owner"]["type"] in {"housing_authority", "other_public"} else 5
+
+
+def map_and_dossiers_agree(out: Path) -> dict[str, int]:
+    """Every lot on the map that has a dossier: its rt, after checking it against the dossier."""
+    layer = json.loads((out / "tiles" / "lots.parcels.geojson").read_text(encoding="utf-8"))
+    found = {}
+    for feature in layer["features"]:
+        account = feature["properties"]["id"]
+        path = out / "dossiers" / f"{account[:4]}.json"
+        if not path.is_file():
+            continue
+        dossier = json.loads(path.read_text(encoding="utf-8"))["parcels"].get(account)
+        if dossier is None:
+            continue
+        assert feature["properties"]["rt"] == expected_rt(dossier), (account, dossier["routes"])
+        found[account] = feature["properties"]["rt"]
+    return found
+
+
+def test_the_lots_first_step_matches_the_dossiers_first_route(built) -> None:
+    _, out = built
+    rt = map_and_dossiers_agree(out)
+    assert rt["371000001"] == 5  # a person: ask the owner
+    assert rt["373000001"] == 1  # the Land Bank, but PHS LandCare already cares for it
+    assert rt["375000001"] == 1
+    assert rt["374000001"] == 5
+
+
+EVERY_FIRST_STEP = {
+    # account: (owner_1, City agency, on PHS's LandCare list, rt)
+    "381000001": (None, None, False, 0),  # no owner name at all
+    "381000002": ("KENSINGTON LOTS LLC", None, True, 1),
+    "381000003": ("PHILADELPHIA LAND BANK", "PLB", False, 2),
+    "381000004": ("REDEVELOPMENT AUTHORITY", "PRA", False, 3),
+    "381000005": ("PHILADELPHIA HOUSING AUTH", None, False, 4),
+    "381000006": ("MORALES ROSA", None, False, 5),
+    "381000007": ("HACE", None, False, 5),  # a name we could not type
+}
+
+
+def test_every_first_step_on_the_map_matches_its_dossier(
+    context_factory, tmp_path, monkeypatch
+) -> None:
+    ctx = context_factory(now=NOW)
+    accounts = list(EVERY_FIRST_STEP)
+    for i, account in enumerate(accounts):
+        monkeypatch.setitem(PLACES, account, (i, 3))
+    opa = {name: [None] * len(accounts) for name in OPA_COLUMNS}
+    opa["parcel_number"] = accounts
+    opa["location"] = [f"{2900 + 2 * i} N 5TH ST" for i in range(len(accounts))]
+    opa["owner_1"] = [EVERY_FIRST_STEP[a][0] for a in accounts]
+    opa["lat"] = [LAT0] * len(accounts)
+    opa["lng"] = [LNG0] * len(accounts)
+    opa["sale_date"] = pa.array([None] * len(accounts), pa.date32())
+    opa["sale_price"] = pa.array([None] * len(accounts), pa.int64())
+    install_snapshot(ctx, "opa_properties", pa.table(opa), geometry=False, fetched_at=FETCHED)
+    owned = [a for a in accounts if EVERY_FIRST_STEP[a][1]]
+    install_snapshot(
+        ctx,
+        "city_owned_property",
+        pa.table(
+            {
+                "opabrt": owned,
+                "agency": [EVERY_FIRST_STEP[a][1] for a in owned],
+                "status_1": ["Available"] * len(owned),
+                "sideyardeligible": ["No"] * len(owned),
+                "location": [None] * len(owned),
+                "geometry": [wkb(box(LNG0, LAT0, LNG0 + 0.0001, LAT0 + 0.0001))] * len(owned),
+            }
+        ),
+        geometry=True,
+        fetched_at=FETCHED,
+    )
+    cared = [a for a in accounts if EVERY_FIRST_STEP[a][2]]
+    install_snapshot(
+        ctx,
+        "phs_landcare",
+        pa.table(
+            {
+                "brt_id": cared,
+                "program": ["PLC"] * len(cared),
+                "year": ["2020"] * len(cared),
+                "geometry": [wkb(box(LNG0, LAT0, LNG0 + 0.0001, LAT0 + 0.0001))] * len(cared),
+            }
+        ),
+        geometry=True,
+        fetched_at=FETCHED,
+    )
+    write_model(
+        ctx,
+        [(a, "lot", 1, "high", 3, 0, 8, 1, None, None, None) for a in accounts],
+    )
+    out = tmp_path / "data"
+    publish(ctx, out)
+    rt = map_and_dossiers_agree(out)
+    assert rt == {a: EVERY_FIRST_STEP[a][3] for a in accounts}
+
+
 def test_every_flag_id_used_has_shared_notes_and_every_route_exists(built) -> None:
     _, out = built
     registry = load_registry(REPO_ROOT / "registry", repo_root=REPO_ROOT)
@@ -905,6 +1020,12 @@ def test_the_dossier_and_the_map_follow_the_vacancy_model(context_factory, tmp_p
         "confidence": "high",
     }
     assert listed[-1]["confidence"] == "medium"
+    # The map's first step agrees with every dossier, and a lot the model marks as LandCare by its
+    # shape (not on PHS's list of accounts) lists Community LandCare first in both.
+    rt = map_and_dossiers_agree(out)
+    assert rt["373000001"] == 1
+    assert parcel(out, "373000001")["routes"][0] == "community_landcare"
+    assert rt["371000001"] == 5
     # The map's lots carry the owner type from the model's path as well.
     layer = json.loads((out / "tiles" / "lots.parcels.geojson").read_text(encoding="utf-8"))
     ot = {f["properties"]["id"]: f["properties"]["ot"] for f in layer["features"]}
