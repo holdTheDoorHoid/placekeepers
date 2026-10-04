@@ -16,8 +16,8 @@ for 38 months.
 
 In neighborhoods below the poverty line, the greened lots saw gun violence fall by 29.1%, all
 crime fall by 13.3%, burglary fall by 21.9%, and nuisance crimes fall by 30.3%. Neighbors living
-near greened lots reported feeling 36.8% safer from crime, 57.8% more comfortable going outside,
-and spent 75.7% more time relaxing and socializing outdoors.
+near greened lots reported 36.8% less crime around them and 57.8% fewer worries about their
+safety when going outside, and spent 75.7% more time relaxing and socializing outdoors.
 
 A second study of the same trial measured shootings on their own and found them down 6.8% near
 greened lots (researchers are confident the true drop is somewhere between 2.7% and 10.6%), and
@@ -31,15 +31,16 @@ Medicine* in 2023) picked 258 abandoned houses, mostly in Black, lower income ne
 randomly assigned them to full repair (working doors and windows, plus cleanup), cleanup only, or
 nothing. Full repair cut gun assaults by 13.1% and weapons violations by 8.4%. Shootings fell
 7.0%, though that smaller number was not large enough for researchers to rule out chance. Cleanup
-alone, without the repairs, made no measurable difference. Nobody was displaced because of the
-repairs.
+alone, without the repairs, made no measurable difference. There was no sign that the violence
+moved to nearby blocks.
 
 An earlier study of Philadelphia's rule requiring working doors and windows on vacant buildings
-found drops in assaults after it was enforced, though property crime nearby went up at the same
-time.
+found drops in assaults after it was enforced, though drug and property crime nearby went up at
+the same time.
 
-Both projects are cheap. Both worked best in the poorest neighborhoods. Neither pushed the problem
-onto the next block.
+Both projects are cheap, and neither pushed the problem onto the next block. The greening trial
+found its effect in neighborhoods below the poverty line, and the house repair trial took place in
+low income neighborhoods.
 
 ## How strong is the evidence
 
@@ -69,7 +70,7 @@ explain the citywide trend, and we never say it does.
 
 **We are not about policing.** Studies of "fixing places and solving problems with neighbors"
 find it modestly reduces crime. Studies of arresting people for minor offenses find it does not,
-and that it falls unevenly on Black and Hispanic residents. Placekeepers is about caring for
+and that it widens racial disparities in arrests. Placekeepers is about caring for
 places. It is never about directing police toward people.
 
 ## The risks we design for

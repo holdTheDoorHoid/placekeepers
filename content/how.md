@@ -23,9 +23,9 @@ most of them.
 
 - **Side or rear yard.** Only the next door neighbor can apply. The price is small, but the lot
   must stay a side yard forever, and the City can take it back if the rules are not kept. The
-  Land Bank aims to answer in 120 days, then City Council has to approve it too. Only 67 of these
-  were approved citywide from 2020 to 2023, so expect it to take a while.
-- **Urban Garden Agreement.** Open to anyone, for $1 a year. The City can cancel it at any time.
+  Land Bank aims to answer in 120 days, then its board and City Council have to approve it. Only
+  67 lots were transferred this way citywide from 2020 to 2023, so expect it to take a while.
+- **Urban Garden Agreement.** Open to anyone, for $1. The City can cancel it at any time.
 - **Individual Garden Agreement.** For one person, $25 a year, with liability insurance.
 - **Community Garden License.** For a group with a nonprofit sponsor, for up to 5 years, with
   insurance and a maintenance plan. **Not yet confirmed:** Grounded in Philly has noted that the
@@ -49,8 +49,8 @@ the only step we can suggest is to contact PHDC and ask about the specific parce
   Justice Legal Initiative to look over any agreement before you sign it.
 - **Buy it.** An ordinary purchase, though many vacant properties have a tangled title (the owner
   died and the estate was never legally settled), which can make a sale difficult.
-- **Garden adverse possession.** A 2024 Pennsylvania law lets a resident, group, or nonprofit ask
-  a court for title to a small privately owned lot (half an acre or less) after 10 years of use,
+- **Garden adverse possession.** A 2024 Pennsylvania law lets a Philadelphia resident, group, or
+  nonprofit ask a court for title to a small privately owned Philadelphia lot (half an acre or less) after 10 years of use,
   at least 5 of them as a garden, with no permanent buildings. It needs a lawyer and a lawsuit,
   and any existing debts tied to the land stay attached. **Not yet confirmed:** we want the
   Garden Justice Legal Initiative to review how we describe this law before you rely on this
@@ -141,7 +141,7 @@ intersection, so this is about enforcing a rule that already exists.
 | Plant a tree | Free through TreePhilly | Request one | Mixed, for violence; strong for shade and heat | TreePhilly |
 | Add a rain garden or stormwater planter | Free for homeowners, through Rain Check | Sign up (**not yet confirmed for groups**) | Not about violence | Water Department |
 | Build a bench | Materials and cutting only, with an open design such as Better Block's Wikiblock | The lot owner's permission; a sidewalk permit is **not yet confirmed** | Not about violence | Better Block (designs) |
-| Start a porch light campaign | Near zero | None needed for your own porch | Moderate | Neighbors |
+| Start a porch light campaign | Near zero | None needed for your own porch | Moderate for street lighting; porch lights themselves are untested | Neighbors |
 | Paint a mural | Varies | Mural Arts process, and the wall owner's permission | Not about violence (good for pride and connection) | Mural Arts |
 | Build a memorial or memorial garden | Low | The family's blessing first; ghost bikes go through the Bicycle Coalition | Not about violence | Families for Safe Streets |
 | Ask for traffic calming | Free to request | 60% petition | Safety evidence is **not yet confirmed** in detail | OTIS, Bicycle Coalition |

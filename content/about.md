@@ -45,8 +45,7 @@ violence nearby. You can read that research on our
 [Why this works](https://holdthedoorhoid.github.io/placekeepers/why/) page.
 
 Clean & Green Philly closed in July 2025. The City's vacant land list had stopped being reliable
-in June 2024, and the volunteers keeping the project going could not keep up with checking it by
-hand, parcel by parcel. Placekeepers combines many City records on purpose, so that one broken
+in June 2024, and a volunteer team without funding could not replace it. Placekeepers combines many City records on purpose, so that one broken
 source can no longer take the whole map down. Read how on
 [How we find vacant land](https://holdthedoorhoid.github.io/placekeepers/vacant-land/).
 
@@ -65,5 +64,5 @@ including a warning wherever a project might raise nearby prices and rents. Read
 Placekeepers is free, public, and open source. Anyone can read the code, the data rules, and the
 reasoning behind every score, at
 [github.com/holdTheDoorHoid/placekeepers](https://github.com/holdTheDoorHoid/placekeepers). The
-code is licensed GPL-3.0 or later. The written guides on this site, including this page, are
+code is licensed GPL-3.0. The written guides on this site, including this page, are
 licensed Creative Commons Attribution ShareAlike 4.0, so anyone may reuse them with credit.

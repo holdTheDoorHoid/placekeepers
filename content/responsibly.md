@@ -53,9 +53,9 @@ public memorial list, such as the Bicycle Coalition's TrafficVictimsPHL. We neve
 or City records for names ourselves.
 
 Every memorial is shown quietly: a plain marker with no red color, no skulls, and no crash
-photos. It shows the name, the date, whether the person was walking or cycling, and a link to the
-public source. It never shows driver details, case numbers, or arrest information, even on the
-rare occasion the City's own records include them. A "show names" setting, on by default, can
+photos. It shows the name, the date, whether the person was walking, cycling, or riding a scooter, and a link to the
+public source. It never shows driver details, case numbers, or arrest information, even though
+the City's own crash records include some of them. A "show names" setting, on by default, can
 hide every name on the map at once.
 
 Before this goes further, we plan to ask the Bicycle Coalition and Families for Safe Streets for
@@ -72,8 +72,9 @@ name never comes back automatically from a future update.
 ## Why shootings are shown as counts, not as a list of victims
 
 The map shows how many people were shot within an area of about two blocks, over the last year or
-the last three years. It does not show a point for every shooting, and it never shows the age,
-sex, or race of a victim, even though the City's own data includes this.
+the last three years. By default it does not show a point for every shooting (a setting can show the City's block
+level points), and it never shows the age, sex, or race of a victim, even though the City's own
+data includes this.
 
 We never rank neighborhoods by how much violence they have had. The map ranks places for the
 amount of care they could use under whatever lens you choose, which is a different question, and

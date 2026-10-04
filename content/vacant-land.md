@@ -26,13 +26,13 @@ As of October 4, 2026:
 ## What we found
 
 - **The City's September 2026 list is a real update, and it is mostly right about lots.** When
-  the City's list and at least two of our own independent records agree a lot is vacant, every
-  one we checked against aerial photos really was empty.
+  the City's list and at least two of our own independent records agree a lot is vacant, 24 of
+  the 26 we checked against aerial photos were empty, and the other 2 were unclear.
 - **The City's list by itself is not enough.** When only the City's list says a lot is vacant,
-  with none of our other records agreeing, fewer than half of the ones we checked against photos
-  were actually empty. The rest were houses, parking, or even a playground.
+  with at most one of our other records agreeing, only 5 of the 13 we checked against photos were
+  empty. The rest were houses, parking, or even a playground.
 - **Our own records find about 4,200 more vacant lots that the City's list leaves out.** Most of
-  these look like real vacant lots once we checked them.
+  the ones we checked were empty, though several were tended side yards.
 - **The City's list is slow to catch new vacant lots created by tearing a building down.** A
   demolition shows up in our own records right away; it can take the City over a year to add the
   resulting lot to its own list.
