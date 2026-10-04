@@ -1,0 +1,312 @@
+/* Placekeepers: shared look. Light theme first. Every text color meets WCAG AA contrast on
+   the background it sits on; focus is always visible. */
+
+:root {
+  color-scheme: light;
+  --pk-bg: #ffffff;
+  --pk-surface: #f6f6f3;
+  --pk-surface-2: #ebebe5;
+  --pk-text: #1d2327;
+  --pk-muted: #4d5860;
+  --pk-border: #868e96; /* 3.3 to 1 on white: control outlines need 3 to 1 */
+  --pk-accent: #1f5f8b;
+  --pk-accent-hover: #174a6d;
+  --pk-accent-ink: #ffffff;
+  --pk-accent-soft: #e3edf5;
+  --pk-focus: #0b4f8a;
+  --pk-note-bg: #fff4d6;
+  --pk-note-ink: #4f3b00;
+  --pk-ok-bg: #e4f1e7;
+  --pk-ok-ink: #1c4d2b;
+  --pk-stale-bg: #fff1d6;
+  --pk-stale-ink: #5c4300;
+  --pk-fail-bg: #f1e6f4;
+  --pk-fail-ink: #55275f;
+  --pk-radius: 8px;
+  --pk-shadow: 0 2px 12px rgba(16, 24, 32, 0.18);
+  --pk-font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  font: 16px/1.45 var(--pk-font);
+  color: var(--pk-text);
+  background: var(--pk-bg);
+  -webkit-text-size-adjust: 100%;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  line-height: 1.25;
+  margin: 0 0 0.4em;
+}
+
+h2 {
+  font-size: 1.1rem;
+}
+
+h3 {
+  font-size: 1rem;
+}
+
+h4 {
+  font-size: 0.9rem;
+}
+
+p {
+  margin: 0 0 0.6em;
+}
+
+a {
+  color: var(--pk-accent);
+}
+
+a:hover {
+  color: var(--pk-accent-hover);
+}
+
+:focus-visible {
+  outline: 3px solid var(--pk-focus);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 8px;
+  top: -100px;
+  z-index: 100;
+  background: var(--pk-bg);
+  padding: 8px 12px;
+  border-radius: var(--pk-radius);
+  box-shadow: var(--pk-shadow);
+}
+
+.skip-link:focus {
+  top: 8px;
+}
+
+.muted {
+  color: var(--pk-muted);
+}
+
+.small {
+  font-size: 0.875rem;
+}
+
+/* Buttons */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 6px 14px;
+  border: 1px solid var(--pk-accent);
+  border-radius: var(--pk-radius);
+  background: var(--pk-bg);
+  color: var(--pk-accent);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.button:hover {
+  background: var(--pk-accent-soft);
+}
+
+.button.primary {
+  background: var(--pk-accent);
+  color: var(--pk-accent-ink);
+}
+
+.button.primary:hover {
+  background: var(--pk-accent-hover);
+}
+
+.button.small {
+  min-height: 34px;
+  padding: 4px 10px;
+  font-size: 0.875rem;
+}
+
+.button.quiet {
+  border-color: var(--pk-border);
+  color: var(--pk-text);
+}
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--pk-border);
+  border-radius: var(--pk-radius);
+  background: var(--pk-bg);
+  color: var(--pk-text);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.icon-button:hover {
+  background: var(--pk-surface);
+}
+
+/* Chips: toggle buttons with aria-pressed */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 6px 14px;
+  border: 1px solid var(--pk-border);
+  border-radius: 999px;
+  background: var(--pk-bg);
+  color: var(--pk-text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.chip[aria-pressed='true'] {
+  background: var(--pk-accent);
+  border-color: var(--pk-accent);
+  color: var(--pk-accent-ink);
+}
+
+.chip[aria-pressed='true']::before {
+  content: '\2713';
+  font-weight: 700;
+}
+
+.chip[aria-disabled='true'] {
+  color: var(--pk-muted);
+  border-style: dashed;
+}
+
+.chip .soon {
+  font-weight: 400;
+  font-size: 0.8rem;
+}
+
+/* Notes and notices */
+.notice {
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: var(--pk-radius);
+  background: var(--pk-note-bg);
+  color: var(--pk-note-ink);
+  font-size: 0.9rem;
+}
+
+/* Form controls */
+input[type='range'] {
+  width: 100%;
+  accent-color: var(--pk-accent);
+}
+
+input[type='checkbox'],
+input[type='radio'] {
+  accent-color: var(--pk-accent);
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  flex: none;
+}
+
+fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+legend {
+  padding: 0;
+  font-weight: 600;
+}
+
+details > summary {
+  cursor: pointer;
+  color: var(--pk-accent);
+  font-weight: 600;
+  padding: 4px 0;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--pk-surface-2);
+  vertical-align: top;
+}
+
+th {
+  font-size: 0.85rem;
+  color: var(--pk-muted);
+}
+
+caption {
+  text-align: left;
+  font-weight: 600;
+  padding: 0 0 6px;
+}
+
+/* The "you are here" dot drawn on the map by MapController. */
+.pk-you-are-here {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--pk-focus);
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 0 2px var(--pk-focus);
+}
+
+/* MapLibre controls: keep keyboard focus visible on top of the map. */
+.maplibregl-ctrl button:focus-visible,
+.maplibregl-canvas:focus-visible {
+  outline: 3px solid var(--pk-focus);
+  outline-offset: -3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
