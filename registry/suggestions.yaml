@@ -29,7 +29,7 @@
   evidence: not_violence
   cost: Low; a ghost bike request is free
   routes: [ghost_bike_request]
-  partners: [families_for_safe_streets, bike_coalition]
+  partners: [bike_coalition]
   default_on: true
   release: v0.1
 - id: traffic_calming_petition

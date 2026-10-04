@@ -5,4 +5,3 @@
 - {id: land_bank, name: Philadelphia Land Bank, url: "https://phillylandbank.org/", one_line: "City programs for vacant lots, including side yards and gardens."}
 - {id: bike_coalition, name: Bicycle Coalition of Greater Philadelphia, url: "https://bicyclecoalition.org/", one_line: "Vision Zero advocacy, ghost bikes and Families for Safe Streets."}
 - {id: feet_first, name: Feet First Philly, url: "https://feetfirstphilly.org/", one_line: "Pedestrian advocacy, walk audits and public space mini grants."}
-- {id: families_for_safe_streets, name: Families for Safe Streets Greater Philadelphia, url: "https://bicyclecoalition.org/programs/families-for-safe-streets/", one_line: "Support for families after a deadly crash, run by the Bicycle Coalition."}
