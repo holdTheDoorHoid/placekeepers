@@ -18,6 +18,7 @@ from shapely.geometry import LineString, MultiLineString, Point, box, mapping
 
 from placekeepers.adapters import ADAPTERS, ArcgisAdapter, CartoAccountsAdapter, UrlAdapter
 from placekeepers.adapters.carto import CartoAdapter, Column
+from placekeepers.adapters.lens_context import TreeCanopy2018
 from placekeepers.candidates import Candidates
 from placekeepers.registry import Source
 from placekeepers.runner import fetch_source, validate_source
@@ -206,7 +207,8 @@ def fake_layer(source_id: str, count: int = 3) -> FakeArcgis:
     return FakeArcgis(fields=fields, features=features, geometry_type=spec["geometry"])
 
 
-@pytest.mark.parametrize("source_id", ids_of(ArcgisAdapter))
+# The canopy keeps square meters per cell, not shapes; tests/test_lenses.py covers it.
+@pytest.mark.parametrize("source_id", ids_of(ArcgisAdapter, exclude=TreeCanopy2018))
 def test_arcgis_sources_from_fixtures(source_id: str, context_factory) -> None:
     adapter = ADAPTERS[source_id]
     fake = fake_layer(source_id)

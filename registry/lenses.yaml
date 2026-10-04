@@ -12,25 +12,41 @@
       field: f_vacant
       evidence: strong
       default_weight: 3
-      explain: Randomized trials in Philadelphia found that greening vacant lots and sealing abandoned houses reduced gun violence nearby.
+      explain: >-
+        Randomized trials in Philadelphia found that greening vacant lots and giving abandoned
+        houses working doors and windows reduced gun violence nearby. Places already treated that
+        way score 0: lots PHS LandCare keeps up, and buildings whose owner fixed the doors and
+        windows after an L&I citation. Every other vacant lot or building scores 100.
     - id: shootings_nearby
       label: Shootings nearby in the last three years
       field: f_shoot
       evidence: context
       default_weight: 3
-      explain: The trials measured fewer shootings around treated places, so care helps most where shootings happen.
+      explain: >-
+        People shot in the last three years within about a quarter mile (the place's hexagon and
+        the six around it), from the Police Department's shooting victim records. The rank is the
+        share of places on the map with fewer. The trials measured fewer shootings around treated
+        places, so care helps most where shootings happen.
     - id: poverty
       label: Neighborhood poverty rate
       field: f_poverty
       evidence: strong
       default_weight: 2
-      explain: In the citywide trial, the drop in gun violence was found in neighborhoods below the poverty line.
+      explain: >-
+        The share of people living below the poverty line in the place's census tract (Census
+        Bureau survey, 2020 to 2024). The rank is the share of places on the map in tracts with a
+        lower rate. In the citywide trial, the drop in gun violence was found in neighborhoods
+        below the poverty line.
     - id: canopy_gap
       label: Few trees nearby
       field: f_canopy
       evidence: mixed
       default_weight: 1
-      explain: Street trees are linked to less crime, but evidence is mixed and depends on placement.
+      explain: >-
+        Tree canopy on the land within about a quarter mile, from the City's 2018 tree canopy
+        survey. The rank is the share of places on the map with more trees around them, so fewer
+        trees rank higher. Street trees are linked to less crime, but evidence is mixed and
+        depends on placement.
   presets:
     - id: research
       label: Research based

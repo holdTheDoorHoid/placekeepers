@@ -90,6 +90,17 @@ def vacancy_notes(ctx: Context) -> list[str]:
     return [line, *summary.get("notes", [])]
 
 
+def lens_notes(ctx: Context) -> list[str]:
+    """What the violence lens could not score, from the summary beside derived/lens_factors."""
+    path = ctx.cache.root / "derived" / "lens_factors.json"
+    if not path.is_file():
+        if (ctx.cache.root / "derived" / "vacancy.parquet").is_file():
+            return ["The lens factors have not been computed, so the lots have no scores yet"]
+        return []
+    summary = json.loads(path.read_text(encoding="utf-8"))
+    return list(summary.get("notes", []))
+
+
 def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> PublishResult:
     started = time.monotonic()
     registry = ctx.registry
@@ -150,6 +161,7 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
             )
 
         notes.extend(vacancy_notes(ctx))
+        notes.extend(lens_notes(ctx))
 
         exe = find_tippecanoe()
         if exe is None:

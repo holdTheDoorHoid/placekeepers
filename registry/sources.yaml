@@ -350,3 +350,23 @@
   cadence: irregular
   health: {min_rows: 0, max_drop_pct: 100}
   release: v0.1
+- id: census_tracts_2020
+  name: Census tracts 2020
+  publisher: City of Philadelphia, Planning Commission, from the U.S. Census Bureau
+  homepage: https://www.arcgis.com/home/item.html?id=dd253c179ac643e3870d31cc0c059d4b
+  endpoint: {kind: arcgis, service: Census_Tracts_2020, layer: 0}
+  license: city_terms
+  attribution: "Census tracts: City of Philadelphia, from the U.S. Census Bureau"
+  cadence: frozen
+  health: {min_rows: 400, max_drop_pct: 0}
+  release: v0.1
+- id: tree_canopy_2018
+  name: Tree canopy 2008 to 2018
+  publisher: City of Philadelphia, Parks and Recreation, with the University of Vermont Spatial Analysis Laboratory
+  homepage: https://www.arcgis.com/home/item.html?id=de383e47c72045cbbd9af780d1117ff3
+  endpoint: {kind: arcgis, service: TreeCanopyChange_2008_2018, layer: 0}
+  license: city_terms
+  attribution: "Tree canopy 2018: City of Philadelphia Parks and Recreation and the University of Vermont Spatial Analysis Laboratory"
+  cadence: frozen
+  health: {min_rows: 3000, max_drop_pct: 2}
+  release: v0.1

@@ -37,6 +37,8 @@ from shapely.geometry.polygon import orient
 
 from placekeepers.context import Context
 from placekeepers.dates import months_before
+from placekeepers.derive.lenses import SOURCES as LENS_SOURCES
+from placekeepers.derive.lenses import load_factors
 from placekeepers.derive.vacancy import SOURCES as VACANCY_SOURCES
 from placekeepers.geo import GeoJSONWriter, geometry_json
 
@@ -191,6 +193,7 @@ SHOWN_KINDS = ("lot", "lot_conflict", "building")
 def build_parcels_from_model(model: Path, out: Path) -> BuildResult:
     columns = ["opa", "kind", "k", "vc", "lc", "rs", "n", "dy", "sy", "ny", "geometry"]
     table = pq.read_table(model, columns=columns)
+    factors = load_factors(model.with_name("lens_factors.parquet"))
     rows = zip(*(table.column(name).to_pylist() for name in columns), strict=True)
     with GeoJSONWriter(out) as writer:
         for opa, kind, k, vc, lc, rs, n, dy, sy, ny, wkb in rows:
@@ -200,6 +203,7 @@ def build_parcels_from_model(model: Path, out: Path) -> BuildResult:
             for key, year in (("dy", dy), ("sy", sy), ("ny", ny)):
                 if year is not None:
                     properties[key] = int(year)
+            properties.update(factors.get(opa, {}))
             writer.write(properties, geometry_json(wkb))
     return BuildResult(writer.count, [])
 
@@ -370,8 +374,12 @@ BUILDERS: tuple[LayerBuilder, ...] = (
         "parcels",
         PARCEL_LAYER_SOURCES,
         build_parcels,
-        # Every input of the vacancy model, so the tile file credits each one.
-        extras=tuple(s for s in VACANCY_SOURCES if s not in PARCEL_LAYER_SOURCES),
+        # Every input of the vacancy model and the lens factors, so the tile file credits each.
+        extras=tuple(
+            s
+            for s in dict.fromkeys((*VACANCY_SOURCES, *LENS_SOURCES))
+            if s not in PARCEL_LAYER_SOURCES
+        ),
     ),
     LayerBuilder("tiles/streets.pmtiles", "hin", ("high_injury_network",), build_hin),
     LayerBuilder("tiles/context.pmtiles", "h3", ("shootings",), build_h3),

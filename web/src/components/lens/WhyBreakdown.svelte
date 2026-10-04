@@ -1,12 +1,14 @@
 <script lang="ts">
   // The "why" behind a score: each factor's citywide rank, its weight, and how many points
   // it adds. The points add up to the score.
-  import type { ScoreExplanation } from '../../map/lens.ts';
+  import { displayedBreakdown, type ScoreExplanation } from '../../map/lens.ts';
   import { strings } from '../../strings.ts';
   import EvidenceBadge from '../common/EvidenceBadge.svelte';
 
   let { why, idPrefix }: { why: ScoreExplanation; idPrefix: string } = $props();
   const max = $derived(Math.max(1, ...why.factors.map((f) => f.contribution)));
+  // Shown to a tenth of a point, rounded so the column adds up to the score exactly.
+  const shown = $derived(displayedBreakdown(why));
 </script>
 
 <section class="why" aria-labelledby="{idPrefix}-why">
@@ -25,7 +27,7 @@
         </tr>
       </thead>
       <tbody>
-        {#each why.factors as f (f.id)}
+        {#each why.factors as f, i (f.id)}
           <tr class:off={f.weight === 0}>
             <th scope="row">
               <span class="label">{f.label}</span>
@@ -34,7 +36,7 @@
             <td>{f.value === null ? strings.why.noData : f.value}</td>
             <td>{f.weight === 0 ? strings.why.off : f.weight}</td>
             <td>
-              <span class="adds">{f.contribution.toFixed(1)}</span>
+              <span class="adds">{shown.contributions[i]!.toFixed(1)}</span>
               <span class="bar" style:width="{(f.contribution / max) * 100}%" aria-hidden="true"></span>
             </td>
           </tr>
@@ -43,7 +45,7 @@
       <tfoot>
         <tr>
           <th scope="row">{strings.why.total}</th>
-          <td colspan="3"><strong>{why.score === null ? strings.why.noData : why.score.toFixed(1)}</strong></td>
+          <td colspan="3"><strong>{shown.score === null ? strings.why.noData : shown.score.toFixed(1)}</strong></td>
         </tr>
       </tfoot>
     </table>
