@@ -1,0 +1,272 @@
+import { existsSync, readFileSync } from 'node:fs';
+import { describe, expect, it } from 'vitest';
+import { loadRegistry } from '../plugins/registry.ts';
+import {
+  dataKind,
+  describeStatus,
+  freshness,
+  isSampleData,
+  loadManifest,
+  parseManifest,
+  resolveDataBase,
+  resolveLayerData,
+  statusRows,
+  statusSummary,
+  type Manifest,
+} from '../src/data/manifest.ts';
+
+const reg = loadRegistry();
+const FIXTURE_ROOT = new URL('../fixtures/data/', import.meta.url);
+const fixtureJson = JSON.parse(readFileSync(new URL('manifest.json', FIXTURE_ROOT), 'utf8'));
+const layer = (id: string) => reg.layers.find((l) => l.id === id)!;
+
+function manifestWith(overrides: Record<string, unknown> = {}): Manifest {
+  const parsed = parseManifest({
+    schema: 1,
+    build_id: '2026-10-05T10-00-00Z-1a2b3c4',
+    generated_at: '2026-10-05T10:03:12Z',
+    sources: Object.fromEntries(
+      reg.sources.map((s) => [
+        s.id,
+        {
+          status: 'ok',
+          last_attempt: '2026-10-05T10:00:05Z',
+          last_success: '2026-10-05T10:00:05Z',
+          stale_since: null,
+          rows: 100,
+          newest_record: '2026-10-01',
+          message: null,
+        },
+      ]),
+    ),
+    layers: { shootings_hex: { file: 'tiles/context.pmtiles', source_layer: 'h3', sources: ['shootings'] } },
+    files: { 'tiles/context.pmtiles': { bytes: 1234567, sha256: 'abc' } },
+    ...overrides,
+  });
+  if (!parsed.manifest) throw new Error(parsed.error ?? 'no manifest');
+  return parsed.manifest;
+}
+
+describe('parsing manifest.json', () => {
+  it('reads the example from CONTRACTS.md', () => {
+    const { manifest, problems, error } = parseManifest({
+      schema: 1,
+      build_id: '2026-10-05T10-00-00Z-1a2b3c4',
+      generated_at: '2026-10-05T10:03:12Z',
+      sources: {
+        shootings: {
+          status: 'ok',
+          last_attempt: '2026-10-05T10:00:05Z',
+          last_success: '2026-10-05T10:00:05Z',
+          stale_since: null,
+          rows: 17973,
+          newest_record: '2026-10-01',
+          message: null,
+        },
+      },
+      layers: { shootings_hex: { file: 'tiles/context.pmtiles', source_layer: 'h3', sources: ['shootings'] } },
+      files: { 'tiles/context.pmtiles': { bytes: 1234567, sha256: '...' } },
+    });
+    expect(error).toBeNull();
+    expect(problems).toEqual([]);
+    expect(manifest?.sources.shootings?.rows).toBe(17973);
+    expect(manifest?.layers.shootings_hex).toEqual({ file: 'tiles/context.pmtiles', source_layer: 'h3', sources: ['shootings'] });
+  });
+
+  it('reads the committed fixture without problems', () => {
+    const { manifest, problems, error } = parseManifest(fixtureJson);
+    expect(error).toBeNull();
+    expect(problems).toEqual([]);
+    expect(isSampleData(manifest)).toBe(true);
+  });
+
+  it('refuses a schema it cannot read, or something that is not an object', () => {
+    expect(parseManifest({ schema: 2 }).error).toMatch(/schema 2/);
+    expect(parseManifest([]).error).toMatch(/not a JSON object/);
+    expect(parseManifest(null).manifest).toBeNull();
+  });
+
+  it('notes problems but keeps going', () => {
+    const { manifest, problems } = parseManifest({
+      schema: 1,
+      build_id: 'b',
+      future_key: { anything: true },
+      sources: {
+        a: { status: 'exploded', rows: 'many' },
+        b: 'nope',
+        c: { status: 'stale', stale_since: '2026-09-27', rows: 5 },
+      },
+      layers: { x: { file: '/etc/passwd' }, y: { file: 'tiles/../../up.pmtiles' }, z: { file: 'tiles/lots.pmtiles' } },
+      files: [],
+    });
+    expect(manifest?.sources.a?.status).toBe('unknown');
+    expect(manifest?.sources.a?.rows).toBeNull();
+    expect(manifest?.sources.b).toBeUndefined();
+    expect(manifest?.sources.c?.status).toBe('stale');
+    expect(Object.keys(manifest?.layers ?? {})).toEqual(['z']);
+    expect(problems.length).toBeGreaterThanOrEqual(5);
+  });
+
+  it('loads over the network and reports failures in words, never throwing', async () => {
+    const ok = (body: unknown) => (async () => new Response(JSON.stringify(body), { status: 200 })) as typeof fetch;
+    expect((await loadManifest('https://example.test/data/', ok(fixtureJson))).manifest).not.toBeNull();
+    const notFound = (async () => new Response('missing', { status: 404 })) as typeof fetch;
+    expect((await loadManifest('https://example.test/data/', notFound)).error).toBe('manifest.json answered 404');
+    const offline = (async () => {
+      throw new TypeError('offline');
+    }) as typeof fetch;
+    expect((await loadManifest('https://example.test/data/', offline)).error).toMatch(/could not be downloaded/);
+    const garbage = (async () => new Response('{not json', { status: 200 })) as typeof fetch;
+    expect((await loadManifest('https://example.test/data/', garbage)).error).toMatch(/not valid JSON/);
+  });
+
+  it('asks for a fresh copy and builds the address from the data root', async () => {
+    let seen: { url: string; init?: RequestInit } | null = null;
+    const spy = (async (url: string, init?: RequestInit) => {
+      seen = { url, init };
+      return new Response(JSON.stringify(fixtureJson));
+    }) as unknown as typeof fetch;
+    await loadManifest('https://example.test/placekeepers/data/', spy);
+    expect(seen!.url).toBe('https://example.test/placekeepers/data/manifest.json');
+    expect(seen!.init?.cache).toBe('no-cache');
+  });
+});
+
+describe('finding each layer\'s file', () => {
+  const base = 'https://example.test/placekeepers/data/';
+
+  it('picks the loader by file type', () => {
+    expect(dataKind('tiles/lots.pmtiles')).toBe('pmtiles');
+    expect(dataKind('geojson/hin.geojson')).toBe('geojson');
+    expect(dataKind('tables/parcels.json')).toBe('geojson');
+    expect(dataKind('tiles/lots.mbtiles')).toBeNull();
+  });
+
+  it('uses the manifest entry, which wins over the registry', () => {
+    const m = manifestWith({ layers: { hin_2025: { file: 'geojson/hin.geojson', source_layer: 'hin' } } });
+    expect(resolveLayerData(layer('hin_2025'), m, base)).toEqual({
+      ok: true,
+      data: { kind: 'geojson', path: 'geojson/hin.geojson', url: `${base}geojson/hin.geojson`, sourceLayer: null },
+    });
+  });
+
+  it('falls back to the registry file when the manifest lists the file but not the layer', () => {
+    const m = manifestWith({ layers: {}, files: { 'tiles/streets.pmtiles': { bytes: 10 } } });
+    expect(resolveLayerData(layer('hin_2025'), m, base)).toEqual({
+      ok: true,
+      data: { kind: 'pmtiles', path: 'tiles/streets.pmtiles', url: `${base}tiles/streets.pmtiles`, sourceLayer: 'hin' },
+    });
+  });
+
+  it('says when a layer is not published or there is no manifest', () => {
+    const m = manifestWith({ layers: {}, files: {} });
+    expect(resolveLayerData(layer('vacant_parcels'), m, base)).toEqual({ ok: false, reason: 'not_published', path: 'tiles/lots.pmtiles' });
+    expect(resolveLayerData(layer('vacant_parcels'), null, base)).toEqual({ ok: false, reason: 'no_manifest', path: 'tiles/lots.pmtiles' });
+  });
+
+  it('refuses file types it cannot draw', () => {
+    const m = manifestWith({ layers: { hin_2025: { file: 'tiles/streets.mbtiles' } } });
+    expect(resolveLayerData(layer('hin_2025'), m, base)).toMatchObject({ ok: false, reason: 'unsupported' });
+  });
+
+  it('points every fixture layer at a file that exists, using both file types', () => {
+    const { manifest } = parseManifest(fixtureJson);
+    const kinds = new Set<string>();
+    for (const l of reg.layers) {
+      const result = resolveLayerData(l, manifest, FIXTURE_ROOT.href);
+      expect(result.ok, l.id).toBe(true);
+      if (!result.ok) continue;
+      kinds.add(result.data.kind);
+      expect(existsSync(new URL(result.data.path, FIXTURE_ROOT)), result.data.path).toBe(true);
+    }
+    expect([...kinds].sort()).toEqual(['geojson', 'pmtiles']);
+  });
+});
+
+describe('the data root', () => {
+  it('resolves the default against the site base, from any page', () => {
+    expect(resolveDataBase(undefined, '/placekeepers/', 'https://x.github.io/placekeepers/')).toBe(
+      'https://x.github.io/placekeepers/data/',
+    );
+    expect(resolveDataBase('./data/', '/placekeepers/', 'https://x.github.io/placekeepers/status/')).toBe(
+      'https://x.github.io/placekeepers/data/',
+    );
+    expect(resolveDataBase('', '/', 'http://localhost:5173/')).toBe('http://localhost:5173/data/');
+  });
+
+  it('keeps an absolute data root and adds the final slash', () => {
+    expect(resolveDataBase('https://data.example.org/pk', '/placekeepers/', 'https://x.github.io/placekeepers/')).toBe(
+      'https://data.example.org/pk/',
+    );
+  });
+});
+
+describe('status in plain words', () => {
+  it('lists every registry source, marking absent ones as not fetched', () => {
+    const m = manifestWith({ sources: {} });
+    const rows = statusRows(reg, m);
+    expect(rows.map((r) => r.id)).toEqual(reg.sources.map((s) => s.id));
+    expect(rows.every((r) => r.status === 'missing')).toBe(true);
+    expect(describeStatus(rows[0]!)).toEqual({ label: 'Not fetched yet', summary: 'This source has not been fetched yet.', details: [] });
+  });
+
+  it('adds sources the manifest knows but the registry does not', () => {
+    const m = manifestWith({ sources: { mystery: { status: 'ok' } } });
+    expect(statusRows(reg, m).at(-1)).toMatchObject({ id: 'mystery', source: null, name: 'mystery', status: 'ok' });
+  });
+
+  it('describes a stale source with the date of its last good copy', () => {
+    const m = manifestWith();
+    m.sources.shootings = {
+      status: 'stale',
+      last_attempt: '2026-10-05T10:00:05Z',
+      last_success: '2026-09-27T10:00:05Z',
+      stale_since: '2026-09-27',
+      rows: 17973,
+      newest_record: '2026-09-25',
+      message: 'Row count dropped by half',
+    };
+    const row = statusRows(reg, m).find((r) => r.id === 'shootings')!;
+    expect(describeStatus(row)).toEqual({
+      label: 'Out of date',
+      summary: 'Using the last good copy, from September 27, 2026.',
+      details: [
+        'Last good download: September 27, 2026',
+        'Last attempt: October 5, 2026',
+        '17,973 records',
+        'Newest record: September 25, 2026',
+        'Note from the refresh: Row count dropped by half',
+      ],
+    });
+  });
+
+  it('describes failing and unknown sources', () => {
+    const m = manifestWith();
+    m.sources.shootings = { status: 'failing', last_attempt: null, last_success: null, stale_since: null, rows: null, newest_record: null, message: null };
+    const failing = describeStatus(statusRows(reg, m).find((r) => r.id === 'shootings')!);
+    expect(failing.label).toBe('Not working');
+    expect(failing.details).toEqual(['No good download yet']);
+    m.sources.shootings.status = 'unknown';
+    expect(describeStatus(statusRows(reg, m).find((r) => r.id === 'shootings')!).label).toBe('Unknown');
+  });
+
+  it('sums up the sources', () => {
+    const m = manifestWith();
+    expect(statusSummary(statusRows(reg, m))).toBe('Every source is up to date.');
+    m.sources.shootings!.status = 'stale';
+    delete m.sources.opa_properties;
+    delete m.sources.pwd_parcels;
+    expect(statusSummary(statusRows(reg, m))).toBe('1 source is out of date, 2 sources have not been fetched yet.');
+  });
+
+  it('gives the header badge the data date, or a warning', () => {
+    expect(freshness(reg, manifestWith())).toEqual({ kind: 'ok', text: 'Data from Oct 5, 2026' });
+    const stale = manifestWith();
+    stale.sources.shootings!.status = 'stale';
+    expect(freshness(reg, stale).kind).toBe('stale');
+    const failing = manifestWith();
+    delete failing.sources.shootings;
+    expect(freshness(reg, failing).kind).toBe('failing');
+    expect(freshness(reg, null)).toEqual({ kind: 'unknown', text: 'Data status unknown' });
+  });
+});
