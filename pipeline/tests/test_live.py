@@ -79,3 +79,43 @@ def test_the_partner_garden_layer_answers(live: Context) -> None:
     adapter = GardensPhsNgt(live.registry.sources["gardens_phs_ngt"], live)
     assert adapter.layer_url.startswith("https://services2.arcgis.com/qjOOiLCYeUtwT7x7/")
     assert adapter.count() >= 150
+
+
+# The vacancy model on the real cache, against the study
+
+STUDY_COUNTS = {  # docs/VACANCY_METHOD.md, run on 2026-10-04
+    "lot": {"high": 24_166, "medium": 6_147, "low": 10_465},
+    "building": {"high": 6_553, "medium": 2_876, "low": 8_503},
+}
+TOLERANCE = 0.15  # the data moves every week; a bigger change means something broke
+
+
+def test_the_vacancy_model_lands_near_the_studys_counts(tmp_path: Path) -> None:
+    """Runs the model on the snapshots in $PK_CACHE (download them first with pk all) and prints
+    how far each count is from the study's. Writes only to a temporary folder."""
+    from placekeepers.derive import vacancy
+
+    settings = Settings.from_env(repo_root=REPO_ROOT)
+    ctx = Context(settings, load_registry(settings.registry_dir, repo_root=REPO_ROOT))
+    try:
+        missing = [s for s in vacancy.SOURCES if SnapshotStore(ctx.cache, s).current() is None]
+        if "opa_properties" in missing:
+            pytest.skip("no snapshots in the cache yet: run pk all first")
+        result = vacancy.run(ctx, out=tmp_path / "vacancy.parquet")
+    finally:
+        ctx.close()
+
+    print(f"\nVacancy model as of {result.as_of} against the study (2026-10-04):")
+    far = []
+    for kind, levels in STUDY_COUNTS.items():
+        for level, study in levels.items():
+            ours = result.counts[kind][level]
+            change = (ours - study) / study
+            print(f"  {kind:8} {level:6} ours {ours:7,}  study {study:7,}  ({change:+.1%})")
+            if abs(change) > TOLERANCE:
+                far.append(f"{kind} {level}: {ours:,} against {study:,} ({change:+.1%})")
+    print(f"  left out as parks, gardens, parking and similar: {result.counts['excluded']:,}")
+    for note in result.notes:
+        print(f"  note: {note}")
+    assert not missing, f"the model ran without {', '.join(missing)}"
+    assert not far, "counts moved more than 15% from the study: " + "; ".join(far)

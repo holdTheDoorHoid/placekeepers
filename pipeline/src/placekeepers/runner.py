@@ -13,7 +13,7 @@ import os
 import shutil
 import time
 from dataclasses import dataclass
-from datetime import timedelta
+from datetime import date, timedelta
 
 from placekeepers.adapters import ADAPTERS, adapter_for
 from placekeepers.cache import RawFetch, RawStore, atomic_output, new_fetch_id, sha256_file
@@ -276,3 +276,25 @@ def all_statuses(ctx: Context, sources: list[Source] | None = None) -> list[Sour
         )
         for source in chosen
     ]
+
+
+def derive_vacancy(ctx: Context, as_of: date | None = None) -> StepResult:
+    """Run the vacancy model. A failure is reported, never raised, so publishing still happens
+    (the map then shows the City's lists alone, and says so)."""
+    from placekeepers.derive import vacancy
+
+    started = time.monotonic()
+    try:
+        result = vacancy.run(ctx, as_of)
+    except Exception as exc:  # the map must still publish
+        message = f"The vacancy model could not run: {plain_error(exc)}"
+        log.error("derive: %s", message)
+        log.debug("derive: details", exc_info=True)
+        return StepResult("vacancy", "derive", "failed", message, time.monotonic() - started)
+    lots, buildings = result.counts["lot"], result.counts["building"]
+    detail = (
+        f"lots {lots['high']:,} high, {lots['medium']:,} medium, {lots['low']:,} low; "
+        f"buildings {buildings['high']:,} high, {buildings['medium']:,} medium, "
+        f"{buildings['low']:,} low; {result.counts['excluded']:,} left out"
+    )
+    return StepResult("vacancy", "derive", "ok", detail, time.monotonic() - started)

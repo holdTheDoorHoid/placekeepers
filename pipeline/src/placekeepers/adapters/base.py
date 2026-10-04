@@ -127,4 +127,9 @@ class Adapter(ABC):
             last_good=last_good,
             today=self.ctx.today(),
         )
+        checks += self.extra_checks(path, newest)
         return Validation(rows=rows, columns=columns, newest=newest, checks=checks)
+
+    def extra_checks(self, path: Path, newest: date | None) -> list[Check]:
+        """Rules a source needs beyond its registry health rules. None by default."""
+        return []
