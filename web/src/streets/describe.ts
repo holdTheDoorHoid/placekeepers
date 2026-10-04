@@ -39,9 +39,14 @@ export function modesOf(m: unknown): ModeKey[] {
   return MODE_BITS.filter(([, bit]) => (bits & bit) !== 0).map(([key]) => key);
 }
 
-/** How the person was traveling, for a memorial: the first of walking, cycling, scooter, motorcycle. */
+/**
+ * How the person was traveling, for a memorial. The Police record the units involved, not who
+ * died, so when a crash involved more than one of walking, cycling, a scooter or a motorcycle the
+ * memorial says only "killed in a traffic crash" rather than guess.
+ */
 export function memorialMode(m: unknown): ModeKey | 'other' {
-  return modesOf(m)[0] ?? 'other';
+  const modes = modesOf(m);
+  return modes.length === 1 ? modes[0]! : 'other';
 }
 
 export function capitalize(value: string): string {

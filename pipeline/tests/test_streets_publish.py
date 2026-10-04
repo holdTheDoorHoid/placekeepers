@@ -31,7 +31,7 @@ from . import streets_fixtures as fx
 from .conftest import FakeArcgis, FakeCarto, arcgis_feature, install_snapshot, load_fixture
 
 NOW = datetime(2026, 10, 4, 15, 0, tzinfo=UTC)
-FORBIDDEN = ("age", "sex", "dc_number", "dc_key", "arrest_yes", "investigat", "crash_type", "hit")
+FORBIDDEN = (*FatalCrashes.never_fetch, "age", "sex", "arrest", "hit")
 PLACEHOLDERS = ("PLACEHOLDER", '"age"', '"sex"', "dc_number", "arrest", "investigat")
 
 

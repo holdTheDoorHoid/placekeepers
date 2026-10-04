@@ -240,8 +240,11 @@ describe('street safety colors', () => {
 });
 
 describe('what a memorial says', () => {
-  it('names how the person was traveling, walking first', () => {
-    expect([1, 2, 8, 4, 0, 3, 12].map((m) => memorialMode(m))).toEqual(['walk', 'bike', 'scooter', 'motorcycle', 'other', 'walk', 'scooter']);
+  it('names how the person was traveling, and never guesses when the record names two ways', () => {
+    expect([1, 2, 8, 4, 0].map((m) => memorialMode(m))).toEqual(['walk', 'bike', 'scooter', 'motorcycle', 'other']);
+    // "M/C and PED" or a cyclist and a pedestrian: the Police do not say who died.
+    expect([3, 5, 9, 12].map((m) => memorialMode(m))).toEqual(['other', 'other', 'other', 'other']);
+    expect(describeMemorial({ id: 'x', d: '2025-01-02', m: 5 }, true, LINKS).sentence).toBe('Killed in a traffic crash on January 2, 2025.');
     expect(modesOf(13)).toEqual(['walk', 'scooter', 'motorcycle']);
   });
 

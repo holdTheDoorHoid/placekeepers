@@ -16,7 +16,12 @@
   import WhyBreakdown from '../lens/WhyBreakdown.svelte';
   import BlessingNote from './BlessingNote.svelte';
 
-  let { store, target, onClose }: { store: AppStore; target: InspectTarget; onClose?: () => void } = $props();
+  let {
+    store,
+    target,
+    heading,
+    onClose,
+  }: { store: AppStore; target: InspectTarget; heading?: string; onClose?: () => void } = $props();
 
   const layer = $derived(store.registry.layers.find((l) => l.id === target.layerId));
   const style = $derived(layer ? styleFor(layer) : null);
@@ -29,6 +34,7 @@
 </script>
 
 <section class="pk-feature" aria-label={s.popupLabel}>
+  {#if heading}<h2>{heading}</h2>{/if}
   {#if style === STYLES.memorials}
     {#if target.features.length > 1}<p class="muted small">{s.peopleHere(target.features.length)}</p>{/if}
     {#each target.features as properties, i (i)}

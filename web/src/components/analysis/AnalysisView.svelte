@@ -56,7 +56,12 @@
     <button class="icon-button" type="button" aria-label={strings.analysis.closePanel} onclick={() => (rightOpen = false)}>&times;</button>
   </div>
   {#if store.inspected}
-    <FeatureDetails {store} target={store.inspected} onClose={() => store.inspect(null)} />
+    <FeatureDetails
+      {store}
+      target={store.inspected}
+      heading={strings.streets.detailsTitle(store.registry.layers.find((l) => l.id === store.inspected?.layerId)?.style ?? '')}
+      onClose={() => store.inspect(null)}
+    />
   {:else if store.state.selected && store.selectedProperties}
     <PlaceDetails {store} properties={store.selectedProperties} />
   {:else}
