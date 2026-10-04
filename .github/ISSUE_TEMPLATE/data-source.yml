@@ -1,0 +1,41 @@
+name: Suggest a data source
+description: Tell us about a public data source we should add to the map.
+title: "Data source: "
+labels: ["suggested-data-source"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Placekeepers only uses public sources that have a clear license, and credits every one on
+        the Data status page. Tell us what you found, and we will look into adding it.
+  - type: input
+    id: name
+    attributes:
+      label: Source name
+      description: What is it called, and who publishes it?
+      placeholder: "City of Philadelphia, Vacant Property Indicators"
+    validations:
+      required: true
+  - type: input
+    id: link
+    attributes:
+      label: Where to find it
+      description: A link to the data, the agency page, or the dataset listing.
+      placeholder: "https://opendataphilly.org/..."
+    validations:
+      required: true
+  - type: input
+    id: license
+    attributes:
+      label: License, if you know it
+      description: For example, a public domain notice, a named open license, or "not sure".
+      placeholder: "not sure"
+    validations:
+      required: false
+  - type: textarea
+    id: why
+    attributes:
+      label: What it would add
+      description: What would this source let the map show that it cannot show today?
+    validations:
+      required: false

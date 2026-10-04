@@ -1,0 +1,37 @@
+name: Report a correction
+description: Tell us about a place, score, or fact on the map that looks wrong.
+title: "Correction: "
+labels: ["correction"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for checking our work. Placekeepers republishes public records, and they can be
+        wrong or out of date.
+
+        This form is for facts shown on the map or on the site's pages. It is not for a memorial.
+        To ask for a memorial name to come down, use the removal request on the Contact page
+        instead; that one goes by email, not here.
+  - type: input
+    id: place
+    attributes:
+      label: Place id or address
+      description: The parcel number if you have it, or the street address or intersection.
+      placeholder: "123456700, or 1234 Example Street"
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong
+      description: What does the map or page show, and what should it show instead?
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Source, if you know one
+      description: A link, or a short note on where the correct information comes from.
+      placeholder: "https://, or the name of a City office"
+    validations:
+      required: false
