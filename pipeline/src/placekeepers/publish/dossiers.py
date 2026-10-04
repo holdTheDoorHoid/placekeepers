@@ -10,9 +10,12 @@ assessments by year, an L&I summary, the legal routes, the suggestions, and a fe
 
 Written under the data root:
 
-    dossiers/<first three digits of the OPA account>.json    one file per prefix
-    tables/owners.json    every private owner holding many vacant parcels, with the parcels, so a
-                          flag can link to "this owner's list"
+    dossiers/<first four digits of the OPA account>.json    the parcels, one file per prefix
+    dossiers/common.json  the parts of each flag that are the same for every parcel (its careful
+                          note, next step, routes, links and sources) and the notices, fetched once
+    tables/owners.json    every private owner holding many vacant parcels, with each parcel's
+                          account, address, kind and confidence, so "this owner's list" needs no
+                          other file
 
 The vacancy call is the vacancy model's (placekeepers.derive.vacancy), read from the same file
 the lots layer reads, so the dossier and the map always agree; without the model, both show the
@@ -77,7 +80,11 @@ log = logging.getLogger(__name__)
 
 SCHEMA = 1
 DOSSIER_DIR = "dossiers"
+COMMON_FILE = "dossiers/common.json"
 OWNERS_TABLE = "tables/owners.json"
+#: shards are named by this many leading digits of the OPA account: about 920 files, the largest
+#: about 700 parcels, small enough to open one lot on a phone
+SHARD_DIGITS = 4
 #: the sources a dossier draws on; opa_properties is required, the rest are used when present
 REQUIRED = ("opa_properties",)
 OPTIONAL = (
@@ -128,6 +135,10 @@ class DossierResult:
     parcels: int = 0
     shards: int = 0
     bytes: int = 0
+    #: the largest shard, dossiers/common.json and tables/owners.json, in bytes
+    largest: int = 0
+    common_bytes: int = 0
+    owners_bytes: int = 0
     owners_listed: int = 0
     notes: list[str] = field(default_factory=list)
     #: counts for the report: owner types, flags, routes
@@ -837,7 +848,7 @@ def build_dossiers(
         dossier["nearby"] = nearby_counts(
             points.get(account), shootings, landcare_grid, garden_grid
         )
-        shards[account[:3]][account] = dossier
+        shards[account[:SHARD_DIGITS]][account] = dossier
 
         result.owner_types[owner_type.type] += 1
         for flag in flags:
@@ -847,8 +858,10 @@ def build_dossiers(
         for route in routes:
             result.routes[route] += 1
 
-    write_shards(result, out_root, shards, iso_z(ctx.now()))
-    write_owners_table(result, out_root, listed, opa, iso_z(ctx.now()))
+    generated_at = iso_z(ctx.now())
+    write_shards(result, out_root, shards, generated_at)
+    write_common(result, out_root, generated_at)
+    write_owners_table(result, out_root, listed, opa, vacancy, generated_at)
     if candidates.missing:
         result.notes.append(
             "lot dossiers were built without " + ", ".join(sorted(candidates.missing))
@@ -912,17 +925,28 @@ def write_shards(
     folder.mkdir(parents=True, exist_ok=True)
     for prefix in sorted(shards):
         target = folder / f"{prefix}.json"
-        body = {
-            "schema": SCHEMA,
-            "generated_at": generated_at,
-            "flags": FLAG_NOTES,
-            "notices": NOTICES,
-            "parcels": shards[prefix],
-        }
+        body = {"schema": SCHEMA, "generated_at": generated_at, "parcels": shards[prefix]}
         target.write_text(dump(body), encoding="utf-8")
-        result.bytes += target.stat().st_size
+        size = target.stat().st_size
+        result.bytes += size
+        result.largest = max(result.largest, size)
         result.parcels += len(shards[prefix])
     result.shards = len(shards)
+
+
+def write_common(result: DossierResult, out_root: Path, generated_at: str) -> None:
+    """dossiers/common.json: each flag's careful note, next step, routes, links and sources, and
+    the notices, which are the same for every parcel."""
+    target = out_root / COMMON_FILE
+    target.parent.mkdir(parents=True, exist_ok=True)
+    body = {
+        "schema": SCHEMA,
+        "generated_at": generated_at,
+        "flags": FLAG_NOTES,
+        "notices": NOTICES,
+    }
+    target.write_text(dump(body), encoding="utf-8")
+    result.common_bytes = target.stat().st_size
 
 
 def write_owners_table(
@@ -930,12 +954,27 @@ def write_owners_table(
     out_root: Path,
     listed: dict[str, list[str]],
     opa: dict[str, Opa],
+    vacancy: dict[str, dict[str, Any]],
     generated_at: str,
 ) -> None:
+    """tables/owners.json: each listed owner's parcels with what "this owner's list" shows."""
     table = out_root / OWNERS_TABLE
     table.parent.mkdir(parents=True, exist_ok=True)
+
+    def entry(account: str) -> dict[str, Any]:
+        call = vacancy.get(account) or {}
+        return {
+            "id": account,
+            "address": opa[account].location,
+            "kind": call.get("kind"),
+            "confidence": call.get("confidence"),
+        }
+
     owners = {
-        ow.owner_list_id(key): {"names": opa[found[0]].names, "parcels": sorted(found)}
+        ow.owner_list_id(key): {
+            "names": opa[found[0]].names,
+            "parcels": [entry(account) for account in sorted(found)],
+        }
         for key, found in listed.items()
     }
     body = {
@@ -946,6 +985,7 @@ def write_owners_table(
     }
     table.write_text(dump(body), encoding="utf-8")
     result.owners_listed = len(listed)
+    result.owners_bytes = table.stat().st_size
 
 
 def dump(body: Any) -> str:

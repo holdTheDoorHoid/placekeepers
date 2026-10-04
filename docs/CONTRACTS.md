@@ -176,7 +176,8 @@ data/
     parcels.json          compact columnar table for ranking and lists
     owners.json           owners holding many vacant parcels, with their parcels (section 6)
   dossiers/
-    <first three digits of the OPA account>.json
+    <first four digits of the OPA account>.json
+    common.json           the parts of every flag that are the same for all parcels (section 6)
   basemap/
     philly.pmtiles        Protomaps basemap extract
 ```
@@ -371,7 +372,7 @@ shows; the Police marker stays, unnamed) or a marker's id (the marker is not dra
 listed with its date, `lat` and `lng`, so it stays hidden even if the Police correct the record and
 its id changes. If this file cannot be read, no memorials are published at all.
 
-## 6. Dossier shards (`dossiers/<prefix>.json`) and the owners table
+## 6. Dossier shards (`dossiers/<prefix>.json`), `dossiers/common.json` and the owners table
 
 Rewritten 2026-10-04 by M1.3, which builds them (`pipeline/src/placekeepers/publish/dossiers.py`).
 The lot dossier (milestone M1.6) reads them.
@@ -380,29 +381,25 @@ The lot dossier (milestone M1.6) reads them.
 vacancy list, owned by the City, the Land Bank, the Redevelopment Authority or PHDC, in PHS
 LandCare, vacant land or a vacant exterior to the assessor, cleaned and sealed or demolished since
 2016, or on the unsafe or imminently dangerous lists), and every parcel the vacancy model shows,
-that OPA or the City's list of public property still knows. On 2026-10-04 that was 77,866 parcels
-in 211 files: 109.4 MB on disk and 14.0 MB as served compressed; the largest file (`885.json`) is
-6.8 MB, 0.8 MB compressed. Any other parcel is looked up live. The file is named by the first three
-digits of the 9 digit OPA account.
+that OPA or the City's list of public property still knows. Any other parcel is looked up live.
+
+**Files** (changed 2026-10-04 by the orchestrator, so one lot opens fast on a phone): a parcel's
+dossier is in `dossiers/<first four digits of its 9 digit OPA account>.json`, which holds only
+parcels. The parts of each flag that are the same for every parcel, and the notices, are in one
+file, `dossiers/common.json`, which the browser fetches once. On 2026-10-04: 77,866 parcels in 929
+files, 108.3 MB on disk and 14.5 MB as served compressed; the largest file (`8715.json`, 810
+parcels) is 1.2 MB, 178 kB compressed; the median file holds 52 parcels (74 kB). `common.json` is
+5.2 kB. The manifest lists every file, which brings `manifest.json` to about 120 kB.
+
+A shard, `dossiers/3710.json`:
 
 ```json
 {
   "schema": 1,
   "generated_at": "2026-10-05T10:03:12Z",
-  "flags": {
-    "absentee": {
-      "careful": "This is the address where the City sends tax bills. ...",
-      "next_step": "Write to the owner at this address to ask before ...",
-      "routes": ["ask_the_owner"],
-      "sources": ["opa_properties"]
-    }
-  },
-  "notices": {
-    "deed_fraud": {"text": "Deed theft happens when ...", "routes": ["fraud_guard"], "links": [{"label": "...", "url": "..."}]}
-  },
   "parcels": {
-    "123456789": {
-      "address": "1234 N EXAMPLE ST",
+    "371000001": {
+      "address": "2931 N LAWRENCE ST",
       "vacancy": {"kind": "lot", "confidence": "high", "rs": 13, "n": 2},
       "owner": {
         "names": ["MORALES ROSA"],
@@ -428,13 +425,33 @@ digits of the 9 digit OPA account.
 }
 ```
 
-**`flags` and `notices` (top level).** Every flag has three parts (docs/ETHICS.md): what it means,
-why to be careful, and a protective next step. The careful note and the next step are the same for
-every parcel with that flag, so each file holds them once, by flag id, with the flag's `routes`
-(registry route ids), `links` (label and url) and `sources` (registry source ids). A parcel's flag
-holds its own `text` and `data`. Put together, `text`, `careful` and `next_step` give the full flag;
-the possible estate flag then reads the ETHICS.md text word for word. `notices` holds the deed fraud
-notice the same way. Both are written in full in every file, so one file is all a dossier needs.
+`dossiers/common.json`:
+
+```json
+{
+  "schema": 1,
+  "generated_at": "2026-10-05T10:03:12Z",
+  "flags": {
+    "absentee": {
+      "careful": "This is the address where the City sends tax bills. ...",
+      "next_step": "Write to the owner at this address to ask before ...",
+      "routes": ["ask_the_owner"],
+      "sources": ["opa_properties"]
+    }
+  },
+  "notices": {
+    "deed_fraud": {"text": "Deed theft happens when ...", "routes": ["fraud_guard"], "links": [{"label": "...", "url": "..."}]}
+  }
+}
+```
+
+**`flags` and `notices` (in `common.json`).** Every flag has three parts (docs/ETHICS.md): what it
+means, why to be careful, and a protective next step. The careful note and the next step are the
+same for every parcel with that flag, so `common.json` holds them once, by flag id, with the flag's
+`routes` (registry route ids), `links` (label and url) and `sources` (registry source ids). A
+parcel's flag holds its own `text` and `data`. Put together, `text`, `careful` and `next_step` give
+the full flag; the possible estate flag then reads the ETHICS.md text word for word. `notices` holds
+the deed fraud notice the same way.
 
 **`vacancy`** (decided 2026-10-04 by the orchestrator): the vacancy model's call, read from the same
 output the lots layer reads, so the dossier and the map always agree. It carries the tile's fields,
@@ -518,13 +535,19 @@ City's Carto API; anything it cannot refresh stays as in the shard, labeled with
   "schema": 1,
   "generated_at": "2026-10-05T10:03:12Z",
   "min_parcels": 5,
-  "owners": {"03ccd2b2a56c": {"names": ["KENSINGTON LOTS LLC"], "parcels": ["372000001", "372000002"]}}
+  "owners": {
+    "03ccd2b2a56c": {
+      "names": ["KENSINGTON LOTS LLC"],
+      "parcels": [{"id": "372000001", "address": "2902 N 5TH ST", "kind": "lot", "confidence": "high"}]
+    }
+  }
 }
 ```
 
 Every private owner holding at least `min_parcels` parcels we call vacant with high or medium
-confidence, keyed by the `list` id of its `many_parcels` flag, with the parcels' accounts. Owners
+confidence, keyed by the `list` id of its `many_parcels` flag, with each parcel's OPA account, address
+and vacancy `kind` and `confidence`, so "this owner's list" shows without opening any shard. Owners
 are matched conservatively: two parcels share an owner only when all their owner names match after
 spelling is evened out (capitals, no punctuation, "L.L.C." as LLC, "&" as AND), so one owner under
 two spellings counts twice and two owners are never merged. Public owners are left out: the City
-lists its own holdings. On 2026-10-04: 464 owners, 91 KB.
+lists its own holdings. On 2026-10-04: 464 owners, 449 kB (70 kB compressed), one file.

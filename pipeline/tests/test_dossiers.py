@@ -488,33 +488,52 @@ def shard(out: Path, prefix: str) -> dict[str, Any]:
 
 
 def parcel(out: Path, account: str) -> dict[str, Any]:
-    return shard(out, account[:3])["parcels"][account]
+    return shard(out, account[:4])["parcels"][account]
 
 
-def test_one_shard_per_account_prefix_listed_in_the_manifest(built) -> None:
+def common(out: Path) -> dict[str, Any]:
+    return json.loads((out / "dossiers" / "common.json").read_text(encoding="utf-8"))
+
+
+def test_one_shard_per_four_digit_prefix_listed_in_the_manifest(built) -> None:
     result, out = built
     files = sorted(p.name for p in (out / "dossiers").iterdir())
-    assert files == ["371.json", "372.json", "373.json", "374.json", "375.json", "885.json"]
+    assert files == [
+        "3710.json",
+        "3720.json",
+        "3730.json",
+        "3740.json",
+        "3750.json",
+        "8850.json",
+        "common.json",
+    ]
     for name in files:
         assert f"dossiers/{name}" in result.manifest["files"]
     assert "tables/owners.json" in result.manifest["files"]
     assert result.dossiers.parcels == 12
     assert result.dossiers.shards == 6
-    # 376000001 is known only to an old L&I record: no dossier, so no 376 shard.
+    sizes = [(out / "dossiers" / name).stat().st_size for name in files if name != "common.json"]
+    assert result.dossiers.largest == max(sizes)
+    assert result.dossiers.common_bytes == (out / "dossiers" / "common.json").stat().st_size
+    # 376000001 is known only to an old L&I record: no dossier, so no 3760 shard.
     assert (
         "1 candidate accounts are no longer in OPA's records and get no lot dossier"
         in result.manifest["notes"]
     )
 
 
-def test_a_shard_has_the_contract_keys_and_the_shared_flag_notes(built) -> None:
+def test_shards_hold_parcels_and_common_holds_the_shared_flag_notes(built) -> None:
     _, out = built
-    body = shard(out, "371")
-    assert list(body) == ["schema", "generated_at", "flags", "notices", "parcels"]
+    shared = common(out)
+    assert list(shared) == ["schema", "generated_at", "flags", "notices"]
+    assert shared["schema"] == 1
+    assert shared["generated_at"] == "2026-10-04T15:00:00Z"
+    assert shared["flags"] == FLAG_NOTES
+    assert shared["notices"] == NOTICES
+    body = shard(out, "3710")
+    assert list(body) == ["schema", "generated_at", "parcels"]
     assert body["schema"] == 1
     assert body["generated_at"] == "2026-10-04T15:00:00Z"
-    assert body["flags"] == FLAG_NOTES
-    assert body["notices"] == NOTICES
     record = body["parcels"]["371000001"]
     assert list(record) == [
         "address",
@@ -595,7 +614,15 @@ def test_an_owner_with_many_vacant_parcels_links_to_the_list(built) -> None:
     assert table["owners"] == {
         list_id: {
             "names": ["KENSINGTON LOTS LLC"],
-            "parcels": [f"37200000{i}" for i in range(1, 6)],
+            "parcels": [
+                {
+                    "id": f"37200000{i}",
+                    "address": f"{2900 + i * 2} N 5TH ST",
+                    "kind": "lot",
+                    "confidence": "medium",
+                }
+                for i in range(1, 6)
+            ],
         }
     }
     assert flags["fast_resales"]["text"] == "Sold 2 times since 2024."
@@ -683,11 +710,14 @@ def test_the_lots_layer_carries_the_owner_type(built) -> None:
 def test_every_flag_id_used_has_shared_notes_and_every_route_exists(built) -> None:
     _, out = built
     registry = load_registry(REPO_ROOT / "registry", repo_root=REPO_ROOT)
-    for path in (out / "dossiers").iterdir():
+    shared = common(out)
+    for route in [r for notes in shared["flags"].values() for r in notes.get("routes", [])]:
+        assert route in registry.routes
+    for path in (out / "dossiers").glob("[0-9]*.json"):
         body = json.loads(path.read_text(encoding="utf-8"))
         for record in body["parcels"].values():
             for flag in record["owner"]["flags"]:
-                assert flag["id"] in body["flags"]
+                assert flag["id"] in shared["flags"]
                 assert set(flag) <= {"id", "text", "data"}
             for route in [*record["routes"], *record["owner"].get("help", [])]:
                 assert route in registry.routes
@@ -852,13 +882,21 @@ def test_the_dossier_and_the_map_follow_the_vacancy_model(context_factory, tmp_p
     flags = {flag["id"]: flag for flag in parcel(out, "372000001")["owner"]["flags"]}
     assert flags["many_parcels"]["text"] == "This owner holds 5 vacant parcels in the city."
     table = json.loads((out / "tables" / "owners.json").read_text(encoding="utf-8"))
-    assert table["owners"][flags["many_parcels"]["data"]["list"]]["parcels"] == [
+    listed = table["owners"][flags["many_parcels"]["data"]["list"]]["parcels"]
+    assert [item["id"] for item in listed] == [
         "372000001",
         "372000002",
         "372000003",
         "372000004",
         "372000006",
     ]
+    assert listed[0] == {
+        "id": "372000001",
+        "address": "2902 N 5TH ST",
+        "kind": "lot",
+        "confidence": "high",
+    }
+    assert listed[-1]["confidence"] == "medium"
     # The map's lots carry the owner type from the model's path as well.
     layer = json.loads((out / "tiles" / "lots.parcels.geojson").read_text(encoding="utf-8"))
     ot = {f["properties"]["id"]: f["properties"]["ot"] for f in layer["features"]}

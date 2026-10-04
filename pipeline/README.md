@@ -157,8 +157,8 @@ DuckDB: `SELECT * FROM '~/.cache/placekeepers/snapshots/opa_properties/current.p
 `tiles/boundaries.pmtiles` (layers `council_districts`, `rcos` and `neighborhoods`). It builds in a
 hidden folder and swaps it into place at the end, and it refuses to replace a folder that is not an
 earlier data root. A layer with nothing to show is left out with a note, so it never breaks the rest
-of its tile file. It also writes the lot dossiers, `dossiers/<first three digits>.json`, and
-`tables/owners.json` (see "Lot dossiers and owner flags" below).
+of its tile file. It also writes the lot dossiers, `dossiers/<first four digits>.json` with
+`dossiers/common.json`, and `tables/owners.json` (see "Lot dossiers and owner flags" below).
 
 ### Street safety and memorials
 
@@ -203,8 +203,9 @@ shows (about 78,000; docs/CONTRACTS.md section 6), with the rules in `derive/`:
 * **Routes** (`derive/routes.py`): by owner and context, the lawful route first. Conservatorship,
   with its abuse warning, only for a private parcel called vacant with high or medium confidence.
 
-Each flag's careful note and next step are written once per file, not once per parcel, which keeps
-the dossiers near 110 MB on disk (14 MB as served compressed). Readers take only the columns a
+Each flag's careful note and next step are the same for every parcel, so they are written once,
+in `dossiers/common.json`, not once per parcel. Files are named by the first four digits of the OPA
+account, so opening one lot on a phone fetches a small file. Readers take only the columns a
 snapshot has, so a source that drops a column cannot stop the publish.
 
 ## Tests

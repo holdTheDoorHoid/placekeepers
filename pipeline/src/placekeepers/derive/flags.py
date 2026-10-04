@@ -2,8 +2,9 @@
 
 Every flag has the three parts ETHICS.md asks for: what it means (`text`), why to be careful
 (`careful`) and a protective next step (`next_step`). The careful note and the next step are the
-same for every parcel with that flag, so they live once in `FLAG_NOTES` (and once per dossier
-shard, docs/CONTRACTS.md section 6), together with the routes, links and sources behind the flag.
+same for every parcel with that flag, so they live once in `FLAG_NOTES` (published once, in
+dossiers/common.json, docs/CONTRACTS.md section 6), together with the routes, links and sources
+behind the flag.
 What differs from parcel to parcel travels with the parcel:
 
     {"id": "absentee",
