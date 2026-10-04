@@ -50,7 +50,7 @@ Release = Annotated[str, StringConstraints(pattern=r"^v\d+\.\d+$")]
 Weight = Annotated[int, Field(strict=True, ge=0, le=5)]
 Evidence = Literal["strong", "moderate", "mixed", "weak", "not_violence", "context"]
 Cadence = Literal["daily", "weekly", "monthly", "yearly", "irregular", "frozen"]
-AppliesTo = Literal["parcel", "segment", "stop", "cell"]
+AppliesTo = Literal["parcel", "segment", "crash", "stop", "cell"]
 EndpointKind = Literal["carto", "arcgis", "url", "osm_extract", "curated"]
 
 

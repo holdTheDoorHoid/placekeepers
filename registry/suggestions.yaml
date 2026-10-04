@@ -19,3 +19,58 @@
   partners: []
   default_on: true
   release: v0.1
+- id: memorial_or_ghost_bike
+  label: A memorial or a ghost bike, only with the family's blessing
+  applies_to: crash
+  summary: >-
+    A memorial honors the person who died and reminds everyone passing to slow down. For a person
+    killed while cycling, the Bicycle Coalition can place a ghost bike, a bicycle painted white.
+    Only with the family's blessing. Families for Safe Streets supports families after a crash.
+  evidence: not_violence
+  cost: Low; a ghost bike request is free
+  routes: [ghost_bike_request]
+  partners: [families_for_safe_streets, bike_coalition]
+  default_on: true
+  release: v0.1
+- id: traffic_calming_petition
+  label: Ask for traffic calming on this residential street
+  applies_to: crash
+  summary: >-
+    Neighbors can ask the City for speed cushions on a residential street. The City scores
+    requests three times a year using crash data, and if this street is chosen, 60 percent of the
+    block signs a petition. Arterials, state highways, short, steep and curving streets do not
+    qualify.
+  evidence: not_violence
+  cost: Free to request
+  routes: [traffic_calming_request]
+  partners: [bike_coalition, feet_first]
+  default_on: true
+  release: v0.1
+- id: daylighting_check
+  label: Check that this corner is clear for 20 feet
+  applies_to: crash
+  summary: >-
+    Pennsylvania law already bans parking within 20 feet of a crosswalk at an intersection, and
+    within 30 feet of a stop sign or signal, so drivers and people crossing can see each other.
+    If cars park there, ask the City about daylighting the corner with paint, posts or planters.
+    Report a dark streetlight here to Philly311.
+  evidence: not_violence
+  cost: Free to ask
+  routes: [otis_contact, report_to_311]
+  partners: [feet_first]
+  default_on: true
+  release: v0.1
+- id: asphalt_art_check
+  label: Asphalt art at this corner, check with the City first
+  applies_to: crash
+  summary: >-
+    One study of painted intersections found fewer crashes involving people walking and cycling,
+    but it had no comparison group and was paid for by the program's sponsor. In 2025 the federal
+    government began urging states to remove crosswalk art, and Philadelphia has no permit process
+    for it. Check with the City before painting anything.
+  evidence: weak
+  cost: Not known; there is no City process to price it
+  routes: [otis_contact]
+  partners: [feet_first]
+  default_on: true
+  release: v0.1

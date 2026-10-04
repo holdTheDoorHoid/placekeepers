@@ -36,8 +36,29 @@ TILE_OPTIONS: dict[str, list[str]] = {
     "tiles/streets.pmtiles": [
         "--minimum-zoom=8",
         "--maximum-zoom=16",
+        # Keep every point at every zoom. tippecanoe would otherwise thin points below its base
+        # zoom, and a memorial must never disappear.
+        "--base-zoom=8",
         "--no-feature-limit",
         "--no-tile-size-limit",
+        # Low zoom tiles cover the whole city, so they carry what matters most there: deaths and
+        # serious injuries, and blocks with recorded harm or on the High Injury Network. Other
+        # crashes and blocks near a school appear from zoom 12, and every block from zoom 14.
+        "--feature-filter",
+        json.dumps(
+            {
+                "crashes": ["any", [">=", "sev", 2], [">=", "$zoom", 12]],
+                "segments": [
+                    "any",
+                    ["==", "hin", 1],
+                    [">", "ksi", 0],
+                    [">", "k2", 0],
+                    ["all", [">=", "$zoom", 12], ["==", "sch", 1]],
+                    [">=", "$zoom", 14],
+                ],
+            },
+            separators=(",", ":"),
+        ),
     ],
     "tiles/context.pmtiles": [
         "--minimum-zoom=8",

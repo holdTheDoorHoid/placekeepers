@@ -84,6 +84,10 @@ class ArcgisAdapter(Adapter):
     page_size: ClassVar[int] = 2000
     #: ArcGIS bookkeeping fields we do not keep (lower case)
     skip_fields: ClassVar[frozenset[str]] = frozenset({"shape__area", "shape__length"})
+    #: fields to download, spelled as the layer spells them (None downloads every field)
+    query_fields: ClassVar[tuple[str, ...] | None] = None
+    #: an ArcGIS where clause that limits which features are downloaded
+    query_where: ClassVar[str] = "1=1"
 
     @property
     def endpoint(self) -> ArcgisEndpoint:
@@ -97,7 +101,7 @@ class ArcgisAdapter(Adapter):
     def count(self) -> int:
         data = self.ctx.http.get_json(
             f"{self.layer_url}/query",
-            {"where": "1=1", "returnCountOnly": "true", "f": "json"},
+            {"where": self.query_where, "returnCountOnly": "true", "f": "json"},
             check=check_arcgis,
         )
         return int(data["count"])
@@ -106,6 +110,8 @@ class ArcgisAdapter(Adapter):
         http = self.ctx.http
         layer = http.get_json(self.layer_url, {"f": "json"}, check=check_arcgis)
         fields = [{"name": f["name"], "type": f["type"]} for f in layer.get("fields") or []]
+        if self.query_fields is not None:
+            fields = [f for f in fields if f["name"] in self.query_fields]
         object_id = layer.get("objectIdField") or next(
             (f["name"] for f in fields if f["type"] == "esriFieldTypeOID"), None
         )
@@ -123,8 +129,8 @@ class ArcgisAdapter(Adapter):
             data = http.get_json(
                 f"{self.layer_url}/query",
                 {
-                    "where": "1=1",
-                    "outFields": "*",
+                    "where": self.query_where,
+                    "outFields": ",".join(self.query_fields) if self.query_fields else "*",
                     "returnGeometry": "true",
                     "outSR": "4326",
                     "f": "geojson",
