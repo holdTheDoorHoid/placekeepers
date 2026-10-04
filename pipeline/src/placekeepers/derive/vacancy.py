@@ -902,9 +902,9 @@ def write_output(con: duckdb.DuckDBPyConnection, out: Path) -> int:
     """).fetchone()[0]
 
 
-def run(ctx: Context, as_of: date | None = None) -> VacancyResult:
-    """Run the model on the current snapshots and write $PK_CACHE/derived/vacancy.parquet with a
-    JSON summary beside it."""
+def run(ctx: Context, as_of: date | None = None, out: Path | None = None) -> VacancyResult:
+    """Run the model on the current snapshots and write $PK_CACHE/derived/vacancy.parquet (or
+    `out`) with a JSON summary beside it."""
     started = time.monotonic()
     as_of = as_of or ctx.today()
     w = Windows(as_of)
@@ -928,7 +928,7 @@ def run(ctx: Context, as_of: date | None = None) -> VacancyResult:
             SELECT {classify_sql("false", "false")} FROM signals
         """)
         alone = counts(con, "(SELECT * FROM without_city WHERE kind IS NOT NULL)")
-        out = output_path(ctx)
+        out = out or output_path(ctx)
         with atomic_output(out) as tmp:
             no_shape = write_output(con, tmp)
     finally:

@@ -4,8 +4,26 @@
   group: lots
   description: >-
     Parcels that are probably vacant, with how sure we are and why. Combines the City's vacancy
-    indicator with other City records, so no single source can break it.
-  sources: [vacant_indicators_land, vacant_indicators_bldg, opa_properties, pwd_parcels, phs_landcare]
+    indicator with the assessor's records, building footprints, demolitions, L&I cases and the
+    land use map, so no single source can break it.
+  sources:
+    - vacant_indicators_land
+    - vacant_indicators_bldg
+    - opa_properties
+    - pwd_parcels
+    - building_footprints
+    - land_use
+    - phs_landcare
+    - li_clean_and_seal
+    - li_demolitions
+    - li_unsafe
+    - li_imminently_dangerous
+    - li_permits
+    - li_violations
+    - li_complaints
+    - ppr_properties
+    - gardens_phs_ngt
+    - gardens_registered
   file: tiles/lots.pmtiles
   source_layer: parcels
   geometry: polygon

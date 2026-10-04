@@ -6,9 +6,12 @@ docs/CONTRACTS.md section 4.
   build date, per H3 cell at resolution 9 (about two blocks across). Only cells with at least one
   victim in the 36 month window are written. Counts only: no dates, no points, nothing about any
   person.
-* `parcels` (lots): `id` (OPA account), `k` (1 vacant lot, 2 vacant building), `vc` (confidence;
-  2, medium, while the City's indicator is the only signal), `ot` (owner type; 0, unknown, until
-  owner types arrive), `lc` (1 when PHS LandCare maintains the parcel).
+* `parcels` (lots): every parcel the vacancy model (placekeepers.derive.vacancy) shows: `id` (OPA
+  account), `k` (1 vacant lot, 2 vacant building), `vc` (confidence: 3 high, 2 medium, 1 low),
+  `ot` (owner type; 0, unknown, until owner types arrive), `lc` (1 when PHS LandCare maintains the
+  parcel), `rs` (reason bits), `n` (independent signals that agree), and `dy`, `sy`, `ny` (the year
+  of a demolition, a City seal or a new construction permit, only when a reason uses it). When the
+  model has not run, the City's lists alone are shown at medium confidence instead.
 * `landcare` (care): `id` (OPA account, or empty), `p` (program: 1 LandCare, 2 Community LandCare,
   3 Land Bank lot, 4 PHDC lot, 0 other), `y` (year the lot joined, 0 when unknown).
 * `gardens` (care): `nm` (name), `src` (1 PHS, 2 Neighborhood Gardens Trust, 3 both, 4 registered
@@ -170,6 +173,37 @@ def parcel_kind(kinds: set[int], description: str | None) -> int:
 
 
 def build_parcels(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) -> BuildResult:
+    """The vacancy model's parcels, or the City's lists alone when the model has not run."""
+    model = ctx.cache.root / "derived" / "vacancy.parquet"
+    if model.is_file():
+        return build_parcels_from_model(model, out)
+    result = build_parcels_from_city_lists(ctx, paths, out, as_of)
+    result.notes.append("The vacancy model has not run, so the map shows the City's lists alone")
+    return result
+
+
+SHOWN_KINDS = ("lot", "lot_conflict", "building")
+
+
+def build_parcels_from_model(model: Path, out: Path) -> BuildResult:
+    columns = ["opa", "kind", "k", "vc", "lc", "rs", "n", "dy", "sy", "ny", "geometry"]
+    table = pq.read_table(model, columns=columns)
+    rows = zip(*(table.column(name).to_pylist() for name in columns), strict=True)
+    with GeoJSONWriter(out) as writer:
+        for opa, kind, k, vc, lc, rs, n, dy, sy, ny, wkb in rows:
+            if kind not in SHOWN_KINDS or wkb is None or vc is None:
+                continue
+            properties = {"id": opa, "k": k, "vc": vc, "ot": 0, "lc": lc, "rs": rs, "n": n}
+            for key, year in (("dy", dy), ("sy", sy), ("ny", ny)):
+                if year is not None:
+                    properties[key] = int(year)
+            writer.write(properties, geometry_json(wkb))
+    return BuildResult(writer.count, [])
+
+
+def build_parcels_from_city_lists(
+    ctx: Context, paths: dict[str, Path], out: Path, as_of: date
+) -> BuildResult:
     kinds: dict[str, set[int]] = {}
     shapes: dict[str, bytes] = {}
     descriptions: dict[str, str | None] = {}
@@ -331,7 +365,7 @@ BUILDERS: tuple[LayerBuilder, ...] = (
     LayerBuilder(
         "tiles/lots.pmtiles",
         "parcels",
-        ("vacant_indicators_land", "vacant_indicators_bldg"),
+        ("opa_properties", "vacant_indicators_land", "vacant_indicators_bldg"),
         build_parcels,
         extras=("phs_landcare",),
     ),
