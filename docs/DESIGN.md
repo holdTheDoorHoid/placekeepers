@@ -276,7 +276,9 @@ parcels). High and medium show by default; low sits behind the confidence filter
 two of our records agree, 24 of 26 lots checked in the aerial photos were empty and 2 were unclear.
 
 **Output per parcel:** kind (lot or building), confidence, the agreeing signals in plain words, and the
-signal count, shown on the map and in the dossier.
+signal count, shown on the map and in the dossier. The pipeline runs these rules in `pk derive`
+(`pipeline/src/placekeepers/derive/vacancy.py`, milestone M1.2); the reasons for and against travel
+in the tile as bits of `rs` (CONTRACTS.md section 4), and the details panel turns them into sentences.
 
 **If the City indicator breaks again:** keep its last copy for twelve months, labeled with its date,
 then drop it. Without it, high lots become medium (about 29,000 lots stay on the map at medium) and
