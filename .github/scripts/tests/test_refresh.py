@@ -428,3 +428,77 @@ def test_issues_command_refuses_an_unreadable_manifest(tmp_path: Path) -> None:
         )
         == 1
     )
+
+
+def test_source_names_travel_as_json_between_jobs(tmp_path: Path) -> None:
+    pytest.importorskip("yaml")
+    out = tmp_path / "sources.json"
+    assert refresh.main(["sources", "--registry", str(REPO / "registry"), "--out", str(out)]) == 0
+    from_json = refresh.sources_from_json(out)
+    assert from_json == refresh.load_sources(REPO / "registry")
+    assert from_json["shootings"].publisher == "Philadelphia Police Department"
+
+
+def test_issues_with_sources_json_need_no_yaml(tmp_path: Path, capsys, monkeypatch) -> None:
+    monkeypatch.setattr(refresh, "_gh_available", lambda: False)
+    names = tmp_path / "sources.json"
+    names.write_text(refresh.sources_to_json(SOURCES), encoding="utf-8")
+    previous = tmp_path / "previous.json"
+    current = tmp_path / "current.json"
+    previous.write_text(json.dumps(manifest(high_injury_network=FAILING)), encoding="utf-8")
+    current.write_text(json.dumps(manifest(high_injury_network=FAILING)), encoding="utf-8")
+    args = ["issues", "--current", str(current), "--previous", str(previous)]
+    assert refresh.main([*args, "--sources", str(names), "--dry-run"]) == 0
+    out = capsys.readouterr().out
+    assert out.startswith("open: high_injury_network")
+    assert "**Vision Zero High Injury Network 2025**" in out
+    with pytest.raises(SystemExit):
+        refresh.main([*args, "--dry-run"])  # one of --sources or --registry is required
+
+
+# The release ------------------------------------------------------------------------------------
+
+
+def test_release_plan_replaces_snapshots_and_old_base_maps() -> None:
+    files = [
+        "snapshot-shootings.tar",
+        "snapshot-opa_properties.tar",
+        "manifest.json",
+        "basemap-20261101.tar",
+    ]
+    existing = [
+        "snapshot-shootings.tar",
+        "snapshot-retired_source.tar",
+        "manifest.json",
+        "basemap-20261004.tar",
+    ]
+    assert refresh.plan_release(files, existing) == [
+        ("upload", "basemap-20261101.tar"),
+        ("upload", "manifest.json"),
+        ("upload", "snapshot-opa_properties.tar"),
+        ("upload", "snapshot-shootings.tar"),
+        ("delete", "basemap-20261004.tar"),
+        ("delete", "snapshot-retired_source.tar"),
+    ]
+
+
+def test_release_plan_never_empties_the_release() -> None:
+    existing = ["snapshot-shootings.tar", "basemap-20261004.tar", "manifest.json"]
+    # No snapshots and no base map this run: nothing is deleted.
+    assert refresh.plan_release(["manifest.json"], existing) == [("upload", "manifest.json")]
+    assert refresh.plan_release([], existing) == []
+
+
+def test_release_plan_skips_anything_unexpected(tmp_path: Path, capsys) -> None:
+    for name in ["snapshot-shootings.tar", "evil.sh", "snapshot-../x.tar", "manifest.json.bak"]:
+        if "/" not in name:
+            (tmp_path / name).write_text("x", encoding="utf-8")
+    assets = tmp_path.parent / "assets.txt"
+    assets.write_text("snapshot-shootings.tar\nsnapshot-old.tar\n", encoding="utf-8")
+    assert refresh.main(["release-plan", "--dir", str(tmp_path), "--assets", str(assets)]) == 0
+    assert capsys.readouterr().out.splitlines() == [
+        "upload snapshot-shootings.tar",
+        "delete snapshot-old.tar",
+        "skip evil.sh",
+        "skip manifest.json.bak",
+    ]

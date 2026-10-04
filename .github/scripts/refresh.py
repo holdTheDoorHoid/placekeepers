@@ -16,7 +16,17 @@ Standard library only, so any job can run it with a plain Python 3.12. Commands:
         Given the release's asset names (one per line), prints the base map asset that is still
         fresh enough to reuse, or nothing when a new extract is due.
 
-    refresh.py issues --current FILE [--previous FILE] --registry DIR [--run-url URL] [--dry-run]
+    refresh.py release-plan --dir DIR --assets FILE
+        Decides what the save job does with the data-snapshots release: prints "upload NAME" for
+        each expected file in DIR, "delete NAME" for assets it replaces for good (snapshots of
+        sources that are gone, older base maps), and "skip NAME" for anything unexpected.
+
+    refresh.py sources --registry DIR --out FILE
+        Writes each source's name, publisher and homepage from registry/sources.yaml as JSON
+        (needs PyYAML), so the issues job can run with the standard library alone.
+
+    refresh.py issues --current FILE [--previous FILE] (--sources FILE | --registry DIR)
+                      [--run-url URL] [--dry-run]
         Opens, updates and closes one GitHub issue per data source, labeled data-source, using
         the gh command line tool (GH_TOKEN and GH_REPO come from the workflow). A source gets an
         issue when it is stale or failing in this run and was also stale or failing in the
@@ -131,6 +141,35 @@ def pick_basemap(names: Iterable[str], today: date, max_age_days: int = 30) -> s
     return name if -1 <= (today - built).days <= max_age_days else None
 
 
+# The release ----------------------------------------------------------------------------------
+
+RELEASE_FILE = re.compile(r"^(snapshot-[a-z][a-z0-9_]*\.tar|manifest\.json|basemap-\d{8}\.tar)$")
+
+
+def plan_release(files: Iterable[str], existing: Iterable[str]) -> list[tuple[str, str]]:
+    """What to upload, delete and skip. Snapshots of sources that are no longer produced are
+    deleted only when this run produced snapshots at all, and older base maps only when a new one
+    is uploaded, so a broken run can never empty the release."""
+    uploads = sorted(name for name in files if RELEASE_FILE.match(name))
+    skipped = sorted(name for name in files if not RELEASE_FILE.match(name))
+    new_snapshots = {name for name in uploads if name.startswith("snapshot-")}
+    new_basemaps = {name for name in uploads if name.startswith("basemap-")}
+
+    def replaced(name: str) -> bool:
+        if name.startswith("snapshot-"):
+            return bool(new_snapshots) and name not in new_snapshots
+        if BASEMAP_ASSET.match(name):
+            return bool(new_basemaps) and name not in new_basemaps
+        return False
+
+    deletes = [name for name in sorted(set(existing)) if replaced(name)]
+    return (
+        [("upload", name) for name in uploads]
+        + [("delete", name) for name in deletes]
+        + [("skip", name) for name in skipped]
+    )
+
+
 # Plain words --------------------------------------------------------------------------------
 
 
@@ -166,12 +205,34 @@ class SourceInfo:
 
 
 def load_sources(registry_dir: Path) -> dict[str, SourceInfo]:
-    import yaml  # the workflow installs PyYAML for this command only
+    import yaml  # only the pipeline job, which has PyYAML, reads the registry itself
 
     entries = yaml.safe_load((registry_dir / "sources.yaml").read_text(encoding="utf-8")) or []
     return {
         entry["id"]: SourceInfo(entry["id"], entry["name"], entry["publisher"], entry["homepage"])
         for entry in entries
+    }
+
+
+def sources_to_json(sources: dict[str, SourceInfo]) -> str:
+    data = {
+        source_id: {"name": info.name, "publisher": info.publisher, "homepage": info.homepage}
+        for source_id, info in sources.items()
+    }
+    return json.dumps(data, indent=2, ensure_ascii=False) + "\n"
+
+
+def sources_from_json(path: Path) -> dict[str, SourceInfo]:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    return {
+        source_id: SourceInfo(
+            source_id,
+            str(entry.get("name") or source_id),
+            str(entry.get("publisher") or "its publisher"),
+            str(entry.get("homepage") or ""),
+        )
+        for source_id, entry in data.items()
+        if isinstance(entry, dict)
     }
 
 
@@ -402,10 +463,20 @@ def main(argv: list[str] | None = None) -> int:
     b.add_argument("--today", type=date.fromisoformat, default=None)
     b.add_argument("--max-age-days", type=int, default=30)
 
+    rp = commands.add_parser("release-plan", help="what to upload to and delete from the release")
+    rp.add_argument("--dir", type=Path, required=True)
+    rp.add_argument("--assets", type=Path, required=True, help="file with one asset name per line")
+
+    so = commands.add_parser("sources", help="write source names from the registry as JSON")
+    so.add_argument("--registry", type=Path, required=True)
+    so.add_argument("--out", type=Path, required=True)
+
     i = commands.add_parser("issues", help="open, update and close data-source issues")
     i.add_argument("--current", type=Path, required=True)
     i.add_argument("--previous", type=Path, default=None)
-    i.add_argument("--registry", type=Path, required=True)
+    names = i.add_mutually_exclusive_group(required=True)
+    names.add_argument("--sources", type=Path, help="JSON written by the sources command")
+    names.add_argument("--registry", type=Path, help="the registry folder (needs PyYAML)")
     i.add_argument("--run-url", default=None)
     i.add_argument("--today", type=date.fromisoformat, default=None)
     i.add_argument("--dry-run", action="store_true", help="print what would happen, change nothing")
@@ -435,12 +506,23 @@ def main(argv: list[str] | None = None) -> int:
             print(choice)
         return 0
 
+    if args.command == "release-plan":
+        files = [path.name for path in args.dir.iterdir() if path.is_file()]
+        existing = args.assets.read_text(encoding="utf-8").split() if args.assets.is_file() else []
+        for action, name in plan_release(files, existing):
+            print(f"{action} {name}")
+        return 0
+    if args.command == "sources":
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        args.out.write_text(sources_to_json(load_sources(args.registry)), encoding="utf-8")
+        return 0
+
     current = load_json(args.current)
     if current is None:
         print(f"refresh.py: {args.current} is not a readable manifest", file=sys.stderr)
         return 1
     previous = load_json(args.previous)
-    sources = load_sources(args.registry)
+    sources = sources_from_json(args.sources) if args.sources else load_sources(args.registry)
     gh: Runner = run_gh
     open_issues = [] if args.dry_run and not _gh_available() else open_data_issues(gh)
     actions = plan_issues(previous, current, sources, open_issues, today, args.run_url)
