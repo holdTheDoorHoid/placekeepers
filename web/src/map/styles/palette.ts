@@ -28,5 +28,28 @@ export const COUNT_OPACITY = 0.6;
 export const HIN_COLOR = '#b35806';
 export const HIN_CASING = '#ffffff';
 
+/**
+ * Street safety lens for street blocks, low to high: pink to deep magenta (ColorBrewer RdPu),
+ * clear of the High Injury Network's amber, the lots' greens and the shootings' purples. Lines
+ * get thicker and stronger as the score rises, so low scores stay quiet.
+ */
+export const STREET_RAMP: ColorRamp = {
+  stops: ['#fbb4b9', '#f768a1', '#dd3497', '#ae017e', '#7a0177'],
+  noData: '#a9afb3',
+  allOff: '#a9afb3',
+};
+
+/** Crashes by the worst injury: pale yellow (no injury) to deep brown (someone was killed). */
+export const CRASH_COLORS = ['#fff3b0', '#fec44f', '#ec7014', '#8c2d04'] as const;
+export const CRASH_STROKE = '#ffffff';
+
+/**
+ * Memorials: a small soft marker, white with a muted violet gray ring and a faint glow. Quiet on
+ * purpose: no red and nothing that looks like a crash.
+ */
+export const MEMORIAL_FILL = '#fbfaff';
+export const MEMORIAL_RING = '#62597e';
+export const MEMORIAL_GLOW = '#ffffff';
+
 /** Shown under the data when the base map is missing. */
 export const PLAIN_BACKGROUND = '#ecebe4';

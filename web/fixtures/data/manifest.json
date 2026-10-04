@@ -56,6 +56,69 @@
       "rows": 162,
       "newest_record": null,
       "message": null
+    },
+    "crashes_2020_2024": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 36303,
+      "newest_record": "2024-12-01",
+      "message": null
+    },
+    "crashes_2016_2020": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 45308,
+      "newest_record": null,
+      "message": null
+    },
+    "crashes_2007_2017": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 11453,
+      "newest_record": null,
+      "message": null
+    },
+    "fatal_crashes": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 935,
+      "newest_record": "2026-08-22",
+      "message": null
+    },
+    "schools": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 490,
+      "newest_record": null,
+      "message": null
+    },
+    "street_centerlines": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 41252,
+      "newest_record": null,
+      "message": null
+    },
+    "memorial_names": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 0,
+      "newest_record": null,
+      "message": null
     }
   },
   "layers": {
@@ -82,6 +145,34 @@
       "sources": [
         "shootings"
       ]
+    },
+    "segments": {
+      "file": "tiles/streets.pmtiles",
+      "source_layer": "segments",
+      "sources": [
+        "street_centerlines",
+        "high_injury_network",
+        "crashes_2020_2024",
+        "fatal_crashes",
+        "schools"
+      ]
+    },
+    "crashes": {
+      "file": "tiles/streets.pmtiles",
+      "source_layer": "crashes",
+      "sources": [
+        "crashes_2020_2024",
+        "crashes_2016_2020",
+        "crashes_2007_2017"
+      ]
+    },
+    "memorials": {
+      "file": "tiles/streets.pmtiles",
+      "source_layer": "memorials",
+      "sources": [
+        "fatal_crashes",
+        "memorial_names"
+      ]
     }
   },
   "files": {
@@ -93,13 +184,25 @@
       "bytes": 10493,
       "sha256": "0040acd7e70d59f4906d30b85464572ad1578a4cfb55206b181eb9a85a4bdae6"
     },
+    "tiles/streets.crashes.geojson": {
+      "bytes": 23180,
+      "sha256": "7fdb49961fc365dd09a65490df186f68d1e9070897a44e2be123e9328bd332fe"
+    },
     "tiles/streets.hin.geojson": {
       "bytes": 668,
       "sha256": "7b12cb6d791ce59e1cf68aec9151841c6f521de4c2a4fff924aa8466e1523324"
+    },
+    "tiles/streets.memorials.geojson": {
+      "bytes": 1441,
+      "sha256": "85188b978eea0f9f6267455862127eb9884e4d0abe7f4ce0ab01181f3e7c18d0"
+    },
+    "tiles/streets.segments.geojson": {
+      "bytes": 6886,
+      "sha256": "eb01e602692fee3eff3f6f14688ec8f0d1c0a5887ae6debc2fb9333f784c3058"
     }
   },
   "notes": [
     "This is synthetic sample data for testing the map.",
-    "Street tiles were skipped for this sample, so the High Injury Network is published as GeoJSON."
+    "Street tiles were skipped for this sample, so the street layers are published as GeoJSON."
   ]
 }

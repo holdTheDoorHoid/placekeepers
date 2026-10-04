@@ -38,6 +38,13 @@
         </svg>
         <span>{entry.label}</span>
       </li>
+    {:else if entry.kind === 'circle'}
+      <li class="row">
+        <svg width="28" height="18" aria-hidden="true">
+          <circle cx="14" cy="9" r={entry.radius} fill={entry.fill} stroke={entry.stroke} stroke-width="1.5" />
+        </svg>
+        <span>{entry.label}</span>
+      </li>
     {:else if entry.kind === 'bins'}
       <li>
         <span class="title">{entry.title}</span>

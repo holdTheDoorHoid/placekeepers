@@ -125,6 +125,81 @@ const lines = [
   geometry: { type: 'LineString', coordinates: coords },
 }));
 
+// Street blocks: a grid of made up blocks, each with the street safety lens factors and the
+// counts behind them (docs/CONTRACTS.md, segments). Blocks along the first High Injury Network
+// line are on the network. Factor fields follow the pipeline's rules: yes or no factors are 0
+// or 100, and the count factor is the share of blocks with a lower count.
+const GRID_X = [0, 160, 320, 480, 640, 800];
+const GRID_Y = [-60, 60, 180];
+const blocks = [];
+for (const y of GRID_Y) {
+  for (let i = 1; i < GRID_X.length; i++) blocks.push({ name: `SAMPLE ${blocks.length + 1} ST`, cls: 5, a: [GRID_X[i - 1], y], b: [GRID_X[i], y] });
+}
+for (const x of GRID_X) {
+  for (let i = 1; i < GRID_Y.length; i++) blocks.push({ name: x === 160 ? 'N BROAD ST' : `SAMPLE ${blocks.length + 1} AVE`, cls: x === 160 ? 2 : 4, a: [x, GRID_Y[i - 1]], b: [x, GRID_Y[i]] });
+}
+const toLngLat = ([x, y]) => [round6(LNG0 + dLng(x)), round6(LAT0 + dLat(y))];
+const ksiCounts = blocks.map(() => pick([[0, 60], [1, 20], [2, 12], [4, 8]]));
+const ranked = [...ksiCounts].sort((a, b) => a - b);
+const strictlyLower = (v) => ranked.findIndex((x) => x >= v);
+const segments = blocks.map((block, i) => {
+  const hin = block.name === 'N BROAD ST' ? 1 : 0;
+  const k2 = random() < 0.12 ? 1 : 0;
+  const sch = random() < 0.5 ? 1 : 0;
+  const ksi = ksiCounts[i];
+  return {
+    type: 'Feature',
+    properties: {
+      id: 900001 + i,
+      name: block.name,
+      cls: block.cls,
+      hin,
+      f_hin: hin * 100,
+      ksi,
+      f_ksi_vru: Math.round((100 * strictlyLower(ksi)) / ksiCounts.length),
+      k2,
+      f_fatal2: k2 * 100,
+      sch,
+      f_school: sch * 100,
+    },
+    geometry: { type: 'LineString', coordinates: [toLngLat(block.a), toLngLat(block.b)] },
+  };
+});
+
+// Crashes: made up points along the blocks, 2015 to 2024 (docs/CONTRACTS.md, crashes).
+const crashes = [];
+for (let i = 0; i < 160; i++) {
+  const block = blocks[between(0, blocks.length - 1)];
+  const t = random();
+  const x = block.a[0] + (block.b[0] - block.a[0]) * t;
+  const y = block.a[1] + (block.b[1] - block.a[1]) * t;
+  const year = between(2015, 2024);
+  crashes.push({
+    type: 'Feature',
+    properties: { id: 9000000000 + i, y: year, ya: 2024 - year, sev: pick([[0, 35], [1, 45], [2, 15], [3, 5]]), m: pick([[0, 60], [1, 20], [2, 8], [4, 8], [3, 4]]) },
+    geometry: { type: 'Point', coordinates: toLngLat([x, y]) },
+  });
+}
+
+// Memorials: a few made up markers with dates, modes and places, and no names: names come only
+// from the hand curated public memorial list (docs/ETHICS.md), never from samples.
+const MEMORIAL_SAMPLES = [
+  ['2026-08-20', 1, 'memorial_or_ghost_bike,traffic_calming_petition'],
+  ['2025-11-11', 2, 'memorial_or_ghost_bike,daylighting_check,asphalt_art_check'],
+  ['2024-03-02', 8, 'memorial_or_ghost_bike,traffic_calming_petition,daylighting_check,asphalt_art_check'],
+  ['2023-05-05', 1, 'memorial_or_ghost_bike'],
+  ['2022-07-14', 4, 'memorial_or_ghost_bike'],
+  ['2021-01-30', 0, 'memorial_or_ghost_bike,daylighting_check,asphalt_art_check'],
+];
+const memorials = MEMORIAL_SAMPLES.map(([d, m, sg], i) => {
+  const block = blocks[(i * 7) % blocks.length];
+  return {
+    type: 'Feature',
+    properties: { id: `fc${d.replaceAll('-', '')}_${(4096 + i).toString(16)}`, d, m, pl: `Sample St and Test Ave ${i + 1}`, sg },
+    geometry: { type: 'Point', coordinates: toLngLat([(block.a[0] + block.b[0]) / 2, (block.a[1] + block.b[1]) / 2 + 4]) },
+  };
+});
+
 const collection = (features) => JSON.stringify({ type: 'FeatureCollection', features }) + '\n';
 rmSync(ROOT, { recursive: true, force: true });
 mkdirSync(path('sources'), { recursive: true });
@@ -132,6 +207,9 @@ mkdirSync(path('data/tiles'), { recursive: true });
 writeFileSync(path('sources/parcels.geojson'), collection(parcels));
 writeFileSync(path('sources/h3.geojson'), collection(cells));
 writeFileSync(path('data/tiles/streets.hin.geojson'), collection(lines));
+writeFileSync(path('data/tiles/streets.segments.geojson'), collection(segments));
+writeFileSync(path('data/tiles/streets.crashes.geojson'), collection(crashes));
+writeFileSync(path('data/tiles/streets.memorials.geojson'), collection(memorials));
 
 // Run from the fixtures folder with relative paths, because tippecanoe records its command
 // line in the file's metadata and local folder names do not belong in committed files.
@@ -194,6 +272,13 @@ const manifest = {
     },
     shootings: ok(17973, '2026-10-01'),
     high_injury_network: ok(162, null),
+    crashes_2020_2024: ok(36303, '2024-12-01'),
+    crashes_2016_2020: ok(45308, null),
+    crashes_2007_2017: ok(11453, null),
+    fatal_crashes: ok(935, '2026-08-22'),
+    schools: ok(490, null),
+    street_centerlines: ok(41252, null),
+    memorial_names: ok(0, null),
   },
   layers: {
     vacant_parcels: {
@@ -203,14 +288,35 @@ const manifest = {
     },
     hin_2025: { file: 'tiles/streets.pmtiles', source_layer: 'hin', sources: ['high_injury_network'] },
     shootings_hex: { file: 'tiles/context.pmtiles', source_layer: 'h3', sources: ['shootings'] },
+    segments: {
+      file: 'tiles/streets.pmtiles',
+      source_layer: 'segments',
+      sources: ['street_centerlines', 'high_injury_network', 'crashes_2020_2024', 'fatal_crashes', 'schools'],
+    },
+    crashes: {
+      file: 'tiles/streets.pmtiles',
+      source_layer: 'crashes',
+      sources: ['crashes_2020_2024', 'crashes_2016_2020', 'crashes_2007_2017'],
+    },
+    memorials: { file: 'tiles/streets.pmtiles', source_layer: 'memorials', sources: ['fatal_crashes', 'memorial_names'] },
   },
   files: Object.fromEntries(
-    ['tiles/context.pmtiles', 'tiles/lots.pmtiles', 'tiles/streets.hin.geojson'].map((p) => [p, fileInfo(p)]),
+    [
+      'tiles/context.pmtiles',
+      'tiles/lots.pmtiles',
+      'tiles/streets.crashes.geojson',
+      'tiles/streets.hin.geojson',
+      'tiles/streets.memorials.geojson',
+      'tiles/streets.segments.geojson',
+    ].map((p) => [p, fileInfo(p)]),
   ),
   notes: [
     'This is synthetic sample data for testing the map.',
-    'Street tiles were skipped for this sample, so the High Injury Network is published as GeoJSON.',
+    'Street tiles were skipped for this sample, so the street layers are published as GeoJSON.',
   ],
 };
 writeFileSync(new URL('manifest.json', ROOT), JSON.stringify(manifest, null, 2) + '\n');
-console.log(`Wrote ${parcels.length} parcels, ${cells.length} cells and ${lines.length} lines to ${ROOT.pathname}`);
+console.log(
+  `Wrote ${parcels.length} parcels, ${cells.length} cells, ${lines.length} lines, ${segments.length} blocks, ` +
+    `${crashes.length} crashes and ${memorials.length} memorials to ${ROOT.pathname}`,
+);

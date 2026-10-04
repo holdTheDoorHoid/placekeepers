@@ -34,8 +34,8 @@ function customized(): AppState {
 
 describe('defaults per view', () => {
   it('turns layers on according to each view in the registry', () => {
-    expect(defaultLayers(reg, 'field')).toEqual(['vacant_parcels', 'hin_2025']);
-    expect(defaultLayers(reg, 'analysis')).toEqual(['vacant_parcels', 'hin_2025', 'shootings_hex']);
+    expect(defaultLayers(reg, 'field')).toEqual(['vacant_parcels', 'hin_2025', 'memorials']);
+    expect(defaultLayers(reg, 'analysis')).toEqual(['vacant_parcels', 'hin_2025', 'shootings_hex', 'segments', 'memorials']);
   });
 
   it('follows the registry for every layer, whatever it contains', () => {
@@ -51,7 +51,16 @@ describe('defaults per view', () => {
     expect(state.settings.shootings_hex).toEqual({ window: 'm12' });
     expect(state.settings.hin_2025).toEqual({});
     expect(state.weights.violence).toEqual({ untreated_vacancy: 3, shootings_nearby: 3, poverty: 2, canopy_gap: 1 });
-    expect(state.suggestions).toEqual({ clean_and_green: true, seal_abandoned_building: true });
+    expect(state.suggestions).toEqual({
+      clean_and_green: true,
+      seal_abandoned_building: true,
+      memorial_or_ghost_bike: true,
+      traffic_calming_petition: true,
+      daylighting_check: true,
+      asphalt_art_check: true,
+    });
+    expect(state.settings.memorials).toEqual({ show_names: true, all_fatal: false });
+    expect(state.weights.street_safety).toEqual({ high_injury_network: 3, walking_cycling_harm: 3, recent_death: 2, school_nearby: 1 });
     expect(state.filters.owner_type).toHaveLength(9);
     expect(state.selected).toBeNull();
   });
@@ -126,7 +135,7 @@ describe('address bar state', () => {
 
   it('stays compact: defaults add nothing beyond view, map and layers', () => {
     const text = encodeState(reg, defaultState(reg, 'field'));
-    expect(text).toBe('v=f&m=10.6/40/-75.135&l=vacant_parcels,hin_2025');
+    expect(text).toBe('v=f&m=10.6/40/-75.135&l=vacant_parcels,hin_2025,memorials');
   });
 
   it('writes only what differs from the registry defaults', () => {

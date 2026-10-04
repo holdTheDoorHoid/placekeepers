@@ -11,6 +11,8 @@ interface ImportMetaEnv {
   readonly VITE_DATA_BASE?: string;
   /** "protomaps" (default, self hosted extract), "openfreemap" (hosted fallback), or "none". */
   readonly VITE_BASEMAP?: string;
+  /** The address that takes memorial removal requests (an owner action). Empty: a GitHub issue. */
+  readonly VITE_TAKEDOWN_EMAIL?: string;
 }
 
 interface ImportMeta {

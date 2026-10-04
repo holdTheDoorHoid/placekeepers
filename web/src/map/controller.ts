@@ -43,9 +43,19 @@ export interface ParcelInView {
   center: [number, number];
 }
 
+/** A memorial, crash or street block someone tapped: shown in a popup, not as the selection. */
+export interface InspectTarget {
+  layerId: string;
+  /** Properties of the features of that layer under the pointer, top first, without repeats. */
+  features: Record<string, unknown>[];
+  lngLat: [number, number];
+}
+
 export interface MapEvents {
   move(position: MapPosition): void;
   select(id: string | null, properties: Record<string, unknown> | null): void;
+  /** A tap on a memorial, crash or street block, or null when the popup should close. */
+  inspect(target: InspectTarget | null): void;
   /** The map finished drawing after a move or a data change. */
   idle(): void;
   layerStatus(layerId: string, status: LayerStatus): void;
@@ -104,6 +114,7 @@ export class MapController {
   private loaded = false;
   private labelAnchor: string | undefined;
   private marker: maplibregl.Marker | null = null;
+  private popup: maplibregl.Popup | null = null;
 
   constructor(options: ControllerOptions) {
     ensurePmtilesProtocol();
@@ -194,6 +205,24 @@ export class MapController {
   flyTo(center: [number, number], zoom = 17): void {
     // Not essential, so MapLibre skips the animation for people who prefer reduced motion.
     this.map.flyTo({ center, zoom: Math.max(this.map.getZoom(), zoom), essential: false });
+  }
+
+  /** Opens a popup at a place with the given content; `onClose` runs once when it closes. */
+  showPopup(lngLat: [number, number], content: HTMLElement, onClose: () => void): void {
+    this.closePopup();
+    const popup = new maplibregl.Popup({ closeButton: true, closeOnClick: false, maxWidth: '340px', className: 'pk-popup' });
+    popup.on('close', () => {
+      if (this.popup === popup) this.popup = null;
+      onClose();
+    });
+    popup.setLngLat(lngLat).setDOMContent(content).addTo(this.map);
+    this.popup = popup;
+  }
+
+  closePopup(): void {
+    const popup = this.popup;
+    this.popup = null;
+    popup?.remove();
   }
 
   showUserLocation(lng: number, lat: number): void {
@@ -344,26 +373,51 @@ export class MapController {
     return ids;
   }
 
-  private hitAt(point: { x: number; y: number }) {
+  private hitsAt(point: { x: number; y: number }) {
     const ids = this.parts(() => true, 'clickable');
-    if (ids.length === 0) return undefined;
+    if (ids.length === 0) return [];
     // A small box rather than a single pixel, so a fingertip can hit a narrow lot.
     const box: [[number, number], [number, number]] = [
       [point.x - 4, point.y - 4],
       [point.x + 4, point.y + 4],
     ];
-    return this.map.queryRenderedFeatures(box, { layers: ids })[0];
+    return this.map.queryRenderedFeatures(box, { layers: ids });
+  }
+
+  /** The registry layer id inside a part id such as pk:memorials:marker. */
+  private layerOf(part: string): string | null {
+    const match = /^pk:(.+):[^:]+$/.exec(part);
+    return match ? match[1]! : null;
   }
 
   private handleClick(e: MapMouseEvent): void {
-    const hit = this.hitAt(e.point);
-    const id = hit?.properties?.id;
-    if (hit && id !== undefined && id !== null) this.events.select(String(id), { ...hit.properties });
-    else this.events.select(null, null);
+    const hits = this.hitsAt(e.point);
+    const top = hits[0];
+    const layerId = top ? this.layerOf(top.layer.id) : null;
+    const applied = layerId ? this.applied.get(layerId) : undefined;
+    if (!top || !layerId || !applied || applied.style === STYLES.vacant_parcels) {
+      this.events.inspect(null);
+      const id = top?.properties?.id;
+      if (top && id !== undefined && id !== null) this.events.select(String(id), { ...top.properties });
+      else this.events.select(null, null);
+      return;
+    }
+    // Memorials, crashes and street blocks open a popup; two people remembered at one place are
+    // both listed.
+    const seen = new Set<string>();
+    const features: Record<string, unknown>[] = [];
+    for (const hit of hits) {
+      if (this.layerOf(hit.layer.id) !== layerId) continue;
+      const key = JSON.stringify(hit.properties);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      features.push({ ...hit.properties });
+    }
+    this.events.inspect({ layerId, features, lngLat: [e.lngLat.lng, e.lngLat.lat] });
   }
 
   private handleHover(e: MapMouseEvent): void {
-    this.map.getCanvas().style.cursor = this.hitAt(e.point) ? 'pointer' : '';
+    this.map.getCanvas().style.cursor = this.hitsAt(e.point).length ? 'pointer' : '';
   }
 
   private handleError(e: { sourceId?: string; error?: Error }): void {

@@ -1,0 +1,133 @@
+<script lang="ts">
+  // What opens when someone taps a memorial, a crash or a street block on the map. Memorials
+  // are quiet: the name only from a public memorial list and only while "show names" is on, the
+  // date, how the person was traveling, the place, the public memorial page, "request removal",
+  // and the family's blessing beside every memorial suggestion (docs/ETHICS.md).
+  import { config } from '../../config/index.ts';
+  import { FAMILIES_FOR_SAFE_STREETS_URL, REPO_URL } from '../../config/links.ts';
+  import type { InspectTarget } from '../../map/controller.ts';
+  import { STYLES, styleFor } from '../../map/styles/index.ts';
+  import { showNames } from '../../map/styles/memorials.ts';
+  import type { AppStore } from '../../state/store.svelte.ts';
+  import { describeCrash, describeMemorial, describeSegment, suggestionViews } from '../../streets/describe.ts';
+  import { strings } from '../../strings.ts';
+  import EvidenceBadge from '../common/EvidenceBadge.svelte';
+  import WhyBreakdown from '../lens/WhyBreakdown.svelte';
+
+  let { store, target }: { store: AppStore; target: InspectTarget } = $props();
+
+  const layer = $derived(store.registry.layers.find((l) => l.id === target.layerId));
+  const style = $derived(layer ? styleFor(layer) : null);
+  const names = $derived(layer ? showNames({ layer, registry: store.registry, state: store.state }) : true);
+  const first = $derived(target.features[0] ?? {});
+  const views = $derived(style === STYLES.memorials ? suggestionViews(store.registry, store.state, first) : []);
+  const segment = $derived(style === STYLES.street_segments ? describeSegment(store.registry, store.state, first) : null);
+  const links = { takedownEmail: config.takedownEmail, repoUrl: REPO_URL };
+  const s = strings.streets;
+</script>
+
+<section class="pk-feature" aria-label={s.popupLabel}>
+  {#if style === STYLES.memorials}
+    {#if target.features.length > 1}<p class="muted small">{s.peopleHere(target.features.length)}</p>{/if}
+    {#each target.features as properties, i (i)}
+      {@const memorial = describeMemorial(properties, names, links)}
+      <section class="memorial">
+        <h3>{memorial.name ?? s.memorialTitle}</h3>
+        <p>{memorial.sentence}</p>
+        {#if memorial.place}<p>{memorial.place}</p>{/if}
+        {#if memorial.source}
+          <p><a href={memorial.source} target="_blank" rel="noopener noreferrer">{s.memorialSource}</a></p>
+        {/if}
+        <p class="small">
+          <a href={memorial.removalHref} target="_blank" rel="noopener noreferrer">{s.removal}</a>
+          <span class="muted">{s.removalNote}</span>
+        </p>
+      </section>
+    {/each}
+    {#if views.length}
+      <h4>{s.canDo}</h4>
+      <ul class="suggestions">
+        {#each views as view (view.suggestion.id)}
+          <li>
+            <strong>{view.suggestion.label}</strong>
+            <EvidenceBadge level={view.suggestion.evidence} />
+            {#if view.memorial}
+              <p class="blessing">
+                {s.blessing}
+                <a href={FAMILIES_FOR_SAFE_STREETS_URL} target="_blank" rel="noopener noreferrer">{s.families}</a>
+              </p>
+            {/if}
+            <p class="small">{view.suggestion.summary}</p>
+            <p class="small">{s.cost(view.suggestion.cost)}</p>
+            {#if view.firstStep}
+              <p class="small"><strong>{s.firstStep}:</strong> {view.firstStep.step} <span class="muted">({view.firstStep.route.label})</span></p>
+            {/if}
+          </li>
+        {/each}
+      </ul>
+    {/if}
+  {:else if style === STYLES.crashes}
+    {#if target.features.length > 1}<h3>{s.crashesHere(target.features.length)}</h3>{/if}
+    <ul class="crashes">
+      {#each target.features.slice(0, 6) as properties, i (i)}
+        {@const crash = describeCrash(properties)}
+        <li>
+          <strong>{s.crashTitle(crash.year)}</strong>
+          <span>{crash.severity}.</span>
+          <span class="small">{s.involved}: {crash.involved}.</span>
+        </li>
+      {/each}
+    </ul>
+    <p class="muted small">{s.crashSource}</p>
+  {:else if segment}
+    <h3>{segment.name}</h3>
+    {#if segment.lens && segment.score !== null}
+      <p>{s.segmentScore(segment.score, segment.lens.label)}</p>
+    {:else}
+      <p class="muted">{s.segmentNoScore}</p>
+    {/if}
+    <ul class="facts">
+      {#each segment.facts as fact (fact)}<li>{fact}</li>{/each}
+    </ul>
+    {#if segment.why}<WhyBreakdown why={segment.why} idPrefix="popup" />{/if}
+  {/if}
+</section>
+
+<style>
+  .pk-feature {
+    max-height: min(60vh, 460px);
+    overflow-y: auto;
+    padding-right: 4px;
+    font-size: 0.9rem;
+  }
+  h3 {
+    margin-bottom: 2px;
+  }
+  .memorial {
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--pk-surface-2);
+    margin-bottom: 6px;
+  }
+  .memorial p {
+    margin: 2px 0;
+  }
+  .suggestions,
+  .crashes,
+  .facts {
+    margin: 0;
+    padding-left: 18px;
+  }
+  .suggestions li,
+  .crashes li {
+    margin-bottom: 6px;
+  }
+  .suggestions p {
+    margin: 2px 0;
+  }
+  .blessing {
+    font-weight: 600;
+  }
+  .crashes span {
+    display: block;
+  }
+</style>

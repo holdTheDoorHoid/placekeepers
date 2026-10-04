@@ -101,8 +101,6 @@ export const strings = {
     streets: 'Streets',
     memorials: 'Memorials',
     comingSoon: 'coming soon',
-    memorialsSoon:
-      'Memorials will appear here once they are prepared by hand from public memorial lists, with care for families.',
   },
 
   sheet: {
@@ -177,6 +175,10 @@ export const strings = {
     weightValue: (w: number) => (w === 0 ? 'Off' : `${w} of 5`),
     resetWeights: 'Reset weights',
     allOff: 'Every factor is off. Turn one on to color the lots.',
+    allOffFor: (appliesTo: string) =>
+      appliesTo === 'segment'
+        ? 'Every factor is off. Turn one on to color the streets.'
+        : 'Every factor is off. Turn one on to color the lots.',
     explainToggle: 'Why this factor',
     legendLow: 'Lower priority',
     legendHigh: 'Higher priority',
@@ -277,6 +279,67 @@ export const strings = {
     hexNone: 'Hexagons with no shootings are left clear.',
     countBin: (lo: number, hi: number | null) =>
       hi === null ? `${formatNumber(lo)} or more` : lo === hi ? formatNumber(lo) : `${formatNumber(lo)} to ${formatNumber(hi)}`,
+    segmentsFill: 'Line color: street safety score under your lens blend',
+    segmentsShown: (min: number) =>
+      min <= 1 ? 'Every block with a score above zero is shown.' : `Blocks that score ${formatNumber(min)} or more out of 100 are shown.`,
+    segmentsZoom:
+      'Zoomed out, only blocks with recorded harm or on the High Injury Network are drawn. Zoom in to see the rest.',
+    crashSeverity: {
+      3: 'Someone was killed',
+      2: 'Someone was seriously injured',
+      1: 'Someone was injured',
+      0: 'No one was reported hurt',
+    } as Record<number, string>,
+    crashesZoom: 'Zoom in to see crashes where no one was seriously hurt.',
+    crashesSource: 'From PennDOT crash records, which arrive about a year after the crashes.',
+    memorial: 'A person killed while walking, cycling or riding a scooter',
+    memorialEveryone: 'A person killed in a traffic crash',
+    memorialNames: 'A fuller ring means a public memorial list shares the person\'s name. Open the marker to read it.',
+    memorialNamesHidden: 'Names are hidden.',
+  },
+
+  streets: {
+    popupLabel: 'About this place on the map',
+    memorialTitle: 'In memory',
+    peopleHere: (n: number) => `${plural(n, 'person is', 'people are')} remembered here`,
+    killed: {
+      walk: 'Killed while walking',
+      bike: 'Killed while cycling',
+      scooter: 'Killed while riding a scooter',
+      motorcycle: 'Killed while riding a motorcycle',
+      other: 'Killed in a traffic crash',
+    },
+    killedOn: (what: string, date: string) => `${what} on ${date}.`,
+    memorialSource: 'Read the public memorial',
+    blessing: 'Only with the family\'s blessing.',
+    families: 'Families for Safe Streets supports families after a crash.',
+    canDo: 'What neighbors can do here',
+    firstStep: 'First step',
+    cost: (cost: string) => `Cost: ${cost}`,
+    removal: 'Request removal',
+    removalNote: 'Anyone can ask us to remove a name or a marker. We do it without asking why.',
+    removalSubject: (id: string) => `Memorial removal request ${id}`,
+    removalBody: (id: string) =>
+      `Please remove memorial ${id} from Placekeepers. You do not need to give a reason or any proof.`,
+    crashTitle: (year: string) => `Crash in ${year}`,
+    crashesHere: (n: number) => `${plural(n, 'crash', 'crashes')} at this spot`,
+    involved: 'Who was involved',
+    involvedModes: {
+      walk: 'someone walking',
+      bike: 'someone cycling',
+      motorcycle: 'someone on a motorcycle',
+      scooter: 'someone on a scooter',
+    },
+    involvedOthers: 'people in cars or other vehicles',
+    crashSource: 'From PennDOT crash records.',
+    segmentScore: (score: number, lens: string) => `${lens}: ${score} of 100 under your lens blend`,
+    segmentNoScore: 'No street safety score for this block.',
+    onHin: 'On the High Injury Network',
+    ksi: (n: number) =>
+      `${plural(n, 'person', 'people')} killed or seriously injured while walking or cycling on this block or at its corners, in the last five years of PennDOT records`,
+    noKsi: 'No one recorded killed or seriously injured while walking or cycling here in the last five years of PennDOT records',
+    killed2: (n: number) => `${plural(n, 'person', 'people')} killed here in the last two years`,
+    school: 'A school within 400 meters',
   },
 
   basemap: {
