@@ -3,11 +3,14 @@
 
 import type { Layer } from '../../registry/types.ts';
 import { boundary } from './boundary.ts';
+import { crashes } from './crashes.ts';
 import { gardens } from './gardens.ts';
 import { hin } from './hin.ts';
 import type { StyleId } from './ids.ts';
 import { landcare } from './landcare.ts';
+import { memorials } from './memorials.ts';
 import { shootingsHex } from './shootings_hex.ts';
+import { streetSegments } from './street_segments.ts';
 import type { StyleModule } from './types.ts';
 import { vacantParcels } from './vacant_parcels.ts';
 
@@ -18,6 +21,9 @@ export const STYLES: Record<StyleId, StyleModule> = {
   landcare,
   gardens,
   boundary,
+  street_segments: streetSegments,
+  crashes,
+  memorials,
 };
 
 export function styleFor(layer: Layer): StyleModule | null {

@@ -367,3 +367,9 @@ def builder_for(file: str, source_layer: str) -> LayerBuilder | None:
         if builder.file == file and builder.source_layer == source_layer:
             return builder
     return None
+
+
+# The street safety layers (segments, crashes, memorials) live in their own module (M1.5).
+from placekeepers.publish.streets import STREET_BUILDERS  # noqa: E402
+
+BUILDERS = (*BUILDERS, *STREET_BUILDERS)

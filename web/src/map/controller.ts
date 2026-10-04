@@ -43,9 +43,19 @@ export interface ParcelInView {
   center: [number, number];
 }
 
+/** A memorial, crash or street block someone tapped: shown in the details panel. */
+export interface InspectTarget {
+  layerId: string;
+  /** Properties of the features of that layer under the pointer, top first, without repeats. */
+  features: Record<string, unknown>[];
+  lngLat: [number, number];
+}
+
 export interface MapEvents {
   move(position: MapPosition): void;
   select(id: string | null, properties: Record<string, unknown> | null): void;
+  /** A tap on a memorial, crash or street block, or null when nothing of the kind was tapped. */
+  inspect(target: InspectTarget | null): void;
   /** The map finished drawing after a move or a data change. */
   idle(): void;
   layerStatus(layerId: string, status: LayerStatus): void;
@@ -104,6 +114,8 @@ export class MapController {
   private loaded = false;
   private labelAnchor: string | undefined;
   private marker: maplibregl.Marker | null = null;
+  /** The features someone opened, drawn as selected by their layer's style. */
+  private inspected: { layerId: string; ids: (string | number)[] } | null = null;
 
   constructor(options: ControllerOptions) {
     ensurePmtilesProtocol();
@@ -147,6 +159,18 @@ export class MapController {
   setState(state: AppState): void {
     this.state = state;
     this.sync();
+  }
+
+  /** Draws the memorial, crash or street block someone opened as selected, or clears it. */
+  setInspected(target: InspectTarget | null): void {
+    const before = this.inspected?.layerId;
+    const ids = (target?.features ?? [])
+      .map((f) => f.id)
+      .filter((id): id is string | number => typeof id === 'string' || typeof id === 'number');
+    this.inspected = target && ids.length ? { layerId: target.layerId, ids } : null;
+    if (!this.loaded) return;
+    if (before) this.syncLayer(before);
+    if (this.inspected && this.inspected.layerId !== before) this.syncLayer(this.inspected.layerId);
   }
 
   setManifest(manifest: Manifest | null): void {
@@ -251,7 +275,15 @@ export class MapController {
       }
       const sourceId = this.ensureSource(resolved.data);
       const specs = this.withVisibility(
-        style.layers({ layer, registry: this.registry, state: this.state, sourceId, sourceLayer: resolved.data.sourceLayer, glyphs: this.hasGlyphs() }),
+        style.layers({
+          layer,
+          registry: this.registry,
+          state: this.state,
+          sourceId,
+          sourceLayer: resolved.data.sourceLayer,
+          glyphs: this.hasGlyphs(),
+          highlight: this.highlightFor(layerId),
+        }),
         true,
       );
       const before = this.beforeId(style.zIndex);
@@ -262,7 +294,15 @@ export class MapController {
     }
 
     const next = this.withVisibility(
-      style.layers({ layer, registry: this.registry, state: this.state, sourceId: applied.sourceId, sourceLayer: applied.sourceLayer, glyphs: this.hasGlyphs() }),
+      style.layers({
+        layer,
+        registry: this.registry,
+        state: this.state,
+        sourceId: applied.sourceId,
+        sourceLayer: applied.sourceLayer,
+        glyphs: this.hasGlyphs(),
+        highlight: this.highlightFor(layerId),
+      }),
       visible,
     );
     next.forEach((spec, i) => {
@@ -270,6 +310,10 @@ export class MapController {
       if (prev?.id === spec.id) this.updateLayer(prev, spec);
     });
     applied.specs = next;
+  }
+
+  private highlightFor(layerId: string): (string | number)[] {
+    return this.inspected?.layerId === layerId ? this.inspected.ids : [];
   }
 
   private withVisibility(specs: LayerSpecification[], visible: boolean): LayerSpecification[] {
@@ -349,26 +393,51 @@ export class MapController {
     return ids;
   }
 
-  private hitAt(point: { x: number; y: number }) {
+  private hitsAt(point: { x: number; y: number }) {
     const ids = this.parts(() => true, 'clickable');
-    if (ids.length === 0) return undefined;
+    if (ids.length === 0) return [];
     // A small box rather than a single pixel, so a fingertip can hit a narrow lot.
     const box: [[number, number], [number, number]] = [
       [point.x - 4, point.y - 4],
       [point.x + 4, point.y + 4],
     ];
-    return this.map.queryRenderedFeatures(box, { layers: ids })[0];
+    return this.map.queryRenderedFeatures(box, { layers: ids });
+  }
+
+  /** The registry layer id inside a part id such as pk:memorials:marker. */
+  private layerOf(part: string): string | null {
+    const match = /^pk:(.+):[^:]+$/.exec(part);
+    return match ? match[1]! : null;
   }
 
   private handleClick(e: MapMouseEvent): void {
-    const hit = this.hitAt(e.point);
-    const id = hit?.properties?.id;
-    if (hit && id !== undefined && id !== null) this.events.select(String(id), { ...hit.properties });
-    else this.events.select(null, null);
+    const hits = this.hitsAt(e.point);
+    const top = hits[0];
+    const layerId = top ? this.layerOf(top.layer.id) : null;
+    const applied = layerId ? this.applied.get(layerId) : undefined;
+    if (!top || !layerId || !applied || applied.style === STYLES.vacant_parcels) {
+      this.events.inspect(null);
+      const id = top?.properties?.id;
+      if (top && id !== undefined && id !== null) this.events.select(String(id), { ...top.properties });
+      else this.events.select(null, null);
+      return;
+    }
+    // Memorials, crashes and street blocks open in the details panel; two people remembered at
+    // one place are both listed.
+    const seen = new Set<string>();
+    const features: Record<string, unknown>[] = [];
+    for (const hit of hits) {
+      if (this.layerOf(hit.layer.id) !== layerId) continue;
+      const key = JSON.stringify(hit.properties);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      features.push({ ...hit.properties });
+    }
+    this.events.inspect({ layerId, features, lngLat: [e.lngLat.lng, e.lngLat.lat] });
   }
 
   private handleHover(e: MapMouseEvent): void {
-    this.map.getCanvas().style.cursor = this.hitAt(e.point) ? 'pointer' : '';
+    this.map.getCanvas().style.cursor = this.hitsAt(e.point).length ? 'pointer' : '';
   }
 
   private handleError(e: { sourceId?: string; error?: Error }): void {

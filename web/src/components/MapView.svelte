@@ -40,6 +40,7 @@
         events: {
           move: (position) => store.setMap(position),
           select: (id, properties) => store.select(id, properties),
+          inspect: (target) => store.inspect(target),
           idle: refreshFromMap,
           layerStatus: (id, status) => (store.layerStatus = { ...store.layerStatus, [id]: status }),
         },
@@ -62,6 +63,11 @@
   $effect(() => {
     const manifest = store.manifest;
     store.controller?.setManifest(manifest);
+  });
+
+  $effect(() => {
+    const inspected = store.inspected;
+    store.controller?.setInspected(inspected);
   });
 </script>
 

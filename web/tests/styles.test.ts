@@ -18,8 +18,13 @@ function states(): AppState[] {
   busy.weights.violence = { untreated_vacancy: 0, shootings_nearby: 5, poverty: 0, canopy_gap: 0 };
   busy.filters.owner_type = ['3', '4'];
   busy.selected = '990000012';
+  busy.settings.crashes = { years: 'all', severity: '0', mode: 'walk_cycle' };
+  busy.settings.memorials = { show_names: false, all_fatal: true };
+  busy.settings.segments = { min_score: '60' };
+  busy.weights.street_safety = { high_injury_network: 0, walking_cycling_harm: 5, recent_death: 1, school_nearby: 0 };
   const off = defaultState(reg, 'field');
   off.weights.violence = { untreated_vacancy: 0, shootings_nearby: 0, poverty: 0, canopy_gap: 0 };
+  off.weights.street_safety = { high_injury_network: 0, walking_cycling_harm: 0, recent_death: 0, school_nearby: 0 };
   off.filters.owner_type = [];
   return [plain, busy, off];
 }

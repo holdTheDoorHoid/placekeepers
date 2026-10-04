@@ -96,7 +96,7 @@ option values appear in shared links, so they never change once published.
 ```yaml
 - id: violence
   label: Violence reduction
-  applies_to: parcel                  # parcel | segment | stop | cell
+  applies_to: parcel                  # parcel | segment | crash | stop | cell
   description: Where cleaning, greening or sealing would most likely reduce gun violence nearby.
   factors:
     - id: untreated_vacancy
@@ -115,6 +115,15 @@ option values appear in shared links, so they never change once published.
 The lens score is `sum(weight * field) / sum(weight)`, computed in the map style. Percentile fields
 are integers from 0 to 100, where 100 means the most need citywide.
 
+How factor fields are made (added 2026-10-04 by M1.5, for the street safety lens): a yes or no
+factor is 100 for yes and 0 for no (such as `f_hin`, on the High Injury Network). A count factor is
+the share of places citywide with a strictly lower count, rounded, so a place with none gets 0 and
+the place with the most gets 100 (such as `f_ksi_vru`). A factor whose data is missing for a place is
+left out of its properties, so the map leaves it out of that place's average.
+
+Each lens colors its own kind of place: the first lens that applies to `parcel` colors the lots and
+the first that applies to `segment` colors the street blocks.
+
 ### `registry/suggestions.yaml`
 
 ```yaml
@@ -132,6 +141,11 @@ are integers from 0 to 100, where 100 means the most need citywide.
 
 Which places get which suggestion is decided in the pipeline (rules live in Python next to the
 derive step, keyed by suggestion id). The web app only shows, hides and explains them.
+
+`applies_to: crash` (added 2026-10-04 by M1.5) marks suggestions for the place of a crash; they are
+carried by `memorials` markers in `sg`. The memorial suggestion (`memorial_or_ghost_bike`) is always
+shown with the line "Only with the family's blessing." and a link to Families for Safe Streets
+(docs/ETHICS.md); the web app adds that line wherever the suggestion is listed.
 
 ### `registry/routes.yaml` and `registry/partners.yaml`
 
@@ -231,10 +245,39 @@ percentiles for cell level factors such as `f_poverty`).
 
 **`crashes` (streets.pmtiles)**: `id` (crash record number), `y` (year), `sev` (3 fatal, 2 serious
 injury, 1 other injury, 0 no injury), `m` (bit flags: 1 pedestrian, 2 bicycle, 4 motorcycle, 8
-scooter).
+scooter). Added 2026-10-04 by M1.5: `ya` (years before the newest year of records, 0 for the newest,
+so the map can show "the most recent five years" without knowing which year that is). PennDOT's
+public data has no scooter field, so crashes never set 8. Every PennDOT crash from 2015 on appears
+once; each year comes from the newest City slice that covers it.
 
 **`memorials` (streets.pmtiles)**: `id`, `d` (date), `m` (mode), `nm` (name, only when curated from a
 public memorial list and not suppressed), `src` (source url).
+
+Clarified and extended 2026-10-04 by M1.5: one marker per person the Police record as killed (one
+row of their fatal crash table), not per crash. `id` is built from the date and the place, such as
+`fc20260822_3f9a` (with `_2` and so on for more people killed in the same crash); a marker that
+exists only because a curated entry has no Police record uses the curated entry's id. `d` is
+`YYYY-MM-DD`. `m` uses the same bit flags as `crashes` (0 for a person in a car or other vehicle);
+the map shows markers with 1, 2 or 8 by default. `src` is present only with a curated entry. New:
+`pl` (the place in words, such as "600 block of Packer Ave"; house numbers become blocks) and `sg`
+(suggestion ids for the crash site, comma separated, the memorial suggestion first). Nothing else
+about the person is ever published: no age, sex, case number, arrest or driver details.
+
+**`segments` (streets.pmtiles, lines)**, added 2026-10-04 by M1.5: one feature per street block from
+the City's street centerlines (classes that carry traffic). `id` (the City's `seg_id`), `name`
+(street name as the City writes it, such as "N BROAD ST"), `cls` (the City's street class: 1
+expressway, 2 major arterial, 3 minor arterial, 4 collector, 5 local, 9 and 10 ramps), the street
+safety lens factors `f_hin`, `f_ksi_vru`, `f_fatal2` and `f_school`, and the facts behind them: `hin`
+(1 on the High Injury Network), `ksi` (people killed or seriously injured while walking or cycling on
+the block or at its corners in the five most recent years of PennDOT records), `k2` (people killed on
+the block or at its corners in the two years before the build, from the Police records) and `sch` (1
+when a school is within 400 meters). A crash within 10 meters of an intersection counts for every
+block that meets there; any other crash counts for the nearest block within 30 meters (60 meters for
+the Police records, whose points are less precise).
+
+In the tiles (not the GeoJSON), low zooms carry only what matters most citywide: crashes with a death
+or serious injury, blocks with `hin`, `ksi` or `k2`, and every memorial. Other crashes and blocks near
+a school appear from zoom 12, and every block from zoom 14 (`publish/tiles.py`).
 
 Added 2026-10-04 by M1.1 (and `lc` in `parcels` is now filled from PHS LandCare):
 
@@ -256,7 +299,38 @@ when known). Areas overlap. Contact people's names, emails and phones are never 
 
 Every boundary layer has `nm`, so one style (`boundary`) can draw and label all three.
 
-## 5. Dossier shards (`dossiers/<prefix>.json`)
+## 5. Hand curated memorial files (`data/curated/`)
+
+Added 2026-10-04 by M1.5. People edit these by hand; the pipeline reads them at every publish
+(`pipeline/src/placekeepers/curated.py`).
+
+`memorials.yaml` is a list of names copied from public memorial lists (docs/ETHICS.md), never
+scraped. Each entry:
+
+```yaml
+- id: m2024_0001                # ours, stable, never reused; lowercase, digits, underscores
+  name: "..."                   # as the public source gives it
+  date: 2024-05-17              # the day of the crash
+  mode: walking                 # walking | cycling | scooter | motorcycle | driving | passenger
+  crash: fc20240517_3f9a        # optional: the memorial marker id this name belongs to
+  lat: 39.988                   # the approximate place; needed when there is no crash link
+  lng: -75.154
+  place: Broad St and Erie Ave  # optional, in words
+  source: https://...           # the public memorial page (https only)
+  note: ...                     # optional, for curators, never published
+```
+
+An entry joins a marker by `crash`, or else by its date (one day either way) and place (within 250
+meters, nearest first, the same mode preferred). An entry that matches no marker becomes its own
+marker at its place, so a person killed before 2019 can be remembered. An entry with a problem is
+skipped and reported in the build notes by its id, never by name.
+
+`suppressed.yaml` lists what never appears again, by id only: a curated entry's id (its name never
+shows; the Police marker stays, unnamed) or a marker's id (the marker is not drawn). A marker may be
+listed with its date, `lat` and `lng`, so it stays hidden even if the Police correct the record and
+its id changes. If this file cannot be read, no memorials are published at all.
+
+## 6. Dossier shards (`dossiers/<prefix>.json`)
 
 ```json
 {

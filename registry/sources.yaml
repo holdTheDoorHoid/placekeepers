@@ -280,3 +280,73 @@
   cadence: frozen
   health: {min_rows: 570000, max_drop_pct: 0, newest_field: snapshot_date}
   release: v0.1
+- id: crashes_2020_2024
+  name: Crashes, 2020 to 2024 (PennDOT data, City copy)
+  publisher: City of Philadelphia, from Pennsylvania Department of Transportation crash records
+  homepage: https://opendataphilly.org/datasets/crashes/
+  endpoint: {kind: arcgis, service: collision_crash_2020_2024, layer: 0}
+  license: city_terms
+  attribution: "Crashes: PennDOT, published by the City of Philadelphia"
+  cadence: yearly
+  health: {min_rows: 34000, max_drop_pct: 5, newest_field: crash_date, max_age_days: 800}
+  release: v0.1
+- id: crashes_2016_2020
+  name: Crashes, 2016 to 2020 (PennDOT data, City copy)
+  publisher: City of Philadelphia, from Pennsylvania Department of Transportation crash records
+  homepage: https://opendataphilly.org/datasets/crashes/
+  endpoint: {kind: arcgis, service: COLLISION_CRASH_2016_2020, layer: 0}
+  license: city_terms
+  attribution: "Crashes: PennDOT, published by the City of Philadelphia"
+  cadence: frozen
+  health: {min_rows: 43000, max_drop_pct: 5}
+  release: v0.1
+- id: crashes_2007_2017
+  name: Crashes, 2015 (PennDOT data, City copy of 2007 to 2017)
+  publisher: City of Philadelphia, from Pennsylvania Department of Transportation crash records
+  homepage: https://opendataphilly.org/datasets/crashes/
+  endpoint: {kind: arcgis, service: COLLISION_CRASH_2007_2017, layer: 0}
+  license: city_terms
+  attribution: "Crashes: PennDOT, published by the City of Philadelphia"
+  cadence: frozen
+  health: {min_rows: 10000, max_drop_pct: 5}
+  release: v0.1
+- id: fatal_crashes
+  name: Fatal crashes
+  publisher: Philadelphia Police Department, Accident Investigation Unit
+  homepage: https://opendataphilly.org/datasets/fatal-crashes/
+  endpoint: {kind: carto, table: fatal_crashes}
+  license: city_terms
+  attribution: "Fatal crash data: Philadelphia Police Department via OpenDataPhilly"
+  cadence: daily
+  health: {min_rows: 850, max_drop_pct: 5, newest_field: date_, max_age_days: 90}
+  release: v0.1
+- id: schools
+  name: Schools
+  publisher: City of Philadelphia, Planning Commission
+  homepage: https://opendataphilly.org/datasets/schools/
+  endpoint: {kind: arcgis, service: Schools, layer: 0}
+  license: city_terms
+  attribution: "Schools: City of Philadelphia"
+  cadence: irregular
+  health: {min_rows: 400, max_drop_pct: 20}
+  release: v0.1
+- id: street_centerlines
+  name: Street centerlines
+  publisher: City of Philadelphia, Streets Department
+  homepage: https://opendataphilly.org/datasets/street-centerlines/
+  endpoint: {kind: arcgis, service: Street_Centerline, layer: 0}
+  license: city_terms
+  attribution: "Streets: City of Philadelphia Streets Department"
+  cadence: irregular
+  health: {min_rows: 40000, max_drop_pct: 5}
+  release: v0.1
+- id: memorial_names
+  name: Memorial names, curated by hand
+  publisher: Placekeepers, from public memorial lists such as the Bicycle Coalition's TrafficVictimsPHL
+  homepage: https://github.com/holdTheDoorHoid/placekeepers/blob/main/data/curated/memorials.yaml
+  endpoint: {kind: curated, path: data/curated/memorials.yaml}
+  license: odbl
+  attribution: "Memorial names: public memorial lists"
+  cadence: irregular
+  health: {min_rows: 0, max_drop_pct: 100}
+  release: v0.1
