@@ -7,6 +7,7 @@ the map never goes dark, and manifest.json says how old each source is.
 
 from __future__ import annotations
 
+import json
 import logging
 import os
 import shutil
@@ -73,6 +74,22 @@ def _swap_into_place(staging: Path, out_dir: Path) -> None:
         shutil.rmtree(old, ignore_errors=True)
 
 
+def vacancy_notes(ctx: Context) -> list[str]:
+    """The vacancy model's counts and remarks, from its summary beside derived/vacancy.parquet."""
+    path = ctx.cache.root / "derived" / "vacancy.json"
+    if not path.is_file():
+        return []
+    summary = json.loads(path.read_text(encoding="utf-8"))
+    lots, buildings = summary["counts"]["lot"], summary["counts"]["building"]
+    line = (
+        f"Vacancy model as of {summary['as_of']}: lots {lots['high']:,} very likely vacant, "
+        f"{lots['medium']:,} probably, {lots['low']:,} not sure; buildings {buildings['high']:,} "
+        f"very likely vacant, {buildings['medium']:,} probably, {buildings['low']:,} not sure; "
+        f"{summary['counts']['excluded']:,} parks, gardens, parking and similar left out"
+    )
+    return [line, *summary.get("notes", [])]
+
+
 def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> PublishResult:
     started = time.monotonic()
     registry = ctx.registry
@@ -131,6 +148,8 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
             attributions.setdefault(layer.file, []).extend(
                 registry.sources[source_id].attribution for source_id in paths
             )
+
+        notes.extend(vacancy_notes(ctx))
 
         exe = find_tippecanoe()
         if exe is None:

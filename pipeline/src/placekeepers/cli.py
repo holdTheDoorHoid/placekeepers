@@ -3,9 +3,10 @@
     pk registry check            check every registry file and cross reference
     pk fetch [ids...]            download sources into the cache
     pk validate [ids...]         turn new downloads into snapshots, or keep the last good one
+    pk derive [--as-of DATE]     run the vacancy model on the current snapshots
     pk publish [--out DIR]       write manifest.json and the map layers
     pk health [ids...]           show each source's status
-    pk all                       fetch, validate, publish, then show health
+    pk all                       fetch, validate, run the vacancy model, publish, then show health
 
 Common options: --sources a,b (limit to some sources), --offline (use only the cache),
 --cache DIR (instead of $PK_CACHE), -v (more detail).
@@ -29,6 +30,7 @@ from placekeepers.runner import (
     StepResult,
     UsageError,
     all_statuses,
+    derive_vacancy,
     fetch_source,
     ordered,
     select_sources,
@@ -116,6 +118,17 @@ def cmd_validate(args: argparse.Namespace) -> int:
     return 0
 
 
+def _as_of(args: argparse.Namespace) -> date | None:
+    return date.fromisoformat(args.as_of) if getattr(args, "as_of", None) else None
+
+
+def cmd_derive(args: argparse.Namespace) -> int:
+    ctx = _context(args)
+    step = derive_vacancy(ctx, _as_of(args))
+    _print_steps([step])
+    return 0 if step.outcome == "ok" else 1
+
+
 def _publish(ctx: Context, args: argparse.Namespace) -> int:
     from placekeepers.publish import publish
 
@@ -169,6 +182,7 @@ def cmd_all(args: argparse.Namespace) -> int:
             if not ctx.settings.offline:
                 steps.append(fetch_source(ctx, source, force=args.force))
             steps.append(validate_source(ctx, source))
+        steps.append(derive_vacancy(ctx, _as_of(args)))
         print("Steps:")
         _print_steps(steps)
         _publish(ctx, args)
@@ -235,6 +249,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     validate.add_argument("ids", nargs="*", help="source ids (default: all)")
     validate.set_defaults(func=cmd_validate)
+
+    derive = commands.add_parser(
+        "derive", help="run the vacancy model on the current snapshots", parents=[common]
+    )
+    derive.add_argument("--as-of", help="build date for time windows, YYYY-MM-DD (default: today)")
+    derive.set_defaults(func=cmd_derive)
 
     publish = commands.add_parser(
         "publish", help="write the published data", parents=[common, offline, out]

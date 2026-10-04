@@ -50,6 +50,38 @@ const dLat = (m) => m / M_PER_DEG_LAT;
 const dLng = (m) => m / M_PER_DEG_LNG;
 const round6 = (n) => Math.round(n * 1e6) / 1e6;
 
+// The vacancy model's reasons for a made up parcel (docs/CONTRACTS.md section 4): the bits of
+// `rs`, the count `n` of the parcel's own records that agree (not the City's list), and the
+// years that go with some bits. Chosen from the kind and confidence, so they fit the rules,
+// without drawing random numbers, so every other fixture stays the same.
+const REASON_BITS = [
+  'city_land', 'city_building', 'assessor_vacant_land', 'no_building', 'demolished',
+  'vacant_lot_record', 'landcare', 'sealed', 'unsafe', 'imminently_dangerous',
+  'vacant_building_record', 'assessor_exterior', 'built_since', 'construction_starting',
+  'side_yard', 'land_use_shows_use', 'recent_permit', 'building_stands',
+];
+function reasonsFor({ k, vc, lc }, index) {
+  const odd = index % 2 === 1;
+  let ids;
+  const years = {};
+  if (k === 1 && vc === 3) ids = ['city_land', 'assessor_vacant_land', 'no_building'];
+  else if (k === 1 && vc === 2 && odd) ids = ['city_land', 'assessor_vacant_land', 'no_building', 'land_use_shows_use'];
+  else if (k === 1 && vc === 2) ids = ['no_building', 'demolished', 'vacant_lot_record'];
+  else if (k === 1 && odd && lc !== 1) ids = ['no_building', 'side_yard'];
+  else if (k === 1) ids = ['assessor_vacant_land', 'built_since'];
+  else if (vc === 3) ids = ['city_building', 'sealed'];
+  else if (vc === 2 && odd) ids = ['unsafe'];
+  else if (vc === 2) ids = ['city_building', 'sealed', 'recent_permit'];
+  else ids = ['vacant_building_record'];
+  if (lc === 1) ids.push('landcare');
+  if (ids.includes('demolished')) years.dy = 2024;
+  if (ids.includes('sealed')) years.sy = ids.includes('recent_permit') ? 2025 : 2024;
+  if (ids.includes('built_since')) years.ny = 2023;
+  const bits = ids.map((id) => REASON_BITS.indexOf(id));
+  const own = bits.filter((bit) => bit >= 2 && bit < 12).length;
+  return { rs: bits.reduce((sum, bit) => sum + 2 ** bit, 0), n: own, ...years };
+}
+
 // Parcels: ten runs of rowhouse sized lots (5 m wide, 25 m deep) on block faces.
 const parcels = [];
 const RUNS = [3, 6, 4, 7, 5, 4, 6, 5, 3, 7];
@@ -84,6 +116,7 @@ RUNS.forEach((length, run) => {
       f_poverty: Math.min(100, Math.max(0, poverty + between(-3, 3))),
       sg: building ? 'seal_abandoned_building' : landcare ? '' : 'clean_and_green',
     };
+    Object.assign(properties, reasonsFor(properties, n));
     // Some parcels have no tree canopy rank yet, as happens while data arrives.
     if (random() > 0.2) properties.f_canopy = between(0, 100);
     parcels.push({ type: 'Feature', properties, geometry: { type: 'Polygon', coordinates: [ring] } });

@@ -191,22 +191,41 @@ class CartoAdapter(Adapter):
         }
 
     # Normalize
+    #: drop rows repeated across the downloaded files (set when two downloads can overlap)
+    dedupe: ClassVar[bool] = False
+
     def csv_names(self) -> list[str]:
         """The columns of each downloaded CSV chunk, in order."""
         return [column.name for column in self.columns] + [KEY_ALIAS]
 
-    def normalize(self, raw: RawFetch, out: Path) -> None:
+    def csv_groups(self, raw: RawFetch) -> list[tuple[list[Path], list[str]]]:
+        """The downloaded files, in groups that share their columns."""
         assert raw.dir is not None
         files = sorted(raw.dir.glob("chunk-*.csv"))
-        if not files:
+        return [(files, self.csv_names())] if files else []
+
+    def csv_source(self, raw: RawFetch) -> str:
+        """SQL reading every downloaded file as text columns (one select per group)."""
+        groups = [(files, names) for files, names in self.csv_groups(raw) if files]
+        if not groups:
             raise FetchError("The download has no data files")
-        names = self.csv_names()
-        types = ", ".join(f"{quote_literal(name)}: 'VARCHAR'" for name in names)
-        file_list = "[" + ", ".join(quote_literal(str(path)) for path in files) + "]"
-        source = (
-            f"read_csv({file_list}, header = true, columns = {{{types}}}, "
-            f"max_line_size = {MAX_LINE_BYTES}, quote = '\"', escape = '\"')"
-        )
+        wanted = ", ".join(quote_ident(column.name) for column in self.columns)
+        selects = []
+        for files, names in groups:
+            types = ", ".join(f"{quote_literal(name)}: 'VARCHAR'" for name in names)
+            file_list = "[" + ", ".join(quote_literal(str(path)) for path in files) + "]"
+            selects.append(
+                f"SELECT {wanted} FROM read_csv({file_list}, header = true, columns = {{{types}}}, "
+                f"max_line_size = {MAX_LINE_BYTES}, quote = '\"', escape = '\"')"
+            )
+        if len(selects) == 1 and not self.dedupe:
+            return f"({selects[0]})"
+        joiner = " UNION " if self.dedupe else " UNION ALL "
+        return "(" + joiner.join(selects) + ")"
+
+    def normalize(self, raw: RawFetch, out: Path) -> None:
+        assert raw.dir is not None
+        source = self.csv_source(raw)
         con = self.ctx.duckdb()
         try:
             self._note_cast_losses(con, source)
