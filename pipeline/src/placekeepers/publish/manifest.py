@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 from datetime import datetime
 from pathlib import Path
@@ -39,14 +40,18 @@ def build_id(generated_at: datetime, commit: str) -> str:
     return f"{iso_z(generated_at).replace(':', '-')}-{commit}"
 
 
+#: Dossier shards (dossiers/<digits>.json) are summarized in the manifest's `dossiers` block
+#: rather than listed one by one, so the manifest every visitor fetches stays small.
+DOSSIER_SHARD = re.compile(r"^dossiers/\d+\.json$")
+
+
 def file_index(data_root: Path) -> dict[str, dict[str, Any]]:
+    """Every file under the data root except manifest.json and the dossier shards."""
     files = {}
     for path in sorted(data_root.rglob("*")):
-        if path.is_file() and path.relative_to(data_root).as_posix() != MANIFEST:
-            files[path.relative_to(data_root).as_posix()] = {
-                "bytes": path.stat().st_size,
-                "sha256": sha256_file(path),
-            }
+        name = path.relative_to(data_root).as_posix()
+        if path.is_file() and name != MANIFEST and not DOSSIER_SHARD.match(name):
+            files[name] = {"bytes": path.stat().st_size, "sha256": sha256_file(path)}
     return files
 
 
@@ -58,6 +63,7 @@ def build_manifest(
     generated_at: datetime,
     commit: str,
     notes: list[str],
+    dossiers: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     return {
         "schema": SCHEMA,
@@ -73,5 +79,6 @@ def build_manifest(
             for layer in registry.layers.values()
         },
         "files": file_index(data_root),
+        "dossiers": dossiers,
         "notes": notes,
     }

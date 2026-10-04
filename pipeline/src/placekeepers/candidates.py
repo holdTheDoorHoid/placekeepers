@@ -22,6 +22,8 @@ import logging
 from dataclasses import dataclass, field
 from pathlib import Path
 
+import duckdb
+
 from placekeepers.context import Context
 from placekeepers.snapshots import SnapshotStore
 from placekeepers.sql import quote_literal
@@ -92,9 +94,16 @@ def candidate_accounts(ctx: Context) -> Candidates:
             query = f"SELECT {account_column} AS account FROM {snapshot}"
             if conditions:
                 query += " WHERE " + " OR ".join(f"({c})" for c in conditions)
-            count = con.execute(
-                f"SELECT count(DISTINCT {NORMALIZE}) FROM ({query}) WHERE {VALID}"
-            ).fetchone()[0]
+            try:
+                count = con.execute(
+                    f"SELECT count(DISTINCT {NORMALIZE}) FROM ({query}) WHERE {VALID}"
+                ).fetchone()[0]
+            except duckdb.BinderException as exc:
+                # The snapshot lacks a column its rule needs: leave the source out, as if it had
+                # no snapshot, rather than stop everything that reads the candidates.
+                log.warning("candidates: %s cannot be read (%s)", source_id, exc)
+                result.missing.append(source_id)
+                continue
             result.by_source[source_id] = int(count)
             parts.append(f"SELECT {NORMALIZE} AS account FROM ({query}) WHERE {VALID}")
         if parts:

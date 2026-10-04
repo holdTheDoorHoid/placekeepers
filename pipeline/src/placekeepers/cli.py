@@ -143,6 +143,14 @@ def _publish(ctx: Context, args: argparse.Namespace) -> int:
     )
     for name, count in result.features.items():
         print(f"  {name}: {count:,} features")
+    found = result.dossiers
+    if found is not None and found.parcels:
+        print(
+            f"  dossiers: {found.parcels:,} parcels in {found.shards:,} files "
+            f"({found.bytes / 1e6:.1f} MB, the largest {found.largest / 1e6:.2f} MB), "
+            f"common.json {found.common_bytes / 1e3:.1f} kB, {found.owners_listed:,} owners with "
+            f"many vacant parcels in tables/owners.json ({found.owners_bytes / 1e3:.0f} kB)"
+        )
     for file in result.tiles_built:
         print(f"  built {file}")
     for note in result.manifest["notes"]:

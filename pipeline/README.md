@@ -174,7 +174,8 @@ DuckDB: `SELECT * FROM '~/.cache/placekeepers/snapshots/opa_properties/current.p
 `tiles/boundaries.pmtiles` (layers `council_districts`, `rcos` and `neighborhoods`). It builds in a
 hidden folder and swaps it into place at the end, and it refuses to replace a folder that is not an
 earlier data root. A layer with nothing to show is left out with a note, so it never breaks the rest
-of its tile file.
+of its tile file. It also writes the lot dossiers, `dossiers/<first four digits>.json` with
+`dossiers/common.json`, and `tables/owners.json` (see "Lot dossiers and owner flags" below).
 
 ### Street safety and memorials
 
@@ -198,6 +199,31 @@ of its tile file.
 
 The streets tiles keep every point at every zoom (tippecanoe would otherwise thin them), and carry
 only deaths, serious injuries and blocks with recorded harm at low zooms.
+
+### Lot dossiers and owner flags
+
+`publish/dossiers.py` writes one dossier per candidate parcel and per parcel the vacancy model
+shows (about 78,000; docs/CONTRACTS.md section 6), with the rules in `derive/`:
+
+* **Owner type** (`derive/owners.py`): the City's list of public property first, then OPA's owner
+  names by documented patterns (public bodies, company forms, nonprofit words, a person's name).
+  The lots layer's `ot` comes from the same rules.
+* **Flags** (`derive/flags.py`, with every sentence in `derive/wording.py`, word for word from
+  docs/ETHICS.md where it gives wording): absentee owner (the mailing address is elsewhere; never
+  for an owner on the parcel's own block), possible estate (estate words in a person's name, never
+  in a company's), tax debt as of July 2025, past sheriff sales, years since the last sale on the
+  open market (token deeds of $100 or less and sheriff deeds left out; the City's deed records are
+  complete from 2000, the assessor's last sale fills in before), an owner holding five or more
+  parcels called vacant with high or medium confidence, fast resales (two or more sales within 24
+  months), open violations, unsafe and imminently dangerous buildings.
+* **Transfers** (`derive/transfers.py`): every deed, newest first; mortgages are left out.
+* **Routes** (`derive/routes.py`): by owner and context, the lawful route first. Conservatorship,
+  with its abuse warning, only for a private parcel called vacant with high or medium confidence.
+
+Each flag's careful note and next step are the same for every parcel, so they are written once,
+in `dossiers/common.json`, not once per parcel. Files are named by the first four digits of the OPA
+account, so opening one lot on a phone fetches a small file. Readers take only the columns a
+snapshot has, so a source that drops a column cannot stop the publish.
 
 ## Tests
 
