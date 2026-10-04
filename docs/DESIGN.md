@@ -218,6 +218,25 @@ it, not only candidates.
   scrapes names. A "show names" setting is on by default. Every memorial has "request removal".
 - Asphalt art suggestions say "check with the City first" because of the 2025 federal stance.
 
+As built (M1.5, 2026-10-04):
+
+- **Memorials** are one quiet marker per person the Police record as killed (their table has a row
+  per person; 928 placed markers on 2026-10-04, 428 of them people walking, cycling or riding a
+  scooter, shown by default; a setting adds everyone else). A name is never drawn on the map: it
+  appears when someone opens a marker, and only while "show names" is on, which also hides the
+  public memorial link. A curated name that matches no Police record (for example a death before
+  2019) gets its own marker. "Request removal" goes to the dedicated removal address once the owner
+  creates it, and until then to the Contact page; never to a public form.
+- **Crashes** cover 2015 to 2024 (84,942 on 2026-10-04): each year from the newest City slice that
+  covers it, every crash record once, filterable by years, by how badly people were hurt and by who
+  was involved. The newest year of PennDOT records is 2024; deaths since then appear as memorials.
+- **The street safety lens** scores every street block (40,453 City centerline segments). A crash
+  within 10 meters of an intersection counts for every block that meets there, which takes the
+  place of a separate intersection layer. "People killed or seriously injured walking or cycling"
+  counts the five most recent PennDOT years; "someone killed here in the last 2 years" uses the
+  Police records. The analysis view shows its sliders beside the violence lens; the field view's
+  Streets chip still shows the High Injury Network, and the blocks layer is under "More layers".
+
 ## 6. Finding vacant land without depending on one source
 
 The City's vacancy indicator stopped being accurate in June 2024, and that alone ended the original
