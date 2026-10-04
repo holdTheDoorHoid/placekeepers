@@ -112,7 +112,7 @@ export class AppStore {
     this.fetchImpl = deps.fetchImpl;
     this.dossier = new DossierController({
       dataBase: deps.dataBase ?? './data/',
-      files: () => this.manifestReady.then(() => (this.manifest ? this.manifest.files : null)),
+      manifest: () => this.manifestReady.then(() => this.manifest),
       liveOn: () => this.liveCityData,
       fetchImpl: deps.fetchImpl,
     });

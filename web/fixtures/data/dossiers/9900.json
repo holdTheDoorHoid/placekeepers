@@ -1,0 +1,1068 @@
+{
+  "schema": 1,
+  "generated_at": "2026-10-04T10:03:12Z",
+  "parcels": {
+    "990000001": {
+      "address": "1201 N SAMPLE ST",
+      "vacancy": {
+        "kind": "building",
+        "confidence": "high",
+        "rs": 130,
+        "n": 1,
+        "sy": 2024
+      },
+      "owner": {
+        "names": [
+          "EXAMPLE DARNELL",
+          "EXAMPLE TINA"
+        ],
+        "mailing": "1201 N SAMPLE ST, PHILADELPHIA PA 19122",
+        "type": "individual",
+        "type_reason": "The owner name looks like a person's name.",
+        "flags": [
+          {
+            "id": "sheriff_sales",
+            "text": "Sold at sheriff sale on March 14, 2019 for $1,600.",
+            "data": {
+              "sales": [
+                {
+                  "date": "2019-03-14",
+                  "price": 1600
+                }
+              ]
+            }
+          },
+          {
+            "id": "years_since_sale",
+            "text": "Last sold in 2025.",
+            "data": {
+              "year": 2025,
+              "date": "2025-06-10",
+              "price": 95000,
+              "source": "real_estate_transfers"
+            }
+          },
+          {
+            "id": "fast_resales",
+            "text": "Sold 3 times since 2024.",
+            "data": {
+              "count": 3,
+              "dates": [
+                "2024-03-15",
+                "2024-11-02",
+                "2025-06-10"
+              ]
+            }
+          },
+          {
+            "id": "open_violations",
+            "text": "L&I lists 2 open violations. The most recent, from August 1, 2025, is for vacant structure and land.",
+            "data": {
+              "count": 2,
+              "last": "2025-08-01",
+              "title": "VACANT STRUCTURE AND LAND"
+            }
+          },
+          {
+            "id": "unsafe",
+            "text": "L&I lists this building as unsafe, since May 2, 2023.",
+            "data": {
+              "since": "2023-05-02"
+            }
+          }
+        ],
+        "notice": "deed_fraud",
+        "help": [
+          "tangled_title_help",
+          "fraud_guard"
+        ]
+      },
+      "transfers": [
+        {
+          "date": "2025-06-10",
+          "type": "DEED",
+          "price": 95000,
+          "from": [
+            "SAMPLE FLIP CO LLC"
+          ],
+          "to": [
+            "EXAMPLE DARNELL",
+            "EXAMPLE TINA"
+          ]
+        },
+        {
+          "date": "2024-11-02",
+          "type": "DEED",
+          "price": 41000,
+          "from": [
+            "QUICK SAMPLE HOMES LLC"
+          ],
+          "to": [
+            "SAMPLE FLIP CO LLC"
+          ]
+        },
+        {
+          "date": "2024-03-15",
+          "type": "DEED",
+          "price": 18000,
+          "from": [
+            "EXAMPLE INVESTOR LLC"
+          ],
+          "to": [
+            "QUICK SAMPLE HOMES LLC"
+          ]
+        },
+        {
+          "date": "2019-03-14",
+          "type": "DEED SHERIFF",
+          "price": 1600,
+          "from": [
+            "SAMPLE MARY"
+          ],
+          "to": [
+            "EXAMPLE INVESTOR LLC"
+          ]
+        },
+        {
+          "date": "2004-05-17",
+          "type": "DEED - DECEASED ",
+          "price": 1500,
+          "from": [
+            "SAMPLE ARTHUR"
+          ],
+          "to": [
+            "SAMPLE MARY"
+          ]
+        }
+      ],
+      "assessments": [
+        [
+          2027,
+          56200
+        ],
+        [
+          2026,
+          54700
+        ],
+        [
+          2025,
+          53200
+        ],
+        [
+          2024,
+          51700
+        ],
+        [
+          2023,
+          50200
+        ],
+        [
+          2022,
+          48600
+        ],
+        [
+          2021,
+          47100
+        ],
+        [
+          2020,
+          45600
+        ],
+        [
+          2019,
+          44100
+        ],
+        [
+          2018,
+          42600
+        ],
+        [
+          2017,
+          41000
+        ],
+        [
+          2016,
+          39500
+        ],
+        [
+          2015,
+          38000
+        ]
+      ],
+      "li": {
+        "open_violations": 2,
+        "last_violation": "2025-08-01",
+        "unsafe": true,
+        "imminently_dangerous": false,
+        "violations": 9,
+        "unsafe_since": "2023-05-02",
+        "sealed": "2024-02-14"
+      },
+      "routes": [
+        "ask_the_owner",
+        "conservatorship"
+      ],
+      "suggestions": [
+        "seal_abandoned_building"
+      ],
+      "nearby": {
+        "s12": 4,
+        "s36": 11,
+        "landcare_within_500ft": 2,
+        "gardens_within_500ft": 1
+      }
+    },
+    "990000002": {
+      "address": "1203 N SAMPLE ST",
+      "vacancy": {
+        "kind": "lot",
+        "confidence": "high",
+        "rs": 77,
+        "n": 3
+      },
+      "owner": {
+        "names": [
+          "CITY OF PHILA"
+        ],
+        "mailing": "1515 ARCH ST, PHILADELPHIA PA 19102",
+        "type": "city",
+        "type_reason": "The City's list of public property names the City of Philadelphia as the owner.",
+        "city_owned": {
+          "agency": "PUB",
+          "status": "AVAILABLE",
+          "side_yard_eligible": false
+        },
+        "flags": [
+          {
+            "id": "sheriff_sales",
+            "text": "Sold at sheriff sale on February 1, 2006 for $900.",
+            "data": {
+              "sales": [
+                {
+                  "date": "2006-02-01",
+                  "price": 900
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "transfers": [
+        {
+          "date": "2006-02-01",
+          "type": "SHERIFF'S DEED",
+          "price": 900,
+          "from": [
+            "SAMPLE WALTER"
+          ],
+          "to": [
+            "CITY OF PHILADELPHIA"
+          ]
+        }
+      ],
+      "assessments": [
+        [
+          2027,
+          13300
+        ],
+        [
+          2026,
+          13000
+        ],
+        [
+          2025,
+          12600
+        ],
+        [
+          2024,
+          12200
+        ],
+        [
+          2023,
+          11900
+        ],
+        [
+          2022,
+          11500
+        ],
+        [
+          2021,
+          11200
+        ],
+        [
+          2020,
+          10800
+        ],
+        [
+          2019,
+          10400
+        ],
+        [
+          2018,
+          10100
+        ],
+        [
+          2017,
+          9700
+        ],
+        [
+          2016,
+          9400
+        ],
+        [
+          2015,
+          9000
+        ]
+      ],
+      "li": {
+        "open_violations": 0,
+        "last_violation": null,
+        "unsafe": false,
+        "imminently_dangerous": false,
+        "violations": 0
+      },
+      "routes": [
+        "community_landcare",
+        "land_bank_garden_agreement"
+      ],
+      "suggestions": [],
+      "landcare": {
+        "program": "landcare",
+        "year": 2016
+      },
+      "nearby": {
+        "s12": 4,
+        "s36": 10,
+        "landcare_within_500ft": 3,
+        "gardens_within_500ft": 0
+      }
+    },
+    "990000004": {
+      "address": "1301 N EXAMPLE AVE",
+      "vacancy": {
+        "kind": "building",
+        "confidence": "medium",
+        "rs": 65666,
+        "n": 1,
+        "sy": 2025
+      },
+      "owner": {
+        "names": [
+          "EXAMPLE HOLDINGS LLC"
+        ],
+        "mailing": "PO BOX 5183, PHILADELPHIA PA 19141",
+        "type": "company",
+        "type_reason": "The owner name includes \"LLC\".",
+        "flags": [
+          {
+            "id": "absentee",
+            "text": "The owner gets mail somewhere else: a post office box in Philadelphia.",
+            "data": {
+              "scope": "po_box_in_city"
+            }
+          },
+          {
+            "id": "years_since_sale",
+            "text": "Last sold in 2021.",
+            "data": {
+              "year": 2021,
+              "date": "2021-09-30",
+              "price": 30000,
+              "source": "real_estate_transfers"
+            }
+          },
+          {
+            "id": "many_parcels",
+            "text": "This owner holds 7 vacant parcels in the city.",
+            "data": {
+              "count": 7,
+              "list": "3f2a9c1b7d04"
+            }
+          }
+        ],
+        "help": [
+          "tangled_title_help",
+          "fraud_guard"
+        ]
+      },
+      "transfers": [
+        {
+          "date": "2021-09-30",
+          "type": "DEED",
+          "price": 30000,
+          "from": [
+            "SAMPLE PAULINE"
+          ],
+          "to": [
+            "EXAMPLE HOLDINGS LLC"
+          ],
+          "properties": 2
+        }
+      ],
+      "assessments": [
+        [
+          2027,
+          77000
+        ],
+        [
+          2026,
+          74900
+        ],
+        [
+          2025,
+          72800
+        ],
+        [
+          2024,
+          70700
+        ],
+        [
+          2023,
+          68600
+        ],
+        [
+          2022,
+          66600
+        ],
+        [
+          2021,
+          64500
+        ],
+        [
+          2020,
+          62400
+        ],
+        [
+          2019,
+          60300
+        ],
+        [
+          2018,
+          58200
+        ],
+        [
+          2017,
+          56200
+        ],
+        [
+          2016,
+          54100
+        ],
+        [
+          2015,
+          52000
+        ]
+      ],
+      "li": {
+        "open_violations": 0,
+        "last_violation": "2022-04-11",
+        "unsafe": false,
+        "imminently_dangerous": false,
+        "violations": 3
+      },
+      "routes": [
+        "ask_the_owner"
+      ],
+      "suggestions": [
+        "seal_abandoned_building"
+      ],
+      "nearby": {
+        "s12": 1,
+        "s36": 6,
+        "landcare_within_500ft": 1,
+        "gardens_within_500ft": 0
+      }
+    },
+    "990000005": {
+      "address": "1305 N EXAMPLE AVE",
+      "vacancy": {
+        "kind": "lot",
+        "confidence": "high",
+        "rs": 13,
+        "n": 2
+      },
+      "owner": {
+        "names": [
+          "SAMPLE ROSE M EST OF"
+        ],
+        "mailing": "455 EXAMPLE AVE, CHERRY HILL NJ 08002",
+        "type": "individual",
+        "type_reason": "The owner name looks like a person's name.",
+        "flags": [
+          {
+            "id": "absentee",
+            "text": "The owner gets mail somewhere else: Cherry Hill, NJ (out of state).",
+            "data": {
+              "scope": "out_of_state",
+              "place": "Cherry Hill, NJ"
+            }
+          },
+          {
+            "id": "possible_estate",
+            "text": "The owner of record may have died."
+          },
+          {
+            "id": "tax_debt_2025",
+            "text": "As of July 2025, City records showed $3,214 in unpaid real estate taxes from 6 tax years.",
+            "data": {
+              "as_of": "2025-07-09",
+              "total_due": 3214,
+              "years": 6
+            }
+          },
+          {
+            "id": "years_since_sale",
+            "text": "Last sold in 1987.",
+            "data": {
+              "year": 1987,
+              "date": "1987-06-12",
+              "price": 15000,
+              "source": "opa_properties"
+            }
+          },
+          {
+            "id": "open_violations",
+            "text": "L&I lists 1 open violation, from August 1, 2025, for exterior area weeds.",
+            "data": {
+              "count": 1,
+              "last": "2025-08-01",
+              "title": "EXTERIOR AREA WEEDS"
+            }
+          }
+        ],
+        "notice": "deed_fraud",
+        "help": [
+          "tangled_title_help",
+          "fraud_guard"
+        ]
+      },
+      "transfers": [],
+      "assessments": [
+        [
+          2027,
+          17800
+        ],
+        [
+          2026,
+          17300
+        ],
+        [
+          2025,
+          16800
+        ],
+        [
+          2024,
+          16300
+        ],
+        [
+          2023,
+          15800
+        ],
+        [
+          2022,
+          15400
+        ],
+        [
+          2021,
+          14900
+        ],
+        [
+          2020,
+          14400
+        ],
+        [
+          2019,
+          13900
+        ],
+        [
+          2018,
+          13400
+        ],
+        [
+          2017,
+          13000
+        ],
+        [
+          2016,
+          12500
+        ],
+        [
+          2015,
+          12000
+        ]
+      ],
+      "li": {
+        "open_violations": 1,
+        "last_violation": "2025-08-01",
+        "unsafe": false,
+        "imminently_dangerous": false,
+        "violations": 1
+      },
+      "routes": [
+        "ask_the_owner",
+        "conservatorship"
+      ],
+      "suggestions": [
+        "clean_and_green"
+      ],
+      "nearby": {
+        "s12": 2,
+        "s36": 7,
+        "landcare_within_500ft": 3,
+        "gardens_within_500ft": 1
+      }
+    },
+    "990000009": {
+      "address": "1313 N EXAMPLE AVE",
+      "vacancy": {
+        "kind": "lot",
+        "confidence": "medium",
+        "rs": 32781,
+        "n": 2
+      },
+      "owner": {
+        "names": [
+          "PHILADELPHIA LAND BANK"
+        ],
+        "mailing": "1234 MARKET ST FL 16, PHILADELPHIA PA 19107",
+        "type": "land_bank",
+        "type_reason": "The City's list of public property names the Philadelphia Land Bank as the owner.",
+        "city_owned": {
+          "agency": "PLB",
+          "status": "AVAILABLE",
+          "side_yard_eligible": true
+        },
+        "flags": [
+          {
+            "id": "sheriff_sales",
+            "text": "Sold at sheriff sale on May 5, 2003 for $800.",
+            "data": {
+              "sales": [
+                {
+                  "date": "2003-05-05",
+                  "price": 800
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "transfers": [
+        {
+          "date": "2019-08-20",
+          "type": "DEED LAND BANK",
+          "price": 1,
+          "from": [
+            "CITY OF PHILADELPHIA"
+          ],
+          "to": [
+            "PHILADELPHIA LAND BANK"
+          ]
+        },
+        {
+          "date": "2003-05-05",
+          "type": "DEED SHERIFF",
+          "price": 800,
+          "from": [
+            "SAMPLE NARCISO"
+          ],
+          "to": [
+            "CITY OF PHILADELPHIA"
+          ]
+        }
+      ],
+      "assessments": [
+        [
+          2027,
+          10400
+        ],
+        [
+          2026,
+          10100
+        ],
+        [
+          2025,
+          9800
+        ],
+        [
+          2024,
+          9500
+        ],
+        [
+          2023,
+          9200
+        ],
+        [
+          2022,
+          9000
+        ],
+        [
+          2021,
+          8700
+        ],
+        [
+          2020,
+          8400
+        ],
+        [
+          2019,
+          8100
+        ],
+        [
+          2018,
+          7800
+        ],
+        [
+          2017,
+          7600
+        ],
+        [
+          2016,
+          7300
+        ],
+        [
+          2015,
+          7000
+        ]
+      ],
+      "li": {
+        "open_violations": 0,
+        "last_violation": null,
+        "unsafe": false,
+        "imminently_dangerous": false,
+        "violations": 0
+      },
+      "routes": [
+        "land_bank_garden_agreement",
+        "land_bank_side_yard"
+      ],
+      "suggestions": [
+        "clean_and_green"
+      ],
+      "nearby": {
+        "s12": 0,
+        "s36": 3,
+        "landcare_within_500ft": 5,
+        "gardens_within_500ft": 2
+      }
+    },
+    "990000013": {
+      "address": "1401 N SAMPLE ST",
+      "vacancy": {
+        "kind": "lot",
+        "confidence": "high",
+        "rs": 13,
+        "n": 2
+      },
+      "owner": {
+        "names": [],
+        "mailing": null,
+        "type": "unknown",
+        "type_reason": "City records give no owner name.",
+        "flags": []
+      },
+      "transfers": [],
+      "assessments": [],
+      "li": {
+        "open_violations": 0,
+        "last_violation": null,
+        "unsafe": false,
+        "imminently_dangerous": false,
+        "violations": 0
+      },
+      "routes": [],
+      "suggestions": [
+        "clean_and_green"
+      ],
+      "nearby": {}
+    },
+    "990000029": {
+      "address": "1501 N SAMPLE ST",
+      "vacancy": {
+        "kind": "building",
+        "confidence": "medium",
+        "rs": 256,
+        "n": 1
+      },
+      "owner": {
+        "names": [
+          "PHILADELPHIA REDEVELOPMEN"
+        ],
+        "mailing": "1234 MARKET ST FL 16, PHILADELPHIA PA 19107",
+        "type": "redevelopment_authority",
+        "type_reason": "City records name the Philadelphia Redevelopment Authority as the owner.",
+        "city_owned": {
+          "agency": "PRA",
+          "status": "NOT AVAILABLE",
+          "side_yard_eligible": false
+        },
+        "flags": []
+      },
+      "transfers": [
+        {
+          "date": "2011-03-02",
+          "type": "DEED OF CONDEMNATION",
+          "price": null,
+          "from": [
+            "SAMPLE ESTATE HOLDINGS INC"
+          ],
+          "to": [
+            "REDEVELOPMENT AUTHORITY OF THE CITY OF PHILADELPHIA"
+          ]
+        }
+      ],
+      "assessments": [
+        [
+          2027,
+          31100
+        ],
+        [
+          2026,
+          30200
+        ],
+        [
+          2025,
+          29400
+        ],
+        [
+          2024,
+          28600
+        ],
+        [
+          2023,
+          27700
+        ],
+        [
+          2022,
+          26900
+        ],
+        [
+          2021,
+          26000
+        ],
+        [
+          2020,
+          25200
+        ],
+        [
+          2019,
+          24400
+        ],
+        [
+          2018,
+          23500
+        ],
+        [
+          2017,
+          22700
+        ],
+        [
+          2016,
+          21800
+        ],
+        [
+          2015,
+          21000
+        ]
+      ],
+      "li": {
+        "open_violations": 0,
+        "last_violation": "2019-10-01",
+        "unsafe": false,
+        "imminently_dangerous": true,
+        "violations": 4,
+        "imminently_dangerous_since": "2025-12-03",
+        "demolished": null
+      },
+      "routes": [
+        "contact_phdc"
+      ],
+      "suggestions": [
+        "seal_abandoned_building"
+      ],
+      "nearby": {
+        "s12": 3,
+        "s36": 8,
+        "landcare_within_500ft": 0,
+        "gardens_within_500ft": 0
+      }
+    },
+    "990000033": {
+      "address": "1507 N EXAMPLE AVE",
+      "vacancy": {
+        "kind": "lot",
+        "confidence": "medium",
+        "rs": 32781,
+        "n": 2
+      },
+      "owner": {
+        "names": [
+          "SAMPLE COMMUNITY CHURCH"
+        ],
+        "mailing": "1509 N EXAMPLE AVE, PHILADELPHIA PA 19121",
+        "type": "nonprofit",
+        "type_reason": "The owner name includes \"CHURCH\".",
+        "flags": [
+          {
+            "id": "years_since_sale",
+            "text": "Last sold in 1998.",
+            "data": {
+              "year": 1998,
+              "date": "1998-11-12",
+              "price": 2500,
+              "source": "opa_properties"
+            }
+          }
+        ],
+        "help": [
+          "tangled_title_help",
+          "fraud_guard"
+        ]
+      },
+      "transfers": [],
+      "assessments": [
+        [
+          2027,
+          11800
+        ],
+        [
+          2026,
+          11500
+        ],
+        [
+          2025,
+          11200
+        ],
+        [
+          2024,
+          10900
+        ],
+        [
+          2023,
+          10600
+        ],
+        [
+          2022,
+          10200
+        ],
+        [
+          2021,
+          9900
+        ],
+        [
+          2020,
+          9600
+        ],
+        [
+          2019,
+          9300
+        ],
+        [
+          2018,
+          9000
+        ],
+        [
+          2017,
+          8600
+        ],
+        [
+          2016,
+          8300
+        ],
+        [
+          2015,
+          8000
+        ]
+      ],
+      "li": {
+        "open_violations": 0,
+        "last_violation": null,
+        "unsafe": false,
+        "imminently_dangerous": false,
+        "violations": 0
+      },
+      "routes": [
+        "ask_the_owner",
+        "garden_adverse_possession",
+        "conservatorship"
+      ],
+      "suggestions": [
+        "clean_and_green"
+      ],
+      "garden": true,
+      "nearby": {
+        "s12": 1,
+        "s36": 2,
+        "landcare_within_500ft": 4,
+        "gardens_within_500ft": 3
+      }
+    },
+    "990000098": {
+      "address": "1611 N SAMPLE ST",
+      "owner": {
+        "names": [
+          "PHILADELPHIA LAND BANK"
+        ],
+        "mailing": "1234 MARKET ST FL 16, PHILADELPHIA PA 19107",
+        "type": "land_bank",
+        "type_reason": "City records name the Philadelphia Land Bank as the owner.",
+        "flags": []
+      },
+      "transfers": [],
+      "assessments": [
+        [
+          2027,
+          21000
+        ]
+      ],
+      "li": {
+        "open_violations": 0,
+        "last_violation": null,
+        "unsafe": false,
+        "imminently_dangerous": false,
+        "violations": 0
+      },
+      "routes": [
+        "land_bank_garden_agreement"
+      ],
+      "suggestions": [],
+      "nearby": {
+        "landcare_within_500ft": 1
+      }
+    },
+    "990000099": {
+      "address": "1613 N SAMPLE ST",
+      "vacancy": null,
+      "owner": {
+        "names": [
+          "CITY OF PHILA"
+        ],
+        "mailing": "1515 ARCH ST, PHILADELPHIA PA 19102",
+        "type": "city",
+        "type_reason": "City records name the City of Philadelphia as the owner.",
+        "flags": []
+      },
+      "transfers": [],
+      "assessments": [
+        [
+          2027,
+          19000
+        ]
+      ],
+      "li": {
+        "open_violations": 0,
+        "last_violation": null,
+        "unsafe": false,
+        "imminently_dangerous": false,
+        "violations": 0
+      },
+      "routes": [
+        "land_bank_garden_agreement"
+      ],
+      "suggestions": [],
+      "nearby": {
+        "landcare_within_500ft": 1
+      }
+    }
+  }
+}

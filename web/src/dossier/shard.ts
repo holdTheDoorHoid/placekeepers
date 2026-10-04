@@ -1,14 +1,20 @@
-// Reads a dossier shard, dossiers/<first three digits>.json (docs/CONTRACTS.md, the dossier
-// shards). The pipeline writes it, so the reader is forgiving: a parcel or a section it cannot
-// read is left out with a problem noted, never a crash. It keeps only the fields the contract
-// names and copies them into new objects, so any other key in the file (a price estimate, a note
-// about a person) can never reach the page.
+// Reads the dossier shards (docs/CONTRACTS.md section 6): dossiers/<first four digits>.json, one
+// file per group of accounts, and dossiers/common.json, the wording every shard shares (each
+// flag's careful note and next step, and the deed fraud notice). The pipeline writes them, so the
+// reader is forgiving: a parcel or a section it cannot read is left out with a problem noted,
+// never a crash. It keeps only the fields the contract names and copies them into new objects, so
+// any other key in the file (a price estimate, a note about a person) can never reach the page.
 
+import type { Manifest } from '../data/manifest.ts';
 import { cityDate } from './dates.ts';
-import { isOpaAccount, shardPath } from './opa.ts';
+import { COMMON_PATH, isOpaAccount, shardPath, shardPaths } from './opa.ts';
 import type {
   Assessment,
+  CityOwned,
   Confidence,
+  DossierNotes,
+  FlagNote,
+  NoticeNote,
   LandCare,
   LiSummary,
   Link,
@@ -93,19 +99,38 @@ function vacancy(v: unknown): Vacancy | null {
   return { kind, confidence, rs: count(v.rs), n: count(v.n), dy: year(v.dy), sy: year(v.sy), ny: year(v.ny) };
 }
 
+const ID = /^[a-z][a-z0-9_]*$/;
+
 function flag(v: unknown): OwnerFlag | null {
   if (!isObj(v)) return null;
   const id = text(v.id);
   const body = text(v.text);
-  if (!id || !/^[a-z][a-z0-9_]*$/.test(id) || !body) return null;
-  return { id, text: body, careful: text(v.careful), nextStep: text(v.next_step), links: links(v.links) };
+  if (!id || !ID.test(id) || !body) return null;
+  const data = isObj(v.data) ? v.data : {};
+  const list = typeof data.list === 'string' && /^[A-Za-z0-9_-]{1,64}$/.test(data.list) ? data.list : null;
+  return { id, text: body, careful: text(v.careful), nextStep: text(v.next_step), links: links(v.links), list };
+}
+
+function cityOwned(v: unknown): CityOwned | null {
+  if (!isObj(v)) return null;
+  return { agency: text(v.agency), status: text(v.status), sideYardEligible: v.side_yard_eligible === true };
 }
 
 function owner(v: unknown): Owner | null {
   if (!isObj(v)) return null;
   const type = typeof v.type === 'string' && (OWNER_TYPES as readonly string[]).includes(v.type) ? (v.type as OwnerType) : 'unknown';
   const flags = Array.isArray(v.flags) ? v.flags.map(flag).filter((x): x is OwnerFlag => x !== null) : [];
-  return { names: texts(v.names), mailing: text(v.mailing), type, typeReason: text(v.type_reason), flags };
+  const notice = text(v.notice);
+  return {
+    names: texts(v.names),
+    mailing: text(v.mailing),
+    type,
+    typeReason: text(v.type_reason),
+    flags,
+    cityOwned: cityOwned(v.city_owned),
+    notice: notice && ID.test(notice) ? notice : null,
+    help: ids(v.help),
+  };
 }
 
 function transfer(v: unknown): Transfer | null {
@@ -125,11 +150,12 @@ function transfer(v: unknown): Transfer | null {
   };
 }
 
+/** An assessment: a [year, market value] pair, as the contract writes it, or an object with those keys. */
 function assessment(v: unknown): Assessment | null {
-  if (!isObj(v)) return null;
-  const year = typeof v.year === 'number' ? v.year : typeof v.year === 'string' ? Number(v.year) : NaN;
+  const [rawYear, rawValue] = Array.isArray(v) ? v : isObj(v) ? [v.year, v.market_value] : [undefined, undefined];
+  const year = typeof rawYear === 'number' ? rawYear : typeof rawYear === 'string' ? Number(rawYear) : NaN;
   if (!Number.isInteger(year) || year < 1900 || year > 2200) return null;
-  const value = typeof v.market_value === 'number' && Number.isFinite(v.market_value) ? Math.round(v.market_value) : null;
+  const value = typeof rawValue === 'number' && Number.isFinite(rawValue) && rawValue >= 0 ? Math.round(rawValue) : null;
   return { year, marketValue: value };
 }
 
@@ -140,7 +166,38 @@ function li(v: unknown): LiSummary | null {
     lastViolation: cityDate(v.last_violation),
     unsafe: bool(v.unsafe),
     imminentlyDangerous: bool(v.imminently_dangerous),
+    violations: count(v.violations),
+    unsafeSince: cityDate(v.unsafe_since),
+    dangerousSince: cityDate(v.imminently_dangerous_since),
+    sealed: cityDate(v.sealed),
+    demolished: cityDate(v.demolished),
   };
+}
+
+function flagNote(v: unknown): FlagNote | null {
+  if (!isObj(v)) return null;
+  return { careful: text(v.careful), nextStep: text(v.next_step), routes: ids(v.routes), links: links(v.links) };
+}
+
+function noticeNote(v: unknown): NoticeNote | null {
+  if (!isObj(v)) return null;
+  const body = text(v.text);
+  return body ? { text: body, routes: ids(v.routes), links: links(v.links) } : null;
+}
+
+/** The shared wording in a file's `flags` and `notices`, or null when it has none. */
+export function parseNotes(json: unknown): DossierNotes | null {
+  if (!isObj(json)) return null;
+  const notes: DossierNotes = { flags: {}, notices: {} };
+  for (const [id, raw] of Object.entries(isObj(json.flags) ? json.flags : {})) {
+    const note = flagNote(raw);
+    if (note && ID.test(id)) notes.flags[id] = note;
+  }
+  for (const [id, raw] of Object.entries(isObj(json.notices) ? json.notices : {})) {
+    const note = noticeNote(raw);
+    if (note && ID.test(id)) notes.notices[id] = note;
+  }
+  return Object.keys(notes.flags).length || Object.keys(notes.notices).length ? notes : null;
 }
 
 function nearby(v: unknown): Nearby | null {
@@ -214,27 +271,71 @@ export function parseShard(json: unknown): ShardParseResult {
     if (parcel) parcels.set(opa, parcel);
   }
   const generatedAt = typeof json.generated_at === 'string' && !Number.isNaN(Date.parse(json.generated_at)) ? json.generated_at : null;
-  return { shard: { generatedAt, parcels }, problems, error: null };
+  return { shard: { generatedAt, parcels, notes: parseNotes(json) }, problems, error: null };
+}
+
+/** Reads dossiers/common.json; null when it cannot be used. */
+export function parseCommon(json: unknown): DossierNotes | null {
+  if (!isObj(json) || json.schema !== SHARD_SCHEMA) return null;
+  return parseNotes(json);
 }
 
 // Loading -----------------------------------------------------------------------------------------
 
 export type ShardLoad = { ok: true; shard: Shard } | { ok: false; reason: 'not_published' | 'failed' };
 
+/**
+ * Where a parcel's shard is, by the manifest: its path, or why there is none to ask for:
+ * "unlisted" when the shards are published but none holds this parcel (it is not on our list),
+ * "unpublished" when no shards are published at all.
+ */
+export type ShardLocation = { path: string } | { path: null; reason: 'unlisted' | 'unpublished' };
+
+const SHARD_FILE = /^dossiers\/\d+\.json$/;
+
+export function shardLocation(opa: string, manifest: Pick<Manifest, 'files' | 'dossiers'> | null): ShardLocation {
+  if (!manifest) return { path: shardPath(opa) };
+  if (manifest.dossiers) {
+    const prefix = opa.slice(0, manifest.dossiers.prefix_digits);
+    return manifest.dossiers.prefixes.has(prefix) ? { path: `dossiers/${prefix}.json` } : { path: null, reason: 'unlisted' };
+  }
+  // Older manifests listed each shard in `files`.
+  const listed = shardPaths(opa).find((path) => path in manifest.files);
+  if (listed) return { path: listed };
+  return Object.keys(manifest.files).some((path) => SHARD_FILE.test(path)) ? { path: null, reason: 'unlisted' } : { path: null, reason: 'unpublished' };
+}
+
 const cache = new Map<string, Promise<ShardLoad>>();
+const commonCache = new Map<string, Promise<DossierNotes | null>>();
 
 /**
- * Downloads and reads the shard that holds an account, once per page visit. A shard the
- * manifest does not list is not asked for at all (most parcels in the city have none).
+ * Downloads and reads the shared wording once per page visit, when the manifest lists it (or
+ * when there is no manifest to ask). Null when it is not published or cannot be read; the page
+ * then uses its own copy of the same wording.
  */
-export function loadShard(
-  dataBase: string,
-  opa: string,
-  files: Record<string, unknown> | null,
-  fetchImpl: typeof fetch = fetch,
-): Promise<ShardLoad> {
-  const path = shardPath(opa);
-  if (files && !(path in files)) return Promise.resolve({ ok: false, reason: 'not_published' });
+export function loadCommon(dataBase: string, files: Record<string, unknown> | null, fetchImpl: typeof fetch = fetch): Promise<DossierNotes | null> {
+  if (files && !(COMMON_PATH in files)) return Promise.resolve(null);
+  const key = `${dataBase}${COMMON_PATH}`;
+  let pending = commonCache.get(key);
+  if (!pending) {
+    pending = (async () => {
+      try {
+        const response = await fetchImpl(key);
+        return response.ok ? parseCommon(await response.json()) : null;
+      } catch {
+        return null;
+      }
+    })();
+    commonCache.set(key, pending);
+    pending.then((notes) => {
+      if (!notes) commonCache.delete(key);
+    });
+  }
+  return pending;
+}
+
+/** Downloads and reads one shard (a path from shardLocation), once per page visit. */
+export function loadShard(dataBase: string, path: string, fetchImpl: typeof fetch = fetch): Promise<ShardLoad> {
   const key = `${dataBase}${path}`;
   let pending = cache.get(key);
   if (!pending) {
@@ -262,4 +363,5 @@ export function loadShard(
 /** Forgets downloaded shards (for tests). */
 export function clearShardCache(): void {
   cache.clear();
+  commonCache.clear();
 }

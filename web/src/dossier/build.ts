@@ -27,6 +27,7 @@ import {
   helpLinks,
   liFacts,
   liFlags,
+  mergeLinks,
   ownerFlags,
   sortFlags,
   transferFlags,
@@ -37,7 +38,9 @@ import { isPrivate, ownerTypeFromNames, sameOwners } from './owners.ts';
 import { isSheriff } from './transfers.ts';
 import type {
   Assessment,
+  CityOwned,
   Confidence,
+  DossierNotes,
   LiEvent,
   LiSummary,
   LiveLi,
@@ -85,9 +88,12 @@ export const IDLE_PARTS: LiveParts = {
 
 export type ShardState =
   | { status: 'loading' }
-  | { status: 'found'; parcel: ShardParcel; generatedAt: string | null }
-  /** No published shard has this parcel: it is not on our list. */
-  | { status: 'absent' }
+  | { status: 'found'; parcel: ShardParcel; generatedAt: string | null; notes?: DossierNotes | null }
+  /**
+   * No published shard has this parcel: "unlisted" when shards are published but none holds it
+   * (it is not on our list), "unpublished" when no shards are published at all.
+   */
+  | { status: 'absent'; reason?: 'unlisted' | 'unpublished' }
   /** The shard could not be downloaded. */
   | { status: 'failed' };
 
@@ -122,6 +128,8 @@ export interface FlagView {
   careful: string | null;
   nextStep: string | null;
   links: Link[];
+  /** For the many_parcels flag: the owner's list in tables/owners.json. */
+  list?: string | null;
   provenance: Provenance;
 }
 
@@ -217,6 +225,8 @@ export interface DossierView {
     mailing: string | null;
     typeLabel: string;
     typeReason: string | null;
+    /** What the City's list of public property says, in a sentence. */
+    cityOwned: string | null;
     isPrivate: boolean;
     flags: FlagView[];
     ownerChanged: boolean;
@@ -333,13 +343,28 @@ export function liRow(e: LiEvent): LiRow {
 
 function liSummaryLines(li: LiSummary): string[] {
   const h = strings.dossier.history;
+  const day = (d: string | null | undefined) => (d ? (formatDate(d) ?? d) : null);
   const lines: string[] = [];
   if (li.openViolations !== null) lines.push(`${h.liSummaryOpen(li.openViolations)}.`.replace(/^./, (c) => c.toUpperCase()));
-  if (li.lastViolation) lines.push(h.liSummaryLast(formatDate(li.lastViolation) ?? li.lastViolation));
-  if (li.unsafe) lines.push(h.liUnsafe);
-  if (li.imminentlyDangerous) lines.push(h.liDangerous);
+  if (li.violations != null) lines.push(h.liSince2016(li.violations));
+  if (li.lastViolation) lines.push(h.liSummaryLast(day(li.lastViolation)!));
+  if (li.unsafe) lines.push(day(li.unsafeSince) ? h.liUnsafeSince(day(li.unsafeSince)!) : h.liUnsafe);
+  if (li.imminentlyDangerous) lines.push(day(li.dangerousSince) ? h.liDangerousSince(day(li.dangerousSince)!) : h.liDangerous);
   if (li.unsafe === false && li.imminentlyDangerous === false) lines.push(h.liNeither);
+  if (li.sealed) lines.push(h.liSealed(day(li.sealed)!));
+  if (li.demolished) lines.push(h.liDemolished(day(li.demolished)!));
   return lines;
+}
+
+/** What the City's list of public property says about the parcel, in a sentence. */
+export function cityOwnedText(owned: CityOwned | null): string | null {
+  if (!owned) return null;
+  const o = strings.dossier.owner;
+  const agency = owned.agency ? (o.agencies[owned.agency.toUpperCase()] ?? null) : null;
+  const parts = [agency ? o.cityListNames(agency) : o.cityList];
+  if (owned.status) parts.push(o.cityListStatus(sentenceCase(owned.status)));
+  if (owned.sideYardEligible) parts.push(o.sideYard);
+  return parts.join(' ');
 }
 
 export function routeView(route: Route): RouteView {
@@ -448,7 +473,17 @@ export function buildDossier(input: DossierInput): DossierView {
   }
   if (live.li.status === 'ok') liveFlags.li = liFlags(live.li.data.events);
 
-  const shardFlags = (shardOwner?.flags ?? []).map(completeFlag);
+  const notes = shard.status === 'found' ? (shard.notes ?? null) : null;
+  const routeLinks = (ids: string[]): Link[] =>
+    ids
+      .map((id) => registry.routes.find((r) => r.id === id))
+      .filter((r): r is Route => !!r && r.links.length > 0)
+      .map((r) => ({ label: r.label, url: r.links[0]!.url }));
+  const complete = (flag: OwnerFlag): OwnerFlag => {
+    const note = notes?.flags[flag.id] ?? null;
+    return completeFlag(flag, note, routeLinks(note?.routes ?? []));
+  };
+  const shardFlags = (shardOwner?.flags ?? []).map(complete);
   const flagViews: FlagView[] = [];
   const title = (id: string) => s.owner.flagTitles[id] ?? s.owner.otherFlag;
   for (const id of FLAG_IDS) {
@@ -457,7 +492,7 @@ export function buildDossier(input: DossierInput): DossierView {
     if (fromLive) {
       const livePart = part === 'owner' ? live.property : part === 'transfers' ? live.transfers : live.li;
       for (const flag of fromLive.filter((x) => x.id === id)) {
-        flagViews.push({ ...flag, title: title(id), provenance: liveProvenance(livePart) });
+        flagViews.push({ ...complete(flag), title: title(id), provenance: liveProvenance(livePart) });
       }
       continue;
     }
@@ -473,7 +508,10 @@ export function buildDossier(input: DossierInput): DossierView {
   const sortedFlags = sortFlags(flagViews);
   const taxFlag = sortedFlags.find((x) => x.id === 'tax_debt_2025') ?? null;
   const listedFlags = sortedFlags.filter((x) => x.id !== 'tax_debt_2025');
-  const showDeedFraud = ownerType === 'individual' || sortedFlags.some((x) => x.id === 'possible_estate');
+  const showDeedFraud =
+    ownerType === 'individual' || sortedFlags.some((x) => x.id === 'possible_estate') || (!ownerChanged && shardOwner?.notice === 'deed_fraud');
+  const deedNote = notes?.notices.deed_fraud ?? null;
+  const helpRoutes = !ownerChanged && shardOwner?.help.length ? routeLinks(shardOwner.help) : [];
   const ownerPart = live.property;
   const ownerProvenance = provenanceOf(ownerPart, shardOwner !== null, snapshotDate, liveOn, !shardOwner && tile !== null);
 
@@ -610,8 +648,18 @@ export function buildDossier(input: DossierInput): DossierView {
     summary: {
       address,
       listed,
-      kindLabel: kind ? (s.summary.kind[kind] ?? s.summary.notListed) : listed ? strings.place.kindUnknown : s.summary.notListed,
-      kindHelp: listed ? null : s.summary.notListedHelp,
+      kindLabel: kind
+        ? (s.summary.kind[kind] ?? s.summary.notListed)
+        : listed
+          ? strings.place.kindUnknown
+          : shard.status === 'absent' && shard.reason === 'unpublished'
+            ? s.summary.noDetails
+            : s.summary.notListed,
+      kindHelp: listed
+        ? null
+        : [s.summary.noPublishedDetails, shard.status === 'absent' && shard.reason === 'unpublished' ? '' : s.summary.notListedHelp]
+            .filter(Boolean)
+            .join(' '),
       confidence: confidence ? (s.summary.confidence[confidence] ?? null) : null,
       reasonProperties,
       reasons,
@@ -629,11 +677,14 @@ export function buildDossier(input: DossierInput): DossierView {
       mailing: property ? property.mailing : (shardOwner?.mailing ?? null),
       typeLabel,
       typeReason,
+      cityOwned: ownerChanged ? null : cityOwnedText(shardOwner?.cityOwned ?? null),
       isPrivate: privateOwner,
       flags: listedFlags,
       ownerChanged,
-      deedFraud: showDeedFraud ? { text: s.owner.deedFraud, links: deedFraudLinks() } : null,
-      help: privateOwner && sortedFlags.length > 0 ? helpLinks() : null,
+      deedFraud: showDeedFraud
+        ? { text: deedNote?.text ?? s.owner.deedFraud, links: mergeLinks(deedNote?.links ?? [], routeLinks(deedNote?.routes ?? []), deedFraudLinks()) }
+        : null,
+      help: privateOwner && sortedFlags.length > 0 ? mergeLinks(helpRoutes, helpLinks()) : null,
       tax: {
         flag: taxFlag ? { ...taxFlag, links: mergeLinks(taxFlag.links, flagLinks('tax_debt_2025')) } : null,
         text: taxFlag ? null : parcel ? s.owner.taxNoDebt : s.owner.taxUnknown,
@@ -656,12 +707,6 @@ export function buildDossier(input: DossierInput): DossierView {
     nearby: { groups, layers, provenance: nearbyProvenance },
     sources: { rows: sourceRows, correctionUrl: correctionUrl(opa, address) },
   };
-}
-
-function mergeLinks(a: Link[], b: Link[]): Link[] {
-  const out = [...a];
-  for (const l of b) if (!out.some((x) => x.url === l.url)) out.push(l);
-  return out;
 }
 
 /** Number formatting for the chart, exported for the component. */

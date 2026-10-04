@@ -5,7 +5,7 @@
   import { strings } from '../../strings.ts';
   import ProvenanceLine from './ProvenanceLine.svelte';
 
-  let { flag }: { flag: FlagView } = $props();
+  let { flag, onShowList }: { flag: FlagView; onShowList?: (listId: string) => void } = $props();
   const parts = strings.dossier.owner.parts;
 </script>
 
@@ -23,6 +23,9 @@
       <dd>{flag.nextStep}</dd>
     {/if}
   </dl>
+  {#if flag.list && onShowList}
+    <p><button class="button small quiet" type="button" onclick={() => onShowList(flag.list!)}>{strings.dossier.owner.seeList}</button></p>
+  {/if}
   {#if flag.links.length}
     <ul class="links">
       {#each flag.links as link (link.url)}<li><a href={link.url} target="_blank" rel="noopener noreferrer">{link.label}</a></li>{/each}

@@ -64,16 +64,17 @@ export function propertySql(opa: string): string {
 }
 
 /**
- * Every deed (and certificate of stock transfer), newest first. The date and price are the ones
- * the City's property page shows: the document's date and the adjusted total.
+ * Every deed (and certificate of stock transfer), newest first, with the same fields as the weekly
+ * snapshot (docs/CONTRACTS.md section 6): the day the City recorded it and the total
+ * consideration. (The City's property page shows the document's own date and the adjusted
+ * total instead, which can differ by days and dollars.)
  */
 export function transfersSql(opa: string): string {
   return (
-    'SELECT document_id, document_type, display_date, grantors, grantees, total_consideration, ' +
-    'adjusted_total_consideration, property_count FROM rtt_summary ' +
-    `WHERE opa_account_num = ${accountLiteral(opa)} ` +
+    'SELECT document_id, document_type, recording_date, grantors, grantees, total_consideration, property_count ' +
+    `FROM rtt_summary WHERE opa_account_num = ${accountLiteral(opa)} ` +
     "AND (document_type LIKE '%DEED%' OR document_type = 'CERTIFICATE OF STOCK TRANSFER') " +
-    `ORDER BY display_date DESC, document_id DESC LIMIT ${MAX_TRANSFERS}`
+    `ORDER BY recording_date DESC, document_id DESC LIMIT ${MAX_TRANSFERS}`
   );
 }
 
@@ -209,9 +210,8 @@ export function readTransfers(rows: Row[]): Transfer[] {
     const type = text(row.document_type);
     if (!type) continue;
     const id = num(row.document_id);
-    const date = cityDate(row.display_date);
-    const adjusted = wholeDollars(row.adjusted_total_consideration);
-    const price = adjusted ?? wholeDollars(row.total_consideration);
+    const date = cityDate(row.recording_date);
+    const price = wholeDollars(row.total_consideration);
     const key = id !== null ? String(id) : `${date}|${type}|${price}`;
     if (seen.has(key)) continue;
     seen.add(key);

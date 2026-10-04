@@ -19,6 +19,7 @@
     onPrint?: () => void;
     onShowOnMap?: () => void;
     onClear?: () => void;
+    onShowOwnerList?: (listId: string) => void;
   }
 
   let {
@@ -86,7 +87,7 @@
     </section>
     <section aria-labelledby="{idPrefix}-owner-title">
       <h3 id="{idPrefix}-owner-title" tabindex="-1">{s.sections.owner}</h3>
-      <DossierOwner owner={view.owner} />
+      <DossierOwner owner={view.owner} onShowList={actions.onShowOwnerList} />
     </section>
     <section aria-labelledby="{idPrefix}-history-title">
       <h3 id="{idPrefix}-history-title" tabindex="-1">{s.sections.history}</h3>

@@ -8,7 +8,7 @@
   import FlagItem from './FlagItem.svelte';
   import ProvenanceLine from './ProvenanceLine.svelte';
 
-  let { owner }: { owner: DossierView['owner'] } = $props();
+  let { owner, onShowList }: { owner: DossierView['owner']; onShowList?: (listId: string) => void } = $props();
   const o = strings.dossier.owner;
 </script>
 
@@ -25,6 +25,10 @@
   <dd>{#if owner.mailing}{owner.mailing}{:else}<span class="muted">{o.noMailing}</span>{/if}</dd>
   <dt>{o.type}</dt>
   <dd>{owner.typeLabel}{#if owner.typeReason}<span class="reason">{owner.typeReason}</span>{/if}</dd>
+  {#if owner.cityOwned}
+    <dt>{o.cityListTitle}</dt>
+    <dd>{owner.cityOwned}</dd>
+  {/if}
 </dl>
 <ProvenanceLine provenance={owner.provenance} />
 {#if owner.ownerChanged}<p class="notice">{o.ownerChanged}</p>{/if}
@@ -43,7 +47,7 @@
 {#if owner.flags.length === 0}
   <p class="muted small">{o.noFlags}</p>
 {:else}
-  {#each owner.flags as flag (flag.id + flag.text)}<FlagItem {flag} />{/each}
+  {#each owner.flags as flag (flag.id + flag.text)}<FlagItem {flag} {onShowList} />{/each}
 {/if}
 
 {#if owner.help}

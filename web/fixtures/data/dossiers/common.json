@@ -1,0 +1,136 @@
+{
+  "schema": 1,
+  "generated_at": "2026-10-04T10:03:12Z",
+  "flags": {
+    "absentee": {
+      "careful": "This is the address where the City sends tax bills. It can be out of date, or belong to a relative, a lawyer or a manager, and an owner who lives elsewhere may not know how the property looks today.",
+      "next_step": "Write to the owner at this address to ask before you do anything on the property, and ask the Garden Justice Legal Initiative to review any agreement before you sign it.",
+      "routes": [
+        "ask_the_owner"
+      ],
+      "sources": [
+        "opa_properties"
+      ]
+    },
+    "possible_estate": {
+      "careful": "Family members may still have a right to this property and may not know it.",
+      "next_step": "If you know the family, the Tangled Title Fund (up to $6,500 in legal help) and Philadelphia VIP can help them keep it. Families can also sign up for the City's free Fraud Guard alerts.",
+      "routes": [
+        "tangled_title_help",
+        "fraud_guard"
+      ],
+      "sources": [
+        "opa_properties"
+      ]
+    },
+    "tax_debt_2025": {
+      "careful": "This is the last public record, from July 9, 2025, not today's balance: the owner may have paid since, or owe more. About three or more years of unpaid taxes can lead to a sheriff sale, where a lot neighbors care for can be sold to an outside buyer.",
+      "next_step": "Check today's balance on the City's Tax Center before you rely on this. If your block cares for this lot, Grounded in Philly's guide to sheriff sales explains the risk and what you can do.",
+      "links": [
+        {
+          "label": "City of Philadelphia Tax Center",
+          "url": "https://tax-services.phila.gov/"
+        },
+        {
+          "label": "Grounded in Philly: sheriff sales",
+          "url": "https://groundedinphilly.org/sheriff-sale/"
+        }
+      ],
+      "sources": [
+        "cagp_tax_2025"
+      ]
+    },
+    "sheriff_sales": {
+      "careful": "At a sheriff sale the winning bid clears old debts on the property, so a lot neighbors have cared for can pass to an outside buyer. A past sale does not mean the property is for sale now.",
+      "next_step": "If your block cares for this lot, read Grounded in Philly's guide to sheriff sales and ask the Garden Justice Legal Initiative for free legal help.",
+      "links": [
+        {
+          "label": "Grounded in Philly: sheriff sales",
+          "url": "https://groundedinphilly.org/sheriff-sale/"
+        },
+        {
+          "label": "Garden Justice Legal Initiative",
+          "url": "https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/"
+        }
+      ],
+      "sources": [
+        "real_estate_transfers"
+      ]
+    },
+    "years_since_sale": {
+      "careful": "Sales for a token price and sheriff sales are left out here; the full history is below. Many homes pass down in families without a new sale, so a long time since a sale does not mean the owner has given the property up.",
+      "next_step": "If a family has inherited the property without a new deed, the Tangled Title Fund and Philadelphia VIP can help them clear the title and keep it.",
+      "routes": [
+        "tangled_title_help"
+      ],
+      "sources": [
+        "real_estate_transfers",
+        "opa_properties"
+      ]
+    },
+    "many_parcels": {
+      "careful": "We match owners by their exact name in City records, so one owner can appear under several spellings and two owners can share a name. Holding vacant land is not wrongdoing by itself.",
+      "next_step": "Use the list to see this owner's other parcels, then ask permission the lawful way: write to the owner, and have the Garden Justice Legal Initiative review any agreement.",
+      "routes": [
+        "ask_the_owner"
+      ],
+      "sources": [
+        "opa_properties"
+      ]
+    },
+    "fast_resales": {
+      "careful": "Quick resales can mean investors trading the property, and sometimes a forged deed. They can also be ordinary, such as an estate sale followed by a renovation sale.",
+      "next_step": "Look at who sold and who bought in the history below. Owners and families can sign up for the City's free Fraud Guard alerts to learn when a document naming them is recorded.",
+      "routes": [
+        "fraud_guard"
+      ],
+      "sources": [
+        "real_estate_transfers"
+      ]
+    },
+    "open_violations": {
+      "careful": "A violation is a notice to the owner, who may not have the means to fix it, and the condition may have changed since the inspection.",
+      "next_step": "Report physical problems, such as dumping or an open building, to Philly311. If you know the owner, let them know: they may not have seen the notice.",
+      "routes": [
+        "report_to_311"
+      ],
+      "sources": [
+        "li_violations"
+      ]
+    },
+    "unsafe": {
+      "careful": "Keep out and keep children away: L&I found the structure unsafe. Do not enter it or try to secure it yourself.",
+      "next_step": "If it is open to entry, report it to Philly311 so the City can seal it.",
+      "routes": [
+        "report_to_311"
+      ],
+      "sources": [
+        "li_unsafe"
+      ]
+    },
+    "imminently_dangerous": {
+      "careful": "L&I found the structure could fail at any time. Keep away from it, and keep others away.",
+      "next_step": "Report any change, such as falling bricks or an open door, to Philly311.",
+      "routes": [
+        "report_to_311"
+      ],
+      "sources": [
+        "li_imminently_dangerous"
+      ]
+    }
+  },
+  "notices": {
+    "deed_fraud": {
+      "text": "Deed theft happens when someone files a fake deed to take a property, often one whose owner has died or lives elsewhere. Owners and families can sign up for the City's free Fraud Guard alerts, which send an email when a document naming them is recorded. Since November 2025 the City also automatically blocks deeds whose seller had already died when they supposedly signed.",
+      "routes": [
+        "fraud_guard"
+      ],
+      "links": [
+        {
+          "label": "City of Philadelphia: the automated check that stops deed fraud",
+          "url": "https://www.phila.gov/2025-11-10-philadelphia-launches-new-tool-to-stop-deed-fraud/"
+        }
+      ]
+    }
+  }
+}

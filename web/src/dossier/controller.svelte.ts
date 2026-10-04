@@ -6,6 +6,7 @@
 // Svelte tracks the fields marked $state, so the page updates as each answer arrives.
 
 import type { Geometry } from 'geojson';
+import type { Manifest } from '../data/manifest.ts';
 import {
   fetchAssessments,
   fetchLi,
@@ -18,7 +19,15 @@ import {
 import { IDLE_PARTS, type LiveParts, type Part, type ShardState } from './build.ts';
 import { LIVE_TIMEOUT_MS } from './http.ts';
 import { isOpaAccount } from './opa.ts';
-import { loadShard } from './shard.ts';
+import { loadCommon, loadShard, shardLocation } from './shard.ts';
+import type { DossierNotes } from './types.ts';
+
+/** The shard's own shared wording first (it was written with that shard), then dossiers/common.json. */
+function mergeNotes(own: DossierNotes | null, common: DossierNotes | null): DossierNotes | null {
+  if (!own) return common;
+  if (!common) return own;
+  return { flags: { ...common.flags, ...own.flags }, notices: { ...common.notices, ...own.notices } };
+}
 
 /** How long a live answer is reused before the City is asked again. */
 export const LIVE_CACHE_MS = 5 * 60 * 1000;
@@ -34,8 +43,8 @@ export interface OpenHints {
 
 export interface DossierDeps {
   dataBase: string;
-  /** The manifest's file list once it has loaded (null when it could not load). */
-  files: () => Promise<Record<string, unknown> | null>;
+  /** The manifest once it has loaded (null when it could not load). */
+  manifest: () => Promise<Manifest | null>;
   liveOn: () => boolean;
   fetchImpl?: typeof fetch;
   timeoutMs?: number;
@@ -139,14 +148,23 @@ export class DossierController {
     }
     const shardDone = (async () => {
       if (again && this.shard.status !== 'loading' && this.shard.status !== 'failed') return;
-      const files = await this.deps.files();
-      const result = await loadShard(this.deps.dataBase, opa, files, this.deps.fetchImpl);
+      const manifest = await this.deps.manifest();
+      const where = shardLocation(opa, manifest);
+      if (where.path === null) {
+        if (current()) this.shard = { status: 'absent', reason: where.reason };
+        return;
+      }
+      const result = await loadShard(this.deps.dataBase, where.path, this.deps.fetchImpl);
+      const found = result.ok && result.shard.parcels.has(opa);
+      const common = found ? await loadCommon(this.deps.dataBase, manifest?.files ?? null, this.deps.fetchImpl) : null;
       if (!current()) return;
       if (result.ok) {
         const parcel = result.shard.parcels.get(opa);
-        this.shard = parcel ? { status: 'found', parcel, generatedAt: result.shard.generatedAt } : { status: 'absent' };
+        this.shard = parcel
+          ? { status: 'found', parcel, generatedAt: result.shard.generatedAt, notes: mergeNotes(result.shard.notes, common) }
+          : { status: 'absent', reason: 'unlisted' };
       } else {
-        this.shard = result.reason === 'not_published' ? { status: 'absent' } : { status: 'failed' };
+        this.shard = result.reason === 'not_published' ? { status: 'absent', reason: 'unlisted' } : { status: 'failed' };
       }
     })();
 

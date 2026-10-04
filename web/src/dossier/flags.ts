@@ -22,7 +22,7 @@ import { formatDate, formatMoney, joinAnd, strings } from '../strings.ts';
 import { yearOf } from './dates.ts';
 import { absentee, placeName, possibleEstate, type Absentee } from './owners.ts';
 import { fastResales, lastSale, sheriffSales, type Resales } from './transfers.ts';
-import type { LiEvent, Link, OwnerFlag, Transfer } from './types.ts';
+import type { FlagNote, LiEvent, Link, OwnerFlag, Transfer } from './types.ts';
 
 /** Every flag id, in the order a lot page lists them. */
 export const FLAG_IDS = [
@@ -90,20 +90,29 @@ function make(id: FlagId, text: string): OwnerFlag {
   return { id, text, careful: parts.careful, nextStep: parts.nextStep, links: flagLinks(id) };
 }
 
+/** Links without repeats, first ones first. */
+export function mergeLinks(...lists: Link[][]): Link[] {
+  const out: Link[] = [];
+  for (const list of lists) for (const l of list) if (!out.some((x) => x.url === l.url)) out.push(l);
+  return out;
+}
+
 /**
- * A flag from the snapshot made whole: its own text, its own careful and next step parts when it
- * has them, the page's wording otherwise, and the links its kind always carries.
+ * A flag made whole: its own text; the careful note and next step shared by every shard
+ * (dossiers/common.json) when there is one, else the flag's own, else the page's wording; and
+ * its links, the links of its routes, and the links its kind always carries. The possible estate
+ * flag always reads exactly as docs/ETHICS.md.
  */
-export function completeFlag(flag: OwnerFlag): OwnerFlag {
+export function completeFlag(flag: OwnerFlag, note: FlagNote | null = null, routeLinks: Link[] = []): OwnerFlag {
   const parts = flagParts(flag.id);
-  const links = [...flag.links];
-  for (const l of flagLinks(flag.id)) if (!links.some((x) => x.url === l.url)) links.push(l);
+  const estate = flag.id === 'possible_estate';
   return {
     id: flag.id,
-    text: flag.id === 'possible_estate' ? f.possible_estate.text : flag.text,
-    careful: flag.id === 'possible_estate' ? f.possible_estate.careful : (flag.careful ?? parts?.careful ?? null),
-    nextStep: flag.id === 'possible_estate' ? f.possible_estate.next : (flag.nextStep ?? parts?.nextStep ?? null),
-    links,
+    text: estate ? f.possible_estate.text : flag.text,
+    careful: estate ? f.possible_estate.careful : (note?.careful ?? flag.careful ?? parts?.careful ?? null),
+    nextStep: estate ? f.possible_estate.next : (note?.nextStep ?? flag.nextStep ?? parts?.nextStep ?? null),
+    links: mergeLinks(flag.links, note?.links ?? [], routeLinks, flagLinks(flag.id)),
+    list: flag.list ?? null,
   };
 }
 

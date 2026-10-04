@@ -36,16 +36,32 @@ export interface ManifestFile {
   sha256: string | null;
 }
 
+/**
+ * Which lot dossier shards exist (docs/CONTRACTS.md sections 3 and 6). The shards are not listed
+ * one by one in `files`; this says which prefixes have a file, so the site can tell whether a
+ * parcel has a published dossier before asking for one.
+ */
+export interface ManifestDossiers {
+  /** How many leading digits of the OPA account name a shard file (4: dossiers/3710.json). */
+  prefix_digits: number;
+  /** Prefixes that have a file. */
+  prefixes: Set<string>;
+  files: number | null;
+  bytes: number | null;
+}
+
 export interface Manifest {
   schema: number;
   build_id: string;
   generated_at: string | null;
   sources: Record<string, ManifestSource>;
   layers: Record<string, ManifestLayer>;
-  /** Exactly the files present under the data root (manifest.json aside). */
+  /** Exactly the files present under the data root (manifest.json and the dossier shards aside). */
   files: Record<string, ManifestFile>;
   /** Plain sentences about the build, possibly none. */
   notes: string[];
+  /** The lot dossier shards, or null when none were written (missing in manifests older than them). */
+  dossiers?: ManifestDossiers | null;
 }
 
 export interface ParseResult {
@@ -76,6 +92,28 @@ function count(obj: Record<string, unknown>, key: string, where: string, problem
   if (typeof v === 'number' && Number.isFinite(v) && v >= 0) return v;
   problems.push(`${where}.${key} should be a number`);
   return null;
+}
+
+/** The `dossiers` block: null when missing (older manifests) or null; problems noted when malformed. */
+function parseDossiers(raw: unknown, problems: string[]): ManifestDossiers | null {
+  if (raw === undefined || raw === null) return null;
+  if (!isObject(raw)) {
+    problems.push('dossiers should be an object or null');
+    return null;
+  }
+  const digits = raw.prefix_digits;
+  if (typeof digits !== 'number' || !Number.isInteger(digits) || digits < 1 || digits > 9) {
+    problems.push('dossiers.prefix_digits should be a whole number from 1 to 9');
+    return null;
+  }
+  const pattern = new RegExp(`^\\d{${digits}}$`);
+  const prefixes = new Set<string>();
+  if (!Array.isArray(raw.prefixes)) problems.push('dossiers.prefixes should be a list');
+  for (const prefix of Array.isArray(raw.prefixes) ? raw.prefixes : []) {
+    if (typeof prefix === 'string' && pattern.test(prefix)) prefixes.add(prefix);
+    else problems.push(`dossiers.prefixes has "${String(prefix)}", which is not ${digits} digits`);
+  }
+  return { prefix_digits: digits, prefixes, files: count(raw, 'files', 'dossiers', problems), bytes: count(raw, 'bytes', 'dossiers', problems) };
 }
 
 export function parseManifest(json: unknown): ParseResult {
@@ -150,6 +188,7 @@ export function parseManifest(json: unknown): ParseResult {
       layers,
       files,
       notes,
+      dossiers: parseDossiers(json.dossiers, problems),
     },
     problems,
     error: null,

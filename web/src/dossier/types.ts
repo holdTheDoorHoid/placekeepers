@@ -73,6 +73,15 @@ export interface OwnerFlag {
   careful: string | null;
   nextStep: string | null;
   links: Link[];
+  /** For the many_parcels flag: the owner's list in tables/owners.json. */
+  list?: string | null;
+}
+
+/** The City's list of public property: which agency, its status, and side yard eligibility. */
+export interface CityOwned {
+  agency: string | null;
+  status: string | null;
+  sideYardEligible: boolean;
 }
 
 export interface Owner {
@@ -83,6 +92,30 @@ export interface Owner {
   /** Why we gave that owner type, when known. */
   typeReason: string | null;
   flags: OwnerFlag[];
+  cityOwned: CityOwned | null;
+  /** A notice to show with the flags, such as "deed_fraud". */
+  notice: string | null;
+  /** Route ids of help for owners and families (the Tangled Title Fund, Fraud Guard). */
+  help: string[];
+}
+
+/** The parts of a flag that are the same for every parcel, shared by all shards (dossiers/common.json). */
+export interface FlagNote {
+  careful: string | null;
+  nextStep: string | null;
+  routes: string[];
+  links: Link[];
+}
+
+export interface NoticeNote {
+  text: string;
+  routes: string[];
+  links: Link[];
+}
+
+export interface DossierNotes {
+  flags: Record<string, FlagNote>;
+  notices: Record<string, NoticeNote>;
 }
 
 export interface Transfer {
@@ -106,12 +139,19 @@ export interface Assessment {
   marketValue: number | null;
 }
 
-/** The L&I summary of the contract, plus the dates a live lookup adds. */
+/** The L&I summary of the contract. */
 export interface LiSummary {
   openViolations: number | null;
   lastViolation: string | null;
   unsafe: boolean | null;
   imminentlyDangerous: boolean | null;
+  /** Every violation since 2016. */
+  violations?: number | null;
+  unsafeSince?: string | null;
+  dangerousSince?: string | null;
+  /** The last completed clean and seal, and demolition. */
+  sealed?: string | null;
+  demolished?: string | null;
 }
 
 export interface Nearby {
@@ -148,6 +188,8 @@ export interface Shard {
   /** When the pipeline built this shard: the date of the weekly snapshot. */
   generatedAt: string | null;
   parcels: Map<string, ShardParcel>;
+  /** Shared flag wording, when the file carries it itself. */
+  notes: DossierNotes | null;
 }
 
 // Live lookups --------------------------------------------------------------------------------
