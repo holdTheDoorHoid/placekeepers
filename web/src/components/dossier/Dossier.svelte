@@ -40,6 +40,16 @@
     { key: 'sources', label: s.sections.sources },
   ] as const;
 
+  // A different lot opening in the same panel starts at its top, not where the last one was read.
+  let article: HTMLElement | undefined = $state();
+  let shownOpa = '';
+  $effect(() => {
+    const opa = view.opa;
+    if (!article || opa === shownOpa) return;
+    if (shownOpa) article.scrollIntoView({ block: 'start' });
+    shownOpa = opa;
+  });
+
   function jump(key: string) {
     const heading = document.getElementById(`${idPrefix}-${key}-title`);
     heading?.scrollIntoView({ block: 'start' });
@@ -47,7 +57,7 @@
   }
 </script>
 
-<article class="dossier" aria-labelledby={showTitle ? `${idPrefix}-title` : undefined} aria-busy={view.loading || view.banner.tone === 'pending'}>
+<article bind:this={article} class="dossier" aria-labelledby={showTitle ? `${idPrefix}-title` : undefined} aria-busy={view.loading || view.banner.tone === 'pending'}>
   {#if showTitle}
     <h2 id="{idPrefix}-title" class="title">{view.title}</h2>
   {/if}

@@ -292,7 +292,8 @@ export const strings = {
 
   settings: {
     title: 'Settings',
-    intro: 'Everything on the map is a setting. Your choices are saved in this browser and in the link.',
+    intro:
+      'Everything on the map is a setting. Your choices are saved in this browser and in the link, except your privacy choices, which stay in this browser only.',
     viewTitle: 'View',
     layersTitle: 'Layers and their settings',
     lensTitle: 'Lens weights',
