@@ -56,7 +56,7 @@
         <caption>{s.history.transfersCaption}</caption>
         <thead>
           <tr>
-            <th scope="col">{s.history.recorded}</th>
+            <th scope="col">{s.history.date}</th>
             <th scope="col">{s.history.document}</th>
             <th scope="col">{s.history.price}</th>
             <th scope="col">{s.history.from}</th>

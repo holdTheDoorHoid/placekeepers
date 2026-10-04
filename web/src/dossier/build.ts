@@ -318,7 +318,7 @@ function namesText(names: string[], more: number): string {
 export function transferRow(t: Transfer): TransferRow {
   const h = strings.dossier.history;
   let price = t.price === null ? h.noPrice : formatMoney(t.price);
-  if (t.price !== null && t.properties > 1) price = `${price} ${h.together(t.properties)}`;
+  if (t.price !== null && t.properties > 1) price = `${price}, ${h.share(t.properties)}`;
   return {
     date: t.date ? (formatDate(t.date, 'short') ?? t.date) : h.noDate,
     document: documentLabel(t.type),

@@ -119,11 +119,14 @@ export interface DossierNotes {
 }
 
 export interface Transfer {
-  /** YYYY-MM-DD, or null when the record has no date. */
+  /** The date on the deed (else the day the City recorded it), YYYY-MM-DD, or null when none. */
   date: string | null;
   /** The document type as the City records it, such as "DEED" or "DEED SHERIFF". */
   type: string;
-  /** The price in whole dollars, or null when none was recorded. */
+  /**
+   * The price in dollars, to the cent: the adjusted total (this property's share when one deed
+   * covered several), else the total consideration; null when none was recorded.
+   */
   price: number | null;
   from: string[];
   to: string[];

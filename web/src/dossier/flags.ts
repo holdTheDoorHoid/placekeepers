@@ -2,7 +2,9 @@
 // and wording (pipeline/src/placekeepers/derive/flags.py and wording.py), and the parts a flag
 // from the weekly snapshot may leave out. Every flag has three parts: what it means, why to be
 // careful, and a protective next step. Where ETHICS.md gives wording, it is used word for word
-// (tests/dossier_flags.test.ts checks it against ETHICS.md itself).
+// (tests/dossier_flags.test.ts checks it against ETHICS.md itself). Every sentence must equal the
+// pipeline's: tests/dossier_parity.test.ts checks this file and owners.ts against cases the
+// pipeline answered (pipeline/tests/fixtures/wording_parity.json).
 //
 // Which owners get which flags (the same split as the pipeline):
 // * every owner: past sheriff sales, fast resales, open violations, unsafe, imminently dangerous,
@@ -18,9 +20,10 @@ import {
   TANGLED_TITLE_FUND_URL,
   TAX_CENTER_URL,
 } from '../config/links.ts';
-import { formatDate, formatMoney, joinAnd, strings } from '../strings.ts';
+import { formatDate, formatMoney, strings } from '../strings.ts';
 import { yearOf } from './dates.ts';
 import { absentee, placeName, possibleEstate, type Absentee } from './owners.ts';
+import { plain } from './plain.ts';
 import { fastResales, lastSale, sheriffSales, type Resales } from './transfers.ts';
 import type { FlagNote, LiEvent, Link, OwnerFlag, Transfer } from './types.ts';
 
@@ -118,6 +121,8 @@ export function completeFlag(flag: OwnerFlag, note: FlagNote | null = null, rout
 
 export function absenteeText(found: Absentee): string {
   const a = f.absentee;
+  const city = found.city ? plain(found.city) : found.city;
+  found = { ...found, city };
   if (found.scope === 'out_of_state') {
     const where = [found.city ? placeName(found.city) : null, found.state].filter(Boolean).join(', ');
     return where ? a.outOfState(where) : a.outsidePennsylvania;
@@ -130,7 +135,9 @@ export function absenteeText(found: Absentee): string {
 export function sheriffText(sales: { date: string; price: number | null }[]): string {
   const one = (s: { date: string; price: number | null }) =>
     f.sheriff_sales.sale(formatDate(s.date) ?? s.date, s.price ? formatMoney(s.price) : null);
-  return sales.length === 1 ? f.sheriff_sales.one(one(sales[0]!)) : f.sheriff_sales.many(sales.length, joinAnd(sales.map(one)));
+  if (sales.length === 1) return f.sheriff_sales.one(one(sales[0]!));
+  const items = sales.map(one);
+  return f.sheriff_sales.many(sales.length, `${items.slice(0, -1).join('; ')}; and ${items[items.length - 1]}`);
 }
 
 export function resaleText(r: Resales): string {
@@ -171,7 +178,7 @@ export function liFacts(events: LiEvent[]): LiFacts {
 
 export function violationsText(li: LiFacts): string {
   const when = li.lastOpen ? formatDate(li.lastOpen) : null;
-  const what = li.lastOpenTitle ? li.lastOpenTitle.toLowerCase() : null;
+  const what = li.lastOpenTitle ? plain(li.lastOpenTitle).toLowerCase() : null;
   if (li.openViolations === 1) return f.open_violations.one(when, what);
   const text = f.open_violations.many(li.openViolations);
   return when ? `${text} ${f.open_violations.mostRecent(when, what)}` : text;
@@ -211,7 +218,11 @@ export function transferFlags(
 
 /** Flags from the live L&I timeline: open violations, unsafe, imminently dangerous. */
 export function liFlags(events: LiEvent[]): OwnerFlag[] {
-  const li = liFacts(events);
+  return liFactFlags(liFacts(events));
+}
+
+/** The L&I flags for a summary of the timeline. */
+export function liFactFlags(li: LiFacts): OwnerFlag[] {
   const out: OwnerFlag[] = [];
   const day = (d: string | null) => (d ? formatDate(d) : null);
   if (li.openViolations > 0) out.push(make('open_violations', violationsText(li)));

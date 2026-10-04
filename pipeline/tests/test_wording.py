@@ -146,3 +146,20 @@ def test_never_what_ethics_rules_out() -> None:
     for where, text in every_text():
         found = NEVER.search(text)
         assert not found, f"{where}: {found.group()!r} in {text!r}"
+
+
+def test_city_text_quoted_in_a_sentence_has_no_dashes() -> None:
+    """A violation title such as "DUMPING - PRIVATE LOT" reads with a comma (the house style
+    covers data the reader sees); hyphens inside words stay."""
+    assert wording.plain("DUMPING - PRIVATE LOT") == "DUMPING, PRIVATE LOT"
+    assert wording.plain("SMITH-JONES") == "SMITH-JONES"
+    assert wording.violations_text(1, date(2020, 5, 1), "DUMPING - PRIVATE LOT") == (
+        "L&I lists 1 open violation, for dumping, private lot, from May 1, 2020."
+    )
+    assert "- " not in wording.absentee_text("outside_city", "WILKES - BARRE", "PA")
+
+
+def test_money_rounds_half_a_dollar_up_as_the_web_app_does() -> None:
+    assert wording.money(1599.5) == "$1,600"
+    assert wording.money(2.5) == "$3"
+    assert wording.money(1234567.49) == "$1,234,567"

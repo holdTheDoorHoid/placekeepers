@@ -137,7 +137,7 @@ function transfer(v: unknown): Transfer | null {
   if (!isObj(v)) return null;
   const type = text(v.type);
   if (!type) return null;
-  const price = typeof v.price === 'number' && Number.isFinite(v.price) && v.price >= 0 ? Math.round(v.price) : null;
+  const price = typeof v.price === 'number' && Number.isFinite(v.price) && v.price >= 0 ? Math.round(v.price * 100) / 100 : null;
   return {
     date: cityDate(v.date),
     type,
