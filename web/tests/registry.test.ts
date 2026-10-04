@@ -202,6 +202,16 @@ describe('registry validation catches mistakes', () => {
     expect(registry?.routes[0]?.links).toEqual([]);
   });
 
+  it('lets a route carry a warning, as the conservatorship route does (M1.3)', () => {
+    const reg = loadRegistry();
+    expect(reg.routes.find((r) => r.id === 'conservatorship')?.warning).toMatch(
+      /^Conservatorship can take a property away from its owner\./,
+    );
+    const files = raw();
+    files.routes[0].warning = 42;
+    expect(errorsFor(files).some((e) => e.includes('warning should be text'))).toBe(true);
+  });
+
   it('rejects a suggestion with no legal route', () => {
     const files = raw();
     files.suggestions[0].routes = [];

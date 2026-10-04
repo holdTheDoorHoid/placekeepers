@@ -90,3 +90,84 @@
     - {label: Vision Zero Philadelphia, url: "https://visionzerophl.com/"}
   last_checked: 2026-10-04
   status: confirm
+# Milestone M1.3: routes for owner flags and for Land Bank, Redevelopment Authority and private lots.
+- id: land_bank_side_yard
+  label: Get it as a side or rear yard (next door owners only)
+  who: The owner of the house next door, and only when the City's list marks the lot as eligible for a side yard
+  steps:
+    - Check that you own the house next door and that the lot is marked eligible for a side yard.
+    - Read the Land Bank's side and rear yard page and apply.
+    - Expect a long wait. After staff review, the Land Bank board and City Council must approve it.
+  cost: A nominal price. The lot must stay a side yard for good, under a 30 year mortgage at its appraised value that is forgiven if the rules are kept; the City can take it back if they are not
+  timeline: Staff aim to answer in 120 days, then the Land Bank board and City Council decide. Only 67 lots were conveyed this way citywide from 2020 to 2023
+  links:
+    - {label: "Philadelphia Land Bank: side or rear yards", url: "https://phillylandbank.org/side-or-rear-yards/"}
+  last_checked: 2026-10-04
+  status: verified
+- id: contact_phdc
+  label: Ask PHDC about this parcel
+  who: Anyone
+  steps:
+    - Contact PHDC and name the parcel's address and its OPA account number.
+    - Ask who manages the parcel, whether it is available, and how neighbors could care for it.
+    - If you are not sure whom to ask, start with the Land Bank (land@phdc.phila.gov, 215 448 3034).
+  cost: Free to ask
+  timeline: Not known. Redevelopment Authority lots have no published route for neighbors yet
+  links:
+    - {label: PHDC, url: "https://phdcphila.org/"}
+    - {label: Philadelphia Land Bank, url: "https://phillylandbank.org/"}
+  last_checked: 2026-10-04
+  status: confirm
+- id: garden_adverse_possession
+  label: Garden adverse possession (2024 law)
+  who: Philadelphia residents, groups or nonprofits that have gardened a privately owned lot
+  steps:
+    - "Check the conditions of the 2024 law (53 Pa.C.S. section 1143, in effect since September 6, 2024): privately owned land of half an acre or less, 10 years of use with at least 5 of them as a garden, and no permanent buildings (fences and sheds are allowed)."
+    - Read Grounded in Philly's guide to adverse possession.
+    - Ask the Garden Justice Legal Initiative for a lawyer. This route needs a quiet title lawsuit.
+  cost: A lawyer and court costs. Any liens on the land stay with it
+  timeline: At least 10 years of use, then a lawsuit
+  links:
+    - {label: "Grounded in Philly: adverse possession", url: "https://groundedinphilly.org/how-to-obtain-land-adverse-possession/"}
+    - {label: Garden Justice Legal Initiative, url: "https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/"}
+  last_checked: 2026-10-04
+  status: confirm
+- id: conservatorship
+  label: Conservatorship (Act 135)
+  who: A nonprofit or a person who petitions the court
+  warning: Conservatorship can take a property away from its owner. Researchers found it is used disproportionately in neighborhoods facing gentrification. Talk to the Garden Justice Legal Initiative before you consider it.
+  steps:
+    - Talk to the Garden Justice Legal Initiative before anything else.
+    - Ask first whether writing to the owner, or helping a family keep the property, would meet the same need.
+    - "Know the law's conditions: a court can appoint a conservator only for a property that has not been legally occupied for 12 months, is not being marketed, is not in foreclosure, and was not bought in the last 6 months."
+  cost: Court and repair costs. Since 2014 a petitioner can be paid the greatest of $2,500, 20% of the costs, or 20% of the sale price
+  timeline: A court case; ask legal aid how long it would take
+  links:
+    - {label: Garden Justice Legal Initiative, url: "https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/"}
+  last_checked: 2026-10-04
+  status: verified
+- id: tangled_title_help
+  label: Help a family keep an inherited home (Tangled Title Fund)
+  who: Families whose home is still in the name of a relative who died, with household income up to 80% of the area median; the property must be the applicant's home
+  steps:
+    - Contact the Tangled Title Fund at Philadelphia VIP (tangledtitlefund@gmail.com, 215 523 9553).
+    - The fund pays up to $6,500 toward the legal cost of clearing the title, and up to $3,500 more toward transfer tax, case by case.
+  cost: Free to the family up to the fund's limits; the family covers anything beyond them
+  timeline: First come, first served
+  links:
+    - {label: "Philadelphia VIP: Tangled Title Fund", url: "https://phillyvip.org/tangled-title-fund/"}
+  last_checked: 2026-10-04
+  status: verified
+- id: fraud_guard
+  label: Sign up for the City's free Fraud Guard alerts
+  who: Property owners and their families
+  steps:
+    - Sign up for Fraud Guard with a name and an email address.
+    - The City sends an email when a document naming you is recorded, so a fake deed is caught early.
+    - Questions go to the Department of Records (215 686 2290, records.info@phila.gov).
+  cost: Free
+  timeline: An alert comes about 30 days after a document is recorded
+  links:
+    - {label: "City of Philadelphia: Fraud Guard", url: "https://www.phila.gov/2022-09-06-own-property-in-philadelphia-get-free-deed-fraud-protection-with-fraud-guard/"}
+  last_checked: 2026-10-04
+  status: verified
