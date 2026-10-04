@@ -20,7 +20,7 @@ change once published, because saved links contain them.
   endpoint:
     kind: carto                       # carto | arcgis | url | osm_extract | curated
     table: shootings                  # carto: table (and optional where)
-    # arcgis: service: <name>, layer: 0
+    # arcgis: service: <name>, layer: 0 (and optional url, see below)
     # url: url: <https link>, format: csv | geojson | parquet | zip
     # curated: path: data/curated/<file>.yaml
   license: city_terms                 # key into registry/licenses.yaml
@@ -33,6 +33,13 @@ change once published, because saved links contain them.
     max_age_days: 14                  # stale if the newest record is older than this
   release: v0.1                       # first release that uses it
 ```
+
+An `arcgis` endpoint names a service in the City's ArcGIS Online organization
+(`https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services`). For a service in another
+organization it adds `url`, the REST services root ending in `/rest/services` (added 2026-10-04 by
+M1.1), for example `url: https://services2.arcgis.com/qjOOiLCYeUtwT7x7/arcgis/rest/services` for the
+gardens PHS and the Neighborhood Gardens Trust support. A `csv` file may use another delimiter (the
+Census Bureau's tables use `|`); the source's adapter reads it.
 
 ### `registry/licenses.yaml`
 
