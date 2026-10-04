@@ -1,12 +1,13 @@
 <script lang="ts">
-  // The selected place in the analysis view's right panel: what it is, how sure we are, the
-  // owner type, suggestions with their first legal step, and the "why" breakdown.
+  // The selected place in the analysis view's right panel: what it is, how sure we are and why,
+  // the owner type, suggestions with their first legal step, and the "why" breakdown.
   import { describePlace, parcelLensOf } from '../../places/rank.ts';
   import type { AppStore } from '../../state/store.svelte.ts';
   import { strings } from '../../strings.ts';
   import EvidenceBadge from '../common/EvidenceBadge.svelte';
   import WhyBreakdown from '../lens/WhyBreakdown.svelte';
   import { kindLabel } from './labels.ts';
+  import PlaceReasons from './PlaceReasons.svelte';
 
   let { store, properties }: { store: AppStore; properties: Record<string, unknown> } = $props();
 
@@ -28,6 +29,7 @@
     <dd>{place.ownerType === null ? strings.why.noData : (strings.ownerTypes[place.ownerType] ?? strings.why.noData)}</dd>
   </dl>
   {#if place.landcare}<p>{strings.place.landcare}.</p>{/if}
+  <PlaceReasons {properties} manifest={store.manifest} />
 
   <h3>{strings.place.suggestionsTitle}</h3>
   {#if place.suggestions.length === 0}

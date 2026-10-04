@@ -230,28 +230,30 @@ Short property names keep tiles small. Integers are preferred to strings.
 The layer holds every parcel the vacancy model (DESIGN section 6) shows: lots and buildings at high,
 medium and low confidence. The kind comes from the building footprint, so a parcel on the City's
 building list with no building standing is a lot. Bits of `rs` (test with `rs & (1 << bit)`); bits
-never change meaning once published:
+never change meaning once published. The id names each reason in the pipeline
+(`placekeepers.derive.vacancy.REASONS`), the web app (`web/src/places/reasons.ts`) and its sentences
+(`strings.reasons`); tests on both sides check them against this table:
 
-| Bit | Value | Says | Agrees or against |
-|---|---|---|---|
-| 0 | 1 | The City lists it as likely vacant land (its list's date is `newest_record` of `vacant_indicators_land` in the manifest) | agrees |
-| 1 | 2 | The City lists it as a likely vacant building (date from `vacant_indicators_bldg`) | agrees |
-| 2 | 4 | The assessor classifies it as vacant land | agrees |
-| 3 | 8 | No building stands on the parcel (no footprint) | agrees |
-| 4 | 16 | Demolished in `dy`, nothing built since | agrees |
-| 5 | 32 | A vacant lot violation or complaint in the last two years | agrees |
-| 6 | 64 | Cleaned and kept up by PHS LandCare | agrees |
-| 7 | 128 | Sealed by the City in `sy`, no permit since | agrees |
-| 8 | 256 | On the City's unsafe building list, no permit since | agrees |
-| 9 | 512 | Declared imminently dangerous, no permit since | agrees |
-| 10 | 1024 | A vacant property violation or complaint in the last two years | agrees |
-| 11 | 2048 | The assessor noted a vacant or sealed exterior | agrees |
-| 12 | 4096 | A new construction permit in `ny`: a building may stand now | against |
-| 13 | 8192 | A new construction permit in `ny`: construction may be starting | against |
-| 14 | 16384 | The owner of the lived in building next door also owns it: likely a side yard | against |
-| 15 | 32768 | Planning's land use map shows a use other than vacant | against |
-| 16 | 65536 | A building, trade or zoning permit in the last two years | against |
-| 17 | 131072 | A building footprint stands although records say vacant land | against |
+| Bit | Value | Id | Says | Agrees or against |
+|---|---|---|---|---|
+| 0 | 1 | `city_land` | The City lists it as likely vacant land (its list's date is `newest_record` of `vacant_indicators_land` in the manifest) | agrees |
+| 1 | 2 | `city_building` | The City lists it as a likely vacant building (date from `vacant_indicators_bldg`) | agrees |
+| 2 | 4 | `assessor_vacant_land` | The assessor classifies it as vacant land | agrees |
+| 3 | 8 | `no_building` | No building stands on the parcel (no footprint) | agrees |
+| 4 | 16 | `demolished` | Demolished in `dy`, nothing built since | agrees |
+| 5 | 32 | `vacant_lot_record` | A vacant lot violation or complaint in the last two years | agrees |
+| 6 | 64 | `landcare` | Cleaned and kept up by PHS LandCare | agrees |
+| 7 | 128 | `sealed` | Sealed by the City in `sy`, no permit since | agrees |
+| 8 | 256 | `unsafe` | On the City's unsafe building list, no permit since | agrees |
+| 9 | 512 | `imminently_dangerous` | Declared imminently dangerous, no permit since | agrees |
+| 10 | 1024 | `vacant_building_record` | A vacant property violation or complaint in the last two years | agrees |
+| 11 | 2048 | `assessor_exterior` | The assessor noted a vacant or sealed exterior | agrees |
+| 12 | 4096 | `built_since` | A new construction permit in `ny`: a building may stand now | against |
+| 13 | 8192 | `construction_starting` | A new construction permit in `ny`: construction may be starting | against |
+| 14 | 16384 | `side_yard` | The owner of the lived in building next door also owns it: likely a side yard | against |
+| 15 | 32768 | `land_use_shows_use` | Planning's land use map shows a use other than vacant | against |
+| 16 | 65536 | `recent_permit` | A building, trade or zoning permit in the last two years | against |
+| 17 | 131072 | `building_stands` | A building footprint stands although records say vacant land | against |
 
 **`h3` (context.pmtiles)**: `h` (cell id), `s12` and `s36` (shooting victim counts), `f_*` (factor
 percentiles for cell level factors such as `f_poverty`).

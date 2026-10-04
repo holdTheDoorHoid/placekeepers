@@ -191,6 +191,45 @@ export const strings = {
     missingNote: 'Factors with no data for this place are left out of its average.',
   },
 
+  // The vacancy model's reasons for a parcel, one sentence per bit of the tile property `rs`
+  // (docs/CONTRACTS.md section 4). Bits 12 and up are reasons for doubt. `date` is the City
+  // list's date in words; `year` comes from the tile (dy, sy or ny) and may be missing.
+  reasons: {
+    title: 'Why we think it is vacant',
+    againstTitle: 'What gives us pause',
+    notPublished: 'The reasons for this place are not published yet.',
+    city_land: (date: string | null) =>
+      date ? `The City lists it as likely vacant land (list dated ${date})` : 'The City lists it as likely vacant land',
+    city_building: (date: string | null) =>
+      date
+        ? `The City lists it as a likely vacant building (list dated ${date})`
+        : 'The City lists it as a likely vacant building',
+    assessor_vacant_land: 'The assessor classifies it as vacant land',
+    no_building: 'No building stands on the parcel',
+    demolished: (year: number | null) =>
+      year ? `Demolished in ${year}, with nothing built since` : 'Demolished, with nothing built since',
+    vacant_lot_record: 'L&I recorded a vacant lot violation or complaint in the last two years',
+    landcare: 'It is in PHS LandCare, which looks after vacant lots',
+    sealed: (year: number | null) =>
+      year ? `Sealed by the City in ${year}, with no permit since` : 'Sealed by the City, with no permit since',
+    unsafe: 'L&I lists it as unsafe, with no permit since',
+    imminently_dangerous: 'L&I declared it imminently dangerous, with no permit since',
+    vacant_building_record: 'L&I recorded a vacant property violation or complaint in the last two years',
+    assessor_exterior: 'The assessor noted its outside as vacant or sealed',
+    built_since: (year: number | null) =>
+      year
+        ? `A new construction permit was issued in ${year}, so a building may stand there now`
+        : 'A new construction permit was issued, so a building may stand there now',
+    construction_starting: (year: number | null) =>
+      year
+        ? `A new construction permit was issued in ${year}, so building may be starting`
+        : 'A new construction permit was issued, so building may be starting',
+    side_yard: 'The owner of the lived in house next door also owns it, so it may be a side yard',
+    land_use_shows_use: "The City's land use map shows it in use",
+    recent_permit: 'A building permit was issued in the last two years',
+    building_stands: 'A building footprint stands on it, although the records say vacant land',
+  },
+
   lens: {
     title: 'Lens',
     presets: 'Presets',

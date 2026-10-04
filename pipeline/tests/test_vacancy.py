@@ -8,6 +8,7 @@ own signal table and expects the study's labels and reasons exactly.
 
 from __future__ import annotations
 
+import re
 from datetime import date
 from pathlib import Path
 
@@ -18,6 +19,8 @@ import pytest
 
 from placekeepers.derive import vacancy
 from placekeepers.derive.vacancy import REASONS, Windows
+
+from .conftest import REPO_ROOT
 
 FIXTURE = Path(__file__).parent / "fixtures" / "vacancy_study_sample.parquet"
 AS_OF = date(2026, 10, 4)
@@ -42,6 +45,18 @@ def classify(**flags: object) -> tuple[str | None, str | None, int]:
         SELECT kind, confidence, {vacancy.reasons_sql()}
         FROM (SELECT *, {vacancy.classify_sql()} FROM one)
     """).fetchone()
+
+
+def test_the_reason_bits_match_the_contract() -> None:
+    """docs/CONTRACTS.md section 4 lists every bit of `rs`; the web app checks the same table."""
+    text = (REPO_ROOT / "docs" / "CONTRACTS.md").read_text(encoding="utf-8")
+    rows = re.findall(
+        r"^\| (\d+) \| (\d+) \| `([a-z_]+)` \| .* \| (agrees|against) \|$", text, re.M
+    )
+    assert [(int(b), int(v), i, side == "against") for b, v, i, side in rows] == [
+        (r.bit, 1 << r.bit, r.id, r.against) for r in REASONS
+    ]
+    assert [r.bit for r in REASONS] == list(range(len(REASONS)))
 
 
 # Classification: lots
