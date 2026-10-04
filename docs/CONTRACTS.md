@@ -153,6 +153,10 @@ Routes carry `id`, `label`, `who`, `steps` (list), `cost`, `timeline`, `links` (
 `last_checked` (date), and `status` (`verified` or `confirm`). Partners carry `id`, `name`, `url`,
 and `one_line`. Content comes from ROUTES.md.
 
+A route may also carry `warning` (added 2026-10-04 by M1.3): a caution the web app shows before the
+steps wherever the route appears. The `conservatorship` route carries the abuse warning of
+docs/ETHICS.md in it, word for word.
+
 ## 2. Published data layout
 
 The pipeline writes everything under one data root (`--out`, default `build/data`). The site serves it
@@ -170,6 +174,7 @@ data/
     boundaries.pmtiles    layers "council_districts", "rcos", "neighborhoods"
   tables/
     parcels.json          compact columnar table for ranking and lists
+    owners.json           owners holding many vacant parcels, with their parcels (section 6)
   dossiers/
     <first three digits of the OPA account>.json
   basemap/
@@ -237,6 +242,11 @@ Short property names keep tiles small. Integers are preferred to strings.
 | `lc` | int | 1 if maintained by PHS LandCare |
 | `f_*` | int | lens factor percentiles, 0 to 100 |
 | `sg` | string | suggestion ids, comma separated |
+
+`ot` is filled from 2026-10-04 by M1.3 (`pipeline/src/placekeepers/derive/owners.py`): the City's
+list of public property decides first (`PUB` 3, `PLB` 4, `PRA` 5, `PHDC` 8), then the owner names
+as OPA publishes them, by documented patterns (public bodies, company forms, nonprofit words, a
+person's name). The dossier's `owner.type` gives the same type by name (section 6).
 
 **`h3` (context.pmtiles)**: `h` (cell id), `s12` and `s36` (shooting victim counts), `f_*` (factor
 percentiles for cell level factors such as `f_poverty`).
@@ -330,27 +340,150 @@ shows; the Police marker stays, unnamed) or a marker's id (the marker is not dra
 listed with its date, `lat` and `lng`, so it stays hidden even if the Police correct the record and
 its id changes. If this file cannot be read, no memorials are published at all.
 
-## 6. Dossier shards (`dossiers/<prefix>.json`)
+## 6. Dossier shards (`dossiers/<prefix>.json`) and the owners table
+
+Rewritten 2026-10-04 by M1.3, which builds them (`pipeline/src/placekeepers/publish/dossiers.py`).
+The lot dossier (milestone M1.6) reads them.
+
+**Which parcels.** Every candidate parcel (`pipeline/src/placekeepers/candidates.py`: on either City
+vacancy list, owned by the City, the Land Bank, the Redevelopment Authority or PHDC, in PHS
+LandCare, vacant land or a vacant exterior to the assessor, cleaned and sealed or demolished since
+2016, or on the unsafe or imminently dangerous lists) that OPA or the City's list of public
+property still knows. On 2026-10-04 that was 72,535 parcels in 211 files: 104.6 MB on disk and 13.4
+MB as served compressed; the largest file (`885.json`) is 6.7 MB, 0.8 MB compressed. Any other
+parcel is looked up live. The file is named by the first three digits of the 9 digit OPA account.
 
 ```json
 {
   "schema": 1,
   "generated_at": "2026-10-05T10:03:12Z",
+  "flags": {
+    "absentee": {
+      "careful": "This is the address where the City sends tax bills. ...",
+      "next_step": "Write to the owner at this address to ask before ...",
+      "routes": ["ask_the_owner"],
+      "sources": ["opa_properties"]
+    }
+  },
+  "notices": {
+    "deed_fraud": {"text": "Deed theft happens when ...", "routes": ["fraud_guard"], "links": [{"label": "...", "url": "..."}]}
+  },
   "parcels": {
     "123456789": {
       "address": "1234 N EXAMPLE ST",
-      "vacancy": {"kind": "lot", "confidence": "high", "reasons": ["City lists it as vacant land", "No building on the parcel"]},
-      "owner": {"names": ["..."], "mailing": "...", "type": "individual", "flags": [{"id": "absentee", "text": "..."}]},
-      "transfers": [{"date": "2004-05-17", "type": "DEED", "price": 1500, "from": ["..."], "to": ["..."]}],
-      "assessments": [{"year": 2027, "market_value": 21000}],
-      "li": {"open_violations": 2, "last_violation": "2025-08-01", "unsafe": false, "imminently_dangerous": false},
-      "routes": ["land_bank_garden_agreement"],
+      "vacancy": {"kind": "lot", "confidence": "medium", "reasons": ["City lists it as vacant land"]},
+      "owner": {
+        "names": ["MORALES ROSA"],
+        "mailing": "41 ORCHARD RD, CHERRY HILL NJ 08002",
+        "type": "individual",
+        "type_reason": "The owner name looks like a person's name.",
+        "flags": [
+          {"id": "absentee", "text": "The owner gets mail somewhere else: Cherry Hill, NJ (out of state).",
+           "data": {"scope": "out_of_state", "place": "Cherry Hill, NJ"}},
+          {"id": "years_since_sale", "text": "Last sold in 1987.", "data": {"year": 1987, "date": "1987-06-12", "price": 15000, "source": "opa_properties"}}
+        ],
+        "notice": "deed_fraud",
+        "help": ["tangled_title_help", "fraud_guard"]
+      },
+      "transfers": [{"date": "2016-08-09", "type": "SHERIFF'S DEED", "price": 12300, "from": ["..."], "to": ["..."]}],
+      "assessments": [[2027, 13800], [2026, 13800]],
+      "li": {"open_violations": 1, "last_violation": "2025-08-01", "unsafe": false, "imminently_dangerous": false, "violations": 2},
+      "routes": ["ask_the_owner", "conservatorship"],
       "suggestions": ["clean_and_green"],
-      "nearby": {"s12": 3, "s36": 9, "landcare_within_500ft": 4}
+      "nearby": {"s12": 1, "s36": 2, "landcare_within_500ft": 4, "gardens_within_500ft": 0}
     }
   }
 }
 ```
 
+**`flags` and `notices` (top level).** Every flag has three parts (docs/ETHICS.md): what it means,
+why to be careful, and a protective next step. The careful note and the next step are the same for
+every parcel with that flag, so each file holds them once, by flag id, with the flag's `routes`
+(registry route ids), `links` (label and url) and `sources` (registry source ids). A parcel's flag
+holds its own `text` and `data`. Put together, `text`, `careful` and `next_step` give the full flag;
+the possible estate flag then reads the ETHICS.md text word for word. `notices` holds the deed fraud
+notice the same way. Both are written in full in every file, so one file is all a dossier needs.
+
+**`vacancy`**: `null` when we do not call the parcel vacant. Until the vacancy model (M1.2) is
+merged, the call comes from the City's lists: a lot or a building, `confidence` `medium`.
+
+**`owner`**: `names` as OPA publishes them (owner 1, then owner 2); `mailing`, the mailing address
+lines as the City publishes them, joined with commas (or `null`); `type`, one of `individual`,
+`company`, `city`, `land_bank`, `redevelopment_authority`, `housing_authority`, `nonprofit`,
+`other_public`, `unknown` (the names of the `ot` codes, section 4); `type_reason`, a sentence saying
+why; `city_owned` (only for parcels on the City's list of public property): `agency` (`PUB` the City,
+`PLB` the Land Bank, `PRA` the Redevelopment Authority, `PHDC`), `status` as the City writes it, and
+`side_yard_eligible`; `flags`; `notice` (`"deed_fraud"`, shown with the flags of an owner who is a
+person or may be an estate); and `help` (the Tangled Title Fund and Fraud Guard route ids, on every
+dossier of a private owner with a flag).
+
+Flags, in this order, with their `data`:
+
+| `id` | Who gets it | `data` |
+|---|---|---|
+| `absentee` | private owners | `scope`: `elsewhere_in_city`, `po_box_in_city`, `outside_city` or `out_of_state`; `place` (such as "Cherry Hill, NJ") outside the city |
+| `possible_estate` | private owners | none |
+| `tax_debt_2025` | every owner | `as_of` ("2025-07-09"), `total_due` (dollars), `years` (tax years owed) |
+| `sheriff_sales` | every owner | `sales`: `date` and `price` of each, oldest first |
+| `years_since_sale` | private owners | `year`; with a known sale `date`, `price` and `source` (`opa_properties` when it comes from the assessor, before the deed records begin in 2000); with none, `sold: false` and `year` is the year since which there has been no sale on the open market |
+| `many_parcels` | private owners with at least 5 parcels we call vacant | `count`, `list` (a key of `tables/owners.json`) |
+| `fast_resales` | every owner | `count`, `dates` (two or more sales within 24 months of each other) |
+| `open_violations` | every owner | `count`, `last` (date), `title` (the City's violation title) |
+| `unsafe`, `imminently_dangerous` | every owner | `since` (date) |
+
+Private owners are a person, a company, a nonprofit, or an owner name we could not type. How each
+flag is computed is in `pipeline/src/placekeepers/derive/` (`owners.py`, `transfers.py`,
+`flags.py`); every sentence is in `wording.py`.
+
+**`transfers`**: every deed, newest first: every document type that names a deed, and certificates
+of stock transfer. Mortgages and other filings are left out. `date` is the day the City recorded it;
+`type` is the City's document type as published; `price` the total consideration in dollars (`null`
+when the record has none); `from` and `to` up to 10 names each, with `from_more` and `to_more`
+counting the rest; `properties` when one price covered several properties. Sales for a token price
+($100 or less) and sheriff deeds are listed here but are not "sales" for `years_since_sale`.
+
+**`assessments`** (changed 2026-10-04 by M1.3 from objects, to keep the files small): `[year,
+market value]` pairs, newest year first.
+
+**`li`**: `open_violations`, `last_violation` (the latest of any status), `unsafe`,
+`imminently_dangerous`, `violations` (every violation since 2016), and when present `unsafe_since`,
+`imminently_dangerous_since`, `sealed` (the last completed clean and seal) and `demolished` (the
+last completed demolition). L&I case numbers are never published.
+
+**`routes`**: registry route ids in the order to try them (docs/ROUTES.md; rules in
+`derive/routes.py`). Conservatorship appears only for a private parcel we call vacant.
+**`suggestions`**: registry suggestion ids (a vacant lot gets `clean_and_green`, a vacant building
+`seal_abandoned_building`).
+
+**Also, when they apply**: `landcare` (`program`: `landcare`, `community_landcare`, `land_bank`,
+`phdc` or `other`, and `year` joined when known) for a lot PHS LandCare maintains; `garden: true`
+when a garden that PHS, the Neighborhood Gardens Trust or Parks and Recreation knows lies on the
+parcel, or the Planning Commission maps community agriculture there.
+
+**`nearby`**: `s12` and `s36` (shooting victims in the parcel's hexagon in the last 12 and 36
+months, as in the `h3` layer), `landcare_within_500ft` and `gardens_within_500ft`. Keys are left
+out when the parcel has no point.
+
+Never in a dossier (docs/ETHICS.md, checked by `tests/test_dossiers.py`): an acquisition price
+estimate, any score or order of how easy a parcel would be to take, letters to owners, and personal
+details beyond the owner names and mailing address the City publishes.
+
 The live refresh in the browser may update `owner`, `transfers`, `assessments` and `li` from the
 City's Carto API; anything it cannot refresh stays as in the shard, labeled with the shard's date.
+
+### `tables/owners.json`
+
+```json
+{
+  "schema": 1,
+  "generated_at": "2026-10-05T10:03:12Z",
+  "min_parcels": 5,
+  "owners": {"03ccd2b2a56c": {"names": ["KENSINGTON LOTS LLC"], "parcels": ["372000001", "372000002"]}}
+}
+```
+
+Every private owner holding at least `min_parcels` parcels we call vacant, keyed by the `list` id
+of its `many_parcels` flag, with the parcels' accounts. Owners are matched conservatively: two
+parcels share an owner only when all their owner names match after spelling is evened out (capitals,
+no punctuation, "L.L.C." as LLC, "&" as AND), so one owner under two spellings counts twice and two
+owners are never merged. Public owners are left out: the City lists its own holdings.
