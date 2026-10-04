@@ -157,6 +157,7 @@ const SCHEMAS: Record<keyof Registry, Fields> = {
     id: id(),
     label: text(),
     who: text(),
+    warning: str({ optional: true }),
     steps: { t: 'strings', nonEmpty: true },
     cost: text(),
     timeline: text(),
