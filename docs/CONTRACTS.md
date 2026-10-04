@@ -68,6 +68,19 @@ change once published, because saved links contain them.
   release: v0.1
 ```
 
+Setting keys by type (added 2026-10-04 by M0.3). Every setting has `id`, `label`, `type` and
+`default`; the other keys depend on the type, and keys that do not belong to the type are an error:
+
+| `type` | Other keys | `default` |
+|---|---|---|
+| `choice` | `options`: a list of `value` (text) and `label` | one of the option values, as text |
+| `toggle` | none | `true` or `false` |
+| `range` | `min` and `max` (numbers), `step` (optional, default 1) | a number from `min` to `max` |
+
+What a setting does to the map is decided by the layer's style in `web/src/map/styles`, which lists
+the setting ids it puts into effect; a web test fails if a registry setting has no effect. Ids and
+option values appear in shared links, so they never change once published.
+
 `registry/groups.yaml` lists groups in display order: `lots`, `care`, `streets`, `safety_context`,
 `boundaries`, `basemap`, each with a label and a one line description.
 

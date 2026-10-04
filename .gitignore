@@ -24,3 +24,6 @@ docs/outreach/
 .DS_Store
 .idea/
 .vscode/
+
+# Web tools downloaded by scripts (go-pmtiles binary)
+web/.tools/

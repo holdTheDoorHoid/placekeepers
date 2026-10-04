@@ -1,0 +1,105 @@
+{
+  "schema": 1,
+  "build_id": "fixture-2026-10-04",
+  "generated_at": "2026-10-04T10:03:12Z",
+  "sources": {
+    "opa_properties": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 583412,
+      "newest_record": "2026-10-02",
+      "message": null
+    },
+    "pwd_parcels": {
+      "status": "missing",
+      "last_attempt": null,
+      "last_success": null,
+      "stale_since": null,
+      "rows": null,
+      "newest_record": null,
+      "message": null
+    },
+    "vacant_indicators_land": {
+      "status": "failing",
+      "last_attempt": "2026-10-04T10:00:09Z",
+      "last_success": null,
+      "stale_since": null,
+      "rows": null,
+      "newest_record": null,
+      "message": "The City server did not answer. There is no earlier copy yet."
+    },
+    "vacant_indicators_bldg": {
+      "status": "stale",
+      "last_attempt": "2026-10-04T10:00:11Z",
+      "last_success": "2026-09-27T10:00:07Z",
+      "stale_since": "2026-09-27",
+      "rows": 9519,
+      "newest_record": "2026-09-27",
+      "message": "This week the row count fell by more than 20 percent, so last week's copy is in use."
+    },
+    "shootings": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 17973,
+      "newest_record": "2026-10-01",
+      "message": null
+    },
+    "high_injury_network": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 162,
+      "newest_record": null,
+      "message": null
+    }
+  },
+  "layers": {
+    "vacant_parcels": {
+      "file": "tiles/lots.pmtiles",
+      "source_layer": "parcels",
+      "sources": [
+        "vacant_indicators_land",
+        "vacant_indicators_bldg",
+        "opa_properties",
+        "pwd_parcels"
+      ]
+    },
+    "hin_2025": {
+      "file": "tiles/streets.pmtiles",
+      "source_layer": "hin",
+      "sources": [
+        "high_injury_network"
+      ]
+    },
+    "shootings_hex": {
+      "file": "tiles/context.pmtiles",
+      "source_layer": "h3",
+      "sources": [
+        "shootings"
+      ]
+    }
+  },
+  "files": {
+    "tiles/context.pmtiles": {
+      "bytes": 18675,
+      "sha256": "1d746dd64887fc690edb3dbd6c056b1630ce99ec1cec269ad1ea21b9890d3717"
+    },
+    "tiles/lots.pmtiles": {
+      "bytes": 10493,
+      "sha256": "0040acd7e70d59f4906d30b85464572ad1578a4cfb55206b181eb9a85a4bdae6"
+    },
+    "tiles/streets.hin.geojson": {
+      "bytes": 668,
+      "sha256": "7b12cb6d791ce59e1cf68aec9151841c6f521de4c2a4fff924aa8466e1523324"
+    }
+  },
+  "notes": [
+    "This is synthetic sample data for testing the map.",
+    "Street tiles were skipped for this sample, so the High Injury Network is published as GeoJSON."
+  ]
+}
