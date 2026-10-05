@@ -649,10 +649,10 @@ any lens that wants the people and places a stop serves.
 
 **Checked on 2026-10-05**, from a point at each place: by Rittenhouse Square about 11,700 people
 live within a 5 minute walk, with 102 street corners and 5 of the 7 kinds of places (no
-recreation center and no park drinking fountain within 800 meters), walkability 16.7; at East
+recreation center and no park drinking fountain within 800 meters), walkability 16.7; near East
 Passyunk Avenue and Tasker Street about 6,300 people, 100 corners and all 7 kinds, walkability
-18.0; at Kensington and Allegheny about 7,400 people, 94 corners and all 7 kinds, 16.2; in Somerton
-in the far Northeast (Bustleton Avenue and Byberry Road) about 1,800 people, 27 corners and 6 kinds
+18.0; near Kensington and Allegheny about 7,400 people, 94 corners and all 7 kinds, 16.2; in Somerton
+in the far Northeast (near Bustleton Avenue and Byberry Road) about 1,800 people, 27 corners and 6 kinds
 (no library), 15.7; in Chestnut Hill about 1,500 people, 24 corners and 6 kinds; on Ridge Avenue in
 Roxborough about 2,200 people, 26 corners and only 3 kinds. Among the parcels on the map, half have
 at least 3,769 people within a 5 minute walk (a quarter fewer than 2,913, a quarter more than
