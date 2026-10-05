@@ -325,7 +325,9 @@
         "community_landcare",
         "land_bank_garden_agreement"
       ],
-      "suggestions": [],
+      "suggestions": [
+        "clean_and_green"
+      ],
       "landcare": {
         "program": "landcare",
         "year": 2016

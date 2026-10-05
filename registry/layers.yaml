@@ -40,9 +40,9 @@
       label: Show parcels we are at least this sure about
       type: choice
       options:
-        - {value: "1", label: Any signal}
-        - {value: "2", label: Medium or high}
-        - {value: "3", label: High only}
+        - {value: "1", label: Any sign of vacancy}
+        - {value: "2", label: Probably or very likely vacant}
+        - {value: "3", label: Very likely vacant only}
       default: "2"
     - id: kinds
       label: Show
@@ -270,4 +270,29 @@
       label: Also remember people killed in cars and on motorcycles
       type: toggle
       default: false
+  release: v0.1
+- id: basemap
+  label: Base map
+  group: basemap
+  description: >-
+    Streets, buildings, parks, water and place names from OpenStreetMap, underneath everything
+    else. Choose the gray look to let the data stand out, or turn the base map off.
+  sources: [basemap_openstreetmap]
+  # Made by web/scripts/make-basemap.sh, not by the pipeline (docs/CONTRACTS.md section 2). The file
+  # holds many layers (earth, water, roads, buildings, places and more); earth names the land under
+  # them all, and the whole base map is drawn.
+  file: basemap/philly.pmtiles
+  source_layer: earth
+  geometry: polygon
+  style: basemap
+  evidence: context
+  default: {field: true, analysis: true}
+  settings:
+    - id: look
+      label: Look
+      type: choice
+      options:
+        - {value: light, label: "Light, in color"}
+        - {value: muted, label: "Gray, so the data stands out"}
+      default: light
   release: v0.1

@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { loadRegistry } from '../plugins/registry.ts';
-import { rankPlaces, summarizeArea, type PlaceInput } from '../src/places/rank.ts';
+import { distanceMeters, nearestPlaces, rankPlaces, summarizeArea, type PlaceInput } from '../src/places/rank.ts';
 import { defaultLayers, defaultState } from '../src/state/defaults.ts';
 import { initialState, savedText } from '../src/state/init.ts';
 import { encodeState } from '../src/state/url.ts';
@@ -34,6 +34,68 @@ describe('ranking places for the cards and the list', () => {
     const hidden = rankPlaces(reg, state, places).find((p) => p.id === building.id)!;
     expect(hidden.suggestions).toEqual([]);
     expect(hidden.firstStep).toBeNull();
+  });
+
+  it('takes the first lawful step for greening from the first step to get permission (rt)', () => {
+    const state = defaultState(reg, 'field');
+    const lot = (rt?: number): PlaceInput => ({
+      id: '1',
+      center: [0, 0],
+      properties: rt === undefined ? { k: 1, sg: 'clean_and_green' } : { k: 1, sg: 'clean_and_green', rt },
+    });
+    const step = (rt?: number) => rankPlaces(reg, state, [lot(rt)])[0]!;
+    expect(step(5).firstStep?.route.id).toBe('ask_the_owner');
+    expect(step(4).firstStep?.route.id).toBe('ask_the_owner');
+    expect(step(3).firstStep?.route.id).toBe('contact_phdc');
+    expect(step(2).firstStep?.route.id).toBe('land_bank_garden_agreement');
+    expect(step(1).firstStep?.route.id).toBe('community_landcare');
+    expect(step(5).permission).toBe(5);
+    // No owner name: no route to point to, and the card says so.
+    expect(step(0)).toMatchObject({ firstStep: null, noRoute: true, permission: 0 });
+    // Older tiles without rt: no guess; the card points to the lot page.
+    expect(step()).toMatchObject({ firstStep: null, noRoute: false, permission: null });
+    // Reporting an open building needs nobody's permission: its own route, whatever rt says.
+    const building = rankPlaces(reg, state, [{ id: '2', center: [0, 0], properties: { k: 2, sg: 'seal_abandoned_building', rt: 0 } }])[0]!;
+    expect(building).toMatchObject({ noRoute: false, permission: 0 });
+    expect(building.firstStep?.route.id).toBe('report_to_311');
+  });
+
+  it('keeps every fixture parcel\'s first step in step with its owner and LandCare', () => {
+    for (const place of places) {
+      const { ot, lc, rt } = place.properties as { ot: number; lc: number; rt: number };
+      if (lc === 1) expect(rt, place.id).toBe(1);
+      else if (ot === 3 || ot === 4) expect(rt, place.id).toBe(2);
+      else if (ot === 5) expect(rt, place.id).toBe(3);
+      else if (ot === 6 || ot === 8) expect(rt, place.id).toBe(4);
+      else if (ot === 0) expect([0, 5], place.id).toContain(rt);
+      else expect(rt, place.id).toBe(5);
+    }
+    // Every category appears, so the filter and the plot are exercised.
+    expect(new Set(places.map((p) => p.properties.rt))).toEqual(new Set([0, 1, 2, 3, 4, 5]));
+  });
+
+  it('can rank lowest first, still leaving places without a score last', () => {
+    const odd: PlaceInput = { id: '0', center: [0, 0], properties: {} };
+    const desc = rankPlaces(reg, defaultState(reg, 'field'), [...places, odd]);
+    const asc = rankPlaces(reg, defaultState(reg, 'field'), [...places, odd], Infinity, 'asc');
+    expect(desc.at(-1)!.id).toBe('0');
+    expect(asc.at(-1)!.id).toBe('0');
+    const scores = asc.slice(0, -1).map((p) => p.why!.score!);
+    expect([...scores].sort((a, b) => a - b)).toEqual(scores);
+  });
+
+  it('lists the places with a suggestion nearest to a point first', () => {
+    const state = defaultState(reg, 'field');
+    const spread: PlaceInput[] = [
+      { id: 'far', center: [-75.1, 39.98], properties: { k: 1, sg: 'clean_and_green', rt: 5 } },
+      { id: 'near', center: [-75.15, 39.98], properties: { k: 1, sg: 'clean_and_green', rt: 5 } },
+      { id: 'cared', center: [-75.15, 39.98], properties: { k: 1, sg: '', rt: 1 } },
+    ];
+    const near = nearestPlaces(reg, state, spread, [-75.1501, 39.98]);
+    expect(near.map((p) => p.id)).toEqual(['near', 'far']);
+    expect(near[0]!.distance).toBeGreaterThan(5);
+    expect(near[0]!.distance).toBeLessThan(12);
+    expect(distanceMeters([-75.15, 39.98], [-75.15, 39.99])).toBeCloseTo(1105.7, 0);
   });
 
   it('ignores suggestion ids the registry does not know', () => {

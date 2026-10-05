@@ -173,6 +173,15 @@
       "rows": 0,
       "newest_record": null,
       "message": null
+    },
+    "basemap_openstreetmap": {
+      "status": "missing",
+      "last_attempt": null,
+      "last_success": null,
+      "stale_since": null,
+      "rows": null,
+      "newest_record": null,
+      "message": "Not collected yet"
     }
   },
   "layers": {
@@ -263,6 +272,13 @@
         "fatal_crashes",
         "memorial_names"
       ]
+    },
+    "basemap": {
+      "file": "basemap/philly.pmtiles",
+      "source_layer": "earth",
+      "sources": [
+        "basemap_openstreetmap"
+      ]
     }
   },
   "files": {
@@ -287,8 +303,8 @@
       "sha256": "1d746dd64887fc690edb3dbd6c056b1630ce99ec1cec269ad1ea21b9890d3717"
     },
     "tiles/lots.pmtiles": {
-      "bytes": 11873,
-      "sha256": "f0526b1011b58e86cab0579ef0d466abb32f45840c3babfd152a0b6e07d975c6"
+      "bytes": 12144,
+      "sha256": "540a7af16cfa7e10106f4ccb7d9f40b51683276c73a082b4d4c5d8843d2a8baa"
     },
     "tiles/streets.crashes.geojson": {
       "bytes": 23183,
@@ -321,7 +337,7 @@
       "9900"
     ],
     "files": 1,
-    "bytes": 21910
+    "bytes": 21943
   },
   "notes": [
     "This is synthetic sample data for testing the map.",

@@ -63,6 +63,7 @@ export const strings = {
     tagline: 'A free map for Philadelphia neighbors who care for their blocks.',
     mapLabel: 'Map of Philadelphia. The list of places below the map shows the same places as text.',
     loadingMap: 'Loading the map',
+    mapFailed: 'The map could not start in this browser. Try another browser, or update this one.',
     sampleData: 'Sample data for testing. These are not real places.',
     earlyPreview:
       'Early preview: the map shows real City data, but lot pages, scores and legal steps are still being built.',
@@ -78,6 +79,7 @@ export const strings = {
     settings: 'Settings',
     share: 'Copy link',
     shareDone: 'Link copied. Anyone who opens it sees this same map.',
+    shareDoneNoMap: 'Link copied. It leaves out where the map is, because the map is showing where you are.',
     shareFailed: 'Could not copy the link. Copy the address from your browser instead.',
     dataStatus: 'Data status',
   },
@@ -126,8 +128,13 @@ export const strings = {
     nearMeUnavailable: 'Your device could not find your location. You can still move the map by hand.',
     nearMeUnsupported: 'This browser cannot share your location. You can still move the map by hand.',
     nearMeOutside: 'You seem to be outside Philadelphia. This map covers Philadelphia only.',
-    nearMePrivacy: 'Your location stays on your device. Placekeepers never sends it anywhere.',
+    nearMePrivacy: 'Your location stays on your device. Placekeepers never sends it anywhere and never puts it in a link.',
     youAreHere: 'You are here',
+    stopLocation: 'Stop using my location',
+    locationInUse:
+      'Using your location. It stays on this device, and links leave out where the map is until you move the map yourself.',
+    myLists: 'My lists',
+    listsTitle: 'Saved lists',
     chipsLabel: 'Main layers',
     moreLayers: 'More layers',
     layersTitle: 'Layers',
@@ -148,11 +155,17 @@ export const strings = {
     zoomIn: 'Move or zoom the map to a neighborhood to see places nearby.',
     noLotsLayer: 'Turn on the Lots layer to see places nearby.',
     nothingHere: 'No vacant lots or buildings match your settings in this part of the map.',
-    allOff: 'Every lens factor is turned off, so places are not ranked. Turn a factor back on in Settings.',
-    noScores: 'Priority scores are not published yet, so these places are listed by parcel number.',
     showOnMap: 'Show on map',
     openLotPage: 'Open lot page',
-    preview: 'Preview. The full list with addresses and legal steps arrives in a later update.',
+    nearestToYou: 'Nearest to you first.',
+    nearestToCenter: 'Nearest to the middle of the map first. Move the map, or tap Near me.',
+    noneWithSuggestion: 'No place here has a suggestion that is turned on. Turn suggestions on in Settings, or move the map.',
+    showMore: 'Show more places',
+    distance: (meters: number, fromYou: boolean) => {
+      const feet = meters * 3.28084;
+      const far = feet < 1000 ? `${formatNumber(Math.max(10, Math.round(feet / 10) * 10))} feet` : `${(feet / 5280).toFixed(1)} miles`;
+      return `About ${far} from ${fromYou ? 'you' : 'the middle of the map'}`;
+    },
   },
 
   place: {
@@ -162,11 +175,9 @@ export const strings = {
     parcel: (id: string) => `Parcel ${id}`,
     priority: (score: number, lens: string) => `Priority ${score} of 100 for ${lens.toLowerCase()}`,
     mainReason: (label: string) => `Main reason: ${label}.`,
-    noScore: 'No priority score yet for this place.',
     bestSuggestion: 'What you could do',
     firstStep: 'First legal step',
     cost: (cost: string) => `Cost: ${cost}`,
-    noSuggestion: 'No suggestion yet for this place.',
     confidence: { 1: 'We are not very sure it is vacant', 2: 'Probably vacant', 3: 'Very likely vacant' } as Record<
       number,
       string
@@ -264,10 +275,46 @@ export const strings = {
 
   filters: {
     title: 'Filters',
+    intro:
+      'Choose chips to narrow the lots on the map, the ranked list and the plot. A group with no chip chosen shows everything.',
     ownerType: 'Owner type',
-    all: 'All',
-    none: 'None',
-    noneSelected: 'No owner types are selected, so no lots are shown.',
+    landcare: 'Already in LandCare',
+    inLandcare: 'Kept up by PHS LandCare',
+    notInLandcare: 'Not in LandCare',
+    confidence: 'How sure we are',
+    kind: 'Lot or building',
+    clear: 'Clear filters',
+    showAll: 'Show all',
+    noneSelected: (group: string) => `Nothing is chosen under "${group}", so no lots are shown.`,
+    narrowedNote: (n: number) =>
+      n === 1 ? 'A filter from the analysis view is narrowing these places.' : `${formatNumber(n)} filters from the analysis view are narrowing these places.`,
+  },
+
+  // The first lawful step to get permission (`rt`, src/config/permission.ts). A category, never a
+  // score: never call it easy or hard, and never use words about buying or acquiring land.
+  permission: {
+    title: 'First step to get permission',
+    short: {
+      0: 'No clear route yet',
+      1: 'Community LandCare',
+      2: 'Garden agreement or license',
+      3: 'Ask PHDC',
+      4: 'Ask the public agency',
+      5: 'Ask the owner',
+    } satisfies Record<0 | 1 | 2 | 3 | 4 | 5, string>,
+    long: {
+      0: 'No clear route yet: City records give no owner name',
+      1: 'PHS LandCare already cares for it: Community LandCare stewardship',
+      2: 'The City or the Land Bank owns it: a garden agreement or license',
+      3: 'The Redevelopment Authority or PHDC owns it: ask PHDC',
+      4: 'The housing authority or another public body owns it: ask the agency',
+      5: 'A private owner: ask the owner',
+    } satisfies Record<0 | 1 | 2 | 3 | 4 | 5, string>,
+    notPublished: 'Not published yet',
+    filterHelp:
+      'Who to ask first, from the owner City records name. It is a kind of step, not a measure of how likely anyone is to say yes.',
+    noRoute: 'No clear route yet: City records give no owner name. The lot page shows what we know.',
+    seeLotPage: 'The lot page lists the lawful routes for this place.',
   },
 
   layers: {
@@ -312,19 +359,111 @@ export const strings = {
     areaLandcare: (n: number) => `${formatNumber(n)} already maintained by PHS LandCare`,
     areaEmpty: 'No vacant lots or buildings match your settings here. Try zooming out or changing the filters.',
     areaHint: 'Select a lot on the map or in the list to see why it scores the way it does.',
-    tableTitle: 'Ranked list',
-    tableShow: 'Show ranked list',
-    tableHide: 'Hide ranked list',
     tableCaption: 'Places in view, ranked by the current lens blend',
     rank: 'Rank',
     place: 'Place',
-    kind: 'Kind',
-    sure: 'How sure',
     score: 'Score',
     reason: 'Main reason',
-    tablePlaceholder: 'Exports to CSV and GeoJSON and a printable report arrive in a later update.',
+    save: 'Save',
+    sortHighFirst: 'Highest score first. Choose to put the lowest first.',
+    sortLowFirst: 'Lowest score first. Choose to put the highest first.',
     tableEmpty: 'Nothing to rank in view.',
     noScores: 'Priority scores are not published yet, so this list is in parcel number order.',
+    tableMore: (shown: number, total: number) =>
+      `Showing the first ${formatNumber(shown)} of ${formatNumber(total)}. Zoom in or narrow the filters to see the rest, or download them all.`,
+    drawerLabel: 'Places in view',
+    tabTable: 'Ranked list',
+    tabPlot: 'Need and first step',
+    tabLists: 'Saved lists',
+  },
+
+  // The plot of need against the first step to get permission (docs/DESIGN.md section 5.4).
+  plot: {
+    title: 'Need and the first step to get permission',
+    intro:
+      'Each dot is a place in view. Across: its priority under your lens blend, from 0 to 100. Down: the first step to get permission, a kind of step, not a measure of how likely anyone is to say yes. Choose a dot to open its lot page.',
+    axisX: 'Priority under your lens blend',
+    empty: 'No places in view to plot.',
+    noScore: (n: number) => `${plural(n, 'place has', 'places have')} no score and ${n === 1 ? 'is' : 'are'} not shown.`,
+    noStep: (n: number) => `${plural(n, 'place has', 'places have')} no first step published yet and ${n === 1 ? 'is' : 'are'} not shown.`,
+    dot: (place: string, score: number, step: string) => `${place}: priority ${score}. ${step}.`,
+    tableNote: 'The ranked list shows the same places, with the same first step, for keyboards and screen readers.',
+    capped: (shown: number, total: number) =>
+      `Showing the ${formatNumber(shown)} places with the highest scores of ${formatNumber(total)} in view. Zoom in to see them all.`,
+    summary: (rows: string) => `Places in view by the first step to get permission: ${rows}.`,
+    rowSummary: (label: string, n: number) => `${label}, ${plural(n, 'place', 'places')}`,
+  },
+
+  // Downloads of places in view or of a saved list (docs/ETHICS.md, "Bulk export"). The notes at
+  // the top of a CSV file avoid commas, so they stay on one line in a spreadsheet.
+  export: {
+    title: 'Download these places',
+    help: (limit: number) =>
+      `A file with up to ${formatNumber(limit)} places and what each lot page says about the owner, including the owner flags. Its first line points to the terms of use.`,
+    csv: 'Download CSV',
+    geojson: 'Download GeoJSON',
+    inView: 'Places in view',
+    working: (done: number, total: number) => `Gathering owner details: ${formatNumber(done)} of ${formatNumber(total)} files`,
+    done: (n: number) => `Downloaded ${plural(n, 'place', 'places')}.`,
+    leftOut: (n: number, limit: number) =>
+      `${plural(n, 'more place was', 'more places were')} left out, because a download holds at most ${formatNumber(limit)}. Zoom in or narrow the filters to download the rest.`,
+    withoutDetails: (n: number) => `${plural(n, 'place has', 'places have')} no published details, so ${n === 1 ? 'its' : 'their'} owner columns are empty.`,
+    nothing: 'There are no places to download.',
+    failed: 'The download could not be made. Try again in a moment.',
+    yes: 'yes',
+    no: 'no',
+    termsLine: (url: string) => `Placekeepers export: for community care and lawful action only. Read the terms of use first: ${url}`,
+    madeLine: (n: number, title: string, day: string, dataDay: string | null) =>
+      `${plural(n, 'place', 'places')} from ${title}. Made on ${day}${dataDay ? ` from the weekly data of ${dataDay}` : ''}.`,
+    ownerLine:
+      'Owner names and mailing addresses are as the City publishes them. Every owner flag has a careful note and a protective next step: read them on the lot page before you act. Not legal advice.',
+    scoreLine: (lens: string, weights: string) => `Scores use the ${lens} lens with these weights: ${weights}.`,
+  },
+
+  // Saved lists, kept only in this browser (src/places/lists.svelte.ts).
+  lists: {
+    title: 'Saved lists',
+    privacy:
+      'Lists stay in this browser, on this device. Nothing is sent anywhere. To move a list to another device or share it, download it as a file and open that file there.',
+    notKept:
+      'This browser is not keeping lists right now, perhaps a private window or blocked storage. Download your list before you close the page.',
+    empty: 'No lists yet. Save a place from its card, the ranked list or its lot page, and a list starts.',
+    inUse: 'List in use',
+    defaultName: 'My list',
+    untitled: 'List',
+    newList: 'New list',
+    newName: 'Name for the new list',
+    create: 'Make the list',
+    rename: 'Rename',
+    renameLabel: 'New name for this list',
+    saveName: 'Save the name',
+    cancel: 'Cancel',
+    delete: 'Delete this list',
+    confirmDelete: (name: string, n: number) =>
+      `Delete "${name}" and its ${plural(n, 'place', 'places')} from this browser? It cannot be brought back unless you downloaded it.`,
+    count: (n: number) => plural(n, 'place', 'places'),
+    noPlaces: 'This list is empty. Save places from their cards, the ranked list or their lot pages.',
+    open: (place: string) => `Open the lot page for ${place}`,
+    remove: 'Remove',
+    removeLabel: (place: string) => `Remove ${place} from the list`,
+    save: 'Save to my list',
+    saveShort: 'Save',
+    savedShort: 'Saved',
+    saveShortLabel: (place: string, list: string) => `Save ${place} to ${list}`,
+    saveTo: (name: string) => `Save to ${name}`,
+    saved: (name: string) => `Saved to ${name}`,
+    savedLabel: (name: string) => `Saved to ${name}. Choose to remove it.`,
+    added: (name: string) => `Saved to "${name}". Lists stay in this browser.`,
+    removed: (name: string) => `Removed from "${name}".`,
+    full: (limit: number) => `This list is full: a list holds up to ${formatNumber(limit)} places.`,
+    tooMany: (limit: number) => `This browser keeps up to ${formatNumber(limit)} lists. Delete one to make another.`,
+    download: 'Download this list',
+    importTitle: 'Open a list file',
+    importHelp: 'A CSV or GeoJSON file downloaded from Placekeepers, or any text file of nine digit parcel numbers.',
+    imported: (name: string, n: number) => `Opened "${name}" with ${plural(n, 'place', 'places')}.`,
+    importFailed: 'That file has no parcel numbers we could read.',
+    importTooBig: 'That file is too large to be a list.',
+    importLeftOut: (n: number, limit: number) => `${plural(n, 'place was', 'places were')} left out: a list holds up to ${formatNumber(limit)}.`,
   },
 
   evidence: {
@@ -426,9 +565,18 @@ export const strings = {
   },
 
   basemap: {
-    attribution:
-      '<a href="https://protomaps.com">Protomaps</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> (ODbL)',
     missing: 'The base map is not available, so streets and place names are hidden. The data layers still work.',
+    unavailable: 'The base map is not available here, so the map shows a plain background.',
+    legend: 'Streets, buildings, parks, water and place names, in color.',
+    legendMuted: 'Streets, buildings, parks, water and place names, in gray, so the data stands out.',
+  },
+
+  // The short credits line on the map (HTML). The full list of sources, each with its license, is on
+  // the Data status page and in each layer's "About this layer".
+  credits: {
+    basemap:
+      '<a href="https://protomaps.com" target="_blank" rel="noopener noreferrer">Protomaps</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>',
+    data: (statusUrl: string) => `Data: City of Philadelphia and <a href="${statusUrl}">others</a>`,
   },
 
   status: {
@@ -480,6 +628,11 @@ export const strings = {
     } as Record<string, string>,
     problems: 'Problems in the status file',
     notesTitle: 'Notes from the latest refresh',
+    basemapLabel: { ok: 'Up to date', failing: 'Not available' } as Record<string, string>,
+    basemapMade: (date: string) =>
+      `The weekly refresh makes a new copy of the base map about once a month. This copy was made from OpenStreetMap on ${date}.`,
+    basemapNoDate: 'The weekly refresh makes a new copy of the base map about once a month.',
+    basemapMissing: 'The base map is not available on this copy of the site, so the map shows a plain background. The data layers still work.',
   },
 
   search: {

@@ -215,6 +215,15 @@ with `web/scripts/make-basemap.sh`, and the weekly refresh adds it beside the pi
 assembles the site. It is therefore not listed in the manifest's `files` (clarified 2026-10-04 by
 M0.4).
 
+The base map is also a registry layer (added 2026-10-04 by M1.7): `basemap`, in the `basemap` group,
+with `file: basemap/philly.pmtiles`, so it has a switch and a setting (`look`: `light` or `muted`) like
+every layer. `pk publish` leaves every layer whose file is under `basemap/` alone, and the manifest
+lists the layer in `layers` but not its file in `files`. Its source, `basemap_openstreetmap` (endpoint
+kind `osm_extract` with no keys, the first source of that kind), is never fetched by the pipeline, so
+the manifest gives it the status `missing`; the web app ignores that status, judges the base map by
+`basemap/BUILD` (the Protomaps build date, written by make-basemap.sh), and leaves it out of the
+header's freshness badge.
+
 ## 3. `manifest.json`
 
 ```json
@@ -320,6 +329,11 @@ never change meaning once published. The id names each reason in the pipeline
 list of public property decides first (`PUB` 3, `PLB` 4, `PRA` 5, `PHDC` 8), then the owner names
 as OPA publishes them, by documented patterns (public bodies, company forms, nonprofit words, a
 person's name). The dossier's `owner.type` gives the same type by name (section 6).
+
+`sg` is written for every parcel from 2026-10-04 (M1.7; the table listed it before the pipeline
+wrote it): the parcel's suggestion ids as its dossier lists them (`derive.routes.suggestions_for`),
+`clean_and_green` for a vacant lot (a LandCare lot too, whose first step is then Community LandCare)
+and `seal_abandoned_building` for a vacant building, limited to the suggestions the registry has.
 
 `rt`, the first lawful step to get permission for the parcel (added 2026-10-04): the first route
 the parcel's dossier lists (`placekeepers.derive.routes.routes_for`, from the same owner type, owner

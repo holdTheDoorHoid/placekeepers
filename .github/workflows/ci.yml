@@ -1,6 +1,7 @@
 # Checks every pull request and every push to main: the data pipeline's tests and lint, the
-# workflow helper's tests, and the web app's tests, type check and build. Uses only the small
-# committed fixtures, never the network (apart from installing packages).
+# workflow helper's tests, the web app's tests, type check and build, and end to end tests of both
+# views at phone and desktop sizes in Chromium. Uses only the small committed fixtures, never the
+# network (apart from installing packages and the browser).
 
 name: CI
 
@@ -87,3 +88,59 @@ jobs:
 
       - name: Build for GitHub Pages
         run: npm run build
+
+  e2e:
+    name: Web end to end tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      # The browser download is kept between runs, keyed by the Playwright version in the lockfile.
+      - name: Find the Playwright version
+        id: playwright
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Restore the browser
+        id: browser
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+
+      - name: Install Chromium
+        if: steps.browser.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps --only-shell chromium
+
+      - name: Install the system libraries Chromium needs
+        if: steps.browser.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      # Builds the production site on the sample data, serves it, and tests both views at phone and
+      # desktop sizes (web/playwright.config.ts).
+      - name: End to end tests
+        run: npx playwright test
+
+      - name: Keep the report of a failed run
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: playwright-report
+          path: |
+            web/playwright-report/
+            web/test-results/
+          retention-days: 7

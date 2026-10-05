@@ -6,11 +6,14 @@
 // Fallback ("openfreemap"): the hosted OpenFreeMap Positron style, chosen at build time
 // with VITE_BASEMAP=openfreemap, for when the extract cannot be built.
 // "none": a plain background.
+//
+// The base map is the registry layer `basemap` (src/map/styles/basemap.ts), which the map controller
+// turns off or gives the gray look by restyling the base layers in place.
 
-import { layers, namedFlavor } from '@protomaps/basemaps';
 import type { StyleSpecification } from 'maplibre-gl';
 import { strings } from '../strings.ts';
 import type { BasemapMode } from './basemap-mode.ts';
+import { flavorLayers } from './styles/basemap.ts';
 import { PLAIN_BACKGROUND } from './styles/palette.ts';
 
 export const OPENFREEMAP_STYLE = 'https://tiles.openfreemap.org/styles/positron';
@@ -39,11 +42,16 @@ export function protomapsStyle(dataBase: string): StyleSpecification {
     version: 8,
     glyphs: files.glyphs,
     sprite: files.sprite,
-    sources: {
-      [BASEMAP_SOURCE]: { type: 'vector', url: `pmtiles://${files.tiles}`, attribution: strings.basemap.attribution },
-    },
-    layers: layers(BASEMAP_SOURCE, namedFlavor('light'), { lang: 'en' }) as StyleSpecification['layers'],
+    // The credit is in the map's own credits line (src/map/controller.ts), not on the source.
+    sources: { [BASEMAP_SOURCE]: { type: 'vector', url: `pmtiles://${files.tiles}` } },
+    // The light look holds every layer; the controller restyles them for the chosen look.
+    layers: flavorLayers(BASEMAP_SOURCE, 'light'),
   };
+}
+
+/** True for a style built on the self hosted Protomaps extract. */
+export function isProtomaps(style: StyleSpecification | string): style is StyleSpecification {
+  return typeof style !== 'string' && BASEMAP_SOURCE in (style.sources ?? {});
 }
 
 /** True when the extract exists and starts like a PMTiles file. */
@@ -71,4 +79,9 @@ export async function chooseBasemap(mode: BasemapMode, dataBase: string, fetchIm
   if (mode === 'openfreemap') return { style: OPENFREEMAP_STYLE, missing: false };
   if (await extractAvailable(dataBase, fetchImpl)) return { style: protomapsStyle(dataBase), missing: false };
   return { style: plainStyle(), missing: true };
+}
+
+/** The credit for the base map in the map's credits line, or null when the style brings its own. */
+export function basemapCredit(style: StyleSpecification | string): string | null {
+  return isProtomaps(style) ? strings.credits.basemap : null;
 }

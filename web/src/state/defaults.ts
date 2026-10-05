@@ -5,6 +5,7 @@
 import { FILTERS } from '../config/filters.ts';
 import {
   MAX_WEIGHT,
+  type Layer,
   type Lens,
   type Registry,
   type SettingValue,
@@ -53,6 +54,14 @@ export const FIELD_VIEW_MAX_WIDTH = 768;
 
 export function autoView(width: number): ViewName {
   return width < FIELD_VIEW_MAX_WIDTH ? 'field' : 'analysis';
+}
+
+/**
+ * The base map (style `basemap`): a layer like the others, except in links, where it is on unless
+ * the link says otherwise, because links made before it had a switch never list it (src/state/url.ts).
+ */
+export function isBaseLayer(layer: Layer): boolean {
+  return layer.style === 'basemap';
 }
 
 export function defaultLayers(reg: Registry, view: ViewName): string[] {

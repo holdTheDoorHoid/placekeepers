@@ -16,10 +16,13 @@ import maplibregl, {
 import type { Geometry } from 'geojson';
 import { Protocol } from 'pmtiles';
 import { resolveLayerData, type LayerData, type Manifest } from '../data/manifest.ts';
+import { basemapCredit, isProtomaps } from './basemap.ts';
+import { NO_PADDING, type Padding } from './covered.ts';
 import { registerArchive, styleArchives } from './pmtiles-source.ts';
-import type { Registry } from '../registry/types.ts';
+import type { Layer, Registry, ViewName } from '../registry/types.ts';
 import type { AppState, MapPosition } from '../state/defaults.ts';
 import { strings } from '../strings.ts';
+import { basemapLook, restyleBase } from './styles/basemap.ts';
 import { SELECTED, SELECTED_CASING } from './styles/palette.ts';
 import { STYLES, partId, styleFor, type StyleModule } from './styles/index.ts';
 
@@ -59,7 +62,8 @@ export interface InspectTarget {
 }
 
 export interface MapEvents {
-  move(position: MapPosition): void;
+  /** The map moved; `byPerson` when someone dragged, zoomed or turned it themselves. */
+  move(position: MapPosition, byPerson: boolean): void;
   /** A tap on a parcel of the lots layer, with where it was tapped. */
   select(id: string | null, properties: Record<string, unknown> | null, lngLat?: [number, number]): void;
   /** A tap that hit nothing on the data layers: the app may look up the parcel there. */
@@ -68,6 +72,8 @@ export interface MapEvents {
   inspect(target: InspectTarget | null): void;
   /** The map finished drawing after a move or a data change. */
   idle(): void;
+  /** The map has drawn for the first time, with its data layers. */
+  ready?(): void;
   layerStatus(layerId: string, status: LayerStatus): void;
 }
 
@@ -79,6 +85,13 @@ export interface ControllerOptions {
   state: AppState;
   manifest: Manifest | null;
   events: MapEvents;
+  /** The site root, for the link to the Data status page in the credits line. */
+  siteBase?: string;
+  /**
+   * How much of the map the page covers now (src/map/covered.ts), or null when nothing useful is
+   * left uncovered. The map flies with it as padding, so places land where people can see them.
+   */
+  padding?: () => Padding | null;
 }
 
 interface Applied {
@@ -90,8 +103,9 @@ interface Applied {
 
 const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
 
-function escapeHtml(text: string): string {
-  return text.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+/** Where the credits line sits: clear of the field view's bottom sheet and the map's buttons. */
+function creditsPosition(view: ViewName): 'top-left' | 'bottom-right' {
+  return view === 'field' ? 'top-left' : 'bottom-right';
 }
 
 function centerOf(geometry: Geometry): [number, number] {
@@ -128,6 +142,20 @@ export class MapController {
   private inspected: { layerId: string; ids: (string | number)[] } | null = null;
   /** The outline of a parcel opened by a lookup, waiting for the map to load. */
   private pickedShape: Geometry | null = null;
+  /** The base map's own layers as the starting style drew them, before any restyling. */
+  private baseStart: LayerSpecification[] | null = null;
+  /** The base layers as they are drawn now. */
+  private baseApplied: LayerSpecification[] = [];
+  private readonly protomaps: boolean;
+  private credits: maplibregl.AttributionControl;
+  private creditsAt: 'top-left' | 'bottom-right';
+  private readyFired = false;
+  /** The look and visibility the base layers are drawn with now (see baseKey). */
+  private baseDrawn = '';
+  private readonly padding: () => Padding | null;
+  /** A camera move waiting for the next frame, when panels have opened or closed. */
+  private pendingMove: { center: [number, number]; zoom: number | null; animate: boolean } | null = null;
+  private moveFrame = 0;
 
   constructor(options: ControllerOptions) {
     for (const url of styleArchives(options.style)) registerArchive(pmtilesProtocol(), url);
@@ -136,10 +164,20 @@ export class MapController {
     this.events = options.events;
     this.manifest = options.manifest;
     this.state = options.state;
+    this.protomaps = isProtomaps(options.style);
+    this.padding = options.padding ?? (() => NO_PADDING);
+    let style = options.style;
+    if (typeof style !== 'string') {
+      // The base map starts in the look and visibility the state asks for, with no flash of the
+      // default look; it keeps every layer of the light look so another look can be chosen later.
+      this.baseStart = style.layers;
+      this.baseApplied = this.baseTarget();
+      style = { ...style, layers: this.baseApplied };
+    }
     const { lng, lat, zoom, bearing, pitch } = options.state.map;
     this.map = new maplibregl.Map({
       container: options.container,
-      style: options.style,
+      style,
       center: [lng, lat],
       zoom,
       bearing,
@@ -150,27 +188,37 @@ export class MapController {
       attributionControl: false,
       localIdeographFontFamily: 'sans-serif',
     });
-    // Top right in both views, so the bottom sheet and drawer never cover the credits. The
-    // credits name every source on the map, which is a long list, so they fold into an "i" button
-    // once the map has loaded (MapLibre would keep them open until the first drag).
-    this.map.addControl(new maplibregl.AttributionControl({ compact: true }), 'top-right');
-    this.map.once('idle', () => {
-      this.map
-        .getContainer()
-        .querySelector('.maplibregl-ctrl-attrib.maplibregl-compact-show')
-        ?.classList.remove('maplibregl-compact-show');
-    });
+    // One short credits line, always open: the base map's credit, which OpenStreetMap's license
+    // asks to stay visible, and "Data: City of Philadelphia and others" linking to the Data status
+    // page, which lists every source with its license (as each layer's "About this layer" does).
+    // The full list of sources no longer sits on the map, where it covered a third of it.
+    const credits = [basemapCredit(options.style), strings.credits.data(`${options.siteBase ?? './'}status/`)];
+    this.credits = new maplibregl.AttributionControl({ compact: false, customAttribution: credits.filter((c): c is string => c !== null) });
+    this.creditsAt = creditsPosition(options.state.view);
+    this.map.addControl(this.credits, this.creditsAt);
     this.map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), 'top-right');
     this.map.getCanvas().setAttribute('aria-label', strings.app.mapLabel);
 
     this.map.on('load', () => {
       this.loaded = true;
-      this.labelAnchor = this.map.getStyle().layers.find((l) => l.type === 'symbol')?.id;
+      const layers = this.map.getStyle().layers;
+      // A hosted style (OpenFreeMap) brings its own layers, known only now, drawn as it styles them.
+      if (!this.baseStart) {
+        this.baseApplied = this.baseStart = layers;
+        this.baseDrawn = 'light:true';
+      }
+      this.labelAnchor = layers.find((l) => l.type === 'symbol')?.id;
       this.sync();
       this.drawPickedShape();
     });
-    this.map.on('moveend', () => this.events.move(this.position()));
-    this.map.on('idle', () => this.events.idle());
+    this.map.on('moveend', (e) => this.events.move(this.position(), 'originalEvent' in e && !!e.originalEvent));
+    this.map.on('idle', () => {
+      if (this.loaded && !this.readyFired) {
+        this.readyFired = true;
+        this.events.ready?.();
+      }
+      this.events.idle();
+    });
     this.map.on('click', (e) => this.handleClick(e));
     this.map.on('mousemove', (e) => this.handleHover(e));
     this.map.on('error', (e) => this.handleError(e as unknown as { sourceId?: string; error?: Error }));
@@ -233,6 +281,7 @@ export class MapController {
   }
 
   destroy(): void {
+    cancelAnimationFrame(this.moveFrame);
     this.map.remove();
   }
 
@@ -254,8 +303,8 @@ export class MapController {
     return [...seen.values()];
   }
 
-  /** The properties of a parcel in loaded data, for a selection that came from a link. */
-  findParcel(id: string): Record<string, unknown> | null {
+  /** A parcel in loaded data, with a point on it, for a selection that came from a link. */
+  findParcel(id: string): { properties: Record<string, unknown>; center: [number, number] } | null {
     if (!this.loaded) return null;
     for (const applied of this.applied.values()) {
       if (applied.style !== STYLES.vacant_parcels) continue;
@@ -263,14 +312,44 @@ export class MapController {
         sourceLayer: applied.sourceLayer ?? undefined,
         filter: ['==', ['to-string', ['get', 'id']], id] as FilterSpecification,
       });
-      if (features[0]) return { ...features[0].properties };
+      if (features[0]) return { properties: { ...features[0].properties }, center: centerOf(features[0].geometry) };
     }
     return null;
   }
 
+  /** How much of the map the page covers now, or null when nothing useful is left uncovered. */
+  coverPadding(): Padding | null {
+    return this.padding();
+  }
+
+  /**
+   * Flies to a place, zooming in to at least `zoom`, and lands it in the middle of the part of the
+   * map people can see: the move waits for the next frame, so a panel that opens or closes with the
+   * same tap is already in place, and flies with that panel or sheet as MapLibre's padding.
+   */
   flyTo(center: [number, number], zoom = 17): void {
-    // Not essential, so MapLibre skips the animation for people who prefer reduced motion.
-    this.map.flyTo({ center, zoom: Math.max(this.map.getZoom(), zoom), essential: false });
+    this.queueMove({ center, zoom, animate: true });
+  }
+
+  /** Brings a place to the middle of the visible part of the map without zooming, as a link opens. */
+  showPlace(center: [number, number], animate = false): void {
+    this.queueMove({ center, zoom: null, animate });
+  }
+
+  private queueMove(move: { center: [number, number]; zoom: number | null; animate: boolean }): void {
+    this.pendingMove = move;
+    if (this.moveFrame) return;
+    this.moveFrame = requestAnimationFrame(() => {
+      this.moveFrame = 0;
+      const next = this.pendingMove;
+      this.pendingMove = null;
+      if (!next) return;
+      const padding = this.padding() ?? NO_PADDING;
+      const zoom = next.zoom === null ? this.map.getZoom() : Math.max(this.map.getZoom(), next.zoom);
+      // Not essential, so MapLibre skips the animation for people who prefer reduced motion.
+      if (next.animate) this.map.flyTo({ center: next.center, zoom, padding, essential: false });
+      else this.map.easeTo({ center: next.center, zoom, padding, duration: 0 });
+    });
   }
 
   showUserLocation(lng: number, lat: number): void {
@@ -282,7 +361,18 @@ export class MapController {
       this.marker = new maplibregl.Marker({ element: dot });
     }
     this.marker.setLngLat([lng, lat]).addTo(this.map);
-    this.map.flyTo({ center: [lng, lat], zoom: 16, essential: false });
+    this.queueMove({ center: [lng, lat], zoom: 16, animate: true });
+  }
+
+  /** Takes the "you are here" dot off the map. */
+  hideUserLocation(): void {
+    this.marker?.remove();
+  }
+
+  /** The view as west, south, east and north. */
+  bounds(): [number, number, number, number] {
+    const b = this.map.getBounds();
+    return [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()];
   }
 
   // Keeping the map in step with the state ------------------------------------------------
@@ -290,7 +380,54 @@ export class MapController {
   private sync(): void {
     if (!this.loaded) return;
     this.syncCamera();
+    this.syncCredits();
     for (const layer of this.registry.layers) this.syncLayer(layer.id);
+  }
+
+  private syncCredits(): void {
+    const at = creditsPosition(this.state.view);
+    if (at === this.creditsAt) return;
+    this.map.removeControl(this.credits);
+    this.map.addControl(this.credits, at);
+    this.creditsAt = at;
+  }
+
+  // The base map ------------------------------------------------------------------------------
+
+  /** The base map's registry layer (style `basemap`), if the registry has one. */
+  private baseLayer(): Layer | undefined {
+    return this.registry.layers.find((l) => styleFor(l)?.base);
+  }
+
+  /** The look and visibility the state asks of the base map, as a short key. */
+  private baseKey(): string {
+    const layer = this.baseLayer();
+    if (!layer) return 'none';
+    return `${basemapLook({ layer, registry: this.registry, state: this.state })}:${this.state.layers.includes(layer.id)}`;
+  }
+
+  /** The base layers as the state wants them drawn. */
+  private baseTarget(): LayerSpecification[] {
+    const layer = this.baseLayer();
+    if (!this.baseStart) return [];
+    this.baseDrawn = this.baseKey();
+    if (!layer) return this.baseStart;
+    const visible = this.state.layers.includes(layer.id);
+    const look = basemapLook({ layer, registry: this.registry, state: this.state });
+    return restyleBase(this.baseStart, look, visible, this.protomaps);
+  }
+
+  private syncBase(layer: Layer): void {
+    if (!this.baseStart) return;
+    // Without the extract (a plain background) there is no base map to show or restyle.
+    this.report(layer.id, this.baseStart.some((l) => l.type !== 'background') ? 'ok' : 'unavailable');
+    if (this.baseKey() === this.baseDrawn) return;
+    const next = this.baseTarget();
+    next.forEach((spec, i) => {
+      const prev = this.baseApplied[i];
+      if (prev?.id === spec.id) this.updateLayer(prev, spec);
+    });
+    this.baseApplied = next;
   }
 
   private syncCamera(): void {
@@ -316,6 +453,10 @@ export class MapController {
     const layer = this.registry.layers.find((l) => l.id === layerId);
     const style = layer && styleFor(layer);
     if (!layer || !style) return;
+    if (style.base) {
+      this.syncBase(layer);
+      return;
+    }
     const visible = this.state.layers.includes(layerId);
     const applied = this.applied.get(layerId);
 
@@ -409,31 +550,17 @@ export class MapController {
     return best?.id ?? this.labelAnchor;
   }
 
+  /** Adds a data file as a map source. Its credits are in the credits line, not on the source. */
   private ensureSource(data: LayerData): string {
     const sourceId = `pk-src:${data.path}`;
     if (this.map.getSource(sourceId)) return sourceId;
-    const attribution = this.attributionFor(data.path);
     if (data.kind === 'pmtiles') {
       registerArchive(pmtilesProtocol(), data.url);
-      this.map.addSource(sourceId, { type: 'vector', url: `pmtiles://${data.url}`, attribution });
+      this.map.addSource(sourceId, { type: 'vector', url: `pmtiles://${data.url}` });
     } else {
-      this.map.addSource(sourceId, { type: 'geojson', data: data.url, attribution });
+      this.map.addSource(sourceId, { type: 'geojson', data: data.url });
     }
     return sourceId;
-  }
-
-  /** Credits for every registry source behind the layers stored in one file. */
-  private attributionFor(path: string): string {
-    const texts = new Set<string>();
-    for (const layer of this.registry.layers) {
-      const resolved = resolveLayerData(layer, this.manifest, this.dataBase);
-      if (!resolved.ok || resolved.data.path !== path) continue;
-      for (const sourceId of layer.sources) {
-        const source = this.registry.sources.find((s) => s.id === sourceId);
-        if (source) texts.add(escapeHtml(source.attribution));
-      }
-    }
-    return [...texts].join('; ');
   }
 
   // Pointer handling ------------------------------------------------------------------------

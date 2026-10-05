@@ -17,10 +17,12 @@
   );
 
   async function share() {
-    const url = `${location.origin}${location.pathname}#${encodeState(store.registry, $state.snapshot(store.state))}`;
+    // While the person's location is in use, the map position would show where they are.
+    const located = store.mapPrivate;
+    const url = `${location.origin}${location.pathname}#${encodeState(store.registry, $state.snapshot(store.state), { includeMap: !located })}`;
     try {
       await navigator.clipboard.writeText(url);
-      store.say(strings.header.shareDone);
+      store.say(located ? strings.header.shareDoneNoMap : strings.header.shareDone);
     } catch {
       store.say(strings.header.shareFailed);
     }

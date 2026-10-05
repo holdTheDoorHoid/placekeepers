@@ -20,7 +20,7 @@ const violence = reg.lenses.find((l) => l.id === 'violence')!;
 function customized(): AppState {
   const state = defaultState(reg, 'analysis');
   state.map = { lng: -75.15623, lat: 39.98712, zoom: 15.25, bearing: 0, pitch: 0 };
-  state.layers = ['vacant_parcels', 'shootings_hex'];
+  state.layers = ['vacant_parcels', 'shootings_hex', 'basemap'];
   state.settings.vacant_parcels!.min_confidence = '3';
   state.settings.vacant_parcels!.kinds = 'lots';
   state.settings.shootings_hex!.window = 'm36';
@@ -34,7 +34,7 @@ function customized(): AppState {
 
 describe('defaults per view', () => {
   it('turns layers on according to each view in the registry', () => {
-    expect(defaultLayers(reg, 'field')).toEqual(['vacant_parcels', 'hin_2025', 'memorials']);
+    expect(defaultLayers(reg, 'field')).toEqual(['vacant_parcels', 'hin_2025', 'memorials', 'basemap']);
     expect(defaultLayers(reg, 'analysis')).toEqual([
       'vacant_parcels',
       'hin_2025',
@@ -43,6 +43,7 @@ describe('defaults per view', () => {
       'gardens',
       'segments',
       'memorials',
+      'basemap',
     ]);
   });
 
@@ -162,6 +163,30 @@ describe('address bar state', () => {
     expect(back.layers).toEqual([]);
   });
 
+  it('keeps the base map on for links made before it had a switch, and off only when a link says so', () => {
+    expect(decodeState(reg, 'v=a&l=vacant_parcels,hin_2025', 'field').state.layers).toEqual(['vacant_parcels', 'hin_2025', 'basemap']);
+    expect(decodeState(reg, 'v=a&l=', 'field').state.layers).toEqual(['basemap']);
+    const state = defaultState(reg, 'analysis');
+    state.layers = ['vacant_parcels'];
+    const text = encodeState(reg, state);
+    expect(text).toContain('l=vacant_parcels,-basemap');
+    expect(decodeState(reg, text, 'field').state.layers).toEqual(['vacant_parcels']);
+    state.layers = ['vacant_parcels', 'basemap'];
+    expect(encodeState(reg, state)).toMatch(/l=vacant_parcels($|&)/);
+    state.settings.basemap!.look = 'muted';
+    expect(encodeState(reg, state)).toContain('s=basemap.look:muted');
+    expect(decodeState(reg, encodeState(reg, state), 'field').state).toEqual(state);
+  });
+
+  it('carries the LandCare and first step filters in the link', () => {
+    const state = defaultState(reg, 'analysis');
+    state.filters.first_step = ['2', '5'];
+    state.filters.landcare = ['0'];
+    const text = encodeState(reg, state);
+    expect(text).toContain('f=landcare:0,first_step:2+5');
+    expect(decodeState(reg, text, 'field').state.filters).toEqual(state.filters);
+  });
+
   it('keeps an empty filter as "nothing selected"', () => {
     const state = defaultState(reg, 'analysis');
     state.filters.owner_type = [];
@@ -192,7 +217,7 @@ describe('address bar state', () => {
     const defaults = defaultState(reg, 'field');
     expect(state.view).toBe('field');
     expect(state.map).toEqual(DEFAULT_MAP);
-    expect(state.layers).toEqual(['vacant_parcels']);
+    expect(state.layers).toEqual(['vacant_parcels', 'basemap']);
     expect(state.settings).toEqual(defaults.settings);
     expect(state.weights.violence).toEqual({ ...defaults.weights.violence, poverty: 5 });
     expect(state.suggestions).toEqual(defaults.suggestions);

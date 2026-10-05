@@ -182,7 +182,9 @@ def build_parcels(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) 
     """The vacancy model's parcels, or the City's lists alone when the model has not run."""
     model = ctx.cache.root / "derived" / "vacancy.parquet"
     if model.is_file():
-        return build_parcels_from_model(model, out, paths, set(ctx.registry.routes))
+        return build_parcels_from_model(
+            model, out, paths, set(ctx.registry.routes), set(ctx.registry.suggestions)
+        )
     result = build_parcels_from_city_lists(ctx, paths, out, as_of)
     result.notes.append("The vacancy model has not run, so the map shows the City's lists alone")
     return result
@@ -193,11 +195,22 @@ PARCEL_LAYER_SOURCES = ("opa_properties", "vacant_indicators_land", "vacant_indi
 SHOWN_KINDS = ("lot", "lot_conflict", "building")
 
 
+def suggestion_ids(k: int, known: set[str] | None) -> str:
+    """`sg`: the parcel's suggestion ids, comma separated, as its dossier lists them (a vacant lot
+    gets clean and green, a vacant building gets sealed; derive.routes.suggestions_for)."""
+    from placekeepers.derive.routes import SUGGESTIONS_BY_KIND, suggestions_for
+
+    kind = "lot" if k == 1 else "building"
+    allowed = known if known is not None else set(SUGGESTIONS_BY_KIND[kind])
+    return ",".join(suggestions_for(kind, allowed))
+
+
 def build_parcels_from_model(
     model: Path,
     out: Path,
     paths: dict[str, Path] | None = None,
     known_routes: set[str] | None = None,
+    known_suggestions: set[str] | None = None,
 ) -> BuildResult:
     columns = ["opa", "kind", "k", "vc", "lc", "rs", "n", "dy", "sy", "ny", "geometry"]
     table = pq.read_table(model, columns=columns)
@@ -225,6 +238,7 @@ def build_parcels_from_model(
             rt = routes.get(opa, 0)
             properties = {"id": opa, "k": k, "vc": vc, "ot": ot, "rt": rt, "lc": lc, "rs": rs}
             properties["n"] = n
+            properties["sg"] = suggestion_ids(k, known_suggestions)
             for key, year in (("dy", dy), ("sy", sy), ("ny", ny)):
                 if year is not None:
                     properties[key] = int(year)
@@ -289,6 +303,7 @@ def build_parcels_from_city_lists(
             ot = owner_types.get(account, 0)
             rt = routes.get(account, 0)
             properties = {"id": account, "k": kind, "vc": 2, "ot": ot, "rt": rt, "lc": lc}
+            properties["sg"] = suggestion_ids(kind, set(ctx.registry.suggestions))
             writer.write(properties, geometry_json(shapes[account]))
     return BuildResult(writer.count, notes)
 

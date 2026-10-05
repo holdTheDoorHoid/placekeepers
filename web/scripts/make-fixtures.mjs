@@ -82,6 +82,24 @@ function reasonsFor({ k, vc, lc }, index) {
   return { rs: bits.reduce((sum, bit) => sum + 2 ** bit, 0), n: own, ...years };
 }
 
+// The first lawful step to get permission (`rt`, docs/CONTRACTS.md section 4), worked out from the
+// owner type and LandCare as the pipeline's routes_for does: LandCare first, then the City or the
+// Land Bank, the Redevelopment Authority, another public body, and a private owner. An unknown
+// owner has no name on every other parcel (no clear route yet) and an untyped name on the rest.
+// No random numbers are drawn, so every other fixture stays the same.
+function firstStepFor({ ot, lc }, index) {
+  if (lc === 1) return 1;
+  if (ot === 3 || ot === 4) return 2;
+  if (ot === 5) return 3;
+  if (ot === 6 || ot === 8) return 4;
+  if (ot === 0) return index % 2 === 1 ? 0 : 5;
+  return 5;
+}
+
+// Two parcels get a public owner the random draw never gives (a housing authority and another
+// public body), so every first step appears in the sample.
+const OWNER_OVERRIDES = { 31: 6, 47: 8 };
+
 // Parcels: ten runs of rowhouse sized lots (5 m wide, 25 m deep) on block faces.
 const parcels = [];
 const RUNS = [3, 6, 4, 7, 5, 4, 6, 5, 3, 7];
@@ -114,8 +132,12 @@ RUNS.forEach((length, run) => {
       f_vacant: landcare ? between(20, 45) : between(55, 100),
       f_shoot: Math.min(100, Math.max(0, Math.round(25 + 60 * xNorm + between(-10, 10)))),
       f_poverty: Math.min(100, Math.max(0, poverty + between(-3, 3))),
-      sg: building ? 'seal_abandoned_building' : landcare ? '' : 'clean_and_green',
+      // As the pipeline does: every vacant lot gets clean and green (for a LandCare lot, through
+      // Community LandCare), every vacant building gets sealed.
+      sg: building ? 'seal_abandoned_building' : 'clean_and_green',
     };
+    if (OWNER_OVERRIDES[n] !== undefined) properties.ot = OWNER_OVERRIDES[n];
+    properties.rt = firstStepFor(properties, n);
     Object.assign(properties, reasonsFor(properties, n));
     // Some parcels have no tree canopy rank yet, as happens while data arrives.
     if (random() > 0.2) properties.f_canopy = between(0, 100);
@@ -388,6 +410,16 @@ const manifest = {
     schools: ok(490, null),
     street_centerlines: ok(41252, null),
     memorial_names: ok(0, null),
+    // The pipeline lists the base map's source but never fetches it: the site makes the base map.
+    basemap_openstreetmap: {
+      status: 'missing',
+      last_attempt: null,
+      last_success: null,
+      stale_since: null,
+      rows: null,
+      newest_record: null,
+      message: 'Not collected yet',
+    },
   },
   layers: {
     vacant_parcels: {
@@ -413,6 +445,7 @@ const manifest = {
       sources: ['crashes_2020_2024', 'crashes_2016_2020', 'crashes_2007_2017'],
     },
     memorials: { file: 'tiles/streets.pmtiles', source_layer: 'memorials', sources: ['fatal_crashes', 'memorial_names'] },
+    basemap: { file: 'basemap/philly.pmtiles', source_layer: 'earth', sources: ['basemap_openstreetmap'] },
   },
   files: Object.fromEntries(
     [
