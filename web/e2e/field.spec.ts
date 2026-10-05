@@ -2,7 +2,7 @@
 // saving places, at phone and desktop sizes.
 
 import { expect, test } from '@playwright/test';
-import { LOT, expectHash, expectSelectedInView, hashParams, openMap } from './helpers.ts';
+import { LOT, SAMPLE_CENTER, expectHash, expectSelectedInView, hashParams, openMap, parcelsDrawn, zoomTo } from './helpers.ts';
 
 const AT_LOT = `v=f&m=17/${LOT.lat}/${LOT.lng}`;
 
@@ -81,6 +81,18 @@ test.describe('field view', () => {
     expect((await hashParams(page)).has('m')).toBe(false);
     await page.getByRole('button', { name: 'Zoom out' }).click();
     await expect.poll(async () => (await hashParams(page)).has('m')).toBe(true);
+  });
+
+  test('zoomed out, the nearby list waits for every parcel instead of listing the sample', async ({ page }) => {
+    await openMap(page, `v=f&m=12.4/${SAMPLE_CENTER.lat}/${SAMPLE_CENTER.lng}`);
+    await expect.poll(async () => (await parcelsDrawn(page)).sample).toBeGreaterThan(0);
+    await page.getByRole('button', { name: /What you can do nearby/ }).click();
+    await expect(page.locator('#pk-places')).toContainText('Move or zoom the map to a neighborhood to see places nearby.');
+    await expect(page.locator('article.card')).toHaveCount(0);
+    await zoomTo(page, 13.4);
+    await expect.poll(async () => (await parcelsDrawn(page)).sample).toBe(0);
+    await expect(page.locator('article.card').first()).toBeVisible();
+    await expect(page.getByText('Nearest to the middle of the map first.')).toBeVisible();
   });
 
   test('saves a place to a list from its card, kept in this browser', async ({ page }) => {

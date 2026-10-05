@@ -347,7 +347,14 @@ medium and low confidence. A parcel is its Water Department parcel shape, else t
 else (added 2026-10-04, issue #22) a Point at the assessor's location (`lat`, `lng` in OPA), with
 the same properties; a unit inside a larger parcel (an OPA `unit`) with no shape is left out.
 Styles must draw both polygons and points. The kind comes from the building footprint, so a parcel
-on the City's building list with no building standing is a lot. Bits of `rs` (test with `rs & (1 << bit)`); bits
+on the City's building list with no building standing is a lot.
+
+Zoomed out, the layer is light (added 2026-10-05, issue #26): from zoom 13 up it holds every parcel
+exactly as above; below zoom 13 it holds one Point on each parcel's shape (a sample: tippecanoe
+keeps about 40 percent at zoom 12, 16 at 11 and 6 at 10), with every property except `rs`, `n`,
+`dy`, `sy` and `ny` (the lot page reads those from the dossier), plus `lo` = 1. So the lens colors
+and every filter work at every zoom, but a count or list built from what the map draws below zoom
+13 is a sample of the parcels in view. Bits of `rs` (test with `rs & (1 << bit)`); bits
 never change meaning once published. The id names each reason in the pipeline
 (`placekeepers.derive.vacancy.REASONS`), the web app (`web/src/places/reasons.ts`) and its sentences
 (`strings.reasons`); tests on both sides check them against this table:

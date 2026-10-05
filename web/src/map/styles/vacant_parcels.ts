@@ -4,7 +4,9 @@
 //   probably:    solid thin outline, medium fill
 //   not sure:    dashed outline, faint fill
 // A parcel with no mapped shape is a point at the assessor's location (issue #22), drawn as a
-// circle with the same color and the same strength for how sure we are.
+// circle with the same color and the same strength for how sure we are. Zoomed out (below zoom 13)
+// the tiles carry a light sample of the parcels as points (issue #26), drawn the same way with a
+// hairline edge, so the lens colors show where lots cluster.
 // Settings: min_confidence (hide parcels below a confidence) and kinds (lots, buildings or
 // both). The owner type filter from the analysis view applies here too.
 
@@ -54,8 +56,11 @@ const outlineWidth: ExpressionSpecification = [
   ['match', vc, 3, 2.2, 1.2],
 ];
 
-/** Circles for parcels with no shape: small when zoomed out, about a lot wide up close. */
-const pointRadius: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 10, 2, 14, 4, 17, 7];
+/** Circles for parcels with no shape, and for every parcel zoomed out: small far out, about a
+ *  lot wide up close. */
+const pointRadius: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 10, 2.5, 14, 4, 17, 7];
+/** Below zoom 13 the circles are the light sample: a hairline edge, so the fill color reads. */
+const pointEdge: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 12, 0.3, 13, ['match', vc, 3, 1.6, 2, 1, 0.75]];
 /** The ring around a selected point, a little wider than the point. */
 const selectedRadius: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 10, 5, 14, 7, 17, 10];
 
@@ -104,7 +109,7 @@ export const vacantParcels: StyleModule = {
           'circle-opacity': ['match', vc, 3, 0.9, 2, 0.72, 0.45],
           'circle-radius': pointRadius,
           'circle-stroke-color': PARCEL_OUTLINE,
-          'circle-stroke-width': ['match', vc, 3, 1.6, 2, 1, 0.75],
+          'circle-stroke-width': pointEdge,
           'circle-stroke-opacity': ['match', vc, 3, 1, 2, 1, 0.6],
         },
       },
