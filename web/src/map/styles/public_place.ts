@@ -8,7 +8,7 @@
 
 import type { ExpressionSpecification, FilterSpecification, LayerSpecification } from 'maplibre-gl';
 import { strings } from '../../strings.ts';
-import { NOT_IN_SERVICE_RING, PLACE_COLORS, PLACE_RING, POOL_COLORS, SELECTED } from './palette.ts';
+import { NOT_IN_SERVICE_RING, PLACE_COLORS, PLACE_RING, POOL_COLORS, POOL_RING, SELECTED } from './palette.ts';
 import { highlightFilter, partId, settingValue, sourceKeys, type LegendContext, type LegendEntry, type StyleContext, type StyleModule } from './types.ts';
 
 const FALLBACK = '#5f6870';
@@ -47,7 +47,7 @@ export const publicPlace: StyleModule = {
         paint: {
           'circle-color': color,
           'circle-radius': radius,
-          'circle-stroke-color': PLACE_RING,
+          'circle-stroke-color': pools ? POOL_RING : PLACE_RING,
           'circle-stroke-width': ['interpolate', ['linear'], ['zoom'], 10, 1, 16, 2],
         },
       },
@@ -89,7 +89,7 @@ export const publicPlace: StyleModule = {
     if (!isPools(ctx)) {
       return [{ kind: 'circle', label: t.legend[ctx.layer.id] ?? ctx.layer.label, fill: PLACE_COLORS[ctx.layer.id] ?? FALLBACK, stroke: PLACE_RING, radius: 6 }];
     }
-    const entries: LegendEntry[] = [1, 2, 3].map((k) => ({ kind: 'circle', label: t.poolLegend[k]!, fill: POOL_COLORS[k]!, stroke: PLACE_RING, radius: 6 }));
+    const entries: LegendEntry[] = [1, 2, 3].map((k) => ({ kind: 'circle', label: t.poolLegend[k]!, fill: POOL_COLORS[k]!, stroke: POOL_RING, radius: 6 }));
     if (!inServiceOnly(ctx)) entries.push({ kind: 'circle', label: t.notInService, fill: '#ffffff', stroke: NOT_IN_SERVICE_RING, radius: 6 });
     entries.push({ kind: 'note', text: t.poolsShown[inServiceOnly(ctx) ? 'in_service' : 'all']! });
     entries.push({ kind: 'note', text: t.seasonNote });

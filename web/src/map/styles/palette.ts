@@ -67,27 +67,32 @@ export const STOP_UNKNOWN_RING = '#5f6870';
 
 /**
  * Amenities from OpenStreetMap (M3.5): a small dot with a white ring, one hue per kind, clear of
- * the lots' greens, the selection blue and the stops' colors.
+ * the lots' greens, the selection blue and the stops' colors. Toilets and water, on in the field
+ * view, are a deep pink and a sky blue, clear of the memorials' gray violet and the High Injury
+ * Network's amber shown beside them.
  */
 export const AMENITY_COLORS: Record<string, string> = {
   benches: '#8c6d31',
   picnic_tables: '#6b7f1f',
   drinking_water: '#1b8ac2',
-  toilets: '#7b5ea7',
+  toilets: '#b8327a',
   bookcases: '#c0622f',
 };
 export const AMENITY_RING = '#ffffff';
 
 /**
  * Public places from the City (M3.5): a larger dot with a white ring. Park drinking fountains share
- * the drinking water blue; a pool or sprayground not in service this year is a hollow gray ring.
+ * the drinking water blue; pools, spraygrounds and sprinklers are three aquas, from deep to pale,
+ * with a dark outline; one not in service this year is a hollow gray ring.
  */
 export const PLACE_COLORS: Record<string, string> = {
   park_water: '#1b8ac2',
   libraries: '#3d3f7a',
   recreation_centers: '#1f7a6d',
 };
-export const POOL_COLORS: Record<number, string> = { 1: '#0a7fb0', 2: '#33b5d6', 3: '#7fd0e6' };
+export const POOL_COLORS: Record<number, string> = { 1: '#0096b8', 2: '#4cc3dc', 3: '#97dcea' };
+/** Pools draw a dark outline, so the pale sprinkler blue still shows on a pale base map. */
+export const POOL_RING = '#0b5468';
 export const PLACE_RING = '#ffffff';
 export const NOT_IN_SERVICE_RING = '#6b747c';
 
