@@ -57,6 +57,18 @@ with memorials.
 - Anyone can ask for a memorial to come down through a public GitHub issue, no name or reason
   needed, until a private email address exists.
 
+### Buses and trains, an early look
+
+- SEPTA's bus, trolley and train stops and routes: how often service comes and how many people
+  get on each weekday, from SEPTA's own counts. Subway, El and Regional Rail stations can be
+  added in Settings.
+- Shelters and benches at stops, from what OpenStreetMap knows so far, with the "Survey bus
+  stops" guide showing neighbors how to add the stops it is still missing using the free
+  StreetComplete app.
+- Both layers are under "Buses and trains" in the layer list, off by default. The transit comfort
+  lens and its suggestions, which give these layers a job on the map, are not part of v0.1; they
+  come in version 0.2.
+
 ### Data and upkeep
 
 - A weekly automatic refresh (and an on demand one) that downloads every source again, checks it,
@@ -87,6 +99,6 @@ with memorials.
 
 ### Site pages
 
-- About, Why this works, How to do it, Use this responsibly, How we find vacant land, Data
-  status, Terms, Privacy, and Contact, all in plain language with no jargon.
+- About, Why this works, How to do it, Use this responsibly, How we find vacant land, Survey bus
+  stops, Data status, Terms, Privacy, and Contact, all in plain language with no jargon.
 
