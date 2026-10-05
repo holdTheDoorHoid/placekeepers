@@ -13,6 +13,7 @@ from placekeepers.adapters.fatal_crashes import FatalCrashes
 from placekeepers.adapters.high_injury_network import HighInjuryNetwork
 from placekeepers.adapters.lens_context import CensusTracts2020, TreeCanopy2018
 from placekeepers.adapters.opa_properties import OpaProperties
+from placekeepers.adapters.osm import OsmExtract
 from placekeepers.adapters.property_records import AssessmentHistory, RealEstateTransfers
 from placekeepers.adapters.pwd_parcels import PwdParcels
 from placekeepers.adapters.schools import Schools
@@ -68,6 +69,8 @@ ADAPTERS: dict[str, type[Adapter]] = {
     # The violence reduction lens (M1.4)
     "census_tracts_2020": CensusTracts2020,
     "tree_canopy_2018": TreeCanopy2018,
+    # Shelters and benches from OpenStreetMap (M2.2)
+    "osm_philadelphia": OsmExtract,
 }
 
 
