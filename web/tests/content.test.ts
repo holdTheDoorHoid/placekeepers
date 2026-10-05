@@ -58,11 +58,24 @@ describe('readContentPages', () => {
     expect(pages.contact).not.toContain('{{REMOVAL_EMAIL}}');
   });
 
-  it('says "coming soon" style text while REMOVAL_EMAIL is not set, and a mailto link once it is', () => {
+  it('says a private address is coming soon while REMOVAL_EMAIL is not set, and a mailto link once it is', () => {
     if (REMOVAL_EMAIL === null) {
-      expect(pages.contact).toMatch(/not finished setting up/);
+      // Decision D7 (docs/VERIFICATION.md): no promise of an email that does not exist yet, and
+      // the interim way to ask is a GitHub issue, said plainly to be public.
+      expect(pages.contact).toMatch(/private email address for these requests is coming soon/);
+      expect(pages.contact).toMatch(/Anyone can read a GitHub issue/);
+      expect(pages.contact).toContain('template=memorial-removal.yml');
     } else {
       expect(pages.contact).toContain(`mailto:${REMOVAL_EMAIL}`);
+    }
+  });
+
+  it('never promises removal by email while there is no removal address', () => {
+    if (REMOVAL_EMAIL !== null) return;
+    for (const slug of slugsOnDisk()) {
+      const text = pages[slug]!.replace(/<[^>]+>/g, ' ');
+      expect(text, `content/${slug}.md`).not.toMatch(/remov[a-z]*[^.]*by email|by email[^.]*remov/i);
+      expect(text, `content/${slug}.md`).not.toMatch(/follow up by email/i);
     }
   });
 });

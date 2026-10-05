@@ -20,6 +20,7 @@ import {
   suggestionViews,
   titleStreet,
 } from '../src/streets/describe.ts';
+import { REMOVAL_EMAIL } from '../src/content/removal-email.ts';
 import { strings } from '../src/strings.ts';
 
 const reg = loadRegistry();
@@ -170,6 +171,21 @@ describe('memorials style', () => {
     expect(hidden.source).toBeNull();
     expect(JSON.stringify(hidden)).not.toContain('Alex Example');
   });
+
+  it('says in its legend that no names show while there is no removal address (decision D7)', () => {
+    const notes = (state: AppState) =>
+      styleFor(memorials)!
+        .legend({ layer: memorials, registry: reg, state })
+        .filter((e) => e.kind === 'note')
+        .map((e) => (e as { text: string }).text);
+    if (REMOVAL_EMAIL === null) {
+      expect(notes(defaultState(reg, 'analysis'))).toEqual([strings.legend.memorialNamesWaiting]);
+      expect(notes(defaultState(reg, 'analysis')).join(' ')).not.toMatch(/shares the person's name/);
+    } else {
+      expect(notes(defaultState(reg, 'analysis'))).toEqual([strings.legend.memorialNames]);
+    }
+    expect(notes(withSetting(memorials, 'show_names', false))).toEqual([strings.legend.memorialNamesHidden]);
+  });
 });
 
 describe('street segments style', () => {
@@ -267,6 +283,13 @@ describe('what a memorial says', () => {
     expect(decodeURIComponent(mail)).toContain('fc20260820_1000');
     expect(decodeURIComponent(mail)).not.toContain('Alex');
     expect(mail).not.toContain('github.com');
+  });
+
+  it('promises no removal email before the address exists (decision D7)', () => {
+    expect(strings.streets.removalNote(false)).not.toMatch(/email\./i);
+    expect(strings.streets.removalNote(false)).toMatch(/coming soon/);
+    expect(strings.streets.removalNote(false)).toMatch(/GitHub issue, which anyone can read/);
+    expect(strings.streets.removalNote(true)).toMatch(/private email/);
   });
 
   it('puts the family blessing beside every memorial suggestion', () => {

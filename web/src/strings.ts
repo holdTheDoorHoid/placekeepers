@@ -524,6 +524,8 @@ export const strings = {
     memorial: 'A person killed while walking, cycling or riding a scooter',
     memorialEveryone: 'A person killed in a traffic crash',
     memorialNames: 'A fuller ring means a public memorial list shares the person\'s name. Open the marker to read it.',
+    /** While there is no private way to ask for a name to come down, no name can appear (D7). */
+    memorialNamesWaiting: 'No names are shown yet. They will appear only once families have a private way to ask for one to come down.',
     memorialNamesHidden: 'Names are hidden.',
   },
 
@@ -555,7 +557,11 @@ export const strings = {
     memorialsLayerOff: 'Turn on the Memorials layer to list the memorials in view.',
     memorialsNone: 'No memorials in this part of the map.',
     removal: 'Request removal',
-    removalNote: 'Anyone can ask us to remove a name or a marker. We do it without asking why.',
+    /** Beside "Request removal". No text promises an email address before it exists (docs/VERIFICATION.md, D7). */
+    removalNote: (hasEmail: boolean) =>
+      hasEmail
+        ? 'Anyone can ask us to take this memorial down, by private email. We do it without asking why.'
+        : 'Anyone can ask us to take this memorial down, without giving a reason. A private email address for this is coming soon; until then the Contact page says how to ask in a GitHub issue, which anyone can read.',
     removalSubject: (id: string) => `Memorial removal request ${id}`,
     removalBody: (id: string) =>
       `Please remove memorial ${id} from Placekeepers. You do not need to give a reason or any proof.`,

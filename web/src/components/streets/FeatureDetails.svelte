@@ -48,7 +48,7 @@
         {/if}
         <p class="small">
           <a href={memorial.removalHref}>{s.removal}</a>
-          <span class="muted">{s.removalNote}</span>
+          <span class="muted">{s.removalNote(REMOVAL_EMAIL !== null)}</span>
         </p>
       </section>
     {/each}

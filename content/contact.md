@@ -15,13 +15,13 @@ here.
 
 [Suggest a data source](https://github.com/holdTheDoorHoid/placekeepers/issues/new?template=data-source.yml)
 
-## Ask for a memorial name to come down
+## Ask for a memorial to come down
 
-Anyone can ask for a name to be removed from the map, no questions asked. {{REMOVAL_EMAIL}}
+Anyone can ask for a memorial marker, or a name, to be taken off the map, no questions asked and
+no proof needed. {{REMOVAL_EMAIL}}
 
-We do not use a public form for this, because a removal request is personal and private. Once we
-take a name down, we keep a record of the parcel or crash id only, never the name, so it does not
-come back in a later update.
+Once we take a memorial down, we keep a record of its id only, never a name, so it does not come
+back in a later update.
 
 ## Everything else
 
