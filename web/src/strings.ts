@@ -951,7 +951,7 @@ export const strings = {
       notInCopy: (parts: string[]) =>
         `Our weekly copy does not include ${parts.length > 1 ? `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}` : parts[0]} for this parcel, so this page cannot say whether there are any.`,
       partialParts: { transfers: 'deed records', assessments: 'assessments', li: 'L&I violation records' } as Record<string, string>,
-      notInCopyOff: 'Turn on live City data to see them.',
+      notInCopyOff: 'Live City data can show them.',
       notInCopyFailed: 'The City did not answer. Try again to see them.',
       recordsNote: 'City deed records are complete from 2000 on. Older sales may be missing.',
       datesNote:

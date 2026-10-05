@@ -706,4 +706,5 @@ them from there (changed 2026-10-04, docs/VERIFICATION.md D3). Owners
 are matched conservatively: two parcels share an owner only when all their owner names match after
 spelling is evened out (capitals, no punctuation, "L.L.C." as LLC, "&" as AND), so one owner under
 two spellings counts twice and two owners are never merged. Public owners are left out: the City
-lists its own holdings. On 2026-10-04: 464 owners, 449 kB (70 kB compressed), one file.
+lists its own holdings. On 2026-10-04: 366 organizations, 374 kB (57 kB compressed), one file; the
+95 owners who may be people that hold five or more are listed on their own 819 parcels instead.
