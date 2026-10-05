@@ -15,6 +15,7 @@ import type { NearbyPlace } from '../src/places/rank.ts';
 import { defaultState, type AppState } from '../src/state/defaults.ts';
 import { AppStore } from '../src/state/store.svelte.ts';
 import { strings } from '../src/strings.ts';
+import { parseStopTable } from '../src/transit/answers.ts';
 import { describeComfort, nearestStops, stopLensOf, type NearbyStop } from '../src/transit/comfort.ts';
 
 const reg = loadRegistry();
@@ -26,6 +27,8 @@ const fixture = JSON.parse(readFileSync(new URL('../fixtures/data/tiles/transit.
 };
 const stop = (id: string) => fixture.features.find((f) => f.properties.id === id)!;
 const props = (id: string) => stop(id).properties;
+/** What OpenStreetMap says at the sample stops, published apart and joined in the browser (decision D1). */
+const TABLE = parseStopTable(JSON.parse(readFileSync(new URL('../fixtures/data/tables/stop_amenities.json', import.meta.url), 'utf8')))!;
 
 function state(view: 'field' | 'analysis' = 'analysis'): AppState {
   return defaultState(reg, view);
@@ -64,7 +67,7 @@ describe('the transit comfort lens in the registry', () => {
 
 describe('what a stop says under the lens', () => {
   it('gives a busy stop with nothing to sit under or on its score, answers, facts and suggestions', () => {
-    const view = describeComfort(reg, state(), props('sp1002'));
+    const view = describeComfort(reg, state(), props('sp1002'), TABLE);
     // (3*60 + 3*100 + 2*100 + 2*83 + 1*33 + 2*100 + 1*20) / 14 = 78.5
     expect(view.why?.score).toBeCloseTo(1099 / 14, 5);
     expect(view.score).toBe(79);
@@ -96,7 +99,7 @@ describe('what a stop says under the lens', () => {
   });
 
   it('says "not yet surveyed", never "no", and counts those answers halfway', () => {
-    const view = describeComfort(reg, state(), props('sp1004'));
+    const view = describeComfort(reg, state(), props('sp1004'), TABLE);
     expect(view.inOsm).toBe(true);
     expect(view.summary).toBe(strings.stopAmenities.comfort[0]);
     expect(view.answers.every((a) => !a.known && a.value === strings.stopAmenities.unknown)).toBe(true);
@@ -111,38 +114,40 @@ describe('what a stop says under the lens', () => {
     expect(view.matched).toBe(strings.transit.matchedByPlace);
 
     // A shelter answer without a bench answer: the shelter is known, the bench is not.
-    const half = describeComfort(reg, state(), props('sp1008'));
+    const half = describeComfort(reg, state(), props('sp1008'), TABLE);
     expect(half.answers.slice(0, 2).map((a) => a.value)).toEqual([strings.stopAmenities.no, strings.stopAmenities.unknown]);
     expect(half.halfway).toBe(true);
     expect(half.suggestions.map((s) => s.suggestion.id)).toEqual(['stop_survey', 'stop_shelter_request']);
   });
 
   it('says when no OpenStreetMap stop matches at all', () => {
-    const view = describeComfort(reg, state(), props('sp1105'));
+    const view = describeComfort(reg, state(), props('sp1105'), TABLE);
     expect(view.inOsm).toBe(false);
     expect(view.summary).toBe(strings.transit.notInOsm);
     expect(view.osmUrl).toBeNull();
     expect(view.matched).toBeNull();
     expect(view.halfway).toBe(true);
     // No SEPTA count: riders are left out of the average, not counted as zero.
-    expect(describeComfort(reg, state(), props('sp1004')).why?.missing).toEqual(['riders']);
+    expect(describeComfort(reg, state(), props('sp1004'), TABLE).why?.missing).toEqual(['riders']);
   });
 
   it('follows the sliders and the suggestion switches', () => {
     const s = state();
     s.weights.transit_comfort = { ...s.weights.transit_comfort, no_shelter: 0, no_bench: 0 };
-    expect(describeComfort(reg, s, props('sp1004')).halfway).toBe(false);
+    expect(describeComfort(reg, s, props('sp1004'), TABLE).halfway).toBe(false);
     s.weights.transit_comfort = Object.fromEntries(lens.factors.map((f) => [f.id, 0]));
-    const off = describeComfort(reg, s, props('sp1002'));
+    const off = describeComfort(reg, s, props('sp1002'), TABLE);
     expect(off.score).toBeNull();
     expect(off.why?.allOff).toBe(true);
     const quiet = state();
     quiet.suggestions.stop_shelter_request = false;
-    expect(describeComfort(reg, quiet, props('sp1001')).suggestions).toEqual([]);
+    expect(describeComfort(reg, quiet, props('sp1001'), TABLE).suggestions).toEqual([]);
   });
 
   it('renders the details with the score, the answers, the suggestions and the breakdown', () => {
     const store = new AppStore(reg, { state: state(), viewPinned: true }, { listStorage: null });
+    store.stopTable = TABLE;
+    store.stopTableStatus = 'ok';
     const { body } = render(TransitStopDetails, { props: { store, features: [props('sp1002')], guide: 'streetcomplete' } });
     expect(body).toContain('Priority 79 of 100 for transit comfort.');
     expect(body).toContain(strings.transit.findTitle);
@@ -172,12 +177,48 @@ describe('what a stop says under the lens', () => {
   });
 });
 
+describe('stops the lens leaves out, and answers that have not arrived', () => {
+  const store = () => {
+    const s = new AppStore(reg, { state: state(), viewPinned: true }, { listStorage: null });
+    s.stopTable = TABLE;
+    s.stopTableStatus = 'ok';
+    return s;
+  };
+
+  it('shows a trolley tunnel station like a station: no answers, no score, and says why', () => {
+    // A trolley stop the pipeline does not mark with `tc` is one of the tunnel stations underground.
+    const tunnel = { id: 'sp283', sid: '283', nm: '13th St', md: 2, r: 'T1,T2', tw: 300, hm: 3, b: 500, bp: 'Spring 2026' };
+    const { body } = render(TransitStopDetails, { props: { store: store(), features: [tunnel] } });
+    expect(body).toContain(strings.transit.tunnelStation);
+    expect(body).not.toContain(strings.transit.findTitle);
+    expect(body).not.toContain(strings.why.title);
+    expect(body).not.toContain(strings.transit.canDo);
+    // Its service and riders still show.
+    expect(body).toContain(strings.transit.howOften);
+  });
+
+  it('says so, rather than showing answers, while what OpenStreetMap says has not loaded', () => {
+    const s = store();
+    s.stopTable = null;
+    s.stopTableStatus = 'loading';
+    let body = render(TransitStopDetails, { props: { store: s, features: [props('sp1002')] } }).body;
+    expect(body).toContain(strings.transit.answersLoading);
+    expect(body).not.toMatch(/Shelter: (No|Yes|Not yet surveyed)/);
+    s.stopTableStatus = 'unavailable';
+    body = render(TransitStopDetails, { props: { store: s, features: [props('sp1002')] } }).body;
+    expect(body).toContain(strings.transit.answersUnavailable);
+    // A stop with no OpenStreetMap link has nothing to wait for.
+    body = render(TransitStopDetails, { props: { store: s, features: [props('sp1105')] } }).body;
+    expect(body).toContain(strings.transit.notInOsm);
+  });
+});
+
 describe('stops in "What you can do nearby"', () => {
   const inputs = fixture.features.map((f) => ({ layerId: 'transit_stops', properties: f.properties, lngLat: f.geometry.coordinates }));
   const anchor = stop('sp1002').geometry.coordinates;
 
   it('lists stops with a suggestion switched on, nearest first, and leaves out the rest', () => {
-    const near = nearestStops(reg, state('field'), inputs, anchor);
+    const near = nearestStops(reg, state('field'), inputs, anchor, TABLE);
     const ids = near.map((s) => s.id);
     expect(ids[0]).toBe('sp1002');
     // A sheltered stop with nothing to suggest, and stations, are left out.
@@ -187,7 +228,7 @@ describe('stops in "What you can do nearby"', () => {
     expect(ids.sort()).toEqual(['sp1001', 'sp1002', 'sp1004', 'sp1008', 'sp1105']);
     const distances = near.map((s) => s.distance);
     expect([...distances].sort((a, b) => a - b)).toEqual(distances);
-    expect(nearestStops(reg, state('field'), inputs, anchor, 2)).toHaveLength(2);
+    expect(nearestStops(reg, state('field'), inputs, anchor, TABLE, 2)).toHaveLength(2);
     const first = near[0]!;
     expect(first.kind).toBe('bus');
     expect(first.title).toBe('N Broad St & Sample 2 St');
@@ -196,7 +237,7 @@ describe('stops in "What you can do nearby"', () => {
   });
 
   it('mixes lots and stops by distance', () => {
-    const near = nearestStops(reg, state('field'), inputs, anchor);
+    const near = nearestStops(reg, state('field'), inputs, anchor, TABLE);
     const lot = (id: string, distance: number) => ({ id, distance }) as NearbyPlace;
     const second = near[1]!;
     const merged = mergeNearby([lot('a', second.distance / 2), lot('b', 1e6)], near);
@@ -209,7 +250,7 @@ describe('stops in "What you can do nearby"', () => {
 
   it('renders a stop card with its priority, its first suggestion and the first step', () => {
     const store = new AppStore(reg, { state: state('field'), viewPinned: true }, { listStorage: null });
-    const card: NearbyStop = nearestStops(reg, state('field'), inputs, anchor)[0]!;
+    const card: NearbyStop = nearestStops(reg, state('field'), inputs, anchor, TABLE)[0]!;
     const { body } = render(StopCard, { props: { store, stop: card, lensLabel: lens.label, fromYou: false } });
     expect(body).toContain('data-stop="sp1002"');
     expect(body).toContain('Bus stop');

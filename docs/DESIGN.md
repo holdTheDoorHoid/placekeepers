@@ -207,10 +207,13 @@ counts, which use older numbers, and later neighbors' notes keep following the p
 **Buses and trains** group holds every SEPTA stop and station in Philadelphia, with how often
 service comes on a typical weekday, Saturday and Sunday and SEPTA's own weekday boardings (97.8% of
 bus and trolley stops had a count on 2026-10-04), and the routes as context; both layers are off by
-default. From M2.3 (2026-10-05) the stops carry the transit comfort lens (section 5.3) and what
+default. From M2.3 (2026-10-05) the stops carry the transit comfort lens (section 5.3) and show what
 OpenStreetMap knows about their shelter, bench and light, matched to OpenStreetMap's stops the same
 way the route survey sheets are (M2.4); the field view's Bus stops chip and using the lens turn them
-on. The method is in [TRANSIT_METHOD.md](TRANSIT_METHOD.md).
+on. OpenStreetMap's answers are published apart from SEPTA's records and joined in the visitor's
+browser by the OpenStreetMap id (decision D1 of [VERIFICATION_V0_2.md](VERIFICATION_V0_2.md)): the
+Open Database License would otherwise ask the combination to be shared under it, which SEPTA's
+license does not let us grant. The method is in [TRANSIT_METHOD.md](TRANSIT_METHOD.md).
 
 As built (M3.5, 2026-10-05): three new groups. **Benches, water, toilets and more** holds five
 layers from OpenStreetMap, each labeled "as mapped in OpenStreetMap" (benches, picnic tables,

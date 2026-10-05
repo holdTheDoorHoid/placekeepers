@@ -72,7 +72,9 @@
   const detailed = $derived(store.parcelsInView.filter((p) => !isSampleFeature(p.properties)));
   const lots = $derived(nearby ? nearestPlaces(registry, store.state, detailed, anchor, MAX_CARDS) : []);
   /** The stops drawn on the map with a suggestion switched on (the list follows the stops layer). */
-  const stops = $derived(nearby && stopsShown ? nearestStops(registry, store.state, store.stopsInView, anchor, MAX_CARDS) : []);
+  const stops = $derived(
+    nearby && stopsShown ? nearestStops(registry, store.state, store.stopsInView, anchor, store.stopTable, MAX_CARDS) : [],
+  );
   const all = $derived(mergeNearby(lots, stops, MAX_CARDS));
   const items = $derived(all.slice(0, cardCount));
   const places = $derived(items.flatMap((item) => (item.kind === 'place' ? [item.place] : [])));

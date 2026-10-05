@@ -4,6 +4,7 @@
 import type { FilterSpecification, LayerSpecification } from 'maplibre-gl';
 import type { Layer, Registry } from '../../registry/types.ts';
 import type { AppState } from '../../state/defaults.ts';
+import type { StopAnswerIndex } from '../../transit/answers.ts';
 
 export interface StyleContext {
   layer: Layer;
@@ -16,6 +17,12 @@ export interface StyleContext {
   glyphs?: boolean;
   /** Ids of this layer's features that someone opened, to draw them as selected. */
   highlight?: readonly (string | number)[];
+  /**
+   * What OpenStreetMap says at SEPTA's stops, by the linked OpenStreetMap id, joined in the
+   * browser (decision D1, src/transit/answers.ts). Missing until the table has loaded: every stop
+   * then counts its shelter and bench halfway.
+   */
+  stopAnswers?: StopAnswerIndex | null;
 }
 
 export type LegendContext = Omit<StyleContext, 'sourceId' | 'sourceLayer'>;

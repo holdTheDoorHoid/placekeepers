@@ -179,6 +179,16 @@ had nothing. The web app knows such a value from the stop's own answers (`sh` or
 for the shelter `cv` not 1), never calls it the main reason, and marks it "not yet surveyed" in the
 "why" breakdown.
 
+A second difference for the same lens (changed 2026-10-05, decision D1 of VERIFICATION_V0_2.md):
+those two factors, and everything else worked out only from what OpenStreetMap says at a stop, are
+not in the tiles. The browser works them out from `tables/stop_amenities.json` (section 8), joined
+to each stop by the OpenStreetMap id it links to (`o`), and the map style reads them from that join
+rather than from the feature. Storing OpenStreetMap's answers in SEPTA's stop records would make a
+derivative database the Open Database License asks to be shared under it, which SEPTA's license does
+not let us grant. The pipeline keeps the reference join
+(`placekeepers.derive.transit_comfort.join_published`); the cases in
+`pipeline/tests/fixtures/stop_join_parity.json` hold both sides to the same answers.
+
 ### `registry/suggestions.yaml`
 
 ```yaml
@@ -202,10 +212,13 @@ carried by `memorials` markers in `sg`. The memorial suggestion (`memorial_or_gh
 shown with the line "Only with the family's blessing." and a link to Families for Safe Streets
 (docs/ETHICS.md); the web app adds that line wherever the suggestion is listed.
 
-`applies_to: stop` (added 2026-10-05 by M2.3) marks suggestions for SEPTA's bus and trolley stops;
-they are carried by `stops` in transit.pmtiles in `sg`, in the order the stop lists them. None needs
-a landowner's permission, so the first step is always the first step of the suggestion's first
-route.
+`applies_to: stop` (added 2026-10-05 by M2.3) marks suggestions for SEPTA's bus and trolley stops.
+None needs a landowner's permission, so the first step is always the first step of the suggestion's
+first route. Of these, `sg` in transit.pmtiles carries only those SEPTA's and the City's data
+decide (planting shade trees); the four that follow from what OpenStreetMap says at the stop
+(survey it, ask for a shelter, ask for a bench, report a dark streetlight) are worked out in the
+browser by the same rules (decision D1, section 1 lenses), and a stop lists them all in that order:
+survey, shelter, bench, streetlight, shade trees.
 
 Greening suggestions (`clean_and_green` in this release, listed in
 `web/src/config/suggestions.ts`; added 2026-10-04 by M1.10, decision D12 of VERIFICATION.md) are
@@ -266,7 +279,7 @@ data/
     context.pmtiles       layer "h3"        (area cells, resolution 9)
     care.pmtiles          layers "landcare", "gardens"
     boundaries.pmtiles    layers "council_districts", "rcos", "neighborhoods"
-    transit.pmtiles       layers "stops", "routes"   (SEPTA, added 2026-10-04 by M2.1; the transit comfort lens on "stops", M2.3)
+    transit.pmtiles       layers "stops", "routes"   (SEPTA, added 2026-10-04 by M2.1; the transit comfort lens on "stops", M2.3; never OpenStreetMap's answers)
     amenities.pmtiles     layers "stops" (shelters and benches at stops, M2.2), "benches",
                           "picnic_tables", "water", "toilets", "bookcases" (M3.5): from OpenStreetMap
     places.pmtiles        layers "park_water", "libraries", "recreation", "pools" (the City's; M3.5)
@@ -278,7 +291,8 @@ data/
     owners.json           organizations holding many vacant parcels, with their parcels (section 6)
     routes/               route survey sheets (section 7; added 2026-10-05 by M2.4)
       index.json          every SEPTA bus and trolley route with a sheet
-      <route id>.json     one route's stops in order, each direction, with what OpenStreetMap shows
+      <route id>.json     one route's stops in order, each direction, with the id of the OpenStreetMap stop at each
+    stop_amenities.json   what OpenStreetMap says at each stop it knows, by its id (section 8; Open Database License; decision D1)
   dossiers/
     <first four digits of the OPA account>.json
     common.json           the parts of every flag that are the same for all parcels (section 6)
@@ -606,29 +620,50 @@ Added 2026-10-05 by M2.3 (the transit comfort lens; the method in plain words is
 Bus and trolley stops (`md` bit 1 or 2) also carry these; stations of the subway, the El and
 Regional Rail carry none of them, nor do the 15 trolley tunnel stations underground from 13th
 Street to 37th Street (`TUNNEL_STATIONS` in `derive/transit_comfort.py`, added 2026-10-05 by the
-v0.2 review). `o`, `a`, `sh`, `bn`, `li` and `cv` come from OpenStreetMap, so
-the layer lists `osm_philadelphia` among its sources and is credited "© OpenStreetMap contributors",
-and those properties are under the Open Database License, as amenities.pmtiles is.
+v0.2 review).
+
+Changed 2026-10-05 (decision D1 of VERIFICATION_V0_2.md): this file never holds what OpenStreetMap
+says at a stop, nor anything worked out only from it. Storing OpenStreetMap's answers in SEPTA's
+stop records would make a derivative database the Open Database License asks to be shared under
+it, which SEPTA's license does not let us grant. A stop carries the id of the OpenStreetMap stop at
+the same pole (`o`) as a link; what OpenStreetMap says there is in `tables/stop_amenities.json`
+(section 8), and the browser joins the two. The properties that were removed (`om`, `a`, `sh`,
+`bn`, `li`, `cv`, `f_noshelter`, `f_nobench`, and the suggestions they decide) are what the join
+gives (`web/src/transit/answers.ts`, following `join_published` in `derive/transit_comfort.py`;
+`pipeline/tests/fixtures/stop_join_parity.json` holds both to the same answers). The file reads
+OpenStreetMap only to make the link, so its credit line names SEPTA and the City alone
+(`LayerBuilder.links` in `publish/layers.py`); the stops layer still lists `osm_philadelphia` among
+its sources, because the map shows the joined answers on it, credited "© OpenStreetMap
+contributors".
 
 | Property | Type | Meaning |
 |---|---|---|
-| `o` | string | the OpenStreetMap stop matched to this one, as `id` in amenities.pmtiles (`n` or `w` and the element id); absent when none matched. The match is `match_septa` in `derive/bus_stops.py`, as for the route survey sheets (section 7): by stop number, then by distance, both only within 15 meters, closest pairs first, each stop once; a number counts only when no other SEPTA stop stands more than 3 meters closer, and by distance an OpenStreetMap stop pairs only with its nearest SEPTA stop (changed 2026-10-05 by the v0.2 review) |
-| `om` | int | 1 when the stop numbers agree (the OpenStreetMap stop's `ref` or `gtfs:stop_id` names `sid` or a number in `fid`), 2 when the two only stand at the same place |
-| `a` | int | what riders find, the matched stop's `c` in amenities.pmtiles: 3 a shelter or roof, 2 a bench but no shelter mapped, 1 neither, 0 not yet surveyed; absent when no OpenStreetMap stop matched (also not yet surveyed, never "missing") |
-| `sh`, `bn`, `li`, `cv` | int | the matched stop's shelter, bench, lit and covered answers, 1 yes and 0 no; absent when unknown. Lit is `li` here because `lt` is the last departure |
+| `tc` | int | 1 for a stop the transit comfort lens scores (a bus or trolley stop on the street); absent for stations and the trolley tunnel stations. The browser gives such a stop the halfway answers (50) where nothing is known |
+| `o` | string | the OpenStreetMap stop at the same pole, as its id in amenities.pmtiles and tables/stop_amenities.json (`n` or `w` and the element id); absent when none matched. The match is `match_septa` in `derive/bus_stops.py`, as for the route survey sheets (section 7): by stop number, then by distance, both only within 15 meters, closest pairs first, each stop once; a number counts only when no other SEPTA stop stands more than 3 meters closer, and by distance an OpenStreetMap stop pairs only with its nearest SEPTA stop (changed 2026-10-05 by the v0.2 review) |
 | `f_riders` | int | lens factor: the share of bus and trolley stops with fewer weekday boardings (`b`); absent without a count |
-| `f_noshelter` | int | 100 when a survey found no shelter, 0 with a shelter or the whole stop under a roof, 50 when not yet surveyed (section 1, lenses) |
-| `f_nobench` | int | 100 when a survey found no bench, 0 with one, 50 when not yet surveyed |
 | `f_shade` | int | the share of stops with more tree canopy (2018) on the land of their H3 cell (resolution 9, water left out); absent without canopy data |
 | `f_heat` | int | the share of stops whose census tract has a lower heat exposure score (`heat_vulnerability`, `hei_score`); absent outside the tracts or without the data |
 | `f_hin` | int | 100 when the stop stands within 30 meters of the High Injury Network, else 0 |
 | `f_wait` | int | the share of stops with a shorter midday weekday wait (`hm`); absent without midday service |
 | `cp` | int | percent of the land of the stop's H3 cell under tree canopy in 2018; absent without canopy data |
 | `hin` | int | 1 when the stop is on the High Injury Network; absent otherwise |
-| `sg` | string | suggestion ids, comma separated, in this order: `stop_survey` (shelter or bench not known yet), `stop_shelter_request` (a survey found no shelter, and the stop is not under a roof), `stop_bench_request` (a survey found no bench), `stop_streetlight_report` (OpenStreetMap says the stop is not lit), `stop_shade_trees` (`f_shade` of 75 or more); absent when none |
+| `sg` | string | the suggestions SEPTA's and the City's data decide, comma separated: `stop_shade_trees` (`f_shade` of 75 or more); absent when none |
+
+What the browser adds by the join (never published here): `a` (the linked stop's `c`: 3 a shelter
+or roof, 2 a bench but no shelter mapped, 1 neither, 0 not yet surveyed; absent when no
+OpenStreetMap stop is linked, which is also not yet surveyed, never "missing"); `om` (1 when the
+stop numbers agree: an `n` of the linked stop names `sid` or a number in `fid`; 2 when the two only
+stand at the same place); `sh`, `bn`, `li` (lit; `lt` here is the last departure) and `cv`, 1 yes
+and 0 no, absent when unknown; `f_noshelter` (100 when a survey found no shelter, 0 with a shelter
+or the whole stop under a roof, 50 when not yet surveyed) and `f_nobench` (100, 0 or 50 the same
+way); and the suggestions in this order: `stop_survey` (shelter or bench not known yet),
+`stop_shelter_request` (a survey found no shelter, and the stop is not under a roof),
+`stop_bench_request` (a survey found no bench), `stop_streetlight_report` (OpenStreetMap says the
+stop is not lit), then those in `sg`.
 
 Every rank is among the bus and trolley stops on the map, as in section 1 (lenses). The build notes
-carry the match counts, the surveyed counts and the count of each suggestion.
+carry the match counts, the surveyed counts and the count of each suggestion as the browser will
+show them.
 
 **`routes` (transit.pmtiles, lines)**: every SEPTA route with a stop in Philadelphia on the typical
 days, as the lines its trips follow, merged, simplified to about 5 meters and cut to a box around
@@ -676,9 +711,11 @@ the counts of each `c` inside the city.
 These are OpenStreetMap's stops, not SEPTA's: SEPTA's own stops are `stops` in `transit.pmtiles`
 (above). M2.3 joins the two by SEPTA's stop number first, an OpenStreetMap stop's `ref` (or `gs`)
 against SEPTA's `sid`, then by distance for the stops that do not match by number. The route survey
-sheets (section 7, M2.4) and SEPTA's stops on the map (`o` and `om` there, M2.3) both join them
-with `match_septa` in `pipeline/src/placekeepers/derive/bus_stops.py`, so a stop's sheet and its
-details on the map always describe the same OpenStreetMap stop.
+sheets (section 7, M2.4) and SEPTA's stops on the map (`o` there, M2.3) both pair them with
+`match_septa` in `pipeline/src/placekeepers/derive/bus_stops.py`, so a stop's sheet and its details
+on the map always describe the same OpenStreetMap stop. Both carry only the id: what OpenStreetMap
+says at each stop is published apart, in this layer and in `tables/stop_amenities.json` (section 8),
+and joined in the browser (decision D1).
 
 Added 2026-10-05 by M3.5, five more layers of `amenities.pmtiles`, one per OpenStreetMap tag, every
 element inside the city limits with that tag that is not closed to the public (`access` no or
@@ -1043,10 +1080,17 @@ lists its own holdings. On 2026-10-04: 366 organizations, 374 kB (57 kB compress
 ## 7. Route survey sheets (`tables/routes/`)
 
 Added 2026-10-05 by M2.4 (the survey campaign kit). For every SEPTA bus and trolley route with a
-stop in Philadelphia, each direction's stops in Philadelphia in SEPTA's own order, each with what
-OpenStreetMap shows there. The web page `survey/` turns a route's file into a printable survey
-sheet. Subway, El and Regional Rail lines have no sheet. Written by
+stop in Philadelphia, each direction's stops in Philadelphia in SEPTA's own order, each with the id
+of the OpenStreetMap stop at the same pole. The web page `survey/` joins what OpenStreetMap shows
+there from `tables/stop_amenities.json` (section 8) by that id, and turns a route's file into a
+printable survey sheet. Subway, El and Regional Rail lines have no sheet. Written by
 `pipeline/src/placekeepers/publish/route_sheets.py` as compact JSON.
+
+Changed 2026-10-05 (decision D1 of VERIFICATION_V0_2.md): the files hold SEPTA's stops and their
+order and the OpenStreetMap ids, never what OpenStreetMap says at a stop (`c`, the answers, and the
+index's counts by `c` were removed), so OpenStreetMap's answers are never stored in the same records
+as SEPTA's data. Each file and the index carry a `credit` and a `license` line for SEPTA (finding
+F7).
 
 ### Where the order comes from
 
@@ -1068,6 +1112,8 @@ sheets and says so.
   "schema": 1,
   "generated_at": "2026-10-05T10:03:12Z",
   "as_of": {"schedules": "v202609270", "osm": "2026-10-03"},
+  "credit": "Stops and their order: SEPTA. Each osm id links to tables/stop_amenities.json.",
+  "license": "SEPTA open data license agreement (free to use, reproduce and redistribute; no commercial use of SEPTA's trademarks), https://wwww.septa.org/license-agreement/",
   "id": "47",
   "r": "47",
   "nm": "Whitman Plaza to 5th-Godfrey",
@@ -1080,7 +1126,7 @@ sheets and says so.
       "m": 15514,
       "out": 0,
       "stops": [
-        {"k": "sp24973", "sid": "24973", "nm": "Whitman Plaza, 2", "lat": 39.91373, "lng": -75.155728, "c": 3, "osm": "n8878395954", "sh": 1},
+        {"k": "sp24973", "sid": "24973", "nm": "Whitman Plaza, 2", "lat": 39.91373, "lng": -75.155728, "osm": "n8878395954"},
         {"k": "sp16496", "sid": "16496", "nm": "Oregon Av & 5th St", "lat": 39.915035, "lng": -75.156573}
       ]
     }
@@ -1092,7 +1138,8 @@ sheets and says so.
 
 | Field | Meaning |
 |---|---|
-| `as_of` | `schedules`: SEPTA's `feed_version`; `osm`: the day of the OpenStreetMap extract. Either is `null` when missing |
+| `as_of` | `schedules`: SEPTA's `feed_version`; `osm`: the day of the OpenStreetMap extract the ids come from. Either is `null` when missing |
+| `credit`, `license` | the credit line and SEPTA's license, with its address (from `registry/licenses.yaml`) |
 | `id`, `r`, `nm`, `md` | SEPTA's route id, short name, long name (dashes used as punctuation turned into commas) and mode bits, as in the `routes` layer (section 4) |
 | `d` | SEPTA's `direction_id` |
 | `dir`, `to` | SEPTA's name for the direction and its destination; each only when SEPTA gives it |
@@ -1100,9 +1147,7 @@ sheets and says so.
 | `out` | how many stops of this direction lie outside Philadelphia and are left off the sheet |
 | `stops` | the stops in Philadelphia in SEPTA's order. A direction with none is left out, and a route with no direction has no file |
 | `k`, `sid`, `nm`, `lat`, `lng` | the stop's Placekeepers key, SEPTA's stop number, its name with the side of the street in words (as in `stops`, section 4) and SEPTA's position |
-| `c` | what OpenStreetMap shows, with the codes of the shelters and benches layer (`stops` in amenities.pmtiles, section 4): 3 a shelter or roof, 2 a bench but no shelter mapped, 1 neither, 0 not yet surveyed. Absent when no OpenStreetMap stop matches |
-| `osm` | the matching OpenStreetMap element, such as `n8878395954`; only with `c` |
-| `sh`, `bn`, `bi`, `lt` | that stop's answers for a shelter, a bench, a waste basket and a light, 1 yes and 0 no, as in amenities.pmtiles; absent when unknown |
+| `osm` | the OpenStreetMap stop at the same pole, such as `n8878395954`, its key in `tables/stop_amenities.json` (section 8), where the page reads what it shows (`c`) and its answers for a shelter, a bench, a waste basket and a light; absent when no OpenStreetMap stop matches |
 
 "In Philadelphia" is SEPTA's own rule for its stops layer: inside the City Council districts widened by
 100 meters. Every stop of a route's order is kept, the ends of the line too, although a trip's last
@@ -1119,7 +1164,7 @@ the street is only 12 meters away (the two rules after "and" were added 2026-10-
 review, docs/VERIFICATION_V0_2.md). On 2026-10-05 this paired 654 of the 829 OpenStreetMap stops in
 the city with a SEPTA stop; most of the rest stand 15 to 30 meters from the nearest one. Where an
 OpenStreetMap stop's number agrees with the SEPTA stop it is paired with (180 pairs that day), that
-stop is also its nearest SEPTA stop 179 times. A stop with no `c` may still be in OpenStreetMap a few steps away, so the sheet says "not found
+stop is also its nearest SEPTA stop 179 times. A stop with no `osm` may still be in OpenStreetMap a few steps away, so the sheet says "not found
 in OpenStreetMap", never "missing".
 
 ### `tables/routes/index.json`
@@ -1129,6 +1174,8 @@ in OpenStreetMap", never "missing".
   "schema": 1,
   "generated_at": "2026-10-05T10:03:12Z",
   "as_of": {"schedules": "v202609270", "osm": "2026-10-03"},
+  "credit": "Stops and their order: SEPTA. Each osm id links to tables/stop_amenities.json.",
+  "license": "SEPTA open data license agreement (...), https://wwww.septa.org/license-agreement/",
   "routes": [
     {
       "id": "47", "r": "47", "nm": "Whitman Plaza to 5th-Godfrey", "md": 1,
@@ -1136,20 +1183,59 @@ in OpenStreetMap", never "missing".
       "dirs": [
         {"d": 0, "dir": "Southbound", "to": "Whitman Plaza", "n": 102},
         {"d": 1, "dir": "Northbound", "to": "5th-Godfrey", "n": 99}
-      ],
-      "s": {"0": 10, "1": 3, "3": 2, "none": 186}
+      ]
     }
   ]
 }
 ```
 
-Every route with a file, in SEPTA's order of routes: its id, names and mode, its file, each direction
-with `n` stops on the sheet, and `s`, the stops of all its directions by `c` (`none` for stops with
-no match). The route files are not in the manifest's `files` (section 3); the index is. On
+Every route with a file, in SEPTA's order of routes: its id, names and mode, its file, and each
+direction with `n` stops on the sheet (the counts by what OpenStreetMap shows, `s`, were removed by
+decision D1; the page counts them after the join). The route files are not in the manifest's
+`files` (section 3); the index is. On
 2026-10-05: 123 routes (117 bus, 6 trolley), 237 directions with a median of 55 stops, files of
 0.4 to 28 kB (median 11 kB, about 2 kB compressed), 1.4 MB in all; the index is 31 kB (6 kB
 compressed).
 
 The page's time estimate is the site's own, not data: walking about 80 meters a minute (3 miles an
 hour) along `m`, plus a minute at each stop, rounded to 5 minutes.
+
+## 8. What OpenStreetMap says at each stop (`tables/stop_amenities.json`)
+
+Added 2026-10-05 (decision D1 of VERIFICATION_V0_2.md). What OpenStreetMap says at every bus and
+trolley stop it knows in and around the city (the stops of `osm_philadelphia`, the 200 meter band
+around the city included, since a SEPTA stop on the city line can stand on one just outside it),
+keyed by the stop's OpenStreetMap id. It is OpenStreetMap's data alone, under the Open Database
+License, credited "© OpenStreetMap contributors", like `tiles/amenities.pmtiles`. SEPTA's stops on
+the map (`o`, section 4) and on the route survey sheets (`osm`, section 7) link to it by that id, and
+the web app joins the two in the visitor's browser (`web/src/transit/answers.ts`), so OpenStreetMap's
+answers are never stored in the same published records as SEPTA's data. Written by
+`pipeline/src/placekeepers/publish/stop_table.py` as compact JSON; listed in the manifest's `files`.
+
+```json
+{
+  "schema": 1,
+  "generated_at": "2026-10-05T10:03:12Z",
+  "as_of": {"osm": "2026-10-03"},
+  "credit": "© OpenStreetMap contributors",
+  "license": "Open Database License 1.0, https://opendatacommons.org/licenses/odbl/1-0/",
+  "stops": {
+    "n8878395954": {"c": 3, "sh": 1, "n": ["24973"]},
+    "n13315617154": {"c": 1, "sh": 0, "bn": 0, "lt": 1, "n": ["24150"]}
+  }
+}
+```
+
+| Field | Meaning |
+|---|---|
+| `as_of` | `osm`: the day of the OpenStreetMap extract; `null` when unknown |
+| `credit`, `license` | OpenStreetMap's credit line and the Open Database License, with its address |
+| `stops` | one entry per OpenStreetMap stop, keyed by its id as in amenities.pmtiles (`n` or `w` and the element id) |
+| `c` | what the map shows, with the codes of the shelters and benches layer: 3 a shelter or roof, 2 a bench but no shelter mapped, 1 neither, 0 not yet surveyed |
+| `sh`, `bn`, `bi`, `lt`, `cv` | the stop's answers for a shelter, a bench, a waste basket, a light and a roof over the whole stop, 1 yes and 0 no, as in amenities.pmtiles; absent when unknown |
+| `n` | the SEPTA stop numbers its `ref` and `gtfs:stop_id` name, in that order; absent when none. The browser compares them with a SEPTA stop's `sid` and `fid` to say whether the numbers agree |
+
+Without the `osm_philadelphia` snapshot the file is not written, and the build notes say every stop
+shows as not yet surveyed. When the browser cannot load it, a stop's page says so rather than showing
+its answers, and the map counts every shelter and bench halfway.
 
