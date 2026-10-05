@@ -628,7 +628,8 @@ parcels on the map.
   most five of a kind, so a street with many bus stops does not outweigh a library. Places just
   across the city line are not counted, because most of these lists cover Philadelphia only. The
   drinking fountains are the City's; OpenStreetMap's 30 drinking water points are left out, so its
-  share alike license stays off the lots and these layers (most are likely the same fountains).
+  share alike license stays off the lots and these layers (19 of them have one of the City's
+  fountains within 800 meters anyway).
 - **Street corners within a 5 minute walk** count the points within 400 meters where three or more
   segments of the City's street centerlines that people can walk along meet (arterials,
   collectors, local streets and walking connectors; not expressways, ramps or driveways). More
