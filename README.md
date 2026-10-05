@@ -43,8 +43,8 @@ Every layer, score and suggestion can be switched on or off in Settings.
 ## What it does not do yet
 
 Names of people killed are not shown. We want the Bicycle Coalition and Families for Safe Streets
-to weigh in first, and families need a private email address to ask for a name to come down;
-neither exists yet.
+to weigh in first. Removal requests go through a public GitHub issue for now; a private email
+address is planned.
 
 Transit comfort, heat and shade, public art, history and displacement watch, and organizing tools
 are planned for later releases. See the [roadmap](docs/ROADMAP.md).

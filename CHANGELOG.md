@@ -27,6 +27,8 @@ with memorials.
   October 4, 2026: 24,162 high confidence lots, 6,160 medium, 10,454 low; 5,045 high confidence
   buildings, 3,819 medium, 9,053 low). Parks, gardens, parking and similar never show as vacant
   (1,727 left out).
+- Phone fixes: a shorter top bar, a preview note you can hide, bigger buttons and sliders for
+  touch, and a usable layout when the phone is turned sideways.
 
 ### Lot pages
 
@@ -49,8 +51,11 @@ with memorials.
   mode.
 - The street safety lens, scoring every one of the city's 40,453 street blocks.
 - A quiet marker for every person the Police record as killed in a crash (928 markers as of
-  October 4, 2026, 428 of them walking, cycling or riding a scooter, shown by default). Names are
-  not shown yet; see the release notes for why.
+  October 4, 2026, 428 of them walking, cycling or riding a scooter, shown by default), each also
+  listed by date and place so it can be read without touching the map. Names are not shown yet;
+  see the release notes for why.
+- Anyone can ask for a memorial to come down through a public GitHub issue, no name or reason
+  needed, until a private email address exists.
 
 ### Data and upkeep
 
@@ -66,6 +71,10 @@ with memorials.
 ### Safeguards and privacy
 
 - No analytics, no cookies, no accounts, no tracking.
+- Every screen passes automated accessibility checks (contrast, keyboard, screen reader labels
+  and roles), now run on every change.
+- A privacy test checks that the site asks only its own server for anything, and, with "Fetch
+  live City data" on, only the two City services it names.
 - Conservatorship is never suggested for a parcel with a homestead exemption, the City's own
   record that someone lives there, or did.
 - For an owner who is a person, flags about the owner appear only on parcels we are fairly sure
