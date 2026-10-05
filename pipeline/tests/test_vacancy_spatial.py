@@ -223,6 +223,8 @@ RUN_ACCOUNTS = {
     "400000006": "vacant land with no parcel shape anywhere",
     "400000007": "a LandCare lot",
     "400000008": "on the City's land list, with only the City's polygon",
+    "400000009": "vacant land that is a unit inside a larger parcel, with no shape",
+    "400000010": "vacant land with no shape and no point",
 }
 
 
@@ -236,7 +238,7 @@ def install_run_snapshots(ctx, *, city_land_date: datetime) -> None:
             {
                 "parcel_number": ids,
                 "location": [f"{2000 + 10 * n} N SAMPLE ST" for n in range(len(ids))],
-                "unit": [None] * len(ids),
+                "unit": ["P9" if i == "400000009" else None for i in ids],
                 "category_code": ["1" if i in houses else "6" for i in ids],
                 "building_code_description": [
                     "ROW 2 STY MASONRY" if i in houses else "VAC LAND RES < ACRE" for i in ids
@@ -245,8 +247,8 @@ def install_run_snapshots(ctx, *, city_land_date: datetime) -> None:
                 "total_livable_area": [1200.0 if i in houses else 0.0 for i in ids],
                 "year_built": ["1920"] * len(ids),
                 "exterior_condition": ["4"] * len(ids),
-                "lat": [39.98] * len(ids),
-                "lng": [-75.15] * len(ids),
+                "lat": [None if i == "400000010" else 39.98 for i in ids],
+                "lng": [None if i == "400000010" else -75.15 for i in ids],
             }
         ),
         geometry=False,
@@ -400,6 +402,8 @@ def test_a_run_labels_each_parcel_and_writes_its_shape(run_ctx) -> None:
         "400000006": ("lot", "low"),
         "400000007": ("lot", "medium"),
         "400000008": ("lot", "low"),
+        "400000009": ("lot", "low"),
+        "400000010": ("lot", "low"),
     }
     assert rows["400000001"]["rs"] == bits("city_land", "assessor_vacant_land", "no_building")
     assert rows["400000002"]["rs"] == bits("city_building", "sealed")
@@ -416,16 +420,33 @@ def test_a_run_labels_each_parcel_and_writes_its_shape(run_ctx) -> None:
     assert rows["400000005"]["excluded_use"] == "park"
     assert (rows["400000007"]["lc"], rows["400000007"]["n"]) == (1, 3)
 
-    # Shapes: the Water Department parcel, else the City's polygon, else none.
+    # Shapes: the Water Department parcel, else the City's polygon, else the assessor's point,
+    # except for a unit inside a larger parcel.
     shape = {opa: row["geometry"] for opa, row in rows.items()}
+    source = {opa: row["shape"] for opa, row in rows.items()}
     assert shapely.from_wkb(shape["400000001"]).area > 0
+    assert source["400000001"] == "parcel"
     assert shapely.from_wkb(shape["400000008"]).equals_exact(rect(500, 0, 10, 20), 1e-9)
-    assert shape["400000006"] is None
-    assert result.no_shape == 1
-    assert "1 vacant parcels have no parcel shape and are not on the map" in result.notes
+    assert source["400000008"] == "city"
+    assert shapely.from_wkb(shape["400000006"]).equals(shapely.Point(-75.15, 39.98))
+    assert source["400000006"] == "point"
+    assert shape["400000009"] is None and source["400000009"] is None  # a unit
+    assert shape["400000010"] is None and source["400000010"] is None  # no point either
+    assert (result.no_shape, result.points) == (2, 1)
+    assert (
+        "1 vacant parcels have no parcel shape, so the map shows each as a point at the "
+        "assessor's location"
+    ) in result.notes
+    assert (
+        "1 vacant parcels are units inside a larger parcel (condominium units, or lots a new "
+        "development has not split off yet), so they are not on the map"
+    ) in result.notes
+    assert "1 vacant parcels have no parcel shape and no point, so they are not on the map" in (
+        result.notes
+    )
 
     assert result.counts == {
-        "lot": {"high": 1, "medium": 2, "low": 3},
+        "lot": {"high": 1, "medium": 2, "low": 5},
         "building": {"high": 1, "medium": 0, "low": 0},
         "excluded": 1,
     }
@@ -464,15 +485,20 @@ def test_the_map_shows_the_models_parcels_with_their_reasons(run_ctx, tmp_path) 
     published = publish(run_ctx, tmp_path / "data")
     features = json.loads((tmp_path / "data" / "tiles" / "lots.parcels.geojson").read_text())
     properties = {f["properties"]["id"]: f["properties"] for f in features["features"]}
-    # Not the park, and not the parcel without a shape.
+    geometry = {f["properties"]["id"]: f["geometry"]["type"] for f in features["features"]}
+    # Not the park, not the unit inside a larger parcel, and not the parcel with no point; the
+    # parcel with no shape is a point at the assessor's location, with the same properties.
     assert sorted(properties) == [
         "400000001",
         "400000002",
         "400000003",
         "400000004",
+        "400000006",
         "400000007",
         "400000008",
     ]
+    assert geometry["400000006"] == "Point" and geometry["400000001"] == "Polygon"
+    assert set(properties["400000006"]) == set(properties["400000001"]) - {"dy", "sy", "ny"}
     assert properties["400000002"] == {
         "id": "400000002",
         "k": 2,
@@ -491,7 +517,7 @@ def test_the_map_shows_the_models_parcels_with_their_reasons(run_ctx, tmp_path) 
     assert properties["400000007"]["rt"] == 1
     notes = published.manifest["notes"]
     assert (
-        "Vacancy model as of 2026-10-04: lots 1 very likely vacant, 2 probably, 3 not sure; "
+        "Vacancy model as of 2026-10-04: lots 1 very likely vacant, 2 probably, 5 not sure; "
         "buildings 1 very likely vacant, 0 probably, 0 not sure; 1 parks, gardens, parking and "
         "similar left out"
     ) in notes

@@ -123,7 +123,9 @@ as vacant. LandCare lots stay in, marked as maintained. The City's lists are a s
 never enough alone for high; each is used for twelve months after its own date, then dropped, and
 the build notes say so. Time windows count back from the build date (`--as-of`).
 
-The result goes to `$PK_CACHE/derived/vacancy.parquet` (one row per parcel, with its shape) and a
+The result goes to `$PK_CACHE/derived/vacancy.parquet` (one row per parcel, with its shape: the
+Water Department parcel, else the City's polygon, else the assessor's point, as its `shape` column
+says; a unit inside a larger parcel with no shape gets none and stays off the map) and a
 summary beside it, `vacancy.json` (counts by kind and confidence, with and without the City's lists,
 the lists' dates, and notes). `pk publish` builds the `parcels` layer from it; when the model has
 not run, the layer shows the City's lists alone and the build notes say so. A full run takes about

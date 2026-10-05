@@ -848,8 +848,11 @@ class VacancyResult:
     without_city: dict[str, Any]
     city_lists: dict[str, Any]
     missing_sources: list[str]
+    #: shown parcels that are not on the map: units inside a larger parcel, or no shape or point
     no_shape: int
     seconds: float
+    #: shown parcels drawn as the assessor's point, for want of a shape
+    points: int = 0
     notes: list[str] = field(default_factory=list)
 
     def to_json(self) -> dict[str, Any]:
@@ -862,10 +865,40 @@ def output_path(ctx: Context) -> Path:
     return ctx.cache.root / "derived" / "vacancy.parquet"
 
 
-def write_output(con: duckdb.DuckDBPyConnection, out: Path) -> int:
-    """The shown parcels (kind lot, lot_conflict or building), with their parcel shape: the
-    Water Department parcels of the account joined into one, or the City's polygon when the
-    account has none. Returns how many shown parcels have no shape at all."""
+@dataclass
+class Shapes:
+    """How the shown parcels reach the map (write_output)."""
+
+    #: no Water Department parcel and no City polygon: drawn as the assessor's point
+    points: int = 0
+    #: a unit inside a larger parcel (a condominium unit, or a lot a new development has not split
+    #: off yet): not drawn
+    units: int = 0
+    #: no shape and no point either: not drawn
+    nothing: int = 0
+
+    @property
+    def off_map(self) -> int:
+        return self.units + self.nothing
+
+
+#: The SQL condition for a unit inside a larger parcel: the assessor gives the account a unit.
+#: Checked on 2026-10-04 against the City's property records (issue #22): the units among the
+#: parcels with no shape were condominium units (a parking space, a unit in a downtown building),
+#: lots in new developments not yet split off, or a pad inside a ten acre shopping center; none
+#: was a lot standing on its own, so they stay off the map (all were low confidence).
+UNIT = "(v.unit IS NOT NULL AND trim(v.unit) <> '')"
+
+
+def write_output(con: duckdb.DuckDBPyConnection, out: Path) -> Shapes:
+    """Every candidate parcel, with its shape for the map: the Water Department parcels of the
+    account joined into one, else the City's polygon, else (for a shown parcel that is not a unit
+    inside a larger parcel) the assessor's point. `shape` says which: parcel, city or point.
+
+    The parcels with no shape (1,869 on 2026-10-04) are mostly ones the Water Department's layer
+    has not caught up with: new lots and consolidations from 2019 on, rear and split lots drawn
+    inside a neighbor's parcel, and land with no parcel in the Department of Records' map at all.
+    Nearly all are low confidence, so the map hides them by default either way."""
     con.execute(f"""
         CREATE TABLE shapes AS
         SELECT {opa9("brt_id")} AS opa, ST_Union_Agg(geometry) AS geometry
@@ -902,21 +935,34 @@ def write_output(con: duckdb.DuckDBPyConnection, out: Path) -> int:
     ]
     flags = [r.flag for r in REASONS if r.flag != "footprint_conflict"]
     columns = ", ".join(f"v.{name}" for name in dict.fromkeys(base + flags))
+    point = (
+        f"(v.kind <> 'excluded' AND v.opa_lat IS NOT NULL AND v.opa_lon IS NOT NULL AND NOT {UNIT})"
+    )
     kv = quote_literal(json.dumps(geo_metadata([])))
     con.execute(f"""
         COPY (
           SELECT {columns},
-                 ST_AsWKB(coalesce(s.geometry, c.geometry))::BLOB AS geometry
+                 CASE WHEN s.geometry IS NOT NULL THEN 'parcel'
+                      WHEN c.geometry IS NOT NULL THEN 'city'
+                      WHEN {point} THEN 'point' END AS shape,
+                 ST_AsWKB(coalesce(
+                   s.geometry, c.geometry,
+                   CASE WHEN {point} THEN ST_Point(v.opa_lon, v.opa_lat) END))::BLOB AS geometry
           FROM vacancy v
           LEFT JOIN shapes s USING (opa)
           LEFT JOIN city_shapes c USING (opa)
           ORDER BY opa
         ) TO {quote_literal(str(out))} (FORMAT parquet, COMPRESSION zstd, KV_METADATA {{geo: {kv}}})
     """)
-    return con.execute(f"""
-        SELECT count(*) FROM read_parquet({quote_literal(str(out))})
-        WHERE kind <> 'excluded' AND geometry IS NULL
-    """).fetchone()[0]
+    points, units, nothing = con.execute(f"""
+        SELECT count(*) FILTER (WHERE o.shape = 'point'),
+               count(*) FILTER (WHERE o.geometry IS NULL AND {UNIT}),
+               count(*) FILTER (WHERE o.geometry IS NULL AND NOT {UNIT})
+        FROM read_parquet({quote_literal(str(out))}) o
+        JOIN vacancy v USING (opa)
+        WHERE o.kind <> 'excluded'
+    """).fetchone()
+    return Shapes(points=points, units=units, nothing=nothing)
 
 
 def run(ctx: Context, as_of: date | None = None, out: Path | None = None) -> VacancyResult:
@@ -947,7 +993,7 @@ def run(ctx: Context, as_of: date | None = None, out: Path | None = None) -> Vac
         alone = counts(con, "(SELECT * FROM without_city WHERE kind IS NOT NULL)")
         out = out or output_path(ctx)
         with atomic_output(out) as tmp:
-            no_shape = write_output(con, tmp)
+            shapes = write_output(con, tmp)
     finally:
         con.close()
 
@@ -967,8 +1013,21 @@ def run(ctx: Context, as_of: date | None = None, out: Path | None = None) -> Vac
             )
     if missing:
         notes.append(f"The vacancy model ran without {', '.join(missing)}")
-    if no_shape:
-        notes.append(f"{no_shape:,} vacant parcels have no parcel shape and are not on the map")
+    if shapes.points:
+        notes.append(
+            f"{shapes.points:,} vacant parcels have no parcel shape, so the map shows each as a "
+            "point at the assessor's location"
+        )
+    if shapes.units:
+        notes.append(
+            f"{shapes.units:,} vacant parcels are units inside a larger parcel (condominium "
+            "units, or lots a new development has not split off yet), so they are not on the map"
+        )
+    if shapes.nothing:
+        notes.append(
+            f"{shapes.nothing:,} vacant parcels have no parcel shape and no point, so they are not "
+            "on the map"
+        )
     result = VacancyResult(
         path=out,
         as_of=as_of.isoformat(),
@@ -985,7 +1044,8 @@ def run(ctx: Context, as_of: date | None = None, out: Path | None = None) -> Vac
             },
         },
         missing_sources=missing,
-        no_shape=no_shape,
+        no_shape=shapes.off_map,
+        points=shapes.points,
         seconds=round(time.monotonic() - started, 1),
         notes=notes,
     )
