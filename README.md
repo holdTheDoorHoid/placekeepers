@@ -38,6 +38,11 @@ permission.
 **Street safety and memorials.** The High Injury Network, years of crash records, and a quiet
 marker for each person the Police record as killed while walking, cycling or riding a scooter.
 
+**An early look at buses and trains.** SEPTA's stops and routes, how often service comes and how
+many people ride, and which stops OpenStreetMap knows have a shelter or a bench, under "Buses and
+trains" in the layer list, off by default. The "Survey bus stops" page shows how to help map the
+stops OpenStreetMap does not know about yet, with the free StreetComplete app.
+
 Every layer, score and suggestion can be switched on or off in Settings.
 
 ## What it does not do yet
@@ -46,8 +51,9 @@ Names of people killed are not shown. We want the Bicycle Coalition and Families
 to weigh in first. Removal requests go through a public GitHub issue for now; a private email
 address is planned.
 
-Transit comfort, heat and shade, public art, history and displacement watch, and organizing tools
-are planned for later releases. See the [roadmap](docs/ROADMAP.md).
+The transit comfort lens and its suggestions, heat and shade, public art, history and
+displacement watch, and organizing tools are planned for later releases. See the
+[roadmap](docs/ROADMAP.md).
 
 ## How the data stays fresh
 
@@ -72,8 +78,10 @@ Data status page. If any of its code is reused later, that code will keep the pr
 notice in the file header and be listed in a NOTICE file, as the project's own rules require. No
 NOTICE file is needed until then.
 
-Map data comes from the City of Philadelphia and other public sources. Every source, with its
-publisher and license, is listed on the
+Map data comes from the City of Philadelphia and other public sources. Transit schedules and
+ridership come from SEPTA, under its open data license agreement. Shelters and benches at stops
+come from OpenStreetMap and its contributors, under the Open Database License, the same source
+behind the base map. Every source, with its publisher and license, is listed on the
 [Data status page](https://holdthedoorhoid.github.io/placekeepers/status/) and in
 [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md).
 
