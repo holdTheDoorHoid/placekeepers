@@ -646,7 +646,9 @@ out when the parcel has no point.
 
 Never in a dossier (docs/ETHICS.md, checked by `tests/test_dossiers.py`): an acquisition price
 estimate, any score or order of how easy a parcel would be to take, letters to owners, and personal
-details beyond the owner names and mailing address the City publishes.
+details beyond the names of owners past and present and the current mailing address. Seller and
+buyer names on deeds (`from` and `to` in `transfers`) are published: they are owners of record over
+time, as the City shows them (decided 2026-10-04, docs/VERIFICATION.md D4).
 
 The live refresh in the browser may update `owner`, `transfers`, `assessments` and `li` from the
 City's Carto API; anything it cannot refresh stays as in the shard, labeled with the shard's date.
