@@ -15,8 +15,9 @@ needs, worked out by placekeepers.derive.transit (method in docs/TRANSIT_METHOD.
   there, and for a typical weekday (`_wk`), Saturday (`_sa`) and Sunday (`_su`): departures
   (`trips`), the first and last departure (`first`, `last`, minutes after midnight of the service
   day, so 1530 is 1:30 at night), departures in the busiest hour (`busiest`), from 7 to 9 in the
-  morning (`peak`), from 10 to 2 (`midday`), from 8 at night (`evening`) and from 1 to 4 at
-  night (`night`); and the stop's history: `former_ids` (earlier SEPTA ids, newest first) and
+  morning (`peak`), from 10 to 2 (`midday`) and from 8 at night (`evening`), and how many of the
+  hours from 1 to 4 at night have one (`night`, 3 for service through the night); and the stop's
+  history: `former_ids` (earlier SEPTA ids, newest first) and
   `history` (each with its name, the day it was replaced and how far it stood), `key_since`;
 * one row per stop id that disappeared in the last year without a successor (`kind` "retired",
   with `retired_on`), so a returning id keeps its key and a late successor can still be linked;

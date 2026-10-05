@@ -302,8 +302,8 @@ const memorials = MEMORIAL_SAMPLES.map(([d, m, sg], i) => {
 // SEPTA count, a renumbered stop whose count came from its old id, a stop with no midday service,
 // the two platforms of a subway station at one spot, and a Regional Rail station.
 const STOP_SAMPLES = [
-  [[170, 60], { id: 'sp1001', sid: '1001', nm: 'Sample 2 St & N Broad St (far side)', md: 1, r: '16,B1 OWL', tw: 75, ts: 65, tu: 58, bh: 6, hp: 17, hm: 22, hs: 22, hu: 30, ft: 24, lt: 1507, ev: 8, nt: 19, wc: 1, b: 132, bp: 'Spring 2026' }],
-  [[150, 60], { id: 'sp1002', sid: '1002', nm: 'N Broad St & Sample 2 St', md: 1, r: '4,16', tw: 140, ts: 90, tu: 70, bh: 10, hp: 6, hm: 9, hs: 12, hu: 15, ft: 305, lt: 1460, ev: 16, wc: 1, b: 848, bp: 'Spring 2026' }],
+  [[170, 60], { id: 'sp1001', sid: '1001', nm: 'Sample 2 St & N Broad St (far side)', md: 1, r: '16,B1 OWL', tw: 75, ts: 65, tu: 58, bh: 6, hp: 17, hm: 22, hs: 22, hu: 30, ft: 24, lt: 1507, ev: 8, nt: 3, wc: 1, b: 132, bp: 'Spring 2026' }],
+  [[150, 60], { id: 'sp1002', sid: '1002', nm: 'N Broad St & Sample 2 St', md: 1, r: '4,16', tw: 140, ts: 90, tu: 70, bh: 10, hp: 6, hm: 9, hs: 12, hu: 15, ft: 305, lt: 1528, ev: 16, nt: 1, wc: 1, b: 848, bp: 'Spring 2026' }],
   [[480, 180], { id: 'sp1003', sid: '1003', nm: 'Sample 3 St & Sample 5 Ave', md: 3, r: 'T1,47', tw: 180, ts: 120, tu: 100, bh: 12, hp: 5, hm: 7, hs: 9, hu: 10, ft: 300, lt: 1450, ev: 20, wc: 1, b: 1240, bp: 'Spring 2026' }],
   [[640, -60], { id: 'sp1004', sid: '1004', nm: 'Sample 1 St & Sample 8 Ave', md: 1, r: '60', tw: 22, ts: 12, tu: 0, bh: 2, hp: 40, hm: 60, hs: 120, ft: 380, lt: 1180, ev: 0, wc: 1 }],
   [[560, 60], { id: 'sp1105', sid: '1005', nm: 'Sample 2 St & Sample 6 Ave (midblock, near side)', md: 1, r: '60', tw: 22, ts: 12, tu: 0, bh: 2, hp: 40, hm: 60, hs: 120, ft: 385, lt: 1185, ev: 0, wc: 2, fid: '1105', b: 4, bp: 'Spring 2026', bx: '1105' }],

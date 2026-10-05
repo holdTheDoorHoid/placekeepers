@@ -163,12 +163,15 @@ describe('what a stop says', () => {
     expect(view.often).toContain('Weekday mornings from 7 to 9: a bus about every 6 minutes.');
     expect(view.often).toContain('Weekdays from 10 to 2: a bus about every 9 minutes.');
     expect(view.often).toContain('140 departures on a typical weekday, 90 on Saturdays and 70 on Sundays.');
-    expect(view.often).toContain('On weekdays the first departs at 5:05 AM and the last at 12:20 AM after midnight.');
+    // One late bus at 1:28 at night is a last departure, not service all night.
+    expect(view.often).toContain('On weekdays the first departs at 5:05 AM and the last at 1:28 AM after midnight.');
+    expect(view.often).toContain('After 8 at night on weekdays: 16 departures.');
+    expect(view.often).not.toContain(strings.transit.allNight);
     expect(view.riders).toEqual(["About 848 people get on here on an average weekday (SEPTA's count, Spring 2026)."]);
     expect(view.details).toEqual(['SEPTA stop number 1002.', 'SEPTA lists this stop as reachable in a wheelchair.']);
   });
 
-  it('says when buses run all night instead of first and last times', () => {
+  it('says when buses run all night (a departure in every hour from 1 to 4) instead of first and last times', () => {
     const view = describeStop(stop('sp1001'));
     expect(view.often).toContain(strings.transit.allNight);
     expect(view.often.some((line) => line.startsWith('On weekdays the first'))).toBe(false);

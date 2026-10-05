@@ -24,7 +24,8 @@ them on (the transit comfort lens of milestone M2.3 gives them a job on the map)
 
 On 2026-10-04 the map shows 8,081 stops and stations in Philadelphia (7,927 of them bus and trolley
 stops) and 141 routes. 4,294 stops have a bus or train at least every 15 minutes at midday on
-weekdays; 911 wait longer than 30 minutes or have no midday service.
+weekdays; 911 wait longer than 30 minutes or have no midday service; 2,632 have service through the
+night.
 
 ## Where the data comes from
 
@@ -65,8 +66,9 @@ alike). If a feed's dates have run out, its last four weeks are used and the bui
   says "only 2 buses from 10 to 2" instead of an average that would mislead.
 - **First and last departure** on weekdays. SEPTA's service day runs past midnight, so a bus at
   "25:30" in the schedule leaves at 1:30 at night, and the page says "after midnight".
-- **Service through the night**: any departure between 1 and 4 in the morning. The page then says
-  service runs all night instead of giving first and last times.
+- **Service through the night**: a departure in every hour from 1 to 4 in the morning. The page
+  then says service runs all night instead of giving first and last times. One late bus at 1:28
+  is just the last departure.
 - **After 8 at night**: departures from 8 at night until service ends.
 - **Frequent service** means a bus or train at least every 15 minutes at midday on weekdays, the
   New Bus Network's own measure; **long waits** means less often than every 30 minutes, or none.

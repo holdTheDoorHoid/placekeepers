@@ -219,7 +219,8 @@ layers. The method is in `docs/TRANSIT_METHOD.md`; in short:
   the download with the most common set of running services, so holidays and events never count.
 * **Measures per stop**: departures (never at a trip's last stop, nor where no one may board), the
   busiest hour, departures from 7 to 9 and from 10 to 2 (the map turns them into minutes between
-  buses), first and last departure, after 8 at night, and from 1 to 4 in the morning.
+  buses), first and last departure, after 8 at night, and how many hours from 1 to 4 in the
+  morning have one (all three means service through the night).
 * **Stable keys**: `sp` and the SEPTA stop number when first seen (`sr` for Regional Rail). A
   number that disappears passes its key to a new number within 30 meters with a similar name;
   the old number goes into the stop's history. The keys and history come from the previous good

@@ -479,7 +479,7 @@ start at zoom 12.
 | `hm`, `hs`, `hu` | int | the same from 10 to 2 on the weekday, Saturday and Sunday (240 divided by the departures); absent when none |
 | `ft`, `lt` | int | the first and last departure on the weekday, in minutes after midnight of SEPTA's service day, which runs past midnight (1530 is 1:30 at night); only with weekday service |
 | `ev` | int | weekday departures from 8 at night on; only with weekday service |
-| `nt` | int | weekday departures from 1 to 4 in the morning (service through the night); only when above 0 |
+| `nt` | int | how many of the clock hours from 1 to 4 in the morning have a weekday departure (1 to 3; 3 is service through the night); only when above 0 |
 | `wc` | int | SEPTA's wheelchair boarding: 1 reachable, 2 not; absent when SEPTA does not say |
 | `b` | int | average weekday boardings from SEPTA's newest spring or fall stop count, summed over the routes and directions counted there (0 when SEPTA counted no one); absent when no count matches, never estimated |
 | `bp` | string | the period of that count, such as "Spring 2026"; only with `b` |

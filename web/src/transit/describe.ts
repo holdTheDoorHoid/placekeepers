@@ -11,6 +11,8 @@ const MODE_METRO = 4;
 const MODE_RAIL = 8;
 const PEAK_MINUTES = 120;
 const MIDDAY_MINUTES = 240;
+/** `nt` counts the hours from 1 to 4 at night with a departure; all three is service all night. */
+const NIGHT_HOURS = 3;
 
 function int(value: unknown): number | null {
   const n = typeof value === 'number' ? value : typeof value === 'string' && value.trim() !== '' ? Number(value) : NaN;
@@ -94,12 +96,13 @@ export function describeStop(properties: Record<string, unknown>): StopView {
   if (busiest && weekday) often.push(t.busiest(busiest));
   const first = int(properties.ft);
   const last = int(properties.lt);
-  if (int(properties.nt)) often.push(t.allNight);
+  const allNight = (int(properties.nt) ?? 0) >= NIGHT_HOURS;
+  if (allNight) often.push(t.allNight);
   else if (weekday && first !== null && last !== null) {
     often.push(t.firstLast(clock(first), last >= 1440 ? t.afterMidnight(clock(last)) : clock(last)));
   }
   const evening = int(properties.ev);
-  if (weekday && evening !== null && !int(properties.nt)) often.push(t.evening(evening));
+  if (weekday && evening !== null && !allNight) often.push(t.evening(evening));
 
   const riders: string[] = [];
   const boardings = int(properties.b);

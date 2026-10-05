@@ -370,8 +370,8 @@
       "sha256": "ba6d52260354a67d1609cfa76aa2696ba0dacded44f23dba816aead9ffdd08c0"
     },
     "tiles/transit.stops.geojson": {
-      "bytes": 2626,
-      "sha256": "c3acd64fb7f1accd7c0281d9df47156b7f1ba61e1d8dbff2ada11762e04b49c6"
+      "bytes": 2632,
+      "sha256": "3452d8cbd96b82ac9b7b81a1ba12d0f1b2b64f2e45f950c1d8da5d898574d155"
     },
     "dossiers/common.json": {
       "bytes": 6273,

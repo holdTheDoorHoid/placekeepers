@@ -155,6 +155,24 @@ def test_departures_leave_out_trip_ends_and_stops_where_nobody_may_board(summari
     assert stops["100"].days["su"]["trips"] == 1
 
 
+def test_night_service_counts_hours_not_buses(tmp_path: Path) -> None:
+    """One late bus at 1:30 is one night hour; buses at 1:30, 2:10 and 3:05 are all three,
+    which is what the map calls service through the night."""
+    files = bus_files()
+    files["trips.txt"] += "10,WK,owl2,To 103,0,S10\n10,WK,owl3,To 103,0,S10\n"
+    files["stop_times.txt"] += (
+        "owl2,26:10:00,26:10:00,100,1,0,0\nowl2,26:20:00,26:20:00,103,2,0,0\n"
+        "owl3,27:05:00,27:05:00,100,1,0,0\nowl3,27:15:00,27:15:00,103,2,0,0\n"
+    )
+    write_feed(tmp_path / "bus", files)
+    con = duckdb.connect()
+    bus = summarize_feed(con, tmp_path / "bus", feed="bus_metro", start=date(2026, 10, 4))
+    con.close()
+    stops = {stop.stop_id: stop for stop in bus.stops}
+    assert stops["100"].days["wk"]["night"] == 3
+    assert stops["101"].days["wk"]["night"] == 1  # the owl trips skip 101
+
+
 def test_stops_know_their_routes_in_septas_order_and_their_modes(summaries) -> None:
     bus, rail = summaries
     stops = {stop.stop_id: stop for stop in [*bus.stops, *rail.stops]}

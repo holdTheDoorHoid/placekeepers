@@ -12,7 +12,8 @@ The method is explained in plain words in docs/TRANSIT_METHOD.md. In short:
   service day, so 25:30 (1:30 at night) is 1530.
 * **Measures per stop and day**: trips (departures), the first and last departure, departures in
   the busiest clock hour, in the morning peak (7 to 9), at midday (10 to 2), in the evening (from
-  8 at night, until service ends) and at night (1 to 4 on the clock). The map turns the peak and
+  8 at night, until service ends), and how many of the clock hours from 1 to 4 at night have a
+  departure (all three means service through the night). The map turns the peak and
   midday counts into a typical wait between departures: 120 or 240 minutes divided by the count.
 * **Stable keys.** Each stop gets a Placekeepers key, `sp` and its SEPTA stop id when first seen
   (`sr` for Regional Rail). When a stop id disappears and a new one appears within
@@ -44,9 +45,11 @@ WINDOW_DAYS = 28
 PEAK = (7 * 60, 9 * 60)
 MIDDAY = (10 * 60, 14 * 60)
 EVENING_FROM = 20 * 60
-#: Night, on the clock: 1 to 4 in the morning (a departure at 25:30 counts, as 1:30). Most
-#: routes start between 4 and 5, so only service through the night falls in it.
+#: Night, on the clock: the hours from 1 to 4 in the morning (a departure at 25:30 counts, as
+#: 1:30). `night` counts how many of these three hours have a departure, so one late bus at 1:28
+#: is 1, and service through the night is 3. Most routes start between 4 and 5.
 NIGHT = (1 * 60, 4 * 60)
+NIGHT_HOURS = (NIGHT[1] - NIGHT[0]) // 60
 PEAK_MINUTES = PEAK[1] - PEAK[0]
 MIDDAY_MINUTES = MIDDAY[1] - MIDDAY[0]
 
@@ -671,7 +674,8 @@ def summarize_feed(
                count(*) FILTER (WHERE m >= {PEAK[0]} AND m < {PEAK[1]}) AS peak,
                count(*) FILTER (WHERE m >= {MIDDAY[0]} AND m < {MIDDAY[1]}) AS midday,
                count(*) FILTER (WHERE m >= {EVENING_FROM}) AS evening,
-               count(*) FILTER (WHERE m % 1440 >= {NIGHT[0]} AND m % 1440 < {NIGHT[1]}) AS night
+               count(DISTINCT (m % 1440) // 60)
+                 FILTER (WHERE m % 1440 >= {NIGHT[0]} AND m % 1440 < {NIGHT[1]}) AS night
         FROM dep GROUP BY kind, stop_id"""
     ).fetchall()
     for kind, stop_id, n, first, last, peak, midday, evening, night in rows:
