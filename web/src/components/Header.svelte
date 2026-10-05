@@ -51,9 +51,17 @@
       </a>
       <button class="button quiet small share" type="button" onclick={share}>{strings.header.share}</button>
     </div>
-    <button class="button primary small settings" type="button" aria-haspopup="dialog" onclick={onOpenSettings}
-      >{strings.header.settings}</button
-    >
+    <!-- On narrow phones the word gives way to a gear, so the top bar keeps to two rows even with a
+         wide or large font; the word stays as the button's name for screen readers. -->
+    <button class="button primary small settings" type="button" aria-haspopup="dialog" onclick={onOpenSettings}>
+      <svg class="gear" viewBox="0 0 24 24" aria-hidden="true">
+        {#each [0, 45, 90, 135, 180, 225, 270, 315] as angle (angle)}
+          <rect x="10.4" y="1.6" width="3.2" height="5" rx="1" fill="currentColor" transform="rotate({angle} 12 12)" />
+        {/each}
+        <circle cx="12" cy="12" r="6" fill="none" stroke="currentColor" stroke-width="3.2" />
+      </svg>
+      <span class="settings-label">{strings.header.settings}</span>
+    </button>
   </div>
   {@render children?.()}
 </header>
@@ -149,6 +157,33 @@
   }
   .menu-share {
     display: none;
+  }
+  .gear {
+    display: none;
+    width: 24px;
+    height: 24px;
+  }
+  /* Narrow phones: Settings shows a gear (its name stays "Settings" for screen readers), so the
+     view switch and Settings share the first row whatever the phone's font. */
+  @media (max-width: 400px) {
+    .settings {
+      min-width: 44px;
+      padding: 4px;
+    }
+    .gear {
+      display: block;
+    }
+    .settings-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
   }
   /* Phones: logo, view switch and Settings on the first row; data date and link below. */
   @media (max-width: 560px) {
