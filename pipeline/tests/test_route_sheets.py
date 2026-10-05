@@ -34,11 +34,13 @@ from placekeepers.derive.route_stops import Direction, read_route_order
 from placekeepers.publish import publish
 from placekeepers.publish.manifest import ROUTE_SHEET, file_index
 from placekeepers.publish.route_sheets import (
+    CREDIT,
     INDEX,
     build_route_sheets,
     meters_along,
     route_file,
 )
+from placekeepers.publish.stop_table import STOP_TABLE, build_stop_table
 from placekeepers.runner import all_statuses, fetch_source, validate_source
 from placekeepers.snapshots import SnapshotStore
 
@@ -332,7 +334,7 @@ def read(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def test_each_route_gets_its_stops_in_order_with_what_openstreetmap_knows(
+def test_each_route_gets_its_stops_in_order_with_the_openstreetmap_stop_at_each(
     sheets_ctx, tmp_path: Path
 ) -> None:
     result = build(sheets_ctx, tmp_path)
@@ -347,6 +349,10 @@ def test_each_route_gets_its_stops_in_order_with_what_openstreetmap_knows(
     }
     assert sheet["as_of"] == {"schedules": "vtest1", "osm": "2026-10-03"}
     assert sheet["generated_at"] == "2026-10-05T15:00:00Z"
+    # SEPTA's data, credited, with the OpenStreetMap ids as links (finding F7, decision D1).
+    assert sheet["credit"] == CREDIT
+    assert sheet["license"].startswith("SEPTA open data license agreement")
+    assert sheet["license"].endswith("https://wwww.septa.org/license-agreement/")
     [north] = sheet["directions"]  # southbound has no trips, so no sheet
     assert {k: north[k] for k in ("d", "dir", "to", "out")} == {
         "d": 0,
@@ -356,23 +362,18 @@ def test_each_route_gets_its_stops_in_order_with_what_openstreetmap_knows(
     }
     assert 1100 <= north["m"] <= 1125  # two gaps of about 556 meters
     first, second, third = north["stops"]
+    # Only the link to the OpenStreetMap stop: what it says there is joined on the page from
+    # tables/stop_amenities.json (decision D1).
     assert first == {
         "k": "sp100",
         "sid": "100",
         "nm": "Broad St & Erie Av (far side)",
         "lat": 39.96,
         "lng": -75.15,
-        "c": SHELTER,
         "osm": "n1",
-        "sh": 1,
     }
-    assert {k: second[k] for k in ("sid", "c", "osm", "sh", "bn")} == {
-        "sid": "101",
-        "c": BENCH,
-        "osm": "n2",
-        "sh": 0,
-        "bn": 1,
-    }
+    assert {k: second[k] for k in ("sid", "osm")} == {"sid": "101", "osm": "n2"}
+    assert set(second) == {"k", "sid", "nm", "lat", "lng", "osm"}
     assert third == {
         "k": "sp103",
         "sid": "103",
@@ -386,13 +387,28 @@ def test_each_route_gets_its_stops_in_order_with_what_openstreetmap_knows(
     assert not (tmp_path / "tables/routes/AIR.json").exists()
     assert any(
         note.startswith("Route survey sheets: 2 SEPTA bus and trolley routes with 4 stops")
+        and "(2 with a shelter or roof, 1 with a bench but no shelter" in note
         for note in result.notes
     )
 
 
-def test_the_index_lists_every_route_file_with_its_directions_and_counts(
-    sheets_ctx, tmp_path: Path
-) -> None:
+#: What OpenStreetMap says at a stop, as the shelters and benches layer and the stop table name it:
+#: never in a route file (decision D1 of docs/VERIFICATION_V0_2.md).
+OSM_ANSWERS = {"c", "sh", "bn", "bi", "lt", "tp", "wc", "db", "cv", "nb", "a", "li", "n"}
+
+
+def test_the_route_files_carry_no_openstreetmap_answers(sheets_ctx, tmp_path: Path) -> None:
+    build(sheets_ctx, tmp_path)
+    index = read(tmp_path / INDEX)
+    assert all("s" not in route for route in index["routes"])
+    for route in index["routes"]:
+        sheet = read(tmp_path / route["file"])
+        for direction in sheet["directions"]:
+            for stop in direction["stops"]:
+                assert not OSM_ANSWERS & set(stop), (route["id"], stop)
+
+
+def test_the_index_lists_every_route_file_with_its_directions(sheets_ctx, tmp_path: Path) -> None:
     build(sheets_ctx, tmp_path)
     index = read(tmp_path / INDEX)
     assert index["schema"] == 1 and index["as_of"]["schedules"] == "vtest1"
@@ -404,8 +420,8 @@ def test_the_index_lists_every_route_file_with_its_directions_and_counts(
         "md": 1,
         "file": "tables/routes/10.json",
         "dirs": [{"d": 0, "dir": "Northbound", "to": "Broad-Tioga", "n": 3}],
-        "s": {"2": 1, "3": 1, "none": 1},
     }
+    assert index["credit"] == CREDIT and "SEPTA" in index["license"]
     # SEPTA's own order of routes: T1 sorts before 10.
     assert [route["id"] for route in index["routes"]] == ["T1", "10"]
     for route in index["routes"]:
@@ -420,7 +436,33 @@ def test_stops_outside_the_city_are_left_out_and_counted(context_factory, tmp_pa
     [north] = read(tmp_path / "tables/routes/10.json")["directions"]
     assert [s["sid"] for s in north["stops"]] == ["100"]
     assert north["out"] == 2 and north["m"] == 0
-    assert "c" not in north["stops"][0]  # no OpenStreetMap snapshot in this cache
+    assert "osm" not in north["stops"][0]  # no OpenStreetMap snapshot in this cache
+
+
+def test_the_stop_table_holds_what_openstreetmap_says_keyed_by_its_id(
+    sheets_ctx, tmp_path: Path
+) -> None:
+    # The one place the route pages (and the map) read OpenStreetMap's answers from, joined in
+    # the browser by the id the route files carry (decision D1).
+    statuses = {status.id: status for status in all_statuses(sheets_ctx)}
+    result = build_stop_table(sheets_ctx, statuses, tmp_path)
+    table = read(tmp_path / STOP_TABLE)
+    assert table["schema"] == 1 and table["as_of"] == {"osm": "2026-10-03"}
+    assert table["credit"] == "© OpenStreetMap contributors"
+    assert table["license"].startswith("Open Database License 1.0")
+    assert table["stops"]["n1"] == {"c": SHELTER, "sh": 1}
+    assert table["stops"]["n2"] == {"c": BENCH, "sh": 0, "bn": 1, "n": ["101"]}
+    assert result.stops == len(table["stops"]) >= 2
+    assert result.notes[0].startswith(f"Stop answers table: {result.stops} OpenStreetMap stops")
+
+
+def test_without_openstreetmap_there_is_no_stop_table(context_factory, tmp_path) -> None:
+    result = build_stop_table(context_factory(now=NOW), {}, tmp_path)
+    assert not (tmp_path / STOP_TABLE).exists()
+    assert result.notes == [
+        "Stop answers table: OpenStreetMap's stops are missing, so there is none and every stop "
+        "shows as not yet surveyed"
+    ]
 
 
 def test_without_a_stop_order_there_are_no_sheets(context_factory, tmp_path) -> None:
@@ -458,7 +500,7 @@ def test_the_manifest_lists_the_index_but_not_each_route(sheets_ctx, tmp_path: P
     result = publish(sheets_ctx, out)
     assert result.route_sheets is not None and result.route_sheets.routes == 2
     files = result.manifest["files"]
-    assert INDEX in files
+    assert INDEX in files and STOP_TABLE in files
     assert not any(re.match(r"^tables/routes/(?!index)", name) for name in files)
     assert (out / "tables/routes/10.json").is_file() and (out / "tables/routes/T1.json").is_file()
     assert ROUTE_SHEET.match("tables/routes/47.json") and not ROUTE_SHEET.match(INDEX)

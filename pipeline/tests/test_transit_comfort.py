@@ -22,9 +22,12 @@ from placekeepers.derive.transit_comfort import (
     BY_NUMBER,
     BY_PLACE,
     NOT_SURVEYED,
+    OSM_FIELDS,
+    OSM_SUGGESTIONS,
     TUNNEL_STATIONS,
     SeptaStop,
     comfort_for_stops,
+    join_published,
     match_osm,
     stop_suggestions,
     yes_no_need,
@@ -250,34 +253,41 @@ def comfort_paths(context_factory, tmp_path):
     return ctx, paths
 
 
-def published(ctx, paths, tmp_path) -> tuple[dict[str, dict], list[str]]:
+def publish_stops(ctx, paths, tmp_path) -> tuple[dict[str, dict], list[str]]:
     out = tmp_path / "transit.stops.geojson"
     result = build_transit_stops(ctx, paths, out, date(2026, 10, 4))
     features = json.loads(out.read_text())["features"]
     return {f["properties"]["sid"]: f["properties"] for f in features}, result.notes
 
 
-def test_stops_carry_what_riders_find_the_factors_and_suggestions(comfort_paths, tmp_path) -> None:
+#: OpenStreetMap's answers as the shelters and benches layer names them, which must never be
+#: published on SEPTA's stops either.
+OSM_ANSWER_KEYS = {"c", "bi", "tp", "db", "nb"}
+
+
+def assert_no_openstreetmap_answers(stops: dict[str, dict]) -> None:
+    """Decision D1 of docs/VERIFICATION_V0_2.md: SEPTA's stop records carry the OpenStreetMap id
+    as a link, and nothing OpenStreetMap says there."""
+    for sid, stop in stops.items():
+        assert not (OSM_FIELDS | OSM_ANSWER_KEYS) & set(stop), (sid, sorted(set(stop)))
+        suggested = set(str(stop.get("sg") or "").split(",")) - {""}
+        assert not suggested & OSM_SUGGESTIONS, (sid, suggested)
+
+
+def test_stops_carry_the_link_and_the_lens_factors_but_never_openstreetmaps_answers(
+    comfort_paths, tmp_path
+) -> None:
     ctx, paths = comfort_paths
-    stops, notes = published(ctx, paths, tmp_path)
+    stops, notes = publish_stops(ctx, paths, tmp_path)
     s100, s101, s108 = stops["100"], stops["101"], stops["108"]
-    # What riders find, from OpenStreetMap, by number and by place; 108 is not in it.
-    assert (s100["o"], s100["om"], s100["a"], s100["sh"], s100["bn"], s100["li"]) == (
-        "n1",
-        1,
-        2,
-        0,
-        1,
-        0,
-    )
-    assert (s101["o"], s101["om"], s101["a"], s101["sh"]) == ("n2", 2, 3, 1)
-    assert "bn" not in s101 and "o" not in s108 and "a" not in s108
+    assert_no_openstreetmap_answers(stops)
+    # The link to the OpenStreetMap stop at the same pole, by number (100) and by place (101);
+    # 108 is not in OpenStreetMap.
+    assert (s100["o"], s101["o"]) == ("n1", "n2") and "o" not in s108
+    # Every stop the lens scores is marked; the station (102) is not.
+    assert s100["tc"] == s101["tc"] == s108["tc"] == 1 and "tc" not in stops["102"]
     # Riders: 55, 30 and 7 boardings, ranked among the three stops.
     assert (s100["f_riders"], s101["f_riders"], s108["f_riders"]) == (67, 33, 0)
-    # Known answers are 0 or 100; unknown ones count halfway.
-    assert (s100["f_noshelter"], s100["f_nobench"]) == (100, 0)
-    assert (s101["f_noshelter"], s101["f_nobench"]) == (0, NOT_SURVEYED)
-    assert (s108["f_noshelter"], s108["f_nobench"]) == (NOT_SURVEYED, NOT_SURVEYED)
     # Shade: 100's cell has the least canopy; heat from its tract; the High Injury Network
     # passes 100 and 101 but not 108.
     assert s100["f_shade"] == 67 and s100["cp"] == 2 and s108["f_shade"] == 0
@@ -287,15 +297,89 @@ def test_stops_carry_what_riders_find_the_factors_and_suggestions(comfort_paths,
     assert s100["hin"] == 1 and "hin" not in s108
     # Midday waits of 80 and 120 minutes; 108 has no midday service, so no wait factor.
     assert (s100["f_wait"], s101["f_wait"]) == (0, 50) and "f_wait" not in s108
-    # Suggestions, in the registry's order for stops.
-    assert s100["sg"] == "stop_shelter_request,stop_streetlight_report"
-    assert s101["sg"] == "stop_survey"
-    assert s108["sg"] == "stop_survey"
+    # No stop is among the quarter with the least canopy, so none has a published suggestion.
+    assert not any("sg" in stop for stop in stops.values())
     # Stations get none of this.
-    assert not any(key.startswith("f_") or key in ("sg", "a") for key in stops["102"])
+    assert not any(key.startswith("f_") or key in ("sg", "o", "tc") for key in stops["102"])
+    # The build notes still count what the browser will show.
     note = next(n for n in notes if "match an OpenStreetMap stop" in n)
     assert "2 of 3 SEPTA bus and trolley stops match an OpenStreetMap stop within 15 meters" in note
     assert "(1 where the stop numbers agree, 1 by place), of the 3 OpenStreetMap has in" in note
+    assert any("1 with a shelter or roof, 1 with a bench but no shelter mapped" in n for n in notes)
+
+
+def stop_entries(paths) -> dict[str, dict]:
+    """The OpenStreetMap stops of the snapshot as tables/stop_amenities.json gives them."""
+    import pyarrow.parquet as pq
+
+    from placekeepers.derive.bus_stops import find_stops
+    from placekeepers.publish.amenities import STOP_COLUMNS
+    from placekeepers.publish.stop_table import stop_table_entry
+
+    found, _ = find_stops(pq.read_table(paths["osm_philadelphia"], columns=STOP_COLUMNS))
+    return {stop.id: stop_table_entry(stop) for stop in found}
+
+
+def test_the_browser_join_gives_back_what_the_pipeline_worked_out(comfort_paths) -> None:
+    # What riders find, the halfway answers and the suggestions, joined from the stop table as
+    # the browser does (join_published, the reference for web/src/transit/answers.ts).
+    _, paths = comfort_paths
+    stops = [
+        SeptaStop("100", (), 39.96, -75.15),
+        SeptaStop("101", (), 39.965, -75.15),
+        SeptaStop("108", (), 39.96, -75.16),
+    ]
+    result = comfort_for_stops(stops, [55, 30, 7], [80, 120, None], paths)
+    j100, j101, j108 = result.joined
+    assert (j100["o"], j100["om"], j100["a"], j100["sh"], j100["bn"], j100["li"]) == (
+        "n1",
+        BY_NUMBER,
+        2,
+        0,
+        1,
+        0,
+    )
+    assert (j101["o"], j101["om"], j101["a"], j101["sh"]) == ("n2", BY_PLACE, 3, 1)
+    assert "bn" not in j101 and "o" not in j108 and "a" not in j108
+    # Known answers are 0 or 100; unknown ones count halfway.
+    assert (j100["f_noshelter"], j100["f_nobench"]) == (100, 0)
+    assert (j101["f_noshelter"], j101["f_nobench"]) == (0, NOT_SURVEYED)
+    assert (j108["f_noshelter"], j108["f_nobench"]) == (NOT_SURVEYED, NOT_SURVEYED)
+    # Suggestions, in the registry's order for stops.
+    assert j100["sg"] == "stop_shelter_request,stop_streetlight_report"
+    assert j101["sg"] == "stop_survey"
+    assert j108["sg"] == "stop_survey"
+    # Publishing, then joining in the browser, gives the same picture. (The tile also carries
+    # SEPTA's own properties, such as the stop number the browser compares with OpenStreetMap's.)
+    entries = stop_entries(paths)
+    for stop, props, joined in zip(stops, result.properties, result.joined, strict=True):
+        entry = entries.get(str(props["o"])) if props.get("o") else None
+        tile = {**props, "sid": stop.sid}
+        assert join_published(tile, entry) == {**joined, "tc": 1, "sid": stop.sid}
+
+
+def test_without_openstreetmap_every_stop_is_not_yet_surveyed(comfort_paths, tmp_path) -> None:
+    ctx, paths = comfort_paths
+    del paths["osm_philadelphia"]
+    stops, notes = publish_stops(ctx, paths, tmp_path)
+    assert all("o" not in stops[sid] and stops[sid]["tc"] == 1 for sid in ("100", "101", "108"))
+    # The browser then gives every stop the halfway answers and the survey suggestion.
+    joined = [join_published(stops[sid], None) for sid in ("100", "101", "108")]
+    assert all(j["f_noshelter"] == NOT_SURVEYED for j in joined)
+    assert all(j["sg"].startswith("stop_survey") for j in joined)
+    assert any("OpenStreetMap is missing" in note for note in notes)
+
+
+def test_a_station_is_left_as_it_is_by_the_join() -> None:
+    station = {"id": "sp102", "sid": "102", "md": 4}
+    assert join_published(station, {"c": 1, "sh": 0, "bn": 0}) == station
+
+
+def test_the_numbers_agree_through_a_former_number_and_only_then() -> None:
+    props = {"sid": "300", "fid": "299,298", "o": "n1", "tc": 1}
+    assert join_published(props, {"c": 0, "n": ["298"]})["om"] == BY_NUMBER
+    assert join_published(props, {"c": 0, "n": ["301"]})["om"] == BY_PLACE
+    assert join_published(props, {"c": 0})["om"] == BY_PLACE
 
 
 def test_the_trolley_tunnel_stations_are_left_out_like_stations(
@@ -308,9 +392,11 @@ def test_the_trolley_tunnel_stations_are_left_out_like_stations(
 
     monkeypatch.setattr(transit_layer, "TUNNEL_STATIONS", frozenset({"108"}))
     ctx, paths = comfort_paths
-    stops, notes = published(ctx, paths, tmp_path)
+    stops, notes = publish_stops(ctx, paths, tmp_path)
     tunnel = stops["108"]
-    assert not any(key.startswith("f_") or key in ("sg", "a", "o", "cp", "hin") for key in tunnel)
+    assert not any(
+        key.startswith("f_") or key in ("sg", "a", "o", "cp", "hin", "tc") for key in tunnel
+    )
     assert tunnel["b"] == 7 and tunnel["tw"] > 0
     # The other two stops are ranked between themselves.
     assert (stops["100"]["f_riders"], stops["101"]["f_riders"]) == (50, 0)
@@ -326,17 +412,6 @@ def test_the_tunnel_station_list_names_real_trolley_stops() -> None:
     # station but the 13th Street loop.
     assert all(number.isdigit() for number in TUNNEL_STATIONS)
     assert len(TUNNEL_STATIONS) == 15
-
-
-def test_without_openstreetmap_every_stop_is_not_yet_surveyed(comfort_paths, tmp_path) -> None:
-    ctx, paths = comfort_paths
-    del paths["osm_philadelphia"]
-    stops, notes = published(ctx, paths, tmp_path)
-    assert all(
-        stops[sid]["f_noshelter"] == NOT_SURVEYED and stops[sid]["sg"].startswith("stop_survey")
-        for sid in ("100", "101", "108")
-    )
-    assert any("OpenStreetMap is missing" in note for note in notes)
 
 
 def test_comfort_for_no_stops_is_empty() -> None:
