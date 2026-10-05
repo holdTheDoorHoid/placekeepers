@@ -11,6 +11,11 @@
 //   and tax debt as of July 2025 (from the snapshot only);
 // * private owners only: absentee, possible estate, years since the last sale, many vacant
 //   parcels (from the snapshot only).
+//
+// The flags about the owner rather than the parcel (absentee, possible estate, tax debt, many
+// vacant parcels) are held back, as the pipeline holds them back, for an owner who may be a person
+// unless we call the parcel vacant with high or medium confidence; possible estate never shows
+// with a homestead exemption (docs/ETHICS.md; ownerFlagAllowed).
 
 import {
   DEED_FRAUD_CHECK_URL,
@@ -22,10 +27,10 @@ import {
 } from '../config/links.ts';
 import { formatDate, formatMoney, strings } from '../strings.ts';
 import { yearOf } from './dates.ts';
-import { absentee, placeName, possibleEstate, type Absentee } from './owners.ts';
+import { absentee, isPrivate, placeName, possibleEstate, type Absentee } from './owners.ts';
 import { plain } from './plain.ts';
 import { fastResales, lastSale, sheriffSales, type Resales } from './transfers.ts';
-import type { FlagNote, LiEvent, Link, OwnerFlag, Transfer } from './types.ts';
+import type { FlagNote, LiEvent, Link, OwnerFlag, OwnerType, Transfer } from './types.ts';
 
 /** Every flag id, in the order a lot page lists them. */
 export const FLAG_IDS = [
@@ -41,6 +46,42 @@ export const FLAG_IDS = [
   'imminently_dangerous',
 ] as const;
 export type FlagId = (typeof FLAG_IDS)[number];
+
+/** The flags about the owner rather than the parcel: held back on a parcel that may be someone's home. */
+export const ABOUT_THE_OWNER: readonly string[] = ['absentee', 'possible_estate', 'tax_debt_2025', 'many_parcels'];
+
+/** What decides whether the flags about the owner may show on a lot page. */
+export interface OwnerFlagRule {
+  /** The owner may be a person (personLike). */
+  personLike: boolean;
+  /** We call the parcel vacant with high or medium confidence. */
+  calledVacant: boolean;
+  /** The City records a homestead exemption: someone lives there, or did. */
+  homestead: boolean;
+}
+
+/** The owner may be a person: typed as one, of a type we could not tell, or a private owner whose names carry an estate. */
+export function personLike(type: OwnerType, names: string[]): boolean {
+  return type === 'individual' || type === 'unknown' || (isPrivate(type, names.length > 0) && possibleEstate(names));
+}
+
+/**
+ * Whether a flag may be shown (the pipeline's owner_flag_allowed, docs/VERIFICATION.md D5 and D6):
+ * the flags about an owner who may be a person only on a parcel we call vacant with high or medium
+ * confidence, and possible estate never with a homestead exemption.
+ */
+export function ownerFlagAllowed(id: string, rule: OwnerFlagRule): boolean {
+  if (id === 'possible_estate' && rule.homestead) return false;
+  return !(ABOUT_THE_OWNER.includes(id) && rule.personLike && !rule.calledVacant);
+}
+
+/**
+ * The deed fraud notice appears whenever the owner may be a person, flags or not (the pipeline's
+ * shows_deed_fraud_notice): it protects the family living there and says nothing about the owner.
+ */
+export function showsDeedFraudNotice(type: OwnerType, names: string[]): boolean {
+  return personLike(type, names);
+}
 
 /** Which live lookup each flag is worked out from; the rest come only from the weekly snapshot. */
 export const FLAG_PART: Record<FlagId, 'owner' | 'transfers' | 'li' | 'snapshot'> = {
@@ -116,6 +157,7 @@ export function completeFlag(flag: OwnerFlag, note: FlagNote | null = null, rout
     nextStep: estate ? f.possible_estate.next : (note?.nextStep ?? flag.nextStep ?? parts?.nextStep ?? null),
     links: mergeLinks(flag.links, note?.links ?? [], routeLinks, flagLinks(flag.id)),
     list: flag.list ?? null,
+    parcels: flag.parcels ?? null,
   };
 }
 

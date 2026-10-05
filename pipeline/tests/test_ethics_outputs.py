@@ -14,9 +14,16 @@ tables/owners.json. The tests below check, in every one of them:
 * none of the things we do not build (a price estimate, ease of acquisition, a buy button, letters
   to owners), no suggestion that involves the police, never "owner deceased" or "no heirs", and
   never "dangerous", "high crime" or "hot spot" about a place;
-* the possible estate flag reads the ETHICS.md text word for word, with the deed fraud notice;
-* conservatorship only for a private parcel called vacant with high or medium confidence;
-* names only from memorials.yaml, and everything in suppressed.yaml gone from every file.
+* the possible estate flag reads the ETHICS.md text word for word, with the deed fraud notice,
+  and never shows on a parcel with a homestead exemption;
+* the flags about an owner who may be a person (absentee, possible estate, tax debt, many vacant
+  parcels) only on parcels called vacant with high or medium confidence, and the deed fraud notice
+  on every dossier whose owner may be a person, flags or not;
+* conservatorship only for a private parcel called vacant with high or medium confidence, and
+  never on a parcel with a homestead exemption;
+* names only from memorials.yaml, and everything in suppressed.yaml gone from every file;
+* the citywide owners table lists organizations only, never a person;
+* a dossier built without some records says so (`partial`) instead of claiming there are none.
 
 Rules that need a person to judge (care framing, quiet design, what the interface shows) are
 listed in docs/VERIFICATION.md.
@@ -34,11 +41,13 @@ import pytest
 import yaml
 
 from placekeepers.curated import REMOVAL_EMAIL_FILE
+from placekeepers.derive import owners as ow
+from placekeepers.derive.flags import ABOUT_THE_OWNER
 from placekeepers.publish import publish
 
 from . import streets_fixtures as fx
 from .conftest import REPO_ROOT, install_snapshot
-from .test_dossiers import NOW, dates, install_everything
+from .test_dossiers import HOMESTEAD, NOW, dates, install_everything
 
 LATER = "2026-10-04T14:30:00Z"
 ETHICS = (REPO_ROOT / "docs" / "ETHICS.md").read_text(encoding="utf-8")
@@ -272,14 +281,60 @@ def test_the_possible_estate_flag_reads_ethics_word_for_word(built) -> None:
     for name, body in files.items():
         if not re.fullmatch(r"dossiers/\d{4}\.json", name):
             continue
-        for record in body["parcels"].values():
+        for account, record in body["parcels"].items():
             for flag in record["owner"]["flags"]:
                 if flag["id"] == "possible_estate":
                     found += 1
+                    assert account not in HOMESTEAD, account
                     whole = " ".join([flag["text"], notes["careful"], notes["next_step"]])
                     assert whole == ESTATE_TEXT
                     assert record["owner"]["notice"] == "deed_fraud"
     assert found == 1  # BOWMAN LEROY and BOWMAN EVELYN ESTATE OF
+
+
+def test_flags_about_a_person_only_on_parcels_called_vacant(built) -> None:
+    out, _, _ = built
+    held = 0
+    for name, body in published_files(out).items():
+        if not re.fullmatch(r"dossiers/\d{4}\.json", name):
+            continue
+        for record in body["parcels"].values():
+            owner = record["owner"]
+            person = owner["type"] in {"individual", "unknown"} or owner.get("notice")
+            called = (record["vacancy"] or {}).get("confidence") in {"high", "medium"}
+            if owner["type"] in {"individual", "unknown"}:
+                assert owner.get("notice") == "deed_fraud", name
+            if person and not called:
+                held += 1
+                ids = {flag["id"] for flag in owner["flags"]}
+                assert not ids & set(ABOUT_THE_OWNER), (name, ids)
+    assert held  # WALLACE GLORIA's parcel is not called vacant
+
+
+def test_the_owners_table_lists_organizations_only(built) -> None:
+    out, _, _ = built
+    owners = published_files(out)["tables/owners.json"]["owners"]
+    assert owners  # KENSINGTON LOTS LLC
+    for entry in owners.values():
+        found = ow.type_from_name(entry["names"])
+        assert found.type not in {"individual", "unknown"}, entry["names"]
+        assert not ow.possible_estate(entry["names"]), entry["names"]
+
+
+def test_no_dossier_claims_records_it_was_not_built_from(built) -> None:
+    out, _, _ = built
+    for name, body in published_files(out).items():
+        if not re.fullmatch(r"dossiers/\d{4}\.json", name):
+            continue
+        for record in body["parcels"].values():
+            partial = record.get("partial", [])
+            assert set(partial) <= {"transfers", "assessments", "li"}
+            if "transfers" in partial:
+                assert record["transfers"] is None
+            if "assessments" in partial:
+                assert record["assessments"] is None
+            if "li" in partial:
+                assert record["li"]["open_violations"] is None
 
 
 def test_conservatorship_only_for_private_parcels_called_vacant(built) -> None:
@@ -288,13 +343,15 @@ def test_conservatorship_only_for_private_parcels_called_vacant(built) -> None:
     for name, body in published_files(out).items():
         if not re.fullmatch(r"dossiers/\d{4}\.json", name):
             continue
-        for record in body["parcels"].values():
+        for account, record in body["parcels"].items():
             if "conservatorship" in record["routes"]:
                 seen += 1
+                assert account not in HOMESTEAD, account
                 assert record["owner"]["type"] in {"individual", "company", "nonprofit", "unknown"}
                 assert record["owner"]["names"]
                 assert (record["vacancy"] or {}).get("confidence") in {"high", "medium"}
     assert seen  # the fixture has private lots called vacant
+    assert HOMESTEAD  # and a home among them that must not get it
 
 
 def test_names_come_only_from_the_curated_file(built) -> None:

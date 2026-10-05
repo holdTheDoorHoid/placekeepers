@@ -1,19 +1,39 @@
 <script lang="ts">
   // History: every recorded sale and transfer newest first, the City's assessments by year (a
   // chart and the same numbers as a table), and the L&I timeline of permits, violations and
-  // demolitions. Each part says whether it is live or from the weekly snapshot.
+  // demolitions. Each part says whether it is live or from the weekly snapshot. Records the
+  // weekly copy does not hold for this parcel are said to be missing, never "none on record",
+  // with a way to see them live.
   import type { DossierView } from '../../dossier/build.ts';
   import { strings } from '../../strings.ts';
   import AssessmentChart from './AssessmentChart.svelte';
   import ProvenanceLine from './ProvenanceLine.svelte';
 
-  let { history, idPrefix }: { history: DossierView['history']; idPrefix: string } = $props();
+  let {
+    history,
+    idPrefix,
+    onTurnOnLive,
+    onRetry,
+  }: { history: DossierView['history']; idPrefix: string; onTurnOnLive?: () => void; onRetry?: () => void } = $props();
   const h = strings.dossier.history;
   /** The L&I timeline starts short; "Show all" opens the rest. */
   const FIRST_LI = 12;
   let allLi = $state(false);
   const liRows = $derived(history.li.rows ? (allLi ? history.li.rows : history.li.rows.slice(0, FIRST_LI)) : null);
 </script>
+
+{#if history.notInCopy}
+  <p class="notice not-in-copy">
+    {history.notInCopy.text}
+    {#if history.notInCopy.offerLive && onTurnOnLive}
+      {h.notInCopyOff}
+      <button class="button small quiet" type="button" onclick={onTurnOnLive}>{strings.options.turnOn}</button>
+    {:else if history.notInCopy.retry && onRetry}
+      {h.notInCopyFailed}
+      <button class="button small quiet" type="button" onclick={onRetry}>{strings.dossier.retry}</button>
+    {/if}
+  </p>
+{/if}
 
 <h4>{h.transfersTitle}</h4>
 <ProvenanceLine provenance={history.transfersProvenance} />

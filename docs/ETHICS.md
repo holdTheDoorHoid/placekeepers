@@ -21,6 +21,25 @@ easy, obvious one. Builders must follow this page; changes need the owner's agre
 **Decision (owner, 2026-10-04): show everything we can compute.** That includes owner names and
 mailing address as the City publishes them, owner type, and derived flags.
 
+**Limits (orchestrator, 2026-10-04, after the verification review in docs/VERIFICATION.md; the owner
+can undo them).** Some of what we can compute would help someone take a family's home, so:
+
+- Conservatorship is never offered on a parcel with a homestead exemption, at any confidence: that
+  is the City's own record that someone lives there, or did.
+- For an owner who is a person, whose type we could not tell, or who may be an estate, the flags
+  about the owner (absentee owner, possible estate, tax debt as of July 2025, owner holds many
+  vacant parcels) appear only on parcels the map calls vacant with high or medium confidence, in
+  the published files and on the lot page with live City data alike. A parcel we are not sure
+  about may be someone's home. Possible estate never appears on a parcel with a homestead
+  exemption. Facts about the parcel (deeds, sheriff sales, violations) and the owner's name and
+  mailing address as the City publishes them are always shown. Organizations keep every flag.
+- The citywide list of owners holding many vacant parcels names organizations only (companies and
+  nonprofits). For a person who holds five or more, the flag stays on those parcels' own lot
+  pages, with the list of that person's other parcels shown there, never in one citywide file.
+- Seller and buyer names on deeds are shown: they are owners of record over time, as the City
+  shows them. We publish no personal details beyond the names of owners past and present and the
+  current mailing address.
+
 Flags in the first release:
 
 | Flag | Source | Shown as |
@@ -41,9 +60,11 @@ Flags in the first release:
   to this property and may not know it. If you know the family, the Tangled Title Fund (up to $6,500
   in legal help) and Philadelphia VIP can help them keep it. Families can also sign up for the City's
   free Fraud Guard alerts."* It never reads "owner deceased" or "no heirs".
-- Any dossier showing an individual owner flag also shows a short deed fraud notice: how deed theft
-  works in Philadelphia, the City's Fraud Guard sign up, and the City's November 2025 automated check
-  that blocks deeds signed by people already dead.
+- Every dossier whose owner may be a person (a person, an owner whose type we could not tell, or a
+  possible estate) shows a short deed fraud notice, even where the flags about the owner are held
+  back: how deed theft works in Philadelphia, the City's Fraud Guard sign up, and the City's
+  November 2025 automated check that blocks deeds signed by people already dead. It protects the
+  family who may live there and says nothing about the owner (orchestrator, 2026-10-04).
 - The conservatorship route always carries this note: *"Conservatorship can take a property away from
   its owner. Researchers found it is used disproportionately in neighborhoods facing gentrification.
   Talk to the Garden Justice Legal Initiative before you consider it."*
@@ -67,6 +88,9 @@ with a first line pointing to the terms of use.
 - Presentation: a quiet marker (no red, no skulls, no crash imagery), the name, the date, "walking" or
   "cycling", and a link to the public memorial page. No driver details, no case numbers, no arrest
   information, even though the Police dataset has some of these.
+- A crash's id on the map is PennDOT's crash record number, which PennDOT and the City publish; it is
+  not a Police case number, and it stays so a crash can be found again to correct or remove it
+  (decision D11, docs/VERIFICATION.md).
 - Memorial suggestions ("memorial garden", "ghost bike") always say "only with the family's blessing"
   and link to Families for Safe Streets.
 - A "show names" setting (on by default) hides every name at once.

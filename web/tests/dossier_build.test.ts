@@ -57,6 +57,7 @@ function liveProperty(over: Partial<LiveProperty> = {}): LiveProperty {
     saleDate: '1987-06-12',
     salePrice: 15000,
     marketValue: 12000,
+    homestead: false,
     lng: -75.15572,
     lat: 39.98513,
     ...over,
@@ -196,6 +197,15 @@ describe('live City data', () => {
     expect(view.history.transfersProvenance.text).toBe("The City's servers could not be reached, so this is the weekly snapshot of October 4, 2026.");
   });
 
+  it('never offers conservatorship when the City\'s live record shows a homestead exemption', () => {
+    const routeIds = (view: ReturnType<typeof buildDossier>) =>
+      [...view.actions.suggestions.flatMap((s) => s.routes), ...view.actions.otherRoutes].map((r) => r.route.id);
+    expect(routeIds(buildDossier(input('990000005', { live: allLive() })))).toContain('conservatorship');
+    const home = routeIds(buildDossier(input('990000005', { live: allLive(liveProperty({ homestead: true })) })));
+    expect(home).not.toContain('conservatorship');
+    expect(home).toContain('ask_the_owner');
+  });
+
   it('leaves out notes about an earlier owner when the City names a new one', () => {
     const view = buildDossier(
       input('990000004', { live: { ...allLive(liveProperty({ opa: '990000004', address: '1301 N EXAMPLE AVE', names: ['NEIGHBOR SAM'], mailing: '1303 N EXAMPLE AVE, PHILADELPHIA PA 19122', mailingStreet: '1303 N EXAMPLE AVE', mailingCityState: 'PHILADELPHIA PA', mailingZip: '19122' })) } }),
@@ -205,6 +215,117 @@ describe('live City data', () => {
     expect(view.owner.typeLabel).toBe('A person');
     expect(view.owner.typeReason).toBe("The owner name looks like a person's name.");
     expect(view.owner.flags.map((f) => f.id)).not.toContain('absentee');
+  });
+});
+
+describe('a parcel that may be someone\'s home (docs/VERIFICATION.md D5 and D6)', () => {
+  /** A shard parcel as the snapshot has it, but called vacant with this confidence. */
+  function at(opa: string, confidence: 'high' | 'medium' | 'low' | null): DossierInput['shard'] {
+    const parcel = structuredClone(shard.parcels.get(opa)!);
+    parcel.vacancy = confidence ? { ...parcel.vacancy!, confidence } : null;
+    return { status: 'found', parcel, generatedAt: shard.generatedAt, notes };
+  }
+  const ids = (view: ReturnType<typeof buildDossier>) => [...view.owner.flags.map((f) => f.id), ...(view.owner.tax.flag ? ['tax_debt_2025'] : [])];
+
+  it('holds back the notes about an owner who may be a person, from the snapshot and live alike', () => {
+    for (const live of [IDLE_PARTS, allLive()]) {
+      const view = buildDossier(input('990000005', { shard: at('990000005', 'low'), live, liveOn: live !== IDLE_PARTS }));
+      expect(ids(view)).toEqual(['years_since_sale', 'open_violations']);
+      expect(view.owner.held).toMatch(/^We are not sure this parcel is vacant, so it may be someone's home\./);
+      // Never "no unpaid taxes" when the tax note is held back.
+      expect(view.owner.tax.text).toMatch(/only on parcels we call very likely or probably vacant/);
+      // The deed fraud notice goes with the flags still shown.
+      expect(view.owner.deedFraud).not.toBeNull();
+      // The owner's name and mailing address are still shown as the City publishes them.
+      expect(view.owner.names).toEqual(['SAMPLE ROSE M EST OF']);
+      expect(view.owner.mailing).toBe('455 EXAMPLE AVE, CHERRY HILL NJ 08002');
+    }
+    const none = buildDossier(input('990000005', { shard: at('990000005', null), liveOn: false }));
+    expect(ids(none)).toEqual(['years_since_sale', 'open_violations']);
+  });
+
+  it('shows them where we call the parcel very likely or probably vacant', () => {
+    const view = buildDossier(input('990000005', { shard: at('990000005', 'medium'), liveOn: false }));
+    expect(ids(view)).toEqual(['absentee', 'possible_estate', 'years_since_sale', 'open_violations', 'tax_debt_2025']);
+    expect(view.owner.held).toBeNull();
+  });
+
+  it('never shows a possible estate with a homestead exemption', () => {
+    const view = buildDossier(input('990000005', { live: allLive(liveProperty({ homestead: true })) }));
+    expect(ids(view)).not.toContain('possible_estate');
+    expect(ids(view)).toContain('absentee');
+  });
+
+  it('keeps the deed fraud notice when no flag is left to show', () => {
+    const parcel = structuredClone(shard.parcels.get('990000005')!);
+    parcel.vacancy = { ...parcel.vacancy!, confidence: 'low' };
+    parcel.owner!.flags = parcel.owner!.flags.filter((f) => ['absentee', 'tax_debt_2025'].includes(f.id));
+    const view = buildDossier(input('990000005', { shard: { status: 'found', parcel, generatedAt: shard.generatedAt, notes }, liveOn: false }));
+    expect(ids(view)).toEqual([]);
+    // The notice protects the family that may live there, and says nothing about the owner.
+    expect(view.owner.deedFraud!.text).toBe(notes!.notices.deed_fraud!.text);
+    expect(view.owner.held).not.toBeNull();
+  });
+
+  it('takes a person\'s other parcels from the lot\'s own record, never from the owners table', () => {
+    const parcel = structuredClone(shard.parcels.get('990000005')!);
+    const others = [{ id: '990000006', address: '1307 N EXAMPLE AVE', kind: 'lot' as const, confidence: 'high' as const }];
+    parcel.owner!.flags.push({ id: 'many_parcels', text: 'This owner holds 5 vacant parcels in the city.', careful: null, nextStep: null, links: [], list: null, parcels: others });
+    const view = buildDossier(input('990000005', { shard: { status: 'found', parcel, generatedAt: shard.generatedAt, notes }, liveOn: false }));
+    const many = view.owner.flags.find((f) => f.id === 'many_parcels')!;
+    expect(many.parcels).toEqual(others);
+    expect(many.list).toBeNull();
+  });
+
+  it('keeps every flag of an organization on any parcel', () => {
+    const view = buildDossier(input('990000004', { shard: at('990000004', 'low'), liveOn: false }));
+    expect(ids(view)).toEqual(['absentee', 'years_since_sale', 'many_parcels']);
+    expect(view.owner.held).toBeNull();
+  });
+});
+
+describe('a dossier built without some records (docs/VERIFICATION.md D9)', () => {
+  /** 990000005 as the pipeline writes a parcel outside the candidates: no deeds, assessments or violation records. */
+  function partialShard(): DossierInput['shard'] {
+    const parcel = structuredClone(shard.parcels.get('990000005')!);
+    parcel.partial = ['transfers', 'assessments', 'li'];
+    parcel.transfers = null;
+    parcel.assessments = null;
+    parcel.li = { ...parcel.li!, openViolations: null, lastViolation: null, violations: null };
+    parcel.owner!.flags = parcel.owner!.flags.filter((f) => f.id !== 'open_violations');
+    return { status: 'found', parcel, generatedAt: shard.generatedAt, notes };
+  }
+
+  it('says the records are not in the weekly copy and offers live data, never "none on record"', () => {
+    const view = buildDossier(input('990000005', { shard: partialShard(), liveOn: false }));
+    expect(view.history.transfers).toBeNull();
+    expect(view.history.assessments).toBeNull();
+    expect(view.history.notInCopy).toEqual({
+      text: 'Our weekly copy does not include deed records, assessments and L&I violation records for this parcel, so this page cannot say whether there are any.',
+      offerLive: true,
+      retry: false,
+    });
+    expect(view.history.li.summary!.join(' ')).not.toMatch(/open violation/i);
+    expect(view.history.transfersProvenance.text).toBe('Live City data is off, and our weekly snapshot does not cover this part.');
+  });
+
+  it('shows live records when the City answers, and offers to try again for a part that failed', () => {
+    const view = buildDossier(input('990000005', { shard: partialShard(), live: { ...allLive(), li: failed() } }));
+    expect(view.history.transfers!.map((t) => t.date)).toEqual(['Sep 2, 2026']);
+    expect(view.history.assessments!.map((a) => a.year)).toEqual([2027, 2026]);
+    expect(view.history.notInCopy).toEqual({
+      text: 'Our weekly copy does not include L&I violation records for this parcel, so this page cannot say whether there are any.',
+      offerLive: false,
+      retry: true,
+    });
+    const all = buildDossier(input('990000005', { shard: partialShard(), live: allLive() }));
+    expect(all.history.notInCopy).toBeNull();
+  });
+
+  it('says nothing about missing records while the City is still asked', () => {
+    const view = buildDossier(input('990000005', { shard: partialShard(), live: { ...IDLE_PARTS, transfers: loading, assessments: loading, li: loading } }));
+    expect(view.history.notInCopy).toBeNull();
+    expect(view.history.transfers).toBeNull();
   });
 });
 

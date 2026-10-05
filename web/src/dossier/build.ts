@@ -28,7 +28,10 @@ import {
   liFacts,
   liFlags,
   mergeLinks,
+  ownerFlagAllowed,
   ownerFlags,
+  personLike,
+  showsDeedFraudNotice,
   sortFlags,
   transferFlags,
   type FlagId,
@@ -49,7 +52,9 @@ import type {
   Link,
   Nearby,
   OwnerFlag,
+  OwnerListParcel,
   OwnerType,
+  PartialPart,
   ShardParcel,
   Transfer,
   VacancyKind,
@@ -129,8 +134,10 @@ export interface FlagView {
   careful: string | null;
   nextStep: string | null;
   links: Link[];
-  /** For the many_parcels flag: the owner's list in tables/owners.json. */
+  /** For the many_parcels flag: an organization's list in tables/owners.json. */
   list?: string | null;
+  /** For the many_parcels flag of an owner who may be a person: their other parcels, from this lot's record. */
+  parcels?: OwnerListParcel[] | null;
   provenance: Provenance;
 }
 
@@ -230,6 +237,8 @@ export interface DossierView {
     cityOwned: string | null;
     isPrivate: boolean;
     flags: FlagView[];
+    /** Said when the flags about an owner who may be a person are held back on this parcel. */
+    held: string | null;
     ownerChanged: boolean;
     deedFraud: { text: string; links: Link[] } | null;
     help: Link[] | null;
@@ -242,6 +251,11 @@ export interface DossierView {
     assessments: AssessmentRow[] | null;
     assessmentsProvenance: Provenance;
     li: { rows: LiRow[] | null; summary: string[] | null; truncated: boolean; liveForTimeline: boolean };
+    /**
+     * Said when records this dossier was not built from cannot be shown live (live data off, or
+     * the City did not answer): they are not in the weekly copy, never "none on record".
+     */
+    notInCopy: { text: string; offerLive: boolean; retry: boolean } | null;
     liProvenance: Provenance;
   };
   nearby: {
@@ -433,7 +447,13 @@ export function buildDossier(input: DossierInput): DossierView {
   const suggestions = placeSuggestions(registry, state, { sg: Array.isArray(suggestionIds) ? suggestionIds.join(',') : suggestionIds }).filter(
     (sg) => sg.applies_to === 'parcel',
   );
-  const parcelRoutes = (parcel?.routes ?? []).map((id) => registry.routes.find((r) => r.id === id)).filter((r): r is Route => !!r);
+  // A homestead exemption in the City's live record rules out conservatorship, as the pipeline
+  // does for the snapshot (docs/ETHICS.md): the City's records say someone lives there, or did.
+  const homestead = property?.homestead === true;
+  const parcelRoutes = (parcel?.routes ?? [])
+    .filter((id) => !(homestead && id.includes('conservatorship')))
+    .map((id) => registry.routes.find((r) => r.id === id))
+    .filter((r): r is Route => !!r);
   const used = new Set<string>();
   const suggestionViews: SuggestionView[] = suggestions.map((suggestion) => {
     let routes = parcelRoutes.filter((r) => suggestion.routes.includes(r.id));
@@ -469,8 +489,18 @@ export function buildDossier(input: DossierInput): DossierView {
     ownerType = OWNER_TYPE_BY_CODE[int(tile?.ot) ?? 0] ?? 'unknown';
     typeReason = null;
   }
-  const names = (property ? property.names : (shardOwner?.names ?? [])).map((name) => plain(name));
+  const rawNames = property ? property.names : (shardOwner?.names ?? []);
+  const names = rawNames.map((name) => plain(name));
   const privateOwner = isPrivate(ownerType, names.length > 0 || (!property && !shardOwner && ownerType !== 'unknown'));
+  // The flags about an owner who may be a person wait for a vacancy call, and possible estate is
+  // never shown with a homestead exemption: the pipeline's rule, so the snapshot and live data
+  // agree (docs/ETHICS.md, docs/VERIFICATION.md D5 and D6).
+  // A parcel in the snapshot is judged by its own vacancy call, the one the pipeline used; one
+  // known only from the map, by its tile.
+  const callConfidence = parcel ? (parcel.vacancy?.confidence ?? null) : confidence;
+  const calledVacant = callConfidence === 'high' || callConfidence === 'medium';
+  const flagRule = { personLike: personLike(ownerType, rawNames), calledVacant, homestead };
+  const ownerHeld = flagRule.personLike && !calledVacant;
   const snapshotProvenance: Provenance = {
     tone: 'snapshot',
     text: snapshotDateText(snapshotDate) ? p.snapshot(snapshotDateText(snapshotDate)!) : p.snapshotNoDate,
@@ -519,19 +549,26 @@ export function buildDossier(input: DossierInput): DossierView {
       flagViews.push({ ...flag, title: title(flag.id), provenance: snapshotProvenance });
     }
   }
-  const sortedFlags = sortFlags(flagViews);
+  const sortedFlags = sortFlags(flagViews.filter((flag) => ownerFlagAllowed(flag.id, flagRule)));
   const taxFlag = sortedFlags.find((x) => x.id === 'tax_debt_2025') ?? null;
   const listedFlags = sortedFlags.filter((x) => x.id !== 'tax_debt_2025');
-  const showDeedFraud =
-    ownerType === 'individual' || sortedFlags.some((x) => x.id === 'possible_estate') || (!ownerChanged && shardOwner?.notice === 'deed_fraud');
+  const showDeedFraud = showsDeedFraudNotice(ownerType, rawNames);
   const deedNote = notes?.notices.deed_fraud ?? null;
   const helpRoutes = !ownerChanged && shardOwner?.help.length ? routeLinks(shardOwner.help) : [];
   const ownerPart = live.property;
   const ownerProvenance = provenanceOf(ownerPart, shardOwner !== null, snapshotDate, liveOn, !shardOwner && tile !== null);
 
   // History ---------------------------------------------------------------------------------------
-  const transfers = pick(live.transfers, parcel?.transfers ?? null);
-  const assessments = pick(live.assessments, parcel?.assessments ?? null);
+  // Parts the dossier was not built from show live data or say they are not in the weekly copy.
+  const partial = parcel?.partial ?? [];
+  const livePartOf = (part: PartialPart): Part<unknown> => (part === 'transfers' ? live.transfers : part === 'assessments' ? live.assessments : live.li);
+  const unseen = partial.filter((part) => livePartOf(part).status !== 'ok');
+  const missing = partial.filter((part) => {
+    const status = livePartOf(part).status;
+    return status === 'failed' || (status === 'idle' && !liveOn);
+  });
+  const transfers = unseen.includes('transfers') ? null : pick(live.transfers, parcel?.transfers ?? null);
+  const assessments = unseen.includes('assessments') ? null : pick(live.assessments, parcel?.assessments ?? null);
   const liveLi = live.li.status === 'ok' ? live.li.data : null;
   const shardLi = parcel?.li ?? null;
   const liRows = liveLi ? liveLi.events.map(liRow) : null;
@@ -694,6 +731,7 @@ export function buildDossier(input: DossierInput): DossierView {
       cityOwned: ownerChanged ? null : cityOwnedText(shardOwner?.cityOwned ?? null),
       isPrivate: privateOwner,
       flags: listedFlags,
+      held: ownerHeld ? s.owner.heldBack : null,
       ownerChanged,
       deedFraud: showDeedFraud
         ? { text: deedNote?.text ?? s.owner.deedFraud, links: mergeLinks(deedNote?.links ?? [], routeLinks(deedNote?.routes ?? []), deedFraudLinks()) }
@@ -701,22 +739,29 @@ export function buildDossier(input: DossierInput): DossierView {
       help: privateOwner && sortedFlags.length > 0 ? mergeLinks(helpRoutes, helpLinks()) : null,
       tax: {
         flag: taxFlag ? { ...taxFlag, links: mergeLinks(taxFlag.links, flagLinks('tax_debt_2025')) } : null,
-        text: taxFlag ? null : parcel ? s.owner.taxNoDebt : s.owner.taxUnknown,
+        text: taxFlag ? null : ownerHeld ? s.owner.taxHeld : parcel ? s.owner.taxNoDebt : s.owner.taxUnknown,
         link: { label: s.owner.taxCenter, url: TAX_CENTER_URL },
       },
       provenance: ownerProvenance,
     },
     history: {
       transfers: transfers ? transfers.map(transferRow) : null,
-      transfersProvenance: provenanceOf(live.transfers, parcel?.transfers != null, snapshotDate, liveOn),
+      transfersProvenance: provenanceOf(live.transfers, parcel?.transfers != null && !unseen.includes('transfers'), snapshotDate, liveOn),
       assessments: assessments
         ? [...assessments]
             .sort((a, b) => b.year - a.year)
             .map((a) => ({ year: a.year, marketValue: a.marketValue, value: a.marketValue === null ? s.history.noValue : formatMoney(a.marketValue) }))
         : null,
-      assessmentsProvenance: provenanceOf(live.assessments, parcel?.assessments != null, snapshotDate, liveOn),
+      assessmentsProvenance: provenanceOf(live.assessments, parcel?.assessments != null && !unseen.includes('assessments'), snapshotDate, liveOn),
       li: { rows: liRows, summary: liSummary, truncated: liveLi?.truncated ?? false, liveForTimeline: !liveLi },
       liProvenance: provenanceOf(live.li, shardLi !== null, snapshotDate, liveOn),
+      notInCopy: missing.length
+        ? {
+            text: s.history.notInCopy(missing.map((part) => s.history.partialParts[part]!)),
+            offerLive: !liveOn,
+            retry: liveOn && missing.some((part) => livePartOf(part).status === 'failed'),
+          }
+        : null,
     },
     nearby: { groups, layers, provenance: nearbyProvenance },
     sources: { rows: sourceRows, correctionUrl: correctionUrl(opa, address) },

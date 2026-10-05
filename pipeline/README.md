@@ -79,9 +79,10 @@ for them are in each adapter's docstring.
 **Candidate parcels.** Transfers, assessments and violations are too large to download for the
 whole city every week, so they come down for every parcel with any sign of vacancy (see
 `candidates.py`): either City vacancy list, City owned, in LandCare, OPA vacant land or a vacant or
-sealed exterior note, cleaned and sealed or demolished since 2016, or on the unsafe or imminently
-dangerous lists. The accounts go to Carto in chunks of 5,000, by POST, joined as a VALUES list, and
-each chunk is checked against a count.
+sealed exterior note, cleaned and sealed or demolished since 2016, on the unsafe or imminently
+dangerous lists, or the subject of a vacancy complaint (VL, VA, VO or BDNO) since 2023 (84,247
+parcels on 2026-10-04; the complaints added 9,392). The accounts go to Carto in chunks of 5,000, by
+POST, joined as a VALUES list, and each chunk is checked against a count.
 
 Every request carries the User-Agent `Placekeepers/0.1 (+https://github.com/holdTheDoorHoid/placekeepers)`,
 waits at least a second between requests to the same server, and retries busy or failed replies

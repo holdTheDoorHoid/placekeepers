@@ -5,6 +5,7 @@
   import type { Snippet } from 'svelte';
   import type { Manifest } from '../../data/manifest.ts';
   import type { DossierView } from '../../dossier/build.ts';
+  import type { OwnerListTarget } from '../../dossier/owners-table.ts';
   import { strings } from '../../strings.ts';
   import DossierActions from './DossierActions.svelte';
   import DossierHistory from './DossierHistory.svelte';
@@ -20,7 +21,7 @@
     onPrint?: () => void;
     onShowOnMap?: () => void;
     onClear?: () => void;
-    onShowOwnerList?: (listId: string) => void;
+    onShowOwnerList?: (target: OwnerListTarget) => void;
   }
 
   let {
@@ -112,7 +113,7 @@
     </section>
     <section aria-labelledby="{idPrefix}-history-title">
       <h3 id="{idPrefix}-history-title" tabindex="-1">{s.sections.history}</h3>
-      <DossierHistory history={view.history} {idPrefix} />
+      <DossierHistory history={view.history} {idPrefix} onTurnOnLive={actions.onTurnOnLive} onRetry={actions.onRetry} />
     </section>
     <section aria-labelledby="{idPrefix}-nearby-title">
       <h3 id="{idPrefix}-nearby-title" tabindex="-1">{s.sections.nearby}</h3>

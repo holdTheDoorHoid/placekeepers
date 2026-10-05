@@ -1,14 +1,16 @@
 <script lang="ts">
   // Who owns it: the owner names and mailing address as the City publishes them, the kind of
-  // owner and why, the deed fraud notice wherever a person owns the parcel, each flag in its three
+  // owner and why, the deed fraud notice wherever the owner may be a person, each flag in its three
   // parts, help for owners and families, and taxes, always dated July 2025 with a link to the
-  // City's Tax Center for today's balance (docs/ETHICS.md).
+  // City's Tax Center for today's balance (docs/ETHICS.md). On a parcel that may be someone's
+  // home, a line says why the notes about an owner who may be a person are not shown.
   import type { DossierView } from '../../dossier/build.ts';
+  import type { OwnerListTarget } from '../../dossier/owners-table.ts';
   import { strings } from '../../strings.ts';
   import FlagItem from './FlagItem.svelte';
   import ProvenanceLine from './ProvenanceLine.svelte';
 
-  let { owner, onShowList }: { owner: DossierView['owner']; onShowList?: (listId: string) => void } = $props();
+  let { owner, onShowList }: { owner: DossierView['owner']; onShowList?: (target: OwnerListTarget) => void } = $props();
   const o = strings.dossier.owner;
 </script>
 
@@ -44,11 +46,12 @@
 {/if}
 
 <h4>{o.flagsTitle}</h4>
-{#if owner.flags.length === 0}
+{#if owner.flags.length === 0 && !owner.held}
   <p class="muted small">{o.noFlags}</p>
 {:else}
   {#each owner.flags as flag (flag.id + flag.text)}<FlagItem {flag} {onShowList} />{/each}
 {/if}
+{#if owner.held}<p class="muted small">{owner.held}</p>{/if}
 
 {#if owner.help}
   <h4>{o.helpTitle}</h4>

@@ -115,10 +115,15 @@ _DIRECTIONS = {
 }
 
 
+_PARENTHESES = re.compile(r"^\((.+)\)$")
+
+
 def _street(text: str | None) -> str | None:
     if not text:
         return None
     cleaned = " ".join(text.replace(".", " ").replace('"', " ").split()).strip(" ,;")
+    # Tidy parentheses: "( Sergeant St )" becomes "(Sergeant St)" (finding F15).
+    cleaned = re.sub(r"\(\s+", "(", re.sub(r"\s+\)", ")", cleaned))
     return cleaned or None
 
 
@@ -143,6 +148,10 @@ def place_text(primary: str | None, secondary: str | None) -> str | None:
             if direction or not block.group(2).strip():
                 prefix = f"{direction} " if direction else ""
                 return f"{_block(block.group(1))} of {prefix}{first}"
+            # "2500 Block (Sergeant St)": the block of the first street, at the street named.
+            named = _PARENTHESES.match(block.group(2).strip())
+            if named:
+                return f"{_block(block.group(1))} of {first} near {named.group(1)}"
     if first:
         block = _BLOCK.match(first)
         house = _HOUSE_NUMBER.match(first)

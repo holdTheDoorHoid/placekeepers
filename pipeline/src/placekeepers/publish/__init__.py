@@ -98,6 +98,23 @@ def vacancy_notes(ctx: Context) -> list[str]:
     return [line, *summary.get("notes", [])]
 
 
+def vacancy_counts(ctx: Context) -> dict[str, Any] | None:
+    """The `vacancy` block of manifest.json (docs/CONTRACTS.md section 3): the vacancy model's
+    counts by kind and confidence, from its summary, or None when the model has not run."""
+    path = ctx.cache.root / "derived" / "vacancy.json"
+    if not path.is_file():
+        return None
+    summary = json.loads(path.read_text(encoding="utf-8"))
+    counts = summary["counts"]
+    levels = ("high", "medium", "low")
+    return {
+        "as_of": summary["as_of"],
+        "lots": {level: int(counts["lot"][level]) for level in levels},
+        "buildings": {level: int(counts["building"][level]) for level in levels},
+        "left_out": int(counts["excluded"]),
+    }
+
+
 def lens_notes(ctx: Context) -> list[str]:
     """What the violence lens could not score, from the summary beside derived/lens_factors."""
     path = ctx.cache.root / "derived" / "lens_factors.json"
@@ -212,6 +229,7 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
             commit=git_short_hash(ctx.settings.repo_root),
             notes=notes,
             dossiers=result.dossiers.manifest_block() if result.dossiers else None,
+            vacancy=vacancy_counts(ctx),
         )
         atomic_write_json(staging / MANIFEST, result.manifest)
         _swap_into_place(staging, out_dir)

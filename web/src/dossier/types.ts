@@ -62,6 +62,14 @@ export interface Link {
   url: string;
 }
 
+/** One parcel of an owner's list: its account, address, and how the map calls it. */
+export interface OwnerListParcel {
+  id: string;
+  address: string | null;
+  kind: VacancyKind | null;
+  confidence: Confidence | null;
+}
+
 /**
  * An owner flag (docs/ETHICS.md): what it means (`text`), why to be careful, and a protective
  * next step. A shard may carry only `id` and `text`; the page then uses its own wording for the
@@ -73,8 +81,13 @@ export interface OwnerFlag {
   careful: string | null;
   nextStep: string | null;
   links: Link[];
-  /** For the many_parcels flag: the owner's list in tables/owners.json. */
+  /** For the many_parcels flag of an organization: its list in tables/owners.json. */
   list?: string | null;
+  /**
+   * For the many_parcels flag of an owner who may be a person: their other parcels, from this
+   * lot's own dossier entry. No citywide file lists people (docs/VERIFICATION.md D3).
+   */
+  parcels?: OwnerListParcel[] | null;
 }
 
 /** The City's list of public property: which agency, its status, and side yard eligibility. */
@@ -172,6 +185,10 @@ export interface LandCare {
   year: number | null;
 }
 
+/** The parts of a dossier whose records the weekly copy holds only for some parcels (docs/CONTRACTS.md section 6). */
+export const PARTIAL_PARTS = ['transfers', 'assessments', 'li'] as const;
+export type PartialPart = (typeof PARTIAL_PARTS)[number];
+
 /** One parcel from a dossier shard. A section the shard leaves out is null. */
 export interface ShardParcel {
   address: string | null;
@@ -180,6 +197,11 @@ export interface ShardParcel {
   transfers: Transfer[] | null;
   assessments: Assessment[] | null;
   li: LiSummary | null;
+  /**
+   * The parts this dossier was not built from: their records were never downloaded for this
+   * parcel, so their absence says nothing (never "No deeds on record.").
+   */
+  partial: PartialPart[];
   routes: string[];
   suggestions: string[];
   nearby: Nearby | null;
@@ -212,6 +234,11 @@ export interface LiveProperty {
   saleDate: string | null;
   salePrice: number | null;
   marketValue: number | null;
+  /**
+   * The owner has a homestead exemption: the City's record that someone lives there, or did. A
+   * lot page then never offers conservatorship or shows a possible estate (docs/ETHICS.md).
+   */
+  homestead: boolean;
   lng: number | null;
   lat: number | null;
 }

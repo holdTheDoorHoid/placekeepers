@@ -19,6 +19,20 @@ rail, utilities and cemeteries never show as vacant. Today's numbers:
 | Lots | 24,166 | 6,147 | 10,465 | 1,727 |
 | Buildings | 6,553 | 2,876 | 8,503 | |
 
+**After the study (2026-10-04, decision D1 in [VERIFICATION.md](VERIFICATION.md)).** The map added
+one reason against vacancy: the owner has an owner occupied homestead exemption, the City's own
+record that someone lives there, or did. It lowers a building one level and is shown on a lot
+without changing the level. On the study's date, with the pipeline's data, that gives:
+
+| | High | Medium | Low | Not shown |
+|---|---|---|---|---|
+| Lots | 24,162 | 6,160 | 10,454 | 1,727 |
+| Buildings | 5,045 | 3,819 | 9,054 | |
+
+(1,552 high buildings became medium and 579 medium buildings became low. The other small
+differences from the table above are the pipeline's own downloads of the same day.) Without the
+City's indicator, 2,387 buildings stay high.
+
 ### What we found
 
 1. **The City's September 2026 lists are a real recalculation, and they are mostly right about lots.**

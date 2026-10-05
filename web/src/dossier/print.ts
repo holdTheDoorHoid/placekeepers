@@ -20,10 +20,12 @@ export interface PrintModel {
     type: string;
     /** Each flag's title and what it means; the possible estate flag in full, as docs/ETHICS.md words it. */
     flags: { title: string; text: string }[];
+    /** Why the notes about an owner who may be a person are held back, when they are. */
+    held: string | null;
     tax: string;
     deedFraud: string | null;
   };
-  history: { transfers: TransferRow[]; moreTransfers: number; assessment: string | null; li: string[] };
+  history: { transfers: TransferRow[]; moreTransfers: number; assessment: string | null; li: string[]; notInCopy: string | null };
   sources: string[];
   moreSources: string | null;
   notLegalAdvice: string;
@@ -69,6 +71,7 @@ export function printModel(view: DossierView, now: Date = new Date()): PrintMode
       mailing: view.owner.mailing,
       type: view.owner.typeLabel,
       flags,
+      held: view.owner.held,
       tax,
       deedFraud: view.owner.deedFraud?.text ?? null,
     },
@@ -77,6 +80,7 @@ export function printModel(view: DossierView, now: Date = new Date()): PrintMode
       moreTransfers: Math.max(0, transfers.length - PRINT_LIMITS.transfers),
       assessment: latest ? strings.dossier.print.lastAssessment(latest.year, latest.value) : null,
       li: (view.history.li.summary ?? []).slice(0, PRINT_LIMITS.li),
+      notInCopy: view.history.notInCopy?.text ?? null,
     },
     sources: view.sources.rows.slice(0, PRINT_LIMITS.sources).map((r) => `${r.name}: ${r.when}`),
     moreSources:

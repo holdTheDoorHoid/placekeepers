@@ -343,6 +343,20 @@ def build_landcare(ctx: Context, paths: dict[str, Path], out: Path, as_of: date)
 
 GARDEN_SUPPORT = {"PHS": 1, "NGT": 2, "PHS AND NGT": 3}
 
+# No dashes as punctuation in what people read (finding F14): a City name such as "Fishtown -
+# Lower Kensington" becomes "Fishtown, Lower Kensington", as the lot page shows City records
+# (web/src/dossier/plain.ts). Hyphens inside words ("Smith-Jones", "1304-08") stay.
+_SPACED_DASH = re.compile(r"\s+[-\u2013\u2014]+\s+")
+_LONE_DASH = re.compile(r"[\u2013\u2014]+")
+
+
+def plain_name(text: object) -> object:
+    """A name for a map label, with a dash used as punctuation turned into a comma."""
+    if not isinstance(text, str):
+        return text
+    cleaned = _LONE_DASH.sub(", ", _SPACED_DASH.sub(", ", text))
+    return re.sub(r"\s+,", ",", cleaned)
+
 
 def _with_website(properties: dict, website: object) -> dict:
     text = str(website or "").strip()
@@ -361,7 +375,8 @@ def build_gardens(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) 
                 *(table.column(c).to_pylist() for c in table.column_names), strict=True
             ):
                 src = GARDEN_SUPPORT.get(str(supported or "").strip().upper(), 1)
-                writer.write(_with_website({"nm": name, "src": src}, website), geometry_json(wkb))
+                properties = {"nm": plain_name(name), "src": src}
+                writer.write(_with_website(properties, website), geometry_json(wkb))
         if "gardens_registered" in paths:
             table = pq.read_table(
                 paths["gardens_registered"], columns=["garden_name", "contact_website", "geometry"]
@@ -369,7 +384,8 @@ def build_gardens(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) 
             for name, website, wkb in zip(
                 *(table.column(c).to_pylist() for c in table.column_names), strict=True
             ):
-                writer.write(_with_website({"nm": name, "src": 4}, website), geometry_json(wkb))
+                properties = {"nm": plain_name(name), "src": 4}
+                writer.write(_with_website(properties, website), geometry_json(wkb))
     return BuildResult(writer.count, [])
 
 
@@ -396,7 +412,7 @@ def build_rcos(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) -> 
         for lni_id, name, kind, website, wkb in zip(
             *(table.column(c).to_pylist() for c in table.column_names), strict=True
         ):
-            properties = {"id": int(lni_id) if lni_id is not None else 0, "nm": name}
+            properties = {"id": int(lni_id) if lni_id is not None else 0, "nm": plain_name(name)}
             if kind:
                 properties["t"] = kind
             writer.write(_with_website(properties, website), geometry_json(wkb, 6))
@@ -411,7 +427,7 @@ def build_neighborhoods(
         for name, listname, wkb in zip(
             *(table.column(c).to_pylist() for c in table.column_names), strict=True
         ):
-            writer.write({"id": name, "nm": listname or name}, geometry_json(wkb, 6))
+            writer.write({"id": name, "nm": plain_name(listname or name)}, geometry_json(wkb, 6))
     return BuildResult(writer.count, [])
 
 

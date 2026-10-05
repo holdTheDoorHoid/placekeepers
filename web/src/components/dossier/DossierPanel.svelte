@@ -2,6 +2,7 @@
   // The open lot page, wired to the app: try again, turn on live data, show a layer, print,
   // show the parcel on the map, or clear the selection.
   import { config } from '../../config/index.ts';
+  import type { OwnerListTarget } from '../../dossier/owners-table.ts';
   import type { AppStore } from '../../state/store.svelte.ts';
   import { LIVE_CITY_DATA } from '../../state/options.ts';
   import { strings } from '../../strings.ts';
@@ -19,7 +20,7 @@
   }: { store: AppStore; showTitle?: boolean; idPrefix?: string; onShowOnMap?: () => void; clearable?: boolean } = $props();
 
   const view = $derived(store.dossierView);
-  let ownerList = $state<string | null>(null);
+  let ownerList = $state.raw<OwnerListTarget | null>(null);
   const actions = $derived({
     onRetry: () => store.dossier.retry(),
     onTurnOnLive: () => store.setOption(LIVE_CITY_DATA, true),
@@ -27,7 +28,7 @@
     onPrint: () => window.print(),
     onShowOnMap,
     onClear: clearable ? () => store.select(null) : undefined,
-    onShowOwnerList: (listId: string) => (ownerList = listId),
+    onShowOwnerList: (target: OwnerListTarget) => (ownerList = target),
   });
 </script>
 
@@ -51,7 +52,7 @@
   {#if ownerList}
     <OwnerList
       {store}
-      listId={ownerList}
+      target={ownerList}
       dataBase={config.dataBase}
       onOpen={(id) => {
         ownerList = null;

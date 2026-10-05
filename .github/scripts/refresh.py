@@ -15,6 +15,17 @@ Standard library only, so any job can run it with a plain Python 3.12. Commands:
         last week's good copy instead of to nothing, and notes a fingerprint of each source's
         files so pack can tell which ones did not change.
 
+    refresh.py encrypt --dir DIR --status FILE
+    refresh.py decrypt --dir DIR --status FILE
+        No snapshot is published in plain form (decision D2, docs/VERIFICATION.md). encrypt
+        turns each snapshot tar in DIR into snapshot-<source>.tar.gpg (GnuPG, symmetric AES256)
+        with the key in the PK_SNAPSHOT_KEY environment variable, a repository secret; decrypt
+        does the reverse after the download, and writes to FILE whether this week's snapshots may
+        be saved. The key goes to gpg through a pipe, never on a command line, in a file or in a
+        log. Without the key, or when a saved copy does not decrypt, no snapshot is saved that
+        week and the run carries on without last week's copies; neither command ever fails the
+        run.
+
     refresh.py pick-basemap --assets FILE [--today YYYY-MM-DD] [--max-age-days 30]
         Given the release's asset names (one per line), prints the base map asset that is still
         fresh enough to reuse, or nothing when a new extract is due.
@@ -44,10 +55,12 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
 import tarfile
+import tempfile
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
@@ -60,6 +73,9 @@ STATE_FILE = "state.json"
 CURRENT_LINK = "current.parquet"
 ASSET_PREFIX = "snapshot-"
 SNAPSHOT_ASSET = re.compile(r"^snapshot-[a-z][a-z0-9_]*\.tar$")
+ENCRYPTED_ASSET = re.compile(r"^snapshot-[a-z][a-z0-9_]*\.tar\.gpg$")
+KEY_ENV = "PK_SNAPSHOT_KEY"
+NO_KEY = "there is no PK_SNAPSHOT_KEY secret"
 # Written by restore beside each source's files; the pipeline ignores names starting with a dot.
 FINGERPRINT = ".restored-fingerprint"
 UNCHANGED_LIST = "unchanged.txt"
@@ -161,6 +177,137 @@ def restore(cache: Path, from_dir: Path) -> list[str]:
     return restored
 
 
+# Encrypted snapshots (decision D2) ---------------------------------------------------------------
+
+
+def snapshot_key(environ: dict[str, str] | None = None) -> str | None:
+    """The snapshot key from the environment, or None when it is missing or blank."""
+    key = (os.environ if environ is None else environ).get(KEY_ENV, "")
+    return key if key.strip() else None
+
+
+def run_gpg(args: list[str], key: str) -> bool:
+    """Run gpg in batch mode with `key` as the passphrase. The passphrase travels through a pipe
+    (--passphrase-fd), never on the command line or on disk, and gpg works in a throwaway home
+    folder so nothing is cached or left behind. True when gpg succeeds."""
+    with tempfile.TemporaryDirectory(prefix="pk-gnupg-") as home:
+        os.chmod(home, 0o700)
+        read_end, write_end = os.pipe()
+        try:
+            os.write(write_end, key.encode("utf-8"))
+        finally:
+            os.close(write_end)
+        command = [
+            "gpg",
+            "--homedir",
+            home,
+            "--batch",
+            "--yes",
+            "--quiet",
+            "--no-tty",
+            "--pinentry-mode",
+            "loopback",
+            "--no-symkey-cache",
+            "--passphrase-fd",
+            str(read_end),
+            *args,
+        ]
+        try:
+            done = subprocess.run(command, pass_fds=(read_end,), capture_output=True, check=False)
+        except OSError:
+            return False
+        finally:
+            os.close(read_end)
+            subprocess.run(
+                ["gpgconf", "--homedir", home, "--kill", "gpg-agent"],
+                capture_output=True,
+                check=False,
+            )
+    return done.returncode == 0
+
+
+def encrypt_snapshots(folder: Path, key: str | None, blocked: str | None = None) -> list[Path]:
+    """Replace every snapshot-<source>.tar in `folder` with snapshot-<source>.tar.gpg, and rename
+    the unchanged list's entries to match. When there is no key, when decrypt reported a reason
+    not to save (`blocked`), or when any tar fails to encrypt, every snapshot tar and the
+    unchanged list are removed instead: no snapshot is saved this week, and the release keeps
+    the encrypted copies it has. Returns the encrypted files."""
+    tars = sorted(folder.glob(f"{ASSET_PREFIX}*.tar"))
+    listing = folder / UNCHANGED_LIST
+    reason = blocked or (NO_KEY if key is None else None)
+    done: list[Path] = []
+    if reason is None:
+        assert key is not None
+        for tar_path in tars:
+            target = tar_path.with_name(tar_path.name + ".gpg")
+            symmetric = ["--symmetric", "--cipher-algo", "AES256", "--output", str(target)]
+            if not run_gpg([*symmetric, str(tar_path)], key) or not target.is_file():
+                reason = f"{tar_path.name} could not be encrypted"
+                break
+            done.append(target)
+    if reason is not None:
+        for path in [*tars, *done]:
+            path.unlink(missing_ok=True)
+        listing.unlink(missing_ok=True)
+        print(f"::warning::No snapshots are saved this week: {reason}.")
+        return []
+    for tar_path in tars:
+        tar_path.unlink()
+    if listing.is_file():
+        names = [
+            f"{name}.gpg" if SNAPSHOT_ASSET.match(name) else name
+            for name in listing.read_text(encoding="utf-8").split()
+        ]
+        listing.write_text("".join(f"{name}\n" for name in names), encoding="utf-8")
+    return done
+
+
+def decrypt_snapshots(folder: Path, key: str | None) -> tuple[list[str], str | None]:
+    """Turn every snapshot-<source>.tar.gpg in `folder` into snapshot-<source>.tar for restore.
+    Returns the tars decrypted and, when something went wrong, the reason no snapshot may be
+    saved this week: there is no key, or a copy does not decrypt (a wrong key would otherwise
+    replace good copies with ones nobody can read). A copy that does not decrypt is removed, so
+    its source starts without last week's copy. A plain tar from before encryption (the first
+    run with it) is restored as it is."""
+    encrypted = sorted(folder.glob(f"{ASSET_PREFIX}*.tar.gpg"))
+    if key is None:
+        for path in encrypted:
+            path.unlink()
+        print(f"::warning::{NO_KEY}, so this run starts without last week's copies of the data.")
+        return [], NO_KEY
+    reason = None
+    decrypted = []
+    for path in encrypted:
+        target = path.with_name(path.name[: -len(".gpg")])
+        partial = target.with_name(target.name + ".part")
+        if run_gpg(["--decrypt", "--output", str(partial), str(path)], key) and partial.is_file():
+            partial.replace(target)
+            decrypted.append(target.name)
+        else:
+            partial.unlink(missing_ok=True)
+            reason = f"{path.name} could not be decrypted with the PK_SNAPSHOT_KEY secret"
+            print(f"::warning::{reason}, so that source starts without last week's copy.")
+        path.unlink()
+    return decrypted, reason
+
+
+def write_status(path: Path, reason: str | None) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("ok\n" if reason is None else f"blocked: {reason}\n", encoding="utf-8")
+
+
+def read_status(path: Path) -> str | None:
+    """The reason not to save snapshots, from decrypt's status file; a missing or unreadable
+    file is a reason too, since nobody checked the key."""
+    try:
+        text = path.read_text(encoding="utf-8").strip()
+    except OSError:
+        return "the restore step did not record whether the snapshot key works"
+    if text == "ok":
+        return None
+    return text.removeprefix("blocked:").strip() or "the snapshot key could not be checked"
+
+
 # Base map -----------------------------------------------------------------------------------
 
 
@@ -186,7 +333,10 @@ def pick_basemap(names: Iterable[str], today: date, max_age_days: int = 30) -> s
 
 # The release ----------------------------------------------------------------------------------
 
-RELEASE_FILE = re.compile(r"^(snapshot-[a-z][a-z0-9_]*\.tar|manifest\.json|basemap-\d{8}\.tar)$")
+# Snapshots go on the release encrypted only; the manifest and the base map are plain.
+RELEASE_FILE = re.compile(
+    r"^(snapshot-[a-z][a-z0-9_]*\.tar\.gpg|manifest\.json|basemap-\d{8}\.tar)$"
+)
 
 
 def plan_release(
@@ -195,18 +345,22 @@ def plan_release(
     """What to upload, keep, delete and skip. Unchanged snapshots (listed by pack) keep their
     existing asset instead of being uploaded again. Snapshots of sources that are no longer
     produced are deleted only when this run produced or kept snapshots at all, and older base maps
-    only when a new one is uploaded, so a broken run can never empty the release."""
+    only when a new one is uploaded, so a broken run can never empty the release. A plain
+    snapshot is never uploaded (it is skipped), and a plain snapshot already on the release, from
+    before snapshots were encrypted, is always deleted."""
     files = [name for name in files if name != UNCHANGED_LIST]
     existing = set(existing)
     uploads = sorted(name for name in files if RELEASE_FILE.match(name))
     skipped = sorted(name for name in files if not RELEASE_FILE.match(name))
-    listed = sorted({name for name in unchanged if SNAPSHOT_ASSET.match(name)} - set(uploads))
+    listed = sorted({name for name in unchanged if ENCRYPTED_ASSET.match(name)} - set(uploads))
     kept = [name for name in listed if name in existing]
     missing = [name for name in listed if name not in existing]
     produced = {name for name in uploads if name.startswith("snapshot-")} | set(kept)
     new_basemaps = {name for name in uploads if name.startswith("basemap-")}
 
     def replaced(name: str) -> bool:
+        if SNAPSHOT_ASSET.match(name):
+            return True  # a plain copy: never kept on the release (decision D2)
         if name.startswith("snapshot-"):
             return bool(produced) and name not in produced
         if BASEMAP_ASSET.match(name):
@@ -511,6 +665,14 @@ def main(argv: list[str] | None = None) -> int:
     r.add_argument("--cache", type=Path, required=True)
     r.add_argument("--from", dest="from_dir", type=Path, required=True)
 
+    en = commands.add_parser("encrypt", help="encrypt the packed snapshots with PK_SNAPSHOT_KEY")
+    en.add_argument("--dir", type=Path, required=True)
+    en.add_argument("--status", type=Path, required=True, help="the status file decrypt wrote")
+
+    de = commands.add_parser("decrypt", help="decrypt downloaded snapshots with PK_SNAPSHOT_KEY")
+    de.add_argument("--dir", type=Path, required=True)
+    de.add_argument("--status", type=Path, required=True, help="where to say if saving may go on")
+
     b = commands.add_parser("pick-basemap", help="print the base map asset to reuse, if any")
     b.add_argument("--assets", type=Path, required=True, help="file with one asset name per line")
     b.add_argument("--today", type=date.fromisoformat, default=None)
@@ -546,6 +708,19 @@ def main(argv: list[str] | None = None) -> int:
             print(f"unchanged {name} (the release keeps last week's copy)")
         total = sum(path.stat().st_size for path in written)
         print(f"{len(written)} snapshot(s) to upload, {total / 1e6:.1f} MB in all")
+        return 0
+    if args.command == "encrypt":
+        written = encrypt_snapshots(args.dir, snapshot_key(), read_status(args.status))
+        if written:
+            total = sum(path.stat().st_size for path in written)
+            print(f"Encrypted {len(written)} snapshot(s), {total / 1e6:.1f} MB in all")
+        return 0
+    if args.command == "decrypt":
+        if not args.dir.is_dir():
+            args.dir.mkdir(parents=True)
+        decrypted, reason = decrypt_snapshots(args.dir, snapshot_key())
+        write_status(args.status, reason)
+        print(f"Decrypted {len(decrypted)} snapshot(s)")
         return 0
     if args.command == "restore":
         if not args.from_dir.is_dir():

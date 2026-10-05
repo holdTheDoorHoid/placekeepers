@@ -22,9 +22,20 @@ Which owners get which flags:
   offices, do not die, and are not bought and sold like homes, and their holdings are listed by the
   City itself.
 
+The flags about the owner rather than the parcel (absentee, possible estate, tax debt as of July
+2025, many vacant parcels) are held back for an owner who is a person, whose type we could not
+tell, or who may be an estate, unless we call the parcel vacant with high or medium confidence: a
+parcel we are not sure about may be someone's home. Possible estate is never shown on a parcel
+with a homestead exemption, the City's record that someone lives there. Organizations keep every
+flag, and facts about the parcel (deeds, sheriff sales, violations) are always shown (decided
+2026-10-04 by the orchestrator, docs/VERIFICATION.md D5 and D6).
+
 A dossier whose private owner has any flag also carries `help` (the Tangled Title Fund and Fraud
-Guard routes: ETHICS.md puts "Fraud Guard and Tangled Title links on every flagged dossier"), and
-one whose owner is a person, or may be an estate, carries the deed fraud notice.
+Guard routes: ETHICS.md puts "Fraud Guard and Tangled Title links on every flagged dossier"). Every
+dossier whose owner may be a person (a person, an owner whose type we could not tell, or a possible
+estate) carries the deed fraud notice, even where the flags about the owner are held back: those
+are mostly homes, and the notice protects the family living there while saying nothing about the
+owner (decided 2026-10-04 by the orchestrator).
 """
 
 from __future__ import annotations
@@ -39,6 +50,11 @@ from placekeepers.derive.transfers import LastSale, Resales, Transfer, dollars
 
 #: "many" vacant parcels: an owner with at least this many gets the flag
 MANY_PARCELS_MIN = 5
+#: The flags about the owner rather than the parcel, held back on a parcel that may be someone's
+#: home when the owner may be a person (owner_flag_allowed).
+ABOUT_THE_OWNER = ("absentee", "possible_estate", "tax_debt_2025", "many_parcels")
+#: Owner types that may be a person: the flags about the owner wait for a vacancy call.
+PERSON_TYPES = frozenset({"individual", "unknown"})
 HELP_ROUTES = ["tangled_title_help", "fraud_guard"]
 
 
@@ -160,14 +176,41 @@ class OwnerFacts:
     history: list[Transfer] = field(default_factory=list)
     last_sale: LastSale | None = None
     resales: Resales | None = None
-    #: how many vacant parcels this owner holds, and the id of the list of them
+    #: how many vacant parcels this owner holds, and the id of the list of them in the owners
+    #: table (an organization) or the owner's other parcels themselves (an owner who may be a
+    #: person: no citywide file lists people, docs/VERIFICATION.md D3)
     holdings: int = 0
     holdings_list: str | None = None
+    holdings_parcels: list[dict[str, Any]] | None = None
     li: LiSummary = field(default_factory=LiSummary)
+    #: we call the parcel vacant with high or medium confidence
+    called_vacant: bool = False
+    #: OPA records an owner occupied homestead exemption
+    homestead: bool = False
 
     @property
     def private(self) -> bool:
         return not self.owner_type.public and (self.owner_type.type != "unknown" or self.has_names)
+
+    @property
+    def person_like(self) -> bool:
+        return person_like(self.owner_type, self.has_names, self.possible_estate)
+
+
+def person_like(owner_type: OwnerType, has_names: bool, possible_estate: bool) -> bool:
+    """The owner may be a person: typed as one, of a type we could not tell, or a private owner
+    whose names carry an estate."""
+    private = not owner_type.public and (owner_type.type != "unknown" or has_names)
+    return owner_type.type in PERSON_TYPES or (private and possible_estate)
+
+
+def owner_flag_allowed(flag_id: str, facts: OwnerFacts) -> bool:
+    """Whether a flag may be shown on this parcel (docs/VERIFICATION.md D5 and D6): the flags
+    about an owner who may be a person only on a parcel we call vacant with high or medium
+    confidence, and possible estate never with a homestead exemption."""
+    if flag_id == "possible_estate" and facts.homestead:
+        return False
+    return not (flag_id in ABOUT_THE_OWNER and facts.person_like and not facts.called_vacant)
 
 
 def make_flag(flag_id: str, text: str, data: dict[str, Any] | None = None) -> dict[str, Any]:
@@ -241,10 +284,14 @@ def sale_flag(found: LastSale) -> dict[str, Any]:
     )
 
 
-def many_parcels_flag(count: int, list_id: str | None) -> dict[str, Any]:
+def many_parcels_flag(
+    count: int, list_id: str | None, parcels: list[dict[str, Any]] | None = None
+) -> dict[str, Any]:
     data: dict[str, Any] = {"count": count}
     if list_id:
         data["list"] = list_id
+    if parcels is not None:
+        data["parcels"] = parcels
     return make_flag("many_parcels", wording.many_parcels_text(count), data)
 
 
@@ -295,7 +342,7 @@ def owner_flags(facts: OwnerFacts, as_of: date) -> list[dict[str, Any]]:
     if private and facts.last_sale is not None:
         flags.append(sale_flag(facts.last_sale))
     if private and facts.holdings >= MANY_PARCELS_MIN:
-        flags.append(many_parcels_flag(facts.holdings, facts.holdings_list))
+        flags.append(many_parcels_flag(facts.holdings, facts.holdings_list, facts.holdings_parcels))
     if facts.resales is not None:
         flags.append(resale_flag(facts.resales))
     if facts.li.open_violations > 0:
@@ -304,11 +351,12 @@ def owner_flags(facts: OwnerFacts, as_of: date) -> list[dict[str, Any]]:
         flags.append(unsafe_flag(facts.li.unsafe_since))
     if facts.li.dangerous_since is not None:
         flags.append(dangerous_flag(facts.li.dangerous_since))
-    return flags
+    return [flag for flag in flags if owner_flag_allowed(flag["id"], facts)]
 
 
-def shows_deed_fraud_notice(facts: OwnerFacts, flags: list[dict[str, Any]]) -> bool:
-    """ETHICS.md: any dossier showing an individual owner flag also shows the deed fraud notice.
-    Here: the owner is a person, or a name may be an estate, and the owner has a flag."""
-    person = facts.owner_type.type == "individual" or (facts.private and facts.possible_estate)
-    return person and bool(flags)
+def shows_deed_fraud_notice(facts: OwnerFacts) -> bool:
+    """ETHICS.md: the deed fraud notice appears whenever the owner may be a person (typed as
+    one, of a type we could not tell, or a private owner whose names carry an estate), with or
+    without flags: it says how deed theft works and how families can protect a home, and nothing
+    about the owner."""
+    return facts.person_like
