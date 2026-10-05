@@ -2,7 +2,7 @@
   // The settings drawer, generated from the registry: the view, every layer with its own
   // settings, the lens weights, which suggestion types to show, and "Reset to defaults".
   import { config } from '../config/index.ts';
-  import { autoView } from '../state/defaults.ts';
+  import { screenView } from '../state/screen.ts';
   import type { AppStore } from '../state/store.svelte.ts';
   import { strings } from '../strings.ts';
   import Dialog from './common/Dialog.svelte';
@@ -22,7 +22,7 @@
   ] as const;
 
   function chooseView(value: (typeof choices)[number]['value']) {
-    if (value === 'auto') store.unpinView(autoView(window.innerWidth));
+    if (value === 'auto') store.unpinView(screenView());
     else store.setView(value);
   }
 </script>

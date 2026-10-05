@@ -319,8 +319,20 @@
     }
   }
 
-  /* Phones: both panels open over the map, one at a time. */
+  /* Phones: both panels open over the map, one at a time, and the drawer's tabs stay in one row
+     that scrolls sideways, with a fade at its right edge to show there are more. */
   @media (max-width: 767px) {
+    .tabs {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-right: 32px;
+      mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+    }
+    .tab {
+      flex: none;
+      padding: 8px 12px;
+    }
     .left {
       grid-area: map;
       z-index: 4;

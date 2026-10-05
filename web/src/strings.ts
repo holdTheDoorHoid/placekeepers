@@ -70,6 +70,8 @@ export const strings = {
     followAlong: 'Follow along',
     repoUrl: 'https://github.com/holdTheDoorHoid/placekeepers',
     skipToList: 'Skip to the list of places',
+    hideNote: 'Hide',
+    hideNoteLabel: 'Hide this note',
     close: 'Close',
     notAffiliated: 'Not affiliated with the City of Philadelphia. Not legal advice.',
     licenses: 'Code: GPL-3.0. Data: each source has its own license. Writing: Creative Commons BY-SA 4.0.',
@@ -136,8 +138,9 @@ export const strings = {
     nearMePrivacy: 'Your location stays on your device. Placekeepers never sends it anywhere and never puts it in a link.',
     youAreHere: 'You are here',
     stopLocation: 'Stop using my location',
-    locationInUse:
-      'Using your location. It stays on this device, and links leave out where the map is until you move the map yourself.',
+    locationInUse: 'Using your location. It stays on this device, and out of any link you copy.',
+    /** The short button beside that note; its full name for screen readers is stopLocation. */
+    stop: 'Stop',
     myLists: 'My lists',
     listsTitle: 'Saved lists',
     chipsLabel: 'Main layers',

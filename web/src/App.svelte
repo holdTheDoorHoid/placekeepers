@@ -2,9 +2,9 @@
   import { onMount, untrack } from 'svelte';
   import { config } from './config/index.ts';
   import { isSampleData, loadManifest } from './data/manifest.ts';
-  import { FIELD_VIEW_MAX_WIDTH, autoView } from './state/defaults.ts';
+  import { VIEW_QUERIES, screenView } from './state/screen.ts';
   import { savedText } from './state/init.ts';
-  import { PREFS_KEY, removeItem, writeItem } from './state/storage.ts';
+  import { NOTE_KEY, PREFS_KEY, readItem, removeItem, writeItem } from './state/storage.ts';
   import type { AppStore } from './state/store.svelte.ts';
   import { decodeState, encodeState } from './state/url.ts';
   import { strings } from './strings.ts';
@@ -95,20 +95,28 @@
     };
     window.addEventListener('hashchange', onHashChange);
 
-    // Until someone picks a view, it follows the screen width.
-    const narrow = window.matchMedia(`(max-width: ${FIELD_VIEW_MAX_WIDTH - 0.02}px)`);
-    const onWidth = () => {
-      if (!store.viewPinned) store.setView(autoView(window.innerWidth), false);
+    // Until someone picks a view, it follows the screen: its width, and a phone turned sideways.
+    const screens = VIEW_QUERIES.map((query) => window.matchMedia(query));
+    const onScreen = () => {
+      if (!store.viewPinned) store.setView(screenView(), false);
     };
-    narrow.addEventListener('change', onWidth);
+    for (const screen of screens) screen.addEventListener('change', onScreen);
 
     return () => {
       window.removeEventListener('hashchange', onHashChange);
-      narrow.removeEventListener('change', onWidth);
+      for (const screen of screens) screen.removeEventListener('change', onScreen);
     };
   });
 
   const sample = $derived(isSampleData(store.manifest));
+
+  // The note about the early preview can be hidden once read; this browser remembers that, so a
+  // phone keeps the room for the map. It comes back if the browser forgets its storage.
+  let noteHidden = $state(readItem(NOTE_KEY) === 'hidden');
+  function hideNote() {
+    noteHidden = true;
+    writeItem(NOTE_KEY, 'hidden');
+  }
 </script>
 
 <div class="app">
@@ -122,10 +130,15 @@
     }}>{strings.app.skipToList}</a
   >
   <Header {store} onOpenSettings={() => (settingsOpen = true)}>
-    {#if sample}<p class="sample" role="note">{strings.app.sampleData}</p>{:else}<p class="sample" role="note">
-        {strings.app.earlyPreview}
-        <a href={strings.app.repoUrl}>{strings.app.followAlong}</a>
-      </p>{/if}
+    {#if !noteHidden}
+      <div class="sample">
+        {#if sample}<p role="note">{strings.app.sampleData}</p>{:else}<p role="note">
+            {strings.app.earlyPreview}
+            <a href={strings.app.repoUrl}>{strings.app.followAlong}</a>
+          </p>{/if}
+        <button class="hide" type="button" aria-label={strings.app.hideNoteLabel} onclick={hideNote}>{strings.app.hideNote}</button>
+      </div>
+    {/if}
   </Header>
   <main class="stage {store.state.view}" class:with-dossier={store.dossierView !== null && !store.inspected}>
     <!-- The view's controls and lists come before the map, so the keyboard reaches them in the
@@ -157,13 +170,44 @@
     overflow: clip;
   }
   .sample {
-    margin: 0;
-    padding: 4px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px 10px;
+    padding: 2px 12px;
     background: var(--pk-note-bg);
     color: var(--pk-note-ink);
     font-size: 0.85rem;
     font-weight: 600;
+  }
+  .sample p {
+    margin: 0;
+    padding: 2px 0;
     text-align: center;
+  }
+  .sample a {
+    color: inherit;
+  }
+  .hide {
+    flex: none;
+    min-height: 32px;
+    padding: 2px 10px;
+    border: 1px solid currentColor;
+    border-radius: var(--pk-radius);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+  /* Phones: smaller, so the note takes less of the screen from the map. */
+  @media (max-width: 560px), (max-height: 500px) {
+    .sample {
+      font-size: 0.8rem;
+      justify-content: space-between;
+    }
+    .sample p {
+      text-align: left;
+    }
   }
   .stage {
     flex: 1;

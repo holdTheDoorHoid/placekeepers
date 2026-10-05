@@ -47,9 +47,9 @@
         >{strings.nav.menu}</button
       >
       <a class="freshness" data-kind={fresh.kind} href="{config.siteBase}status/">
-        <span class="dot" aria-hidden="true"></span>{fresh.text}<span class="sr-only">. {strings.header.dataStatus}</span>
+        <span class="dot" aria-hidden="true"></span><span class="fresh-text">{fresh.text}</span><span class="sr-only">. {strings.header.dataStatus}</span>
       </a>
-      <button class="button quiet small" type="button" onclick={share}>{strings.header.share}</button>
+      <button class="button quiet small share" type="button" onclick={share}>{strings.header.share}</button>
     </div>
     <button class="button primary small settings" type="button" aria-haspopup="dialog" onclick={onOpenSettings}
       >{strings.header.settings}</button
@@ -59,6 +59,17 @@
 </header>
 
 <Dialog bind:open={menuOpen} title={strings.nav.menuTitle} id="pk-menu">
+  <!-- On the narrowest phones "Copy link" moves here from the top bar. -->
+  <p class="menu-share">
+    <button
+      class="button quiet"
+      type="button"
+      onclick={() => {
+        menuOpen = false;
+        void share();
+      }}>{strings.header.share}</button
+    >
+  </p>
   <SiteNav current="map" />
 </Dialog>
 
@@ -136,6 +147,9 @@
   .settings {
     order: 4;
   }
+  .menu-share {
+    display: none;
+  }
   /* Phones: logo, view switch and Settings on the first row; data date and link below. */
   @media (max-width: 560px) {
     .topbar {
@@ -157,8 +171,34 @@
     .actions {
       order: 3;
       width: 100%;
+      flex-wrap: nowrap;
       justify-content: space-between;
       margin-left: 0;
+    }
+    /* The data date shares its row with Menu and Copy link: smaller, and cut short with "..." on
+       screen if it still does not fit (the Data status page it links to says it in full). */
+    .freshness {
+      min-width: 0;
+      font-size: 0.8rem;
+      padding: 2px 8px;
+    }
+    .fresh-text {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+  /* The narrowest phones: "Copy link" waits in the menu, so the top bar keeps to two rows. */
+  @media (max-width: 360px) {
+    .share {
+      display: none;
+    }
+    .menu-share {
+      display: block;
+      margin: 0 0 8px;
+    }
+    .topbar {
+      padding-inline: 8px;
     }
   }
 </style>

@@ -289,6 +289,20 @@ input[type='radio'] {
   flex: none;
 }
 
+/* The "Choose file" button of a file input, as big and as clear as the site's other buttons. */
+input[type='file']::file-selector-button {
+  min-height: 40px;
+  margin-right: 10px;
+  padding: 6px 14px;
+  border: 1px solid var(--pk-accent);
+  border-radius: var(--pk-radius);
+  background: var(--pk-bg);
+  color: var(--pk-accent);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 fieldset {
   border: 0;
   margin: 0;

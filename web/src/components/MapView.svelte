@@ -153,6 +153,8 @@
     height: 100%;
     min-height: 0;
     background: #ecebe4;
+    /* Notes and buttons on the map never spill onto the panels around it. */
+    overflow: hidden;
   }
   .map {
     position: absolute;

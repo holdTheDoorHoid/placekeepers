@@ -118,17 +118,20 @@
 <div class="field-controls">
   <div class="row">
     <AddressSearch {store} idPrefix="pk-field" />
+    <!-- Near me stays here while the location is in use (it finds the person again); stopping sits
+         beside the note below, so the search box keeps its width on a phone. -->
+    <button class="button small primary near-me" type="button" onclick={nearMe} disabled={locating} aria-describedby="pk-near-me-note">
+      {locating ? strings.field.nearMeBusy : strings.field.nearMe}
+    </button>
+    <span id="pk-near-me-note" class="sr-only">{strings.field.nearMePrivacy}</span>
+  </div>
+  <div class="location" class:in-use={store.userLocation !== null}>
+    <!-- Always in place, so screen readers announce the note when Near me fills it. -->
+    <p class="location-note small" role="status">{store.userLocation ? strings.field.locationInUse : ''}</p>
     {#if store.userLocation}
-      <button class="button small near-me" type="button" onclick={stopLocation}>{strings.field.stopLocation}</button>
-    {:else}
-      <button class="button small primary near-me" type="button" onclick={nearMe} disabled={locating} aria-describedby="pk-near-me-note">
-        {locating ? strings.field.nearMeBusy : strings.field.nearMe}
-      </button>
-      <span id="pk-near-me-note" class="sr-only">{strings.field.nearMePrivacy}</span>
+      <button class="button quiet small stop" type="button" aria-label={strings.field.stopLocation} onclick={stopLocation}>{strings.field.stop}</button>
     {/if}
   </div>
-  <!-- Always in place, so screen readers announce the note when Near me fills it. -->
-  <p class="location-note small" role="status">{store.userLocation ? strings.field.locationInUse : ''}</p>
   <div class="chips" role="group" aria-label={strings.field.chipsLabel}>
     {#each chips as chip (chip.id)}
       {#if chip.layers.length > 0}
@@ -262,14 +265,16 @@
     flex-wrap: wrap;
     gap: 6px;
   }
-  /* Phones: one row of chips that scrolls sideways, so the map keeps its room. */
+  /* Phones: one row of chips that scrolls sideways, so the map keeps its room. Its right edge
+     fades, so it shows there is more to see; the last chip can scroll clear of the fade. */
   @media (max-width: 560px) {
     .chips {
       flex-wrap: nowrap;
       overflow-x: auto;
       scrollbar-width: none;
       margin: 0 -12px;
-      padding: 2px 12px;
+      padding: 2px 40px 2px 12px;
+      mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);
     }
     .chips .chip {
       flex: none;
@@ -287,6 +292,16 @@
     background: var(--pk-bg);
     border-radius: 14px 14px 0 0;
     box-shadow: var(--pk-shadow);
+  }
+  /* A phone turned sideways: the open sheet runs down the left of the map, so the map stays in
+     sight beside it instead of being squeezed under it. */
+  @media (max-height: 500px) and (min-width: 560px) {
+    .sheet.open {
+      align-self: stretch;
+      max-height: none;
+      width: min(55%, 440px);
+      border-radius: 0 14px 0 0;
+    }
   }
   .sheet h2 {
     margin: 0;
@@ -350,13 +365,27 @@
   .order {
     margin-bottom: 8px;
   }
+  .location {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 10px;
+  }
+  /* Nothing to show until Near me is used: no room taken, but the status line stays in place. */
+  .location:not(.in-use) {
+    margin-top: -8px;
+  }
   .location-note {
+    flex: 1 1 14rem;
     margin: 0;
     color: var(--pk-muted);
   }
-  .location-note:empty {
-    display: block;
-    height: 0;
-    margin-top: -8px;
+  .stop {
+    flex: none;
+  }
+  @media (max-width: 560px) {
+    .location-note {
+      font-size: 0.8rem;
+    }
   }
 </style>
