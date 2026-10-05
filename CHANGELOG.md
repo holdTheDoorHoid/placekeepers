@@ -1,8 +1,67 @@
 # Changelog
 
-Placekeepers does not have a numbered history yet. This file starts with the first public
-release. Numbers below are from the live manifest and the project's docs, as of October 4, 2026,
+Numbers below are from the live manifest and the project's docs, each said "as of" its own date,
 and change a little every week as the data refreshes.
+
+## v0.2 (2026-10-05)
+
+A first look at transit comfort: the SEPTA bus and trolley stops and routes from v0.1 now carry a
+lens that scores where a shelter, a bench or shade would help riders most, with suggestions and
+printable survey tools. Also carries an early look at two later releases, heat and shade and
+amenities around the city.
+
+### Transit comfort
+
+- A transit comfort lens for SEPTA's bus and trolley stops: riders, a missing shelter or bench,
+  little shade, crossing the High Injury Network, and long waits, with a "why" breakdown, a
+  "Busiest stops first" and a "Heat and shade" preset. 7,912 stops scored as of October 5, 2026.
+- Five suggestions, each with the first lawful step: survey a stop with StreetComplete, ask the
+  City for a shelter or a bench (no public request form exists, so the card gives OTIS's own
+  address), report a dark streetlight to Philly311, or ask a building owner to request a free
+  street tree. As of October 5, 2026: 7,649 stops suggest a survey, 229 a shelter request, 210 a
+  bench request, 17 a streetlight report, and 1,987 shade trees.
+- A new "Bus stops" chip in the field view, and stops listed beside lots in "What you can do
+  nearby".
+- The "Survey a route" kit: a printable sheet for every SEPTA bus and trolley route and
+  direction, 123 routes and 237 directions, in SEPTA's own stop order.
+- 660 of the 7,912 scored stops are matched to one of the 829 stops OpenStreetMap knows in the
+  city (181 by stop number, 479 by place); 278 have their shelter or bench surveyed, and the
+  other 7,634 say "not yet surveyed" rather than guessing.
+- The 15 trolley tunnel stations underground are shown as stations: left out of the lens and its
+  suggestions, since no one can survey an underground platform.
+- OpenStreetMap's shelter and bench answers are joined to SEPTA's stops in your browser, not
+  stored together in our published files, so SEPTA's license and OpenStreetMap's license each
+  stay with their own data.
+
+### Heat and shade, an early look
+
+- A heat and shade lens for lots and buildings: neighborhood heat vulnerability, tree canopy,
+  City street trees nearby, and how many people it would reach, with "Balanced", "People most at
+  risk" and "Fewest trees" presets.
+- 151,726 City trees shown on the map, and the FEMA floodplain, as of October 5, 2026.
+- The transit comfort lens's "Heat and shade" preset also weighs shade at bus stops.
+
+### Amenities and conditions, an early look
+
+- What OpenStreetMap knows so far about benches, picnic tables, drinking water, public toilets
+  and little free library boxes around the city.
+- Free Library branches, recreation and older adult centers, pools, spraygrounds and sprinklers,
+  from the City's own lists.
+- 311 reports of illegal dumping, street and alley lights out, and graffiti, grouped by block
+  over the last 90 days.
+- No lens or suggestions of their own yet; that is further Phase 3 work.
+
+### Map and views
+
+- The whole city view loads a lighter copy of the lots on phones.
+- The analysis view says plainly when its list, plot and downloads show only a sample of the
+  places in view rather than every one; zoom in to see and count every place.
+
+### Safeguards and privacy
+
+- The privacy test now covers the bus stop pages, the "Survey bus stops" guide and the "Survey a
+  route" pages: with live City data off, they ask no other server for anything.
+- The "not affiliated" line now names SEPTA as well as the City of Philadelphia.
 
 ## v0.1 (2026-10-05)
 
