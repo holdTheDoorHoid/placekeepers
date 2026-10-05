@@ -5,7 +5,7 @@
   import { FIELD_CHIPS } from '../../config/chips.ts';
   import { FILTERS, filterNarrows } from '../../config/filters.ts';
   import { STYLES, styleFor } from '../../map/styles/index.ts';
-  import { nearestPlaces, parcelLensOf } from '../../places/rank.ts';
+  import { distanceMeters, nearestPlaces, parcelLensOf } from '../../places/rank.ts';
   import { PHILLY_BOUNDS } from '../../state/defaults.ts';
   import type { AppStore } from '../../state/store.svelte.ts';
   import { strings } from '../../strings.ts';
@@ -16,6 +16,7 @@
   import PlaceCard from '../places/PlaceCard.svelte';
   import AddressSearch from '../search/AddressSearch.svelte';
   import FeatureDetails from '../streets/FeatureDetails.svelte';
+  import MemorialList from '../streets/MemorialList.svelte';
 
   let { store }: { store: AppStore } = $props();
 
@@ -24,6 +25,8 @@
   /** Cards shown at first, and added by "Show more places", up to MAX_CARDS. */
   const CARDS_STEP = 5;
   const MAX_CARDS = 25;
+  /** Memorials listed under the cards, nearest first. */
+  const MAX_MEMORIALS = 10;
 
   let layersOpen = $state(false);
   let listsOpen = $state(false);
@@ -53,6 +56,15 @@
   const all = $derived(nearby ? nearestPlaces(registry, store.state, store.parcelsInView, anchor, MAX_CARDS) : []);
   const places = $derived(all.slice(0, cardCount));
   const narrowed = $derived(FILTERS.filter((f) => filterNarrows(f, store.state.filters[f.id])).length);
+  const memorialsShown = $derived(
+    registry.layers.some((l) => styleFor(l) === STYLES.memorials && store.state.layers.includes(l.id)),
+  );
+  /** The memorials drawn on the map, nearest first: the way to reach them without the map. */
+  const memorials = $derived(
+    nearby && memorialsShown
+      ? [...store.memorialsInView].sort((a, b) => distanceMeters(anchor, a.lngLat) - distanceMeters(anchor, b.lngLat))
+      : [],
+  );
 
   /** The sheet's own button: where keyboard focus goes when the sheet closes under it. */
   let sheetToggle: HTMLButtonElement | undefined = $state();
@@ -175,6 +187,16 @@
       {#if all.length > places.length}
         <button class="button quiet small" type="button" onclick={() => (cardCount += CARDS_STEP)}>{strings.sheet.showMore}</button>
       {/if}
+    {/if}
+    {#if memorials.length > 0}
+      <section class="memorials" aria-labelledby="pk-sheet-memorials">
+        <h3 id="pk-sheet-memorials">
+          {strings.streets.memorialsNearby} <span class="count">{strings.streets.memorialCount(memorials.length)}</span>
+        </h3>
+        <p class="muted small">{strings.streets.memorialsIntro}</p>
+        <MemorialList {store} memorials={memorials.slice(0, MAX_MEMORIALS)} />
+        {#if memorials.length > MAX_MEMORIALS}<p class="muted small">{strings.streets.memorialsMore(memorials.length - MAX_MEMORIALS)}</p>{/if}
+      </section>
     {/if}
   </div>
 </section>
@@ -314,7 +336,14 @@
     padding: 0;
     list-style: none;
   }
-
+  .memorials {
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid var(--pk-surface-2);
+  }
+  .memorials h3 {
+    margin-bottom: 2px;
+  }
   .notice {
     margin-bottom: 8px;
   }

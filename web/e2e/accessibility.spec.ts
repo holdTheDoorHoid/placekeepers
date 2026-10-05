@@ -1,6 +1,6 @@
 // Accessibility of both views and the content pages, at phone and desktop sizes, aiming at WCAG 2.2
 // AA wherever a map allows: automated checks with axe of every panel, the keyboard paths that reach
-// everything without the map canvas, Escape and focus, pages that never
+// everything without the map canvas (memorials included), Escape and focus, pages that never
 // scroll sideways at 320 pixels or at 200 percent zoom, and maps that do not fly for people who
 // prefer reduced motion. The map canvas itself is drawn pixels; the lists stand in for it.
 
@@ -48,6 +48,7 @@ test.describe('accessibility', () => {
     const sheet = page.getByRole('button', { name: /What you can do nearby/ });
     await sheet.click();
     await expect(page.getByRole('list', { name: 'What you can do nearby' }).getByRole('listitem').first()).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Memorials nearby/ })).toBeVisible();
     await expectAccessible(page, 'nearby list');
 
     const card = page.locator('article.card').first();
@@ -70,9 +71,15 @@ test.describe('accessibility', () => {
       await page.keyboard.press('Escape');
       await expect(page.getByRole('dialog', { name: dialog })).toBeHidden();
     }
+
+    // A memorial opened from the list shows the same details as its marker.
+    await expect(sheet).toHaveAttribute('aria-expanded', 'true');
+    await page.locator('[data-memorial]').first().getByRole('button').click();
+    await expect(page.getByRole('dialog', { name: 'Memorial' })).toBeVisible();
+    await expectAccessible(page, 'memorial');
   });
 
-  test('analysis view: panels, ranked list, plot, saved lists and a lot page', async ({ page }, info) => {
+  test('analysis view: panels, ranked list, plot, saved lists, memorials and a lot page', async ({ page }, info) => {
     await openMap(page, IN_VIEW);
     await expectAccessible(page, 'analysis view');
     if (isPhone(info)) {
@@ -86,11 +93,17 @@ test.describe('accessibility', () => {
       [/Ranked list/, '#pk-drawer-table tbody tr'],
       [/Need and first step/, '#pk-drawer-plot g.dot'],
       [/Saved lists/, '#pk-drawer-lists button'],
+      [/Memorials/, '#pk-drawer-memorials [data-memorial]'],
     ] as const) {
       await drawer.getByRole('button', { name: tab }).click();
       await expect(page.locator(body).first()).toBeAttached();
       await expectAccessible(page, String(tab));
     }
+    // A memorial chosen in the list opens in the details panel.
+    await page.locator('#pk-drawer-memorials [data-memorial]').first().getByRole('button').click();
+    await expect(page.locator('#pk-right').getByRole('heading', { name: 'Memorial' })).toBeVisible();
+    await expectAccessible(page, 'memorial details');
+
     await page.goto('about:blank');
     await openMap(page, `v=a&m=18/${LOT.lat}/${LOT.lng}&p=${LOT.id}`);
     await expect(page.locator('#pk-right')).toContainText('Who owns it');
@@ -108,7 +121,7 @@ test.describe('accessibility', () => {
     }
   });
 
-  test('keyboard: the controls come before the map', async ({ page }) => {
+  test('keyboard: the controls come before the map, and a memorial opens without the map', async ({ page }) => {
     await openMap(page, FIELD);
     // The search box, Near me and the chips come first, then the list of places, then the map.
     const passed = await tabTo(page, /What you can do nearby/);
@@ -118,6 +131,16 @@ test.describe('accessibility', () => {
     expect(passed.some((item) => item.startsWith('canvas'))).toBe(false);
     await page.keyboard.press('Enter');
     await expect(page.locator('#pk-places')).toBeVisible();
+
+    // Every memorial on the map is in the list, and opens with the keyboard alone.
+    await tabTo(page, /Killed while/);
+    await page.keyboard.press('Enter');
+    const memorial = page.getByRole('dialog', { name: 'Memorial' });
+    await expect(memorial).toBeVisible();
+    await expect(memorial).toContainText(/Killed while (walking|cycling|riding a scooter) on/);
+    await page.keyboard.press('Escape');
+    await expect(memorial).toBeHidden();
+    expect(await focused(page)).toMatch(/^button: Killed while/);
   });
 
   test('keyboard: Escape closes what it opened and focus comes back', async ({ page }) => {

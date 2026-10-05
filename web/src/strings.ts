@@ -61,7 +61,7 @@ export const strings = {
   app: {
     name: 'Placekeepers',
     tagline: 'A free map for Philadelphia neighbors who care for their blocks.',
-    mapLabel: 'Map of Philadelphia. The list of places below the map shows the same places as text.',
+    mapLabel: 'Map of Philadelphia. The lists of places and memorials on this page show the same things as text.',
     loadingMap: 'Loading the map',
     mapFailed: 'The map could not start in this browser. Try another browser, or update this one.',
     sampleData: 'Sample data for testing. These are not real places.',
@@ -380,6 +380,7 @@ export const strings = {
     tabTable: 'Ranked list',
     tabPlot: 'Need and first step',
     tabLists: 'Saved lists',
+    tabMemorials: 'Memorials',
   },
 
   // The plot of need against the first step to get permission (docs/DESIGN.md section 5.4).
@@ -546,6 +547,13 @@ export const strings = {
     canDo: 'What neighbors can do here',
     firstStep: 'First step',
     cost: (cost: string) => `Cost: ${cost}`,
+    memorialsNearby: 'Memorials nearby',
+    memorialsInView: 'Memorials in view',
+    memorialsIntro: 'Each one remembers a person killed in a traffic crash. Open one to read more.',
+    memorialCount: (n: number) => plural(n, 'memorial', 'memorials'),
+    memorialsMore: (n: number) => `${plural(n, 'more memorial is', 'more memorials are')} in view. Zoom in to list them here.`,
+    memorialsLayerOff: 'Turn on the Memorials layer to list the memorials in view.',
+    memorialsNone: 'No memorials in this part of the map.',
     removal: 'Request removal',
     removalNote: 'Anyone can ask us to remove a name or a marker. We do it without asking why.',
     removalSubject: (id: string) => `Memorial removal request ${id}`,

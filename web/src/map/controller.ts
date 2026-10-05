@@ -53,6 +53,13 @@ export interface ParcelInView {
   center: [number, number];
 }
 
+/** A memorial marker drawn in the current view: one person, with where the marker stands. */
+export interface MemorialInView {
+  layerId: string;
+  properties: Record<string, unknown>;
+  lngLat: [number, number];
+}
+
 /** A memorial, crash or street block someone tapped: shown in the details panel. */
 export interface InspectTarget {
   layerId: string;
@@ -299,6 +306,24 @@ export class MapController {
       const id = feature.properties?.id;
       if (id === undefined || id === null || seen.has(String(id))) continue;
       seen.set(String(id), { id: String(id), properties: { ...feature.properties }, center: centerOf(feature.geometry) });
+    }
+    return [...seen.values()];
+  }
+
+  /**
+   * Memorial markers drawn in the current view, one entry per person, so the lists that stand in
+   * for the map can offer each one to keyboards and screen readers.
+   */
+  memorialsInView(): MemorialInView[] {
+    const ids = this.parts((style) => style === STYLES.memorials, 'clickable');
+    if (!this.loaded || ids.length === 0) return [];
+    const seen = new Map<string, MemorialInView>();
+    for (const feature of this.map.queryRenderedFeatures({ layers: ids })) {
+      const layerId = this.layerOf(feature.layer.id);
+      const properties = { ...feature.properties };
+      const key = String(properties.id ?? JSON.stringify(properties));
+      if (!layerId || seen.has(key)) continue;
+      seen.set(key, { layerId, properties, lngLat: centerOf(feature.geometry) });
     }
     return [...seen.values()];
   }

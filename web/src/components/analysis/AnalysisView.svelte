@@ -3,6 +3,7 @@
   // selected place or a summary of the area on the right, and a ranked list underneath.
   // On narrower screens the side panels become panels that open over the map.
   import { tick } from 'svelte';
+  import { STYLES, styleFor } from '../../map/styles/index.ts';
   import { strings } from '../../strings.ts';
   import { rankPlaces, type ScoreOrder } from '../../places/rank.ts';
   import type { AppStore } from '../../state/store.svelte.ts';
@@ -15,12 +16,13 @@
   import RankedTable from '../places/RankedTable.svelte';
   import AddressSearch from '../search/AddressSearch.svelte';
   import FeatureDetails from '../streets/FeatureDetails.svelte';
+  import MemorialList from '../streets/MemorialList.svelte';
   import Filters from './Filters.svelte';
   import NeedPlot from './NeedPlot.svelte';
 
   let { store }: { store: AppStore } = $props();
 
-  type Panel = 'table' | 'plot' | 'lists';
+  type Panel = 'table' | 'plot' | 'lists' | 'memorials';
   type Side = 'left' | 'right';
   let leftOpen = $state(false);
   let rightOpen = $state(false);
@@ -39,8 +41,20 @@
     { id: 'table', label: strings.analysis.tabTable },
     { id: 'plot', label: strings.analysis.tabPlot },
     { id: 'lists', label: strings.analysis.tabLists },
+    { id: 'memorials', label: strings.analysis.tabMemorials },
   ];
   const listCount = $derived(store.lists.active?.places.length ?? 0);
+  /** Most memorials listed at once, newest first. */
+  const MAX_MEMORIALS = 200;
+  const memorialsShown = $derived(
+    store.registry.layers.some((l) => styleFor(l) === STYLES.memorials && store.state.layers.includes(l.id)),
+  );
+  /** The memorials drawn on the map, newest first: the way to reach them without the map. */
+  const memorials = $derived(
+    memorialsShown
+      ? [...store.memorialsInView].sort((a, b) => String(b.properties.d ?? '').localeCompare(String(a.properties.d ?? '')))
+      : [],
+  );
 
   function overMap(side: Side): boolean {
     return window.matchMedia(OVER_MAP[side]).matches;
@@ -164,6 +178,7 @@
         <span>{item.label}</span>
         {#if item.id === 'table'}<span class="count">{strings.sheet.countLabel(ranked.length)}</span>{/if}
         {#if item.id === 'lists' && store.lists.active}<span class="count">{strings.lists.count(listCount)}</span>{/if}
+        {#if item.id === 'memorials' && memorialsShown}<span class="count">{strings.streets.memorialCount(memorials.length)}</span>{/if}
       </button>
     {/each}
   </div>
@@ -181,6 +196,20 @@
   </div>
   <div id="pk-drawer-lists" class="drawer-body" hidden={panel !== 'lists'}>
     {#if panel === 'lists'}<SavedLists {store} idPrefix="pk-analysis" />{/if}
+  </div>
+  <div id="pk-drawer-memorials" class="drawer-body" hidden={panel !== 'memorials'}>
+    {#if panel === 'memorials'}
+      <h3 class="sr-only">{strings.streets.memorialsInView}</h3>
+      {#if !memorialsShown}
+        <p class="muted">{strings.streets.memorialsLayerOff}</p>
+      {:else if memorials.length === 0}
+        <p class="muted">{strings.streets.memorialsNone}</p>
+      {:else}
+        <p class="muted small">{strings.streets.memorialsIntro}</p>
+        <MemorialList {store} memorials={memorials.slice(0, MAX_MEMORIALS)} />
+        {#if memorials.length > MAX_MEMORIALS}<p class="muted small">{strings.streets.memorialsMore(memorials.length - MAX_MEMORIALS)}</p>{/if}
+      {/if}
+    {/if}
   </div>
 </section>
 
