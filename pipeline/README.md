@@ -38,8 +38,11 @@ cache, `--as-of YYYY-MM-DD` sets the build date for time windows, and `-v` shows
 a source comes after the ones its download needs: transfers, assessments and violations wait for
 the sources that define the vacancy candidate parcels. A source whose registry cadence is `frozen`
 is downloaded once; a `yearly` one at most every 30 days; the OpenStreetMap extract at most every
-six days, as Geofabrik asks (its adapter's `min_refetch`; `--force` overrides all three). No
-download starts while less than 10 GB of disk is free (`PK_MIN_FREE_GB`).
+six days, as Geofabrik asks (its adapter's `min_refetch`; `--force` overrides all three). A
+snapshot made with other registry settings than today's (its sidecar's `recipe`, such as the
+extract's tag list, missing in snapshots made before 2026-10-05) is downloaded again on the next
+run whatever its age, so a tag added to the registry never waits six days. No download starts
+while less than 10 GB of disk is free (`PK_MIN_FREE_GB`).
 
 ## Sources
 
@@ -202,9 +205,11 @@ DuckDB: `SELECT * FROM '~/.cache/placekeepers/snapshots/opa_properties/current.p
 `tiles/streets.pmtiles` (layers `hin`, `segments`, `crashes` and `memorials`),
 `tiles/context.pmtiles` (layer `h3`), `tiles/care.pmtiles` (layers `landcare` and `gardens`),
 `tiles/boundaries.pmtiles` (layers `council_districts`, `rcos` and `neighborhoods`),
-`tiles/transit.pmtiles` (layers `stops` and `routes`), `tiles/amenities.pmtiles` (layer
-`stops`), `tiles/environment.pmtiles` (layers `heat_tracts` and `floodplain`) and
-`tiles/trees.pmtiles` (layer `trees`, zoom 14 only). It builds in a
+`tiles/transit.pmtiles` (layers `stops` and `routes`), `tiles/amenities.pmtiles` (layers `stops`,
+`benches`, `picnic_tables`, `water`, `toilets` and `bookcases`), `tiles/environment.pmtiles` (layers
+`heat_tracts` and `floodplain`), `tiles/trees.pmtiles` (layer `trees`, zoom 14 only),
+`tiles/places.pmtiles` (layers `park_water`, `libraries`, `recreation` and `pools`) and
+`tiles/conditions.pmtiles` (layers `dumping`, `lights` and `graffiti`). It builds in a
 hidden folder and swaps it into place at the end, and it refuses to replace a folder that is not an
 earlier data root. A layer with nothing to show is left out with a note, so it never breaks the rest
 of its tile file. It also writes the lot dossiers, `dossiers/<first four digits>.json` with
@@ -295,6 +300,21 @@ These are OpenStreetMap's stops, a separate layer from SEPTA's, which M2.3 joins
 
 The layer is under the Open Database License, credited "© OpenStreetMap contributors". Later
 milestones (M3.5) add more amenities from OpenStreetMap to the same file.
+
+### Amenities, public places and 311 conditions (M3.5)
+
+* **Amenities from OpenStreetMap** (`derive/amenities.py`, `publish/amenities.py`): benches, picnic
+  tables, drinking water, public toilets and public bookcases, one layer each, from the same weekly
+  extract as the stops (their tags joined the registry's list). Only elements inside the city and
+  open to the public; each answer is yes, no or left out when OpenStreetMap does not say.
+* **Public places from the City** (`adapters/city_places.py`, `publish/city_places.py`): Free
+  Library locations, Parks and Recreation's program sites (recreation centers and more), pools,
+  spraygrounds and drinking fountains, each a small ArcGIS layer fetched with an explicit field
+  list, published into their own tile file because the City's terms differ from OpenStreetMap's.
+* **Conditions reported to 311** (`adapters/philly311.py`, `publish/conditions.py`): dumping, light
+  outage and graffiti requests from the last 120 days, of which the map counts the last 90 days on
+  the nearest street block within 50 meters, one point per block, never at an address. Only the
+  code, status, days and point are downloaded.
 
 ### Route survey sheets
 

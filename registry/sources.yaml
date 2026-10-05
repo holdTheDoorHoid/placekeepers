@@ -456,7 +456,7 @@
 # with the next weekly download. railway=tram_stop is not listed: in Philadelphia it marks where a
 # trolley stops on its tracks, while riders wait at the platform beside it.
 - id: osm_philadelphia
-  name: OpenStreetMap in Philadelphia (bus stops, shelters and benches)
+  name: OpenStreetMap in Philadelphia (bus stops, shelters, benches, water, toilets and more)
   publisher: OpenStreetMap contributors, from Geofabrik's Pennsylvania extract
   homepage: https://www.openstreetmap.org/copyright
   endpoint:
@@ -467,8 +467,13 @@
       - public_transport=platform
       - amenity=shelter
       - amenity=bench
+      # Amenities (M3.5): drinking water, public toilets, little free libraries, picnic tables
+      - amenity=drinking_water
+      - amenity=toilets
+      - amenity=public_bookcase
+      - leisure=picnic_table
   license: odbl
-  attribution: "Bus stops, shelters and benches: © OpenStreetMap contributors (Open Database License)"
+  attribution: "Bus stops, benches, water, toilets and more: © OpenStreetMap contributors (Open Database License)"
   cadence: weekly
   health: {min_rows: 2500, max_drop_pct: 10, newest_field: extract_date, max_age_days: 14}
   release: v0.2
@@ -487,3 +492,73 @@
   cadence: irregular
   health: {min_rows: 350, max_drop_pct: 5}
   release: v0.2
+# Milestone M3.5: public places from the City (libraries, recreation centers, pools and
+# spraygrounds, park drinking fountains) and conditions reported to 311. Each place layer is a
+# small point layer of the City's ArcGIS Online organization, fetched with an explicit field list
+# (placekeepers/adapters/city_places.py).
+- id: library_locations
+  name: Free Library locations
+  publisher: City of Philadelphia, for the Free Library of Philadelphia
+  homepage: https://metadata.phila.gov/#home/datasetdetails/68dee636e3367f02bb01011c/representationdetails/68dee637e3367f02bb01014f/
+  endpoint: {kind: arcgis, service: library_locations, layer: 0}
+  license: city_terms
+  attribution: "Library locations: City of Philadelphia"
+  cadence: irregular
+  health: {min_rows: 45, max_drop_pct: 15}
+  release: v0.3
+- id: ppr_program_sites
+  name: Parks and Recreation program sites
+  publisher: City of Philadelphia, Parks and Recreation
+  homepage: https://opendataphilly.org/datasets/parks-recreation-program-sites/
+  endpoint: {kind: arcgis, service: PPR_Program_Sites, layer: 0}
+  license: city_terms
+  attribution: "Recreation centers: Philadelphia Parks and Recreation"
+  cadence: irregular
+  health: {min_rows: 140, max_drop_pct: 15}
+  release: v0.3
+- id: ppr_swimming_pools
+  name: Parks and Recreation swimming pools
+  publisher: City of Philadelphia, Parks and Recreation
+  homepage: https://opendataphilly.org/datasets/ppr-swimming-pools/
+  endpoint: {kind: arcgis, service: PPR_Swimming_Pools, layer: 0}
+  license: city_terms
+  attribution: "Pools: Philadelphia Parks and Recreation"
+  cadence: irregular
+  health: {min_rows: 60, max_drop_pct: 15}
+  release: v0.3
+- id: ppr_spraygrounds
+  name: Parks and Recreation spraygrounds
+  publisher: City of Philadelphia, Parks and Recreation
+  homepage: https://opendataphilly.org/datasets/ppr-spraygrounds/
+  endpoint: {kind: arcgis, service: PPR_Spraygrounds, layer: 0}
+  license: city_terms
+  attribution: "Spraygrounds: Philadelphia Parks and Recreation"
+  cadence: irregular
+  health: {min_rows: 90, max_drop_pct: 15}
+  release: v0.3
+- id: ppr_hydration_stations
+  name: Parks and Recreation hydration stations
+  publisher: City of Philadelphia, Parks and Recreation
+  homepage: https://opendataphilly.org/datasets/ppr-hydration-stations/
+  endpoint: {kind: arcgis, service: PPR_Hydration_Stations, layer: 0}
+  license: city_terms
+  attribution: "Park drinking fountains: Philadelphia Parks and Recreation"
+  cadence: irregular
+  health: {min_rows: 120, max_drop_pct: 15}
+  release: v0.3
+# Conditions reported to 311, for physical conditions only and never about people
+# (docs/ETHICS.md): four kinds of request, by the City's service code, from the last 120 days.
+# Only the code, the status, the days and the point are downloaded (adapters/philly311.py).
+- id: philly311_conditions
+  name: Philly311 requests about dumping, dark lights and graffiti
+  publisher: City of Philadelphia, Philly311
+  homepage: https://opendataphilly.org/datasets/311-service-and-information-requests/
+  endpoint:
+    kind: carto
+    table: public_cases_fc
+    where: "service_code IN ('SR-ST02', 'SR-ST04', 'SR-ST06', 'SR-CL01') AND requested_datetime >= now() - interval '120 days'"
+  license: city_terms
+  attribution: "311 requests: City of Philadelphia, Philly311"
+  cadence: daily
+  health: {min_rows: 2000, max_drop_pct: 50, newest_field: requested, max_age_days: 10}
+  release: v0.3

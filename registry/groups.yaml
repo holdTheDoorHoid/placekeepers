@@ -14,6 +14,15 @@
 - id: heat
   label: Heat, trees and flooding
   description: How hard summer heat hits each neighborhood, the trees the City keeps on its streets and in its parks, and where FEMA expects flooding.
+- id: amenities
+  label: Benches, water, toilets and more
+  description: Places to sit, drink water, use a toilet or borrow a book, as mapped in OpenStreetMap, and drinking fountains in parks.
+- id: public_places
+  label: Libraries, recreation centers and pools
+  description: Free Library branches and Parks and Recreation's recreation centers, pools and spraygrounds, as the City lists them.
+- id: conditions
+  label: Conditions reported to 311
+  description: Illegal dumping, lights out and graffiti that people reported to Philly311 in the last 90 days, counted by block.
 - id: safety_context
   label: Where care is needed most
   description: Context that shows where improvements are likely to help most.

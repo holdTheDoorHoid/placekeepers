@@ -10,6 +10,9 @@ Geofabrik remakes its extracts every day. Its `-latest` link redirects to the da
 `pennsylvania-261003.osm.pbf`), which the client follows. Geofabrik asks automated downloaders not
 to fetch the same file over and over, so a good copy younger than six days is never downloaded
 again unless someone forces it (`pk fetch --force`); the weekly refresh runs every seven days.
+One exception: the snapshot remembers a hash of the tag list it was made with (its sidecar's
+`recipe`), and a copy made with other tags, or with no hash at all, is downloaded again on the next
+run, so a tag added to the registry always reaches the next weekly refresh (M3.5).
 
 The snapshot (GeoParquet), one row per element:
 
@@ -34,6 +37,7 @@ and anything published from it is ODbL too (registry license `odbl`).
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import zlib
@@ -247,6 +251,10 @@ class OsmExtract(Adapter):
             "rows": None,
         }
 
+    def recipe(self) -> str | None:
+        """The registry's tag list, as a hash: the tags decide which elements the snapshot keeps."""
+        return tags_recipe(self.endpoint.tags)
+
     def extract_date(self, raw: RawFetch, header: PbfHeader) -> date:
         """The day the extract's data is from, in Philadelphia."""
         if header.replication_timestamp is not None:
@@ -334,6 +342,12 @@ def padded_bounds(city: BaseGeometry, pad: float = 0.01) -> tuple[float, float, 
     pass over most of Pennsylvania quickly before the exact test."""
     west, south, east, north = city.bounds
     return west - pad, south - pad, east + pad, north + pad
+
+
+def tags_recipe(tags: list[str]) -> str:
+    """A hash of a tag list, the same whatever the order or repeats: "tags:" and 16 hex digits."""
+    text = "\n".join(sorted(set(tags)))
+    return "tags:" + hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
 
 
 def tag_condition(tags: list[str]) -> str:

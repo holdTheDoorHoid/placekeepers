@@ -24,6 +24,7 @@ from placekeepers.adapters.osm import (
     check_extract,
     read_pbf_header,
     tag_condition,
+    tags_recipe,
 )
 from placekeepers.cache import RawFetch, RawStore
 from placekeepers.config import USER_AGENT
@@ -181,7 +182,12 @@ def test_a_good_copy_younger_than_six_days_is_not_downloaded_again(
     ctx = context_factory(now=NOW, handler=geofabrik(pbf, seen))
     source = ctx.registry.sources[SOURCE]
     install_snapshot(
-        ctx, SOURCE, pa.table({"osm_id": [1]}), geometry=False, fetched_at="2026-10-01T10:00:00Z"
+        ctx,
+        SOURCE,
+        pa.table({"osm_id": [1]}),
+        geometry=False,
+        fetched_at="2026-10-01T10:00:00Z",
+        recipe=tags_recipe(source.endpoint.tags),
     )
     reason = refetch_due(ctx, source)
     assert reason is not None and "less than 6 days old" in reason
@@ -193,6 +199,37 @@ def test_a_good_copy_younger_than_six_days_is_not_downloaded_again(
     # So does someone who forces it.
     assert fetch_source(ctx, source, force=True).outcome == "downloaded"
     assert [str(r.url) for r in seen] == [LATEST, DATED]
+
+
+@pytest.mark.parametrize("recipe", [None, "tags:0000000000000000"])
+def test_a_copy_made_with_other_tags_is_downloaded_again_at_once(
+    context_factory, tmp_path: Path, recipe: str | None
+) -> None:
+    """A tag added to the registry must reach the next refresh, not wait six days: a copy made
+    with another tag list, or one that does not say (made before the hash was kept), is fetched
+    again whatever its age."""
+    seen: list[httpx.Request] = []
+    pbf = sample_pbf(tmp_path / "server").read_bytes()
+    ctx = context_factory(now=NOW, handler=geofabrik(pbf, seen))
+    source = ctx.registry.sources[SOURCE]
+    install_snapshot(
+        ctx,
+        SOURCE,
+        pa.table({"osm_id": [1]}),
+        geometry=False,
+        fetched_at="2026-10-04T10:00:00Z",
+        recipe=recipe,
+    )
+    assert refetch_due(ctx, source) is None
+    assert fetch_source(ctx, source).outcome == "downloaded"
+    assert [str(r.url) for r in seen] == [LATEST, DATED]
+
+
+def test_the_tag_hash_ignores_order_and_repeats_but_not_a_new_tag() -> None:
+    tags = ["highway=bus_stop", "amenity=bench"]
+    assert tags_recipe(tags) == tags_recipe(list(reversed(tags))) == tags_recipe([*tags, tags[0]])
+    assert tags_recipe(tags) != tags_recipe([*tags, "amenity=toilets"])
+    assert tags_recipe(tags).startswith("tags:") and len(tags_recipe(tags)) == len("tags:") + 16
 
 
 # The filter to the city and the tags ------------------------------------------------------------
@@ -217,6 +254,8 @@ def test_the_snapshot_keeps_the_tags_inside_the_city_and_a_margin(
     meta = store.current()
     assert meta is not None and meta.newest_record == "2026-10-03"
     assert meta.format == "geoparquet"
+    # The snapshot remembers the tags it was made with, so a tag change is fetched at once.
+    assert meta.recipe == tags_recipe(ctx.registry.sources[SOURCE].endpoint.tags)
     rows = kept(store.path_for(meta))
     # Not kept: the stop position (no listed tag), the cafe, the stop 1 km outside the city, and
     # the relation (relations are not read).
