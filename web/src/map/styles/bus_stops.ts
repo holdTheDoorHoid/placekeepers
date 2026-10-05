@@ -7,15 +7,7 @@
 
 import type { ExpressionSpecification, FilterSpecification, LayerSpecification } from 'maplibre-gl';
 import { strings } from '../../strings.ts';
-import {
-  SELECTED,
-  STOP_BENCH_STROKE,
-  STOP_COLORS,
-  STOP_NEITHER_STROKE,
-  STOP_STROKE,
-  STOP_UNKNOWN_FILL,
-  STOP_UNKNOWN_RING,
-} from './palette.ts';
+import { SELECTED, STOP_COLORS, STOP_OUTLINES, STOP_UNKNOWN_FILL, STOP_UNKNOWN_RING } from './palette.ts';
 import {
   highlightFilter,
   partId,
@@ -84,7 +76,7 @@ export const busStops: StyleModule = {
         paint: {
           'circle-color': ['match', comfort, COMFORT.shelter, STOP_COLORS.shelter, COMFORT.bench, STOP_COLORS.bench, STOP_COLORS.neither],
           'circle-radius': radius,
-          'circle-stroke-color': ['match', comfort, COMFORT.shelter, STOP_STROKE, COMFORT.bench, STOP_BENCH_STROKE, STOP_NEITHER_STROKE],
+          'circle-stroke-color': ['match', comfort, COMFORT.shelter, STOP_OUTLINES.shelter, COMFORT.bench, STOP_OUTLINES.bench, STOP_OUTLINES.neither],
           'circle-stroke-width': ['interpolate', ['linear'], ['zoom'], 10, 0.75, 16, 1.5],
         },
       },
@@ -108,9 +100,9 @@ export const busStops: StyleModule = {
     const l = strings.legend;
     const shown = new Set(shownCodes(ctx));
     const entries: LegendEntry[] = [];
-    if (shown.has(COMFORT.shelter)) entries.push({ kind: 'circle', label: l.stopShelter, fill: STOP_COLORS.shelter, stroke: STOP_STROKE, radius: 5 });
-    if (shown.has(COMFORT.bench)) entries.push({ kind: 'circle', label: l.stopBench, fill: STOP_COLORS.bench, stroke: STOP_BENCH_STROKE, radius: 5 });
-    if (shown.has(COMFORT.neither)) entries.push({ kind: 'circle', label: l.stopNeither, fill: STOP_COLORS.neither, stroke: STOP_NEITHER_STROKE, radius: 5 });
+    if (shown.has(COMFORT.shelter)) entries.push({ kind: 'circle', label: l.stopShelter, fill: STOP_COLORS.shelter, stroke: STOP_OUTLINES.shelter, radius: 5 });
+    if (shown.has(COMFORT.bench)) entries.push({ kind: 'circle', label: l.stopBench, fill: STOP_COLORS.bench, stroke: STOP_OUTLINES.bench, radius: 5 });
+    if (shown.has(COMFORT.neither)) entries.push({ kind: 'circle', label: l.stopNeither, fill: STOP_COLORS.neither, stroke: STOP_OUTLINES.neither, radius: 5 });
     if (shown.has(COMFORT.unknown)) {
       const guide = ctx.layer.guide;
       entries.push({

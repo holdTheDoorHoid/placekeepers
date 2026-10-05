@@ -56,12 +56,11 @@ export const PLAIN_BACKGROUND = '#ecebe4';
 
 /**
  * Bus and trolley stops (M2.2), by what OpenStreetMap says riders find there: a shelter or roof
- * in deep blue, a bench in light blue, neither in a warm amber (a gap worth care, not an alarm).
- * A stop not yet surveyed is a hollow gray ring, so unknown never looks like missing.
+ * in deep blue, a bench in light blue, neither in a warm amber (a gap worth care, not an alarm),
+ * each with a darker outline of its own, so every kind reads at the same size. A stop not yet
+ * surveyed is a hollow gray ring, so unknown never looks like missing.
  */
 export const STOP_COLORS = { shelter: '#1f5c99', bench: '#8fbfe0', neither: '#e8a33d' } as const;
-export const STOP_STROKE = '#ffffff';
-export const STOP_BENCH_STROKE = '#1f5c99';
-export const STOP_NEITHER_STROKE = '#7a4a05';
+export const STOP_OUTLINES = { shelter: '#0b2f55', bench: '#1f5c99', neither: '#7a4a05' } as const;
 export const STOP_UNKNOWN_FILL = '#ffffff';
 export const STOP_UNKNOWN_RING = '#5f6870';
