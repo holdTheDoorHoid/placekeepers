@@ -313,8 +313,9 @@ class WalkInputs:
             try:
                 read()
             except Exception as exc:  # one unreadable input never stops the others
+                reason = " ".join(str(exc).split())[:200] or type(exc).__name__
                 found.notes.append(
-                    f"Walking distance: {what} could not be read ({exc}), so it is left out"
+                    f"Walking distance: {what} could not be read ({reason}), so it is left out"
                 )
                 log.warning("walk: %s could not be read", what, exc_info=True)
 
