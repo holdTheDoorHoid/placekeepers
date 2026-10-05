@@ -183,6 +183,33 @@
       "newest_record": "2026-10-03",
       "message": null
     },
+    "heat_vulnerability": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 384,
+      "newest_record": null,
+      "message": null
+    },
+    "street_trees": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 151726,
+      "newest_record": "2025-11-20",
+      "message": null
+    },
+    "fema_floodplain": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 883,
+      "newest_record": null,
+      "message": null
+    },
     "basemap_openstreetmap": {
       "status": "missing",
       "last_attempt": null,
@@ -316,6 +343,27 @@
         "osm_philadelphia"
       ]
     },
+    "heat_tracts": {
+      "file": "tiles/environment.pmtiles",
+      "source_layer": "heat_tracts",
+      "sources": [
+        "heat_vulnerability"
+      ]
+    },
+    "city_trees": {
+      "file": "tiles/trees.pmtiles",
+      "source_layer": "trees",
+      "sources": [
+        "street_trees"
+      ]
+    },
+    "floodplain": {
+      "file": "tiles/environment.pmtiles",
+      "source_layer": "floodplain",
+      "sources": [
+        "fema_floodplain"
+      ]
+    },
     "basemap": {
       "file": "basemap/philly.pmtiles",
       "source_layer": "earth",
@@ -362,8 +410,8 @@
       "sha256": "1d746dd64887fc690edb3dbd6c056b1630ce99ec1cec269ad1ea21b9890d3717"
     },
     "tiles/lots.pmtiles": {
-      "bytes": 12169,
-      "sha256": "44ef081803bc9b78b3b31fda47800e0fe5b16e3e14c6cf26cfb5348569ed9684"
+      "bytes": 14605,
+      "sha256": "3fc569bcc30dbe6cb20eacb68a5447b962f9b7f545e8bfb0cc5da5c43da7ad3f"
     },
     "tiles/streets.crashes.geojson": {
       "bytes": 23183,
@@ -393,6 +441,18 @@
       "bytes": 1235,
       "sha256": "80a02058dbddc5adfc4efdb6504a88622f3515a97af52a87c315d2d2f06ceb71"
     },
+    "tiles/environment.heat_tracts.geojson": {
+      "bytes": 970,
+      "sha256": "a3fc54e6acd1aaecca2f147f00ea17e35504948a65a3e650274fb67d4d9301eb"
+    },
+    "tiles/environment.floodplain.geojson": {
+      "bytes": 658,
+      "sha256": "71f88a47551e0a63a6fdba27d8656098b0c8c598b29ecd2599cd36d96360558f"
+    },
+    "tiles/trees.trees.geojson": {
+      "bytes": 4520,
+      "sha256": "8f5ba15713fbdbbf988c833a1c8834d6ec42825574c98f7590cf53037f66e894"
+    },
     "tables/routes/index.json": {
       "bytes": 840,
       "sha256": "26689397df08d2525e75e7abd3683cba9db1bbd3985a77a7e8e842ddc11b735b"
@@ -416,6 +476,6 @@
   },
   "notes": [
     "This is synthetic sample data for testing the map.",
-    "Street, boundary, transit and amenity tiles were skipped for this sample, so those layers are published as GeoJSON."
+    "Street, boundary, transit, amenity, heat, tree and floodplain tiles were skipped for this sample, so those layers are published as GeoJSON."
   ]
 }

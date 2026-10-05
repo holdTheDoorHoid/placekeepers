@@ -101,6 +101,28 @@ function firstStepFor({ ot, lc }, index) {
 // public body), so every first step appears in the sample.
 const OWNER_OVERRIDES = { 31: 6, 47: 8 };
 
+// The heat and shade lens (M3.1, docs/CONTRACTS.md section 4), worked out without random draws so
+// every other fixture stays the same: heat vulnerability rises to the east, City trees thin out
+// to the north, people are spread evenly, and the eastern run of the first row lies in the 1
+// percent annual chance floodplain (`fp`). The heat suggestions follow the pipeline's rule
+// (pipeline/src/placekeepers/derive/heat.py): on a lot, plant shade trees where the canopy rank
+// (or, without it, the City tree rank) is at least 50, and green to cool where heat
+// vulnerability is.
+function heatFor({ k, f_canopy }, index, col, row) {
+  const heat = {
+    f_heatvul: Math.min(99, 15 + col * 20 + (index % 3) * 2),
+    f_strees: Math.min(97, 25 + row * 35 + (index % 4) * 6),
+    f_people: 30 + (index % 6) * 12,
+  };
+  if (col === 4 && row === 0) heat.fp = 1;
+  const extra = [];
+  if (k === 1) {
+    if ((f_canopy ?? heat.f_strees) >= 50) extra.push('plant_shade_trees');
+    if (heat.f_heatvul >= 50) extra.push('cool_green_lot');
+  }
+  return { heat, extra };
+}
+
 // Parcels: ten runs of rowhouse sized lots (5 m wide, 25 m deep) on block faces.
 const parcels = [];
 const RUNS = [3, 6, 4, 7, 5, 4, 6, 5, 3, 7];
@@ -142,6 +164,9 @@ RUNS.forEach((length, run) => {
     Object.assign(properties, reasonsFor(properties, n));
     // Some parcels have no tree canopy rank yet, as happens while data arrives.
     if (random() > 0.2) properties.f_canopy = between(0, 100);
+    const { heat, extra } = heatFor(properties, n, col, row);
+    Object.assign(properties, heat);
+    if (extra.length) properties.sg = [properties.sg, ...extra].join(',');
     parcels.push({ type: 'Feature', properties, geometry: { type: 'Polygon', coordinates: [ring] } });
   }
 });
@@ -339,6 +364,36 @@ const AMENITY_STOP_SAMPLES = [
 ];
 const amenityStops = AMENITY_STOP_SAMPLES.map(([x, y, properties]) => ({ type: 'Feature', properties, geometry: { type: 'Point', coordinates: toLngLat([x, y]) } }));
 
+// Heat, trees and the floodplain (M3.1), made up and without random draws. Four census tracts of
+// the City's Heat Vulnerability Index around the parcels, each with its class from 1 to 5 for
+// heat vulnerability, exposure and sensitivity, one rated very high (`vh`) and one the index does
+// not report; City trees along the sample streets, of several kinds and sizes; and the 1 percent
+// annual chance floodplain with a floodway beside the 0.2 percent annual chance area, in the east.
+// Published as GeoJSON, as the pipeline does when it skips a tile file.
+const heatTracts = [
+  [{ id: '42101900100', hv: 2, he: 1, hs: 3 }, box(-200, -150, 300, 420)],
+  [{ id: '42101900200', hv: 4, he: 4, hs: 3 }, box(300, -150, 650, 420)],
+  [{ id: '42101900300', hv: 5, he: 5, hs: 5, vh: 1 }, box(650, -150, 1050, 420)],
+  [{ id: '42101900400' }, box(-200, 420, 1050, 600)],
+].map(([properties, geometry]) => ({ type: 'Feature', properties, geometry }));
+const TREE_KINDS = ['Red Maple', 'London Planetree', 'Callery Pear', null, 'Pin Oak', 'Japanese Zelkova'];
+const TREE_TRUNKS = [2, 3, 8, 14, 22, null, 31];
+const cityTrees = [];
+for (const [y, west, east, step] of [[56, 0, 800, 40], [-64, 0, 480, 60], [184, 320, 800, 80]]) {
+  for (let x = west; x <= east; x += step) {
+    const i = cityTrees.length;
+    const properties = {};
+    if (TREE_KINDS[i % TREE_KINDS.length]) properties.sp = TREE_KINDS[i % TREE_KINDS.length];
+    if (TREE_TRUNKS[i % TREE_TRUNKS.length] !== null) properties.d = TREE_TRUNKS[i % TREE_TRUNKS.length];
+    cityTrees.push({ type: 'Feature', properties, geometry: { type: 'Point', coordinates: toLngLat([x, y]) } });
+  }
+}
+const floodAreas = [
+  [{ z: 1 }, box(640, -80, 820, 60)],
+  [{ z: 1, fw: 1 }, box(820, -80, 850, 60)],
+  [{ z: 2 }, box(640, 60, 850, 140)],
+].map(([properties, geometry]) => ({ type: 'Feature', properties, geometry }));
+
 const collection = (features) => JSON.stringify({ type: 'FeatureCollection', features }) + '\n';
 // The lot dossier files in data/dossiers/ (a shard and common.json) and the owners table in
 // data/tables/ are written by hand (docs/CONTRACTS.md section 6: every flag type, and parcels the
@@ -387,6 +442,9 @@ writeFileSync(path('data/tiles/streets.memorials.geojson'), collection(memorials
 writeFileSync(path('data/tiles/transit.stops.geojson'), collection(transitStops));
 writeFileSync(path('data/tiles/transit.routes.geojson'), collection(transitRoutes));
 writeFileSync(path('data/tiles/amenities.stops.geojson'), collection(amenityStops));
+writeFileSync(path('data/tiles/environment.heat_tracts.geojson'), collection(heatTracts));
+writeFileSync(path('data/tiles/environment.floodplain.geojson'), collection(floodAreas));
+writeFileSync(path('data/tiles/trees.trees.geojson'), collection(cityTrees));
 // The route survey sheets (scripts/route-fixtures.mjs): the index is listed in files, each route's
 // sheet is not (docs/CONTRACTS.md section 7).
 mkdirSync(path('data/tables/routes'), { recursive: true });
@@ -483,6 +541,10 @@ const manifest = {
     street_centerlines: ok(41252, null),
     memorial_names: ok(0, null),
     osm_philadelphia: ok(3338, '2026-10-03'),
+    // Heat, trees and the floodplain (M3.1)
+    heat_vulnerability: ok(384, null),
+    street_trees: ok(151726, '2025-11-20'),
+    fema_floodplain: ok(883, null),
     // The pipeline lists the base map's source but never fetches it: the site makes the base map.
     basemap_openstreetmap: {
       status: 'missing',
@@ -522,6 +584,9 @@ const manifest = {
     },
     memorials: { file: 'tiles/streets.pmtiles', source_layer: 'memorials', sources: ['fatal_crashes', 'memorial_names'] },
     stop_amenities: { file: 'tiles/amenities.pmtiles', source_layer: 'stops', sources: ['osm_philadelphia'] },
+    heat_tracts: { file: 'tiles/environment.pmtiles', source_layer: 'heat_tracts', sources: ['heat_vulnerability'] },
+    city_trees: { file: 'tiles/trees.pmtiles', source_layer: 'trees', sources: ['street_trees'] },
+    floodplain: { file: 'tiles/environment.pmtiles', source_layer: 'floodplain', sources: ['fema_floodplain'] },
     basemap: { file: 'basemap/philly.pmtiles', source_layer: 'earth', sources: ['basemap_openstreetmap'] },
     transit_stops: {
       file: 'tiles/transit.pmtiles',
@@ -545,6 +610,9 @@ const manifest = {
       'tiles/transit.routes.geojson',
       'tiles/transit.stops.geojson',
       'tiles/amenities.stops.geojson',
+      'tiles/environment.heat_tracts.geojson',
+      'tiles/environment.floodplain.geojson',
+      'tiles/trees.trees.geojson',
       'tables/routes/index.json',
       ...handWritten.map(([name]) => name).filter((name) => !shardFiles.some(([shard]) => shard === name)),
     ].map((p) => [p, fileInfo(p)]),
@@ -559,7 +627,7 @@ const manifest = {
     : null,
   notes: [
     'This is synthetic sample data for testing the map.',
-    'Street, boundary, transit and amenity tiles were skipped for this sample, so those layers are published as GeoJSON.',
+    'Street, boundary, transit, amenity, heat, tree and floodplain tiles were skipped for this sample, so those layers are published as GeoJSON.',
   ],
 };
 writeFileSync(new URL('manifest.json', ROOT), JSON.stringify(manifest, null, 2) + '\n');

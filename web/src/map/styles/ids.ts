@@ -15,5 +15,9 @@ export const STYLE_IDS = [
   'transit_stops',
   'transit_routes',
   'stop_amenities',
+  // Heat, trees and the floodplain (M3.1)
+  'heat_tracts',
+  'city_trees',
+  'floodplain',
 ] as const;
 export type StyleId = (typeof STYLE_IDS)[number];

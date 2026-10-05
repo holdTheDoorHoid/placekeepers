@@ -63,6 +63,8 @@ describe('defaults per view', () => {
     expect(state.suggestions).toEqual({
       clean_and_green: true,
       seal_abandoned_building: true,
+      plant_shade_trees: true,
+      cool_green_lot: true,
       memorial_or_ghost_bike: true,
       traffic_calming_petition: true,
       daylighting_check: true,

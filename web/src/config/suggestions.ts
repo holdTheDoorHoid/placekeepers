@@ -4,7 +4,12 @@
 // downloads (docs/VERIFICATION.md, decision D12). A new greening suggestion in
 // registry/suggestions.yaml joins this list.
 
-export const GREENING_SUGGESTIONS: ReadonlySet<string> = new Set(['clean_and_green']);
+export const GREENING_SUGGESTIONS: ReadonlySet<string> = new Set([
+  'clean_and_green',
+  // The heat and shade lens (M3.1): planting trees and greening to cool are greening too.
+  'plant_shade_trees',
+  'cool_green_lot',
+]);
 
 export function isGreening(suggestionId: string): boolean {
   return GREENING_SUGGESTIONS.has(suggestionId);

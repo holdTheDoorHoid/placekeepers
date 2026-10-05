@@ -64,3 +64,25 @@ export const STOP_COLORS = { shelter: '#1f5c99', bench: '#8fbfe0', neither: '#e8
 export const STOP_OUTLINES = { shelter: '#0b2f55', bench: '#1f5c99', neither: '#7a4a05' } as const;
 export const STOP_UNKNOWN_FILL = '#ffffff';
 export const STOP_UNKNOWN_RING = '#5f6870';
+
+/**
+ * Heat vulnerability by census tract (M3.1), fifths of the city's tracts from least to most:
+ * ColorBrewer Oranges, warm but never an alarm red, drawn faintly under everything else. The
+ * outline marks the tracts the City rates very high.
+ */
+export const HEAT_BINS = ['#feedde', '#fdbe85', '#fd8d3c', '#e6550d', '#a63603'] as const;
+export const HEAT_OPACITY = 0.5;
+export const HEAT_PRIORITY_LINE = '#7f2704';
+
+/** The City's trees (M3.1): forest green dots with a pale ring, sized by the trunk. */
+export const TREE_FILL = '#3f7f2a';
+export const TREE_RING = '#f4fbef';
+
+/**
+ * The floodplain (M3.1), in water blues (ColorBrewer Blues): the 1 percent annual chance
+ * floodplain stronger, the 0.2 percent annual chance area lighter with a dashed edge, and the
+ * floodway, the channel kept open for floods, darkest.
+ */
+export const FLOOD_COLORS = { high: '#2171b5', moderate: '#9ecae1', floodway: '#08519c' } as const;
+export const FLOOD_LINES = { high: '#08519c', moderate: '#4292c6' } as const;
+export const FLOOD_OPACITY = { high: 0.28, moderate: 0.22, floodway: 0.4 } as const;
