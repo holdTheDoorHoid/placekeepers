@@ -161,6 +161,7 @@ export const strings = {
     hide: 'Hide places nearby',
     countLabel: (n: number) => plural(n, 'place', 'places'),
     zoomIn: 'Move or zoom the map to a neighborhood to see places nearby.',
+    finding: 'Finding the places nearby.',
     noLotsLayer: 'Turn on the Lots layer to see places nearby.',
     nothingHere: 'No vacant lots or buildings match your settings in this part of the map.',
     showOnMap: 'Show on map',
@@ -369,6 +370,12 @@ export const strings = {
     areaLandcare: (n: number) => `${formatNumber(n)} already maintained by PHS LandCare`,
     areaEmpty: 'No vacant lots or buildings match your settings here. Try zooming out or changing the filters.',
     areaHint: 'Select a lot on the map or in the list to see why it scores the way it does.',
+    // Zoomed out, the map draws only a sample of the parcels (src/places/sample.ts).
+    sampleArea:
+      'Zoomed out this far, the map shows only a sample of the vacant lots and buildings, so they are not counted here. Zoom in to count every place.',
+    sampleList:
+      'Zoom in to list every place. Zoomed out this far, the map shows only a sample of the vacant lots and buildings, so a list or a plot here would leave places out.',
+    sampleTab: 'zoom in',
     tableCaption: 'Places in view, ranked by the current lens blend',
     rank: 'Rank',
     place: 'Place',
@@ -420,6 +427,7 @@ export const strings = {
       `${plural(n, 'more place was', 'more places were')} left out, because a download holds at most ${formatNumber(limit)}. Zoom in or narrow the filters to download the rest.`,
     withoutDetails: (n: number) => `${plural(n, 'place has', 'places have')} no published details, so ${n === 1 ? 'its' : 'their'} owner columns are empty.`,
     nothing: 'There are no places to download.',
+    sampleOff: 'Downloads hold every place in view, and zoomed out this far the map shows only a sample. Zoom in to download.',
     failed: 'The download could not be made. Try again in a moment.',
     yes: 'yes',
     no: 'no',

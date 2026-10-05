@@ -36,7 +36,9 @@
   let panel = $state<Panel | null>(null);
   let order = $state<ScoreOrder>('desc');
 
-  const ranked = $derived(rankPlaces(store.registry, store.state, store.parcelsInView, Infinity, order));
+  /** Zoomed out, the map draws only a sample of the parcels, so nothing here lists or counts them. */
+  const sampled = $derived(store.parcelsSampled);
+  const ranked = $derived(sampled ? [] : rankPlaces(store.registry, store.state, store.parcelsInView, Infinity, order));
   const panels: { id: Panel; label: string }[] = [
     { id: 'table', label: strings.analysis.tabTable },
     { id: 'plot', label: strings.analysis.tabPlot },
@@ -101,6 +103,8 @@
 
   /** The places in view for a download, highest score first (the download keeps the first 500). */
   function inView() {
+    // Never a sample: downloads are off while zoomed out, and this checks again at the moment.
+    if (store.parcelsSampled) return [];
     return rankPlaces(store.registry, store.state, store.parcelsInView).map((p) => ({ id: p.id, center: p.center, properties: p.properties }));
   }
 
@@ -166,7 +170,7 @@
       onShowOnMap={store.dossier.center ? showOnMap : undefined}
     />
   {:else}
-    <AreaSummary places={ranked} />
+    <AreaSummary places={ranked} {sampled} />
   {/if}
 </aside>
 
@@ -176,7 +180,7 @@
     {#each panels as item (item.id)}
       <button type="button" class="tab" aria-expanded={panel === item.id} aria-controls="pk-drawer-{item.id}" onclick={() => toggle(item.id)}>
         <span>{item.label}</span>
-        {#if item.id === 'table'}<span class="count">{strings.sheet.countLabel(ranked.length)}</span>{/if}
+        {#if item.id === 'table'}<span class="count">{sampled ? strings.analysis.sampleTab : strings.sheet.countLabel(ranked.length)}</span>{/if}
         {#if item.id === 'lists' && store.lists.active}<span class="count">{strings.lists.count(listCount)}</span>{/if}
         {#if item.id === 'memorials' && memorialsShown}<span class="count">{strings.streets.memorialCount(memorials.length)}</span>{/if}
       </button>
@@ -184,15 +188,25 @@
   </div>
   <div id="pk-drawer-table" class="drawer-body" hidden={panel !== 'table'}>
     {#if panel === 'table'}
-      <ExportButtons {store} places={inView} title={strings.export.inView} idPrefix="pk-view" />
-      <RankedTable {store} places={ranked} {order} onOrder={(next) => (order = next)} />
+      <ExportButtons {store} places={inView} title={strings.export.inView} idPrefix="pk-view" off={sampled ? strings.export.sampleOff : null} />
+      {#if sampled}
+        <p class="notice sample" role="status">{strings.analysis.sampleList}</p>
+      {:else}
+        <RankedTable {store} places={ranked} {order} onOrder={(next) => (order = next)} />
+      {/if}
     {/if}
   </div>
   <!-- The plot has nothing to tab to (the ranked list is its keyboard alternative), so its box
        takes focus itself, letting the arrow keys scroll it (WCAG 2.1.1). -->
   <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
   <div id="pk-drawer-plot" class="drawer-body" hidden={panel !== 'plot'} tabindex="0" role="region" aria-label={strings.analysis.tabPlot}>
-    {#if panel === 'plot'}<NeedPlot {store} places={ranked} idPrefix="pk-analysis" />{/if}
+    {#if panel === 'plot'}
+      {#if sampled}
+        <p class="notice sample" role="status">{strings.analysis.sampleList}</p>
+      {:else}
+        <NeedPlot {store} places={ranked} idPrefix="pk-analysis" />
+      {/if}
+    {/if}
   </div>
   <div id="pk-drawer-lists" class="drawer-body" hidden={panel !== 'lists'}>
     {#if panel === 'lists'}<SavedLists {store} idPrefix="pk-analysis" />{/if}

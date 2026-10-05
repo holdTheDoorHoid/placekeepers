@@ -4,7 +4,7 @@
 
 import { readFileSync } from 'node:fs';
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
-import { LOT, SAMPLE_CENTER, expectHash, expectSelectedInView, hashParams, isPhone, openMap } from './helpers.ts';
+import { LOT, SAMPLE_CENTER, expectHash, expectSelectedInView, hashParams, isPhone, openMap, parcelsDrawn, zoomTo } from './helpers.ts';
 
 // Every sample parcel fits in view, even in the small map a phone leaves above the open drawer.
 const IN_VIEW = `v=a&m=15.4/${SAMPLE_CENTER.lat}/${SAMPLE_CENTER.lng}`;
@@ -180,6 +180,47 @@ test.describe('analysis view', () => {
     await expectSelectedInView(page);
     if (isPhone(info)) await expect(details).toBeHidden();
     else await expect(details).toBeVisible();
+  });
+
+  test('zoomed out, nothing counts, lists or downloads the sample the map draws', async ({ page }, info) => {
+    await openMap(page, `v=a&m=12.4/${SAMPLE_CENTER.lat}/${SAMPLE_CENTER.lng}`);
+    // Below zoom 13 the lots tiles hold a sample of the parcels, as points (CONTRACTS.md section 4).
+    await expect.poll(async () => (await parcelsDrawn(page)).sample).toBeGreaterThan(0);
+    const drawn = await parcelsDrawn(page);
+    expect(drawn.sample).toBe(drawn.total);
+    expect(drawn.total).toBeLessThan(50);
+
+    // The area summary says why it counts nothing, instead of counting the sample.
+    if (isPhone(info)) await page.getByRole('button', { name: 'Details' }).click();
+    const summary = page.locator('#pk-right');
+    await expect(summary).toContainText('the map shows only a sample of the vacant lots and buildings, so they are not counted here');
+    await expect(summary).not.toContainText(/\d+ vacant lots?\b/);
+    if (isPhone(info)) await summary.getByRole('button', { name: 'Close panel' }).click();
+
+    // The ranked list and the plot ask for a closer view, and downloads wait for it.
+    const tab = page.locator('#places-section').getByRole('button', { name: /Ranked list/ });
+    await expect(tab).toContainText('zoom in');
+    await openDrawer(page, /Ranked list/);
+    const table = page.locator('#pk-drawer-table');
+    await expect(table).toContainText('Zoom in to list every place.');
+    await expect(rows(page)).toHaveCount(0);
+    await expect(table.getByRole('button', { name: 'Download CSV' })).toBeDisabled();
+    await expect(table.getByRole('button', { name: 'Download GeoJSON' })).toBeDisabled();
+    await expect(table).toContainText('Downloads hold every place in view, and zoomed out this far the map shows only a sample. Zoom in to download.');
+    await openDrawer(page, /Need and first step/);
+    await expect(page.locator('#pk-drawer-plot')).toContainText('Zoom in to list every place.');
+    await expect(page.locator('#pk-drawer-plot g.dot')).toHaveCount(0);
+
+    // From zoom 13 the map draws every parcel, and the list, the counts and downloads return.
+    await zoomTo(page, 13.4);
+    await expect.poll(async () => (await parcelsDrawn(page)).sample).toBe(0);
+    const detailed = await parcelsDrawn(page);
+    expect(detailed.total).toBeGreaterThan(drawn.total);
+    await openDrawer(page, /Ranked list/);
+    await expect(tab).toContainText(`${detailed.total} places`);
+    await expect(rows(page).first()).toBeVisible();
+    await expect(page.locator('#pk-drawer-table').getByRole('button', { name: 'Download CSV' })).toBeEnabled();
+    await expect(page.locator('#pk-drawer-table')).not.toContainText('Zoom in to list every place.');
   });
 
   test('the base map is a setting kept in the link', async ({ page }, info) => {
