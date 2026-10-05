@@ -133,9 +133,10 @@ As built (M1.7, 2026-10-04):
   on map", after choosing a place in a card, the list, the plot or a saved list, and when a link
   opens with a lot page. On a phone, where the lot page covers the whole map, "Show on map" closes it
   first.
-- A loading note covers the map until it has drawn once with its data. On the production build with
-  the sample data the map is ready about 1 to 2 seconds after the page opens (a headless browser
-  drawing in software); with the real data and the base map, about 2.5 to 4 seconds at street zoom.
+- A loading note covers the map until it has drawn once with its data. Measured on the production
+  build in a headless browser drawing in software (slower than a phone's graphics chip), the map is
+  ready about 1 to 2 seconds after the page opens with the sample data, and with the real data and
+  the base map about 2 to 3 seconds at street zoom and 4.5 seconds for the whole city.
 - The map's corner shows one short credits line that stays open: the base map's credit (Protomaps
   and OpenStreetMap, whose license asks for a visible credit) and "Data: City of Philadelphia and
   others", linking to the Data status page, which lists every source with its license, as each
