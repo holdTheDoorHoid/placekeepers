@@ -5,7 +5,9 @@
 * `crashes`: every PennDOT crash from 2015 on, once each, with its year, severity and who was
   involved.
 * `memorials`: one quiet marker per person the Police record as killed, with a name only from
-  data/curated/memorials.yaml and never anything listed in data/curated/suppressed.yaml.
+  data/curated/memorials.yaml, only once the removal email address exists
+  (placekeepers.curated.removal_address), and never anything listed in
+  data/curated/suppressed.yaml.
 
 The curated files are read from the repository at publish time, never from a cached copy, so a
 removal takes effect at the very next publish, even an offline one.
@@ -29,6 +31,7 @@ from placekeepers.curated import (
     CuratedMemorials,
     read_memorials,
     read_suppressed,
+    removal_address,
 )
 from placekeepers.derive.memorials import (
     SUGGESTION_ORDER,
@@ -221,6 +224,19 @@ def build_memorial_layer(
         curated = read_memorials(repo)
     except CuratedError as exc:
         curated = CuratedMemorials([], [f"no names are shown: {exc}"])
+    if curated.entries and removal_address(repo) is None:
+        # ETHICS.md promises families that one email takes a name down; until that address
+        # exists, no name or memorial page link is published (owner decision, 2026-10-04).
+        removed = {item.id for item in suppressions}
+        waiting = sum(1 for entry in curated.entries if entry.id not in removed)
+        curated = CuratedMemorials(
+            [],
+            [
+                *curated.problems,
+                f"memorials: {plural(waiting, 'name waits', 'names wait')} for the removal email "
+                "address, so no names are shown yet",
+            ],
+        )
 
     records = []
     if "fatal_crashes" in paths:

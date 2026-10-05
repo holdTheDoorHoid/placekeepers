@@ -194,8 +194,10 @@ of its tile file. It also writes the lot dossiers, `dossiers/<first four digits>
 * **Memorials**: one marker per person in the Police records, with an id built from the date and
   place. Names come only from `data/curated/memorials.yaml` and are joined by marker id or by date
   and place; anything in `data/curated/suppressed.yaml` never appears, and if that file cannot be
-  read no memorials are published. Both files are read from the repository at every publish, never
-  from a cached copy, so a removal takes effect at once. Each crash site gets its suggestions: the
+  read no memorials are published. No name or memorial page link is published until the removal
+  email address exists (`REMOVAL_EMAIL` in `web/src/content/removal-email.ts`, owner decision
+  2026-10-04). Both files are read from the repository at every publish, never from a cached copy,
+  so a removal takes effect at once. Each crash site gets its suggestions: the
   memorial always, traffic calming on a collector or local street the State does not maintain, and
   the daylighting and asphalt art checks within 20 meters of an intersection.
 

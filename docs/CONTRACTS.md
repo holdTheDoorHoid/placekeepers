@@ -437,6 +437,12 @@ meters, nearest first, the same mode preferred). An entry that matches no marker
 marker at its place, so a person killed before 2019 can be remembered. An entry with a problem is
 skipped and reported in the build notes by its id, never by name.
 
+Names wait for the removal address (owner decision 2026-10-04, recorded in ROADMAP.md; added to
+this contract 2026-10-04 by M1.10): ETHICS.md promises families that one email takes a name down,
+so while `REMOVAL_EMAIL` in `web/src/content/removal-email.ts` is null (or missing, or cannot be
+read), the pipeline publishes no `nm` and no `src` and makes no marker from a curated entry, and the
+build notes say how many names wait.
+
 `suppressed.yaml` lists what never appears again, by id only: a curated entry's id (its name never
 shows; the Police marker stays, unnamed) or a marker's id (the marker is not drawn). A marker may be
 listed with its date, `lat` and `lng`, so it stays hidden even if the Police correct the record and
