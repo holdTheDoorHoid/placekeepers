@@ -117,8 +117,15 @@ by the lens that applies to them; the other options color them by something else
 app (moving one of its sliders or choosing a preset) turns on the layers that draw its places and
 sets such a setting to `lens`.
 
+When more than one lens ranks a layer's places, the setting's option values are those lenses' ids
+instead (added 2026-10-05 by M3.1): the lots layer's `lens` setting ("Color lots by", `violence` or
+`heat`, default `violence`) names the lens that colors the lots, and using a lens sets it to that
+lens's id. Its options must name every lens that applies to `parcel` and nothing else (a web test
+checks it).
+
 `registry/groups.yaml` lists groups in display order: `lots`, `care`, `streets`, `transit` (added
-2026-10-04 by M2.1 for SEPTA's layers; M2.2 adds the shelters and benches at stops to it),
+2026-10-04 by M2.1 for SEPTA's layers; M2.2 adds the shelters and benches at stops to it), `heat`
+(added 2026-10-05 by M3.1 for heat vulnerability, the City's trees and the floodplain),
 `safety_context`, `boundaries`, `basemap`, each with a label and a one line
 description.
 
@@ -154,7 +161,11 @@ left out of its properties, so the map leaves it out of that place's average.
 
 Each lens colors its own kind of place: the first lens that applies to `parcel` colors the lots,
 the first that applies to `segment` colors the street blocks, and the first that applies to `stop`
-colors SEPTA's bus and trolley stops (`stops` in transit.pmtiles; added 2026-10-05 by M2.3).
+colors SEPTA's bus and trolley stops (`stops` in transit.pmtiles; added 2026-10-05 by M2.3). Two
+lenses apply to `parcel` from M3.1 (violence reduction and heat and shade): the lots layer's `lens`
+setting chooses which one colors the lots (section 1, layers), the first by default. A factor field
+may appear in more than one lens: the heat and shade lens lists the violence lens's `f_canopy`,
+computed once.
 
 One exception to leaving missing data out (added 2026-10-05 by M2.3, the transit comfort lens): a
 stop's shelter or bench that no one has surveyed yet is not missing but 50, halfway between having
