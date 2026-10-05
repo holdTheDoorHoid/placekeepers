@@ -3,6 +3,7 @@
   // and text show up first on slow connections.
   import { onMount, untrack } from 'svelte';
   import { config } from '../config/index.ts';
+  import { extractAvailable } from '../map/basemap-mode.ts';
   import type { MapController } from '../map/controller.ts';
   import { pagePadding } from '../map/covered.ts';
   import type { AppStore } from '../state/store.svelte.ts';
@@ -21,6 +22,7 @@
     if (!controller) return;
     store.viewBounds = controller.bounds();
     store.parcelsInView = controller.parcelsInView();
+    store.memorialsInView = controller.memorialsInView();
     const selected = store.state.selected;
     if (selected && !store.selectedProperties) {
       const found = controller.findParcel(selected);
@@ -36,11 +38,14 @@
     let disposed = false;
     let controller: MapController | null = null;
     (async () => {
-      const [{ MapController }, { chooseBasemap }] = await Promise.all([
+      // Ask whether the base map file is there while the map library downloads, not after.
+      const extract = config.basemap === 'protomaps' ? extractAvailable(config.dataBase) : undefined;
+      const [{ MapController }, { chooseBasemap, isProtomaps, warmLabelFont }] = await Promise.all([
         import('../map/controller.ts'),
         import('../map/basemap.ts'),
       ]);
-      const basemap = await chooseBasemap(config.basemap, config.dataBase);
+      const basemap = await chooseBasemap(config.basemap, config.dataBase, fetch, extract);
+      if (isProtomaps(basemap.style)) warmLabelFont(config.dataBase);
       if (disposed) return;
       store.basemapMissing = basemap.missing;
       controller = new MapController({
@@ -148,6 +153,8 @@
     height: 100%;
     min-height: 0;
     background: #ecebe4;
+    /* Notes and buttons on the map never spill onto the panels around it. */
+    overflow: hidden;
   }
   .map {
     position: absolute;

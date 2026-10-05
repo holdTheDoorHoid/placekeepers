@@ -145,6 +145,29 @@ As built (M1.7, 2026-10-04):
   layer's "About this layer" does. Changed from the folded list of every source on the map, which
   covered a third of it when open.
 
+As built (M1.10, interface review, 2026-10-04; details in
+[VERIFICATION_INTERFACE.md](VERIFICATION_INTERFACE.md)):
+
+- **Keyboards and screen readers.** Every panel passes automated accessibility checks (axe, WCAG
+  2.2 AA) at phone and desktop sizes. The keyboard reaches the view's controls and lists before the
+  map, in the order they appear. Escape closes what it opened and focus returns to where it was,
+  including the panels that open over the map on phones.
+- **Memorials without the map.** The memorials drawn on the map are also listed: "Memorials nearby"
+  at the end of the field view's sheet (nearest first) and a Memorials tab in the analysis drawer
+  (newest first). An entry says what the marker says before it is opened (how the person was
+  traveling, the date and the place), never a name; opening it shows the same details as the marker.
+- **Phones.** Phones get the field view held either way up; turned sideways, the open sheet runs down
+  the left of the map. On the narrowest phones "Copy link" moves into the menu, so the top bar keeps
+  to two rows. The early preview note can be hidden once read (this browser remembers, under
+  `placekeepers:v1:note`). "Stop" sits beside the note that the location is in use, so the search
+  box keeps its width. The chips row fades at its edge to show it scrolls. Buttons, chips and
+  sliders are at least 40 pixels tall on touch screens.
+- **Loading.** The data layers download beside the base map instead of after it has drawn, and the
+  label font is asked for early. On an emulated mid range phone (four times slower than this
+  laptop, on a Fast 3G connection) the map is usable after about 8 seconds at street zoom and 14
+  for the whole city (11 and 17 before); on Fast 4G about 4 and 5 seconds. The first load before
+  map tiles is about 0.5 MB at street zoom and 0.65 MB for the whole city, under the 2 MB budget.
+
 ## 5. What the map shows
 
 ### 5.1 Things on the map
@@ -232,7 +255,9 @@ Land Bank, ask PHDC, ask the public agency, or ask the owner. It is a category, 
 is a filter and an axis of the plot, always in that fixed order, and never a sort (changed from "a
 filter and a sort", per ETHICS.md, "Things we do not build"). The plot shows each place in view as a
 dot: across, its priority under the lens blend; down, its first step. Choosing a dot opens the lot
-page, and the ranked list holds the same places for keyboards and screen readers.
+page, and the ranked list holds the same places for keyboards and screen readers. Dots of places
+that share a score spread apart within their row (a "beeswarm", added by M1.10), so each can be
+chosen; a row grows to fit them, up to a limit.
 
 ### 5.5 Suggestions
 
@@ -254,6 +279,12 @@ setting. First release suggestions:
 
 Funding is shown beside suggestions where it fits: the City's community violence prevention grants
 and Feet First Philly's public space mini grants (see ROUTES.md).
+
+As built (M1.10, 2026-10-04, decision D12 of VERIFICATION.md): until the displacement watch overlay
+exists, every greening suggestion (in this release, clean and green) carries the ETHICS.md caution
+word for word, "Greening can raise nearby prices. Consider pairing it with protections.", with a
+link to the ways to protect neighbors: on the nearby cards, the lot page and its print, in
+settings, and as a note at the top of any download that holds one.
 
 ### 5.6 The lot dossier
 
@@ -373,7 +404,10 @@ As built (M1.5, 2026-10-04):
   appears when someone opens a marker, and only while "show names" is on, which also hides the
   public memorial link. A curated name that matches no Police record (for example a death before
   2019) gets its own marker. "Request removal" goes to the dedicated removal address once the owner
-  creates it, and until then to the Contact page; never to a public form.
+  creates it. Until then (decision D7 of VERIFICATION.md, M1.10) no text promises an email: the link
+  opens the Contact page, which says a private address is coming soon, that the map shows no names
+  meanwhile, and that a request can be made in a GitHub issue ("Ask for a memorial to come down"),
+  which anyone can read; the memorial details and the legend say the same.
 - **Crashes** cover 2015 to 2024 (84,942 on 2026-10-04): each year from the newest City slice that
   covers it, every crash record once, filterable by years, by how badly people were hurt and by who
   was involved. The newest year of PennDOT records is 2024; deaths since then appear as memorials.

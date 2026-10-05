@@ -2,13 +2,14 @@
   // The settings drawer, generated from the registry: the view, every layer with its own
   // settings, the lens weights, which suggestion types to show, and "Reset to defaults".
   import { config } from '../config/index.ts';
-  import { autoView } from '../state/defaults.ts';
+  import { screenView } from '../state/screen.ts';
   import type { AppStore } from '../state/store.svelte.ts';
   import { strings } from '../strings.ts';
   import Dialog from './common/Dialog.svelte';
   import EvidenceBadge from './common/EvidenceBadge.svelte';
   import LayerList from './layers/LayerList.svelte';
   import LensPanel from './lens/LensPanel.svelte';
+  import DisplacementNote from './places/DisplacementNote.svelte';
   import BlessingNote from './streets/BlessingNote.svelte';
 
   let { store, open = $bindable(false) }: { store: AppStore; open?: boolean } = $props();
@@ -21,7 +22,7 @@
   ] as const;
 
   function chooseView(value: (typeof choices)[number]['value']) {
-    if (value === 'auto') store.unpinView(autoView(window.innerWidth));
+    if (value === 'auto') store.unpinView(screenView());
     else store.setView(value);
   }
 </script>
@@ -89,13 +90,13 @@
 
   <section aria-labelledby="pk-settings-layers">
     <h3 id="pk-settings-layers">{strings.settings.layersTitle}</h3>
-    <LayerList {store} idPrefix="settings" showReset={false} />
+    <LayerList {store} idPrefix="settings" showReset={false} level={4} />
   </section>
 
   <section aria-labelledby="pk-settings-lens">
     <h3 id="pk-settings-lens">{strings.settings.lensTitle}</h3>
     {#each store.registry.lenses as lens (lens.id)}
-      <LensPanel {store} {lens} idPrefix="settings" />
+      <LensPanel {store} {lens} idPrefix="settings" level={4} />
     {/each}
   </section>
 
@@ -114,7 +115,7 @@
           <label for="pk-suggestion-{suggestion.id}">{suggestion.label}</label>
           <EvidenceBadge level={suggestion.evidence} />
         </div>
-        <div class="note"><BlessingNote suggestionId={suggestion.id} /></div>
+        <div class="note"><BlessingNote suggestionId={suggestion.id} /><DisplacementNote suggestionId={suggestion.id} /></div>
         <p class="muted small">{suggestion.summary}</p>
       </div>
     {/each}

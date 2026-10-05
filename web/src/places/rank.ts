@@ -7,7 +7,7 @@
 // the first step to get permission (`rt`); this file only shows, hides and explains them.
 
 import { PERMISSION_ROUTE, PERMISSION_ROUTES, permissionCode, type PermissionCode } from '../config/permission.ts';
-import { explainScore, type ScoreExplanation } from '../map/lens.ts';
+import { explainScore, wholeScore, type ScoreExplanation } from '../map/lens.ts';
 import type { Lens, Registry, Route, Suggestion } from '../registry/types.ts';
 import type { AppState } from '../state/defaults.ts';
 
@@ -92,7 +92,7 @@ export function describePlace(reg: Registry, state: AppState, place: PlaceInput)
     landcare: int(place.properties.lc) === 1,
     permission,
     why,
-    score: why?.score === null || why?.score === undefined ? null : Math.round(why.score),
+    score: wholeScore(why?.score),
     suggestions,
     ...firstStepFor(reg, suggestions[0], permission),
   };

@@ -7,6 +7,7 @@
   import { strings } from '../../strings.ts';
   import EvidenceBadge from '../common/EvidenceBadge.svelte';
   import ListToggle from '../lists/ListToggle.svelte';
+  import DisplacementNote from './DisplacementNote.svelte';
   import { kindLabel } from './labels.ts';
 
   let {
@@ -51,6 +52,7 @@
       {suggestion.label}. <EvidenceBadge level={suggestion.evidence} />
       <span class="cost">{strings.place.cost(suggestion.cost)}</span>
     </p>
+    <DisplacementNote suggestionId={suggestion.id} />
     <p class="step">
       <strong>{strings.place.firstStep}:</strong>
       {#if place.firstStep}{place.firstStep.route.label}. {place.firstStep.step}{:else if place.noRoute}{strings.permission.noRoute}{:else}{strings.permission.seeLotPage}{/if}

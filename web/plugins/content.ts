@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { marked } from 'marked';
 import type { Plugin } from 'vite';
 import { REMOVAL_EMAIL } from '../src/content/removal-email.ts';
+import { strings } from '../src/strings.ts';
 import { findDashViolations } from '../src/style/no-dashes.ts';
 
 export const CONTENT_DIR = fileURLToPath(new URL('../../content', import.meta.url));
@@ -20,11 +21,28 @@ const RESOLVED_ID = '\0' + VIRTUAL_ID;
 // to change once the owner creates the address; every other page is untouched by this, because
 // none of them contain the token.
 const REMOVAL_EMAIL_TOKEN = '{{REMOVAL_EMAIL}}';
-const REMOVAL_EMAIL_FALLBACK =
-  'We have not finished setting up a dedicated email address for this yet. Check back soon, or use the correction form below and we will follow up by email.';
+// Until the address exists, no text promises one (docs/VERIFICATION.md, decision D7): the page says
+// a private address is coming soon and that meanwhile a request can be made in a GitHub issue,
+// which anyone can read.
+const REMOVAL_ISSUE_URL = 'https://github.com/holdTheDoorHoid/placekeepers/issues/new?template=memorial-removal.yml';
+const REMOVAL_EMAIL_FALLBACK = `A private email address for these requests is coming soon. Until it exists, the map shows no names at all, and you can ask in a [GitHub issue](${REMOVAL_ISSUE_URL}). Anyone can read a GitHub issue, so write only the memorial's id or where it is: you do not need to give a name, a reason or who you are.`;
 
 function renderRemovalEmail(): string {
-  return REMOVAL_EMAIL ? `Email us at [${REMOVAL_EMAIL}](mailto:${REMOVAL_EMAIL}).` : REMOVAL_EMAIL_FALLBACK;
+  return REMOVAL_EMAIL
+    ? `Email us at [${REMOVAL_EMAIL}](mailto:${REMOVAL_EMAIL}). We do not use a public form for this, because a removal request is personal and private.`
+    : REMOVAL_EMAIL_FALLBACK;
+}
+
+/**
+ * Wraps each table in a box that scrolls sideways on its own, so a wide table never makes the
+ * whole page scroll sideways on a phone (WCAG 1.4.10). The box can take keyboard focus, so the
+ * arrow keys scroll it too (WCAG 2.1.1), and it is named for screen readers: a group rather than a
+ * landmark, so pages with many tables do not fill the list of landmarks.
+ */
+export function wrapTables(html: string): string {
+  return html
+    .replaceAll('<table>', `<div class="table-scroll" tabindex="0" role="group" aria-label="${strings.content.tableLabel}"><table>`)
+    .replaceAll('</table>', '</table></div>');
 }
 
 function markdownFiles(dir: string): string[] {
@@ -42,7 +60,7 @@ export function readContentPages(dir: string = CONTENT_DIR): Record<string, stri
     const slug = name.slice(0, -3);
     const raw = readFileSync(resolve(dir, name), 'utf8').replaceAll(REMOVAL_EMAIL_TOKEN, renderRemovalEmail());
     for (const problem of findDashViolations(raw)) problems.push(`content/${name} has a ${problem}`);
-    pages[slug] = marked.parse(raw, { async: false }) as string;
+    pages[slug] = wrapTables(marked.parse(raw, { async: false }) as string);
   }
 
   if (problems.length) {

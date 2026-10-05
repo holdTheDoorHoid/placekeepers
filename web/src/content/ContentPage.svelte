@@ -53,6 +53,19 @@
     text-decoration: none;
     color: var(--pk-text);
   }
+  /* Long words and web addresses wrap instead of pushing the page sideways on a phone. */
+  .prose {
+    overflow-wrap: break-word;
+  }
+  .prose :global(.table-scroll) {
+    max-width: 100%;
+    overflow-x: auto;
+    margin: 0.6em 0 1.2em;
+  }
+  .prose :global(.table-scroll:focus-visible) {
+    outline: 3px solid var(--pk-focus);
+    outline-offset: 2px;
+  }
   .prose :global(h1) {
     font-size: 1.6rem;
     margin-top: 8px;
@@ -74,7 +87,7 @@
     color: var(--pk-muted);
   }
   .prose :global(table) {
-    margin: 0.6em 0 1.2em;
+    margin: 0;
     font-size: 0.925rem;
   }
   .prose :global(a) {

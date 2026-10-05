@@ -5,7 +5,18 @@
   import { strings } from '../../strings.ts';
   import LayerItem from './LayerItem.svelte';
 
-  let { store, idPrefix, showReset = true }: { store: AppStore; idPrefix: string; showReset?: boolean } = $props();
+  let {
+    store,
+    idPrefix,
+    showReset = true,
+    level = 3,
+  }: {
+    store: AppStore;
+    idPrefix: string;
+    showReset?: boolean;
+    /** The heading level of the group titles, so headings stay in order wherever the list sits. */
+    level?: 3 | 4;
+  } = $props();
 
   const groups = $derived(
     store.registry.groups
@@ -17,10 +28,10 @@
 <div class="layer-list">
   {#each groups as { group, layers } (group.id)}
     <section class="group" aria-labelledby="{idPrefix}-group-{group.id}">
-      <h3 id="{idPrefix}-group-{group.id}">{group.label}</h3>
+      <svelte:element this={`h${level}`} id="{idPrefix}-group-{group.id}" class="group-title">{group.label}</svelte:element>
       <p class="muted small">{group.description}</p>
       {#each layers as layer (layer.id)}
-        <LayerItem {store} {layer} {idPrefix} />
+        <LayerItem {store} {layer} {idPrefix} level={level === 3 ? 4 : 5} />
       {/each}
     </section>
   {/each}
@@ -40,8 +51,9 @@
   .group {
     margin-bottom: 14px;
   }
-  .group h3 {
+  .group-title {
     margin-bottom: 2px;
+    font-size: 1rem;
   }
   .group > p {
     margin-bottom: 2px;
