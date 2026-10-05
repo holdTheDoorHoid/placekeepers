@@ -19,6 +19,39 @@
   partners: []
   default_on: true
   release: v0.1
+# The heat and shade lens (M3.1). Which lots get them is decided in
+# pipeline/src/placekeepers/derive/heat.py, from the lens factors. Both are greening, so the web
+# app shows the displacement caution of docs/ETHICS.md with them (web/src/config/suggestions.ts).
+- id: plant_shade_trees
+  label: Plant shade trees on and along this lot
+  applies_to: parcel
+  summary: >-
+    Fewer trees shade this area than around at least half the places on this map (the City's 2018
+    tree canopy survey). Trees cool a block with their shade and with the water their leaves give
+    off. The City plants free street trees in the sidewalk when a property's owner asks, and
+    TreePhilly gives away free trees to plant in the ground on private land. Choose trees that
+    will grow tall, so they shade the street and neighbors can still see across the lot.
+  evidence: mixed
+  cost: Free trees from the City and TreePhilly. Young trees need about 20 gallons of water a week from March through December
+  routes: [land_bank_garden_agreement, ask_the_owner, community_landcare, street_trees_for_a_lot, treephilly_yard_trees]
+  partners: [treephilly, phs]
+  default_on: true
+  release: v0.3
+- id: cool_green_lot
+  label: Green this lot to cool the block
+  applies_to: parcel
+  summary: >-
+    By the City's heat vulnerability index, summer heat hits people here harder than around at
+    least half the places on this map. Bare dirt, gravel and rubble soak up the sun, while grass,
+    garden beds and above all trees keep a lot cooler and shade the sidewalk beside it. Whatever
+    this lot becomes, a garden, a clean and green lot or a side yard, plant shade trees in it, and
+    keep them tall so the lot stays open to view.
+  evidence: mixed
+  cost: "From free trees (TreePhilly) to about $1,100 to $1,500 up front for a full clean and green (to confirm with PHS)"
+  routes: [land_bank_garden_agreement, ask_the_owner, community_landcare, treephilly_yard_trees]
+  partners: [phs, treephilly, gjli]
+  default_on: true
+  release: v0.3
 - id: memorial_or_ghost_bike
   label: A memorial or a ghost bike
   applies_to: crash

@@ -90,6 +90,35 @@
     - {label: Vision Zero Philadelphia, url: "https://visionzerophl.com/"}
   last_checked: 2026-10-04
   status: confirm
+# Milestone M3.1: trees for the heat and shade lens, from the City's and TreePhilly's own pages,
+# checked 2026-10-05 (docs/ROUTES.md section 1).
+- id: street_trees_for_a_lot
+  label: Ask for free street trees along the lot
+  who: The lot's owner asks the City; neighbors can ask the owner to
+  steps:
+    - Street trees go in the sidewalk in front of a property when its owner asks for them. Find the lot's owner on the lot page and ask them to request trees. For a lot the City or the Land Bank owns, ask the Land Bank.
+    - The owner asks Parks and Recreation's Street Tree Management Division for free street trees online, by email at StreetTree.Info@phila.gov, or by phone at 215 685 4363 or 215 685 4362 (weekdays from 7:30 a.m. to 3 p.m.).
+    - The City inspects the spot, chooses the tree, cuts the sidewalk and plants it for free, then waters and mulches it for the first year. After that the tree needs about 20 gallons of water a week from March through December, and neighbors can help.
+  cost: Free
+  timeline: The next planting season, from mid April to mid June or from mid October to mid November
+  links:
+    - {label: "City of Philadelphia: get a street tree", url: "https://www.phila.gov/services/trees-parks-the-environment/tree-related-services/get-a-street-tree/"}
+    - {label: "TreePhilly: street trees", url: "https://treephilly.org/street-trees/"}
+  last_checked: 2026-10-05
+  status: confirm
+- id: treephilly_yard_trees
+  label: Get free trees from a TreePhilly giveaway
+  who: Philadelphia residents, for trees planted in the ground on private property, such as a lot you own or a private lot whose owner agrees in writing
+  steps:
+    - Sign up for TreePhilly's newsletter to hear when registration opens. Giveaways happen in spring (March to May) and fall (September to December) in priority ZIP codes.
+    - Register with the community group hosting a giveaway near you. Registration opens about two weeks to a month before the giveaway and closes when the trees run out.
+    - Pick up the tree, 2 to 10 feet tall in a 5 gallon bucket, with a free bag of mulch, and plant it in the ground. Giveaway trees cannot go in a container, in the sidewalk or anywhere else in the public right of way.
+  cost: Free
+  timeline: The next spring or fall giveaway
+  links:
+    - {label: "TreePhilly: yard trees", url: "https://treephilly.org/yard-trees/"}
+  last_checked: 2026-10-05
+  status: confirm
 # Milestone M1.3: routes for owner flags and for Land Bank, Redevelopment Authority and private lots.
 - id: land_bank_side_yard
   label: Get it as a side or rear yard (next door owners only)

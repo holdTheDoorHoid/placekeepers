@@ -40,6 +40,8 @@ from shapely.geometry.polygon import orient
 
 from placekeepers.context import Context
 from placekeepers.dates import months_before
+from placekeepers.derive.heat import SOURCES as HEAT_SOURCES
+from placekeepers.derive.heat import load_heat, with_heat
 from placekeepers.derive.lenses import SOURCES as LENS_SOURCES
 from placekeepers.derive.lenses import load_factors
 from placekeepers.derive.vacancy import SOURCES as VACANCY_SOURCES
@@ -227,8 +229,9 @@ def build_parcels_from_model(
         )
     }
     routes = route_codes(paths or {}, accounts, known_routes, calls)
-    # The violence lens factors (M1.4), from pk derive.
+    # The violence lens factors (M1.4) and the heat and shade lens factors (M3.1), from pk derive.
     factors = load_factors(model.with_name("lens_factors.parquet"))
+    heat = load_heat(model.with_name("heat_factors.parquet"))
     rows = zip(*(table.column(name).to_pylist() for name in columns), strict=True)
     with GeoJSONWriter(out) as writer:
         for opa, kind, k, vc, lc, rs, n, dy, sy, ny, wkb in rows:
@@ -243,6 +246,11 @@ def build_parcels_from_model(
                 if year is not None:
                     properties[key] = int(year)
             properties.update(factors.get(opa, {}))
+            hot = heat.get(opa)
+            if hot is not None:
+                properties.update(hot.properties)
+                first = [s for s in properties["sg"].split(",") if s]
+                properties["sg"] = ",".join(with_heat(first, hot.suggestions, known_suggestions))
             writer.write(properties, geometry_json(wkb))
     return BuildResult(writer.count, [])
 
@@ -442,7 +450,7 @@ BUILDERS: tuple[LayerBuilder, ...] = (
         extras=(
             *(
                 s
-                for s in dict.fromkeys((*VACANCY_SOURCES, *LENS_SOURCES))
+                for s in dict.fromkeys((*VACANCY_SOURCES, *LENS_SOURCES, *HEAT_SOURCES))
                 if s not in PARCEL_LAYER_SOURCES
             ),
             "city_owned_property",
@@ -476,9 +484,16 @@ def builder_for(file: str, source_layer: str) -> LayerBuilder | None:
 
 # The street safety layers (segments, crashes, memorials) live in their own module (M1.5), SEPTA's
 # stops and routes in another (M2.1), and the amenities from OpenStreetMap (shelters and benches
-# at stops) in a third (M2.2).
+# at stops) in a third (M2.2). Heat, trees and the floodplain have theirs too (M3.1).
 from placekeepers.publish.amenities import AMENITY_BUILDERS  # noqa: E402
+from placekeepers.publish.environment import ENVIRONMENT_BUILDERS  # noqa: E402
 from placekeepers.publish.streets import STREET_BUILDERS  # noqa: E402
 from placekeepers.publish.transit import TRANSIT_BUILDERS  # noqa: E402
 
-BUILDERS = (*BUILDERS, *STREET_BUILDERS, *TRANSIT_BUILDERS, *AMENITY_BUILDERS)
+BUILDERS = (
+    *BUILDERS,
+    *STREET_BUILDERS,
+    *TRANSIT_BUILDERS,
+    *AMENITY_BUILDERS,
+    *ENVIRONMENT_BUILDERS,
+)

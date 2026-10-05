@@ -116,14 +116,28 @@ def vacancy_counts(ctx: Context) -> dict[str, Any] | None:
 
 
 def lens_notes(ctx: Context) -> list[str]:
-    """What the violence lens could not score, from the summary beside derived/lens_factors."""
-    path = ctx.cache.root / "derived" / "lens_factors.json"
-    if not path.is_file():
-        if (ctx.cache.root / "derived" / "vacancy.parquet").is_file():
-            return ["The lens factors have not been computed, so the lots have no scores yet"]
-        return []
-    summary = json.loads(path.read_text(encoding="utf-8"))
-    return list(summary.get("notes", []))
+    """What the lenses could not score, from the summaries beside derived/lens_factors (the
+    violence lens) and derived/heat_factors (the heat and shade lens, M3.1)."""
+    notes: list[str] = []
+    model = (ctx.cache.root / "derived" / "vacancy.parquet").is_file()
+    for name, missing in (
+        (
+            "lens_factors.json",
+            "The lens factors have not been computed, so the lots have no scores yet",
+        ),
+        (
+            "heat_factors.json",
+            "The heat lens factors have not been computed, so the lots have no heat scores yet",
+        ),
+    ):
+        path = ctx.cache.root / "derived" / name
+        if not path.is_file():
+            if model:
+                notes.append(missing)
+            continue
+        summary = json.loads(path.read_text(encoding="utf-8"))
+        notes.extend(summary.get("notes", []))
+    return notes
 
 
 def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> PublishResult:

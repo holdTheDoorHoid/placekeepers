@@ -370,6 +370,31 @@
   cadence: frozen
   health: {min_rows: 3000, max_drop_pct: 2}
   release: v0.1
+# Milestone M3.1: the heat and shade lens. Heat vulnerability by census tract (heat_vulnerability)
+# is listed with M2.3 below, which uses it too.
+- id: street_trees
+  name: Street tree inventory
+  publisher: City of Philadelphia, Parks and Recreation
+  homepage: https://opendataphilly.org/datasets/philadelphia-tree-inventory/
+  # One layer per year (PPR_Tree_Inventory_2021 to ppr_tree_inventory_2025). Each run takes the
+  # newest year the City has published, never one older than this (adapters/environment.py).
+  endpoint: {kind: arcgis, service: ppr_tree_inventory_2025, layer: 0}
+  license: city_terms
+  attribution: "Street trees: City of Philadelphia Parks and Recreation"
+  cadence: yearly
+  health: {min_rows: 120000, max_drop_pct: 10, newest_field: source_date, max_age_days: 800}
+  release: v0.3
+- id: fema_floodplain
+  name: FEMA floodplain (2023)
+  publisher: Federal Emergency Management Agency, published by the City of Philadelphia
+  homepage: https://opendataphilly.org/datasets/fema-flood-plain/
+  # Only the 1 percent and 0.2 percent annual chance areas are downloaded (adapters/environment.py).
+  endpoint: {kind: arcgis, service: fema_floodplain_2023, layer: 0}
+  license: city_terms
+  attribution: "Floodplain: FEMA flood maps, published by the City of Philadelphia"
+  cadence: irregular
+  health: {min_rows: 700, max_drop_pct: 10}
+  release: v0.3
 - id: basemap_openstreetmap
   name: Base map from OpenStreetMap
   publisher: OpenStreetMap contributors, in a map file built by Protomaps

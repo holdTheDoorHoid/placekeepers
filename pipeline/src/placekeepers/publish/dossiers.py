@@ -65,6 +65,8 @@ from placekeepers.derive.flags import (
     person_like,
     shows_deed_fraud_notice,
 )
+from placekeepers.derive.heat import load_heat, with_heat
+from placekeepers.derive.heat import output_path as heat_output
 from placekeepers.derive.routes import first_route_code, routes_for, suggestions_for
 from placekeepers.derive.vacancy import REASONS
 from placekeepers.derive.vacancy import output_path as vacancy_output
@@ -863,6 +865,8 @@ def build_dossiers(
     }
 
     known_suggestions = set(ctx.registry.suggestions)
+    # The heat and shade lens's suggestions (M3.1), as the lots layer lists them.
+    heat = load_heat(heat_output(ctx))
     known_routes = set(ctx.registry.routes)
     downloaded_for = set(candidates.accounts)
 
@@ -973,7 +977,11 @@ def build_dossiers(
             dossier["partial"] = partial
         dossier |= {
             "routes": routes,
-            "suggestions": suggestions_for(call["kind"] if call else None, known_suggestions),
+            "suggestions": with_heat(
+                suggestions_for(call["kind"] if call else None, known_suggestions),
+                heat[account].suggestions if account in heat and call else [],
+                known_suggestions,
+            ),
         }
         if account in landcare:
             dossier["landcare"] = landcare[account]
