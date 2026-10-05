@@ -260,7 +260,7 @@ Commits on `agent/uicheck`, in order: f587897, 9de003a, 93bbb3b, eb27c6a, ba653e
 ## Five minutes on your own phone
 
 1. Open the site. The map should appear within a few seconds, with two rows of buttons at the top
-   and the yellow early preview note. Tap **Hide** on the note, then reload: it stays hidden.
+   and the yellow version 0.1 note. Tap **Hide** on the note, then reload: it stays hidden.
 2. Tap **Near me** and allow your location. "What you can do nearby" opens, nearest first. The
    search box keeps its width, and **Stop** sits beside the note saying your location is in use.
 3. Tap the first card's address. The lot page opens. Tap **Who owns it**, then **What you can do**,
