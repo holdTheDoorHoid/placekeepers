@@ -56,7 +56,10 @@ extract), and `tags`, the elements to keep: `key=value` (such as `highway=bus_st
 for any value (such as `shelter`). Keys and values hold letters, digits and `_ : ; . -`, never
 spaces, and a tag is listed once. The pipeline keeps the nodes and ways with any of the tags inside
 the city limits and 200 meters around them (section 2), so a later layer adds its tags here
-without new code; new tags arrive with the next weekly download. An `osm_extract` with neither key
+without new code; new tags arrive with the next weekly download. Each snapshot's sidecar keeps
+`recipe`, a hash of the tag list it was made with (changed 2026-10-05: before then there was none),
+and a snapshot whose hash differs from today's tag list, or that has none, is downloaded again on
+the next run even when it is younger than the six days Geofabrik asks for. An `osm_extract` with neither key
 is the base map, made by the site and never fetched (section 2); one key without the other is an
 error.
 
@@ -132,9 +135,10 @@ checks it).
 
 `registry/groups.yaml` lists groups in display order: `lots`, `care`, `streets`, `transit` (added
 2026-10-04 by M2.1 for SEPTA's layers; M2.2 adds the shelters and benches at stops to it), `heat`
-(added 2026-10-05 by M3.1 for heat vulnerability, the City's trees and the floodplain),
-`placemaking` (added 2026-10-05 by M3.2 for public art), `safety_context`, `boundaries`,
-`basemap`, each with a label and a one line description.
+(added 2026-10-05 by M3.1 for heat vulnerability, the City's trees and the floodplain), `amenities`,
+`public_places` and `conditions` (added 2026-10-05 by M3.5), `placemaking` (added 2026-10-05 by
+M3.2 for public art), `safety_context`, `boundaries`, `basemap`, each with a label and a one line
+description.
 
 ### `registry/lenses.yaml`
 
@@ -270,7 +274,10 @@ data/
     care.pmtiles          layers "landcare", "gardens"
     boundaries.pmtiles    layers "council_districts", "rcos", "neighborhoods"
     transit.pmtiles       layers "stops", "routes"   (SEPTA, added 2026-10-04 by M2.1; the transit comfort lens on "stops", M2.3)
-    amenities.pmtiles     layer "stops"     (shelters and benches at stops, from OpenStreetMap; M2.2)
+    amenities.pmtiles     layers "stops" (shelters and benches at stops, M2.2), "benches",
+                          "picnic_tables", "water", "toilets", "bookcases" (M3.5): from OpenStreetMap
+    places.pmtiles        layers "park_water", "libraries", "recreation", "pools" (the City's; M3.5)
+    conditions.pmtiles    layers "dumping", "lights", "graffiti" (311 requests by block; M3.5)
     environment.pmtiles   layers "heat_tracts", "floodplain"   (heat vulnerability and FEMA's floodplain; M3.1)
     trees.pmtiles         layer "trees"     (the City's street and park trees, zoom 14 only; M3.1)
     art.pmtiles           layer "art"       (public art from the City, OpenStreetMap and Wikidata; M3.2)
@@ -667,13 +674,15 @@ longer in the schedules within 30 meters with a similar name; each count goes to
 Added 2026-10-05 by M2.3 (the transit comfort lens; the method in plain words is in
 [TRANSIT_METHOD.md](TRANSIT_METHOD.md), the code in `pipeline/src/placekeepers/derive/transit_comfort.py`).
 Bus and trolley stops (`md` bit 1 or 2) also carry these; stations of the subway, the El and
-Regional Rail carry none of them. `o`, `a`, `sh`, `bn`, `li` and `cv` come from OpenStreetMap, so
+Regional Rail carry none of them, nor do the 15 trolley tunnel stations underground from 13th
+Street to 37th Street (`TUNNEL_STATIONS` in `derive/transit_comfort.py`, added 2026-10-05 by the
+v0.2 review). `o`, `a`, `sh`, `bn`, `li` and `cv` come from OpenStreetMap, so
 the layer lists `osm_philadelphia` among its sources and is credited "© OpenStreetMap contributors",
 and those properties are under the Open Database License, as amenities.pmtiles is.
 
 | Property | Type | Meaning |
 |---|---|---|
-| `o` | string | the OpenStreetMap stop matched to this one, as `id` in amenities.pmtiles (`n` or `w` and the element id); absent when none matched. The match is `match_septa` in `derive/bus_stops.py`, as for the route survey sheets (section 7): by stop number, then by distance, both only within 15 meters, closest pairs first, each stop once |
+| `o` | string | the OpenStreetMap stop matched to this one, as `id` in amenities.pmtiles (`n` or `w` and the element id); absent when none matched. The match is `match_septa` in `derive/bus_stops.py`, as for the route survey sheets (section 7): by stop number, then by distance, both only within 15 meters, closest pairs first, each stop once; a number counts only when no other SEPTA stop stands more than 3 meters closer, and by distance an OpenStreetMap stop pairs only with its nearest SEPTA stop (changed 2026-10-05 by the v0.2 review) |
 | `om` | int | 1 when the stop numbers agree (the OpenStreetMap stop's `ref` or `gtfs:stop_id` names `sid` or a number in `fid`), 2 when the two only stand at the same place |
 | `a` | int | what riders find, the matched stop's `c` in amenities.pmtiles: 3 a shelter or roof, 2 a bench but no shelter mapped, 1 neither, 0 not yet surveyed; absent when no OpenStreetMap stop matched (also not yet surveyed, never "missing") |
 | `sh`, `bn`, `li`, `cv` | int | the matched stop's shelter, bench, lit and covered answers, 1 yes and 0 no; absent when unknown. Lit is `li` here because `lt` is the last departure |
@@ -740,6 +749,79 @@ against SEPTA's `sid`, then by distance for the stops that do not match by numbe
 sheets (section 7, M2.4) and SEPTA's stops on the map (`o` and `om` there, M2.3) both join them
 with `match_septa` in `pipeline/src/placekeepers/derive/bus_stops.py`, so a stop's sheet and its
 details on the map always describe the same OpenStreetMap stop.
+
+Added 2026-10-05 by M3.5, five more layers of `amenities.pmtiles`, one per OpenStreetMap tag, every
+element inside the city limits with that tag that is not closed to the public (`access` no or
+private) or disused, one point each (`pipeline/src/placekeepers/derive/amenities.py`). As for the
+stops, an answer OpenStreetMap does not have is left out, never shown as no, and yes and no are
+read as in `YES_NO` above. Every feature has `id` (the element, such as `n10554560825`) and `nm`
+(its name, only when it has one); the other properties are each 1 yes and 0 no unless the table
+says otherwise:
+
+| Layer (tag) | Properties |
+|---|---|
+| `benches` (`amenity=bench`) | `br` a backrest, `cv` under a roof (`covered`) |
+| `picnic_tables` (`leisure=picnic_table`) | `cv` under a roof |
+| `water` (`amenity=drinking_water`) | `bt` a bottle can be filled (`bottle`), `sn` only part of the year (`seasonal`: 0 for no, 1 for yes or a season), `in` indoors (`indoor`, or `location` indoor or outdoor) |
+| `toilets` (`amenity=toilets`) | `ac` who may use them (`access`: 1 yes, public, permissive or designated; 2 customers; absent otherwise), `fee`, `wc` wheelchair access (1 yes or designated, 0 no, 2 limited), `ct` a changing table, `in` indoors, `oh` the opening hours exactly as mapped (OpenStreetMap's notation, at most 120 characters) |
+| `bookcases` (`amenity=public_bookcase`, little free libraries) | none beyond `id` and `nm` |
+
+The build notes carry one sentence per layer with the count inside the city. On 2026-10-05 (data of
+2026-10-03): 2,069 benches (1,062 with a backrest), 306 picnic tables, 30 drinking water points, 73
+public toilets (one more closed to the public left out) and 150 public bookcases.
+
+**`park_water`, `libraries`, `recreation` and `pools` (places.pmtiles, points)**, added 2026-10-05 by
+M3.5: public places as the City lists them (`pipeline/src/placekeepers/publish/city_places.py`), in
+their own file because the City's data is under its own terms while data built from OpenStreetMap
+must stay under the Open Database License. Every feature has `id` (the City's object id after a
+prefix naming its layer: `water`, `lib`, `rec`, `pool` or `spray`, so ids never collide) and `nm`.
+Points outside a box around the city are left out and counted in the notes.
+
+| Layer | Source | Properties |
+|---|---|---|
+| `park_water` | `ppr_hydration_stations` | `nm` where it is (the City's `amenity_name`), `pk` the park when it differs, `k` 1 drinking fountain, 2 bottle filling station, `in` 1 indoors, 0 outdoors |
+| `libraries` | `library_locations` | `nm` the branch, `ad` street address, `zip` five digit ZIP code, `ph` phone, `url` the branch's page on freelibrary.org (only links to `https://libwww.freelibrary.org/` or `https://www.freelibrary.org/` are kept) |
+| `recreation` | `ppr_program_sites` | `nm`, `k` 1 recreation center, 2 older adult center, 3 environmental education center (the program sites that are pools are left to `pools`), `bd` 1 a building, 0 a site without one, `gym` 1 has a gym, 0 none |
+| `pools` | `ppr_swimming_pools`, `ppr_spraygrounds` | `k` 1 pool, 2 sprayground, 3 sprinkler, `st` 1 in service this year, 0 not (the City's `pool_status` or `spray_status`, ACTIVE or INACTIVE; absent when the City says UNKNOWN), and for pools `in` 1 indoor, 0 outdoor, `ada` 1 listed as accessible, 0 not, `ad` street address, `op` the day it opened this season, only when in service |
+
+Each property is absent when the City leaves it empty.
+
+**`dumping`, `lights` and `graffiti` (conditions.pmtiles, points)**, added 2026-10-05 by M3.5, from
+`philly311_conditions` (311 requests about physical conditions only, never people;
+`pipeline/src/placekeepers/publish/conditions.py`):
+
+* `dumping`: the City's service code SR-ST02, Illegal Dumping;
+* `lights`: SR-ST04, Street Light Outage, and SR-ST06, Alley Light Outage;
+* `graffiti`: SR-CL01, Graffiti Removal.
+
+They count requests **by block, never by address**: each request made in the 90 days up to the
+newest request in the snapshot counts on the nearest street block within 50 meters of where it was
+reported (the City's street centerlines, the blocks of the `segments` layer; a request farther from
+any block, or without a point, is left out and counted in the notes). Each block with at least one
+request is one point, at the middle of the block:
+
+| Property | Type | Meaning |
+|---|---|---|
+| `id` | int | the block's `seg_id`, the same `id` as the block in `segments` (streets.pmtiles) |
+| `name` | string | the street, as the City writes it ("N BROAD ST") |
+| `n` | int | requests on the block in the window |
+| `o` | int | how many of them were still open in the City's table when the snapshot was made |
+| `d` | string | the day of the newest request on the block, YYYY-MM-DD in Philadelphia |
+| `a` | int | `lights` only: how many of the `n` were about an alley light; absent when none |
+
+The window's last day is the source's `newest_record` in the manifest (the City's table runs a day
+or two behind). Nothing else from 311 is published or even downloaded: no request number, address,
+subject, notes, photo or agency (`never_fetch` in `pipeline/src/placekeepers/adapters/philly311.py`).
+On 2026-10-05 (window 2026-07-05 to 2026-10-02): 3,919 dumping requests on 2,675 blocks (190 still
+open), 919 light requests on 700 blocks (432 still open) and 297 graffiti requests on 232 blocks (31
+still open).
+
+For M3.4 (placemaking suggestions): join these to street blocks by `id`, and to a lot through the
+blocks it faces. A count says that people asked the City for help there, not how often the
+condition occurs: some blocks ask more often than others, so no count or a low one is not a sign
+of a clean block. Suggestions built on them must stay with physical conditions and the City's
+own services (Philly311, the route `report_to_311` in `registry/routes.yaml`), never the police
+(docs/ETHICS.md).
 
 ## 5. Hand curated memorial files (`data/curated/`)
 
@@ -1098,13 +1180,16 @@ stop is not a departure in the `stops` layer.
 
 **Which OpenStreetMap stop is which SEPTA stop.** First by number: an OpenStreetMap stop whose `ref`
 or `gtfs:stop_id` names a SEPTA stop (its `sid` or a number it had before), when the two stand within
-15 meters. Then by distance alone, the closest pairs first, within 15 meters. Each stop pairs once.
-A number farther away is not believed: on Frankford Avenue some stops carry the number of the stop
-across the street while standing within a few meters of another SEPTA stop. On 2026-10-05 this
-paired 659 of the 829 OpenStreetMap stops in the city with a SEPTA stop; most of the rest stand 15
-to 30 meters from the nearest one. Where an OpenStreetMap stop carries a SEPTA
-number and stands within 15 meters of that stop, distance alone finds the same stop 178 times in
-182. A stop with no `c` may still be in OpenStreetMap a few steps away, so the sheet says "not found
+15 meters and no other SEPTA stop stands more than 3 meters closer to the OpenStreetMap stop. Then by
+distance alone, the closest pairs first, within 15 meters, each OpenStreetMap stop only with its
+nearest SEPTA stop: when that one is taken it stays unpaired. Each stop pairs once. A number farther
+away is not believed: on Frankford Avenue some stops carry the number of the stop across the street
+while standing within a few meters of another SEPTA stop, and at Huntingdon Street that stop across
+the street is only 12 meters away (the two rules after "and" were added 2026-10-05 by the v0.2
+review, docs/VERIFICATION_V0_2.md). On 2026-10-05 this paired 654 of the 829 OpenStreetMap stops in
+the city with a SEPTA stop; most of the rest stand 15 to 30 meters from the nearest one. Where an
+OpenStreetMap stop's number agrees with the SEPTA stop it is paired with (180 pairs that day), that
+stop is also its nearest SEPTA stop 179 times. A stop with no `c` may still be in OpenStreetMap a few steps away, so the sheet says "not found
 in OpenStreetMap", never "missing".
 
 ### `tables/routes/index.json`
@@ -1132,7 +1217,7 @@ Every route with a file, in SEPTA's order of routes: its id, names and mode, its
 with `n` stops on the sheet, and `s`, the stops of all its directions by `c` (`none` for stops with
 no match). The route files are not in the manifest's `files` (section 3); the index is. On
 2026-10-05: 123 routes (117 bus, 6 trolley), 237 directions with a median of 55 stops, files of
-0.4 to 28 kB (median 11 kB, about 4 kB compressed), 1.4 MB in all; the index is 31 kB (6 kB
+0.4 to 28 kB (median 11 kB, about 2 kB compressed), 1.4 MB in all; the index is 31 kB (6 kB
 compressed).
 
 The page's time estimate is the site's own, not data: walking about 80 meters a minute (3 miles an

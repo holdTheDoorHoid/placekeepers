@@ -500,6 +500,236 @@
         - {value: high, label: The 1 percent annual chance floodplain only}
       default: both
   release: v0.3
+
+# Amenities from OpenStreetMap (M3.5), one layer per kind, in the same tile file as the shelters
+# and benches at stops. OpenStreetMap is missing many of them, so each says so and links the guide
+# that shows how to add them.
+- id: benches
+  label: Benches, as mapped in OpenStreetMap
+  group: amenities
+  description: >-
+    Places to sit: the benches people have added to OpenStreetMap, the free map anyone can improve,
+    with whether each has a backrest where the map says so. OpenStreetMap is missing many benches,
+    so a street with none shown may still have some. Anyone can add a bench with the StreetComplete
+    phone app, and it appears here within about a week.
+  sources: [osm_philadelphia]
+  file: tiles/amenities.pmtiles
+  source_layer: benches
+  geometry: point
+  style: amenity
+  evidence: not_violence
+  default: {field: false, analysis: false}
+  guide: streetcomplete
+  release: v0.3
+- id: picnic_tables
+  label: Picnic tables, as mapped in OpenStreetMap
+  group: amenities
+  description: >-
+    Picnic tables people have added to OpenStreetMap, mostly in parks, with whether each is under
+    a roof where the map says so. OpenStreetMap is missing many of them. Anyone can add one with
+    the StreetComplete phone app, and it appears here within about a week.
+  sources: [osm_philadelphia]
+  file: tiles/amenities.pmtiles
+  source_layer: picnic_tables
+  geometry: point
+  style: amenity
+  evidence: not_violence
+  default: {field: false, analysis: false}
+  guide: streetcomplete
+  release: v0.3
+- id: drinking_water
+  label: Drinking water, as mapped in OpenStreetMap
+  group: amenities
+  description: >-
+    Drinking fountains and water taps people have added to OpenStreetMap, with whether a bottle can
+    be filled where the map says so. OpenStreetMap knows only a few dozen in the city, so the
+    drinking fountains Parks and Recreation lists are their own layer. Anyone can add a fountain
+    with the StreetComplete phone app, and it appears here within about a week.
+  sources: [osm_philadelphia]
+  file: tiles/amenities.pmtiles
+  source_layer: water
+  geometry: point
+  style: amenity
+  evidence: not_violence
+  # A neighbor on foot, especially on a hot day, needs water: on by default in the field view.
+  default: {field: true, analysis: false}
+  guide: streetcomplete
+  release: v0.3
+- id: toilets
+  label: Public toilets, as mapped in OpenStreetMap
+  group: amenities
+  description: >-
+    Toilets people have added to OpenStreetMap, with who may use them, whether there is a fee and
+    wheelchair access where the map says so. Toilets closed to the public are left out.
+    OpenStreetMap knows fewer than a hundred in the city. Anyone can add one with the
+    StreetComplete phone app, and it appears here within about a week.
+  sources: [osm_philadelphia]
+  file: tiles/amenities.pmtiles
+  source_layer: toilets
+  geometry: point
+  style: amenity
+  evidence: not_violence
+  # A neighbor on foot needs a toilet: on by default in the field view.
+  default: {field: true, analysis: false}
+  guide: streetcomplete
+  release: v0.3
+- id: bookcases
+  label: Little free libraries, as mapped in OpenStreetMap
+  group: amenities
+  description: >-
+    Public bookcases, often called little free libraries, where anyone can take or leave a book,
+    as people have added them to OpenStreetMap. Many are missing. Anyone can add one with the
+    StreetComplete phone app, and it appears here within about a week.
+  sources: [osm_philadelphia]
+  file: tiles/amenities.pmtiles
+  source_layer: bookcases
+  geometry: point
+  style: amenity
+  evidence: not_violence
+  default: {field: false, analysis: false}
+  guide: streetcomplete
+  release: v0.3
+# Public places from the City (M3.5), in their own tile file: the City's data is under its own
+# terms, and OpenStreetMap's license asks that data built from it stay apart.
+- id: park_water
+  label: Drinking fountains in parks
+  group: amenities
+  description: >-
+    Drinking fountains and bottle filling stations at parks and recreation centers, as
+    Philadelphia Parks and Recreation lists them. One inside a recreation center can be used when
+    the center is open.
+  sources: [ppr_hydration_stations]
+  file: tiles/places.pmtiles
+  source_layer: park_water
+  geometry: point
+  style: public_place
+  evidence: not_violence
+  # Water for a neighbor on foot: on by default in the field view, like the fountains above.
+  default: {field: true, analysis: false}
+  release: v0.3
+- id: libraries
+  label: Free Library branches
+  group: public_places
+  description: >-
+    Every Free Library of Philadelphia location the City lists, with its address, phone number and
+    a link to its page for opening hours. Libraries are free and open to everyone.
+  sources: [library_locations]
+  file: tiles/places.pmtiles
+  source_layer: libraries
+  geometry: point
+  style: public_place
+  evidence: not_violence
+  default: {field: false, analysis: false}
+  release: v0.3
+- id: recreation_centers
+  label: Recreation centers
+  group: public_places
+  description: >-
+    Where Philadelphia Parks and Recreation runs programs: recreation centers, older adult centers
+    and environmental education centers, with whether each has a gym, as the City lists them.
+  sources: [ppr_program_sites]
+  file: tiles/places.pmtiles
+  source_layer: recreation
+  geometry: point
+  style: public_place
+  evidence: not_violence
+  default: {field: false, analysis: false}
+  release: v0.3
+- id: pools
+  label: Pools and spraygrounds
+  group: public_places
+  description: >-
+    City pools, spraygrounds and sprinklers, places to cool off on hot days, with whether each is in
+    service this year as Philadelphia Parks and Recreation lists it. Pools open for the summer
+    season only; check with Parks and Recreation for this week's hours.
+  sources: [ppr_swimming_pools, ppr_spraygrounds]
+  file: tiles/places.pmtiles
+  source_layer: pools
+  geometry: point
+  style: public_place
+  evidence: not_violence
+  default: {field: false, analysis: false}
+  settings:
+    - id: show
+      label: Show
+      type: choice
+      options:
+        - {value: in_service, label: Only those in service this year}
+        - {value: all, label: "All of them, also those not in service"}
+      default: in_service
+  release: v0.3
+# Conditions reported to 311 (M3.5): physical conditions only, never people (docs/ETHICS.md).
+# Counted by block, so the map never points at the door a request came from.
+- id: dumping
+  label: Illegal dumping reported to 311
+  group: conditions
+  description: >-
+    Blocks where someone asked Philly311 about illegal dumping in the last 90 days, with how many
+    requests and whether any is still open. Counted by block, never by address, and with nothing
+    about who reported. A request shows that someone noticed and asked for help; some blocks ask
+    more often than others, so few requests does not mean a clean block.
+  sources: [philly311_conditions, street_centerlines]
+  file: tiles/conditions.pmtiles
+  source_layer: dumping
+  geometry: point
+  style: condition
+  evidence: context
+  default: {field: false, analysis: false}
+  settings:
+    - id: show
+      label: Show blocks with
+      type: choice
+      options:
+        - {value: any, label: Any request in the last 90 days}
+        - {value: open, label: A request still open}
+      default: any
+  release: v0.3
+- id: dark_lights
+  label: Street and alley lights reported out
+  group: conditions
+  description: >-
+    Blocks where someone asked Philly311 to fix a street light or an alley light that was out in
+    the last 90 days, with how many requests and whether any is still open. Counted by block, never
+    by address, and with nothing about who reported.
+  sources: [philly311_conditions, street_centerlines]
+  file: tiles/conditions.pmtiles
+  source_layer: lights
+  geometry: point
+  style: condition
+  evidence: context
+  default: {field: false, analysis: false}
+  settings:
+    - id: show
+      label: Show blocks with
+      type: choice
+      options:
+        - {value: any, label: Any request in the last 90 days}
+        - {value: open, label: A request still open}
+      default: any
+  release: v0.3
+- id: graffiti
+  label: Graffiti reported to 311
+  group: conditions
+  description: >-
+    Blocks where someone asked Philly311 to remove graffiti in the last 90 days, with how many
+    requests and whether any is still open. Counted by block, never by address, and with nothing
+    about who reported.
+  sources: [philly311_conditions, street_centerlines]
+  file: tiles/conditions.pmtiles
+  source_layer: graffiti
+  geometry: point
+  style: condition
+  evidence: context
+  default: {field: false, analysis: false}
+  settings:
+    - id: show
+      label: Show blocks with
+      type: choice
+      options:
+        - {value: any, label: Any request in the last 90 days}
+        - {value: open, label: A request still open}
+      default: any
+  release: v0.3
 # Public art (M3.2): one point per work from the City, OpenStreetMap and Wikidata, off by default
 # in both views (several hundred points would crowd the lots and streets).
 - id: public_art

@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"id":"water1","nm":"Sample Recreation Center","k":1,"in":0},"geometry":{"type":"Point","coordinates":[-75.157062,39.984596]}},{"type":"Feature","properties":{"id":"water2","nm":"Sample Playground","pk":"Sample Park","k":2,"in":1},"geometry":{"type":"Point","coordinates":[-75.14909,39.986761]}}]}

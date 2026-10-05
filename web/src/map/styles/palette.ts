@@ -88,6 +88,47 @@ export const FLOOD_LINES = { high: '#08519c', moderate: '#4292c6' } as const;
 export const FLOOD_OPACITY = { high: 0.28, moderate: 0.22, floodway: 0.4 } as const;
 
 /**
+ * Amenities from OpenStreetMap (M3.5): a small dot with a white ring, one hue per kind, clear of
+ * the lots' greens, the selection blue and the stops' colors. Toilets and water, on in the field
+ * view, are a deep pink and a sky blue, clear of the memorials' gray violet and the High Injury
+ * Network's amber shown beside them.
+ */
+export const AMENITY_COLORS: Record<string, string> = {
+  benches: '#8c6d31',
+  picnic_tables: '#6b7f1f',
+  drinking_water: '#1b8ac2',
+  toilets: '#b8327a',
+  bookcases: '#c0622f',
+};
+export const AMENITY_RING = '#ffffff';
+
+/**
+ * Public places from the City (M3.5): a larger dot with a white ring. Park drinking fountains share
+ * the drinking water blue; pools, spraygrounds and sprinklers are three aquas, from deep to pale,
+ * with a dark outline; one not in service this year is a hollow gray ring.
+ */
+export const PLACE_COLORS: Record<string, string> = {
+  park_water: '#1b8ac2',
+  libraries: '#3d3f7a',
+  recreation_centers: '#1f7a6d',
+};
+export const POOL_COLORS: Record<number, string> = { 1: '#0096b8', 2: '#4cc3dc', 3: '#97dcea' };
+/** Pools draw a dark outline, so the pale sprinkler blue still shows on a pale base map. */
+export const POOL_RING = '#0b5468';
+export const PLACE_RING = '#ffffff';
+export const NOT_IN_SERVICE_RING = '#6b747c';
+
+/**
+ * Conditions reported to 311, by block (M3.5): a filled circle where a request is still open, a
+ * hollow ring of the same color where every request is closed; bigger with more requests.
+ */
+export const CONDITION_COLORS: Record<string, string> = {
+  dumping: '#8c510a',
+  dark_lights: '#3a3a4a',
+  graffiti: '#8e4585',
+};
+
+/**
  * Public art (M3.2), by kind, from the Okabe and Ito palette, which people with the common kinds
  * of color blindness can tell apart: murals and wall paintings a reddish purple, sculptures and
  * statues a deep blue, mosaics a yellow, other kinds a slate gray, each with a darker ring of its

@@ -19,6 +19,10 @@ export const STYLE_IDS = [
   'heat_tracts',
   'city_trees',
   'floodplain',
+  // M3.5: amenities from OpenStreetMap, public places from the City, conditions reported to 311
+  'amenity',
+  'public_place',
+  'condition',
   // Public art (M3.2)
   'public_art',
 ] as const;

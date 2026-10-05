@@ -19,6 +19,9 @@
   import TreeDetails from '../heat/TreeDetails.svelte';
   import ArtDetails from '../art/ArtDetails.svelte';
   import RouteDetails from '../transit/RouteDetails.svelte';
+  import AmenityDetails from '../amenities/AmenityDetails.svelte';
+  import ConditionDetails from '../amenities/ConditionDetails.svelte';
+  import PlaceDetails from '../amenities/PlaceDetails.svelte';
 
   let {
     store,
@@ -108,6 +111,18 @@
     <RouteDetails features={target.features} />
   {:else if style === STYLES.city_trees}
     <TreeDetails features={target.features} />
+  {:else if style === STYLES.amenity}
+    {#each target.features.slice(0, 4) as properties, i (i)}
+      <AmenityDetails layerId={target.layerId} {properties} guide={layer?.guide} />
+    {/each}
+  {:else if style === STYLES.public_place}
+    {#each target.features.slice(0, 4) as properties, i (i)}
+      <PlaceDetails layerId={target.layerId} {properties} />
+    {/each}
+  {:else if style === STYLES.condition}
+    {#each target.features.slice(0, 4) as properties, i (i)}
+      <ConditionDetails layerId={target.layerId} {properties} route={store.registry.routes.find((r) => r.id === 'report_to_311')} />
+    {/each}
   {:else if style === STYLES.public_art}
     <ArtDetails features={target.features} lngLat={target.lngLat} registry={store.registry} />
   {/if}

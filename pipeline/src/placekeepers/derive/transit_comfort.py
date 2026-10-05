@@ -10,8 +10,10 @@ same pairing the route survey sheets use (M2.4), so a stop's sheet and its detai
 always describe the same OpenStreetMap stop: first by SEPTA's stop number (an OpenStreetMap stop's
 `ref` or `gtfs:stop_id` naming the SEPTA stop's number today or one it had before), then by
 distance, both only within SAME_STOP_METERS (15 meters), closest pairs first, each stop once. A
-number naming a stop farther away is ignored: on Frankford Avenue a run of OpenStreetMap stops
-carries the numbers of the stops across the street while each stands on another SEPTA stop. `om`
+number naming a stop farther away, or one with another SEPTA stop clearly closer, is ignored: on
+Frankford Avenue a run of OpenStreetMap stops carries the numbers of the stops across the street
+while each stands on another SEPTA stop. By distance an OpenStreetMap stop pairs only with its
+nearest SEPTA stop, never a farther one across the street. `om`
 records whether the stop numbers agree (BY_NUMBER) or the two only stand at the same place
 (BY_PLACE).
 
@@ -78,6 +80,32 @@ HIN_METERS = 30.0
 SHADE_FROM = 75
 #: A shelter or bench no one has surveyed yet: halfway between having one (0) and not (100).
 NOT_SURVEYED = 50
+#: The trolley tunnel stations under Center City and University City, from 13th Street to 37th
+#: Street, where routes T1 to T5 stop underground, by SEPTA stop number (as in SEPTA's schedules
+#: v202609270). A shelter, a bench, shade trees or a survey with StreetComplete make no sense on
+#: a platform underground, and the route survey sheets already tell people to leave these
+#: stations out, so the lens leaves them out too, like the subway, El and Regional Rail stations
+#: (found by the v0.2 review, docs/VERIFICATION_V0_2.md). A stop renumbered in place keeps its
+#: old number in its history, which counts too.
+TUNNEL_STATIONS = frozenset(
+    {
+        "283",  # 13th St
+        "20659",  # 15th St/City Hall
+        "31140",
+        "20646",  # 19th St
+        "20660",
+        "20645",  # 22nd St
+        "20661",
+        "20643",  # Drexel Station at 30th St
+        "20662",
+        "20642",  # 33rd St
+        "20658",
+        "20732",  # 36th St and Sansom St
+        "20733",
+        "20731",  # 37th St and Spruce St
+        "20734",
+    }
+)
 H3_RESOLUTION = 9
 
 #: The lens factors, in registry order.
@@ -388,7 +416,8 @@ def _notes(result: ComfortResult, total: int, paths: Mapping[str, Path]) -> list
             f"OpenStreetMap stop within {SAME_STOP_METERS:g} meters ({s.by_number:,} where the "
             f"stop numbers agree, {s.by_place:,} by place), of the {s.osm_stops:,} OpenStreetMap "
             f"has in the city; {plural(s.numbers_elsewhere, 'stop carries', 'stops carry')} the "
-            "number of a SEPTA stop farther away, which is ignored"
+            "number of a SEPTA stop it is not paired with (farther away, or with another stop "
+            "clearly closer), which is ignored"
         )
         notes.append(
             f"transit comfort: {surveyed:,} SEPTA stops have their shelter or bench surveyed "

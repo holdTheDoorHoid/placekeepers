@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"id":"rec1","nm":"Sample Recreation Center","k":1,"bd":1,"gym":1},"geometry":{"type":"Point","coordinates":[-75.152607,39.986842]}},{"type":"Feature","properties":{"id":"rec2","nm":"Sample Older Adult Center","k":2,"bd":1,"gym":0},"geometry":{"type":"Point","coordinates":[-75.150731,39.986842]}}]}

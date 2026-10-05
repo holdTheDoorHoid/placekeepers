@@ -585,9 +585,15 @@ export const strings = {
                   ? 'Shelter and bench'
                   : style === 'city_trees'
                     ? 'Tree'
-                    : style === 'public_art'
-                      ? 'Public art'
-                      : 'Details',
+                    : style === 'amenity'
+                      ? 'As mapped in OpenStreetMap'
+                      : style === 'public_place'
+                        ? 'Place'
+                        : style === 'condition'
+                          ? 'Reported to 311'
+                          : style === 'public_art'
+                            ? 'Public art'
+                            : 'Details',
     memorialTitle: 'In memory',
     peopleHere: (n: number) => `${plural(n, 'person is', 'people are')} remembered here`,
     killed: {
@@ -979,6 +985,114 @@ export const strings = {
     routeTitle: (route: string) => `Route ${route}`,
     routesHere: (n: number) => `${plural(n, 'route', 'routes')} here`,
     surveyThisRoute: 'Survey the stops of this route for shelters and benches',
+  },
+
+  // Amenities from OpenStreetMap (M3.5, src/map/styles/amenity.ts, AmenityDetails.svelte). Only
+  // what people have mapped appears, and unknown is never worded as no.
+  amenities: {
+    legend: {
+      benches: 'A bench',
+      picnic_tables: 'A picnic table',
+      drinking_water: 'Drinking water',
+      toilets: 'A public toilet',
+      bookcases: 'A little free library',
+    } as Record<string, string>,
+    mappedNote: 'Only what people have added to OpenStreetMap appears here, so many are missing.',
+    addMissing: 'How to add what is missing',
+    titles: {
+      benches: 'Bench',
+      picnic_tables: 'Picnic table',
+      drinking_water: 'Drinking water',
+      toilets: 'Public toilet',
+      bookcases: 'Little free library',
+    } as Record<string, string>,
+    /** Yes, then no, for each answer an amenity can have. */
+    facts: {
+      br: ['Has a backrest', 'No backrest'],
+      cv: ['Under a roof', 'Not under a roof'],
+      bt: ['A bottle can be filled here', 'Not for filling a bottle'],
+      sn: ['Only part of the year', 'All year'],
+      in: ['Indoors', 'Outdoors'],
+      fee: ['There is a fee', 'Free'],
+      ct: ['Has a changing table', 'No changing table'],
+    } as Record<string, [string, string]>,
+    access: { 1: 'Open to anyone', 2: 'For customers only' } as Record<number, string>,
+    wheelchair: {
+      1: 'Wheelchair accessible',
+      0: 'Not wheelchair accessible',
+      2: 'Limited wheelchair access',
+    } as Record<number, string>,
+    hours: (text: string) => `Opening hours as mapped: ${text}`,
+    nothingMore: 'OpenStreetMap does not say more about it yet.',
+    unknownNote: 'Anything not listed is not known yet. That does not mean the answer is no.',
+    openOsm: 'See it on OpenStreetMap',
+    fix: 'Missing or wrong? How to fix it',
+    source: 'As mapped in OpenStreetMap, © OpenStreetMap contributors, updated every week.',
+  },
+
+  // Public places from the City (M3.5, src/map/styles/public_place.ts, PlaceDetails.svelte).
+  places: {
+    legend: {
+      park_water: 'A drinking fountain in a park',
+      libraries: 'A Free Library branch',
+      recreation_centers: 'A recreation center',
+    } as Record<string, string>,
+    poolLegend: { 1: 'A pool', 2: 'A sprayground', 3: 'A sprinkler' } as Record<number, string>,
+    notInService: 'Not in service this year',
+    poolsShown: { in_service: 'Only those in service this year are shown.', all: 'Hollow circles are not in service this year.' } as Record<string, string>,
+    recreationKinds: {
+      1: 'Recreation center',
+      2: 'Older adult center',
+      3: 'Environmental education center',
+    } as Record<number, string>,
+    poolKinds: { 1: 'Pool', 2: 'Sprayground', 3: 'Sprinkler' } as Record<number, string>,
+    waterKinds: { 1: 'Drinking fountain', 2: 'Bottle filling station' } as Record<number, string>,
+    status: { 1: 'In service this year', 0: 'Not in service this year' } as Record<number, string>,
+    statusUnknown: 'Parks and Recreation does not say whether it is in service this year.',
+    indoor: { 1: 'Indoors', 0: 'Outdoors' } as Record<number, string>,
+    waterIndoor: 'Inside a building: open when the building is.',
+    accessible: { 1: 'Listed as accessible for people with disabilities', 0: 'Not listed as accessible' } as Record<number, string>,
+    opened: (date: string) => `Opened for the season on ${date}.`,
+    gym: 'Has a gym.',
+    noBuilding: 'A program site without a building of its own.',
+    inPark: (park: string) => `In ${park}.`,
+    phone: (number: string) => `Phone: ${number}`,
+    libraryPage: 'Hours and events on the Free Library website',
+    seasonNote: 'Pools open for the summer only. Check with Parks and Recreation for this week\'s hours.',
+    source: {
+      libraries: "From the City's list of Free Library of Philadelphia locations.",
+      parks: 'From Philadelphia Parks and Recreation, as the City publishes it.',
+    } as Record<string, string>,
+  },
+
+  // Conditions reported to 311, counted by block (M3.5, src/map/styles/condition.ts,
+  // ConditionDetails.svelte). Physical conditions only, never people (docs/ETHICS.md).
+  conditions: {
+    legend: {
+      dumping: 'Illegal dumping',
+      dark_lights: 'A street or alley light out',
+      graffiti: 'Graffiti',
+    } as Record<string, string>,
+    legendOpen: (what: string) => `${what}: a request still open`,
+    legendClosed: (what: string) => `${what}: every request closed`,
+    legendSize: 'A bigger circle means more requests on that block.',
+    legendWindow: 'Requests to Philly311 in the last 90 days, counted by block, never by address.',
+    openOnly: 'Only blocks with a request still open are shown.',
+    titles: {
+      dumping: 'Illegal dumping reported',
+      dark_lights: 'Lights reported out',
+      graffiti: 'Graffiti reported',
+    } as Record<string, string>,
+    summary: (n: number, open: number) =>
+      `${plural(n, 'request', 'requests')} to Philly311 in the last 90 days, ${open === 0 ? 'none' : formatNumber(open)} still open.`,
+    newest: (date: string) => `The newest was made on ${date}.`,
+    alley: (n: number, total: number) =>
+      n === total ? (n === 1 ? 'It was about an alley light.' : 'All were about alley lights.') : `${formatNumber(n)} of them about an alley light.`,
+    block: (street: string) => `On this block of ${street}.`,
+    byBlock: 'Counted by block, never by address, and nothing about who reported is shown.',
+    meaning: 'A request shows that someone noticed and asked the City for help. Some blocks ask more often than others.',
+    report: 'Report it to Philly311',
+    source: "From the City's 311 records (Philly311), refreshed every week.",
   },
 
   basemap: {

@@ -78,6 +78,24 @@ nothing there, you have two ways to help:
 
 Once a stop is in OpenStreetMap, StreetComplete can ask its questions there too.
 
+## Benches, water, toilets and little free libraries
+
+Our map also shows benches, picnic tables, drinking water, public toilets and little free
+libraries, as people have added them to OpenStreetMap. Each is its own layer under **Benches,
+water, toilets and more**, and each is far from complete: on October 5, 2026, OpenStreetMap had
+about 2,070 benches, 300 picnic tables, 150 little free libraries, 73 public toilets and 30
+drinking water points in the city.
+
+You can add what is missing with StreetComplete's **Things** overlay: switch it on, tap the spot
+where the thing stands, and choose what it is. The overlay covers benches, picnic tables, drinking
+water, toilets and public bookcases, among many other things on the street. Once they are mapped,
+StreetComplete also asks about some of them, for example whether a bench has a backrest, and
+whether public toilets charge a fee or have wheelchair access. Your additions reach our map within
+about a week.
+
+The **Drinking fountains in parks** layer comes from Parks and Recreation's own list, not from
+OpenStreetMap, so changes there come from the City.
+
 ## How long a survey takes
 
 These are our estimates, from SEPTA's schedules, not from the app. SEPTA's stops in the city are

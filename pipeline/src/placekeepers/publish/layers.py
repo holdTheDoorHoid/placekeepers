@@ -486,6 +486,8 @@ def builder_for(file: str, source_layer: str) -> LayerBuilder | None:
 # stops and routes in another (M2.1), and the amenities from OpenStreetMap (shelters and benches
 # at stops) in a third (M2.2). Heat, trees and the floodplain have theirs too (M3.1).
 from placekeepers.publish.amenities import AMENITY_BUILDERS  # noqa: E402
+from placekeepers.publish.city_places import PLACE_BUILDERS  # noqa: E402
+from placekeepers.publish.conditions import CONDITION_BUILDERS  # noqa: E402
 from placekeepers.publish.environment import ENVIRONMENT_BUILDERS  # noqa: E402
 from placekeepers.publish.streets import STREET_BUILDERS  # noqa: E402
 from placekeepers.publish.transit import TRANSIT_BUILDERS  # noqa: E402
@@ -496,6 +498,9 @@ BUILDERS = (
     *TRANSIT_BUILDERS,
     *AMENITY_BUILDERS,
     *ENVIRONMENT_BUILDERS,
+    # Public places from the City and conditions reported to 311 (M3.5).
+    *PLACE_BUILDERS,
+    *CONDITION_BUILDERS,
 )
 
 # Public art (M3.2), from the City, OpenStreetMap and Wikidata.
