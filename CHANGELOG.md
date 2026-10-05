@@ -4,7 +4,7 @@ Placekeepers does not have a numbered history yet. This file starts with the fir
 release. Numbers below are from the live manifest and the project's docs, as of October 4, 2026,
 and change a little every week as the data refreshes.
 
-## v0.1 (date to be set)
+## v0.1 (2026-10-05)
 
 The first public release: a vacant lot finder with a full page for every lot, and street safety
 with memorials.
@@ -32,7 +32,7 @@ with memorials.
 
 ### Lot pages
 
-- Every parcel with a sign of vacancy gets a full page (about 78,000 as of October 4, 2026): a
+- Every parcel with a sign of vacancy gets a full page (about 82,000 as of October 4, 2026): a
   summary with our confidence and the reasons behind it, suggestions with the first lawful step,
   who owns it, full sale history, and what is nearby.
 - Owner flags such as absentee owner, possible estate, tax debt as of July 2025, and owner holds
@@ -56,6 +56,18 @@ with memorials.
   see the release notes for why.
 - Anyone can ask for a memorial to come down through a public GitHub issue, no name or reason
   needed, until a private email address exists.
+
+### Buses and trains, an early look
+
+- SEPTA's bus, trolley and train stops and routes: how often service comes and how many people
+  get on each weekday, from SEPTA's own counts. Subway, El and Regional Rail stations can be
+  added in Settings.
+- Shelters and benches at stops, from what OpenStreetMap knows so far, with the "Survey bus
+  stops" guide showing neighbors how to add the stops it is still missing using the free
+  StreetComplete app.
+- Both layers are under "Buses and trains" in the layer list, off by default. The transit comfort
+  lens and its suggestions, which give these layers a job on the map, are not part of v0.1; they
+  come in version 0.2.
 
 ### Data and upkeep
 
@@ -87,6 +99,6 @@ with memorials.
 
 ### Site pages
 
-- About, Why this works, How to do it, Use this responsibly, How we find vacant land, Data
-  status, Terms, Privacy, and Contact, all in plain language with no jargon.
+- About, Why this works, How to do it, Use this responsibly, How we find vacant land, Survey bus
+  stops, Data status, Terms, Privacy, and Contact, all in plain language with no jargon.
 

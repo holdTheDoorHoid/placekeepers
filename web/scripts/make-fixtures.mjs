@@ -362,6 +362,17 @@ const shardFiles = handWritten.filter(([name]) => /^dossiers\/\d+\.json$/.test(n
 mkdirSync(path('sources'), { recursive: true });
 mkdirSync(path('data/tiles'), { recursive: true });
 writeFileSync(path('sources/parcels.geojson'), collection(parcels));
+// The light zoomed out form of the lots, as the pipeline builds it (docs/CONTRACTS.md section 4,
+// pipeline/src/placekeepers/publish/tiles.py): one point on each parcel, without the properties
+// only the lot page uses, marked `lo`. Below zoom 13 the tiles hold a sample of these points.
+const LOW_ZOOM_LEFT_OUT = new Set(['rs', 'n', 'dy', 'sy', 'ny']);
+const lowZoomParcels = parcels.map((f) => {
+  const ring = f.geometry.coordinates[0].slice(0, -1);
+  const middle = [round6(ring.reduce((a, p) => a + p[0], 0) / ring.length), round6(ring.reduce((a, p) => a + p[1], 0) / ring.length)];
+  const properties = Object.fromEntries(Object.entries(f.properties).filter(([key]) => !LOW_ZOOM_LEFT_OUT.has(key)));
+  return { type: 'Feature', properties: { ...properties, lo: 1 }, geometry: { type: 'Point', coordinates: middle } };
+});
+writeFileSync(path('sources/parcels.lowzoom.geojson'), collection(lowZoomParcels));
 writeFileSync(path('sources/h3.geojson'), collection(cells));
 writeFileSync(path('data/tiles/streets.hin.geojson'), collection(lines));
 writeFileSync(path('sources/landcare.geojson'), collection(landcareLots));
@@ -384,7 +395,18 @@ const tippecanoe = (out, layer, input, name, extra) =>
     ['-q', '-f', '-o', out, '-l', layer, '-n', name, '-N', 'Synthetic test data for Placekeepers', '--no-feature-limit', '--no-tile-size-limit', ...extra, input],
     { stdio: 'inherit', cwd: FIXTURES.pathname },
   );
-tippecanoe('data/tiles/lots.pmtiles', 'parcels', 'sources/parcels.geojson', 'Sample parcels', ['-Z', '12', '-z', '16', '--no-tiny-polygon-reduction']);
+// Lots: the shapes from zoom 13, the light points below it, thinned at tippecanoe's usual rate (about
+// 40 percent kept at zoom 12, 16 at 11 and 6 at 10), with the pipeline's feature filter.
+execFileSync(
+  'tippecanoe',
+  [
+    '-q', '-f', '-o', 'data/tiles/lots.pmtiles', '-n', 'Sample parcels', '-N', 'Synthetic test data for Placekeepers',
+    '--no-feature-limit', '--no-tile-size-limit', '-Z', '10', '-z', '16', '--base-zoom=13', '--no-tiny-polygon-reduction',
+    '--feature-filter', JSON.stringify({ parcels: ['any', ['all', ['<', '$zoom', 13], ['has', 'lo']], ['all', ['>=', '$zoom', 13], ['!has', 'lo']]] }),
+    '-L', 'parcels:sources/parcels.geojson', '-L', 'parcels:sources/parcels.lowzoom.geojson',
+  ],
+  { stdio: 'inherit', cwd: FIXTURES.pathname },
+);
 tippecanoe('data/tiles/context.pmtiles', 'h3', 'sources/h3.geojson', 'Sample area cells', ['-Z', '9', '-z', '14', '--detect-shared-borders']);
 execFileSync(
   'tippecanoe',

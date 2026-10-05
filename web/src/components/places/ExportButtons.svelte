@@ -20,6 +20,7 @@
     title,
     idPrefix,
     headingId,
+    off = null,
   }: {
     store: AppStore;
     /** What to download, highest priority first: only the first EXPORT_LIMIT go in the file. */
@@ -28,6 +29,8 @@
     idPrefix: string;
     /** A heading the page already shows above the buttons; without one they bring their own. */
     headingId?: string;
+    /** Why downloads are not offered right now (zoomed out to a sample), shown in place of the help. */
+    off?: string | null;
   } = $props();
 
   const e = strings.export;
@@ -36,6 +39,7 @@
   let notes = $state<string[]>([]);
 
   async function download(kind: 'csv' | 'geojson') {
+    if (off) return;
     const chosen = places();
     notes = [];
     if (chosen.length === 0) {
@@ -77,10 +81,10 @@
 <div class="export" role="group" aria-labelledby={headingId ?? `${idPrefix}-export-title`} aria-describedby="{idPrefix}-export-help">
   {#if !headingId}<h3 id="{idPrefix}-export-title" class="sr-only">{e.title}</h3>{/if}
   <div class="buttons">
-    <button class="button small" type="button" disabled={busy} onclick={() => download('csv')}>{e.csv}</button>
-    <button class="button small" type="button" disabled={busy} onclick={() => download('geojson')}>{e.geojson}</button>
+    <button class="button small" type="button" disabled={busy || !!off} onclick={() => download('csv')}>{e.csv}</button>
+    <button class="button small" type="button" disabled={busy || !!off} onclick={() => download('geojson')}>{e.geojson}</button>
   </div>
-  <p id="{idPrefix}-export-help" class="muted small help">{e.help(EXPORT_LIMIT)}</p>
+  <p id="{idPrefix}-export-help" class="small help" class:muted={!off} class:off={!!off}>{off ?? e.help(EXPORT_LIMIT)}</p>
   <p class="small status" role="status" aria-live="polite">{status}</p>
   {#each notes as note (note)}<p class="small note">{note}</p>{/each}
 </div>
@@ -95,6 +99,9 @@
   .status,
   .note {
     margin: 4px 0 0;
+  }
+  .off {
+    font-weight: 600;
   }
   /* An empty status line takes no room but stays in place, so screen readers hear what fills it. */
   .status:empty {

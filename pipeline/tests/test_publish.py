@@ -462,3 +462,76 @@ def test_care_and_boundary_tiles_have_their_layers(care_ctx, tmp_path, monkeypat
         "neighborhoods",
         "rcos",
     ]
+
+
+# Light lots tiles when zoomed out (issue #26)
+
+
+def test_low_zoom_points_keep_what_the_map_needs(tmp_path: Path) -> None:
+    from placekeepers.publish.tiles import LOW_ZOOM_LEFT_OUT, low_zoom_points
+
+    source = tmp_path / "parcels.geojson"
+    square = box(-75.15, 39.99, -75.1499, 39.9901)
+    full = {"id": "370000001", "k": 1, "vc": 3, "ot": 1, "rt": 5, "lc": 0, "rs": 13, "n": 2,
+            "dy": 2024, "sg": "clean_and_green", "f_vacant": 100, "f_shoot": 40}  # fmt: skip
+    point = {"id": "370000002", "k": 1, "vc": 1, "ot": 0, "rt": 0, "lc": 0, "rs": 8, "n": 1}
+    lines = [
+        '{"type":"FeatureCollection","features":[',
+        json.dumps({"type": "Feature", "properties": full, "geometry": square.__geo_interface__})
+        + ",",
+        json.dumps(
+            {
+                "type": "Feature",
+                "properties": point,
+                "geometry": Point(-75.16, 39.98).__geo_interface__,
+            }
+        ),
+        "]}",
+    ]
+    source.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    out = tmp_path / "light.geojson"
+    assert low_zoom_points(source, out) == 2
+    light = [json.loads(line) for line in out.read_text(encoding="utf-8").splitlines()]
+    assert [f["geometry"]["type"] for f in light] == ["Point", "Point"]
+    assert shapely.geometry.shape(light[0]["geometry"]).within(square)
+    assert light[1]["geometry"]["coordinates"] == [-75.16, 39.98]
+    assert light[0]["properties"] == {
+        "id": "370000001", "k": 1, "vc": 3, "ot": 1, "rt": 5, "lc": 0, "sg": "clean_and_green",
+        "f_vacant": 100, "f_shoot": 40, "lo": 1,
+    }  # fmt: skip
+    assert not set(LOW_ZOOM_LEFT_OUT) & set(light[1]["properties"])
+
+
+@pytest.mark.skipif(shutil.which("tippecanoe") is None, reason="tippecanoe is not installed")
+def test_lots_tiles_are_light_zoomed_out_and_exact_zoomed_in(
+    context_factory, tmp_path, monkeypatch
+) -> None:
+    from placekeepers.derive import lenses
+
+    from . import pmtiles_read
+    from .test_lenses import AS_OF, install_lens_inputs
+
+    monkeypatch.setenv("PK_TIPPECANOE", "tippecanoe")
+    ctx = context_factory(now=NOW)
+    install_lens_inputs(ctx)
+    lenses.run(ctx, AS_OF)
+    out = tmp_path / "data"
+    publish(ctx, out)
+    assert not list((out / "tiles").glob("*lowzoom*")), "the light points stay out of the data"
+    by_zoom: dict[int, list] = {}
+    for zoom, tile in pmtiles_read.tiles(out / "tiles" / "lots.pmtiles"):
+        by_zoom.setdefault(zoom, []).extend(pmtiles_read.features(tile, "parcels"))
+    shown = {"500000001", "500000002", "500000003", "500000004", "500000005", "500000006",
+             "500000008"}  # fmt: skip
+    # From zoom 13: every parcel, as its shape, with every property.
+    for zoom in range(13, 17):
+        assert {props["id"] for _, props in by_zoom[zoom]} == shown, zoom
+        assert {kind for kind, _ in by_zoom[zoom]} == {"Polygon"}
+        assert all("rs" in props and "lo" not in props for _, props in by_zoom[zoom])
+    # Below zoom 13: light points only, with what the styles, filters and lists use.
+    light = [feature for zoom in (10, 11, 12) for feature in by_zoom.get(zoom, [])]
+    assert light, "the parcels show zoomed out too"
+    for kind, props in light:
+        assert kind == "Point" and props["lo"] == 1
+        assert {"id", "k", "vc", "ot", "rt", "lc", "f_vacant", "f_shoot"} <= set(props)
+        assert not {"rs", "n", "dy", "sy", "ny"} & set(props)
