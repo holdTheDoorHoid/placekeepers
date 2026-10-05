@@ -223,7 +223,7 @@ MEMORIAL_WORDS = re.compile(
 RIP = re.compile(r"\bRIP\b|\b[Rr]\.\s?[Ii]\.\s?[Pp]\b")
 #: Two years like a lifespan ("1990 - 2015", "1990 to 2015"), looked for in names only: in an
 #: inscription the same shape is often the years a work was made.
-LIFESPAN = re.compile(r"\b(1[6-9]|20)\d\d\s*(?:-|–|—|to)\s*(1[6-9]|20)\d\d\b", re.I)
+LIFESPAN = re.compile(r"\b(1[6-9]|20)\d\d\s*(?:-|\u2013|\u2014|to)\s*(1[6-9]|20)\d\d\b", re.I)
 
 #: OpenStreetMap keys holding a name, and those holding other words about a work.
 OSM_NAME_KEYS = ("name", "alt_name", "official_name", "old_name", "loc_name", "short_name")
@@ -322,12 +322,18 @@ def type_from_words(*texts: str | None, table: Sequence[tuple[re.Pattern[str], i
 _LAST_FIRST = re.compile(r"([^\W\d_](?:[^\W\d_]|['.\- ])*?)\s*,\s*([^\W\d_](?:[^\W\d_]|['.\- ])*)")
 
 
+#: An artist's years at the end of the City's name for them: "Abakanowicz, Magdalena (1930-2017)".
+_ARTIST_YEARS = re.compile(r"\s*\(\s*\d{4}\s*-\s*\d{4}\s*\)$")
+
+
 def city_artist(value: object) -> str | None:
-    """The City's artist, "Kimmelman, Harold", as "Harold Kimmelman". Several artists, a
-    company or anything else is kept as the City writes it."""
+    """The City's artist, "Kimmelman, Harold", as "Harold Kimmelman" (without the years the City
+    sometimes adds after a name). Several artists, a company or anything else is kept as the City
+    writes it."""
     text = clean_text(value)
     if text is None or is_placeholder(text):
         return None
+    text = _ARTIST_YEARS.sub("", text)
     if re.search(r"\b(and|with)\b|&", text, re.IGNORECASE):
         return text
     found = _LAST_FIRST.fullmatch(text)

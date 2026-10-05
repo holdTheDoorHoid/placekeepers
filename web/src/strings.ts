@@ -810,7 +810,7 @@ export const strings = {
       mural: 'Murals and wall paintings',
       sculpture: 'Sculptures and statues',
       mosaic: 'Mosaics',
-      other: 'Other public art: installations, fountains, monuments and more',
+      other: 'Other kinds: installations, fountains, monuments and more',
     },
     allOff: "Every kind of art is switched off in this layer's settings.",
     insideHidden: 'Works inside buildings are hidden.',
@@ -859,7 +859,7 @@ export const strings = {
     muralArts: "Search Mural Arts Philadelphia's own list of murals",
     fix: 'Something missing or wrong? Add or fix it on OpenStreetMap; changes reach this map within about a week.',
     fixLink: 'Edit on OpenStreetMap',
-    credit: 'Sources: the City of Philadelphia, OpenStreetMap (© OpenStreetMap contributors) and Wikidata.',
+    credit: 'Public art from the City of Philadelphia, OpenStreetMap (© OpenStreetMap contributors) and Wikidata.',
   },
 
   // The route survey sheet page (M2.4, web/survey/, src/survey/). Times are our own estimate and

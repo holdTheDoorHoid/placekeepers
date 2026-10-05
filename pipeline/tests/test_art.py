@@ -675,6 +675,7 @@ def test_the_citys_artists_read_first_name_first_when_that_is_safe() -> None:
     assert city_artist("Fisher,  Rob") == "Rob Fisher"
     assert city_artist("De Rivera, Jose") == "Jose De Rivera"
     assert city_artist("Fitz-gerald, Clark B.") == "Clark B. Fitz-gerald"
+    assert city_artist("Abakanowicz, Magdalena\n(1930-2017)") == "Magdalena Abakanowicz"
     assert city_artist("Polak, Esther & Van Bekkum, Ivar") == "Polak, Esther & Van Bekkum, Ivar"
     assert (
         city_artist("Koblick, Freda and Tattersfield, Shirley")

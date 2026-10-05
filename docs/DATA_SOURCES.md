@@ -176,18 +176,56 @@ login or a key.
 | Heat exposure 2023 | City ArcGIS `HeatExposure_2023` (408 tracts of 2020, the score as text, "using HEI and SVI census tract information", edited 2023-03-15) | n/a | n/a | **Not used**: the published index above is the City's dataset of record |
 | NOAA and CAPA Heat Watch | Philadelphia took part in a street temperature campaign | n/a | n/a | **Not used**: no data file found |
 
+### Public art
+
+Used from M3.2 (2026-10-05) by the Public art layer (`public_art`, `tiles/art.pmtiles`,
+docs/CONTRACTS.md section 4). The three sources are merged into one point per work: 703 records on
+2026-10-05 (224 from the City, 410 from OpenStreetMap, 69 from Wikidata) became 651 works, 50 of
+them found in more than one source (48 in two, 2 in all three); 45 are memorial artworks, shown
+without names. Each work links to every source it came from.
+
+| Source | Endpoint, size and time | What we use | License and credit | Health rules | Status |
+|---|---|---|---|---|---|
+| Percent for Art | City ArcGIS `Percent_for_Art_Public`, the OpenDataPhilly dataset "Percent for Art Locations" from the Department of Planning and Development (the same 239 records as the Carto table `percent_for_art_public`; the ArcGIS layer is read because it says when it was last edited). 239 works on 2026-10-05: 224 Active, 10 Inaccessible, 5 In Progress; last edited 2025-08-19. One page in 2.3 seconds; an 83 kB snapshot | The Active works: title, artist, year, medium, where in words (and whether inside a building), the City's document about the work when it links one, and the parcel the work stands on (a polygon; the map puts the work on it). Street View links and neighborhood names are not downloaded | City terms; credited "Public art: City of Philadelphia, Percent for Art" | At least 200 rows, no more than 10 percent fewer; the last edit day is shown, with no age limit, since the City updates the list as needed | Used (M3.2): source `percent_for_art` |
+| OpenStreetMap artworks | `tourism=artwork` in the weekly extract (`osm_philadelphia`, below): every element so tagged inside the city limits. 411 on 2026-10-05 (data of 2026-10-03): 176 statues, 122 sculptures, 53 murals, 9 busts, 9 installations, 4 reliefs, 4 paintings, 2 mosaics, 3 others and 29 of no stated kind; 276 with a name and 196 with an artist; 115 link a web page (97 of them the Association for Public Art's page on the work) and 34 a Wikidata item | Name and other names, `artwork_type`, `artist_name`, `start_date`, `material`, `website`, `wikipedia` and `wikidata` (to find the same work in Wikidata), and the memorial tags. One artwork whose `end_date` had passed is left out | ODbL, credited "© OpenStreetMap contributors"; the merged layer is ODbL too | Those of the extract | Used (M3.2) |
+| Wikidata | Wikidata's query service, `https://query.wikidata.org/sparql`, one query a week with the project's User-Agent: items with a coordinate (P625) in a box around the city whose class (P31) is one of a fixed list of 27 kinds of public art (murals, sculptures, statues, busts, reliefs, mosaics, installations, monuments, memorials and similar; `WIKIDATA_CLASSES` in `pipeline/src/placekeepers/derive/art.py`). A search of every subclass of "work of art" timed out on the service, and its matches included television seasons and journals, so the list is fixed. 72 items on 2026-10-05, 69 inside the city limits; about 1 second for the query, 4.6 seconds for the download; an 11 kB snapshot | English label, classes, coordinate, the year it was made (P571), creators (P170), what it commemorates (P547) and whether that is a person, English Wikipedia article, described at (P973) and official website (P856), and whether it is gone (P576, or a state of use such as destroyed). No inscriptions and no images | CC0, which asks for no credit; credited "Public art: Wikidata (CC0)" anyway | At least 40 rows, no more than 25 percent fewer | Used (M3.2): source `wikidata_art` |
+
+**Left out until their owners agree** (owner outreach, docs/ROUTES.md section 6): philart.net (1,268
+works, an API offered as is and not for commercial use), the Association for Public Art's map (252
+works, non commercial and educational use only) and Philadelphia's Magic Gardens' mosaic map (231
+places, no terms stated). Parks and Recreation's layer of art and monuments in its parks
+(`PPR_Art_Monuments_point`, 213 points) is in the City's map services but not listed as open data,
+so it waits for Parks and Recreation too. The map still links to the Association for Public Art's
+and philart.net's pages about a work where OpenStreetMap's `website` tag names them: that is
+OpenStreetMap's data, and a link copies nothing.
+
+**Mural Arts Philadelphia** keeps the largest list of the city's murals (2,012 pages), and its
+terms forbid building a database from its content, so nothing is copied from its site. The layer's
+description and every mural's details link to its own list (`https://muralarts.org/artworks/`,
+checked 2026-10-05); a work links to its page on muralarts.org only when OpenStreetMap or Wikidata
+names that page (none did on 2026-10-05). Its form for proposing a mural is linked from the How to
+do it page.
+
+**Memorial artworks.** Some murals and plaques remember a person. Names of people killed come only
+from the hand curated memorials file (docs/ETHICS.md), so a work that any source marks as a
+memorial is published with no title, artist, year or inscription, only as a memorial artwork with
+its sources (the rule is in docs/CONTRACTS.md section 4). The 45 on 2026-10-05 are monuments such as
+statues OpenStreetMap tags as memorials, war memorials and memorial plaques; none was a memorial
+mural to a private person, but the rule stands ready for them.
+
 ### Placemaking: art, walkability, people
 
 | Source | Count | License | Plan |
 |---|---|---|---|
-| Percent for Art (Carto `percent_for_art_public`) | 239 | City terms | Use |
-| philart.net API (`/api/art.json`) | 1,268 | As is, non commercial | Use after emailing the site owner; needs a browser style User-Agent |
-| Association for Public Art map (JSON embedded in the page) | 252 | Non commercial and educational, with attribution | Ask permission first |
-| OpenStreetMap `tourism=artwork` | about 447 | ODbL | Use; also the channel for new murals |
-| Wikidata public art in Philadelphia | 43 | CC0 | Use |
-| Philadelphia's Magic Gardens mosaic map (Google My Maps KML) | 231 (three current folders) | Unstated | Ask permission first |
-| Mural Arts Philadelphia artworks | 2,012 pages | Terms forbid building a database from their content | **Link out only**; ask about a data partnership |
-| Public Art Archive | Not counted | Fair use, education and press only | Link out only |
+| Percent for Art (City ArcGIS `Percent_for_Art_Public`, the same list as Carto `percent_for_art_public`) | 239 | City terms | **Used (M3.2)**: source `percent_for_art`, see Public art above |
+| philart.net API (`/api/art.json`) | 1,268 | As is, non commercial | **Not used** until its owner agrees (owner outreach); needs a browser style User-Agent |
+| Association for Public Art map (JSON embedded in the page) | 252 | Non commercial and educational, with attribution | **Not used** until it agrees (owner outreach) |
+| OpenStreetMap `tourism=artwork` | 411 inside the city | ODbL | **Used (M3.2)**, from the weekly extract; also the channel for new murals |
+| Wikidata public art in Philadelphia | 69 inside the city | CC0 | **Used (M3.2)**: source `wikidata_art` |
+| Philadelphia's Magic Gardens mosaic map (Google My Maps KML) | 231 (three current folders) | Unstated | **Not used** until it agrees (owner outreach) |
+| Mural Arts Philadelphia artworks | 2,012 pages | Terms forbid building a database from their content | **Link out only**, never copied; ask about a data partnership |
+| Public Art Archive | Not counted | Fair use, education and press only | Link out only; not used |
+| Parks and Recreation art and monuments (City ArcGIS `PPR_Art_Monuments_point`) | 213 | Not listed on OpenDataPhilly, so no open data terms | **Not used**: ask Parks and Recreation (owner outreach) |
 | EPA National Walkability Index (2021, block groups, 405 MB) | | Federal, public domain | Use |
 | Walk Score | | Terms forbid storing scores | **Do not use** |
 | DVRPC pedestrian portal (sidewalks, crosswalks, curb ramps) | | Not stated | Use with its "2018 imagery, not field checked" caveat shown |

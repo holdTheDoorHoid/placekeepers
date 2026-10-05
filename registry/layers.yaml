@@ -533,7 +533,7 @@
       type: toggle
       default: true
     - id: other
-      label: Other kinds of art, such as installations, fountains and monuments
+      label: Other kinds of art
       type: toggle
       default: true
     - id: inside

@@ -98,7 +98,7 @@ own pages refuse automated access, so its steps are not described here.
 | Pedestrian plaza | OTIS | Follow City guidelines | Not stated | One year permit, renewable to three | Verified |
 | Street tree | Parks and Recreation's Street Tree Management Division (TreePhilly), StreetTree.Info@phila.gov, 215-685-4363 | The owner of the property in front of which the tree goes asks, online, by email or by phone; a City arborist visits and picks the tree | Free: the City plants it and waters and mulches it the first year | Planting seasons mid April to mid June and mid October to mid November | Verified 2026-10-05 (phila.gov "Get a street tree", treephilly.org) |
 | Bike rack | Streets | Application | Not stated | Not stated | Verified |
-| Wall mural | Mural Arts (applications due March 15 and November 15); the Art Commission for anything in the public right of way | Wall owner's permission | Free to apply | Months | Verified |
+| Wall mural | Mural Arts, through the "Want a mural on your wall?" form on its contact page (muralarts.org/contact; its old "apply for a mural" address now leads there); the Art Commission for anything in the public right of way | Wall owner's permission | Free to apply | Months | Verified 2026-10-05: the form asks about the wall, the community's support and why the mural matters, and lists no deadline (older guides gave March 15 and November 15) |
 | Report a dark streetlight, dumping, open vacant building | Philly311 | None | Free | Days to weeks | Verified |
 | New streetlight | None found. The City's LED conversion does not add lights; a Philadelphia Energy Authority "lighting equity study" may | n/a | n/a | n/a | Gap |
 | Bench on a sidewalk | No permit path found. At bus stops, benches belong to OTIS's street furniture program (shelters, benches, kiosks and transit head houses, paid for by advertising; OTIS request for information, May 2024), with no public request form: write to otis@phila.gov or call 215-686-9003 | n/a | Free to ask | Not stated | **Confirm with OTIS** (last checked 2026-10-05) |
@@ -185,7 +185,9 @@ These go into outreach drafts for the owner to send; agents never send them.
 5. Bicycle Coalition and Families for Safe Streets: may we show names from TrafficVictimsPHL, and how
    would families like it done?
 6. Mural Arts, the Association for Public Art, philart.net, and Philadelphia's Magic Gardens: may we
-   include their artwork locations?
+   include their artwork locations? And Parks and Recreation: may we include its list of art and
+   monuments in its parks (the `PPR_Art_Monuments_point` layer in the City's map services, which is
+   not listed as open data)?
 7. Parks and Recreation (Street Tree Management Division) and the Land Bank: will the City plant
    street trees in front of a vacant lot the City or the Land Bank owns, and who should ask?
 8. TreePhilly: may a resident plant a giveaway tree on a private vacant lot whose owner agrees in
