@@ -9,7 +9,18 @@
   import Legend from './Legend.svelte';
   import SettingControl from './SettingControl.svelte';
 
-  let { store, layer, idPrefix }: { store: AppStore; layer: Layer; idPrefix: string } = $props();
+  let {
+    store,
+    layer,
+    idPrefix,
+    level = 4,
+  }: {
+    store: AppStore;
+    layer: Layer;
+    idPrefix: string;
+    /** The heading level inside this layer (its legend and its sources). */
+    level?: 4 | 5;
+  } = $props();
 
   const registry = $derived(store.registry);
   const visible = $derived(store.state.layers.includes(layer.id));
@@ -50,7 +61,7 @@
         <SettingControl {store} {layer} {setting} {idPrefix} />
       {/each}
       {#if legend.length}
-        <h4 class="sr-only">{strings.layers.legend}</h4>
+        <svelte:element this={`h${level}`} class="sr-only">{strings.layers.legend}</svelte:element>
         <Legend entries={legend} />
       {/if}
     </div>
@@ -59,7 +70,7 @@
   <details>
     <summary>{strings.layers.details}</summary>
     <p>{layer.description}</p>
-    <h4>{strings.layers.sources}</h4>
+    <svelte:element this={`h${level}`} class="sources-title">{strings.layers.sources}</svelte:element>
     <ul class="sources">
       {#each sources as source (source.id)}
         {@const license = licenseOf(source.license)}
@@ -102,6 +113,9 @@
   }
   details {
     margin: 6px 0 0 28px;
+    font-size: 0.9rem;
+  }
+  .sources-title {
     font-size: 0.9rem;
   }
   .sources {

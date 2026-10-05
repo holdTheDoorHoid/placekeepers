@@ -42,6 +42,18 @@ describe('readContentPages', () => {
     expect(pages.how).toMatch(/<table>/);
   });
 
+  it('puts every table in its own sideways scrolling box that a keyboard can reach', () => {
+    for (const slug of slugsOnDisk()) {
+      const tables = pages[slug]!.match(/<table>/g)?.length ?? 0;
+      const boxes = pages[slug]!.match(/<div class="table-scroll" tabindex="0" role="group" aria-label="[^"]+"><table>/g)?.length ?? 0;
+      expect(boxes, `content/${slug}.md`).toBe(tables);
+    }
+  });
+
+  it('gives every table header cell some text, for screen readers', () => {
+    for (const slug of slugsOnDisk()) expect(pages[slug], `content/${slug}.md`).not.toMatch(/<th>\s*<\/th>/);
+  });
+
   it('never leaves the removal email token in the rendered contact page', () => {
     expect(pages.contact).not.toContain('{{REMOVAL_EMAIL}}');
   });

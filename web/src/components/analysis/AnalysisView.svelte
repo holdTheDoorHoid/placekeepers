@@ -2,6 +2,7 @@
   // The analysis view, desktop first: lens sliders, filters and layers on the left, the
   // selected place or a summary of the area on the right, and a ranked list underneath.
   // On narrower screens the side panels become panels that open over the map.
+  import { tick } from 'svelte';
   import { strings } from '../../strings.ts';
   import { rankPlaces, type ScoreOrder } from '../../places/rank.ts';
   import type { AppStore } from '../../state/store.svelte.ts';
@@ -20,8 +21,15 @@
   let { store }: { store: AppStore } = $props();
 
   type Panel = 'table' | 'plot' | 'lists';
+  type Side = 'left' | 'right';
   let leftOpen = $state(false);
   let rightOpen = $state(false);
+  let leftToggle: HTMLButtonElement | undefined = $state();
+  let rightToggle: HTMLButtonElement | undefined = $state();
+  let leftPanel: HTMLElement | undefined = $state();
+  let rightPanel: HTMLElement | undefined = $state();
+  /** Screen widths where each side panel opens over the map instead of sitting beside it. */
+  const OVER_MAP: Record<Side, string> = { left: '(max-width: 767px)', right: '(max-width: 1099px)' };
   /** Which part of the drawer under the map is open, if any. */
   let panel = $state<Panel | null>(null);
   let order = $state<ScoreOrder>('desc');
@@ -34,11 +42,42 @@
   ];
   const listCount = $derived(store.lists.active?.places.length ?? 0);
 
+  function overMap(side: Side): boolean {
+    return window.matchMedia(OVER_MAP[side]).matches;
+  }
+
+  /**
+   * Opens or closes a side panel. Where the panel opens over the map, keyboard focus moves into it
+   * when it opens and back to its button when it closes, so it never sits behind the panel.
+   */
+  async function setPanel(side: Side, open: boolean) {
+    if (side === 'left') leftOpen = open;
+    else rightOpen = open;
+    if (!overMap(side)) return;
+    await tick();
+    if (open) (side === 'left' ? leftPanel : rightPanel)?.querySelector<HTMLElement>('.panel-close button')?.focus();
+    else (side === 'left' ? leftToggle : rightToggle)?.focus();
+  }
+
+  /** Escape closes a panel that covers the map, as it closes the other panels on the page. */
+  function onKey(event: KeyboardEvent) {
+    if (event.key !== 'Escape' || event.defaultPrevented) return;
+    const target = event.target as Node | null;
+    for (const side of ['left', 'right'] as const) {
+      const panel = side === 'left' ? leftPanel : rightPanel;
+      const open = side === 'left' ? leftOpen : rightOpen;
+      if (open && panel?.contains(target) && overMap(side)) {
+        event.preventDefault();
+        void setPanel(side, false);
+      }
+    }
+  }
+
   /** Flies to the open lot. On phones the details panel covers the whole map, so it closes first. */
   function showOnMap() {
     const center = store.dossier.center;
     if (!center || !store.controller) return;
-    if (store.controller.coverPadding() === null) rightOpen = false;
+    if (store.controller.coverPadding() === null) void setPanel('right', false);
     store.controller.flyTo(center);
   }
 
@@ -58,22 +97,34 @@
   });
 </script>
 
+<svelte:window onkeydown={onKey} />
+
 <div class="toolbar">
-  <button class="button small narrow-only" type="button" aria-expanded={leftOpen} aria-controls="pk-left" onclick={() => (leftOpen = !leftOpen)}
-    >{strings.analysis.openLeft}</button
+  <button
+    class="button small narrow-only"
+    type="button"
+    bind:this={leftToggle}
+    aria-expanded={leftOpen}
+    aria-controls="pk-left"
+    onclick={() => void setPanel('left', !leftOpen)}>{strings.analysis.openLeft}</button
   >
-  <button class="button small" type="button" aria-expanded={rightOpen} aria-controls="pk-right" onclick={() => (rightOpen = !rightOpen)}
-    >{strings.analysis.openRight}</button
+  <button
+    class="button small"
+    type="button"
+    bind:this={rightToggle}
+    aria-expanded={rightOpen}
+    aria-controls="pk-right"
+    onclick={() => void setPanel('right', !rightOpen)}>{strings.analysis.openRight}</button
   >
 </div>
 
-<aside id="pk-left" class="panel left" class:open={leftOpen} aria-label={strings.analysis.leftTitle} data-map-cover>
+<aside id="pk-left" class="panel left" class:open={leftOpen} aria-label={strings.analysis.leftTitle} data-map-cover bind:this={leftPanel}>
   <div class="panel-close narrow-only">
-    <button class="icon-button" type="button" aria-label={strings.analysis.closePanel} onclick={() => (leftOpen = false)}>&times;</button>
+    <button class="icon-button" type="button" aria-label={strings.analysis.closePanel} onclick={() => void setPanel('left', false)}>&times;</button>
   </div>
   <div class="search"><AddressSearch {store} idPrefix="pk-analysis" /></div>
   {#each store.registry.lenses as lens (lens.id)}
-    <LensPanel {store} {lens} idPrefix="left" />
+    <LensPanel {store} {lens} idPrefix="left" level={2} />
   {/each}
   <Filters {store} />
   <section class="layers" aria-labelledby="pk-left-layers">
@@ -82,9 +133,9 @@
   </section>
 </aside>
 
-<aside id="pk-right" class="panel right" class:open={rightOpen} aria-label={strings.analysis.rightTitle} data-map-cover>
+<aside id="pk-right" class="panel right" class:open={rightOpen} aria-label={strings.analysis.rightTitle} data-map-cover bind:this={rightPanel}>
   <div class="panel-close not-wide">
-    <button class="icon-button" type="button" aria-label={strings.analysis.closePanel} onclick={() => (rightOpen = false)}>&times;</button>
+    <button class="icon-button" type="button" aria-label={strings.analysis.closePanel} onclick={() => void setPanel('right', false)}>&times;</button>
   </div>
   {#if store.inspected}
     <FeatureDetails
@@ -122,7 +173,10 @@
       <RankedTable {store} places={ranked} {order} onOrder={(next) => (order = next)} />
     {/if}
   </div>
-  <div id="pk-drawer-plot" class="drawer-body" hidden={panel !== 'plot'}>
+  <!-- The plot has nothing to tab to (the ranked list is its keyboard alternative), so its box
+       takes focus itself, letting the arrow keys scroll it (WCAG 2.1.1). -->
+  <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+  <div id="pk-drawer-plot" class="drawer-body" hidden={panel !== 'plot'} tabindex="0" role="region" aria-label={strings.analysis.tabPlot}>
     {#if panel === 'plot'}<NeedPlot {store} places={ranked} idPrefix="pk-analysis" />{/if}
   </div>
   <div id="pk-drawer-lists" class="drawer-body" hidden={panel !== 'lists'}>

@@ -89,13 +89,13 @@
 
   <section aria-labelledby="pk-settings-layers">
     <h3 id="pk-settings-layers">{strings.settings.layersTitle}</h3>
-    <LayerList {store} idPrefix="settings" showReset={false} />
+    <LayerList {store} idPrefix="settings" showReset={false} level={4} />
   </section>
 
   <section aria-labelledby="pk-settings-lens">
     <h3 id="pk-settings-lens">{strings.settings.lensTitle}</h3>
     {#each store.registry.lenses as lens (lens.id)}
-      <LensPanel {store} {lens} idPrefix="settings" />
+      <LensPanel {store} {lens} idPrefix="settings" level={4} />
     {/each}
   </section>
 

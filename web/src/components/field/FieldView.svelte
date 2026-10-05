@@ -1,6 +1,7 @@
 <script lang="ts">
   // The field view, phones first: search, "Near me", the three main chips, and a bottom
   // sheet listing what you can do nearby.
+  import { tick } from 'svelte';
   import { FIELD_CHIPS } from '../../config/chips.ts';
   import { FILTERS, filterNarrows } from '../../config/filters.ts';
   import { STYLES, styleFor } from '../../map/styles/index.ts';
@@ -53,6 +54,16 @@
   const places = $derived(all.slice(0, cardCount));
   const narrowed = $derived(FILTERS.filter((f) => filterNarrows(f, store.state.filters[f.id])).length);
 
+  /** The sheet's own button: where keyboard focus goes when the sheet closes under it. */
+  let sheetToggle: HTMLButtonElement | undefined = $state();
+
+  /** Closes the sheet to show the map, keeping keyboard focus on the sheet's button. */
+  async function closeSheetForMap() {
+    sheetOpen = false;
+    await tick();
+    sheetToggle?.focus();
+  }
+
   // Addresses come from the lot dossiers, for the cards on show.
   $effect(() => {
     void store.addresses.request(places.map((p) => p.id));
@@ -104,7 +115,8 @@
       <span id="pk-near-me-note" class="sr-only">{strings.field.nearMePrivacy}</span>
     {/if}
   </div>
-  {#if store.userLocation}<p class="location-note small" role="status">{strings.field.locationInUse}</p>{/if}
+  <!-- Always in place, so screen readers announce the note when Near me fills it. -->
+  <p class="location-note small" role="status">{store.userLocation ? strings.field.locationInUse : ''}</p>
   <div class="chips" role="group" aria-label={strings.field.chipsLabel}>
     {#each chips as chip (chip.id)}
       {#if chip.layers.length > 0}
@@ -124,7 +136,14 @@
 
 <section class="sheet" class:open={sheetOpen} id="places-section" tabindex="-1" aria-labelledby="pk-sheet-title" data-map-cover>
   <h2 id="pk-sheet-title">
-    <button type="button" class="sheet-toggle" aria-expanded={sheetOpen} aria-controls="pk-places" onclick={() => (sheetOpen = !sheetOpen)}>
+    <button
+      type="button"
+      class="sheet-toggle"
+      bind:this={sheetToggle}
+      aria-expanded={sheetOpen}
+      aria-controls="pk-places"
+      onclick={() => (sheetOpen = !sheetOpen)}
+    >
       <span class="grip" aria-hidden="true"></span>
       <span class="title">{strings.sheet.title}</span>
       {#if places.length > 0}<span class="count">{strings.sheet.countLabel(places.length)}</span>{/if}
@@ -148,11 +167,11 @@
           <button class="button quiet small" type="button" onclick={() => store.clearFilters()}>{strings.filters.clear}</button>
         </p>
       {/if}
-      <div class="cards">
+      <ul class="cards" aria-label={strings.sheet.title}>
         {#each places as place (place.id)}
-          <PlaceCard {store} {place} lensLabel={lens?.label ?? ''} {fromYou} onShow={() => (sheetOpen = false)} />
+          <li><PlaceCard {store} {place} lensLabel={lens?.label ?? ''} {fromYou} onShow={() => void closeSheetForMap()} /></li>
         {/each}
-      </div>
+      </ul>
       {#if all.length > places.length}
         <button class="button quiet small" type="button" onclick={() => (cardCount += CARDS_STEP)}>{strings.sheet.showMore}</button>
       {/if}
@@ -179,8 +198,8 @@
     idPrefix="pk-field-dossier"
     onShowOnMap={() => {
       store.dossierOpen = false;
-      sheetOpen = false;
       if (store.dossier.center) store.controller?.flyTo(store.dossier.center);
+      void closeSheetForMap();
     }}
   />
 </Dialog>
@@ -291,8 +310,11 @@
   .cards {
     display: grid;
     gap: 10px;
-    margin-bottom: 8px;
+    margin: 0 0 8px;
+    padding: 0;
+    list-style: none;
   }
+
   .notice {
     margin-bottom: 8px;
   }
@@ -302,5 +324,10 @@
   .location-note {
     margin: 0;
     color: var(--pk-muted);
+  }
+  .location-note:empty {
+    display: block;
+    height: 0;
+    margin-top: -8px;
   }
 </style>

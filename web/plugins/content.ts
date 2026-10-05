@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { marked } from 'marked';
 import type { Plugin } from 'vite';
 import { REMOVAL_EMAIL } from '../src/content/removal-email.ts';
+import { strings } from '../src/strings.ts';
 import { findDashViolations } from '../src/style/no-dashes.ts';
 
 export const CONTENT_DIR = fileURLToPath(new URL('../../content', import.meta.url));
@@ -27,6 +28,18 @@ function renderRemovalEmail(): string {
   return REMOVAL_EMAIL ? `Email us at [${REMOVAL_EMAIL}](mailto:${REMOVAL_EMAIL}).` : REMOVAL_EMAIL_FALLBACK;
 }
 
+/**
+ * Wraps each table in a box that scrolls sideways on its own, so a wide table never makes the
+ * whole page scroll sideways on a phone (WCAG 1.4.10). The box can take keyboard focus, so the
+ * arrow keys scroll it too (WCAG 2.1.1), and it is named for screen readers: a group rather than a
+ * landmark, so pages with many tables do not fill the list of landmarks.
+ */
+export function wrapTables(html: string): string {
+  return html
+    .replaceAll('<table>', `<div class="table-scroll" tabindex="0" role="group" aria-label="${strings.content.tableLabel}"><table>`)
+    .replaceAll('</table>', '</table></div>');
+}
+
 function markdownFiles(dir: string): string[] {
   return readdirSync(dir)
     .filter((name) => name.endsWith('.md') && name !== 'README.md')
@@ -42,7 +55,7 @@ export function readContentPages(dir: string = CONTENT_DIR): Record<string, stri
     const slug = name.slice(0, -3);
     const raw = readFileSync(resolve(dir, name), 'utf8').replaceAll(REMOVAL_EMAIL_TOKEN, renderRemovalEmail());
     for (const problem of findDashViolations(raw)) problems.push(`content/${name} has a ${problem}`);
-    pages[slug] = marked.parse(raw, { async: false }) as string;
+    pages[slug] = wrapTables(marked.parse(raw, { async: false }) as string);
   }
 
   if (problems.length) {

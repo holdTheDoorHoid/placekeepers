@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { Snippet } from 'svelte';
   import { config } from '../config/index.ts';
   import { freshness } from '../data/manifest.ts';
   import type { AppStore } from '../state/store.svelte.ts';
@@ -8,7 +9,7 @@
   import SiteNav from './common/SiteNav.svelte';
   import ViewSwitch from './ViewSwitch.svelte';
 
-  let { store, onOpenSettings }: { store: AppStore; onOpenSettings: () => void } = $props();
+  let { store, onOpenSettings, children }: { store: AppStore; onOpenSettings: () => void; children?: Snippet } = $props();
 
   let menuOpen = $state(false);
 
@@ -29,28 +30,32 @@
   }
 </script>
 
-<header class="topbar">
-  <h1 class="brand">
-    <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
-      <rect width="32" height="32" rx="7" fill="#1f5f8b" />
-      <path d="M16 6c-5 4-8 8-8 12a8 8 0 0 0 16 0c0-4-3-8-8-12z" fill="#c2e699" />
-      <path d="M16 12v14" stroke="#1f5f8b" stroke-width="2" stroke-linecap="round" />
-    </svg>
-    <span class="name">{strings.app.name}</span>
-  </h1>
-  <ViewSwitch {store} />
-  <div class="actions">
-    <button class="button quiet small" type="button" aria-haspopup="dialog" onclick={() => (menuOpen = true)}
-      >{strings.nav.menu}</button
+<!-- The page's banner: the top bar, and any note about the whole site (children) below it. -->
+<header class="masthead">
+  <div class="topbar">
+    <h1 class="brand">
+      <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+        <rect width="32" height="32" rx="7" fill="#1f5f8b" />
+        <path d="M16 6c-5 4-8 8-8 12a8 8 0 0 0 16 0c0-4-3-8-8-12z" fill="#c2e699" />
+        <path d="M16 12v14" stroke="#1f5f8b" stroke-width="2" stroke-linecap="round" />
+      </svg>
+      <span class="name">{strings.app.name}</span>
+    </h1>
+    <ViewSwitch {store} />
+    <div class="actions">
+      <button class="button quiet small" type="button" aria-haspopup="dialog" onclick={() => (menuOpen = true)}
+        >{strings.nav.menu}</button
+      >
+      <a class="freshness" data-kind={fresh.kind} href="{config.siteBase}status/">
+        <span class="dot" aria-hidden="true"></span>{fresh.text}<span class="sr-only">. {strings.header.dataStatus}</span>
+      </a>
+      <button class="button quiet small" type="button" onclick={share}>{strings.header.share}</button>
+    </div>
+    <button class="button primary small settings" type="button" aria-haspopup="dialog" onclick={onOpenSettings}
+      >{strings.header.settings}</button
     >
-    <a class="freshness" data-kind={fresh.kind} href="{config.siteBase}status/">
-      <span class="dot" aria-hidden="true"></span>{fresh.text}<span class="sr-only">. {strings.header.dataStatus}</span>
-    </a>
-    <button class="button quiet small" type="button" onclick={share}>{strings.header.share}</button>
   </div>
-  <button class="button primary small settings" type="button" aria-haspopup="dialog" onclick={onOpenSettings}
-    >{strings.header.settings}</button
-  >
+  {@render children?.()}
 </header>
 
 <Dialog bind:open={menuOpen} title={strings.nav.menuTitle} id="pk-menu">

@@ -75,6 +75,11 @@ export const strings = {
     licenses: 'Code: GPL-3.0. Data: each source has its own license. Writing: Creative Commons BY-SA 4.0.',
   },
 
+  content: {
+    /** The name screen readers give a table box on a content page, which scrolls sideways. */
+    tableLabel: 'Table, scrolls sideways',
+  },
+
   header: {
     settings: 'Settings',
     share: 'Copy link',
@@ -439,6 +444,9 @@ export const strings = {
     saveName: 'Save the name',
     cancel: 'Cancel',
     delete: 'Delete this list',
+    made: (name: string) => `Made the list "${name}". Places you save now go to it.`,
+    renamed: (name: string) => `The list is now called "${name}".`,
+    deleted: (name: string) => `Deleted "${name}" from this browser.`,
     confirmDelete: (name: string, n: number) =>
       `Delete "${name}" and its ${plural(n, 'place', 'places')} from this browser? It cannot be brought back unless you downloaded it.`,
     count: (n: number) => plural(n, 'place', 'places'),

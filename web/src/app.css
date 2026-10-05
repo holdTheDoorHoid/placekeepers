@@ -271,8 +271,12 @@ a:hover {
 }
 
 /* Form controls */
+/* Sliders are taller than the browser draws them, so a finger or a pointer has room to land
+   (WCAG 2.5.8 asks for at least 24 pixels; phones get more, below). */
 input[type='range'] {
   width: 100%;
+  height: 28px;
+  margin: 0;
   accent-color: var(--pk-accent);
 }
 
@@ -339,12 +343,19 @@ caption {
 }
 
 /* The map's short credits line: in the field view it sits top left, clear of the bottom sheet,
-   and wraps before it reaches the zoom buttons on the right. */
+   and wraps before it reaches the zoom buttons on the right. Its background is nearly opaque, so
+   its text stays readable over any part of the map, and its links are underlined, so they do not
+   rely on color (MapLibre's own style, loaded later, would take both away without the doubled
+   class). */
 .maplibregl-ctrl-top-left .maplibregl-ctrl-attrib {
   max-width: calc(100vw - 72px);
 }
 
-.maplibregl-ctrl-attrib a {
+.maplibregl-ctrl.maplibregl-ctrl-attrib {
+  background-color: rgba(255, 255, 255, 0.88);
+}
+
+.maplibregl-ctrl.maplibregl-ctrl-attrib a {
   color: inherit;
   text-decoration: underline;
 }
@@ -354,6 +365,34 @@ caption {
 .maplibregl-canvas:focus-visible {
   outline: 3px solid var(--pk-focus);
   outline-offset: -3px;
+}
+
+/* Lists of links (lot pages, layer sources): links at least 24 pixels apart (WCAG 2.5.8). */
+.links > li {
+  padding-block: 2px;
+}
+
+/* Phones and tablets: bigger targets for fingers, aiming at 44 pixels for the main controls. */
+@media (pointer: coarse) {
+  .button,
+  .chip,
+  .icon-button {
+    min-height: 44px;
+  }
+  .icon-button {
+    width: 44px;
+  }
+  .button.small,
+  .chip-choice {
+    min-height: 40px;
+  }
+  input[type='range'] {
+    height: 44px;
+  }
+  .maplibregl-ctrl-group button {
+    width: 40px;
+    height: 40px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

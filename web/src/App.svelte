@@ -121,18 +121,22 @@
       document.getElementById('places-section')?.focus();
     }}>{strings.app.skipToList}</a
   >
-  <Header {store} onOpenSettings={() => (settingsOpen = true)} />
-  {#if sample}<p class="sample" role="note">{strings.app.sampleData}</p>{:else}<p class="sample" role="note">
-      {strings.app.earlyPreview}
-      <a href={strings.app.repoUrl}>{strings.app.followAlong}</a>
-    </p>{/if}
+  <Header {store} onOpenSettings={() => (settingsOpen = true)}>
+    {#if sample}<p class="sample" role="note">{strings.app.sampleData}</p>{:else}<p class="sample" role="note">
+        {strings.app.earlyPreview}
+        <a href={strings.app.repoUrl}>{strings.app.followAlong}</a>
+      </p>{/if}
+  </Header>
   <main class="stage {store.state.view}" class:with-dossier={store.dossierView !== null && !store.inspected}>
-    <div class="map-area"><MapView {store} /></div>
+    <!-- The view's controls and lists come before the map, so the keyboard reaches them in the
+         order they appear on screen; the grid places each part where it belongs. The map stays
+         outside the switch, so changing views never reloads it. -->
     {#if store.state.view === 'field'}
       <FieldView {store} />
     {:else}
       <AnalysisView {store} />
     {/if}
+    <div class="map-area"><MapView {store} /></div>
   </main>
   <SettingsDrawer {store} bind:open={settingsOpen} />
   <div class="toast" class:shown={store.message !== ''} role="status" aria-live="polite">{store.message}</div>
