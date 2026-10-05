@@ -220,7 +220,10 @@ def build_stress(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) -
             if not 1 <= worst <= 4:
                 continue
             first = max(rows, key=lambda r: int(round(r["lts"])))
-            properties: dict[str, object] = {"l": worst}
+            properties: dict[str, object] = {}
+            if isinstance(key, int | float):
+                properties["id"] = int(key)
+            properties["l"] = worst
             calmer = min(stress)
             if calmer < worst:
                 properties["l2"] = calmer

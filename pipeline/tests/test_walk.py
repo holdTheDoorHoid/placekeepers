@@ -633,9 +633,9 @@ def test_traffic_stress_shows_each_street_once_with_its_more_stressful_direction
     result = build_stress(ctx, {"dvrpc_lts": store.path_for(store.current())}, out, AS_OF)
     found = [f["properties"] for f in json.loads(out.read_text())["features"]]
     assert found == [
-        {"l": 3, "l2": 2, "bf": 3, "sp": 30, "ln": 2},
-        {"l": 1, "bf": 6, "ln": 2},
-        {"l": 1, "sp": 25, "ln": 1},
+        {"id": 7, "l": 3, "l2": 2, "bf": 3, "sp": 30, "ln": 2},
+        {"id": 8, "l": 1, "bf": 6, "ln": 2},
+        {"id": 10, "l": 1, "sp": 25, "ln": 1},
     ]
     assert result.notes == [
         "stress: 3 street segments rated by DVRPC: 2 at level 1, 0 at level 2, 1 at level 3, "
