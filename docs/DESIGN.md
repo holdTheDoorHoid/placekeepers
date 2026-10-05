@@ -362,7 +362,8 @@ As built (M1.5, 2026-10-04):
 ## 6. Finding vacant land without depending on one source
 
 The City's vacancy indicator stopped being accurate in June 2024, and that alone ended the original
-project. On 2026-09-27 the City recalculated both indicator layers (28,771 lots and 9,519 buildings).
+project. On 2026-09-27 the City recalculated both indicator layers (28,771 lots and 9,519 buildings),
+and rebuilt them again on 2026-10-04 (28,770 lots and 9,569 buildings, every record dated that day).
 Compared with the June 2024 list L&I gave the original project, 69% of today's lots and 39% of
 today's buildings were already listed, so this is a real recalculation, not old records with a new
 date. Placekeepers uses the indicator, but never alone: losing any one signal lowers confidence on the

@@ -34,8 +34,8 @@ Both allow browser requests without a key.
 
 | Source | Endpoint | Use | Cadence | Status |
 |---|---|---|---|---|
-| Vacant Property Indicators, land | City ArcGIS `Vacant_Indicators_Land` (28,771) | Strong signal, with `land_rank` | Irregular | **Recalculated 2026-09-27.** Compared with the June 2024 L&I list: 69% of today's lots were on it, 5,880 dropped off, 8,980 are new. Real churn, not just a new date |
-| Vacant Property Indicators, buildings | City ArcGIS `Vacant_Indicators_Bldg` (9,519) | Strong signal, with `build_rank` | Irregular | Recalculated 2026-09-27; only 39% overlap with the original's self collected 2024 list |
+| Vacant Property Indicators, land | City ArcGIS `Vacant_Indicators_Land` (28,771) | Strong signal, with `land_rank` | Irregular | **Recalculated 2026-09-27.** Compared with the June 2024 L&I list: 69% of today's lots were on it, 5,880 dropped off, 8,980 are new. Real churn, not just a new date. Rebuilt again on 2026-10-04 (28,770 lots, every record dated that day) |
+| Vacant Property Indicators, buildings | City ArcGIS `Vacant_Indicators_Bldg` (9,519) | Strong signal, with `build_rank` | Irregular | Recalculated 2026-09-27; only 39% overlap with the original's self collected 2024 list. Rebuilt again on 2026-10-04 (9,569 buildings) |
 | June 2024 vacancy lists | Clean & Green Philly `land_backup_2024_06_24.parquet` (25,663 rows, from L&I) and `buildings_backup_2024_06_24.parquet` (9,955, self collected) | Validation labels and history | Frozen | Downloaded and checked 2026-10-04 |
 | L&I violations | Carto `violations` (2.02 million, 2007 onward) | Vacancy related violations per parcel | Daily | Live. Use `violations`, not the smaller `li_violations` |
 | L&I complaints | Carto `complaints` (1,065,777; 2014 onward). `public_cases_fc` is the larger 311 request table | Complaint density, vacant lot complaints | Daily | Live |
