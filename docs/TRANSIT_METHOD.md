@@ -158,12 +158,21 @@ carries the numbers of the stops across the street while each point stands on an
 so the point decides. (An early draft trusted a number up to 60 meters away; on Frankford
 Avenue that would have put a run of answers on the wrong side of the street.)
 
-On 2026-10-05: **663 of the 7,927 bus and trolley stops** match one of the 829 stops OpenStreetMap
-has in the city, 182 where the stop numbers agree and 481 by place; 54 OpenStreetMap stops carry the
-number of a SEPTA stop farther away. **279 stops have their shelter or bench surveyed**: 75 with a
-shelter or roof, 7 with a bench but no shelter mapped, 197 with neither. The other 7,648 are not yet
-surveyed (7,264 have no OpenStreetMap stop matched to them, and 384 have one that no one has
-answered for yet). The route
+Two more rules keep answers on the right side of the street (added by the v0.2 review,
+[VERIFICATION_V0_2.md](VERIFICATION_V0_2.md)). A number is believed only when no other SEPTA stop
+stands more than 3 meters closer to the OpenStreetMap stop: at Frankford Avenue and Huntingdon
+Street a stop numbered for the southbound stop 12 meters away, across the street, stands 4 meters
+from another stop, and its "no shelter, no bench, not lit" had gone to the southbound side. And
+an OpenStreetMap stop pairs by place only with its nearest SEPTA stop: when that one is already
+taken, it stays unpaired instead of moving to a farther stop. At 30th Street a street stop had
+moved on to the trolley platform underground and asked the City for a shelter there.
+
+On 2026-10-05: **660 of the 7,927 bus and trolley stops** match one of the 829 stops OpenStreetMap
+has in the city, 181 where the stop numbers agree and 479 by place; 55 OpenStreetMap stops carry the
+number of a SEPTA stop they are not paired with. **278 stops have their shelter or bench surveyed**:
+75 with a shelter or roof, 7 with a bench but no shelter mapped, 196 with neither. The other 7,649
+are not yet surveyed (7,267 have no OpenStreetMap stop matched to them, and 382 have one that no one
+has answered for yet). The route
 sheets pair every stop the same way except one: a berth of the 69th Street Transportation Center,
 just across the city line, whose OpenStreetMap stop the sheets give to a berth outside the city.
 
@@ -173,8 +182,8 @@ the share of stops ranking lower.
 | Factor | Measure | Badge | Default weight | Stops with data |
 |---|---|---|---|---|
 | People getting on each weekday | SEPTA's count (`b`); the share of stops with fewer | Context | 3 | 7,755 |
-| No shelter | 100 a survey found none, 0 a shelter or the whole stop under a roof, 50 not yet surveyed | Weak | 3 | all (7,622 halfway) |
-| No bench | 100 a survey found none, 0 a bench, 50 not yet surveyed | Weak | 2 | all (7,660 halfway) |
+| No shelter | 100 a survey found none, 0 a shelter or the whole stop under a roof, 50 not yet surveyed | Weak | 3 | all (7,623 halfway) |
+| No bench | 100 a survey found none, 0 a bench, 50 not yet surveyed | Weak | 2 | all (7,661 halfway) |
 | Little shade nearby | tree canopy of 2018 on the land of the stop's hexagon (H3 resolution 9, about two blocks across; water left out); the share of stops with more canopy | Mixed | 2 | 7,926 |
 | Hot neighborhood in summer | the heat exposure score of the stop's census tract, from the City's heat vulnerability data; the share of stops in cooler tracts | Context | 1 | 7,559 |
 | On the High Injury Network | 100 within 30 meters of the network, else 0 | Context | 2 | all (4,041 on it) |
@@ -189,17 +198,17 @@ place's average. Here that would let a stop known only for its heat and its stre
 and counting an unknown shelter as missing would score the stop as if it had nothing. So a shelter
 or bench no one has recorded yet is 50, halfway between having one and not, and the stop gets the
 suggestion to survey it. The stop's page never names a halfway answer as the main reason, and its
-"why" table marks it "not yet surveyed". On 2026-10-05, 38 of the 100 stops ranked highest under
-the default weights were not yet surveyed, and 62 were surveyed with neither a shelter nor a bench.
+"why" table marks it "not yet surveyed". On 2026-10-05, 39 of the 100 stops ranked highest under
+the default weights were not yet surveyed, and 61 were surveyed with neither a shelter nor a bench.
 
 **Suggestions,** in the order a stop lists them, with the count of stops on 2026-10-05 (7,902 of
 the 7,927 have at least one):
 
 | Suggestion | When | Stops | First step |
 |---|---|---|---|
-| Survey this stop with StreetComplete | the shelter or the bench is not known yet | 7,663 | install the free app and answer its questions at the stop |
-| Ask the City for a shelter at this stop | a survey found no shelter, and the stop is not under a roof | 230 | there is no public request form: write to OTIS (otis@phila.gov, 215-686-9003) with the stop's number and its riders, and copy the Council office and SEPTA |
-| Ask the City for a bench at this stop | a survey found no bench | 211 | the same: no public form, write to OTIS |
+| Survey this stop with StreetComplete | the shelter or the bench is not known yet | 7,664 | install the free app and answer its questions at the stop |
+| Ask the City for a shelter at this stop | a survey found no shelter, and the stop is not under a roof | 229 | there is no public request form: write to OTIS (otis@phila.gov, 215-686-9003) with the stop's number and its riders, and copy the Council office and SEPTA |
+| Ask the City for a bench at this stop | a survey found no bench | 210 | the same: no public form, write to OTIS |
 | Report a dark streetlight at this stop | OpenStreetMap says the stop is not lit | 17 | report an outage to Philly311; a stop with no light at all is a question for OTIS |
 | Plant shade trees by this stop | among the quarter of stops with the least canopy (`f_shade` 75 or more) | 1,998 | the owners of the buildings beside the stop ask for a free street tree |
 

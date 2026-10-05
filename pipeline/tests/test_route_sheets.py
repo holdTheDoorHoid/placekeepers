@@ -212,6 +212,46 @@ def test_a_stop_number_across_the_street_is_not_believed() -> None:
     assert match_septa(osm, septa) == {1: 0}
 
 
+def test_a_number_naming_the_stop_across_a_narrow_street_is_not_believed() -> None:
+    # Frankford Avenue at Huntingdon Street, as found by the v0.2 review: the stop's number names
+    # the southbound stop 12 meters away, across the street, but the point stands 4 meters from
+    # another SEPTA stop on its own side. Its answers must not go across the street.
+    lat, lng = 39.9876, -75.1271
+    septa = [
+        septa_point("24149", *offset(lat, lng, east=12)),  # across the street
+        septa_point("16350", *offset(lat, lng, north=4)),  # on the point's own corner
+    ]
+    osm = [osm_stop(1, lat, lng, ref="24149")]
+    assert match_septa(osm, septa) == {1: 0}
+
+
+def test_a_number_still_decides_between_two_stops_almost_as_close() -> None:
+    # Main Street at Hermit Street: the numbered stop is 12 meters away and the other 11.3.
+    lat, lng = 40.0262, -75.2262
+    septa = [
+        septa_point("16205", *offset(lat, lng, north=11.3)),
+        septa_point("30907", *offset(lat, lng, east=12)),
+    ]
+    osm = [osm_stop(1, lat, lng, ref="30907")]
+    assert match_septa(osm, septa) == {1: 0}
+
+
+def test_a_stop_whose_nearest_septa_stop_is_taken_does_not_move_farther() -> None:
+    # 30th Street: a street stop 6.5 meters from SEPTA's Market Street stop (already paired by its
+    # number with another OpenStreetMap stop) used to fall to the next SEPTA stop within 15
+    # meters, the trolley platform underground. It now stays unpaired.
+    lat, lng = 39.9548, -75.1835
+    septa = [
+        septa_point("18996", lat, lng),
+        septa_point("20643", *offset(lat, lng, north=10.7, east=6.5)),
+    ]
+    osm = [
+        osm_stop(1, *offset(lat, lng, north=1), ref="18996"),
+        osm_stop(2, *offset(lat, lng, east=6.5)),  # 6.5 meters from 18996, 10.7 from 20643
+    ]
+    assert match_septa(osm, septa) == {0: 0}
+
+
 def test_a_former_stop_number_also_counts() -> None:
     lat, lng = 39.96, -75.15
     septa = [septa_point("300", *offset(lat, lng, north=2)), septa_point("201", lat, lng, "55")]
