@@ -85,6 +85,30 @@ ngtrust@pennhort.org) works to permanently protect community gardens from ever b
 under the people who built them. **Not yet confirmed:** exactly which gardens qualify; ask them
 directly.
 
+### Trees on and along a lot
+
+Trees cool a block with their shade, and the heat and shade lens on the map shows where they would
+help most. Planting on a lot, or in the sidewalk in front of it, starts with the lot's owner, so
+begin with the permission routes above. Then:
+
+- **Free street trees.** The City plants a street tree in the sidewalk in front of a property when
+  its owner asks Parks and Recreation's Street Tree Management Division, online, by email at
+  StreetTree.Info@phila.gov, or by phone at 215 685 4363. Ask the lot's owner, named on its lot
+  page, or the Land Bank for City or Land Bank land. The City picks the tree, cuts the sidewalk,
+  plants it for free in spring (mid April to mid June) or fall (mid October to mid November), and
+  waters it the first year. After that it needs about 20 gallons of water a week from March
+  through December, and neighbors can help. **Not yet confirmed:** whether the City plants in
+  front of a lot the City or the Land Bank owns.
+- **Free trees from a TreePhilly giveaway.** TreePhilly gives Philadelphia residents free trees to
+  plant in the ground on private property, never in a pot or the sidewalk. Sign up for its
+  newsletter, register with the group hosting a giveaway near you (registration opens about two
+  weeks to a month before), and pick the tree up in spring or fall. **Not yet confirmed:** whether
+  a giveaway tree may go on a private vacant lot whose owner agrees in writing.
+
+Choose trees that will grow tall: big trees shade the street, and they keep the lot open to view.
+Like any greening, trees can raise nearby prices; see the ways to protect neighbors on
+[Use this responsibly](../responsibly/).
+
 ### Help for families keeping their homes
 
 - The **Tangled Title Fund**, run through Philadelphia VIP (tangledtitlefund@gmail.com,
@@ -106,7 +130,7 @@ directly.
 | Become a Block Captain and run cleanups | Streets Department | 51% of the block signs | Free | Up to three organized cleanups a summer, with tools provided |
 | Join Philly Spring Cleanup | Streets Department and PHS | Register | Free brooms, gloves, and bags | Spring |
 | Build a parklet | OTIS | Show community support and get insurance | Not stated | Seasonal, April through November; review can take months |
-| Ask for a free street tree | Parks and Recreation (TreePhilly) | Request one | Free, if the City plants it | Next planting season |
+| Ask for a free street tree | Parks and Recreation (TreePhilly) | The owner of the property it would stand in front of asks | Free: the City plants it and waters it the first year | The next planting season |
 | Ask for a bike rack | Streets Department | Apply | Not stated | Not stated |
 | Paint a wall mural | Mural Arts (apply by March 15 or November 15) | The wall owner's permission | Free to apply | Months |
 | Report a dark streetlight, dumping, or an open vacant building | Philly311 | Nothing | Free | Days to weeks |
@@ -144,7 +168,7 @@ intersection, so this is about enforcing a rule that already exists.
 | Cleanup and mowing only | Less than full greening | Same as above | Strong, for shootings in the original trial | PHS, Block Captains |
 | Seal an abandoned house's doors and windows | Paid by the owner or the City | Report to Philly311; Licenses and Inspections can clean and seal it | Strong, for violence | Licenses and Inspections |
 | Start a community garden | Varies | A garden agreement or license, or the owner's permission | Builds on the greening evidence above | PHS, Neighborhood Gardens Trust, Garden Justice Legal Initiative |
-| Plant a tree | Free through TreePhilly | Request one | Mixed, for violence; strong for shade and heat | TreePhilly |
+| Plant a tree | Free through TreePhilly | Request one (see Trees on and along a lot, above) | Mixed, for violence; Mixed for heat too: trees cool a block by day, but the health gains are estimates, not trials | TreePhilly |
 | Add a rain garden or stormwater planter | Free for homeowners, through Rain Check | Sign up (**not yet confirmed for groups**) | Not about violence | Water Department |
 | Build a bench | Materials and cutting only, with an open design such as Better Block's Wikiblock | The lot owner's permission; a sidewalk permit is **not yet confirmed** | Not about violence | Better Block (designs) |
 | Start a porch light campaign | Near zero | None needed for your own porch | Moderate for street lighting; porch lights themselves are untested | Neighbors |

@@ -55,6 +55,15 @@ can judge for yourself how much weight to give it.
 | Weak | Only surveys, opinions, or one small study support it. |
 | Not about violence | The thing is worth doing for other reasons, but no study links it to less violence. Murals carry this badge: they are linked to neighbors feeling more pride and connection, but no study has tied them to less violence, so murals live in their own lens, not the violence score. |
 
+Trees carry Mixed for heat too. A study that measured the air from a bicycle across a whole city
+found trees cool a block on summer days, most where they cover more than about 40 percent of it,
+but little at night. Estimates for Philadelphia say that reaching the City's goal of 30 percent tree
+cover in every neighborhood could prevent about 400 early deaths a year, most of them in poorer
+neighborhoods, counting every death linked to green space and not heat alone; those are models, not
+trials. So the heat and shade lens counts trees with the
+Mixed badge, and its other measures (how hard summer heat hits a neighborhood, and how many people
+live there) are background, not claims about what works.
+
 Walkable streets and crowded sidewalks are not in this table because the research cuts both ways;
 busier streets can mean more watchful neighbors, or more places that sell alcohol, which is its
 own risk factor. How many people live nearby is never used to raise or lower a violence score. We
