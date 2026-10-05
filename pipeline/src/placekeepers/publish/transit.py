@@ -39,7 +39,7 @@ from placekeepers.derive.transit import (
     sum_counts,
 )
 from placekeepers.derive.transit_comfort import SOURCES as COMFORT_SOURCES
-from placekeepers.derive.transit_comfort import SeptaStop, comfort_for_stops
+from placekeepers.derive.transit_comfort import TUNNEL_STATIONS, SeptaStop, comfort_for_stops
 from placekeepers.geo import GeoJSONWriter, geometry_json
 from placekeepers.publish.layers import BuildResult, LayerBuilder, plain_name
 
@@ -249,15 +249,29 @@ def build_transit_stops(
     matches = match_counts(candidates, counts, known)
     by_row = {surface[index]: match for index, match in matches.items()}
 
-    # The transit comfort lens and the suggestions, for bus and trolley stops (M2.3).
+    # The transit comfort lens and the suggestions, for bus and trolley stops on the street
+    # (M2.3); the trolley tunnel stations underground are left out, as stations are.
+    street = [
+        k for k, (sid, former, _) in enumerate(candidates) if not {sid, *former} & TUNNEL_STATIONS
+    ]
     comfort = comfort_for_stops(
-        [SeptaStop(sid, tuple(former), place.lat, place.lng) for sid, former, place in candidates],
-        [counts[by_row[i].code].weekday if i in by_row else None for i in surface],
-        [headway(rows[i].get("midday_wk"), MIDDAY_MINUTES) for i in surface],
+        [
+            SeptaStop(sid, tuple(former), place.lat, place.lng)
+            for sid, former, place in (candidates[k] for k in street)
+        ],
+        [counts[by_row[surface[k]].code].weekday if surface[k] in by_row else None for k in street],
+        [headway(rows[surface[k]].get("midday_wk"), MIDDAY_MINUTES) for k in street],
         paths,
         set(ctx.registry.suggestions),
     )
-    extra = {surface[index]: props for index, props in enumerate(comfort.properties)}
+    extra = {surface[street[index]]: props for index, props in enumerate(comfort.properties)}
+    if len(street) < len(surface):
+        left_out = len(surface) - len(street)
+        stations = plural(left_out, "trolley tunnel station", "trolley tunnel stations")
+        notes.append(
+            f"transit comfort: {stations} underground {'is' if left_out == 1 else 'are'} left out "
+            "of the lens, as stations are"
+        )
 
     with GeoJSONWriter(out) as writer:
         order = sorted(range(len(rows)), key=lambda i: rows[i]["key"])

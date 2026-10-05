@@ -346,6 +346,13 @@ def summary_note(counts: Mapping[int, int], as_of: date | None) -> str:
 #: apart, while a stop's nearest other SEPTA stop, usually across the street, was 15 meters or
 #: more away for three stops in four.
 SAME_STOP_METERS = 15.0
+#: A stop number is believed only when the SEPTA stop it names stands at most this much farther
+#: from the OpenStreetMap stop than the nearest SEPTA stop does. Found by the v0.2 review
+#: (docs/VERIFICATION_V0_2.md): on Frankford Avenue at Huntingdon Street a stop numbered for the
+#: southbound stop 12 meters away, across the street, stands 4 meters from another stop, and its
+#: answers went to the wrong side. Where two stops stand at almost the same distance (as on Main
+#: Street at Hermit Street, 0.7 meters apart) the number still decides.
+NUMBER_SLACK_METERS = 3.0
 
 
 @dataclass(frozen=True)
@@ -373,16 +380,29 @@ def match_septa(osm: Sequence[Stop], septa: Sequence[SeptaPoint]) -> dict[int, i
     """{index in `septa`: index in `osm`}: which OpenStreetMap stop is which SEPTA stop.
 
     First by number: an OpenStreetMap stop whose `ref` (or `gtfs:stop_id`) is a SEPTA stop's
-    number today or one it had before, when that SEPTA stop stands within SAME_STOP_METERS. A
-    number pointing farther away is ignored: on Frankford Avenue a run of `ref`s names the stop
-    across the street while each point stands on another SEPTA stop. Then by distance: the
-    remaining stops pair up nearest first within SAME_STOP_METERS. Each stop matches once."""
+    number today or one it had before, when that SEPTA stop stands within SAME_STOP_METERS and
+    no other SEPTA stop stands more than NUMBER_SLACK_METERS closer. A number pointing farther
+    away is ignored: on Frankford Avenue a run of `ref`s names the stop across the street while
+    each point stands on another SEPTA stop. Then by distance: each remaining OpenStreetMap stop
+    pairs only with its nearest SEPTA stop, within SAME_STOP_METERS, closest pairs first. When
+    that stop is already taken the OpenStreetMap stop stays unpaired rather than moving to a
+    farther one, which may stand across the street (or, at 30th Street, underground). Each stop
+    matches once."""
     if not osm or not septa:
         return {}
     from placekeepers.derive.street_safety import points_in_meters
 
     osm_points = points_in_meters([s.lat for s in osm], [s.lng for s in osm])
     septa_points = points_in_meters([s.lat for s in septa], [s.lng for s in septa])
+    tree = shapely.STRtree(septa_points)
+    reach = SAME_STOP_METERS + NUMBER_SLACK_METERS
+    nearest: dict[int, tuple[float, int]] = {}
+    for o in range(len(osm)):
+        close = tree.query(osm_points[o], predicate="dwithin", distance=reach)
+        if len(close):
+            nearest[o] = min(
+                (float(osm_points[o].distance(septa_points[s])), int(s)) for s in close
+            )
     by_number: dict[str, int] = {}
     for index, stop in enumerate(septa):
         by_number.setdefault(stop.stop_id, index)
@@ -394,21 +414,18 @@ def match_septa(osm: Sequence[Stop], septa: Sequence[SeptaPoint]) -> dict[int, i
     for o, stop in enumerate(osm):
         for number in stop_numbers(stop):
             s = by_number.get(number)
-            if s is not None:
+            if s is not None and o in nearest:
                 meters = float(osm_points[o].distance(septa_points[s]))
-                if meters <= SAME_STOP_METERS:
+                if meters <= SAME_STOP_METERS and meters <= nearest[o][0] + NUMBER_SLACK_METERS:
                     pairs.append((meters, s, o))
     matched = _pair_up(pairs, {}, set())
 
-    tree = shapely.STRtree(septa_points)
-    near: list[tuple[float, int, int]] = []
     taken = set(matched.values())
-    for o in range(len(osm)):
-        if o in taken:
-            continue
-        for s in tree.query(osm_points[o], predicate="dwithin", distance=SAME_STOP_METERS):
-            if int(s) not in matched:
-                near.append((float(osm_points[o].distance(septa_points[s])), int(s), o))
+    near = [
+        (meters, s, o)
+        for o, (meters, s) in nearest.items()
+        if o not in taken and s not in matched and meters <= SAME_STOP_METERS
+    ]
     return _pair_up(near, matched, taken)
 
 

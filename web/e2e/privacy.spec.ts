@@ -128,6 +128,50 @@ test.describe('privacy', () => {
     for (const key of Object.keys(kept.local)) expect(key).toMatch(/^placekeepers:v1:/);
   });
 
+  test('bus stops, the survey guide and the route survey ask no other server, and ticks stay here', async ({ page, context }) => {
+    // Added by the v0.2 review (docs/VERIFICATION_V0_2.md): the transit pages of v0.2 were not in
+    // this file. Live City data is off, so any request to another server would be a leak.
+    await page.addInitScript(() => localStorage.setItem('placekeepers:v1:options', JSON.stringify({ live_city_data: false })));
+    const seen = watchOrigins(context);
+
+    // A bus stop's details, from the Bus stops chip and the nearby list.
+    await open(page, `v=f&m=17/39.985539/-75.156241`);
+    await page.getByRole('button', { name: 'Bus stops' }).click();
+    await page.getByRole('button', { name: /What you can do nearby/ }).click();
+    const card = page.locator('article.card[data-stop="sp1002"]');
+    await card.locator('button.open').click();
+    await expect(page.getByRole('dialog', { name: 'Stop' })).toContainText('What riders find here');
+
+    // The survey guide, and a route survey sheet with a box ticked.
+    await page.goto('about:blank');
+    await page.goto('./streetcomplete/');
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    await page.goto('./survey/?route=60&d=0');
+    const shelterYes = page.getByRole('checkbox', { name: 'Stop 1, Sample 2 St & Sample 1 Ave: Shelter, Yes' });
+    await shelterYes.check();
+    await expect(page.getByText(/You have filled in 1 of \d+ stops on this device\./)).toBeVisible();
+
+    const local = new URL(page.url()).origin;
+    expect([...seen.origins].filter((origin) => origin !== local)).toEqual([]);
+    // The ticks are kept in this browser only: in its storage, not in cookies, links or requests.
+    const kept = await page.evaluate(() => ({ keys: Object.keys(localStorage), cookie: document.cookie }));
+    expect(kept.keys.some((key) => key.includes('survey'))).toBe(true);
+    expect(kept.cookie).toBe('');
+    expect(seen.urls.filter((url) => url.includes('Shelter') || url.includes('survey:'))).toEqual([]);
+  });
+
+  test.fixme('survey ticks are kept under the site\'s own prefix, like every other setting', async ({ page }) => {
+    // The site shares the github.io origin with the owner's other sites, so everything it keeps
+    // in the browser is named placekeepers:v1: (docs/DESIGN.md section 5.2). The survey page keeps
+    // its ticks under pk-survey: instead (web/src/survey/sheet.ts, answersKey). Found by the v0.2
+    // review; turn this test on when the key moves (keeping ticks saved under the old key).
+    await page.route(/^https?:\/\/(?!localhost[:/])/, (route) => route.abort());
+    await page.goto('./survey/?route=60&d=0');
+    await page.getByRole('checkbox', { name: 'Stop 1, Sample 2 St & Sample 1 Ave: Shelter, Yes' }).check();
+    const keys = await page.evaluate(() => Object.keys(localStorage));
+    for (const key of keys) expect(key).toMatch(/^placekeepers:v1:/);
+  });
+
   test('links that open a new tab carry no opener and no referrer', async ({ page }, info) => {
     await open(page, `v=a&m=18/${LOT.lat}/${LOT.lng}&p=${LOT.id}`);
     await expect(page.locator('#pk-right')).toContainText('Who owns it');
