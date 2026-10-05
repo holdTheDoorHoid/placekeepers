@@ -4,7 +4,6 @@
   // quiet: the name only from a public memorial list and only while "show names" is on, the
   // date, how the person was traveling, the place, the public memorial page, "request removal",
   // and the family's blessing beside every memorial suggestion (docs/ETHICS.md).
-  import { config } from '../../config/index.ts';
   import { REMOVAL_EMAIL } from '../../content/removal-email.ts';
   import type { InspectTarget } from '../../map/controller.ts';
   import { STYLES, styleFor } from '../../map/styles/index.ts';
@@ -29,7 +28,8 @@
   const first = $derived(target.features[0] ?? {});
   const views = $derived(style === STYLES.memorials ? suggestionViews(store.registry, store.state, first) : []);
   const segment = $derived(style === STYLES.street_segments ? describeSegment(store.registry, store.state, first) : null);
-  const links = { removalEmail: REMOVAL_EMAIL, contactUrl: `${config.siteBase}contact/` };
+  // The site root from the build (not config, so the details also render outside a browser).
+  const links = { removalEmail: REMOVAL_EMAIL, contactUrl: `${import.meta.env.BASE_URL}contact/` };
   const s = strings.streets;
 </script>
 

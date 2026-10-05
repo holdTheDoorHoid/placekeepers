@@ -11,7 +11,9 @@ import { loadRegistry } from '../plugins/registry.ts';
 import Dossier from '../src/components/dossier/Dossier.svelte';
 import DossierPrint from '../src/components/dossier/DossierPrint.svelte';
 import PlaceCard from '../src/components/places/PlaceCard.svelte';
+import FeatureDetails from '../src/components/streets/FeatureDetails.svelte';
 import MemorialList from '../src/components/streets/MemorialList.svelte';
+import { FAMILIES_FOR_SAFE_STREETS_URL } from '../src/config/links.ts';
 import { PERMISSION_CODES, PERMISSION_ROUTE, permissionLabel, permissionText } from '../src/config/permission.ts';
 import { FILTERS } from '../src/config/filters.ts';
 import { GREENING_SUGGESTIONS } from '../src/config/suggestions.ts';
@@ -213,8 +215,13 @@ describe('memorials (interface checks 6 and 7)', () => {
     expect(html).not.toContain('example.org');
   });
 
-  it('puts the family blessing beside every memorial suggestion', () => {
+  it('puts the family blessing beside every memorial suggestion, with Families for Safe Streets', () => {
     const views = suggestionViews(registry, defaultState(registry, 'field'), memorial);
     expect(views.find((v) => v.suggestion.id === 'memorial_or_ghost_bike')?.memorial).toBe(true);
+    const html = render(FeatureDetails, { props: { store: fakeStore, target: { layerId: 'memorials', features: [memorial], lngLat: [-75.15, 39.98] } } }).body;
+    const text = textOf(html);
+    const blessing = text.indexOf("Only with the family's blessing.");
+    expect(blessing).toBeGreaterThan(text.indexOf('A memorial or a ghost bike'));
+    expect(html).toContain(FAMILIES_FOR_SAFE_STREETS_URL);
   });
 });
