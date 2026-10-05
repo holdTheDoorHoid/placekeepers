@@ -185,7 +185,9 @@ DuckDB: `SELECT * FROM '~/.cache/placekeepers/snapshots/opa_properties/current.p
 hidden folder and swaps it into place at the end, and it refuses to replace a folder that is not an
 earlier data root. A layer with nothing to show is left out with a note, so it never breaks the rest
 of its tile file. It also writes the lot dossiers, `dossiers/<first four digits>.json` with
-`dossiers/common.json`, and `tables/owners.json` (see "Lot dossiers and owner flags" below).
+`dossiers/common.json`, and `tables/owners.json` (see "Lot dossiers and owner flags" below), and
+the route survey sheets, `tables/routes/<route id>.json` with `tables/routes/index.json` (see "Route
+survey sheets" below).
 
 ### Street safety and memorials
 
@@ -255,6 +257,19 @@ These are OpenStreetMap's stops, a separate layer from SEPTA's, which M2.3 joins
 
 The layer is under the Open Database License, credited "© OpenStreetMap contributors". Later
 milestones (M3.5) add more amenities from OpenStreetMap to the same file.
+
+### Route survey sheets
+
+`publish/route_sheets.py` writes one file per SEPTA bus and trolley route with a stop in
+Philadelphia, and an index (docs/CONTRACTS.md section 7), for the web page `survey/`:
+
+* **Order**: each direction's stops in SEPTA's own order, from the bus feed's `route_stops.txt` and
+  `directions.txt` (not standard GTFS), which the `septa_gtfs` snapshot keeps as `stop_order` on
+  its route rows (`derive/route_stops.py`). Stops outside the city are left off and counted.
+* **What OpenStreetMap shows**: each SEPTA stop takes the answers and kind of the OpenStreetMap
+  stop that is the same stop (`match_septa` in `derive/bus_stops.py`): by SEPTA's number in `ref`
+  or `gtfs:stop_id` within 15 meters, then by distance within 15 meters, each stop once.
+* The manifest lists the index but not each route's file. The whole step takes about a second.
 
 ### Lot dossiers and owner flags
 

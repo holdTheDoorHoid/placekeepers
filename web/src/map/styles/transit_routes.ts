@@ -44,7 +44,8 @@ const width: ExpressionSpecification = [
 export const transitRoutes: StyleModule = {
   zIndex: 28,
   settings: ['service'],
-  clickable: [],
+  // A bus, trolley or subway route opens its details, with a link to its survey sheet (M2.4).
+  clickable: ['line'],
 
   layers(ctx: StyleContext): LayerSpecification[] {
     const layout = { 'line-join': 'round', 'line-cap': 'round' } as const;

@@ -114,7 +114,8 @@ export const stopAmenities: StyleModule = {
         ...(guide ? { link: { page: guide, label: l.stopSurvey } } : {}),
       });
     }
-    entries.push({ kind: 'note', text: l.stopsCoverage });
+    // The route survey sheets (M2.4), for surveying a whole route at once.
+    entries.push({ kind: 'note', text: l.stopsCoverage, link: { page: 'survey', label: l.stopSurveyRoute } });
     return entries;
   },
 };

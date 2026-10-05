@@ -256,6 +256,9 @@ data/
   tables/
     parcels.json          compact columnar table for ranking and lists
     owners.json           organizations holding many vacant parcels, with their parcels (section 6)
+    routes/               route survey sheets (section 7; added 2026-10-05 by M2.4)
+      index.json          every SEPTA bus and trolley route with a sheet
+      <route id>.json     one route's stops in order, each direction, with what OpenStreetMap shows
   dossiers/
     <first four digits of the OPA account>.json
     common.json           the parts of every flag that are the same for all parcels (section 6)
@@ -316,8 +319,11 @@ header's freshness badge.
 `status` is one of `ok`, `stale` (using the last good snapshot), `failing` (no usable snapshot), or
 `missing` (never fetched). `stale_since` is the date of the last good snapshot when stale.
 `sources` lists every source in the registry and `layers` every layer, whether or not it was built.
-`files` lists every file under the data root except `manifest.json` itself and the dossier shards,
-which `dossiers` summarizes, so a layer is available only when `files` lists its `file`.
+`files` lists every file under the data root except `manifest.json` itself, the dossier shards,
+which `dossiers` summarizes, and the route survey sheets (`tables/routes/<route id>.json`), which
+`tables/routes/index.json` lists (changed 2026-10-05 by M2.4: about 120 files the map never reads),
+so a layer is available only when `files` lists its `file`. `tables/routes/index.json` itself is
+listed.
 
 `dossiers` (added 2026-10-04 by M1.3, as the orchestrator decided, so the manifest every visitor
 fetches before the map draws stays small) summarizes the lot dossier shards (section 6) instead of
@@ -607,7 +613,8 @@ the counts of each `c` inside the city.
 These are OpenStreetMap's stops, not SEPTA's: SEPTA's own stops are `stops` in `transit.pmtiles`
 (above). M2.3 joins the two by SEPTA's stop number first, an OpenStreetMap stop's `ref` (or `gs`)
 against SEPTA's `sid`, then by distance for the stops that do not match by number (`o` and `om`
-there).
+there). The route survey sheets (section 7, M2.4) already join them this way, with `match_septa` in
+`pipeline/src/placekeepers/derive/bus_stops.py`.
 
 ## 5. Hand curated memorial files (`data/curated/`)
 
@@ -894,3 +901,114 @@ spelling is evened out (capitals, no punctuation, "L.L.C." as LLC, "&" as AND), 
 two spellings counts twice and two owners are never merged. Public owners are left out: the City
 lists its own holdings. On 2026-10-04: 366 organizations, 374 kB (57 kB compressed), one file; the
 95 owners who may be people that hold five or more are listed on their own 819 parcels instead.
+
+## 7. Route survey sheets (`tables/routes/`)
+
+Added 2026-10-05 by M2.4 (the survey campaign kit). For every SEPTA bus and trolley route with a
+stop in Philadelphia, each direction's stops in Philadelphia in SEPTA's own order, each with what
+OpenStreetMap shows there. The web page `survey/` turns a route's file into a printable survey
+sheet. Subway, El and Regional Rail lines have no sheet. Written by
+`pipeline/src/placekeepers/publish/route_sheets.py` as compact JSON.
+
+### Where the order comes from
+
+SEPTA's bus and Metro schedules carry two files that are not standard GTFS: `route_stops.txt`
+(`route_id`, `direction_id`, `stop_id`, `route_stop_sort_order`: every stop of a route in order, for
+each direction) and `directions.txt` (`route_id`, `direction_id`, `direction` such as "Southbound",
+`direction_destination` such as "Whitman Plaza"). The `septa_gtfs` snapshot keeps them on its route
+rows as `stop_order` (added by M2.4): a list of directions, each with `direction_id`, `direction`,
+`destination` and `stop_ids` in SEPTA's order (`pipeline/src/placekeepers/derive/route_stops.py`).
+The order leaves out stops no trip of that route and direction serves in the feed (126 of SEPTA's
+21,050 entries on 2026-10-05) and cannot place a stop SEPTA's list leaves out (33 that day); the
+build notes count both. Without `route_stops.txt` no route has an order, and the build publishes no
+sheets and says so.
+
+### `tables/routes/<route id>.json`
+
+```json
+{
+  "schema": 1,
+  "generated_at": "2026-10-05T10:03:12Z",
+  "as_of": {"schedules": "v202609270", "osm": "2026-10-03"},
+  "id": "47",
+  "r": "47",
+  "nm": "Whitman Plaza to 5th-Godfrey",
+  "md": 1,
+  "directions": [
+    {
+      "d": 1,
+      "dir": "Northbound",
+      "to": "5th-Godfrey",
+      "m": 15514,
+      "out": 0,
+      "stops": [
+        {"k": "sp24973", "sid": "24973", "nm": "Whitman Plaza, 2", "lat": 39.91373, "lng": -75.155728, "c": 3, "osm": "n8878395954", "sh": 1},
+        {"k": "sp16496", "sid": "16496", "nm": "Oregon Av & 5th St", "lat": 39.915035, "lng": -75.156573}
+      ]
+    }
+  ]
+}
+```
+
+(Shortened: route 47 has two directions, of 102 and 99 stops.)
+
+| Field | Meaning |
+|---|---|
+| `as_of` | `schedules`: SEPTA's `feed_version`; `osm`: the day of the OpenStreetMap extract. Either is `null` when missing |
+| `id`, `r`, `nm`, `md` | SEPTA's route id, short name, long name (dashes used as punctuation turned into commas) and mode bits, as in the `routes` layer (section 4) |
+| `d` | SEPTA's `direction_id` |
+| `dir`, `to` | SEPTA's name for the direction and its destination; each only when SEPTA gives it |
+| `m` | meters from the first stop to the last, in straight lines from stop to stop (UTM zone 18 north) |
+| `out` | how many stops of this direction lie outside Philadelphia and are left off the sheet |
+| `stops` | the stops in Philadelphia in SEPTA's order. A direction with none is left out, and a route with no direction has no file |
+| `k`, `sid`, `nm`, `lat`, `lng` | the stop's Placekeepers key, SEPTA's stop number, its name with the side of the street in words (as in `stops`, section 4) and SEPTA's position |
+| `c` | what OpenStreetMap shows, with the codes of the shelters and benches layer (`stops` in amenities.pmtiles, section 4): 3 a shelter or roof, 2 a bench but no shelter mapped, 1 neither, 0 not yet surveyed. Absent when no OpenStreetMap stop matches |
+| `osm` | the matching OpenStreetMap element, such as `n8878395954`; only with `c` |
+| `sh`, `bn`, `bi`, `lt` | that stop's answers for a shelter, a bench, a waste basket and a light, 1 yes and 0 no, as in amenities.pmtiles; absent when unknown |
+
+"In Philadelphia" is SEPTA's own rule for its stops layer: inside the City Council districts widened by
+100 meters. Every stop of a route's order is kept, the ends of the line too, although a trip's last
+stop is not a departure in the `stops` layer.
+
+**Which OpenStreetMap stop is which SEPTA stop.** First by number: an OpenStreetMap stop whose `ref`
+or `gtfs:stop_id` names a SEPTA stop (its `sid` or a number it had before), when the two stand within
+15 meters. Then by distance alone, the closest pairs first, within 15 meters. Each stop pairs once.
+A number farther away is not believed: on Frankford Avenue some stops carry the number of the stop
+across the street while standing within a few meters of another SEPTA stop. On 2026-10-05 this
+paired 659 of the 829 OpenStreetMap stops in the city with a SEPTA stop; most of the rest stand 15
+to 30 meters from the nearest one. Where an OpenStreetMap stop carries a SEPTA
+number and stands within 15 meters of that stop, distance alone finds the same stop 178 times in
+182. A stop with no `c` may still be in OpenStreetMap a few steps away, so the sheet says "not found
+in OpenStreetMap", never "missing".
+
+### `tables/routes/index.json`
+
+```json
+{
+  "schema": 1,
+  "generated_at": "2026-10-05T10:03:12Z",
+  "as_of": {"schedules": "v202609270", "osm": "2026-10-03"},
+  "routes": [
+    {
+      "id": "47", "r": "47", "nm": "Whitman Plaza to 5th-Godfrey", "md": 1,
+      "file": "tables/routes/47.json",
+      "dirs": [
+        {"d": 0, "dir": "Southbound", "to": "Whitman Plaza", "n": 102},
+        {"d": 1, "dir": "Northbound", "to": "5th-Godfrey", "n": 99}
+      ],
+      "s": {"0": 10, "1": 3, "3": 2, "none": 186}
+    }
+  ]
+}
+```
+
+Every route with a file, in SEPTA's order of routes: its id, names and mode, its file, each direction
+with `n` stops on the sheet, and `s`, the stops of all its directions by `c` (`none` for stops with
+no match). The route files are not in the manifest's `files` (section 3); the index is. On
+2026-10-05: 123 routes (117 bus, 6 trolley), 237 directions with a median of 55 stops, files of
+0.4 to 28 kB (median 11 kB, about 4 kB compressed), 1.4 MB in all; the index is 31 kB (6 kB
+compressed).
+
+The page's time estimate is the site's own, not data: walking about 80 meters a minute (3 miles an
+hour) along `m`, plus a minute at each stop, rounded to 5 minutes.
+

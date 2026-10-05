@@ -564,6 +564,7 @@ export const strings = {
     stopUnknown: 'Not yet surveyed: OpenStreetMap does not say yet',
     stopSurvey: 'How to survey a stop with StreetComplete',
     stopsCoverage: 'Only stops someone has added to OpenStreetMap appear here, so many stops are not shown yet.',
+    stopSurveyRoute: 'Print a survey sheet for a whole route',
   },
 
   streets: {
@@ -577,9 +578,11 @@ export const strings = {
             ? 'Street block'
             : style === 'transit_stops'
               ? 'Stop'
-              : style === 'stop_amenities'
-                ? 'Shelter and bench'
-                : 'Details',
+              : style === 'transit_routes'
+                ? 'Route'
+                : style === 'stop_amenities'
+                  ? 'Shelter and bench'
+                  : 'Details',
     memorialTitle: 'In memory',
     peopleHere: (n: number) => `${plural(n, 'person is', 'people are')} remembered here`,
     killed: {
@@ -755,7 +758,127 @@ export const strings = {
     unknownNote: 'Not yet surveyed means no one has recorded it yet. It does not mean the stop has nothing.',
     survey: 'How to survey this stop with StreetComplete',
     openOsm: 'See this stop on OpenStreetMap',
+    surveyRoute: 'Survey a whole route with a printable sheet',
     source: 'From OpenStreetMap, © OpenStreetMap contributors, updated every week.',
+  },
+
+  // The route survey sheet page (M2.4, web/survey/, src/survey/). Times are our own estimate and
+  // say so. "Not found in OpenStreetMap" rather than "missing": the stop may be drawn a few steps
+  // away, under no number we could match.
+  survey: {
+    pageTitle: 'Survey a route',
+    intro:
+      'Pick a SEPTA bus or trolley route and a direction to get a survey sheet: its stops in Philadelphia in order, what OpenStreetMap shows at each one now, and boxes to fill in. Print it, or tick the boxes on your phone as you go.',
+    guideLink: 'How to survey bus stops',
+    loading: 'Loading the routes…',
+    loadFailed: 'The list of routes could not be loaded. Check your connection and try again.',
+    notPublished: 'Survey sheets are not published yet. They appear after the next weekly update.',
+    sheetFailed: 'This route\'s sheet could not be loaded. Check your connection and try again.',
+    retry: 'Try again',
+    routeLabel: 'Route',
+    routePlaceholder: 'Choose a route',
+    buses: 'Bus routes',
+    trolleys: 'Trolley routes',
+    directionLabel: 'Direction',
+    partsLabel: 'Split among',
+    partsChoice: (n: number) => (n === 1 ? 'one person or pair' : `${n} people or pairs`),
+    directionTo: (dir: string, to: string) => `${dir} to ${to}`,
+    towards: (to: string) => `Toward ${to}`,
+    directionNumber: (n: number) => `Direction ${n}`,
+    stopCount: (n: number) => plural(n, 'stop', 'stops'),
+    title: (route: string, direction: string) => `Route ${route}, ${direction}`,
+    summary: (stops: number, miles: string) =>
+      `${plural(stops, 'stop', 'stops')} in Philadelphia, ${miles} from the first to the last in straight lines.`,
+    outside: (n: number) => `${plural(n, 'more stop is', 'more stops are')} outside Philadelphia and not on this sheet.`,
+    statusTitle: 'What OpenStreetMap shows now',
+    status: {
+      shelter: 'Shelter',
+      bench: 'Bench only',
+      neither: 'Neither',
+      unsurveyed: 'Not yet surveyed',
+      missing: 'Not found in OpenStreetMap',
+    } as Record<string, string>,
+    statusLong: {
+      shelter: 'with a shelter or roof',
+      bench: 'with a bench but no shelter mapped',
+      neither: 'with neither',
+      unsurveyed: 'in OpenStreetMap but not yet surveyed',
+      missing: 'not found in OpenStreetMap',
+    } as Record<string, string>,
+    estimateTitle: 'How long it takes',
+    estimate: (time: string) => `Our estimate: ${time} for one person or pair.`,
+    estimateBasis:
+      'This is our own estimate, not a measurement: walking about 3 miles an hour from stop to stop, and about a minute at each stop. Getting to the first stop and home is extra.',
+    trolleyTunnel:
+      'Trolley routes T1 to T5 run underground at their Center City end, in a tunnel with stations from 13th Street to 37th Street. Leave those stations out: this survey is for stops on the street.',
+    asOf: (osm: string | null, schedules: string | null) =>
+      [osm ? `What OpenStreetMap shows is as of ${osm}.` : null, schedules ? `Stops from SEPTA's schedules (${schedules}).` : null]
+        .filter(Boolean)
+        .join(' '),
+    print: 'Print the sheet',
+    printAll: 'Print every part',
+    printPart: (n: number) => `Print part ${n} only`,
+    part: (n: number, of: number) => `Part ${n} of ${of}`,
+    partStops: (first: number, last: number) => (first === last ? `stop ${first}` : `stops ${first} to ${last}`),
+    partEstimate: (time: string, miles: string) => `Our estimate: ${time} (${miles} of walking).`,
+    sheetFor: (route: string, direction: string) => `Survey sheet: route ${route}, ${direction}`,
+    howToFill:
+      'Tick Y or N for each thing you find at the stop. Lit means a light shines on the stop at night: a lamp in the shelter or a streetlight right beside it. Needs repair means a broken shelter, bench, sign or waste basket. If you cannot tell, leave the box empty: please never guess.',
+    nameLine: 'Name:',
+    dateLine: 'Date:',
+    columns: {
+      number: '#',
+      stop: 'Stop',
+      now: 'OpenStreetMap now',
+      sh: 'Shelter',
+      bn: 'Bench',
+      bi: 'Waste basket',
+      lt: 'Lit',
+      rp: 'Needs repair',
+      nt: 'Notes',
+    } as Record<string, string>,
+    yes: 'Yes',
+    no: 'No',
+    yesShort: 'Y',
+    noShort: 'N',
+    stopNumber: (sid: string) => `SEPTA stop ${sid}`,
+    answerLabel: (n: number, name: string, question: string, answer: string) => `Stop ${n}, ${name}: ${question}, ${answer}`,
+    repairLabel: (n: number, name: string) => `Stop ${n}, ${name}: needs repair`,
+    notesLabel: (n: number, name: string) => `Stop ${n}, ${name}: notes`,
+    openOsm: 'See on OpenStreetMap',
+    editOsm: 'Edit',
+    answered: (n: number, of: number) => `You have filled in ${formatNumber(n)} of ${plural(of, 'stop', 'stops')} on this device.`,
+    kept: 'What you tick and type here stays in this browser on this device only. Nothing is sent anywhere.',
+    notKept: 'This browser is not keeping what you tick, so it will be lost if you leave the page. Print the sheet or write it down.',
+    clear: 'Clear what I filled in',
+    clearConfirm: 'Clear every box and note you filled in for this direction?',
+    safetyTitle: 'Before you go: stay safe',
+    safety: [
+      'Stay on the sidewalk. Never stand in the street or step into a bus lane to look at a stop.',
+      'Go in daylight, and go with a friend.',
+      'Stop walking before you look at this sheet or your phone, and look up before you cross.',
+      'Step aside so riders can wait and board. Do not photograph people.',
+    ],
+    answersTitle: 'Getting your answers into OpenStreetMap',
+    withApp:
+      'With the StreetComplete app: answer its questions about each stop while you stand there. Your answers go straight into OpenStreetMap.',
+    withoutApp: 'Without a phone app, on a computer back home, use OpenStreetMap\'s own editor:',
+    editorSteps: [
+      'Log in at openstreetmap.org. An account is free.',
+      'Open this page again and use the Edit link beside each stop. The editor opens with the stop selected.',
+      'In the panel on the left, click the Shelter box. Under "Add field:" add Bench, Waste Bin (the waste basket) and Lit, and click their boxes too. Each box changes with every click: Yes, then No, then back to Unknown.',
+      'Click Save, write a short note about what you did, such as "Surveyed bus stop shelters and benches", and click Upload.',
+    ],
+    notFound:
+      'Where the sheet says "Not found in OpenStreetMap", look closely around the stop in the editor first: it may be drawn a few steps away. If it is really missing, click Point, put the point on the sidewalk next to the stop\'s sign, and choose Bus Stop.',
+    repairNote:
+      'OpenStreetMap does not record damage, so "Needs repair" and your notes stay with your group. They help when you talk with SEPTA or the City about a stop.',
+    updates: 'Placekeepers reads OpenStreetMap every Monday, so your answers reach our map and these sheets within about a week.',
+    printedFrom: 'Printed from Placekeepers, a free map for Philadelphia neighbors. Stops from SEPTA; map data © OpenStreetMap contributors.',
+    // A route someone tapped on the map (src/components/transit/RouteDetails.svelte).
+    routeTitle: (route: string) => `Route ${route}`,
+    routesHere: (n: number) => `${plural(n, 'route', 'routes')} here`,
+    surveyThisRoute: 'Survey the stops of this route for shelters and benches',
   },
 
   basemap: {

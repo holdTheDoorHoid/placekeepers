@@ -23,7 +23,9 @@ needs, worked out by placekeepers.derive.transit (method in docs/TRANSIT_METHOD.
   with `retired_on`), so a returning id keeps its key and a late successor can still be linked;
 * one row per route (`kind` "route"): `route_id`, `route_name`, `route_long_name`, modes,
   trips per day, and departures in the peak and midday windows where the route runs most often,
-  with the lines its trips follow.
+  with the lines its trips follow, and (added by M2.4, for the route survey sheets) `stop_order`:
+  each direction's name, destination and stops in SEPTA's own order, from the feed's
+  `route_stops.txt` and `directions.txt` (placekeepers.derive.route_stops).
 
 Every row also carries the dates used for the typical days (`weekday_date`, `saturday_date`,
 `sunday_date`), the feed's `feed_version`, and `source_date`.
@@ -63,6 +65,7 @@ from placekeepers.adapters.base import FetchError
 from placekeepers.adapters.url import UrlAdapter
 from placekeepers.cache import RawFetch
 from placekeepers.config import local_date, parse_iso_z
+from placekeepers.derive.route_stops import STOP_ORDER_TYPE, read_route_order
 from placekeepers.derive.transit import (
     DAYS,
     MEASURES,
@@ -88,6 +91,9 @@ GTFS_FILES = (
     "stops.txt",
     "stop_times.txt",
     "shapes.txt",
+    # SEPTA's own stop order per route and direction (M2.4); not standard GTFS
+    "route_stops.txt",
+    "directions.txt",
 )
 
 HISTORY_TYPE = pa.list_(
@@ -185,6 +191,7 @@ def snapshot_schema() -> pa.Schema:
         ("modes", pa.int32()),
         ("routes", pa.string()),
         ("route_sort", pa.int32()),
+        ("stop_order", STOP_ORDER_TYPE),
     ]
     for measure in MEASURES:
         for _, suffix in DAYS:
@@ -245,6 +252,7 @@ class SeptaGtfs(UrlAdapter):
         path = self.data_file(raw)
         fetched = local_date(parse_iso_z(raw.fetched_at))
         summaries: list[FeedSummary] = []
+        orders: dict[str, dict] = {}
         with tempfile.TemporaryDirectory(prefix="septa-gtfs-", dir=self.ctx.cache.tmp_dir()) as tmp:
             feeds = unpack_feeds(path, Path(tmp))
             con = self.ctx.duckdb()
@@ -254,6 +262,9 @@ class SeptaGtfs(UrlAdapter):
                         summaries.append(summarize_feed(con, folder, feed=name, start=fetched))
                     except GtfsError as exc:
                         raise FetchError(f"The {name} feed cannot be read: {exc}") from exc
+                    orders[name], order_notes = read_route_order(con, folder)
+                    if name == "bus_metro":  # Regional Rail has no route lists, nor needs them
+                        self.notes.extend(f"{name}: {note}" for note in order_notes)
             finally:
                 con.close()
         source_date = raw.info.get("source_date")
@@ -264,6 +275,10 @@ class SeptaGtfs(UrlAdapter):
             published = min(starts)
             self.notes.append("The server did not say when the file changed; using its start date")
         rows = self.rows(summaries, fetched, published)
+        for row in rows:
+            if row["kind"] == "route":
+                found = orders.get(row["feed"], {}).get(row["route_id"])
+                row["stop_order"] = [d.row() for d in found] if found else None
         table = pa.Table.from_pylist(rows, schema=snapshot_schema())
         kinds = sorted(
             {shapely.from_wkb(g).geom_type for g in table.column("geometry").to_pylist() if g}

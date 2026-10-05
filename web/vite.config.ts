@@ -40,6 +40,7 @@ export default defineConfig({
         privacy: 'privacy/index.html',
         contact: 'contact/index.html',
         streetcomplete: 'streetcomplete/index.html',
+        survey: 'survey/index.html',
       },
     },
   },

@@ -1,0 +1,28 @@
+/* The survey page's own print rules (M2.4): letter paper, black on white, only the sheet. Parts
+   of the page meant for one medium carry .screen-only or .print-only. */
+
+.print-only {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: letter portrait;
+    margin: 0.45in;
+  }
+  html,
+  body {
+    background: #ffffff;
+    color: #000000;
+  }
+  .screen-only {
+    display: none !important;
+  }
+  .print-only {
+    display: block;
+  }
+  a {
+    color: #000000;
+    text-decoration: none;
+  }
+}
