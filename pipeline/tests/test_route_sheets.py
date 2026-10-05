@@ -495,6 +495,31 @@ def test_distance_along_adds_up_straight_lines() -> None:
     assert 695 <= meters_along([(39.96, -75.15), there, back]) <= 705
 
 
+def test_the_transit_tiles_credit_septa_and_link_to_openstreetmap_without_crediting_it(
+    sheets_ctx, tmp_path: Path, monkeypatch
+) -> None:
+    # SEPTA's stops read OpenStreetMap only to link each stop to its OpenStreetMap stop by id, so
+    # the transit file's credit line names SEPTA and not OpenStreetMap, whose answers are in the
+    # shelters and benches tiles and the stop table (decision D1).
+    import placekeepers.publish as publishing
+
+    credits: dict[str, str] = {}
+
+    def fake_tippecanoe(exe, target, file, layers, attribution) -> None:
+        credits[file] = attribution
+        target.write_bytes(b"pmtiles")
+
+    monkeypatch.setattr(publishing, "find_tippecanoe", lambda: "tippecanoe")
+    monkeypatch.setattr(publishing, "run_tippecanoe", fake_tippecanoe)
+    monkeypatch.setattr(
+        publishing, "pmtiles_layer_names", lambda path: ["stops", "routes", "parcels", "h3"]
+    )
+    publish(sheets_ctx, tmp_path / "data")
+    assert "SEPTA" in credits["tiles/transit.pmtiles"]
+    assert "OpenStreetMap" not in credits["tiles/transit.pmtiles"]
+    assert "OpenStreetMap" in credits["tiles/amenities.pmtiles"]
+
+
 def test_the_manifest_lists_the_index_but_not_each_route(sheets_ctx, tmp_path: Path) -> None:
     out = tmp_path / "data"
     result = publish(sheets_ctx, out)
