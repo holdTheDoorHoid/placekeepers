@@ -253,6 +253,7 @@ export const strings = {
     land_use_shows_use: "The City's land use map shows it in use",
     recent_permit: 'A permit for building work or zoning was issued in the last two years',
     building_stands: 'A building footprint stands on it, although the records say vacant land',
+    homestead: 'The owner has a homestead exemption: City records say someone lives here, or did',
   },
 
   lens: {

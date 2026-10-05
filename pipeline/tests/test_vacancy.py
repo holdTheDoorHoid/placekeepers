@@ -28,7 +28,7 @@ FLAGS = [
     "opa_vacant_land", "no_footprint", "demo_no_newcon", "lot_li_2y", "in_landcare",
     "cs_recent_no_permit", "unsafe_no_permit", "idang_no_permit", "bldg_li_2y", "opa_ext_vacant",
     "city_land", "city_bldg", "lu_developed", "newcon_probably_built", "newcon_planned",
-    "recent_permit", "side_yard_likely",
+    "recent_permit", "side_yard_likely", "homestead",
 ]  # fmt: skip
 BIT = {reason.id: 1 << reason.bit for reason in REASONS}
 
@@ -180,6 +180,30 @@ def test_the_land_use_doubt_is_shown_for_lots_only() -> None:
     assert building[0] == "building" and not building[2] & BIT["land_use_shows_use"]
 
 
+def test_a_homestead_exemption_lowers_a_building_one_level() -> None:
+    """The City's record that someone lives there, or did (decision D1)."""
+    high = {"has_footprint": True, "city_bldg": True, "cs_recent_no_permit": True}
+    medium = {"has_footprint": True, "city_bldg": True}
+    assert classify(**high)[:2] == ("building", "high")
+    assert classify(**high, homestead=True)[:2] == ("building", "medium")
+    assert classify(**medium)[:2] == ("building", "medium")
+    assert classify(**medium, homestead=True)[:2] == ("building", "low")
+    assert classify(has_footprint=True, bldg_li_2y=True, homestead=True)[:2] == ("building", "low")
+    # With a recent permit too, each lowers it one level.
+    assert classify(**high, recent_permit=True)[:2] == ("building", "medium")
+    assert classify(**high, recent_permit=True, homestead=True)[:2] == ("building", "low")
+    assert classify(**high, homestead=True)[2] & BIT["homestead"]
+
+
+def test_on_a_lot_a_homestead_exemption_is_a_reason_against_without_changing_the_level() -> None:
+    lot = {"has_footprint": False, "city_land": True, "opa_vacant_land": True, "no_footprint": True}
+    assert classify(**lot)[:2] == ("lot", "high")
+    kind, confidence, rs = classify(**lot, homestead=True)
+    assert (kind, confidence) == ("lot", "high")
+    assert rs & BIT["homestead"]
+    assert not classify(**lot)[2] & BIT["homestead"]
+
+
 def test_nothing_at_all_is_not_a_candidate() -> None:
     assert classify(has_footprint=True)[:2] == (None, None)
     assert classify(has_footprint=False, side_yard_likely=True)[:2] == (None, None)
@@ -262,6 +286,7 @@ def signals(tmp_path: Path):
                 "building_code_description": [bdesc[i] for i in ids],
                 "owner_1": [owner[i] for i in ids],
                 "total_livable_area": [livable[i] for i in ids],
+                "homestead_exemption": [80_000 if i == "100000020" else 0 for i in ids],
                 "year_built": ["1920"] * len(ids),
                 "exterior_condition": ["4"] * len(ids),
                 "lat": [39.98] * len(ids),
@@ -462,6 +487,11 @@ def test_a_mapped_use_and_recent_permits_are_contradictions(signals) -> None:
     assert signals["100000016"]["recent_permit"] is False
 
 
+def test_a_homestead_exemption_on_the_account_is_a_signal(signals) -> None:
+    assert signals["100000020"]["homestead"] is True
+    assert signals["100000019"]["homestead"] is False
+
+
 def test_landcare_by_account_and_side_yards(signals) -> None:
     assert signals["100000021"]["in_landcare"] is True
     assert signals["100000019"]["side_yard_likely"] is True
@@ -574,7 +604,10 @@ def study_bits(reasons: str | None, kind: str) -> int:
 
 def test_the_rules_reproduce_the_studys_labels_and_reasons() -> None:
     con = duckdb.connect()
-    con.execute(f"CREATE TABLE sample AS SELECT * FROM read_parquet('{FIXTURE}')")
+    # The study had no homestead rule (added after it, decision D1): none in the sample.
+    con.execute(
+        f"CREATE TABLE sample AS SELECT *, false AS homestead FROM read_parquet('{FIXTURE}')"
+    )
     rows = con.execute(f"""
         SELECT opa, study_kind, study_confidence, study_reasons, kind, confidence,
                {vacancy.reasons_sql()} AS rs

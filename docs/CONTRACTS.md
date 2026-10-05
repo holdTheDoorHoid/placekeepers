@@ -324,6 +324,7 @@ never change meaning once published. The id names each reason in the pipeline
 | 15 | 32768 | `land_use_shows_use` | Planning's land use map shows a use other than vacant (lots only, from 2026-10-04 M1.4: the map shows a use for nearly every building) | against |
 | 16 | 65536 | `recent_permit` | A permit for building work (alterations, trades, new construction) or zoning in the last two years | against |
 | 17 | 131072 | `building_stands` | A building footprint stands although records say vacant land | against |
+| 18 | 262144 | `homestead` | The owner has a homestead exemption: City records say someone lives here, or did (added 2026-10-04, decision D1). Lowers a building one level; on a lot it changes no level | against |
 
 `ot` is filled from 2026-10-04 by M1.3 (`pipeline/src/placekeepers/derive/owners.py`): the City's
 list of public property decides first (`PUB` 3, `PLB` 4, `PRA` 5, `PHDC` 8), then the owner names
