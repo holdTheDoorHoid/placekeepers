@@ -87,7 +87,7 @@ crashes, lighter lot tiles for the whole city view, and a Safari check on a real
 | Use of color (1.4.1) | Fixed: the credits link on the map lost its underline to MapLibre's own style. The map's legends already carry meaning in words and line styles, not color alone (how sure we are: line width and dashes) |
 | Contrast (1.4.3, 1.4.11) | Already true, with one fix (the credits line's background was half see through). Ratios below |
 | Reflow (1.4.10) | Fixed: three content pages scrolled sideways at 320 pixels (wide tables and long links); tables now scroll in their own box. The map views never did |
-| Motion (2.3.3) | Already true: map flights are marked not essential, so MapLibre jumps instead of flying for people who prefer reduced motion; now tested |
+| Motion (2.3.3) | Already true: map flights are marked not essential, so MapLibre jumps instead of flying for people who prefer reduced motion; now tested by recording every zoom level the map passes through (none in between with reduced motion), so the test does not depend on the machine's speed. The test build alone hands the tests the map for this |
 | Language and titles (3.1.1, 2.4.2) | Already true: `lang="en"` on every page; each page has its own title, and an open lot page puts its address in the title |
 | Map markers | The canvas has a name that points to the lists; places are in the nearby list and the ranked list, memorials now in their own lists |
 | Plot | A text summary (counts per first step) and a pointer to the ranked list, which holds the same places |
@@ -177,7 +177,11 @@ its lot page, read who owns it and the first legal step, save it, open My lists 
 Every step works and reads well. What was confusing, cut off or too small, and fixed:
 
 * 320 by 568: three rows of header and three lines of note left little map; after Near me the search
-  box was about 55 pixels wide. Fixed (finding M1).
+  box was about 55 pixels wide. Fixed (finding M1). After the merge, GitHub's test machine showed
+  the top bar still taking three rows there: it has no Ubuntu or Noto font, so the page falls back
+  to the wider DejaVu Sans, as many Android phones do. Settings now shows a gear on phones narrower
+  than 400 pixels, and the test forces DejaVu Sans, at normal and at 130 percent text size, so the
+  laptop sees what the test machine sees (M6).
 * Sideways: the analysis view with a tiny map. Fixed (M2).
 * "More layers" and "My lists" sat off the edge of the chips row with nothing to say so; a neighbor
   who saved a place could not see where lists are. Fixed with a fade at the edge (M3).
@@ -225,6 +229,7 @@ Severity: **must** fix before v0.1, **should** fix, or **later**.
 | M3 | Should | The chips row hid More layers and My lists with no sign | Screenshot at 375 | 2b28582 |
 | M4 | Should | The analysis drawer's tabs took three rows on a phone | e2e failure after the Memorials tab | 2b28582 |
 | M5 | Should | The "Choose file" button was small | Screenshot | 2b28582 |
+| M6 | Must | With a wide font (DejaVu Sans, on GitHub's test machine and many Android phones) the top bar took three rows at 320 pixels | CI run 37258923675 | Settings shows a gear on narrow phones; tested with DejaVu Sans at 100 and 130 percent text |
 | P1 | Should | Lots waited for the base map to finish drawing; two other waits in a row | Request log on Fast 3G | 339c653 |
 | E1 | Must (D7) | Texts promised removal by email before the address exists; the legend said names appear | Contact page, Use this responsibly, issue forms, legend | 93bbb3b |
 | E2 | Must (D12) | No displacement caution on greening suggestions | ETHICS.md, Displacement | eb27c6a |
