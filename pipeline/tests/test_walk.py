@@ -482,7 +482,7 @@ def test_without_a_source_its_factor_is_left_out(context_factory) -> None:
     install_walk_inputs(ctx, skip=("census_blocks_2020", "epa_walkability"))
     result = walk.run(ctx, AS_OF)
     assert result.missing_sources == ["census_blocks_2020", "epa_walkability"]
-    found = walk.load_walk(result.path)
+    found = walk.load_walk(result.path, walk.FACTORS)
     assert all("f_neighbors" not in f and "f_walk" not in f for f in found.values())
     assert all("f_dest" in f and "f_corners" in f for f in found.values())
     assert (
@@ -510,7 +510,9 @@ def test_the_lots_carry_the_walking_factors(walk_ctx, tmp_path) -> None:
     lots = json.loads((tmp_path / "data" / "tiles" / "lots.parcels.geojson").read_text())
     properties = {f["properties"]["id"]: f["properties"] for f in lots["features"]}
     first = properties["500000001"]
-    assert {"f_walk", "f_neighbors", "f_dest", "f_corners"} <= set(first)
+    assert {"f_walk", "f_neighbors", "f_dest"} <= set(first)
+    # Street corners stay in the derived file and on the cells, not on the lots.
+    assert "f_corners" not in first
     assert "f_walk" not in properties["500000006"]
     # Seven parcels: the most people ranks above the other six, 6 of 7, 86.
     assert first["f_neighbors"] == 86

@@ -113,6 +113,10 @@ PLACE_SOURCES = tuple(dict.fromkeys(s for _, _, sources in PLACE_KINDS for s in 
 #: Every source this step reads (credited on the lots tiles and the cells layer).
 SOURCES = (*FEEDS, *PLACE_SOURCES)
 FACTORS = ("f_walk", "f_neighbors", "f_dest", "f_corners")
+#: The factors the lots tiles carry. Street corners are part of the EPA's index already, so on
+#: the lots they would mostly repeat `f_walk` while making the tiles heavier (each factor adds
+#: about 4 percent to tiles/lots.pmtiles); they stay in walk_factors.parquet and on the cells.
+PARCEL_FACTORS = ("f_walk", "f_neighbors", "f_dest")
 
 
 @dataclass
@@ -484,13 +488,14 @@ def run(ctx: Context, as_of: date | None = None, out: Path | None = None) -> Wal
     return result
 
 
-def load_walk(path: Path) -> dict[str, dict[str, int]]:
-    """The factor fields per OPA account, without the ones a parcel has no data for."""
+def load_walk(path: Path, fields: Sequence[str] = PARCEL_FACTORS) -> dict[str, dict[str, int]]:
+    """The factor fields per OPA account (by default those the lots tiles carry), without the
+    ones a parcel has no data for."""
     if not path.is_file():
         return {}
-    table = pq.read_table(path, columns=["opa", *FACTORS])
-    columns = {name: table.column(name).to_pylist() for name in ("opa", *FACTORS)}
+    table = pq.read_table(path, columns=["opa", *fields])
+    columns = {name: table.column(name).to_pylist() for name in ("opa", *fields)}
     return {
-        opa: {name: int(columns[name][i]) for name in FACTORS if columns[name][i] is not None}
+        opa: {name: int(columns[name][i]) for name in fields if columns[name][i] is not None}
         for i, opa in enumerate(columns["opa"])
     }
