@@ -704,8 +704,8 @@
       "sha256": "5f785fcbc81bffd5e4dbacffbcda299119e99f30141e03c30098b35c5976022f"
     },
     "tiles/art.art.geojson": {
-      "bytes": 1413,
-      "sha256": "d1b74b6802a750b967dbf1e967618538cd279fd28839316a08d083e604dd1d20"
+      "bytes": 2022,
+      "sha256": "9fccf97daec1c6b914c4ce98bd1dd3367e6d54108e5d28552478050893d92181"
     },
     "tables/routes/index.json": {
       "bytes": 1009,

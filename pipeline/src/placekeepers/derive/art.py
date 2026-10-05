@@ -31,11 +31,17 @@ letter or two ("Oldenberg" and "Oldenburg"). Two works whose sources both name a
 artist in common, are never the same work. The best pairs join first, and a work holds at most one
 record from each source, so the closer of two similar statues takes the match.
 
-**One point, every source.** A merged work stands where OpenStreetMap puts it, else where Wikidata
-does, else on its City parcel. Its title comes from the City, then OpenStreetMap, then Wikidata (the
-City's "Title Unknown" last); its artist from Wikidata, then OpenStreetMap, then the City; its year
-from the City, then Wikidata, then OpenStreetMap; its kind from OpenStreetMap's `artwork_type`, then
-Wikidata's class, then the City's medium and title. It links to every source it came from.
+**One work, one record per source.** The published layer keeps each source's record apart, with
+only what that source says (decision D1 of docs/VERIFICATION_V0_2.md: OpenStreetMap's data never
+shares a record with data under another license); the records of one work share its id and codes
+(ArtWork.record_properties). The map draws one of them, OpenStreetMap's (mapped where the work
+stands), else Wikidata's, else the City's point on its parcel, and the browser joins the others
+when the work is opened, as join_published does here: the title from the City, then OpenStreetMap,
+then Wikidata (the City's "Title Unknown" last); the artist from Wikidata, then OpenStreetMap, then
+the City; the year from the City, then Wikidata, then OpenStreetMap; the kind from OpenStreetMap's
+`artwork_type`, then Wikidata's class, then the City's medium and title; and a link to every
+source it came from (ArtWork.joined is the same answer, from the records before they are
+published).
 
 **Memorial artworks** (docs/ETHICS.md: names of people killed come only from the hand curated
 memorials file, and shooting victims are never named). A work is a memorial when any of its
@@ -43,12 +49,12 @@ sources says so: OpenStreetMap tags it `artwork_type=memorial`, `historic=memori
 `memorial` key; Wikidata says what it commemorates (P547) or classes it as a memorial, a war
 memorial, a commemorative plaque or a ghost bike; or any name, description or inscription says
 "memorial", "in memory", "in memoriam", "rest in peace", "RIP", "commemorates", "died" or "ghost
-bike", or a name holds two years like a lifespan ("1990 to 2015"). A memorial is published with
-no title, artist, year, medium, place in words, subject, inscription or any link whose address
-could hold a name: only that it is a memorial artwork, its kind for the map's filters, and its
-links by number (the City's record, the OpenStreetMap element, the Wikidata item). The rule is
-cautious on purpose: it also hides the names of famous monuments that OpenStreetMap tags as
-memorials, which their sources still show one tap away.
+bike", or a name holds two years like a lifespan ("1990 to 2015"). Every record of a memorial is
+published with no title, artist, year, medium, place in words, subject, inscription or any link
+whose address could hold a name: only that it is a memorial artwork, its codes for the map's
+filters, and its ids (the City's record number, the OpenStreetMap element, the Wikidata item).
+The rule is cautious on purpose: it also hides the names of famous monuments that OpenStreetMap
+tags as memorials, which their sources still show one tap away.
 """
 
 from __future__ import annotations
@@ -751,9 +757,69 @@ class ArtWork:
             bits |= SOURCE_BITS[record.source]
         return bits
 
-    def properties(self) -> dict[str, Any]:
-        """The tile properties (docs/CONTRACTS.md section 4). A memorial carries no words that
-        could name the person it remembers, only its links by number."""
+    @property
+    def primary(self) -> ArtRecord:
+        """The record whose point the map draws: OpenStreetMap's, mapped where the work stands,
+        else Wikidata's, else the City's point on its parcel."""
+        record = self.of(OSM) or self.of(WIKIDATA) or self.of(CITY)
+        assert record is not None
+        return record
+
+    @property
+    def inside(self) -> bool:
+        city = self.of(CITY)
+        return bool(city and city.inside)
+
+    def record_properties(self, record: ArtRecord) -> dict[str, Any]:
+        """The tile properties of one of the work's records (docs/CONTRACTS.md section 4): what its
+        own source says, never another's (decision D1 of docs/VERIFICATION_V0_2.md), with the codes
+        the map needs for the whole work: its id, kind, sources, whether it is a memorial or inside
+        a building, and whether this record draws its dot. A memorial's records carry no words that
+        could name the person it remembers, only the City's record number and document."""
+        props: dict[str, Any] = {
+            "id": record.key,
+            "g": self.id,
+            "k": KIND_OF_TYPE[self.ty],
+            "src": self.src,
+            "s": SOURCE_BITS[record.source],
+        }
+        if record is self.primary:
+            props["pr"] = 1
+        if self.memorial:
+            props["mem"] = 1
+        if self.inside:
+            props["in"] = 1
+        if record.source == CITY:
+            props["pa"] = record.city_id
+            if record.doc:
+                props["doc"] = record.doc
+        if self.memorial:
+            return props
+        for key, value in (
+            ("nm", record.title),
+            ("ar", record.artist),
+            ("y", record.year),
+            ("ty", record.ty or None),
+            ("md", record.medium),
+            ("lc", record.location),
+            ("w", record.website),
+            ("wp", record.wikipedia),
+        ):
+            if value is not None:
+                props[key] = value
+        if record.weak_title and record.title:
+            props["wt"] = 1
+        return props
+
+    def features(self) -> list[tuple[dict[str, Any], tuple[float, float]]]:
+        """Every record of the work, each at its own source's point, primary first."""
+        ordered = sorted(self.records, key=lambda r: r is not self.primary)
+        return [(self.record_properties(r), (r.lng, r.lat)) for r in ordered]
+
+    def joined(self) -> dict[str, Any]:
+        """What the map shows for the work, all its sources together: the reference for the join
+        the browser makes from the published records (join_published here, web/src/art/join.ts
+        there). A memorial shows no words that could name the person it remembers."""
         city, osm, wikidata = self.of(CITY), self.of(OSM), self.of(WIKIDATA)
         ty = self.ty
         props: dict[str, Any] = {"id": self.id, "k": KIND_OF_TYPE[ty], "src": self.src}
@@ -770,7 +836,7 @@ class ArtWork:
             ):
                 if value is not None:
                     props[key] = value
-            if city and city.inside:
+            if self.inside:
                 props["in"] = 1
         if city:
             props["pa"] = city.city_id
@@ -788,6 +854,56 @@ class ArtWork:
             if website:
                 props["w"] = website
         return props
+
+
+def join_published(records: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    """What the map shows for one work from its published records (one per source, sharing `g`),
+    as the browser joins them (web/src/art/join.ts): the same as ArtWork.joined. Each record says
+    only what its own source says, so this is where the City's title, Wikidata's artist and
+    OpenStreetMap's place meet, in the visitor's browser and never in a published record."""
+    by_source = {int(r["s"]): r for r in records}
+    city = by_source.get(SOURCE_BITS[CITY])
+    osm = by_source.get(SOURCE_BITS[OSM])
+    wikidata = by_source.get(SOURCE_BITS[WIKIDATA])
+    any_record = records[0]
+
+    def first(key: str, order: Sequence[Mapping[str, Any] | None]) -> Any:
+        return next((r[key] for r in order if r is not None and r.get(key) is not None), None)
+
+    out: dict[str, Any] = {"id": any_record["g"], "k": any_record["k"], "src": any_record["src"]}
+    memorial = any(r.get("mem") == 1 for r in records)
+    if memorial:
+        out["mem"] = 1
+    else:
+        out["ty"] = first("ty", (osm, wikidata, city)) or TY_OTHER
+        title = city.get("nm") if city is not None and not city.get("wt") else None
+        for key, value in (
+            ("nm", title or first("nm", (osm, wikidata, city))),
+            ("ar", first("ar", (wikidata, osm, city))),
+            ("y", first("y", (city, wikidata, osm))),
+            ("md", first("md", (city, osm))),
+            ("lc", city.get("lc") if city is not None else None),
+        ):
+            if value is not None:
+                out[key] = value
+        if any(r.get("in") == 1 for r in records):
+            out["in"] = 1
+    if city is not None:
+        out["pa"] = city["pa"]
+        if city.get("doc") is not None:
+            out["doc"] = city["doc"]
+    if osm is not None:
+        out["osm"] = osm["id"]
+    if wikidata is not None:
+        out["wd"] = wikidata["id"]
+    if not memorial:
+        for key, value in (
+            ("wp", first("wp", (wikidata, osm))),
+            ("w", first("w", (osm, wikidata))),
+        ):
+            if value is not None:
+                out[key] = value
+    return out
 
 
 def _anonymous(record: ArtRecord) -> bool:

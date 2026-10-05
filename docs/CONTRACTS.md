@@ -533,50 +533,74 @@ chest height in whole inches, from 1 to 80; absent when unknown or out of that r
 about a tree is published.
 
 Added 2026-10-05 by M3.2 (public art; the rules are in `pipeline/src/placekeepers/derive/art.py`,
-the layer in `publish/art.py`). OpenStreetMap's artworks are in it, so the layer is under the Open
-Database License and credited "© OpenStreetMap contributors", with the City and Wikidata.
+the layer in `publish/art.py`).
 
-**`art` (art.pmtiles, points)**: one point per work of public art: the City's Percent for Art works
-whose status is Active (`percent_for_art`; the Inaccessible ones and those In Progress are left out
-and counted in the build notes), OpenStreetMap's `tourism=artwork` elements inside the city
-(`osm_philadelphia`; not those whose `end_date` has passed), and Wikidata's artworks inside the city
-(`wikidata_art`: items of a fixed list of art classes with a coordinate, not those Wikidata says are
-gone). The same work in two or three sources is one point (below). Every point is kept at every
-zoom from 10.
+**`art` (art.pmtiles, points)**: works of public art: the City's Percent for Art works whose status
+is Active (`percent_for_art`; the Inaccessible ones and those In Progress are left out and counted
+in the build notes), OpenStreetMap's `tourism=artwork` elements inside the city (`osm_philadelphia`;
+not those whose `end_date` has passed), and Wikidata's artworks inside the city (`wikidata_art`:
+items of a fixed list of art classes with a coordinate, not those Wikidata says are gone).
+
+**One record per source.** The same work in two or three sources is one work (below), but its
+records stay apart: one feature per source record, at that source's point, holding only what its
+own source says. OpenStreetMap's data never shares a feature with the City's or Wikidata's, as for
+SEPTA's stops (decision D1 of docs/VERIFICATION_V0_2.md): OpenStreetMap's records are under the
+Open Database License and credited "© OpenStreetMap contributors", the City's keep the City's terms
+and Wikidata's are CC0. The records of one work share its id, `g`. The map draws one record per
+work, `pr` 1 (OpenStreetMap's when it has the work, mapped where the work stands, else Wikidata's,
+else the City's), and when a work is opened the browser finds its other records by `g` and joins
+them (`web/src/art/join.ts`), exactly as the pipeline's reference join does
+(`placekeepers.derive.art.join_published`, checked by both test suites against
+`pipeline/tests/fixtures/art_join_parity.json`). Every point is kept at every zoom from 10.
+
+Codes for the whole work, the same on each of its records (our own, from all its sources):
 
 | Property | Type | Meaning |
 |---|---|---|
-| `id` | string | the work: `pa` and the City's Percent for Art number when the City lists it, else the Wikidata item (`Q` and its number), else the OpenStreetMap element (`n` or `w` and its id). It stays the same while its sources keep theirs; when the City or Wikidata later lists a work OpenStreetMap had alone, the work takes their id |
-| `k` | int | its kind, for the layer's settings: 1 murals and wall paintings, 2 sculptures and statues, 3 mosaics, 0 anything else (installations, fountains, monuments, stained glass, plaques, and works of unknown kind) |
-| `ty` | int | its kind in words: 0 a work of public art, 1 mural, 2 painting, 3 street art or graffiti, 4 mosaic, 5 sculpture, 6 statue, 7 bust, 8 relief, 9 installation, 10 fountain, 11 monument, 12 memorial, 13 stained glass, 14 plaque; from OpenStreetMap's `artwork_type`, else Wikidata's class, else the words of the City's title and medium. Absent on a memorial |
+| `id` | string | the record: `pa` and the City's Percent for Art number, the Wikidata item (`Q` and its number), or the OpenStreetMap element (`n` or `w` and its id) |
+| `g` | string | the work: the id of its City record when the City lists it, else of its Wikidata record, else of its OpenStreetMap record. It stays the same while its sources keep their ids; when the City or Wikidata later lists a work OpenStreetMap had alone, the work takes their id |
+| `k` | int | its kind, for the layer's settings: 1 murals and wall paintings, 2 sculptures and statues, 3 mosaics, 0 anything else (installations, fountains, monuments, stained glass, plaques, and works of unknown kind); from the first of OpenStreetMap's `artwork_type`, Wikidata's class and the words of the City's title and medium that names a kind |
 | `src` | int | its sources, as bits: 1 the City, 2 OpenStreetMap, 4 Wikidata |
-| `mem` | int | 1 for a memorial artwork (below); absent otherwise |
-| `nm` | string | its title: the City's, else OpenStreetMap's `name`, else Wikidata's English label (the City's "Title unknown (...)" only when no source has another). Absent when no source gives one, and on a memorial |
-| `ar` | string | its artist or artists: Wikidata's creators, else OpenStreetMap's `artist_name`, else the City's (written first name first when the City writes one person "Last, First"). Absent when unknown, and on a memorial |
-| `y` | int | the year it was made: the City's, else Wikidata's inception (P571), else OpenStreetMap's `start_date`. Absent when unknown, and on a memorial |
-| `md` | string | what it is made of: the City's medium, else OpenStreetMap's `material`. Absent when unknown, and on a memorial |
-| `lc` | string | where it is, in the City's words (`location_name`). Absent otherwise, and on a memorial |
-| `in` | int | 1 when the City's words say the work is inside a building (and not outside too). Absent otherwise, and on a memorial |
-| `pa` | int | the City's Percent for Art number, when the City lists the work |
-| `doc` | string | the City's document about the work (a PDF its list links), when there is one |
-| `osm` | string | the OpenStreetMap element, `n` or `w` and its id, when OpenStreetMap has the work |
-| `wd` | string | the Wikidata item, when Wikidata has the work |
-| `wp` | string | an English Wikipedia article about the work, from Wikidata, else OpenStreetMap's `wikipedia` tag. Absent on a memorial |
-| `w` | string | a web page about the work that OpenStreetMap (`website`, `url`, `contact:website`) or Wikidata (described at, P973; official website, P856) names, other than Wikipedia, Wikidata and OpenStreetMap, such as the Association for Public Art's page on it. Absent on a memorial |
+| `s` | int | this record's own source, as one of those bits |
+| `pr` | int | 1 on the record that draws the work's dot; absent on the others |
+| `mem` | int | 1 for a memorial artwork (below), on every record of the work; absent otherwise |
+| `in` | int | 1 when the City's words say the work is inside a building (and not outside too); absent otherwise |
 
-**The same work in two or three sources** is one point. Two records from different sources are the
-same work when OpenStreetMap's `wikidata` tag names the Wikidata item (within 500 meters); or their
-names agree and they stand at the same place (within 30 meters of each other, or of the City's
-parcel, with at least half the words of the shorter name in the other); or their names agree
-closely within 150 meters (at least 80 percent of the words, and two words or more unless the names
-are the same); or one has no name, they stand at the same place and their artists agree; or one has
-neither a name nor an artist and is the only candidate of its source within 10 meters of a named
-work of the same kind (mural, sculpture or mosaic), which has no other unnamed candidate of that
-source that close. Words are compared without capitals, accents, punctuation and words such as
-"statue", "the" or "memorial", and two long words that differ by a letter or two count as the same.
-Two records whose sources name artists with no name in common are never the same work. The best
-pairs join first, and a work holds at most one record of each source. The point is OpenStreetMap's,
-else Wikidata's, else a point on the City's parcel.
+What each record's own source says, each absent when the source does not say it, and every one of
+them absent on a memorial:
+
+| Property | Type | Meaning |
+|---|---|---|
+| `nm` | string | the title: the City's, OpenStreetMap's `name` or Wikidata's English label |
+| `wt` | int | 1 on a City record whose title is the City's "Title unknown (...)", which the map uses only when no other source has a title |
+| `ar` | string | the artist or artists: the City's (written first name first when it writes one person "Last, First"), OpenStreetMap's `artist_name`, or Wikidata's creators |
+| `y` | int | the year the work was made: the City's, OpenStreetMap's `start_date` or Wikidata's inception (P571) |
+| `ty` | int | the kind in words: 1 mural, 2 painting, 3 street art or graffiti, 4 mosaic, 5 sculpture, 6 statue, 7 bust, 8 relief, 9 installation, 10 fountain, 11 monument, 12 memorial, 13 stained glass, 14 plaque; from OpenStreetMap's `artwork_type`, Wikidata's class, or the words of the City's title and medium; absent when the source names no kind |
+| `md` | string | what it is made of: the City's medium or OpenStreetMap's `material` |
+| `lc` | string | where it is, in the City's words (`location_name`) |
+| `pa`, `doc` | int, string | on a City record, even on a memorial: the City's Percent for Art number, and the City's document about the work (a PDF its list links) when there is one |
+| `w` | string | a web page about the work that OpenStreetMap (`website`, `url`, `contact:website`) or Wikidata (described at, P973; official website, P856) names, other than Wikipedia, Wikidata and OpenStreetMap, such as the Association for Public Art's page on it |
+| `wp` | string | an English Wikipedia article about the work: Wikidata's, or OpenStreetMap's `wikipedia` tag |
+
+**What the map shows for a work** (the join): the City's title (unless it is "Title unknown"), else
+OpenStreetMap's, else Wikidata's; the artist from Wikidata, then OpenStreetMap, then the City; the
+year from the City, then Wikidata, then OpenStreetMap; the kind in words from OpenStreetMap, then
+Wikidata, then the City; the material from the City, then OpenStreetMap; the City's place in words;
+Wikidata's Wikipedia article, else OpenStreetMap's; OpenStreetMap's web page, else Wikidata's; and a
+link to every record: the City's document or list, the OpenStreetMap element, the Wikidata item.
+
+**The same work in two or three sources.** Two records from different sources are the same work
+when OpenStreetMap's `wikidata` tag names the Wikidata item (within 500 meters); or their names agree
+and they stand at the same place (within 30 meters of each other, or of the City's parcel, with at
+least half the words of the shorter name in the other); or their names agree closely within 150
+meters (at least 80 percent of the words, and two words or more unless the names are the same); or
+one has no name, they stand at the same place and their artists agree; or one has neither a name nor
+an artist and is the only candidate of its source within 10 meters of a named work of the same kind
+(mural, sculpture or mosaic), which has no other unnamed candidate of that source that close. Words
+are compared without capitals, accents, punctuation and words such as "statue", "the" or
+"memorial", and two long words that differ by a letter or two count as the same. Two records whose
+sources name artists with no name in common are never the same work. The best pairs join first,
+and a work holds at most one record of each source.
 
 **Memorial artworks** (docs/ETHICS.md: names of people killed come only from the hand curated
 memorials file, and shooting victims are never named). A work is a memorial when any of its sources
@@ -584,11 +608,12 @@ says so: OpenStreetMap tags it `artwork_type=memorial`, `historic=memorial` or a
 Wikidata says what it commemorates (P547) or classes it as a memorial, a war memorial, a
 commemorative plaque or a ghost bike; or a name, description or inscription says "memorial", "in
 memory", "in memoriam", "rest in peace", "RIP", "commemorates", "died" or "ghost bike", or a name
-holds two years like a lifespan. A memorial carries only `id`, `k`, `src`, `mem`, `pa`, `doc`,
-`osm` and `wd`: no title, artist, year, medium, place in words, subject, inscription, or link whose
-address could hold a name. The web app shows it as "Memorial artwork" with its sources, and never
-shows the other properties of a memorial even if a file carried them. The rule is cautious on
-purpose: it also hides the names of famous monuments that a source marks as memorials.
+holds two years like a lifespan. Every record of a memorial carries only `id`, `g`, `k`, `src`, `s`,
+`pr`, `mem`, `in`, and on the City's record `pa` and `doc`: no title, artist, year, medium, place in
+words, subject, inscription, or link whose address could hold a name. The web app shows it as
+"Memorial artwork" with its sources, and never shows a memorial's other properties even if a file
+carried them. The rule is cautious on purpose: it also hides the names of famous monuments that a
+source marks as memorials.
 
 The build notes carry one sentence with each source's count, the works found in two and in three
 sources, the works on the map and the memorial artworks among them, and the works left out (never a

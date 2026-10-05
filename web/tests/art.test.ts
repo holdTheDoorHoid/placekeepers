@@ -51,9 +51,16 @@ function legend(state: AppState): LegendEntry[] {
   return styleFor(layer)!.legend({ layer, registry: reg, state });
 }
 
-function details(features: Record<string, unknown>[]): string {
-  const store = { registry: reg, state: defaultState(reg, 'field') } as unknown as AppStore;
-  const target = { layerId: 'public_art', features, lngLat: HERE };
+/**
+ * The details panel for the drawn records someone tapped, with every record the map has loaded:
+ * the panel finds a work's other records by its id (`g`) and joins them (src/art/join.ts).
+ */
+function details(tapped: Record<string, unknown>[], loaded: Record<string, unknown>[] = tapped): string {
+  const controller = {
+    featuresWith: (_layerId: string, key: string, value: unknown) => loaded.filter((r) => r[key] === value),
+  };
+  const store = { registry: reg, state: defaultState(reg, 'field'), controller } as unknown as AppStore;
+  const target = { layerId: 'public_art', features: tapped, lngLat: HERE };
   return textOf(render(FeatureDetails, { props: { store, target, heading: strings.streets.detailsTitle('public_art') } }).body);
 }
 
@@ -69,9 +76,15 @@ describe('the public art layer', () => {
     expect(reg.sources.find((s) => s.id === 'osm_philadelphia')!.endpoint.tags).toContain('tourism=artwork');
   });
 
+  it("draws one dot per work, from the record marked to draw it, not its other sources' records", () => {
+    const state = defaultState(reg, 'analysis');
+    expect(shown(state, { k: 2, pr: 1 })).toBe(true);
+    expect(shown(state, { k: 2 })).toBe(false);
+  });
+
   it('shows or hides each kind of work with its own switch', () => {
     const state = defaultState(reg, 'analysis');
-    const works = { mural: { k: 1 }, sculpture: { k: 2 }, mosaic: { k: 3 }, other: { k: 0 }, unknown: {} };
+    const works = { mural: { k: 1, pr: 1 }, sculpture: { k: 2, pr: 1 }, mosaic: { k: 3, pr: 1 }, other: { k: 0, pr: 1 }, unknown: { pr: 1 } };
     expect(Object.values(works).map((p) => shown(state, p))).toEqual([true, true, true, true, true]);
     for (const [setting, hidden] of [['murals', 'mural'], ['sculptures', 'sculpture'], ['mosaics', 'mosaic'], ['other', 'other']] as const) {
       const one = defaultState(reg, 'analysis');
@@ -86,17 +99,17 @@ describe('the public art layer', () => {
 
   it('hides works inside buildings when that switch is off, and says so', () => {
     const state = defaultState(reg, 'field');
-    expect(shown(state, { k: 0, in: 1 })).toBe(true);
+    expect(shown(state, { k: 0, in: 1, pr: 1 })).toBe(true);
     state.settings.public_art!.inside = false;
-    expect(shown(state, { k: 0, in: 1 })).toBe(false);
-    expect(shown(state, { k: 0 })).toBe(true);
+    expect(shown(state, { k: 0, in: 1, pr: 1 })).toBe(false);
+    expect(shown(state, { k: 0, pr: 1 })).toBe(true);
     expect(legend(state).some((e) => e.kind === 'note' && e.text === a.insideHidden)).toBe(true);
   });
 
   it('shows nothing when every kind is off, and the legend says why', () => {
     const state = defaultState(reg, 'field');
     for (const setting of ['murals', 'sculptures', 'mosaics', 'other']) state.settings.public_art![setting] = false;
-    expect(shown(state, { k: 1 })).toBe(false);
+    expect(shown(state, { k: 1, pr: 1 })).toBe(false);
     expect(legend(state).some((e) => e.kind === 'note' && e.text === a.allOff)).toBe(true);
   });
 
@@ -165,13 +178,29 @@ describe('what a tapped work says', () => {
     expect(siteName('https://www.jodypinto.com/x')).toBe('jodypinto.com');
   });
 
-  it('lists every work tapped at one spot', () => {
-    const text = details([statue, { id: 'n2', k: 1, ty: 1, osm: 'n2' }]);
+  it("joins a work's records from every source, and lists every work tapped at one spot", () => {
+    // One work in three sources: OpenStreetMap's record draws the dot; the City's and Wikidata's
+    // records are found by the work's id and joined (decision D1).
+    const records = [
+      { id: 'n666320453', g: 'pa224', k: 2, src: 7, s: 2, pr: 1, nm: 'Clothespin', ar: 'Claes Oldenburg', ty: 6, w: statue.w },
+      { id: 'pa224', g: 'pa224', k: 2, src: 7, s: 1, pa: 224, doc: statue.doc, nm: 'Clothespin', ar: 'Claes Oldenburg', y: 1976, ty: 5, md: statue.md, lc: statue.lc },
+      { id: 'Q5135560', g: 'pa224', k: 2, src: 7, s: 4, nm: 'Clothespin', ar: 'Claes Oldenburg', y: 1976, ty: 6, wp: statue.wp },
+    ];
+    const mural = { id: 'n2', g: 'n2', k: 1, src: 2, s: 2, pr: 1, ty: 1 };
+    const text = details([records[0]!, mural], [...records, mural]);
     expect(text).toContain(a.worksHere(2));
     expect(text).toContain('Clothespin');
+    expect(text).toContain('A statue');
+    expect(text).toContain('Made in 1976.');
+    expect(text).toContain('Where: Centre Square.');
+    for (const link of [a.cityRecord, a.openOsm, a.openWikidata, a.openWikipedia]) expect(text).toContain(link);
     expect(text).toContain('A mural');
     expect(text).toContain(a.muralArts);
     expect(text).toContain(a.credit);
+    // Without the other records (a tile not loaded yet), the drawn one still says what it can.
+    const alone = details([records[0]!]);
+    expect(alone).toContain('Clothespin');
+    expect(alone).not.toContain('Made in 1976.');
   });
 });
 
@@ -208,7 +237,12 @@ describe('memorial artworks (docs/ETHICS.md)', () => {
   });
 
   it('never show a name, an artist, a year or a place, even one a file carried', () => {
-    const text = details([leaky]);
+    const records = [
+      { ...leaky, id: 'w1387913462', g: 'Q129570976', s: 2, pr: 1 },
+      { ...leaky, id: 'Q129570976', g: 'Q129570976', s: 4 },
+      { ...leaky, id: 'pa77', g: 'Q129570976', s: 1, pa: 77 },
+    ];
+    const text = details([records[0]!], records);
     expect(text).toContain(a.memorialTitle);
     expect(text).toContain(a.memorialText);
     for (const word of ['Jordan', 'Sample', 'Quill', '2015', 'Bronze', 'Rec Center', 'example.org', 'Wikipedia']) {
@@ -221,7 +255,7 @@ describe('memorial artworks (docs/ETHICS.md)', () => {
     const memorials = fixture.features.filter((f: { properties: Record<string, unknown> }) => f.properties.mem === 1);
     expect(memorials.length).toBeGreaterThan(0);
     for (const feature of memorials) {
-      expect(Object.keys(feature.properties).every((key) => ['id', 'k', 'src', 'mem', 'pa', 'doc', 'osm', 'wd'].includes(key))).toBe(true);
+      expect(Object.keys(feature.properties).every((key) => ['id', 'g', 'k', 'src', 's', 'pr', 'mem', 'in', 'pa', 'doc'].includes(key))).toBe(true);
     }
   });
 });

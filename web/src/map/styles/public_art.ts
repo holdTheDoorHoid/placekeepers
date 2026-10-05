@@ -1,5 +1,6 @@
 // Public art (M3.2): one dot per work from the City's Percent for Art list, OpenStreetMap and
-// Wikidata (`art` in tiles/art.pmtiles, docs/CONTRACTS.md section 4), colored by its kind (`k`):
+// Wikidata (`art` in tiles/art.pmtiles, docs/CONTRACTS.md section 4): a work in two or three
+// sources has a record from each, and the dot is the one marked `pr`. Colored by its kind (`k`):
 // murals and wall paintings, sculptures and statues, mosaics, and other kinds. A tapped work shows
 // its kind, title, artist, year and its sources; a memorial artwork shows none of those words
 // (docs/ETHICS.md). Settings, each a switch that shows or hides dots:
@@ -45,9 +46,12 @@ export function shownKinds(ctx: LegendContext): ArtKind[] {
   return KIND_SETTINGS.filter((k) => on(ctx, k.setting)).map((k) => k.kind);
 }
 
+/** A work's records share its id; the map draws the one marked `pr` (src/art/join.ts). */
+const drawn: ExpressionSpecification = ['==', ['to-number', ['coalesce', ['get', 'pr'], 0]], 1];
+
 export function artFilter(ctx: LegendContext): FilterSpecification {
   const kinds = shownKinds(ctx).map((k) => ART_KIND[k]);
-  const parts: unknown[] = ['all', ['in', kind, ['literal', kinds]]];
+  const parts: unknown[] = ['all', drawn, ['in', kind, ['literal', kinds]]];
   if (!on(ctx, 'inside')) parts.push(['!=', inside, 1]);
   return parts as FilterSpecification;
 }

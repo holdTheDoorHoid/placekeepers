@@ -344,18 +344,23 @@ gone). In short:
   `wikidata` tag, by names and place, by artist at the same place, or, for a work with no name and
   no artist, when it is the only candidate a few meters from a named work of the same kind. Two
   works whose sources name different artists are never joined, and a work holds one record of each
-  source. The merged point takes the best of each: OpenStreetMap's place, the City's title, Wikidata's
-  artist, and every source's link.
+  source.
+* **Records kept apart.** Each source's record is published on its own, with only what that source
+  says, sharing the work's id (decision D1 of docs/VERIFICATION_V0_2.md, as for SEPTA's stops). The
+  map draws one record per work (OpenStreetMap's place first) and the browser joins the others when
+  the work is opened: the City's title, Wikidata's artist and every source's link.
+  `derive.art.join_published` is the reference join, and `tests/art_join_cases.py` writes the cases
+  both test suites check (`python pipeline/tests/art_join_cases.py` after changing it).
 * **Memorial artworks** (docs/ETHICS.md): a work any source marks as a memorial (tags, Wikidata's
   "commemorates", or words such as "in memory of" and "RIP") is published with its kind and its
   links by number only, never a title, artist, year or inscription. `tests/test_art.py` guards it.
 * The build notes give each source's count, the works found in two and three sources, the works on
   the map, the memorial artworks and the works left out (never a name). On 2026-10-05: 224 from the
-  City, 410 from OpenStreetMap and 69 from Wikidata became 651 works, 50 of them in more than one
-  source; 45 memorial artworks. The whole step takes about a second.
+  City, 410 from OpenStreetMap and 69 from Wikidata (703 records) are 651 works, 50 of them in more
+  than one source; 45 memorial artworks. The whole step takes about a second.
 
-The layer is under the Open Database License, because OpenStreetMap's artworks are in it, and is
-credited "© OpenStreetMap contributors" with the City and Wikidata.
+OpenStreetMap's records are under the Open Database License and credited "© OpenStreetMap
+contributors"; the City's and Wikidata's records keep their own terms and credits.
 
 ### Lot dossiers and owner flags
 

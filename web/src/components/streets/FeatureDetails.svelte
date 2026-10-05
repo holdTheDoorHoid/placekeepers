@@ -124,7 +124,12 @@
       <ConditionDetails layerId={target.layerId} {properties} route={store.registry.routes.find((r) => r.id === 'report_to_311')} />
     {/each}
   {:else if style === STYLES.public_art}
-    <ArtDetails features={target.features} lngLat={target.lngLat} registry={store.registry} />
+    <ArtDetails
+      features={target.features}
+      lngLat={target.lngLat}
+      registry={store.registry}
+      related={(g) => store.controller?.featuresWith(target.layerId, 'g', g) ?? []}
+    />
   {/if}
   {#if onClose}
     <button class="button quiet small" type="button" onclick={onClose}>{strings.place.clearSelection}</button>

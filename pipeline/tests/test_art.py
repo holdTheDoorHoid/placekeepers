@@ -52,6 +52,7 @@ from placekeepers.derive.art import (
     ArtRecord,
     city_artist,
     city_records,
+    join_published,
     match_records,
     osm_is_memorial,
     osm_records,
@@ -223,7 +224,47 @@ def test_the_same_work_in_all_three_sources_becomes_one_point_with_every_link() 
         ]
     )
     assert len(works) == 1
-    props = works[0].properties()
+    work = works[0]
+    # Each source keeps its own record, with only what that source says (decision D1); they share
+    # the work's id, and OpenStreetMap's record, mapped where the work stands, draws the dot.
+    records = {props["id"]: props for props, _ in work.features()}
+    common = {"g": "pa224", "k": SCULPTURE, "src": 7}
+    assert records["n666320453"] == {
+        "id": "n666320453",
+        **common,
+        "s": 2,
+        "pr": 1,
+        "nm": "Clothespin",
+        "ar": "Claes Oldenburg",
+        "ty": TY_SCULPTURE,
+        "w": "https://www.associationforpublicart.org/artwork/clothespin/",
+    }
+    assert records["pa224"] == {
+        "id": "pa224",
+        **common,
+        "s": 1,
+        "pa": 224,
+        "doc": "https://dpd-art-is-essential-docs.s3.amazonaws.com/224.pdf",
+        "nm": "Clothespin",
+        "ar": "Oldenberg, Claes Thure",
+        "y": 1976,
+        "ty": TY_SCULPTURE,
+        "md": "Metal, weathering steel",
+    }
+    assert records["Q5135560"] == {
+        "id": "Q5135560",
+        **common,
+        "s": 4,
+        "nm": "Clothespin",
+        "ar": "Claes Oldenburg",
+        "y": 1976,
+        "ty": TY_SCULPTURE,
+        "wp": "https://en.wikipedia.org/wiki/Clothespin_(Oldenburg)",
+    }
+    assert work.features()[0][1] == at(8, 8)
+    # Together, as the browser joins them, they give the best of each source.
+    props = join_published(list(records.values()))
+    assert props == work.joined()
     assert props == {
         "id": "pa224",
         "k": SCULPTURE,
@@ -338,8 +379,8 @@ def test_a_memorial_bench_or_bookcase_never_shows_its_name() -> None:
 
 #: Every invented name in the memorial fixtures. None may appear in the published layer.
 SECRET_NAMES = ("Sample", "Example", "Jordan", "Robin", "Quill")
-#: The only properties a memorial artwork may carry.
-MEMORIAL_KEYS = {"id", "k", "src", "mem", "pa", "doc", "osm", "wd"}
+#: The only properties a memorial artwork's records may carry: codes and the City's record number.
+MEMORIAL_KEYS = {"id", "g", "k", "src", "s", "pr", "mem", "in", "pa", "doc"}
 
 
 def osm_row(osm_id: int, east: float, north: float, tags: dict, *, in_city: bool = True) -> dict:
@@ -556,6 +597,7 @@ def test_a_memorial_artwork_is_published_without_any_words_that_could_name_the_p
         "n13",
         "n14",
         "n15",
+        "n16",
         "pa1",
         "pa2",
     ]
@@ -564,15 +606,20 @@ def test_a_memorial_artwork_is_published_without_any_words_that_could_name_the_p
         text = json.dumps(props)
         for secret in SECRET_NAMES:
             assert secret not in text, (secret, props)
-    # The statue OpenStreetMap names plainly is a memorial too: Wikidata says whom it commemorates.
-    assert by_id["Q101"] == {
-        "id": "Q101",
+    # The statue OpenStreetMap names plainly is a memorial too: Wikidata says whom it commemorates,
+    # so neither record of the work carries a name, and the browser's join shows none either.
+    assert by_id["n16"] == {
+        "id": "n16",
+        "g": "Q101",
         "k": SCULPTURE,
         "src": 6,
+        "s": 2,
+        "pr": 1,
         "mem": 1,
-        "osm": "n16",
-        "wd": "Q101",
     }
+    assert by_id["Q101"] == {"id": "Q101", "g": "Q101", "k": SCULPTURE, "src": 6, "s": 4, "mem": 1}
+    joined = join_published([by_id["n16"], by_id["Q101"]])
+    assert joined == {"id": "Q101", "k": SCULPTURE, "src": 6, "mem": 1, "osm": "n16", "wd": "Q101"}
     # Everything else keeps its title and artist.
     assert by_id["pa3"]["nm"] == "Driftwood" and by_id["pa3"]["ar"] == "Harold Kimmelman"
     assert by_id["n17"]["nm"] == "LOVE" and "mem" not in by_id["n17"]
@@ -608,7 +655,8 @@ def test_the_art_layer_is_published_with_the_other_layers(context_factory, tmp_p
     result = publish(ctx, tmp_path / "data")
     layer = tmp_path / "data" / "tiles" / "art.art.geojson"
     assert layer.is_file()
-    assert result.features["tiles/art.pmtiles art"] == 12
+    # 13 records of 12 works: one work is both in OpenStreetMap and in Wikidata.
+    assert result.features["tiles/art.pmtiles art"] == 13
     assert result.manifest["layers"]["public_art"]["file"] == "tiles/art.pmtiles"
     assert any(note.startswith("Public art: ") for note in result.manifest["notes"])
 

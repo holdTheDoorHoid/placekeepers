@@ -460,21 +460,28 @@ const floodAreas = [
   [{ z: 2 }, box(640, 60, 850, 140)],
 ].map(([properties, geometry]) => ({ type: 'Feature', properties, geometry }));
 
-// Public art (M3.2), made up and without random draws, with the short properties of
-// docs/CONTRACTS.md section 4 (`art` in tiles/art.pmtiles): a statue the City, OpenStreetMap and
-// Wikidata all list, merged into one point with every link; a mural and an untitled mural from
-// OpenStreetMap; a mosaic from Wikidata; an installation inside a City building; and a memorial
-// artwork, which carries no title, artist or year, only its sources by number (docs/ETHICS.md).
-// Published as GeoJSON, as the pipeline does when it skips a tile file.
+// Public art (M3.2), made up and without random draws, as the pipeline publishes it (`art` in
+// tiles/art.pmtiles, docs/CONTRACTS.md section 4): one record per source, each with only what its
+// own source says, sharing the work's id (`g`), and the record that draws the work's dot marked
+// `pr` (decision D1: OpenStreetMap's data never shares a record with another source's). A statue
+// the City, OpenStreetMap and Wikidata all list (three records, a few steps apart); a mural and an
+// untitled mural from OpenStreetMap; a mosaic from Wikidata; an installation inside a City building;
+// and a memorial artwork in OpenStreetMap and Wikidata, whose records carry no title, artist or
+// year (docs/ETHICS.md). Published as GeoJSON, as the pipeline does when it skips a tile file.
 const ART_SAMPLES = [
-  [[110, 100], { id: 'pa9001', k: 2, src: 7, ty: 6, nm: 'Sample Figure', ar: 'Avery Example', y: 1976, md: 'Bronze', pa: 9001,
-    doc: 'https://example.org/percent-for-art/9001.pdf', osm: 'n9200001', wd: 'Q9200001', wp: 'https://en.wikipedia.org/wiki/Sample_Figure',
+  [[110, 100], { id: 'n9200001', g: 'pa9001', k: 2, src: 7, s: 2, pr: 1, nm: 'Sample Figure', ar: 'Avery Example', ty: 6,
     w: 'https://www.associationforpublicart.org/artwork/sample-figure/' }],
-  [[270, 100], { id: 'n9200002', k: 1, src: 2, ty: 1, nm: 'Sample Street Mural', ar: 'Jordan Painter', y: 2019, osm: 'n9200002' }],
-  [[430, 100], { id: 'n9200003', k: 1, src: 2, ty: 1, osm: 'n9200003' }],
-  [[600, 100], { id: 'Q9200004', k: 3, src: 4, ty: 4, nm: 'Sample Mosaic Wall', y: 2005, wd: 'Q9200004' }],
-  [[720, 100], { id: 'pa9005', k: 0, src: 1, ty: 9, nm: 'Sample Light Work', ar: 'Casey Maker', y: 2015, lc: 'Sample Library (interior)', in: 1, pa: 9005 }],
-  [[270, -20], { id: 'Q9200006', k: 2, src: 6, mem: 1, osm: 'n9200006', wd: 'Q9200006' }],
+  [[114, 104], { id: 'pa9001', g: 'pa9001', k: 2, src: 7, s: 1, pa: 9001, doc: 'https://example.org/percent-for-art/9001.pdf',
+    nm: 'Sample Figure', ar: 'Avery Example', y: 1976, ty: 5, md: 'Bronze' }],
+  [[106, 97], { id: 'Q9200001', g: 'pa9001', k: 2, src: 7, s: 4, nm: 'Sample Figure', ar: 'Avery Example', y: 1976, ty: 6,
+    wp: 'https://en.wikipedia.org/wiki/Sample_Figure' }],
+  [[270, 100], { id: 'n9200002', g: 'n9200002', k: 1, src: 2, s: 2, pr: 1, nm: 'Sample Street Mural', ar: 'Jordan Painter', y: 2019, ty: 1 }],
+  [[430, 100], { id: 'n9200003', g: 'n9200003', k: 1, src: 2, s: 2, pr: 1, ty: 1 }],
+  [[600, 100], { id: 'Q9200004', g: 'Q9200004', k: 3, src: 4, s: 4, pr: 1, nm: 'Sample Mosaic Wall', y: 2005, ty: 4 }],
+  [[720, 100], { id: 'pa9005', g: 'pa9005', k: 0, src: 1, s: 1, pr: 1, in: 1, pa: 9005, nm: 'Sample Light Work', ar: 'Casey Maker', y: 2015,
+    ty: 9, lc: 'Sample Library (interior)' }],
+  [[270, -20], { id: 'n9200006', g: 'Q9200006', k: 2, src: 6, s: 2, pr: 1, mem: 1 }],
+  [[274, -16], { id: 'Q9200006', g: 'Q9200006', k: 2, src: 6, s: 4, mem: 1 }],
 ];
 const artWorks = ART_SAMPLES.map(([xy, properties]) => ({ type: 'Feature', properties, geometry: { type: 'Point', coordinates: toLngLat(xy) } }));
 

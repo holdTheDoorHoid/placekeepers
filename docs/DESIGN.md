@@ -230,7 +230,7 @@ details panel offers Philly311 as the next step, never the police.
 
 As built (M3.2, 2026-10-05): a work of public art is known by the City's Percent for Art number
 when the City lists it (`pa` and the number), else by its Wikidata item, else by its OpenStreetMap
-element; the same work in two or three sources is one point (section 5.8).
+element; the same work in two or three sources is one dot on the map (section 5.8).
 
 ### 5.2 The registry: one source of truth for every toggle
 
@@ -546,12 +546,15 @@ terms forbid building a database from it. philart.net, the Association for Publi
 Philadelphia's Magic Gardens' mosaic map and Parks and Recreation's list of art in its parks wait
 for their owners' agreement (docs/DATA_SOURCES.md, "Public art").
 
-**One work, one dot.** The same work often appears in two or three sources. The pipeline joins
+**One work, one dot.** The same work often appears in two or three sources. The pipeline finds
 them by OpenStreetMap's link to the Wikidata item, or by names and place (and artist), cautiously:
 two works whose sources name different artists are never joined, and an unnamed work joins a named
 one only when each is the other's single candidate a few steps away. On 2026-10-05, 703 records
-became 651 works, 50 of them found in more than one source (48 in two, 2 in all three). The rules
-are in docs/CONTRACTS.md section 4.
+are 651 works, 50 of them found in more than one source (48 in two, 2 in all three). Each source's
+record stays apart in the published file, with only what that source says, and the browser joins a
+work's records when someone opens it, so OpenStreetMap's data never shares a record with the City's
+(decision D1 of VERIFICATION_V0_2.md, as for SEPTA's stops). The rules are in docs/CONTRACTS.md
+section 4.
 
 **Memorial artworks.** Some murals and plaques remember a person. Names of people killed come only
 from the hand curated memorials list (ETHICS.md), so a work any source marks as a memorial is shown

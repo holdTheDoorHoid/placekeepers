@@ -1,9 +1,12 @@
 <script lang="ts">
   // Works of public art someone tapped (M3.2): each one's kind, title, artist, year and material
   // where a source gives them, where it is, and a link to each source; a memorial artwork only as
-  // such, with its sources (docs/ETHICS.md). Works close together can be tapped at once; the first
-  // few are listed. Mural Arts Philadelphia's own list is linked beside murals, never copied.
+  // such, with its sources (docs/ETHICS.md). The map draws one record of each work; its other
+  // sources' records are found by the work's id and joined here (src/art/join.ts, decision D1).
+  // Works close together can be tapped at once; the first few are listed. Mural Arts
+  // Philadelphia's own list is linked beside murals, never copied.
   import { describeArt } from '../../art/describe.ts';
+  import { joinArt, recordsOfWork } from '../../art/join.ts';
   import type { Registry } from '../../registry/types.ts';
   import { strings } from '../../strings.ts';
 
@@ -11,12 +14,21 @@
     features,
     lngLat,
     registry,
-  }: { features: Record<string, unknown>[]; lngLat: [number, number]; registry: Registry } = $props();
+    related = () => [],
+  }: {
+    features: Record<string, unknown>[];
+    lngLat: [number, number];
+    registry: Registry;
+    /** The records of a work, by its id, from the map's loaded data. */
+    related?: (g: string) => Record<string, unknown>[];
+  } = $props();
   const a = strings.art;
   /** At most this many works are listed for one tap. */
   const MAX_WORKS = 4;
   const cityList = $derived(registry.sources.find((s) => s.id === 'percent_for_art')?.homepage ?? null);
-  const works = $derived(features.slice(0, MAX_WORKS).map((p) => describeArt(p, lngLat, cityList)));
+  const works = $derived(
+    features.slice(0, MAX_WORKS).map((drawn) => describeArt(joinArt(recordsOfWork(drawn, related)), lngLat, cityList)),
+  );
 </script>
 
 {#if features.length > 1}<p class="muted small">{a.worksHere(features.length)}</p>{/if}
