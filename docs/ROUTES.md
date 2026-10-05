@@ -192,3 +192,8 @@ These go into outreach drafts for the owner to send; agents never send them.
    street trees in front of a vacant lot the City or the Land Bank owns, and who should ask?
 8. TreePhilly: may a resident plant a giveaway tree on a private vacant lot whose owner agrees in
    writing, or a lot the neighbor holds under a garden agreement?
+9. SEPTA: would SEPTA mark the 15 trolley tunnel platforms from 13th Street to 37th Street (routes T1
+   to T5) as underground in its schedules, for example with a level in its `levels` file as it
+   already does for a few stations? Placekeepers leaves those platforms out of the transit comfort
+   lens by a hand kept list of stop numbers (`TUNNEL_STATIONS`, decision D2 of
+   docs/VERIFICATION_V0_2.md), which a new or renumbered tunnel stop would slip past.

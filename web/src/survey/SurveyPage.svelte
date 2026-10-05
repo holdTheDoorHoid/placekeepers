@@ -3,12 +3,14 @@
   // people share the walk, and get the survey sheet (SurveySheet.svelte) with a summary, our own
   // time estimate, safety tips and how to get the answers into OpenStreetMap. The choice lives in
   // the address (?route=47&d=0&parts=3) so a sheet can be shared. What someone ticks stays in this
-  // browser only (sheet.ts).
+  // browser only (sheet.ts). What OpenStreetMap says at each stop comes from its own file and is
+  // joined to the sheet here (decision D1, src/transit/answers.ts).
   import { onMount, tick } from 'svelte';
   import { config } from '../config/index.ts';
   import { formatDate, strings } from '../strings.ts';
   import Dialog from '../components/common/Dialog.svelte';
   import SiteNav from '../components/common/SiteNav.svelte';
+  import { loadStopTable } from '../transit/answers.ts';
   import SurveySheet from './SurveySheet.svelte';
   import {
     MAX_PARTS,
@@ -19,7 +21,9 @@
     formatDuration,
     formatMiles,
     isTrolley,
+    joinSheet,
     loadAnswers,
+    moveLegacyAnswers,
     parseIndex,
     parseSheet,
     readChoice,
@@ -49,6 +53,10 @@
   let kept = $state(true);
   let only = $state<number | null>(null);
   let menuOpen = $state(false);
+  /** What OpenStreetMap says at each stop (tables/stop_amenities.json), loaded once per visit. */
+  const stopTable = loadStopTable(config.dataBase);
+  /** The table could not be loaded: linked stops show as not yet surveyed, and the page says so. */
+  let answersMissing = $state(false);
 
   function storage(): Storage | null {
     try {
@@ -100,8 +108,10 @@
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const parsed = parseSheet(await response.json());
       if (!parsed || !parsed.directions.length) throw new Error('not a route sheet');
+      const table = await stopTable;
       if (choice.route !== wanted.id) return; // someone picked another route meanwhile
-      sheet = parsed;
+      answersMissing = table === null;
+      sheet = joinSheet(parsed, table);
       if (!parsed.directions.some((d) => d.d === choice.d)) choice.d = parsed.directions[0]!.d;
       sheetState = 'ok';
       readAnswers();
@@ -180,6 +190,7 @@
   onMount(() => {
     const reset = () => (only = null);
     window.addEventListener('afterprint', reset);
+    moveLegacyAnswers(storage());
     loadIndex();
     return () => window.removeEventListener('afterprint', reset);
   });
@@ -265,6 +276,7 @@
           {#if direction.out}{t.outside(direction.out)}{/if}
         </p>
         <h3>{t.statusTitle}</h3>
+        {#if answersMissing}<p class="notice">{t.answersMissing}</p>{/if}
         <ul class="counts">
           {#each STATUS_ORDER.filter((k) => counts[k] > 0) as k (k)}
             <li>{t.stopCount(counts[k])} {t.statusLong[k]}</li>

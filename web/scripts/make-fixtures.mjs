@@ -21,7 +21,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { cellToBoundary, gridDisk, latLngToCell } from 'h3-js';
 import { AMENITY_LAYERS, AMENITY_SOURCES, amenityFixtures } from './amenity-fixtures.mjs';
-import { routeSheetFixtures } from './route-fixtures.mjs';
+import { routeOsmStops, routeSheetFixtures } from './route-fixtures.mjs';
 
 const FIXTURES = new URL('../fixtures/', import.meta.url);
 const ROOT = new URL('data/', FIXTURES);
@@ -329,27 +329,29 @@ const memorials = MEMORIAL_SAMPLES.map(([d, m, sg], i) => {
 // SEPTA count, a renumbered stop whose count came from its old id, a stop with no midday service,
 // the two platforms of a subway station at one spot, and a Regional Rail station.
 //
-// Bus and trolley stops also carry the transit comfort lens (M2.3): the OpenStreetMap stop they
-// were matched to (`o`, by number or by place, `om`) with its answers (`a`, `sh`, `bn`, `li`),
-// the lens factors, canopy (`cp`), the High Injury Network (`hin`) and suggestions (`sg`), as the
-// pipeline writes them (ranks among these six stops): a busy stop with neither shelter nor bench,
-// a stop with a bench only, a sheltered stop with nothing to suggest, a stop OpenStreetMap has but
-// no one has surveyed, one it does not have, and one with a shelter answer but no bench answer.
-// Stops on the route survey sheets (route-fixtures.mjs) show the same OpenStreetMap stop there.
+// Bus and trolley stops also carry the transit comfort lens (M2.3) as the pipeline publishes it
+// (ranks among these six stops): the mark of a stop the lens scores (`tc`), SEPTA's and the City's
+// factors, canopy (`cp`), the High Injury Network (`hin`), the suggestion they decide (`sg`), and
+// the OpenStreetMap stop at the same pole (`o`). What OpenStreetMap says there is in
+// tables/stop_amenities.json (LINKED_OSM_STOPS below), joined in the browser (decision D1): a busy
+// stop with neither shelter nor bench, a stop with a bench only, a sheltered stop with nothing to
+// suggest, a stop OpenStreetMap has but no one has surveyed, one it does not have, and one with a
+// shelter answer but no bench answer. Stops on the route survey sheets (route-fixtures.mjs) link
+// to the same OpenStreetMap stop there.
 const STOP_SAMPLES = [
   [[170, 60], { id: 'sp1001', sid: '1001', nm: 'Sample 2 St & N Broad St (far side)', md: 1, r: '16,B1 OWL', tw: 75, ts: 65, tu: 58, bh: 6, hp: 17, hm: 22, hs: 22, hu: 30, ft: 24, lt: 1507, ev: 8, nt: 3, wc: 1, b: 132, bp: 'Spring 2026',
-    o: 'n9100001', om: 2, a: 2, sh: 0, bn: 1, li: 1, f_riders: 40, f_noshelter: 100, f_nobench: 0, f_shade: 33, f_heat: 33, f_hin: 100, f_wait: 40, cp: 24, hin: 1, sg: 'stop_shelter_request' }],
+    o: 'n9100001', tc: 1, f_riders: 40, f_shade: 33, f_heat: 33, f_hin: 100, f_wait: 40, cp: 24, hin: 1 }],
   [[150, 60], { id: 'sp1002', sid: '1002', nm: 'N Broad St & Sample 2 St', md: 1, r: '4,16', tw: 140, ts: 90, tu: 70, bh: 10, hp: 6, hm: 9, hs: 12, hu: 15, ft: 305, lt: 1528, ev: 16, nt: 1, wc: 1, b: 848, bp: 'Spring 2026',
-    o: 'n9100002', om: 1, a: 1, sh: 0, bn: 0, li: 0, f_riders: 60, f_noshelter: 100, f_nobench: 100, f_shade: 83, f_heat: 33, f_hin: 100, f_wait: 20, cp: 2, hin: 1,
-    sg: 'stop_shelter_request,stop_bench_request,stop_streetlight_report,stop_shade_trees' }],
+    o: 'n9100002', tc: 1, f_riders: 60, f_shade: 83, f_heat: 33, f_hin: 100, f_wait: 20, cp: 2, hin: 1,
+    sg: 'stop_shade_trees' }],
   [[480, 180], { id: 'sp1003', sid: '1003', nm: 'Sample 3 St & Sample 5 Ave', md: 3, r: 'T1,47', tw: 180, ts: 120, tu: 100, bh: 12, hp: 5, hm: 7, hs: 9, hu: 10, ft: 300, lt: 1450, ev: 20, wc: 1, b: 1240, bp: 'Spring 2026',
-    o: 'w9100003', om: 1, a: 3, sh: 1, bn: 1, li: 1, f_riders: 80, f_noshelter: 0, f_nobench: 0, f_shade: 17, f_heat: 0, f_hin: 0, f_wait: 0, cp: 31 }],
+    o: 'w9100003', tc: 1, f_riders: 80, f_shade: 17, f_heat: 0, f_hin: 0, f_wait: 0, cp: 31 }],
   [[640, -60], { id: 'sp1004', sid: '1004', nm: 'Sample 1 St & Sample 8 Ave', md: 1, r: '60', tw: 22, ts: 12, tu: 0, bh: 2, hp: 40, hm: 60, hs: 120, ft: 380, lt: 1180, ev: 0, wc: 1,
-    o: 'n9100004', om: 2, a: 0, f_noshelter: 50, f_nobench: 50, f_shade: 67, f_heat: 83, f_hin: 0, f_wait: 60, cp: 6, sg: 'stop_survey' }],
+    o: 'n9100004', tc: 1, f_shade: 67, f_heat: 83, f_hin: 0, f_wait: 60, cp: 6 }],
   [[560, 60], { id: 'sp1105', sid: '1005', nm: 'Sample 2 St & Sample 6 Ave (midblock, near side)', md: 1, r: '60', tw: 22, ts: 12, tu: 0, bh: 2, hp: 40, hm: 60, hs: 120, ft: 385, lt: 1185, ev: 0, wc: 2, fid: '1105', b: 4, bp: 'Spring 2026', bx: '1105',
-    f_riders: 20, f_noshelter: 50, f_nobench: 50, f_shade: 50, f_heat: 67, f_hin: 0, f_wait: 60, cp: 12, sg: 'stop_survey' }],
+    tc: 1, f_riders: 20, f_shade: 50, f_heat: 67, f_hin: 0, f_wait: 60, cp: 12 }],
   [[320, 180], { id: 'sp1008', sid: '1008', nm: 'Sample 3 St & Sample 2 St', md: 1, r: '441', tw: 1, ts: 0, tu: 0, bh: 1, ft: 388, lt: 388, ev: 0, wc: 1, b: 0, bp: 'Spring 2026',
-    o: 'n9100008', om: 1, a: 0, sh: 0, f_riders: 0, f_noshelter: 100, f_nobench: 50, f_shade: 0, f_heat: 0, f_hin: 0, cp: 40, sg: 'stop_survey,stop_shelter_request' }],
+    o: 'n9100008', tc: 1, f_riders: 0, f_shade: 0, f_heat: 0, f_hin: 0, cp: 40 }],
   [[160, -20], { id: 'sp1006', sid: '1006', nm: 'Sample', md: 4, r: 'B1,B2,B3', tw: 283, ts: 153, tu: 113, bh: 27, hp: 2, hm: 5, hs: 7, hu: 7, ft: 307, lt: 1455, ev: 23, wc: 2 }],
   [[161, -20], { id: 'sp1007', sid: '1007', nm: 'Sample', md: 4, r: 'B1,B2,B3', tw: 284, ts: 152, tu: 104, bh: 26, hp: 2, hm: 4, hs: 7, hu: 10, ft: 315, lt: 1485, ev: 28, wc: 2 }],
   [[800, 180], { id: 'sr90009', sid: '90009', nm: 'Sample Regional Rail Station', md: 8, r: 'CHW', tw: 42, ts: 18, tu: 18, bh: 3, hp: 40, hm: 60, hs: 120, hu: 120, ft: 330, lt: 1430, ev: 6, wc: 1 }],
@@ -379,6 +381,54 @@ const AMENITY_STOP_SAMPLES = [
   [800, 172, { id: 'w9000007', c: 0, md: 2, sh: 0 }],
 ];
 const amenityStops = AMENITY_STOP_SAMPLES.map(([x, y, properties]) => ({ type: 'Feature', properties, geometry: { type: 'Point', coordinates: toLngLat([x, y]) } }));
+
+// What OpenStreetMap says at each stop, keyed by its id (tables/stop_amenities.json, docs/CONTRACTS.md
+// section 8): the stops of the shelters and benches samples above, the OpenStreetMap stops SEPTA's
+// sample stops link to (`o`), and those the route sheets link to (`osm`). The only file besides the
+// shelters and benches tiles that holds OpenStreetMap's answers; the browser joins it (decision D1).
+const LINKED_OSM_STOPS = {
+  n9100001: { c: 2, sh: 0, bn: 1, lt: 1 },
+  n9100002: { c: 1, sh: 0, bn: 0, lt: 0, n: ['1002'] },
+  w9100003: { c: 3, sh: 1, bn: 1, lt: 1, n: ['1003'] },
+  n9100004: { c: 0 },
+  n9100008: { c: 0, sh: 0, n: ['1008'] },
+};
+const tableEntry = (properties) => {
+  const entry = { c: properties.c };
+  for (const key of ['sh', 'bn', 'bi', 'lt', 'cv']) if (properties[key] !== undefined) entry[key] = properties[key];
+  const numbers = [properties.ref, properties.gs].filter(Boolean).flatMap((v) => String(v).split(/[;,]/).map((n) => n.trim()).filter(Boolean));
+  if (numbers.length) entry.n = [...new Set(numbers)];
+  return entry;
+};
+const osmStops = {};
+const addOsmStop = (id, entry) => {
+  if (osmStops[id] && JSON.stringify(osmStops[id]) !== JSON.stringify(entry)) {
+    throw new Error(`Two sample answers for OpenStreetMap stop ${id}: ${JSON.stringify(osmStops[id])} and ${JSON.stringify(entry)}`);
+  }
+  osmStops[id] = entry;
+};
+for (const [, , properties] of AMENITY_STOP_SAMPLES) addOsmStop(properties.id, tableEntry(properties));
+for (const [id, entry] of Object.entries(LINKED_OSM_STOPS)) addOsmStop(id, entry);
+for (const [id, answers] of Object.entries(routeOsmStops())) {
+  // The route sheets' samples name the answers too; they must agree with the ones above.
+  if (osmStops[id]) {
+    for (const [key, value] of Object.entries(answers)) {
+      if (osmStops[id][key] !== value) throw new Error(`Route sheet sample ${id} says ${key}=${value}, the table says ${osmStops[id][key]}`);
+    }
+  } else addOsmStop(id, tableEntry(answers));
+}
+for (const transit of STOP_SAMPLES) {
+  const o = transit[1].o;
+  if (o && !osmStops[o]) throw new Error(`Sample stop ${transit[1].id} links to ${o}, which the table does not have`);
+}
+const stopTable = {
+  schema: 1,
+  generated_at: '2026-10-04T10:03:12Z',
+  as_of: { osm: '2026-10-03' },
+  credit: '© OpenStreetMap contributors',
+  license: 'Open Database License 1.0, https://opendatacommons.org/licenses/odbl/1-0/',
+  stops: Object.fromEntries(Object.entries(osmStops).sort(([a], [b]) => a.localeCompare(b))),
+};
 
 // Heat, trees and the floodplain (M3.1), made up and without random draws. Four census tracts of
 // the City's Heat Vulnerability Index around the parcels, each with its class from 1 to 5 for
@@ -487,6 +537,7 @@ writeFileSync(path('data/tiles/art.art.geojson'), collection(artWorks));
 // sheet is not (docs/CONTRACTS.md section 7).
 mkdirSync(path('data/tables/routes'), { recursive: true });
 for (const [name, text] of routeSheetFixtures(toLngLat)) writeFileSync(path(`data/${name}`), text);
+writeFileSync(path('data/tables/stop_amenities.json'), JSON.stringify(stopTable) + '\n');
 
 // Run from the fixtures folder with relative paths, because tippecanoe records its command
 // line in the file's metadata and local folder names do not belong in committed files.
@@ -673,6 +724,7 @@ const manifest = {
       ...amenityFixtures(toLngLat).map(([name]) => name),
       'tiles/art.art.geojson',
       'tables/routes/index.json',
+      'tables/stop_amenities.json',
       ...handWritten.map(([name]) => name).filter((name) => !shardFiles.some(([shard]) => shard === name)),
     ].map((p) => [p, fileInfo(p)]),
   ),

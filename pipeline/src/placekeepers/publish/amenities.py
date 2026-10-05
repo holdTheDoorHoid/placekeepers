@@ -10,6 +10,9 @@ water, public toilets and public bookcases (placekeepers.derive.amenities), one 
   or not yet surveyed. The rules are in placekeepers.derive.bus_stops. SEPTA's own stops are a
   separate layer (`stops` in tiles/transit.pmtiles, M2.1); M2.3 joins the two.
 
+The same answers are also published as a table keyed by OpenStreetMap id, for the browser to join
+to SEPTA's stops (placekeepers.publish.stop_table).
+
 Everything here comes from OpenStreetMap, so the published layers are under the Open Database
 License, credited "© OpenStreetMap contributors".
 """

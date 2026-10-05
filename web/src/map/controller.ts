@@ -25,6 +25,7 @@ import { strings } from '../strings.ts';
 import { basemapLook, restyleBase } from './styles/basemap.ts';
 import { SELECTED, SELECTED_CASING } from './styles/palette.ts';
 import { STYLES, partId, styleFor, type StyleModule } from './styles/index.ts';
+import type { StopAnswerIndex } from '../transit/answers.ts';
 
 /** The outline of a parcel opened by a lookup (not from the lots layer), drawn above everything. */
 const PICKED_SOURCE = 'pk-picked-parcel';
@@ -153,6 +154,8 @@ export class MapController {
   private marker: maplibregl.Marker | null = null;
   /** The features someone opened, drawn as selected by their layer's style. */
   private inspected: { layerId: string; ids: (string | number)[] } | null = null;
+  /** What OpenStreetMap says at SEPTA's stops, joined in the browser (src/transit/answers.ts). */
+  private stopAnswers: StopAnswerIndex | null = null;
   /** The outline of a parcel opened by a lookup, waiting for the map to load. */
   private pickedShape: Geometry | null = null;
   /** The base map's own layers as the starting style drew them, before any restyling. */
@@ -293,6 +296,18 @@ export class MapController {
       layout: { 'line-join': 'round' },
       paint: { 'line-color': SELECTED, 'line-width': 3.5 },
     });
+  }
+
+  /**
+   * What OpenStreetMap says at SEPTA's stops, by the linked OpenStreetMap id (decision D1): the
+   * stops layer reads the shelter and bench from it, so it is drawn again with them.
+   */
+  setStopAnswers(index: StopAnswerIndex | null): void {
+    if (index === this.stopAnswers) return;
+    this.stopAnswers = index;
+    for (const [layerId, applied] of this.applied) {
+      if (applied.style === STYLES.transit_stops) this.syncLayer(layerId);
+    }
   }
 
   setManifest(manifest: Manifest | null): void {
@@ -528,6 +543,7 @@ export class MapController {
           sourceLayer: resolved.data.sourceLayer,
           glyphs: this.hasGlyphs(),
           highlight: this.highlightFor(layerId),
+          stopAnswers: this.stopAnswers,
         }),
         true,
       );
@@ -547,6 +563,7 @@ export class MapController {
         sourceLayer: applied.sourceLayer,
         glyphs: this.hasGlyphs(),
         highlight: this.highlightFor(layerId),
+        stopAnswers: this.stopAnswers,
       }),
       visible,
     );

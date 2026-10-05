@@ -16,6 +16,17 @@ test.describe('transit comfort', () => {
     await chip.click();
     await expect(chip).toHaveAttribute('aria-pressed', 'true');
     await expectHash(page, 'l', /transit_stops/);
+    // The stops layer reads each stop's shelter and bench from what OpenStreetMap says at its linked
+    // stop, published apart and joined here in the browser (decision D1): the map's style names the
+    // linked ids once the answers have loaded.
+    await expect
+      .poll(() =>
+        page.evaluate(() => {
+          const map = (window as unknown as { pkMap: { getPaintProperty(layer: string, name: string): unknown } }).pkMap;
+          return JSON.stringify(map.getPaintProperty('pk:transit_stops:circle', 'circle-color'));
+        }),
+      )
+      .toContain('n9100002');
 
     await page.getByRole('button', { name: /What you can do nearby/ }).click();
     const card = page.locator(`article.card[data-stop="${STOP.id}"]`);

@@ -5,10 +5,12 @@
   // priority under the transit comfort lens, what riders find there (from OpenStreetMap, with "not
   // yet surveyed" where no one has recorded it, never "no"), what neighbors can do with the first
   // lawful step and the route's contacts, the "why" behind the score, then its service and riders.
+  // What OpenStreetMap says is joined here from its own file (decision D1, src/transit/answers.ts).
+  // A trolley tunnel station is shown like a station: the lens leaves it out.
   import type { AppStore } from '../../state/store.svelte.ts';
   import { strings } from '../../strings.ts';
-  import { describeComfort } from '../../transit/comfort.ts';
-  import { describeStop, stopKind } from '../../transit/describe.ts';
+  import { describeComfort, outsideLens, tunnelStation } from '../../transit/comfort.ts';
+  import { describeStop } from '../../transit/describe.ts';
   import EvidenceBadge from '../common/EvidenceBadge.svelte';
   import RouteDetails from '../dossier/RouteDetails.svelte';
   import WhyBreakdown from '../lens/WhyBreakdown.svelte';
@@ -19,15 +21,14 @@
   // The site root from the build (not config, so the details also render outside a browser).
   const siteBase = import.meta.env.BASE_URL;
   const views = $derived(
-    features.slice(0, 6).map((properties) => {
-      const kind = stopKind(properties.md);
-      const station = kind === 'metro' || kind === 'rail';
-      return {
-        id: String(properties.id ?? ''),
-        stop: describeStop(properties),
-        comfort: station ? null : describeComfort(store.registry, store.state, properties),
-      };
-    }),
+    features.slice(0, 6).map((properties) => ({
+      id: String(properties.id ?? ''),
+      stop: describeStop(properties),
+      comfort: outsideLens(properties) ? null : describeComfort(store.registry, store.state, properties, store.stopTable),
+      tunnel: tunnelStation(properties),
+      // A link to OpenStreetMap whose answers have not arrived (or could not be loaded).
+      waiting: typeof properties.o === 'string' && store.stopTableStatus !== 'ok',
+    })),
   );
   const anyComfort = $derived(views.some((v) => v.comfort !== null));
 </script>
@@ -49,15 +50,20 @@
       {/if}
     {/if}
 
+    {#if view.tunnel}<p class="muted small">{t.tunnelStation}</p>{/if}
     {#if comfort}
       <h4>{t.findTitle}</h4>
-      <p>{comfort.summary}</p>
-      <ul class="facts">
-        {#each comfort.answers as answer (answer.key)}
-          <li class:unknown={!answer.known}>{answer.label}: {answer.value}</li>
-        {/each}
-      </ul>
-      {#if comfort.anyUnknown}<p class="muted small">{s.unknownNote}</p>{/if}
+      {#if view.waiting}
+        <p class="muted" role="status">{store.stopTableStatus === 'unavailable' ? t.answersUnavailable : t.answersLoading}</p>
+      {:else}
+        <p>{comfort.summary}</p>
+        <ul class="facts">
+          {#each comfort.answers as answer (answer.key)}
+            <li class:unknown={!answer.known}>{answer.label}: {answer.value}</li>
+          {/each}
+        </ul>
+        {#if comfort.anyUnknown}<p class="muted small">{s.unknownNote}</p>{/if}
+      {/if}
       {#if comfort.facts.length}
         <ul class="facts">
           {#each comfort.facts as fact (fact)}<li>{fact}</li>{/each}

@@ -2,15 +2,21 @@
 // per route (docs/CONTRACTS.md section 7), made up and fixed by hand, along the sample streets of
 // make-fixtures.mjs. They cover every thing a stop can show (a shelter, a bench only, neither, not
 // yet surveyed, not found in OpenStreetMap), a direction with stops outside the city, and a
-// trolley route. A stop that is also one of make-fixtures.mjs's SEPTA stops shows the same
-// OpenStreetMap stop and answers there (`o`, `a`, `sh`, `bn`, `li`), as the pipeline pairs them the
-// same way for both (match_septa). make-fixtures.mjs writes them; run this file alone to write only them:
+// trolley route. A stop that is also one of make-fixtures.mjs's SEPTA stops links to the same
+// OpenStreetMap stop there (`o`), as the pipeline pairs them the same way for both (match_septa).
+// The sheets carry only that link (`osm`); what OpenStreetMap says at each stop listed here goes to
+// tables/stop_amenities.json, which make-fixtures.mjs writes (decision D1 of
+// docs/VERIFICATION_V0_2.md). make-fixtures.mjs writes them; run this file alone to write only them:
 //   node scripts/route-fixtures.mjs
 
 import { mkdirSync, writeFileSync } from 'node:fs';
 
 const GENERATED_AT = '2026-10-04T10:03:12Z';
 const AS_OF = { schedules: 'v202609270', osm: '2026-10-03' };
+// The pipeline's credit and license lines (publish/route_sheets.py).
+const CREDIT = 'Stops and their order: SEPTA. Each osm id links to tables/stop_amenities.json.';
+const LICENSE =
+  "SEPTA open data license agreement (free to use, reproduce and redistribute; no commercial use of SEPTA's trademarks), https://wwww.septa.org/license-agreement/";
 
 // A stop: [key, SEPTA number, name, [x, y] in meters from the sample origin, what OpenStreetMap has].
 const ROUTES = [
@@ -107,26 +113,45 @@ const ROUTES = [
   },
 ];
 
+/** What OpenStreetMap says at each stop the sheets link to, by its id, for tables/stop_amenities.json. */
+export function routeOsmStops() {
+  const found = {};
+  for (const route of ROUTES) {
+    for (const direction of route.directions) {
+      for (const [, , , , { osm, ...answers }] of direction.stops) if (osm) found[osm] = answers;
+    }
+  }
+  return found;
+}
+
 /** The sheets as [path under the data root, JSON text], the index last. */
 export function routeSheetFixtures(toLngLat) {
   const files = [];
   const index = [];
   for (const route of ROUTES) {
-    const counts = {};
     const directions = route.directions.map(({ stops, ...direction }) => {
-      const placed = stops.map(([k, sid, nm, xy, osm]) => {
+      // Only the link to the OpenStreetMap stop: never what it says there (decision D1).
+      const placed = stops.map(([k, sid, nm, xy, { osm }]) => {
         const [lng, lat] = toLngLat(xy);
-        const stop = { k, sid, nm, lat, lng, ...osm };
-        const kind = 'c' in osm ? String(osm.c) : 'none';
-        counts[kind] = (counts[kind] ?? 0) + 1;
-        return stop;
+        return osm ? { k, sid, nm, lat, lng, osm } : { k, sid, nm, lat, lng };
       });
       let m = 0;
       for (let i = 1; i < stops.length; i++) m += Math.hypot(stops[i][3][0] - stops[i - 1][3][0], stops[i][3][1] - stops[i - 1][3][1]);
       return { d: direction.d, dir: direction.dir, to: direction.to, m: Math.round(m), out: direction.out, stops: placed };
     });
     const file = `tables/routes/${route.id}.json`;
-    const sheet = { schema: 1, generated_at: GENERATED_AT, as_of: AS_OF, id: route.id, r: route.r, nm: route.nm, md: route.md, directions };
+    const sheet = {
+      schema: 1,
+      generated_at: GENERATED_AT,
+      as_of: AS_OF,
+      credit: CREDIT,
+      license: LICENSE,
+      id: route.id,
+      r: route.r,
+      nm: route.nm,
+      md: route.md,
+      directions,
+    };
     files.push([file, JSON.stringify(sheet) + '\n']);
     index.push({
       id: route.id,
@@ -135,10 +160,12 @@ export function routeSheetFixtures(toLngLat) {
       md: route.md,
       file,
       dirs: directions.map((d) => ({ d: d.d, dir: d.dir, to: d.to, n: d.stops.length })),
-      s: Object.fromEntries(Object.entries(counts).sort(([a], [b]) => a.localeCompare(b))),
     });
   }
-  files.push(['tables/routes/index.json', JSON.stringify({ schema: 1, generated_at: GENERATED_AT, as_of: AS_OF, routes: index }) + '\n']);
+  files.push([
+    'tables/routes/index.json',
+    JSON.stringify({ schema: 1, generated_at: GENERATED_AT, as_of: AS_OF, credit: CREDIT, license: LICENSE, routes: index }) + '\n',
+  ]);
   return files;
 }
 

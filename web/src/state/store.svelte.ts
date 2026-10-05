@@ -12,6 +12,7 @@ import { ListStore } from '../places/lists.svelte.ts';
 import { isSample } from '../places/sample.ts';
 import type { InspectTarget, LayerStatus, MapController, MemorialInView, ParcelInView, StopInView } from '../map/controller.ts';
 import { lensChanges } from '../map/lens-layers.ts';
+import { STOP_TABLE, loadStopTable, type StopTable } from '../transit/answers.ts';
 import type { Registry, SettingValue, ViewName } from '../registry/types.ts';
 import { strings } from '../strings.ts';
 import {
@@ -79,6 +80,13 @@ export class AppStore {
   memorialsInView = $state.raw<MemorialInView[]>([]);
   /** SEPTA stops drawn in view, for "What you can do nearby" in the field view. */
   stopsInView = $state.raw<StopInView[]>([]);
+  /**
+   * What OpenStreetMap says at SEPTA's stops (tables/stop_amenities.json), joined to them here in
+   * the browser (decision D1, src/transit/answers.ts). Loaded once the stops are shown.
+   */
+  stopTable = $state.raw<StopTable | null>(null);
+  /** `unavailable`: not published, or the download failed; the stops then count as not yet surveyed. */
+  stopTableStatus = $state<'idle' | 'loading' | 'ok' | 'unavailable'>('idle');
   selectedProperties = $state.raw<Record<string, unknown> | null>(null);
   /** A memorial, crash or street block someone tapped, shown in the details panel. */
   inspected = $state.raw<InspectTarget | null>(null);
@@ -139,6 +147,7 @@ export class AppStore {
   readonly manifestReady: Promise<void>;
   private pickRun = 0;
   private readonly fetchImpl: typeof fetch | undefined;
+  private readonly dataBase: string;
 
   constructor(registry: Registry, initial: { state: AppState; viewPinned: boolean; from?: string }, deps: StoreDeps = {}) {
     this.registry = registry;
@@ -148,6 +157,7 @@ export class AppStore {
     this.options = $state(deps.options ?? Object.fromEntries(registry.options.map((o) => [o.id, o.default])));
     this.manifestReady = new Promise<void>((resolve) => (this.resolveManifest = resolve));
     this.fetchImpl = deps.fetchImpl;
+    this.dataBase = deps.dataBase ?? './data/';
     this.dossier = new DossierController({
       dataBase: deps.dataBase ?? './data/',
       manifest: () => this.manifestReady.then(() => this.manifest),
@@ -161,6 +171,20 @@ export class AppStore {
     });
     this.lists = new ListStore(deps.listStorage);
     this.dossierOpen = initial.state.selected !== null;
+  }
+
+  /** Downloads what OpenStreetMap says at SEPTA's stops, once, when the manifest lists it. */
+  async loadStopTable(): Promise<void> {
+    if (this.stopTableStatus === 'loading' || this.stopTableStatus === 'ok') return;
+    this.stopTableStatus = 'loading';
+    await this.manifestReady;
+    if (this.manifest && !(STOP_TABLE in this.manifest.files)) {
+      this.stopTableStatus = 'unavailable';
+      return;
+    }
+    const table = await loadStopTable(this.dataBase, this.fetchImpl);
+    this.stopTable = table;
+    this.stopTableStatus = table ? 'ok' : 'unavailable';
   }
 
   /** Whether the browser may ask the City's servers for live data. */

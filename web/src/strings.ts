@@ -72,7 +72,7 @@ export const strings = {
     hideNote: 'Hide',
     hideNoteLabel: 'Hide this note',
     close: 'Close',
-    notAffiliated: 'Not affiliated with the City of Philadelphia. Not legal advice.',
+    notAffiliated: 'Not affiliated with the City of Philadelphia or SEPTA. Not legal advice.',
     licenses: 'Code: GPL-3.0. Data: each source has its own license. Writing: Creative Commons BY-SA 4.0.',
   },
 
@@ -668,6 +668,7 @@ export const strings = {
     lensTitle: 'Priority under the transit comfort lens',
     lensUnsurveyed: 'Where no one has surveyed a stop yet, its shelter and bench count halfway.',
     lensStations: 'The lens scores bus and trolley stops only, so stations are hollow.',
+    lensTunnel: 'The trolley stops in the tunnel under Center City and University City are hollow too: the lens leaves them out, as it does stations.',
     // The transit comfort lens at a stop (src/transit/comfort.ts).
     findTitle: 'What riders find here',
     notInOsm: 'We found no matching stop in OpenStreetMap yet, so no one has recorded whether it has a shelter or a bench.',
@@ -678,6 +679,9 @@ export const strings = {
       `Tree canopy covers about ${formatNumber(percent)} percent of the land around the stop, in an area about two blocks across (the City's 2018 tree canopy survey).`,
     onHin: 'The stop is on the High Injury Network, the streets where most traffic deaths and serious injuries in Philadelphia happen.',
     noScore: 'The transit comfort lens scores bus and trolley stops only.',
+    tunnelStation: 'This trolley stop is underground, in the tunnel, so the transit comfort lens leaves it out, as it does the subway and rail stations.',
+    answersLoading: 'Loading what OpenStreetMap says at this stop.',
+    answersUnavailable: 'What OpenStreetMap says at this stop could not be loaded right now, so its shelter and bench count as not yet surveyed.',
     canDo: 'What neighbors can do here',
     routeDetails: 'Steps, contacts and links',
     surveyGuide: 'How to survey a stop with StreetComplete',
@@ -896,6 +900,8 @@ export const strings = {
     summary: (stops: number, miles: string) =>
       `${plural(stops, 'stop', 'stops')} in Philadelphia, ${miles} from the first to the last in straight lines.`,
     outside: (n: number) => `${plural(n, 'more stop is', 'more stops are')} outside Philadelphia and not on this sheet.`,
+    answersMissing:
+      'What OpenStreetMap says at these stops could not be loaded right now, so the stops it knows show as not yet surveyed.',
     statusTitle: 'What OpenStreetMap shows now',
     status: {
       shelter: 'Shelter',

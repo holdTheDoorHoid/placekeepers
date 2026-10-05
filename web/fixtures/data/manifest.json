@@ -636,8 +636,8 @@
       "sha256": "ba6d52260354a67d1609cfa76aa2696ba0dacded44f23dba816aead9ffdd08c0"
     },
     "tiles/transit.stops.geojson": {
-      "bytes": 3630,
-      "sha256": "18689d0b5b7f208a17ea58474a3f5381bed737c19d4383086169ea9effd6f89b"
+      "bytes": 3174,
+      "sha256": "515c594b418fb995680c228136aa05c84e5d82acf0eb4a8949b1ebbc2f133849"
     },
     "tiles/amenities.stops.geojson": {
       "bytes": 1235,
@@ -708,8 +708,12 @@
       "sha256": "d1b74b6802a750b967dbf1e967618538cd279fd28839316a08d083e604dd1d20"
     },
     "tables/routes/index.json": {
-      "bytes": 846,
-      "sha256": "9244225df95bdee51d45a9fe6ec98bc2fa5f835611b1a937a9d569e914a5d9cc"
+      "bytes": 1009,
+      "sha256": "01d11edc7bc2753a818222918f2fb5ed042bcdca16e6b3035495189721127b7f"
+    },
+    "tables/stop_amenities.json": {
+      "bytes": 763,
+      "sha256": "28b139874ea1f6a099b26faaec67230cbd44da8de648de9a9af66df2cacbcb17"
     },
     "dossiers/common.json": {
       "bytes": 6273,
