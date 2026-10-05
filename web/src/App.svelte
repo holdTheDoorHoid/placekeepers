@@ -23,7 +23,8 @@
   let lastHash = location.hash.slice(1);
   let hashTimer: ReturnType<typeof setTimeout> | undefined;
   $effect(() => {
-    const text = encodeState(store.registry, $state.snapshot(store.state));
+    // While the person's location is in use, the map position would show where they are.
+    const text = encodeState(store.registry, $state.snapshot(store.state), { includeMap: !store.userLocation });
     clearTimeout(hashTimer);
     hashTimer = setTimeout(() => {
       if (text === lastHash) return;
@@ -64,6 +65,16 @@
   $effect(() => {
     const title = store.dossierView?.title;
     document.title = title ? `${title} | ${strings.app.name}` : strings.app.name;
+  });
+
+  // An open lot page knows its address: cards, the ranked list and saved lists can use it too.
+  $effect(() => {
+    const view = store.dossierView;
+    if (!view || view.loading || view.title === strings.dossier.parcel(view.opa)) return;
+    untrack(() => {
+      store.addresses.remember(view.opa, view.title);
+      store.lists.update(view.opa, { address: view.title, center: store.dossier.center });
+    });
   });
 
   onMount(() => {

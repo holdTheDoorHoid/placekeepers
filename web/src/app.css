@@ -338,6 +338,17 @@ caption {
   box-shadow: 0 0 0 2px var(--pk-focus);
 }
 
+/* The map's short credits line: in the field view it sits top left, clear of the bottom sheet,
+   and wraps before it reaches the zoom buttons on the right. */
+.maplibregl-ctrl-top-left .maplibregl-ctrl-attrib {
+  max-width: calc(100vw - 72px);
+}
+
+.maplibregl-ctrl-attrib a {
+  color: inherit;
+  text-decoration: underline;
+}
+
 /* MapLibre controls: keep keyboard focus visible on top of the map. */
 .maplibregl-ctrl button:focus-visible,
 .maplibregl-canvas:focus-visible {

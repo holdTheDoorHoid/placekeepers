@@ -321,6 +321,17 @@ export class MapController {
     this.map.flyTo({ center: [lng, lat], zoom: 16, essential: false });
   }
 
+  /** Takes the "you are here" dot off the map. */
+  hideUserLocation(): void {
+    this.marker?.remove();
+  }
+
+  /** The view as west, south, east and north. */
+  bounds(): [number, number, number, number] {
+    const b = this.map.getBounds();
+    return [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()];
+  }
+
   // Keeping the map in step with the state ------------------------------------------------
 
   private sync(): void {

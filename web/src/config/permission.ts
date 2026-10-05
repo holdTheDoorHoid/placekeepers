@@ -46,3 +46,22 @@ export function permissionLabel(code: PermissionCode | null): string {
 export function permissionText(code: PermissionCode | null): string {
   return code === null ? strings.permission.notPublished : strings.permission.long[code];
 }
+
+/**
+ * The code for a parcel known only from its dossier (such as a place in an imported list): the
+ * category of the dossier's first route, the same rule the pipeline uses to make `rt`.
+ */
+export function permissionFromRoutes(routes: readonly string[], publicOwner: boolean): PermissionCode {
+  switch (routes[0]) {
+    case 'community_landcare':
+      return 1;
+    case 'land_bank_garden_agreement':
+      return 2;
+    case 'contact_phdc':
+      return 3;
+    case 'ask_the_owner':
+      return publicOwner ? 4 : 5;
+    default:
+      return 0;
+  }
+}

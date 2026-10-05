@@ -16,6 +16,7 @@
   function refreshFromMap() {
     const controller = store.controller;
     if (!controller) return;
+    store.viewBounds = controller.bounds();
     store.parcelsInView = controller.parcelsInView();
     const selected = store.state.selected;
     if (selected && !store.selectedProperties) store.selectedProperties = controller.findParcel(selected);
@@ -104,6 +105,19 @@
     <div class="loading" role="status"><span class="spinner" aria-hidden="true"></span>{strings.app.loadingMap}</div>
   {/if}
   {#if store.picking}<p class="notice picking" role="status">{strings.pick.looking}</p>{/if}
+  {#if store.userLocation && store.state.view === 'analysis'}
+    <p class="notice location">
+      {strings.field.locationInUse}
+      <button
+        class="button quiet small"
+        type="button"
+        onclick={() => {
+          store.userLocation = null;
+          store.controller?.hideUserLocation();
+        }}>{strings.field.stopLocation}</button
+      >
+    </p>
+  {/if}
   {#if store.basemapMissing}<p class="notice basemap-note">{strings.basemap.missing}</p>{/if}
 </div>
 
@@ -153,6 +167,14 @@
     left: 50%;
     top: 8px;
     transform: translateX(-50%);
+    z-index: 2;
+    box-shadow: var(--pk-shadow);
+  }
+  .location {
+    position: absolute;
+    left: 8px;
+    bottom: 32px;
+    max-width: min(420px, calc(100% - 16px));
     z-index: 2;
     box-shadow: var(--pk-shadow);
   }

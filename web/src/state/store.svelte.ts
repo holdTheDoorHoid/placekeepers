@@ -7,6 +7,8 @@ import { buildDossier, type DossierView } from '../dossier/build.ts';
 import { fetchParcelsAt } from '../dossier/carto.ts';
 import { DossierController } from '../dossier/controller.svelte.ts';
 import { isOpaAccount } from '../dossier/opa.ts';
+import { AddressBook } from '../places/addresses.svelte.ts';
+import { ListStore } from '../places/lists.svelte.ts';
 import type { InspectTarget, LayerStatus, MapController, ParcelInView } from '../map/controller.ts';
 import type { Registry, SettingValue, ViewName } from '../registry/types.ts';
 import { strings } from '../strings.ts';
@@ -22,7 +24,7 @@ import {
   type MapPosition,
 } from './defaults.ts';
 import { LIVE_CITY_DATA, saveOptions, type OptionValues } from './options.ts';
-import { PREFS_KEY, removeItem } from './storage.ts';
+import { PREFS_KEY, removeItem, type KeyValueStore } from './storage.ts';
 
 /** Below this zoom a tap on the map is too coarse to mean one parcel. */
 export const PICK_MIN_ZOOM = 16;
@@ -42,6 +44,8 @@ export interface StoreDeps {
   /** The app wide options saved in this browser. */
   options?: OptionValues;
   fetchImpl?: typeof fetch;
+  /** Where saved lists are kept; the browser's own storage when left out (tests pass their own). */
+  listStorage?: KeyValueStore | null;
 }
 
 export class AppStore {
@@ -67,6 +71,17 @@ export class AppStore {
   selectedProperties = $state.raw<Record<string, unknown> | null>(null);
   /** A memorial, crash or street block someone tapped, shown in the details panel. */
   inspected = $state.raw<InspectTarget | null>(null);
+  /** The map's view, as west, south, east and north, after it last settled. */
+  viewBounds = $state.raw<[number, number, number, number] | null>(null);
+  /**
+   * Where the person is, only after they tapped "Near me". Kept in memory alone: never saved, never
+   * sent anywhere, and while it is set, links leave out the map position (it would show where they are).
+   */
+  userLocation = $state.raw<[number, number] | null>(null);
+  /** Addresses for the places in cards, lists and the plot, from the dossier shards. */
+  readonly addresses: AddressBook;
+  /** Saved lists, kept only in this browser. */
+  readonly lists: ListStore;
   /** Short messages read out by screen readers and shown briefly on screen. */
   message = $state('');
 
@@ -118,6 +133,12 @@ export class AppStore {
       liveOn: () => this.liveCityData,
       fetchImpl: deps.fetchImpl,
     });
+    this.addresses = new AddressBook({
+      dataBase: deps.dataBase ?? './data/',
+      manifest: () => this.manifestReady.then(() => this.manifest),
+      fetchImpl: deps.fetchImpl,
+    });
+    this.lists = new ListStore(deps.listStorage);
     this.dossierOpen = initial.state.selected !== null;
   }
 

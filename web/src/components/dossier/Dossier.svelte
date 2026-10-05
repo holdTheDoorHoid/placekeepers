@@ -2,6 +2,7 @@
   // The lot page (docs/DESIGN.md section 5.6), in six sections: Summary, What you can do, Who owns
   // it, History, Nearby, and Sources and freshness. A banner says whether the page is live from the
   // City or from the weekly snapshot, and each part repeats it where it differs.
+  import type { Snippet } from 'svelte';
   import type { Manifest } from '../../data/manifest.ts';
   import type { DossierView } from '../../dossier/build.ts';
   import { strings } from '../../strings.ts';
@@ -28,7 +29,16 @@
     showTitle = false,
     idPrefix = 'pk-dossier',
     actions = {},
-  }: { view: DossierView; manifest: Manifest | null; showTitle?: boolean; idPrefix?: string; actions?: DossierActionsProps } = $props();
+    tools,
+  }: {
+    view: DossierView;
+    manifest: Manifest | null;
+    showTitle?: boolean;
+    idPrefix?: string;
+    actions?: DossierActionsProps;
+    /** More buttons beside Print, such as saving the lot to a list. */
+    tools?: Snippet;
+  } = $props();
 
   const s = strings.dossier;
   const sections = [
@@ -74,6 +84,7 @@
     {#if actions.onPrint}<button class="button small" type="button" onclick={actions.onPrint}>{s.printButton}</button>{/if}
     {#if actions.onShowOnMap}<button class="button small quiet" type="button" onclick={actions.onShowOnMap}>{s.showOnMap}</button>{/if}
     {#if actions.onClear}<button class="button small quiet" type="button" onclick={actions.onClear}>{s.clear}</button>{/if}
+    {@render tools?.()}
   </div>
 
   {#if view.loading}

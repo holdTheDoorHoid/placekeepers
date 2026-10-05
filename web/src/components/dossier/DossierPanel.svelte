@@ -6,6 +6,7 @@
   import { LIVE_CITY_DATA } from '../../state/options.ts';
   import { strings } from '../../strings.ts';
   import Dialog from '../common/Dialog.svelte';
+  import ListToggle from '../lists/ListToggle.svelte';
   import Dossier from './Dossier.svelte';
   import OwnerList from './OwnerList.svelte';
 
@@ -31,7 +32,19 @@
 </script>
 
 {#if view}
-  <Dossier {view} manifest={store.manifest} {showTitle} {idPrefix} {actions} />
+  <Dossier {view} manifest={store.manifest} {showTitle} {idPrefix} {actions}>
+    {#snippet tools()}
+      {#if view && !view.loading}
+        <ListToggle
+          {store}
+          id={view.opa}
+          center={store.dossier.center}
+          properties={store.dossier.tile}
+          address={view.title !== strings.dossier.parcel(view.opa) ? view.title : null}
+        />
+      {/if}
+    {/snippet}
+  </Dossier>
 {/if}
 
 <Dialog bind:open={() => ownerList !== null, (open) => !open && (ownerList = null)} title={strings.dossier.ownerList.title} id="{idPrefix}-owner-list">

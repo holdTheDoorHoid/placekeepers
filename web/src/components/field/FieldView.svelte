@@ -2,14 +2,16 @@
   // The field view, phones first: search, "Near me", the three main chips, and a bottom
   // sheet listing what you can do nearby.
   import { FIELD_CHIPS } from '../../config/chips.ts';
+  import { FILTERS, filterNarrows } from '../../config/filters.ts';
   import { STYLES, styleFor } from '../../map/styles/index.ts';
-  import { parcelLensOf, rankPlaces } from '../../places/rank.ts';
+  import { nearestPlaces, parcelLensOf } from '../../places/rank.ts';
   import { PHILLY_BOUNDS } from '../../state/defaults.ts';
   import type { AppStore } from '../../state/store.svelte.ts';
   import { strings } from '../../strings.ts';
   import Dialog from '../common/Dialog.svelte';
   import DossierPanel from '../dossier/DossierPanel.svelte';
   import LayerList from '../layers/LayerList.svelte';
+  import SavedLists from '../lists/SavedLists.svelte';
   import PlaceCard from '../places/PlaceCard.svelte';
   import AddressSearch from '../search/AddressSearch.svelte';
   import FeatureDetails from '../streets/FeatureDetails.svelte';
@@ -18,10 +20,15 @@
 
   /** Below this zoom the view is too wide to call anything "nearby". */
   const NEARBY_MIN_ZOOM = 13;
+  /** Cards shown at first, and added by "Show more places", up to MAX_CARDS. */
+  const CARDS_STEP = 5;
+  const MAX_CARDS = 25;
 
   let layersOpen = $state(false);
+  let listsOpen = $state(false);
   let sheetOpen = $state(false);
   let locating = $state(false);
+  let cardCount = $state(CARDS_STEP);
 
   const registry = $derived(store.registry);
   const lens = $derived(parcelLensOf(registry));
@@ -35,9 +42,21 @@
     registry.layers.some((l) => styleFor(l) === STYLES.vacant_parcels && store.state.layers.includes(l.id)),
   );
   const nearby = $derived(store.state.map.zoom >= NEARBY_MIN_ZOOM);
-  const places = $derived(nearby ? rankPlaces(registry, store.state, store.parcelsInView, 5) : []);
-  const allOff = $derived(places.length > 0 && places.every((p) => p.why?.allOff));
-  const noScores = $derived(!allOff && places.length > 0 && places.every((p) => p.score === null));
+  /** The person's location, while they use it and it is on the map; otherwise the map's middle. */
+  const fromYou = $derived.by(() => {
+    const at = store.userLocation;
+    const b = store.viewBounds;
+    return !!at && !!b && at[0] >= b[0] && at[0] <= b[2] && at[1] >= b[1] && at[1] <= b[3];
+  });
+  const anchor = $derived<[number, number]>(fromYou && store.userLocation ? store.userLocation : [store.state.map.lng, store.state.map.lat]);
+  const all = $derived(nearby ? nearestPlaces(registry, store.state, store.parcelsInView, anchor, MAX_CARDS) : []);
+  const places = $derived(all.slice(0, cardCount));
+  const narrowed = $derived(FILTERS.filter((f) => filterNarrows(f, store.state.filters[f.id])).length);
+
+  // Addresses come from the lot dossiers, for the cards on show.
+  $effect(() => {
+    void store.addresses.request(places.map((p) => p.id));
+  });
 
   function nearMe() {
     if (!('geolocation' in navigator)) {
@@ -54,7 +73,10 @@
           store.say(strings.field.nearMeOutside);
           return;
         }
+        store.userLocation = [lng, lat];
         store.controller?.showUserLocation(lng, lat);
+        cardCount = CARDS_STEP;
+        sheetOpen = true;
       },
       (error) => {
         locating = false;
@@ -63,16 +85,26 @@
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 },
     );
   }
+
+  function stopLocation() {
+    store.userLocation = null;
+    store.controller?.hideUserLocation();
+  }
 </script>
 
 <div class="field-controls">
   <div class="row">
     <AddressSearch {store} idPrefix="pk-field" />
-    <button class="button small primary near-me" type="button" onclick={nearMe} disabled={locating} aria-describedby="pk-near-me-note">
-      {locating ? strings.field.nearMeBusy : strings.field.nearMe}
-    </button>
-    <span id="pk-near-me-note" class="sr-only">{strings.field.nearMePrivacy}</span>
+    {#if store.userLocation}
+      <button class="button small near-me" type="button" onclick={stopLocation}>{strings.field.stopLocation}</button>
+    {:else}
+      <button class="button small primary near-me" type="button" onclick={nearMe} disabled={locating} aria-describedby="pk-near-me-note">
+        {locating ? strings.field.nearMeBusy : strings.field.nearMe}
+      </button>
+      <span id="pk-near-me-note" class="sr-only">{strings.field.nearMePrivacy}</span>
+    {/if}
   </div>
+  {#if store.userLocation}<p class="location-note small" role="status">{strings.field.locationInUse}</p>{/if}
   <div class="chips" role="group" aria-label={strings.field.chipsLabel}>
     {#each chips as chip (chip.id)}
       {#if chip.layers.length > 0}
@@ -86,6 +118,7 @@
       {/if}
     {/each}
     <button class="chip" type="button" aria-haspopup="dialog" onclick={() => (layersOpen = true)}>{strings.field.moreLayers}</button>
+    <button class="chip" type="button" aria-haspopup="dialog" onclick={() => (listsOpen = true)}>{strings.field.myLists}</button>
   </div>
 </div>
 
@@ -103,23 +136,36 @@
       <p>{strings.sheet.noLotsLayer}</p>
     {:else if !nearby}
       <p>{strings.sheet.zoomIn}</p>
-    {:else if places.length === 0}
+    {:else if store.parcelsInView.length === 0}
       <p>{strings.sheet.nothingHere}</p>
+    {:else if places.length === 0}
+      <p>{strings.sheet.noneWithSuggestion}</p>
     {:else}
-      {#if allOff}<p class="notice">{strings.sheet.allOff}</p>{/if}
-      {#if noScores}<p class="notice">{strings.sheet.noScores}</p>{/if}
+      <p class="muted small order">{fromYou ? strings.sheet.nearestToYou : strings.sheet.nearestToCenter}</p>
+      {#if narrowed}
+        <p class="notice">
+          {strings.filters.narrowedNote(narrowed)}
+          <button class="button quiet small" type="button" onclick={() => store.clearFilters()}>{strings.filters.clear}</button>
+        </p>
+      {/if}
       <div class="cards">
         {#each places as place (place.id)}
-          <PlaceCard {store} {place} lensLabel={lens?.label ?? ''} onShow={() => (sheetOpen = false)} />
+          <PlaceCard {store} {place} lensLabel={lens?.label ?? ''} {fromYou} onShow={() => (sheetOpen = false)} />
         {/each}
       </div>
-      <p class="muted small">{strings.sheet.preview}</p>
+      {#if all.length > places.length}
+        <button class="button quiet small" type="button" onclick={() => (cardCount += CARDS_STEP)}>{strings.sheet.showMore}</button>
+      {/if}
     {/if}
   </div>
 </section>
 
 <Dialog bind:open={layersOpen} title={strings.field.layersTitle} id="pk-field-layers">
   <LayerList {store} idPrefix="field" />
+</Dialog>
+
+<Dialog bind:open={listsOpen} title={strings.field.listsTitle} id="pk-field-lists">
+  <SavedLists {store} idPrefix="pk-field" onOpen={() => (listsOpen = false)} />
 </Dialog>
 
 <!-- The lot page: a full screen sheet on phones. Closing it keeps the parcel marked on the map. -->
@@ -174,6 +220,19 @@
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
+  }
+  /* Phones: one row of chips that scrolls sideways, so the map keeps its room. */
+  @media (max-width: 560px) {
+    .chips {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      margin: 0 -12px;
+      padding: 2px 12px;
+    }
+    .chips .chip {
+      flex: none;
+    }
   }
   .sheet {
     grid-area: map;
@@ -236,5 +295,12 @@
   }
   .notice {
     margin-bottom: 8px;
+  }
+  .order {
+    margin-bottom: 8px;
+  }
+  .location-note {
+    margin: 0;
+    color: var(--pk-muted);
   }
 </style>

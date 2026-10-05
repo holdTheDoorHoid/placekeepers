@@ -2,25 +2,46 @@
   // The analysis view, desktop first: lens sliders, filters and layers on the left, the
   // selected place or a summary of the area on the right, and a ranked list underneath.
   // On narrower screens the side panels become panels that open over the map.
-  import { rankPlaces } from '../../places/rank.ts';
-  import type { AppStore } from '../../state/store.svelte.ts';
   import { strings } from '../../strings.ts';
+  import { rankPlaces, type ScoreOrder } from '../../places/rank.ts';
+  import type { AppStore } from '../../state/store.svelte.ts';
   import DossierPanel from '../dossier/DossierPanel.svelte';
   import LayerList from '../layers/LayerList.svelte';
   import LensPanel from '../lens/LensPanel.svelte';
+  import SavedLists from '../lists/SavedLists.svelte';
   import AreaSummary from '../places/AreaSummary.svelte';
+  import ExportButtons from '../places/ExportButtons.svelte';
   import RankedTable from '../places/RankedTable.svelte';
   import AddressSearch from '../search/AddressSearch.svelte';
   import FeatureDetails from '../streets/FeatureDetails.svelte';
   import Filters from './Filters.svelte';
+  import NeedPlot from './NeedPlot.svelte';
 
   let { store }: { store: AppStore } = $props();
 
+  type Panel = 'table' | 'plot' | 'lists';
   let leftOpen = $state(false);
   let rightOpen = $state(false);
-  let tableOpen = $state(false);
+  /** Which part of the drawer under the map is open, if any. */
+  let panel = $state<Panel | null>(null);
+  let order = $state<ScoreOrder>('desc');
 
-  const ranked = $derived(rankPlaces(store.registry, store.state, store.parcelsInView));
+  const ranked = $derived(rankPlaces(store.registry, store.state, store.parcelsInView, Infinity, order));
+  const panels: { id: Panel; label: string }[] = [
+    { id: 'table', label: strings.analysis.tabTable },
+    { id: 'plot', label: strings.analysis.tabPlot },
+    { id: 'lists', label: strings.analysis.tabLists },
+  ];
+  const listCount = $derived(store.lists.active?.places.length ?? 0);
+
+  function toggle(id: Panel) {
+    panel = panel === id ? null : id;
+  }
+
+  /** The places in view for a download, highest score first (the download keeps the first 500). */
+  function inView() {
+    return rankPlaces(store.registry, store.state, store.parcelsInView).map((p) => ({ id: p.id, center: p.center, properties: p.properties }));
+  }
 
   // Selecting a place, or tapping a memorial, crash or street block, opens the details panel on
   // screens where it is hidden.
@@ -76,16 +97,28 @@
   {/if}
 </aside>
 
-<section class="drawer" id="places-section" tabindex="-1" aria-labelledby="pk-table-title">
-  <h2 id="pk-table-title">
-    <button type="button" aria-expanded={tableOpen} aria-controls="pk-table" onclick={() => (tableOpen = !tableOpen)}>
-      <span>{strings.analysis.tableTitle}</span>
-      <span class="count">{strings.sheet.countLabel(ranked.length)}</span>
-      <span class="sr-only">{tableOpen ? strings.analysis.tableHide : strings.analysis.tableShow}</span>
-    </button>
-  </h2>
-  <div id="pk-table" class="table-body" hidden={!tableOpen}>
-    <RankedTable {store} places={ranked.slice(0, 50)} />
+<section class="drawer" id="places-section" tabindex="-1" aria-labelledby="pk-drawer-title">
+  <h2 id="pk-drawer-title" class="sr-only">{strings.analysis.drawerLabel}</h2>
+  <div class="tabs" role="group" aria-labelledby="pk-drawer-title">
+    {#each panels as item (item.id)}
+      <button type="button" class="tab" aria-expanded={panel === item.id} aria-controls="pk-drawer-{item.id}" onclick={() => toggle(item.id)}>
+        <span>{item.label}</span>
+        {#if item.id === 'table'}<span class="count">{strings.sheet.countLabel(ranked.length)}</span>{/if}
+        {#if item.id === 'lists' && store.lists.active}<span class="count">{strings.lists.count(listCount)}</span>{/if}
+      </button>
+    {/each}
+  </div>
+  <div id="pk-drawer-table" class="drawer-body" hidden={panel !== 'table'}>
+    {#if panel === 'table'}
+      <ExportButtons {store} places={inView} title={strings.export.inView} idPrefix="pk-view" />
+      <RankedTable {store} places={ranked} {order} onOrder={(next) => (order = next)} />
+    {/if}
+  </div>
+  <div id="pk-drawer-plot" class="drawer-body" hidden={panel !== 'plot'}>
+    {#if panel === 'plot'}<NeedPlot {store} places={ranked} idPrefix="pk-analysis" />{/if}
+  </div>
+  <div id="pk-drawer-lists" class="drawer-body" hidden={panel !== 'lists'}>
+    {#if panel === 'lists'}<SavedLists {store} idPrefix="pk-analysis" />{/if}
   </div>
 </section>
 
@@ -131,39 +164,44 @@
     background: var(--pk-bg);
     border-top: 1px solid var(--pk-surface-2);
   }
-  .drawer h2 {
-    margin: 0;
-    font-size: 1rem;
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    background: var(--pk-surface);
   }
-  .drawer h2 button {
+  .tab {
     display: flex;
     align-items: center;
-    gap: 10px;
-    width: 100%;
+    gap: 8px;
     min-height: 44px;
     padding: 8px 14px;
     border: 0;
-    background: var(--pk-surface);
+    border-bottom: 3px solid transparent;
+    background: none;
     color: var(--pk-text);
     font: inherit;
     font-weight: 700;
     text-align: left;
     cursor: pointer;
   }
-  .drawer h2 button::after {
+  .tab::after {
     content: '\25B4';
-    margin-left: auto;
+    font-size: 0.8rem;
   }
-  .drawer h2 button[aria-expanded='true']::after {
+  .tab[aria-expanded='true'] {
+    border-bottom-color: var(--pk-accent);
+    background: var(--pk-bg);
+  }
+  .tab[aria-expanded='true']::after {
     content: '\25BE';
   }
   .count {
     font-weight: 400;
     color: var(--pk-muted);
   }
-  .table-body {
+  .drawer-body {
     position: relative;
-    max-height: 38vh;
+    max-height: 42vh;
     overflow-y: auto;
     padding: 8px 14px 12px;
   }
