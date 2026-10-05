@@ -123,26 +123,31 @@ ready for the owner.
 
 ## Phase 2: v0.2 Transit comfort
 
-- **M2.1 SEPTA data**: GTFS stops, routes and frequencies; stop level ridership; mapping stop ids
-  across New Bus Network phases (Phase 1 began 2026-08-23; phases run to August 2027).
-- **M2.2 Shelters and benches**: OpenStreetMap from a weekly Geofabrik extract; a StreetComplete
-  survey guide for neighbors; the City's shelter list if the Right to Know request succeeds.
-- **M2.3 Transit comfort lens and suggestions**: boardings, missing shelter or bench, heat and shade at
-  the stop, crossing on the High Injury Network; suggestions for shelter requests, benches, shade
-  trees, and lighting reports.
-- **M2.4 Survey campaign kit**: a printable guide for mapping your route's stops in an afternoon.
+- **M2.1 SEPTA data** (done, 2026-10-05): GTFS stops, routes and frequencies; stop level
+  ridership; mapping stop ids across New Bus Network phases (Phase 1 began 2026-08-23; phases run
+  to August 2027).
+- **M2.2 Shelters and benches** (done, 2026-10-05): OpenStreetMap from a weekly Geofabrik
+  extract; a StreetComplete survey guide for neighbors; the City's shelter list if the Right to
+  Know request succeeds.
+- **M2.3 Transit comfort lens and suggestions** (done, 2026-10-05): boardings, missing shelter or
+  bench, heat and shade at the stop, crossing on the High Injury Network; suggestions for shelter
+  requests, benches, shade trees, and lighting reports.
+- **M2.4 Survey campaign kit** (done, 2026-10-05): a printable guide for mapping your route's
+  stops in an afternoon.
 
 ## Phase 3: v0.3 Heat and shade, and placemaking
 
-- **M3.1 Heat and shade lens**: heat vulnerability, street trees, canopy, land cover, flood plain.
+- **M3.1 Heat and shade lens** (done, 2026-10-05, early, in v0.2): heat vulnerability, street
+  trees, canopy, land cover, flood plain.
 - **M3.2 Public art layer**: Percent for Art, OpenStreetMap, Wikidata, plus philart.net, the
   Association for Public Art and Magic Gardens if they agree; deduplication; links out to Mural Arts.
 - **M3.3 Walkability and people**: EPA walkability index, our own OpenStreetMap measures
   (intersection density, destinations within 10 minutes), people within a 5 minute walk, DVRPC
   traffic stress and pedestrian network.
 - **M3.4 Placemaking lens and suggestions**.
-- **M3.5 Amenities and conditions**: benches, water, toilets, bookcases, libraries, recreation
-  centers, and 311 condition layers (dumping, dark streetlights, graffiti).
+- **M3.5 Amenities and conditions** (done, 2026-10-05, early, in v0.2): benches, water, toilets,
+  bookcases, libraries, recreation centers, and 311 condition layers (dumping, dark streetlights,
+  graffiti).
 
 ## Phase 4: v0.4 History and displacement
 

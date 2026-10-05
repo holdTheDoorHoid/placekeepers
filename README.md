@@ -19,7 +19,7 @@ We combine many City records on purpose, so no single broken source can take the
 Read [Why this works](https://holdthedoorhoid.github.io/placekeepers/why/) for the Philadelphia
 research behind it.
 
-## What you can do with v0.1
+## What you can do with v0.2
 
 **On your phone, on the block.** Search an address or tap "Near me" to see "What you can do
 nearby": the closest lots and streets that could use care, each with why it matters, how sure we
@@ -38,10 +38,16 @@ permission.
 **Street safety and memorials.** The High Injury Network, years of crash records, and a quiet
 marker for each person the Police record as killed while walking, cycling or riding a scooter.
 
-**An early look at buses and trains.** SEPTA's stops and routes, how often service comes and how
-many people ride, and which stops OpenStreetMap knows have a shelter or a bench, under "Buses and
-trains" in the layer list, off by default. The "Survey bus stops" page shows how to help map the
-stops OpenStreetMap does not know about yet, with the free StreetComplete app.
+**Transit comfort.** Every SEPTA bus and trolley stop and route, scored for where a shelter, a
+bench or shade would help riders most, with a suggestion and its first lawful step at each stop.
+Switch it on with the "Bus stops" chip, or "Buses and trains" in Settings. The "Survey bus stops"
+guide and the printable "Survey a route" kit show how to help map what OpenStreetMap does not
+know yet.
+
+**An early look at heat and shade, and at what is nearby.** A lens for where planting trees or
+greening a lot would cool people most, with its own suggestions. Also benches, water, toilets,
+libraries, recreation centers and pools, and 311 reports of dumping, dark streetlights and
+graffiti, all without a lens or suggestions of their own yet.
 
 Every layer, score and suggestion can be switched on or off in Settings.
 
@@ -51,9 +57,9 @@ Names of people killed are not shown. We want the Bicycle Coalition and Families
 to weigh in first. Removal requests go through a public GitHub issue for now; a private email
 address is planned.
 
-The transit comfort lens and its suggestions, heat and shade, public art, history and
-displacement watch, and organizing tools are planned for later releases. See the
-[roadmap](docs/ROADMAP.md).
+Amenities and 311 conditions have no lens or suggestions of their own yet. Public art,
+walkability, history and displacement watch, and organizing tools are planned for later
+releases. See the [roadmap](docs/ROADMAP.md).
 
 ## How the data stays fresh
 
@@ -113,6 +119,10 @@ The field view on a phone, near a block with vacant lots, with "What you can do 
 The analysis view on a desktop, with a lot page open:
 
 ![The analysis view on a desktop, with lens sliders on the left, the map in the middle, and an open lot page on the right](docs/images/analysis-desktop.png)
+
+The transit comfort lens on a phone, with a stop's details open near Broad Street:
+
+![The field view on a phone with the transit comfort lens on, showing colored bus stops near Broad Street and a stop's details open with its score and suggestion](docs/images/transit-phone.png)
 
 ## For developers
 
