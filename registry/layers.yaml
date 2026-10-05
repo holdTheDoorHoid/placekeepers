@@ -357,3 +357,32 @@
         - {value: frequent, label: "Frequent routes: every 15 minutes or better at midday"}
       default: all
   release: v0.2
+- id: stop_amenities
+  label: Shelters and benches at stops
+  group: transit
+  description: >-
+    What riders find at the bus and trolley stops OpenStreetMap knows about: a shelter or a roof, a
+    bench but no shelter, neither, or not yet surveyed. Not yet surveyed means no one has recorded
+    it yet; it does not mean the stop has nothing. OpenStreetMap has only about one stop in ten so
+    far (SEPTA's full list of stops is its own layer). Neighbors can survey stops with the
+    StreetComplete phone app, and their answers appear here within about a week.
+  sources: [osm_philadelphia]
+  # Amenities from OpenStreetMap share one tile file; M3.5 adds water, toilets and more to it.
+  file: tiles/amenities.pmtiles
+  source_layer: stops
+  geometry: point
+  style: stop_amenities
+  evidence: not_violence
+  # The transit comfort lens comes in M2.3; until then the stops stay off unless switched on.
+  default: {field: false, analysis: false}
+  guide: streetcomplete
+  settings:
+    - id: show
+      label: Show
+      type: choice
+      options:
+        - {value: all, label: Every stop}
+        - {value: surveyed, label: Stops someone has surveyed}
+        - {value: unsurveyed, label: Stops not yet surveyed}
+      default: all
+  release: v0.2

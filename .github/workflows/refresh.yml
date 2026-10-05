@@ -55,7 +55,9 @@ jobs:
     name: Fetch, check and publish the data
     runs-on: ubuntu-24.04
     # A full run took about 11 minutes on a laptop on 2026-10-04 (28 sources, two bulk files of
-    # about 500 MB each); 90 minutes leaves room for slow City servers and the base map.
+    # about 500 MB each); 90 minutes leaves room for slow City servers and the base map. The
+    # OpenStreetMap extract (M2.2, about 350 MB) adds about a minute: 31 seconds to download and
+    # 18 seconds to keep the bus stops, shelters and benches, on the laptop on 2026-10-04.
     timeout-minutes: 90
     permissions:
       contents: read # read the data-snapshots release
@@ -63,7 +65,9 @@ jobs:
       # The runner has about 14 GB free, so the laptop's 10 GB floor would skip every download
       # and quietly serve last week's data. A run needs about 2 GB at its peak (the restored
       # snapshots, one bulk GeoJSON file of about 600 MB while it is read, the new snapshots and
-      # their tars), so 3 GB still stops a runaway before the disk fills.
+      # their tars), so 3 GB still stops a runaway before the disk fills. The OpenStreetMap
+      # extract (about 350 MB) does not raise the peak: each source is downloaded, checked and
+      # its download deleted before the next starts, and its snapshot is about 200 kB.
       PK_MIN_FREE_GB: "3"
       # Keep only the newest good snapshot of each source on the runner (the release holds it).
       PK_KEEP_SNAPSHOTS: "1"

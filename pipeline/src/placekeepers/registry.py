@@ -115,10 +115,32 @@ class UrlEndpoint(Strict):
     format: Literal["csv", "geojson", "parquet", "zip"]
 
 
+#: An OpenStreetMap tag to keep: a key and a value ("highway=bus_stop"), or a key alone for any
+#: value ("shelter"). Keys may hold colons ("gtfs:stop_id"); neither part holds spaces or quotes.
+OsmTag = Annotated[str, StringConstraints(pattern=r"^[A-Za-z0-9_:.-]+(=[A-Za-z0-9_:;.-]+)?$")]
+
+
 class OsmExtractEndpoint(Strict):
-    """An OpenStreetMap extract. Its keys are defined by the milestone that adds the first one."""
+    """An OpenStreetMap extract (keys added 2026-10-04 by M2.2, docs/CONTRACTS.md section 1).
+
+    With `url` (an .osm.pbf file, such as Geofabrik's Pennsylvania extract) the pipeline downloads
+    the file and keeps the elements that carry one of `tags` inside the city, so a later layer adds
+    its tags here without new code. Without either key (the base map) the site makes the file and
+    the pipeline never fetches it."""
 
     kind: Literal["osm_extract"]
+    url: Annotated[str, StringConstraints(pattern=r"^https://\S+\.osm\.pbf$")] | None = None
+    tags: list[OsmTag] = []
+
+    @model_validator(mode="after")
+    def _url_and_tags_go_together(self) -> OsmExtractEndpoint:
+        if self.url is not None and not self.tags:
+            raise ValueError("an extract with a url needs tags (which elements to keep)")
+        if self.url is None and self.tags:
+            raise ValueError("tags need a url (the extract to read them from)")
+        if len(set(self.tags)) != len(self.tags):
+            raise ValueError(f"a tag is listed twice: {self.tags}")
+        return self
 
 
 class CuratedEndpoint(Strict):
@@ -241,6 +263,9 @@ class Layer(Strict):
     style: Id
     evidence: Evidence
     default: LayerDefault
+    #: the slug of a content page (content/<slug>.md) that shows how anyone can help improve this
+    #: layer's data, linked from "About this layer" (added 2026-10-04 by M2.2)
+    guide: Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9-]*$")] | None = None
     settings: list[Setting] = []
     release: Release
 
@@ -506,6 +531,10 @@ def _cross_check(
         setting_ids = [setting.id for setting in layer.settings]
         if len(set(setting_ids)) != len(setting_ids):
             problems.append(f"{where}: setting ids repeat: {setting_ids}")
+        if layer.guide and repo_root is not None:
+            page = repo_root / "content" / f"{layer.guide}.md"
+            if not page.is_file():
+                problems.append(f"{where}: guide page content/{layer.guide}.md does not exist")
 
     for lens in reg["lenses"].values():
         where = f"registry/lenses.yaml: {lens.id}"

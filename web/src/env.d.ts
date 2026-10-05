@@ -1,6 +1,9 @@
 /// <reference types="svelte" />
 /// <reference types="vite/client" />
 
+/** True only in the end to end tests' build (vite.config.ts). */
+declare const __PK_E2E__: boolean;
+
 declare module 'virtual:placekeepers/registry' {
   const registry: import('./registry/types.ts').Registry;
   export default registry;

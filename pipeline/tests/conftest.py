@@ -43,10 +43,12 @@ def _no_real_tippecanoe(monkeypatch: pytest.MonkeyPatch) -> None:
 
 @pytest.fixture
 def repo_copy(tmp_path: Path) -> Path:
-    """A throwaway copy of the registry and curated data, safe to edit."""
+    """A throwaway copy of the registry, curated data and content pages, safe to edit."""
     root = tmp_path / "repo"
     shutil.copytree(REPO_ROOT / "registry", root / "registry")
     shutil.copytree(REPO_ROOT / "data" / "curated", root / "data" / "curated")
+    # A layer's guide names a content page, which the registry check looks for.
+    shutil.copytree(REPO_ROOT / "content", root / "content")
     return root
 
 

@@ -1,6 +1,6 @@
 <script lang="ts">
-  // What the map shows about a memorial, a crash or a street block someone tapped: in the
-  // analysis view's details panel, and in a panel over the map in the field view. Memorials are
+  // What the map shows about a memorial, a crash, a street block or a stop someone tapped: in
+  // the analysis view's details panel, and in a panel over the map in the field view. Memorials are
   // quiet: the name only from a public memorial list and only while "show names" is on, the
   // date, how the person was traveling, the place, the public memorial page, "request removal",
   // and the family's blessing beside every memorial suggestion (docs/ETHICS.md).
@@ -15,6 +15,7 @@
   import WhyBreakdown from '../lens/WhyBreakdown.svelte';
   import BlessingNote from './BlessingNote.svelte';
   import TransitStopDetails from '../transit/TransitStopDetails.svelte';
+  import StopAmenityDetails from '../transit/StopAmenityDetails.svelte';
 
   let {
     store,
@@ -96,6 +97,10 @@
     {#if segment.why}<WhyBreakdown why={segment.why} idPrefix="feature" />{/if}
   {:else if style === STYLES.transit_stops}
     <TransitStopDetails features={target.features} />
+  {:else if style === STYLES.stop_amenities}
+    {#each target.features.slice(0, 4) as properties, i (i)}
+      <StopAmenityDetails {properties} guide={layer?.guide} />
+    {/each}
   {/if}
   {#if onClose}
     <button class="button quiet small" type="button" onclick={onClose}>{strings.place.clearSelection}</button>

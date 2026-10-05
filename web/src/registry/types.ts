@@ -52,6 +52,8 @@ export interface Endpoint {
   url?: string;
   format?: UrlFormat;
   path?: string;
+  /** osm_extract: the OpenStreetMap tags the pipeline keeps, "key=value" or "key" (M2.2). */
+  tags?: string[];
 }
 
 export interface SourceHealth {
@@ -119,6 +121,8 @@ export interface Layer {
   style: string;
   evidence: Evidence;
   default: Record<ViewName, boolean>;
+  /** The slug of a content page that shows how anyone can help improve this layer (M2.2). */
+  guide?: string;
   settings: LayerSetting[];
   release: string;
 }

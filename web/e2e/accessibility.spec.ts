@@ -235,15 +235,32 @@ test.describe('accessibility', () => {
   });
 
   test('the map moves without flying for people who prefer reduced motion', async ({ page }) => {
+    /**
+     * Shows the first nearby place on the map, from zoom 15, and returns every zoom level the map
+     * passed through on its way to zoom 17 (the test build hands the tests the map as pkMap).
+     */
+    async function zoomsOnShow(): Promise<number[]> {
+      await page.goto('about:blank');
+      await openMap(page, `v=f&m=15/${SAMPLE_CENTER.lat}/${SAMPLE_CENTER.lng}`);
+      await page.evaluate(() => {
+        const w = window as unknown as { pkMap: { on(event: string, fn: () => void): void; getZoom(): number }; pkZooms: number[] };
+        w.pkZooms = [];
+        w.pkMap.on('zoom', () => w.pkZooms.push(w.pkMap.getZoom()));
+      });
+      await page.getByRole('button', { name: /What you can do nearby/ }).click();
+      await page.locator('article.card').first().getByRole('button', { name: 'Show on map' }).click();
+      await expect.poll(async () => (await hashParams(page)).get('m') ?? '', { timeout: 20_000 }).toMatch(/^17\//);
+      return page.evaluate(() => (window as unknown as { pkZooms: number[] }).pkZooms);
+    }
+    const between = (zooms: number[]) => zooms.filter((z) => Math.abs(z - 15) > 0.01 && Math.abs(z - 17) > 0.01);
+
+    // Flying from zoom 15 to 17 passes through the zoom levels in between...
+    expect(between(await zoomsOnShow()).length).toBeGreaterThan(0);
+    // ...but for people who prefer reduced motion the map goes straight there, however slow the
+    // machine: no zoom level in between, only the one it lands on.
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await openMap(page, `v=f&m=15/${SAMPLE_CENTER.lat}/${SAMPLE_CENTER.lng}`);
-    await page.getByRole('button', { name: /What you can do nearby/ }).click();
-    const card = page.locator('article.card').first();
-    await expect(card).toBeVisible();
-    const started = Date.now();
-    await card.getByRole('button', { name: 'Show on map' }).click();
-    // Flying from zoom 15 to 17 takes over a second; with reduced motion the map jumps.
-    await expect.poll(async () => (await hashParams(page)).get('m') ?? '', { timeout: 5_000, intervals: [50] }).toMatch(/^17\//);
-    expect(Date.now() - started).toBeLessThan(1_000);
+    const zooms = await zoomsOnShow();
+    expect(zooms.length).toBeGreaterThan(0);
+    expect(between(zooms)).toEqual([]);
   });
 });

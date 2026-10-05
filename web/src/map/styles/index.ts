@@ -11,6 +11,7 @@ import type { StyleId } from './ids.ts';
 import { landcare } from './landcare.ts';
 import { memorials } from './memorials.ts';
 import { shootingsHex } from './shootings_hex.ts';
+import { stopAmenities } from './stop_amenities.ts';
 import { streetSegments } from './street_segments.ts';
 import { transitRoutes } from './transit_routes.ts';
 import { transitStops } from './transit_stops.ts';
@@ -30,6 +31,7 @@ export const STYLES: Record<StyleId, StyleModule> = {
   basemap,
   transit_stops: transitStops,
   transit_routes: transitRoutes,
+  stop_amenities: stopAmenities,
 };
 
 export function styleFor(layer: Layer): StyleModule | null {
@@ -37,4 +39,4 @@ export function styleFor(layer: Layer): StyleModule | null {
 }
 
 export { partId } from './types.ts';
-export type { LegendEntry, StyleContext, StyleModule } from './types.ts';
+export type { LegendEntry, LegendLink, StyleContext, StyleModule } from './types.ts';

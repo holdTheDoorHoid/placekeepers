@@ -71,6 +71,9 @@
         },
       });
       store.controller = controller;
+      // The end to end tests watch the camera through this, for example that the map jumps
+      // instead of flying for people who prefer reduced motion. Only in the tests' build.
+      if (__PK_E2E__) (window as unknown as { pkMap?: unknown }).pkMap = controller.map;
     })().catch((error: unknown) => {
       // Most often a browser or device without WebGL, which MapLibre needs to draw.
       console.warn('Placekeepers map:', error);

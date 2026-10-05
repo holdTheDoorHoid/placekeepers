@@ -424,3 +424,26 @@
   cadence: irregular
   health: {min_rows: 500, max_drop_pct: 25, newest_field: source_date, max_age_days: 400}
   release: v0.2
+# Milestone M2.2: what OpenStreetMap knows about bus stops, shelters and benches. One weekly
+# download of Geofabrik's Pennsylvania extract (about 350 MB), filtered on this machine to the city
+# limits (with a 200 meter margin) and to the tags below; the extract itself is deleted once the
+# snapshot is made. A later layer adds its tags here (docs/CONTRACTS.md section 1); they arrive
+# with the next weekly download. railway=tram_stop is not listed: in Philadelphia it marks where a
+# trolley stops on its tracks, while riders wait at the platform beside it.
+- id: osm_philadelphia
+  name: OpenStreetMap in Philadelphia (bus stops, shelters and benches)
+  publisher: OpenStreetMap contributors, from Geofabrik's Pennsylvania extract
+  homepage: https://www.openstreetmap.org/copyright
+  endpoint:
+    kind: osm_extract
+    url: https://download.geofabrik.de/north-america/us/pennsylvania-latest.osm.pbf
+    tags:
+      - highway=bus_stop
+      - public_transport=platform
+      - amenity=shelter
+      - amenity=bench
+  license: odbl
+  attribution: "Bus stops, shelters and benches: © OpenStreetMap contributors (Open Database License)"
+  cadence: weekly
+  health: {min_rows: 2500, max_drop_pct: 10, newest_field: extract_date, max_age_days: 14}
+  release: v0.2

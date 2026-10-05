@@ -45,6 +45,48 @@ describe('the real registry', () => {
   });
 });
 
+describe('OpenStreetMap extracts and layer guides (M2.2)', () => {
+  const source = (files: Record<string, any>, id: string) => files.sources.find((s: { id: string }) => s.id === id);
+
+  it('accepts the base map with no keys and the weekly extract with a url and tags', () => {
+    const reg = loadRegistry();
+    expect(reg.sources.find((s) => s.id === 'basemap_openstreetmap')?.endpoint).toEqual({ kind: 'osm_extract' });
+    const osm = reg.sources.find((s) => s.id === 'osm_philadelphia')!;
+    expect(osm.endpoint.url).toMatch(/pennsylvania-latest\.osm\.pbf$/);
+    expect(osm.endpoint.tags).toContain('highway=bus_stop');
+    expect(reg.layers.find((l) => l.id === 'stop_amenities')?.guide).toBe('streetcomplete');
+  });
+
+  it('needs both a url and tags, or neither', () => {
+    const files = raw();
+    delete source(files, 'osm_philadelphia').endpoint.tags;
+    source(files, 'basemap_openstreetmap').endpoint.tags = ['amenity=bench'];
+    const errors = errorsFor(files);
+    expect(errors).toContain('sources.yaml entry "osm_philadelphia".endpoint of kind osm_extract needs both "url" and "tags", or neither');
+    expect(errors).toContain('sources.yaml entry "basemap_openstreetmap".endpoint of kind osm_extract needs both "url" and "tags", or neither');
+  });
+
+  it('rejects a tag with spaces and a repeated tag', () => {
+    const files = raw();
+    source(files, 'osm_philadelphia').endpoint.tags = ['highway=bus_stop', 'amenity = bench', 'highway=bus_stop'];
+    const errors = errorsFor(files);
+    expect(errors.some((e) => e.includes('"amenity = bench"'))).toBe(true);
+    expect(errors.some((e) => e.includes('repeats "highway=bus_stop"'))).toBe(true);
+  });
+
+  it('rejects an extract link that is not an .osm.pbf file', () => {
+    const files = raw();
+    source(files, 'osm_philadelphia').endpoint.url = 'https://download.geofabrik.de/north-america/us/pennsylvania-latest.osm';
+    expect(errorsFor(files)).toEqual(['sources.yaml entry "osm_philadelphia".endpoint.url should be an https link to an .osm.pbf file']);
+  });
+
+  it('accepts a guide only as a page slug', () => {
+    const files = raw();
+    layer(files, 'stop_amenities').guide = '../streetcomplete';
+    expect(errorsFor(files)).toContain('layers.yaml entry "stop_amenities".guide has an invalid value "../streetcomplete"');
+  });
+});
+
 describe('registry validation catches mistakes', () => {
   it('rejects an unknown key, naming the file and the entry', () => {
     const files = raw();

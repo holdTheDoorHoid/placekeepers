@@ -22,6 +22,7 @@ change once published, because saved links contain them.
     table: shootings                  # carto: table (and optional where)
     # arcgis: service: <name>, layer: 0 (and optional url, see below)
     # url: url: <https link>, format: csv | geojson | parquet | zip
+    # osm_extract: url: <https link to an .osm.pbf file>, tags: [key=value or key, ...]
     # curated: path: data/curated/<file>.yaml
   license: city_terms                 # key into registry/licenses.yaml
   attribution: "Shooting data: Philadelphia Police Department via OpenDataPhilly"
@@ -47,6 +48,16 @@ per schedule period, so for `septa_ridership_bus` and `septa_ridership_trolley` 
 the oldest layer to accept: each run lists that folder (`url`) and takes the newest spring or fall
 layer for the mode, and the snapshot says which in its `layer` column
 (`pipeline/src/placekeepers/adapters/septa.py`).
+
+An `osm_extract` endpoint (keys added 2026-10-04 by M2.2) names an OpenStreetMap extract the
+pipeline downloads, `url` (an https link to an `.osm.pbf` file, such as Geofabrik's Pennsylvania
+extract), and `tags`, the elements to keep: `key=value` (such as `highway=bus_stop`) or a key alone
+for any value (such as `shelter`). Keys and values hold letters, digits and `_ : ; . -`, never
+spaces, and a tag is listed once. The pipeline keeps the nodes and ways with any of the tags inside
+the city limits and 200 meters around them (section 2), so a later layer adds its tags here
+without new code; new tags arrive with the next weekly download. An `osm_extract` with neither key
+is the base map, made by the site and never fetched (section 2); one key without the other is an
+error.
 
 ### `registry/licenses.yaml`
 
@@ -95,8 +106,14 @@ What a setting does to the map is decided by the layer's style in `web/src/map/s
 the setting ids it puts into effect; a web test fails if a registry setting has no effect. Ids and
 option values appear in shared links, so they never change once published.
 
+`guide` (optional, added 2026-10-04 by M2.2) is the slug of a content page, `content/<slug>.md`,
+that shows how anyone can help improve the layer's data. The web app links it from "About this
+layer", and a style may link it from its legend (the shelters and benches layer's "not yet surveyed" entry does).
+The pipeline's registry check fails when the page does not exist.
+
 `registry/groups.yaml` lists groups in display order: `lots`, `care`, `streets`, `transit` (added
-2026-10-04 by M2.1), `safety_context`, `boundaries`, `basemap`, each with a label and a one line
+2026-10-04 by M2.1 for SEPTA's layers; M2.2 adds the shelters and benches at stops to it),
+`safety_context`, `boundaries`, `basemap`, each with a label and a one line
 description.
 
 ### `registry/lenses.yaml`
@@ -215,6 +232,7 @@ data/
     care.pmtiles          layers "landcare", "gardens"
     boundaries.pmtiles    layers "council_districts", "rcos", "neighborhoods"
     transit.pmtiles       layers "stops", "routes"   (SEPTA, added 2026-10-04 by M2.1)
+    amenities.pmtiles     layer "stops"     (shelters and benches at stops, from OpenStreetMap; M2.2)
   tables/
     parcels.json          compact columnar table for ranking and lists
     owners.json           organizations holding many vacant parcels, with their parcels (section 6)
@@ -234,7 +252,8 @@ The base map is also a registry layer (added 2026-10-04 by M1.7): `basemap`, in 
 with `file: basemap/philly.pmtiles`, so it has a switch and a setting (`look`: `light` or `muted`) like
 every layer. `pk publish` leaves every layer whose file is under `basemap/` alone, and the manifest
 lists the layer in `layers` but not its file in `files`. Its source, `basemap_openstreetmap` (endpoint
-kind `osm_extract` with no keys, the first source of that kind), is never fetched by the pipeline, so
+kind `osm_extract` with no keys; the extract the pipeline does download, `osm_philadelphia`, has
+`url` and `tags`, section 1), is never fetched by the pipeline, so
 the manifest gives it the status `missing`; the web app ignores that status, judges the base map by
 `basemap/BUILD` (the Protomaps build date, written by make-basemap.sh), and leaves it out of the
 header's freshness badge.
@@ -507,6 +526,40 @@ the city. Routes whose trips have no shapes in the feed are left out.
 | `md` | int | the mode, as for `stops` |
 | `tw` | int | trips on the typical weekday |
 | `hp`, `hm` | int | the typical wait from 7 to 9 and from 10 to 2 on the weekday, where the route runs most often (its busiest stop in its busiest direction); absent when none |
+
+Added 2026-10-04 by M2.2, from the `osm_philadelphia` snapshot (OpenStreetMap, so the layers of
+this file are under the Open Database License and credited "© OpenStreetMap contributors").
+`amenities.pmtiles` holds amenities from OpenStreetMap; M2.2 adds the first layer, and later
+milestones (M3.5: drinking water, toilets and more) add theirs to the same file:
+
+**`stops` (amenities.pmtiles, points)**: the shelters and benches at stops: every bus and trolley
+stop OpenStreetMap knows inside the city limits, one point each (a stop drawn as a line or an area
+gets a point on it). A stop is an element tagged `highway=bus_stop` that is not a
+`public_transport=stop_position`, or a `public_transport=platform` for buses, trolleybuses or
+trolleys; station platforms of trains, subways and light rail, platforms underground or indoors,
+and stops closed to the public are left out (`pipeline/src/placekeepers/derive/bus_stops.py`).
+
+| Property | Type | Meaning |
+|---|---|---|
+| `id` | string | The element in OpenStreetMap: `n` and the node id, or `w` and the way id, such as `n7735158249` (www.openstreetmap.org/node/7735158249) |
+| `c` | int | What the map shows: 3 a shelter, or the whole stop is under a roof (`sh` 1 or `cv` 1); 2 a bench but no shelter mapped (`bn` 1); 1 no shelter and no bench (`sh` 0 and `bn` 0); 0 not yet surveyed (anything else, including only one of the two answers). Unknown is never shown as missing |
+| `md` | int | How it is served, as bits: 1 bus, 2 trolley |
+| `sh`, `bn`, `bi`, `lt`, `tp`, `db`, `cv` | int | The stop's answers, 1 yes and 0 no, absent when OpenStreetMap does not say (or says something we do not recognize): shelter, bench, waste basket (`bin`), lit, tactile paving, departures board, and whether the whole stop is covered (`covered`) |
+| `wc` | int | Wheelchair access: 1 yes, 0 no, 2 limited; absent when unknown |
+| `nb` | int | Bits, present only when set: 1 the shelter, 2 the bench is mapped on its own beside the stop rather than answered on the stop |
+| `nm`, `ref`, `gs` | string | The stop's `name`, `ref` (SEPTA's stop number, where mapped) and `gtfs:stop_id` tags, only when it has them, so the stops can be matched with SEPTA's (M2.3) |
+
+Which values count as yes and as no is the `YES_NO` table in `derive/bus_stops.py` (for example
+`lit=automatic` is yes, `departures_board=realtime` is yes, `shelter=separate` is yes). A shelter
+(`amenity=shelter` with `shelter_type=public_transport` or no `shelter_type`) or a bench
+(`amenity=bench`) mapped on its own counts for the nearest stop within 10 meters, measured in UTM
+zone 18 north, and only when that stop has no answer of its own: a stop's own answer always wins.
+A shelter tagged `bench=yes` gives its stop a bench too. The build notes carry one sentence with
+the counts of each `c` inside the city.
+
+These are OpenStreetMap's stops, not SEPTA's: SEPTA's own stops are `stops` in `transit.pmtiles`
+(above). M2.3 joins the two by SEPTA's stop number first, an OpenStreetMap stop's `ref` (or `gs`)
+against SEPTA's `sid`, then by distance for the stops that do not match by number.
 
 ## 5. Hand curated memorial files (`data/curated/`)
 

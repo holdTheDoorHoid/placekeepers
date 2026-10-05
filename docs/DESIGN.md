@@ -157,10 +157,11 @@ As built (M1.10, interface review, 2026-10-04; details in
   (newest first). An entry says what the marker says before it is opened (how the person was
   traveling, the date and the place), never a name; opening it shows the same details as the marker.
 - **Phones.** Phones get the field view held either way up; turned sideways, the open sheet runs down
-  the left of the map. On the narrowest phones "Copy link" moves into the menu, so the top bar keeps
-  to two rows. The early preview note can be hidden once read (this browser remembers, under
-  `placekeepers:v1:note`). "Stop" sits beside the note that the location is in use, so the search
-  box keeps its width. The chips row fades at its edge to show it scrolls. Buttons, chips and
+  the left of the map. On the narrowest phones "Copy link" moves into the menu and Settings shows a
+  gear (still named "Settings" for screen readers), so the top bar keeps to two rows even with a
+  wide font or larger text. The note at the top (since v0.1, "Version 0.1: a first public
+  version") can be hidden once read (this browser remembers, under `placekeepers:v1:note`). "Stop"
+  sits beside the note that the location is in use, so the search box keeps its width. The chips row fades at its edge to show it scrolls. Buttons, chips and
   sliders are at least 40 pixels tall on touch screens.
 - **Loading.** The data layers download beside the base map instead of after it has drawn, and the
   label font is asked for early. On an emulated mid range phone (four times slower than this
@@ -626,6 +627,24 @@ docs/            design, roadmap, research
   and recommends the StreetComplete phone app, which asks simple questions such as "does this bus stop
   have a shelter?". OpenStreetMap currently knows about shelters at only about 300 Philadelphia bus
   stops, so this survey is a real gap neighbors can fill.
+
+  As built (M2.2, 2026-10-04): the pipeline reads Geofabrik's Pennsylvania extract of OpenStreetMap
+  every week (`osm_philadelphia`, docs/DATA_SOURCES.md) and the map has a **Shelters and benches at
+  stops** layer (`stop_amenities`, in `tiles/amenities.pmtiles`, where later amenities such as water
+  and toilets will go) in the **Buses and trains** group, beside SEPTA's stops and routes (M2.1): a
+  stop with a shelter or roof, a bench but no shelter mapped, neither, or not yet surveyed, which is
+  a hollow ring so that unknown never looks like missing. A shelter or bench drawn on its own counts
+  for the nearest stop within 10 meters when the stop does not answer itself. On 2026-10-04
+  OpenStreetMap had 829 of SEPTA's 7,927 bus and trolley stops in the city: 97 with a shelter or
+  roof, 12 with a bench only, 236 with neither, 484 not yet surveyed. Its stops are OpenStreetMap's,
+  named by their OpenStreetMap element; M2.3 joins them to SEPTA's stops by SEPTA's stop number,
+  then by distance. The layer is off by default in both views until the transit comfort lens
+  (M2.3), because a city full of rings for unsurveyed stops would crowd the lots and streets that
+  v0.1 is about. The guide is the **Survey bus stops** page, linked from the layer's "About this
+  layer", from its "not yet surveyed" legend entry, from a tapped stop, and from the How to do it
+  and Contact pages. StreetComplete only asks about stops already in OpenStreetMap, so the guide
+  also shows how to add a missing stop with the app's Things overlay or a note. Answers reach the
+  map within about a week.
 - Corrections use a GitHub issue form prefilled with the parcel or place id.
 - Takedown requests go to a dedicated email address (the owner creates it; the owner's personal email
   is never published). Memorial removals are honored without questions.
