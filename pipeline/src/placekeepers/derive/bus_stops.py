@@ -22,10 +22,11 @@ point or outline instead of tagging the stop. Such a shelter (`amenity=shelter` 
 transport, or with no `shelter_type`; a picnic shelter or a gazebo is not a bus shelter) or bench
 (`amenity=bench`) counts for the nearest stop, if that stop lies within 10 meters, and only when
 the stop does not answer the question itself: a stop's own answer always wins, even when a
-shelter is drawn beside it. Why 10 meters: on 2026-10-04 every public transport shelter that
-belongs to a mapped stop lay within 4 meters of it, while the nearest other stop, usually across
-the street, was 15 meters or more away for 96 percent of stops (`docs/DATA_SOURCES.md`). Counting
-only the nearest stop keeps a shelter from being credited to the stop across a narrow street too.
+shelter is drawn beside it. Why 10 meters: on 2026-10-04 every stop shelter drawn near a mapped
+stop lay within 4 meters of it (the next was 42 meters away), while the nearest other stop,
+usually across the street, was 15 meters or more away for 95 percent of stops
+(`docs/DATA_SOURCES.md`). Counting only the nearest stop keeps a shelter from being credited to
+the stop across a narrow street too.
 A mapped shelter tagged `bench=yes` also gives its stop a bench.
 
 **What the map shows** (`c`), from those answers:

@@ -155,7 +155,7 @@ As built (M1.7, 2026-10-04):
 | Crash | PennDOT crash record number (City hosted copy); Police fatal crash record | Yes |
 | Memorial | Curated entry linked to a crash location and a public source | Yes |
 | Area cell | H3 hexagon, resolution 9 (about two blocks across) | Yes |
-| Bus stop | SEPTA stop id (expect churn during the New Bus Network rollout) | Later |
+| Bus stop | SEPTA stop id (expect churn during the New Bus Network rollout); until M2.3 joins SEPTA's stops, the OpenStreetMap element (M2.2) | v0.2 |
 | Artwork | OpenStreetMap or Wikidata id, plus any licensed source | Later |
 
 ### 5.2 The registry: one source of truth for every toggle
@@ -580,6 +580,21 @@ docs/            design, roadmap, research
   and recommends the StreetComplete phone app, which asks simple questions such as "does this bus stop
   have a shelter?". OpenStreetMap currently knows about shelters at only about 300 Philadelphia bus
   stops, so this survey is a real gap neighbors can fill.
+
+  As built (M2.2, 2026-10-04): the pipeline reads Geofabrik's Pennsylvania extract of OpenStreetMap
+  every week (`osm_philadelphia`, docs/DATA_SOURCES.md) and the map has a **Bus and trolley stops**
+  layer in a new **Transit comfort** group: a stop with a shelter or roof, a bench but no shelter
+  mapped, neither, or not yet surveyed, which is a hollow ring so that unknown never looks like
+  missing. A shelter or bench drawn on its own counts for the nearest stop within 10 meters when the
+  stop does not answer itself. On 2026-10-04 OpenStreetMap had 829 of the roughly 8,000 stops in
+  SEPTA's data inside the city: 97 with a shelter or roof, 12 with a bench only, 236 with neither,
+  484 not yet surveyed. The layer is off by default in both views until the transit comfort lens
+  (M2.3), because a city full of rings for unsurveyed stops would crowd the lots and streets that
+  v0.1 is about. The guide is the **Survey bus stops** page, linked from the layer's "About this
+  layer", from its "not yet surveyed" legend entry, from a tapped stop, and from the How to do it
+  and Contact pages. StreetComplete only asks about stops already in OpenStreetMap, so the guide
+  also shows how to add a missing stop with the app's Things overlay or a note. Answers reach the
+  map within about a week.
 - Corrections use a GitHub issue form prefilled with the parcel or place id.
 - Takedown requests go to a dedicated email address (the owner creates it; the owner's personal email
   is never published). Memorial removals are honored without questions.

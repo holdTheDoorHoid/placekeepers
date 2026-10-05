@@ -37,12 +37,15 @@ cache, `--as-of YYYY-MM-DD` sets the build date for time windows, and `-v` shows
 `pk all` finishes each source (download, then check) before starting the next, in an order where
 a source comes after the ones its download needs: transfers, assessments and violations wait for
 the sources that define the vacancy candidate parcels. A source whose registry cadence is `frozen`
-is downloaded once; a `yearly` one at most every 30 days. No download starts while less than 10 GB
-of disk is free (`PK_MIN_FREE_GB`).
+is downloaded once; a `yearly` one at most every 30 days; the OpenStreetMap extract at most every
+six days, as Geofabrik asks (its adapter's `min_refetch`; `--force` overrides all three). No
+download starts while less than 10 GB of disk is free (`PK_MIN_FREE_GB`).
 
 ## Sources
 
-Thirty seven sources, each with an entry in `registry/sources.yaml`. Field lists and the reasons
+Thirty eight sources the pipeline collects, each with an entry in `registry/sources.yaml` (the
+base map's source is the thirty ninth: the site makes the base map, so the pipeline never fetches
+it). Field lists and the reasons
 for them are in each adapter's docstring.
 
 | Source | Where | What we keep |
@@ -75,6 +78,7 @@ for them are in each adapter's docstring.
 | `memorial_names` | `data/curated/memorials.yaml` (in the repository) | Checks every entry; the snapshot keeps ids, dates, modes and places, never names or memorial page links, and leaves out removed entries |
 | `census_tracts_2020` | City ArcGIS `Census_Tracts_2020` (frozen) | Every field (tract id `geoid`, land and water area), with the shape |
 | `tree_canopy_2018` | City ArcGIS `TreeCanopyChange_2008_2018` (frozen; about 570 MB of pages, once) | Not the 665,748 canopy polygons: square meters of canopy in 2008 and 2018 per H3 resolution 9 cell, each polygon split exactly along the cell edges |
+| `osm_philadelphia` | Geofabrik's Pennsylvania extract of OpenStreetMap (`.osm.pbf`, about 350 MB, weekly; read with DuckDB's `ST_ReadOSM`) | Not the extract: the nodes and ways with a tag the registry lists (`endpoint.tags`) inside the city limits (the 2020 census tracts joined) and 200 meters around them, with all their tags (JSON), shape, a point on each, whether that point is in the city, and the extract's date. 3,338 rows on 2026-10-04. Most of its stops must lie inside the city |
 
 **Candidate parcels.** Transfers, assessments and violations are too large to download for the
 whole city every week, so they come down for every parcel with any sign of vacancy (see
@@ -173,8 +177,9 @@ DuckDB: `SELECT * FROM '~/.cache/placekeepers/snapshots/opa_properties/current.p
 
 `pk publish` follows `docs/CONTRACTS.md`: `manifest.json`, `tiles/lots.pmtiles` (layer `parcels`),
 `tiles/streets.pmtiles` (layers `hin`, `segments`, `crashes` and `memorials`),
-`tiles/context.pmtiles` (layer `h3`), `tiles/care.pmtiles` (layers `landcare` and `gardens`) and
-`tiles/boundaries.pmtiles` (layers `council_districts`, `rcos` and `neighborhoods`). It builds in a
+`tiles/context.pmtiles` (layer `h3`), `tiles/care.pmtiles` (layers `landcare` and `gardens`),
+`tiles/transit.pmtiles` (layer `stops`) and `tiles/boundaries.pmtiles` (layers
+`council_districts`, `rcos` and `neighborhoods`). It builds in a
 hidden folder and swaps it into place at the end, and it refuses to replace a folder that is not an
 earlier data root. A layer with nothing to show is left out with a note, so it never breaks the rest
 of its tile file. It also writes the lot dossiers, `dossiers/<first four digits>.json` with
@@ -204,6 +209,23 @@ of its tile file. It also writes the lot dossiers, `dossiers/<first four digits>
 
 The streets tiles keep every point at every zoom (tippecanoe would otherwise thin them), and carry
 only deaths, serious injuries and blocks with recorded harm at low zooms.
+
+### Bus and trolley stops
+
+`publish/transit.py` builds the `stops` layer from the `osm_philadelphia` snapshot, with the rules
+in `derive/bus_stops.py` (docs/CONTRACTS.md section 4):
+
+* **Stops**: `highway=bus_stop` (not a stop position in the road) and platforms for buses,
+  trolleybuses and trolleys; station platforms of trains and subways, platforms underground or
+  indoors, and private stops are left out. Only stops inside the city are published.
+* **Answers**: shelter, bench, waste basket, lit, tactile paving, wheelchair, departures board and
+  covered, each read as yes, no or unknown.
+* **Shelters and benches drawn on their own** count for the nearest stop within 10 meters, only
+  when that stop has no answer of its own.
+* **What the map shows**: a shelter or roof, a bench but no shelter mapped, neither, or not yet
+  surveyed. The build notes give the counts.
+
+The layer is under the Open Database License, credited "© OpenStreetMap contributors".
 
 ### Lot dossiers and owner flags
 
