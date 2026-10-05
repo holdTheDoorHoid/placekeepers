@@ -23,5 +23,7 @@ export const STYLE_IDS = [
   'amenity',
   'public_place',
   'condition',
+  // Public art (M3.2)
+  'public_art',
 ] as const;
 export type StyleId = (typeof STYLE_IDS)[number];

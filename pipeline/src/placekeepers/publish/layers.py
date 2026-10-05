@@ -506,3 +506,8 @@ BUILDERS = (
     *PLACE_BUILDERS,
     *CONDITION_BUILDERS,
 )
+
+# Public art (M3.2), from the City, OpenStreetMap and Wikidata.
+from placekeepers.publish.art import ART_BUILDERS  # noqa: E402
+
+BUILDERS = (*BUILDERS, *ART_BUILDERS)

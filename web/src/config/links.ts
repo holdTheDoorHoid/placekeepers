@@ -64,3 +64,16 @@ export function correctionUrl(opa: string, address: string | null): string {
   });
   return `${REPO_URL}/issues/new?${params.toString()}`;
 }
+
+/**
+ * Mural Arts Philadelphia's own list of the city's murals. Its terms forbid building a database
+ * from its content, so the public art layer links to it and never copies it (checked 2026-10-05).
+ */
+export const MURAL_ARTS_ARTWORKS_URL = 'https://muralarts.org/artworks/';
+
+/** OpenStreetMap's editor, opened on one element (n123 a node, w123 a way) or at a place. */
+export function osmEditUrl(element: string | null, lng: number, lat: number): string {
+  const match = /^([nw])(\d+)$/.exec(element ?? '');
+  if (match) return `https://www.openstreetmap.org/edit?${match[1] === 'n' ? 'node' : 'way'}=${match[2]}`;
+  return `https://www.openstreetmap.org/edit#map=19/${lat.toFixed(6)}/${lng.toFixed(6)}`;
+}

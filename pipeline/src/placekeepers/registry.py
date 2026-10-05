@@ -54,7 +54,7 @@ Weight = Annotated[int, Field(strict=True, ge=0, le=5)]
 Evidence = Literal["strong", "moderate", "mixed", "weak", "not_violence", "context"]
 Cadence = Literal["daily", "weekly", "monthly", "yearly", "irregular", "frozen"]
 AppliesTo = Literal["parcel", "segment", "crash", "stop", "cell"]
-EndpointKind = Literal["carto", "arcgis", "url", "osm_extract", "curated"]
+EndpointKind = Literal["carto", "arcgis", "url", "osm_extract", "curated", "sparql"]
 
 
 class Strict(BaseModel):
@@ -150,8 +150,22 @@ class CuratedEndpoint(Strict):
     path: Annotated[str, StringConstraints(pattern=r"^data/curated/[A-Za-z0-9_.-]+\.ya?ml$")]
 
 
+class SparqlEndpoint(Strict):
+    """A SPARQL query service, such as Wikidata's (added 2026-10-05 by M3.2, docs/CONTRACTS.md
+    section 1). The query lives in the source's adapter, as a Carto adapter's columns do: one
+    small query a week, sent with the project's User-Agent."""
+
+    kind: Literal["sparql"]
+    url: Annotated[str, StringConstraints(pattern=r"^https://\S+$")]
+
+
 Endpoint = Annotated[
-    CartoEndpoint | ArcgisEndpoint | UrlEndpoint | OsmExtractEndpoint | CuratedEndpoint,
+    CartoEndpoint
+    | ArcgisEndpoint
+    | UrlEndpoint
+    | OsmExtractEndpoint
+    | CuratedEndpoint
+    | SparqlEndpoint,
     Field(discriminator="kind"),
 ]
 

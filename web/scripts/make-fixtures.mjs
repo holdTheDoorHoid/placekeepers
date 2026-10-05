@@ -460,6 +460,31 @@ const floodAreas = [
   [{ z: 2 }, box(640, 60, 850, 140)],
 ].map(([properties, geometry]) => ({ type: 'Feature', properties, geometry }));
 
+// Public art (M3.2), made up and without random draws, as the pipeline publishes it (`art` in
+// tiles/art.pmtiles, docs/CONTRACTS.md section 4): one record per source, each with only what its
+// own source says, sharing the work's id (`g`), and the record that draws the work's dot marked
+// `pr` (decision D1: OpenStreetMap's data never shares a record with another source's). A statue
+// the City, OpenStreetMap and Wikidata all list (three records, a few steps apart); a mural and an
+// untitled mural from OpenStreetMap; a mosaic from Wikidata; an installation inside a City building;
+// and a memorial artwork in OpenStreetMap and Wikidata, whose records carry no title, artist or
+// year (docs/ETHICS.md). Published as GeoJSON, as the pipeline does when it skips a tile file.
+const ART_SAMPLES = [
+  [[110, 100], { id: 'n9200001', g: 'pa9001', k: 2, src: 7, s: 2, pr: 1, nm: 'Sample Figure', ar: 'Avery Example', ty: 6,
+    w: 'https://www.associationforpublicart.org/artwork/sample-figure/' }],
+  [[114, 104], { id: 'pa9001', g: 'pa9001', k: 2, src: 7, s: 1, pa: 9001, doc: 'https://example.org/percent-for-art/9001.pdf',
+    nm: 'Sample Figure', ar: 'Avery Example', y: 1976, ty: 5, md: 'Bronze' }],
+  [[106, 97], { id: 'Q9200001', g: 'pa9001', k: 2, src: 7, s: 4, nm: 'Sample Figure', ar: 'Avery Example', y: 1976, ty: 6,
+    wp: 'https://en.wikipedia.org/wiki/Sample_Figure' }],
+  [[270, 100], { id: 'n9200002', g: 'n9200002', k: 1, src: 2, s: 2, pr: 1, nm: 'Sample Street Mural', ar: 'Jordan Painter', y: 2019, ty: 1 }],
+  [[430, 100], { id: 'n9200003', g: 'n9200003', k: 1, src: 2, s: 2, pr: 1, ty: 1 }],
+  [[600, 100], { id: 'Q9200004', g: 'Q9200004', k: 3, src: 4, s: 4, pr: 1, nm: 'Sample Mosaic Wall', y: 2005, ty: 4 }],
+  [[720, 100], { id: 'pa9005', g: 'pa9005', k: 0, src: 1, s: 1, pr: 1, in: 1, pa: 9005, nm: 'Sample Light Work', ar: 'Casey Maker', y: 2015,
+    ty: 9, lc: 'Sample Library (interior)' }],
+  [[270, -20], { id: 'n9200006', g: 'Q9200006', k: 2, src: 6, s: 2, pr: 1, mem: 1 }],
+  [[274, -16], { id: 'Q9200006', g: 'Q9200006', k: 2, src: 6, s: 4, mem: 1 }],
+];
+const artWorks = ART_SAMPLES.map(([xy, properties]) => ({ type: 'Feature', properties, geometry: { type: 'Point', coordinates: toLngLat(xy) } }));
+
 const collection = (features) => JSON.stringify({ type: 'FeatureCollection', features }) + '\n';
 // The lot dossier files in data/dossiers/ (a shard and common.json) and the owners table in
 // data/tables/ are written by hand (docs/CONTRACTS.md section 6: every flag type, and parcels the
@@ -514,6 +539,7 @@ writeFileSync(path('data/tiles/trees.trees.geojson'), collection(cityTrees));
 // Amenities from OpenStreetMap, public places from the City and conditions reported to 311 (M3.5,
 // scripts/amenity-fixtures.mjs).
 for (const [name, text] of amenityFixtures(toLngLat)) writeFileSync(path(`data/${name}`), text);
+writeFileSync(path('data/tiles/art.art.geojson'), collection(artWorks));
 // The route survey sheets (scripts/route-fixtures.mjs): the index is listed in files, each route's
 // sheet is not (docs/CONTRACTS.md section 7).
 mkdirSync(path('data/tables/routes'), { recursive: true });
@@ -632,6 +658,9 @@ const manifest = {
     land_use: ok(560515, null),
     heat_vulnerability: ok(384, null),
     ...Object.fromEntries(Object.entries(AMENITY_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
+    // Public art (M3.2); OpenStreetMap's artworks come with osm_philadelphia
+    percent_for_art: ok(239, '2025-08-19'),
+    wikidata_art: ok(72, null),
   },
   layers: {
     vacant_parcels: {
@@ -679,6 +708,7 @@ const manifest = {
     },
     transit_routes: { file: 'tiles/transit.pmtiles', source_layer: 'routes', sources: ['septa_gtfs'] },
     ...AMENITY_LAYERS,
+    public_art: { file: 'tiles/art.pmtiles', source_layer: 'art', sources: ['percent_for_art', 'osm_philadelphia', 'wikidata_art'] },
   },
   files: Object.fromEntries(
     [
@@ -699,6 +729,7 @@ const manifest = {
       'tiles/environment.floodplain.geojson',
       'tiles/trees.trees.geojson',
       ...amenityFixtures(toLngLat).map(([name]) => name),
+      'tiles/art.art.geojson',
       'tables/routes/index.json',
       'tables/stop_amenities.json',
       ...handWritten.map(([name]) => name).filter((name) => !shardFiles.some(([shard]) => shard === name)),
@@ -715,6 +746,7 @@ const manifest = {
   notes: [
     'This is synthetic sample data for testing the map.',
     'Street, boundary, transit, amenity, heat, tree and floodplain tiles were skipped for this sample, so those layers are published as GeoJSON.',
+    'Public art tiles were skipped for this sample too, so its layer is published as GeoJSON.',
   ],
 };
 writeFileSync(new URL('manifest.json', ROOT), JSON.stringify(manifest, null, 2) + '\n');

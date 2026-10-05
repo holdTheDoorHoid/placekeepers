@@ -27,7 +27,7 @@ describe('the real registry', () => {
 
   it('loads the files the web app depends on', () => {
     const reg = loadRegistry();
-    expect(reg.groups.map((g) => g.id)).toEqual(['lots', 'care', 'streets', 'transit', 'heat', 'amenities', 'public_places', 'conditions', 'safety_context', 'boundaries', 'basemap']);
+    expect(reg.groups.map((g) => g.id)).toEqual(['lots', 'care', 'streets', 'transit', 'heat', 'amenities', 'public_places', 'conditions', 'placemaking', 'safety_context', 'boundaries', 'basemap']);
     expect(reg.layers.map((l) => l.id)).toEqual(expect.arrayContaining(['vacant_parcels', 'hin_2025', 'shootings_hex']));
     expect(reg.lenses.find((l) => l.id === 'violence')?.factors.length).toBeGreaterThan(0);
   });
@@ -84,6 +84,18 @@ describe('OpenStreetMap extracts and layer guides (M2.2)', () => {
     const files = raw();
     layer(files, 'stop_amenities').guide = '../streetcomplete';
     expect(errorsFor(files)).toContain('layers.yaml entry "stop_amenities".guide has an invalid value "../streetcomplete"');
+  });
+});
+
+describe('SPARQL query services (M3.2)', () => {
+  const source = (files: Record<string, any>, id: string) => files.sources.find((s: { id: string }) => s.id === id);
+
+  it('needs an https link to the service', () => {
+    const files = raw();
+    source(files, 'wikidata_art').endpoint.url = 'http://query.wikidata.org/sparql';
+    expect(errorsFor(files)).toEqual(['sources.yaml entry "wikidata_art".endpoint.url should be an https link to a query service']);
+    delete source(files, 'wikidata_art').endpoint.url;
+    expect(errorsFor(files)).toContain('sources.yaml entry "wikidata_art".endpoint of kind sparql needs "url"');
   });
 });
 

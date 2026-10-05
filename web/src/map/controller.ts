@@ -383,6 +383,22 @@ export class MapController {
     return null;
   }
 
+  /**
+   * The features of a registry layer's data whose property `key` equals `value`, from what the map
+   * has loaded, drawn or not: the records of one work of public art, which the browser joins
+   * (src/art/join.ts). Empty before the layer's data is on the map.
+   */
+  featuresWith(layerId: string, key: string, value: string | number): Record<string, unknown>[] {
+    const applied = this.applied.get(layerId);
+    if (!this.loaded || !applied) return [];
+    return this.map
+      .querySourceFeatures(applied.sourceId, {
+        sourceLayer: applied.sourceLayer ?? undefined,
+        filter: ['==', ['get', key], value] as FilterSpecification,
+      })
+      .map((feature) => ({ ...feature.properties }));
+  }
+
   /** How much of the map the page covers now, or null when nothing useful is left uncovered. */
   coverPadding(): Padding | null {
     return this.padding();

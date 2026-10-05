@@ -1,0 +1,284 @@
+{
+ "about": "Written by pipeline/tests/art_join_cases.py. Each case is one work of public art: its records as tiles/art.pmtiles publishes them, one per source, and what the map shows when the browser joins them.",
+ "cases": [
+  {
+   "name": "a statue in all three sources: the City's title, Wikidata's artist and Wikipedia article, OpenStreetMap's point and website",
+   "records": [
+    {
+     "id": "n101",
+     "g": "pa224",
+     "k": 2,
+     "src": 7,
+     "s": 2,
+     "pr": 1,
+     "nm": "Sample Pin Statue",
+     "ar": "Avery Example",
+     "ty": 6,
+     "w": "https://example.org/pin"
+    },
+    {
+     "id": "pa224",
+     "g": "pa224",
+     "k": 2,
+     "src": 7,
+     "s": 1,
+     "pa": 224,
+     "doc": "https://example.org/224.pdf",
+     "nm": "Sample Pin",
+     "ar": "Example, Avery",
+     "y": 1976,
+     "ty": 5,
+     "md": "Metal, steel",
+     "lc": "Sample Square"
+    },
+    {
+     "id": "Q201",
+     "g": "pa224",
+     "k": 2,
+     "src": 7,
+     "s": 4,
+     "nm": "Sample Pin",
+     "ar": "Avery Q. Example",
+     "y": 1977,
+     "ty": 5,
+     "w": "https://example.org/wd",
+     "wp": "https://en.wikipedia.org/wiki/Sample_Pin"
+    }
+   ],
+   "joined": {
+    "id": "pa224",
+    "k": 2,
+    "src": 7,
+    "ty": 6,
+    "nm": "Sample Pin",
+    "ar": "Avery Q. Example",
+    "y": 1976,
+    "md": "Metal, steel",
+    "lc": "Sample Square",
+    "pa": 224,
+    "doc": "https://example.org/224.pdf",
+    "osm": "n101",
+    "wd": "Q201",
+    "wp": "https://en.wikipedia.org/wiki/Sample_Pin",
+    "w": "https://example.org/pin"
+   }
+  },
+  {
+   "name": "the City's title is unknown, so OpenStreetMap's name is the title",
+   "records": [
+    {
+     "id": "n102",
+     "g": "pa9",
+     "k": 0,
+     "src": 3,
+     "s": 2,
+     "pr": 1,
+     "nm": "Three Reliefs"
+    },
+    {
+     "id": "pa9",
+     "g": "pa9",
+     "k": 0,
+     "src": 3,
+     "s": 1,
+     "pa": 9,
+     "nm": "Title unknown (three reliefs)",
+     "ar": "Lee Felt",
+     "wt": 1
+    }
+   ],
+   "joined": {
+    "id": "pa9",
+    "k": 0,
+    "src": 3,
+    "ty": 0,
+    "nm": "Three Reliefs",
+    "ar": "Lee Felt",
+    "pa": 9,
+    "osm": "n102"
+   }
+  },
+  {
+   "name": "the City gives no title and Wikidata does; the kind comes from Wikidata",
+   "records": [
+    {
+     "id": "Q202",
+     "g": "pa26",
+     "k": 3,
+     "src": 5,
+     "s": 4,
+     "pr": 1,
+     "in": 1,
+     "nm": "Sample Window",
+     "ar": "Robin Glass",
+     "ty": 4
+    },
+    {
+     "id": "pa26",
+     "g": "pa26",
+     "k": 3,
+     "src": 5,
+     "s": 1,
+     "in": 1,
+     "pa": 26,
+     "y": 1968,
+     "lc": "Sample Chapel (interior)"
+    }
+   ],
+   "joined": {
+    "id": "pa26",
+    "k": 3,
+    "src": 5,
+    "ty": 4,
+    "nm": "Sample Window",
+    "ar": "Robin Glass",
+    "y": 1968,
+    "lc": "Sample Chapel (interior)",
+    "in": 1,
+    "pa": 26,
+    "wd": "Q202"
+   }
+  },
+  {
+   "name": "an untitled mural OpenStreetMap alone has",
+   "records": [
+    {
+     "id": "w103",
+     "g": "w103",
+     "k": 1,
+     "src": 2,
+     "s": 2,
+     "pr": 1,
+     "ty": 1
+    }
+   ],
+   "joined": {
+    "id": "w103",
+    "k": 1,
+    "src": 2,
+    "ty": 1,
+    "osm": "w103"
+   }
+  },
+  {
+   "name": "a mosaic Wikidata alone has, with its article and website",
+   "records": [
+    {
+     "id": "Q203",
+     "g": "Q203",
+     "k": 3,
+     "src": 4,
+     "s": 4,
+     "pr": 1,
+     "nm": "Sample Gardens",
+     "ty": 4,
+     "w": "https://example.org/gardens",
+     "wp": "https://en.wikipedia.org/wiki/Sample_Gardens"
+    }
+   ],
+   "joined": {
+    "id": "Q203",
+    "k": 3,
+    "src": 4,
+    "ty": 4,
+    "nm": "Sample Gardens",
+    "wd": "Q203",
+    "wp": "https://en.wikipedia.org/wiki/Sample_Gardens",
+    "w": "https://example.org/gardens"
+   }
+  },
+  {
+   "name": "a memorial by Wikidata's commemorates: no name from either source",
+   "records": [
+    {
+     "id": "n104",
+     "g": "Q204",
+     "k": 2,
+     "src": 6,
+     "s": 2,
+     "pr": 1,
+     "mem": 1
+    },
+    {
+     "id": "Q204",
+     "g": "Q204",
+     "k": 2,
+     "src": 6,
+     "s": 4,
+     "mem": 1
+    }
+   ],
+   "joined": {
+    "id": "Q204",
+    "k": 2,
+    "src": 6,
+    "mem": 1,
+    "osm": "n104",
+    "wd": "Q204"
+   }
+  },
+  {
+   "name": "a memorial the City alone lists: only its number and document",
+   "records": [
+    {
+     "id": "pa66",
+     "g": "pa66",
+     "k": 0,
+     "src": 1,
+     "s": 1,
+     "pr": 1,
+     "mem": 1,
+     "in": 1,
+     "pa": 66,
+     "doc": "https://example.org/66.pdf"
+    }
+   ],
+   "joined": {
+    "id": "pa66",
+    "k": 0,
+    "src": 1,
+    "mem": 1,
+    "pa": 66,
+    "doc": "https://example.org/66.pdf"
+   }
+  },
+  {
+   "name": "OpenStreetMap does not say the kind, the City does",
+   "records": [
+    {
+     "id": "n105",
+     "g": "pa51",
+     "k": 2,
+     "src": 3,
+     "s": 2,
+     "pr": 1,
+     "nm": "Open-Air Sample",
+     "md": "Steel"
+    },
+    {
+     "id": "pa51",
+     "g": "pa51",
+     "k": 2,
+     "src": 3,
+     "s": 1,
+     "pa": 51,
+     "nm": "Open Air Sample",
+     "ar": "Magda Example",
+     "ty": 5,
+     "md": "Brushed stainless steel"
+    }
+   ],
+   "joined": {
+    "id": "pa51",
+    "k": 2,
+    "src": 3,
+    "ty": 5,
+    "nm": "Open Air Sample",
+    "ar": "Magda Example",
+    "md": "Brushed stainless steel",
+    "pa": 51,
+    "osm": "n105"
+   }
+  }
+ ]
+}

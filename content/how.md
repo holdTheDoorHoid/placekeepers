@@ -132,7 +132,7 @@ Like any greening, trees can raise nearby prices; see the ways to protect neighb
 | Build a parklet | OTIS | Show community support and get insurance | Not stated | Seasonal, April through November; review can take months |
 | Ask for a free street tree | Parks and Recreation (TreePhilly) | The owner of the property it would stand in front of asks | Free: the City plants it and waters it the first year | The next planting season |
 | Ask for a bike rack | Streets Department | Apply | Not stated | Not stated |
-| Paint a wall mural | Mural Arts (apply by March 15 or November 15) | The wall owner's permission | Free to apply | Months |
+| Paint a wall mural | Mural Arts, through the "Want a mural on your wall?" form on [its contact page](https://muralarts.org/contact/) | The wall owner's permission | Free to apply | Months |
 | Report a dark streetlight, dumping, or an open vacant building | Philly311 | Nothing | Free | Days to weeks |
 
 A few things people often ask about do not have a clear City process yet:
@@ -175,6 +175,12 @@ intersection, so this is about enforcing a rule that already exists.
 | Paint a mural | Varies | Mural Arts process, and the wall owner's permission | Not about violence (good for pride and connection) | Mural Arts |
 | Build a memorial or memorial garden | Low | The family's blessing first; ghost bikes go through the Bicycle Coalition | Not about violence | Families for Safe Streets |
 | Ask for traffic calming | Free to request | 60% petition | Safety evidence is **not yet confirmed** in detail | OTIS, Bicycle Coalition |
+
+**Is a mural or a sculpture missing from the map?** The public art on the map comes from the City's
+Percent for Art list, OpenStreetMap and Wikidata. Anyone can add a work to OpenStreetMap, as an
+artwork with its kind, and its name and artist when you know them; it reaches the map within about a
+week. Mural Arts Philadelphia keeps the largest list of the city's murals on
+[its own site](https://muralarts.org/artworks/).
 
 ## Money to help pay for it
 
