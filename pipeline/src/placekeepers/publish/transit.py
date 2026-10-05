@@ -258,14 +258,18 @@ def build_transit_stops(
         # The typical days of the bus and Metro schedules (Regional Rail's may differ).
         sample = next((row for row in rows if row.get("feed") == "bus_metro"), rows[0])
         days = ", ".join(
-            f"{kind} {sample[f'{kind}_date'].isoformat()}"
-            for kind in ("weekday", "saturday", "sunday")
+            f"{label} {sample[f'{kind}_date'].isoformat()}"
+            for kind, label in (
+                ("weekday", "weekday"),
+                ("saturday", "Saturday"),
+                ("sunday", "Sunday"),
+            )
             if sample.get(f"{kind}_date")
         )
         notes.append(
             f"stops: {writer.count:,} SEPTA stops and stations in Philadelphia with service "
-            f"(schedules {sample.get('feed_version') or ''}, typical days of the bus and Metro "
-            f"schedules: {days})"
+            f"(schedules {sample.get('feed_version') or ''}; the typical days of the bus and "
+            f"Metro schedules: {days})"
         )
     if surface and counts:
         how = {
@@ -277,7 +281,7 @@ def build_transit_stops(
         notes.append(
             f"stops: {len(matches):,} of {len(surface):,} bus and trolley stops ({share:.1f}%) "
             f"have a SEPTA boarding count ({', '.join(periods)}): {how['id']:,} under their own "
-            f"id, {how['former']:,} under an id they had before, "
+            f"stop number, {how['former']:,} under a number they had before, "
             f"{plural(how['nearby'], 'from a retired stop', 'from retired stops')} within 30 "
             "meters with a similar name; the rest have none"
         )

@@ -590,7 +590,7 @@ export const strings = {
     noCount: 'No SEPTA count for this stop',
     boardingsNote: "From SEPTA's own counts, which run a season or two behind the schedules.",
     station: 'Subway, El or Regional Rail station',
-    zoomNote: 'Stops appear when the map shows the whole city or closer.',
+    zoomNote: 'Zoom in to a few neighborhoods to see the stops.',
     routeBus: 'Bus route',
     routeTrolley: 'Trolley route',
     routeMetro: 'Subway or El',

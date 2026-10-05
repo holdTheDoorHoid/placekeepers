@@ -7,7 +7,7 @@
 //   color     how often a bus or train comes at midday (`hm`, minutes), or how many people get
 //             on each weekday (`b`, SEPTA's count; stops without a count are hollow and gray)
 //   stations  off: bus and trolley stops only (bits 1 and 2 of `md`); on: every stop and station
-// Stops appear from zoom 11, about the whole city; the tiles carry them from there.
+// Stops appear from zoom 12, a few neighborhoods across; the tiles carry them from there.
 
 import type { ExpressionSpecification, FilterSpecification, LayerSpecification } from 'maplibre-gl';
 import { strings } from '../../strings.ts';
@@ -40,7 +40,7 @@ export const BOARDING_BINS = [10, 50, 200, 1000] as const;
 export const FREQUENT_MINUTES = 15;
 /** Long waits: less often than this at midday, in minutes, or no midday service at all. */
 export const LONG_WAIT_MINUTES = 30;
-export const MIN_ZOOM = 11;
+export const MIN_ZOOM = 12;
 
 const modes: ExpressionSpecification = ['to-number', ['get', 'md'], 0];
 const wait: ExpressionSpecification = ['to-number', ['get', 'hm'], 0];
@@ -102,8 +102,8 @@ const radius: ExpressionSpecification = [
   'interpolate',
   ['linear'],
   ['zoom'],
-  11,
-  ['case', STATION, 3, 1.8],
+  12,
+  ['case', STATION, 3.5, 2.2],
   13,
   ['case', STATION, 4.5, 3],
   15,
@@ -133,7 +133,7 @@ export const transitStops: StyleModule = {
           'circle-color': stopColor(by),
           'circle-radius': radius,
           'circle-stroke-color': ['case', STATION, STATION_RING, hollow(by), TRANSIT_NONE_RING, TRANSIT_RING],
-          'circle-stroke-width': ['interpolate', ['linear'], ['zoom'], 11, 0.4, 14, 1, 17, 1.6],
+          'circle-stroke-width': ['interpolate', ['linear'], ['zoom'], 12, 0.5, 14, 1, 17, 1.6],
         },
       },
       {
@@ -144,7 +144,7 @@ export const transitStops: StyleModule = {
         filter: ['all', filter, highlightFilter(ctx)] as FilterSpecification,
         paint: {
           'circle-color': 'rgba(0, 0, 0, 0)',
-          'circle-radius': ['interpolate', ['linear'], ['zoom'], 11, 5, 15, 9, 17, 12],
+          'circle-radius': ['interpolate', ['linear'], ['zoom'], 12, 6, 15, 9, 17, 12],
           'circle-stroke-color': SELECTED,
           'circle-stroke-width': 2.5,
         },
@@ -162,7 +162,9 @@ export const transitStops: StyleModule = {
       { kind: 'bins', title: by === 'boardings' ? t.boardingsTitle : t.waitTitle, bins: labels.map((label, i) => ({ color: colors[i]!, label })), opacity: 1 },
       { kind: 'circle', label: by === 'boardings' ? t.noCount : t.noMidday, fill: TRANSIT_NONE, stroke: TRANSIT_NONE_RING, radius: 4 },
     ];
-    if (withStations(ctx)) entries.push({ kind: 'circle', label: t.station, fill: TRANSIT_RAMP[2], stroke: STATION_RING, radius: 6 });
+    // Stations have a dark ring; SEPTA counts no platforms, so colored by riders they are hollow.
+    const stationFill = by === 'boardings' ? TRANSIT_NONE : TRANSIT_RAMP[2];
+    if (withStations(ctx)) entries.push({ kind: 'circle', label: t.station, fill: stationFill, stroke: STATION_RING, radius: 6 });
     if (by === 'boardings') entries.push({ kind: 'note', text: t.boardingsNote });
     entries.push({ kind: 'note', text: t.zoomNote });
     return entries;

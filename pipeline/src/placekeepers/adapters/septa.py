@@ -352,7 +352,7 @@ class SeptaGtfs(UrlAdapter):
                 f"{summary.feed} {summary.version or ''}: {len(summary.stops):,} stops "
                 f"({served:,} with service on the typical days: {dates}), "
                 f"{len(summary.routes)} routes, {len(keyed.links)} renumbered stops linked, "
-                f"{len(keyed.retired)} retired ids remembered"
+                f"{len(keyed.retired)} retired stop numbers remembered"
             )
             for stop, old_id, link in keyed.links:
                 log.info(

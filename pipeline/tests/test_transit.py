@@ -626,7 +626,7 @@ def test_a_renumbered_stop_keeps_its_count_and_shows_its_old_id(context_factory,
     assert (stops["201"]["b"], stops["201"]["bx"]) == (30, "101")
     assert (stops["300"]["b"], stops["300"]["bx"]) == (41, "777")
     note = next(n for n in result.notes if "boarding count" in n)
-    assert "1 under an id they had before, 1 from a retired stop" in note
+    assert "1 under a number they had before, 1 from a retired stop" in note
 
 
 def test_routes_are_lines_with_their_frequency(context_factory, tmp_path) -> None:
