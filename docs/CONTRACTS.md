@@ -1196,7 +1196,8 @@ keys and values, copied from that layer as publish writes it, so a factor the la
 too. A lot page opened from a link, a search or a saved list, before the map has the parcel's
 tile, shows the score breakdown and the flood note from here; when it has the tile, the tile's
 values win. On 2026-10-05: 58,325 parcels, 6.3 MB more on disk (5 percent) and 0.5 MB more as
-served compressed (3 percent).
+served compressed (3 percent). From M3.3 it holds the walking factors `f_walk`, `f_neighbors` and
+`f_dest` too, which the lots layer gained (2.4 MB more on disk, 0.3 MB compressed).
 
 **`nearby`**: `s12` and `s36` (shooting victims in the parcel's hexagon in the last 12 and 36
 months, as in the `h3` layer), `landcare_within_500ft` and `gardens_within_500ft`. Keys are left
