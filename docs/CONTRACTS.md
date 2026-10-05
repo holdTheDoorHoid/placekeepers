@@ -755,8 +755,9 @@ element inside the city limits with that tag that is not closed to the public (`
 private) or disused, one point each (`pipeline/src/placekeepers/derive/amenities.py`). As for the
 stops, an answer OpenStreetMap does not have is left out, never shown as no, and yes and no are
 read as in `YES_NO` above. Every feature has `id` (the element, such as `n10554560825`) and `nm`
-(its name, only when it has one); the other properties are each 1 yes and 0 no unless the table
-says otherwise:
+(its name, only when it has one; changed 2026-10-05 by M3.2: never on a memorial, such as a bench
+that remembers someone, by the memorial rule of the `art` layer above); the other properties are
+each 1 yes and 0 no unless the table says otherwise:
 
 | Layer (tag) | Properties |
 |---|---|

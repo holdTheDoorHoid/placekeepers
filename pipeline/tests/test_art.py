@@ -324,6 +324,18 @@ def test_openstreetmap_tags_that_mark_a_memorial() -> None:
     assert not osm_is_memorial({"inscription:url": "https://example.org/in-memory-of"})
 
 
+def test_a_memorial_bench_or_bookcase_never_shows_its_name() -> None:
+    # The amenity layers (M3.5) publish OpenStreetMap's names, except a memorial's.
+    from placekeepers.derive.amenities import amenity_properties
+
+    bench = {"amenity": "bench", "memorial": "bench", "name": "In memory of Lee Sample"}
+    assert "nm" not in amenity_properties("benches", "n1", bench)
+    library = {"amenity": "public_bookcase", "name": "Jordan Sample Memorial Library"}
+    assert "nm" not in amenity_properties("bookcases", "n2", library)
+    plain = {"amenity": "public_bookcase", "name": "Fishtown Little Free Library"}
+    assert amenity_properties("bookcases", "n3", plain)["nm"] == "Fishtown Little Free Library"
+
+
 #: Every invented name in the memorial fixtures. None may appear in the published layer.
 SECRET_NAMES = ("Sample", "Example", "Jordan", "Robin", "Quill")
 #: The only properties a memorial artwork may carry.

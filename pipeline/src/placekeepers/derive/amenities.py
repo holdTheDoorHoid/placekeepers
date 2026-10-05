@@ -23,7 +23,8 @@ OpenStreetMap does not have is left out: unknown is never shown as no.
 * bookcases: nothing more than the name.
 
 Every element also has `id` (the element, `n` and the node id or `w` and the way id) and `nm`, its
-name, when it has one.
+name, when it has one and is not a memorial (a bench that remembers someone, by the public art
+layer's memorial rule in placekeepers.derive.art: its name is never published).
 """
 
 from __future__ import annotations
@@ -36,6 +37,7 @@ from typing import Any
 
 import pyarrow as pa
 
+from placekeepers.derive.art import osm_is_memorial
 from placekeepers.derive.bus_stops import WHEELCHAIR, answer, element_id
 
 #: Source layer -> the tag that makes an element one (docs/CONTRACTS.md section 4).
@@ -128,7 +130,10 @@ def amenity_properties(kind: str, element: str, tags: Mapping[str, str]) -> dict
             props["oh"] = hours[:120]
     props.update({key: value for key, value in found.items() if value is not None})
     name = (tags.get("name") or "").strip()
-    if name:
+    # A memorial bench or bookcase names someone who died, and names of people who died come only
+    # from the hand curated memorials file (docs/ETHICS.md): its name is left out, by the public art
+    # layer's memorial rule (derive/art.py, M3.2).
+    if name and not osm_is_memorial(tags):
         props["nm"] = name
     return props
 
