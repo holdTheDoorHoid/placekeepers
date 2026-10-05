@@ -85,7 +85,7 @@ export const WALK_SOURCES = {
   snap_retailers: [1460, '2026-09-17'],
 };
 export const WALK_LAYERS = {
-  walkability: { file: 'tiles/walk.pmtiles', source_layer: 'block_groups', sources: ['epa_walkability'] },
+  walkability: { file: 'tiles/walk.pmtiles', source_layer: 'block_groups', sources: ['epa_walkability', 'census_tracts_2020', 'land_use'] },
   walking_distance: {
     file: 'tiles/walk.pmtiles',
     source_layer: 'cells',

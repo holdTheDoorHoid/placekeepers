@@ -754,8 +754,8 @@
     many street corners there are, how close the nearest transit stop is, and two measures of how
     well homes, jobs and shops are mixed. Areas are shaded by fifths of Philadelphia's block groups,
     or by the EPA's own classes, which compare the whole country. Each measure can be shown on its
-    own in the settings.
-  sources: [epa_walkability]
+    own in the settings. The block groups are trimmed to the city's land, so rivers stay clear.
+  sources: [epa_walkability, census_tracts_2020, land_use]
   file: tiles/walk.pmtiles
   source_layer: block_groups
   geometry: polygon

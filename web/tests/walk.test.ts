@@ -87,7 +87,7 @@ describe('the three walking layers', () => {
       expect(layer.group).toBe('walking');
       expect(layer.default).toEqual({ field: false, analysis: false });
     }
-    expect(layerOf('walkability').sources).toEqual(['epa_walkability']);
+    expect(layerOf('walkability').sources).toEqual(['epa_walkability', 'census_tracts_2020', 'land_use']);
     expect(layerOf('walking_distance').sources).toContain('census_blocks_2020');
     expect(layerOf('walking_distance').sources).toContain('snap_retailers');
     expect(layerOf('traffic_stress').sources).toEqual(['dvrpc_lts']);

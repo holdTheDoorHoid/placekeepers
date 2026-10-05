@@ -602,7 +602,9 @@
       "file": "tiles/walk.pmtiles",
       "source_layer": "block_groups",
       "sources": [
-        "epa_walkability"
+        "epa_walkability",
+        "census_tracts_2020",
+        "land_use"
       ]
     },
     "walking_distance": {

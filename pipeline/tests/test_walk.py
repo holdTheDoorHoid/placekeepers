@@ -35,7 +35,7 @@ from placekeepers.snapshots import SnapshotStore
 from .conftest import FakeArcgis, install_snapshot
 from .pmtiles_read import features as tile_features
 from .pmtiles_read import tiles as tile_list
-from .test_lenses import AS_OF, NOW, WHEN, at, install_lens_inputs, rect, wkb
+from .test_lenses import AS_OF, M_PER_LNG, NOW, WHEN, at, install_lens_inputs, rect, wkb
 from .walk_fixtures import BLOCKS, geo_header, geo_line, redistricting_zip
 
 
@@ -549,8 +549,33 @@ def test_block_groups_carry_the_index_its_parts_and_their_fifths(walk_ctx, tmp_p
     }  # fmt: skip
     assert result.notes == [
         "walkability: 2 block groups; by the EPA's classes 0 least walkable, 1 below average, "
-        "0 above average, 1 most walkable"
+        "0 above average, 1 most walkable; the census tracts are missing, so the shapes are not "
+        "trimmed to the city's land"
     ]
+
+
+def test_block_groups_are_trimmed_to_the_citys_land(walk_ctx, tmp_path) -> None:
+    # Water across the east of the second block group, and a third block group wholly in it.
+    install_water(walk_ctx, 1500, -1000, 500, 3000)
+    groups = pq.read_table(walk.current_snapshot(walk_ctx, "epa_walkability")).to_pylist()
+    groups.append(
+        {**groups[1], "geoid10": "421019891001", "geometry": wkb(rect(1600, 0, 300, 300))}
+    )
+    install_snapshot(walk_ctx, "epa_walkability", pa.Table.from_pylist(groups), geometry=True,
+                     fetched_at="2026-10-04T15:00:00Z")  # fmt: skip
+    paths = {
+        s: walk.current_snapshot(walk_ctx, s)
+        for s in ("epa_walkability", "census_tracts_2020", "land_use")
+    }
+    out = tmp_path / "walk.block_groups.geojson"
+    result = build_block_groups(walk_ctx, paths, out, AS_OF)
+    found = {f["properties"]["id"]: f for f in json.loads(out.read_text())["features"]}
+    assert sorted(found) == ["421010001001", "421010002001"]
+    trimmed = shapely.geometry.shape(found["421010002001"]["geometry"])
+    # The second block group ran from 450 to 2000 meters east: the water from 1500 is cut away.
+    east_lng = at(0, 0)[1] + 1500 / M_PER_LNG
+    assert trimmed.bounds[2] == pytest.approx(east_lng, abs=1e-6)
+    assert result.notes[0].endswith("; 1 lying wholly on water left out")
 
 
 def install_water(ctx, west: float, south: float, width: float, height: float) -> None:

@@ -115,7 +115,7 @@ the site. No keys, no third party tile service.
 | Heat vulnerability by census tract (City ArcGIS `heat_vulnerability_ct`, layer 0; OpenDataPhilly's "Heat Vulnerability by Census Tract") | By the Department of Public Health and the Office of Sustainability: heat exposure (from satellite surface temperatures, vegetation, built up land and how much sunlight surfaces reflect), heat sensitivity and heat vulnerability scores for each 2010 census tract, from data of 2017 to 2019 (the layer was last edited on 2025-04-03). 384 tracts, downloaded in 2.6 seconds without a login on 2026-10-04. License: the City's open data terms. Health: at least 350 rows, no more than 5 percent fewer | Used (M2.3): source `heat_vulnerability`, the heat exposure score at each stop for the transit comfort lens; and from M3.1 the heat vulnerability score of each lot's tract for the heat and shade lens, and the tract layer (Heat and shade, below) |
 | Indego GBFS `https://gbfs.bcycle.com/bcycle_indego/gbfs.json`, trips, stations | Bike share context | Live |
 | City bike network (City ArcGIS `Bike_Network`) | No stress rating field | Live |
-| DVRPC Level of Traffic Stress | License: "Unrestricted"; updated 2026-09-03 | Live |
+| DVRPC Level of Traffic Stress | License: "Unrestricted"; updated 2026-09-03 | Used (M3.3): source `dvrpc_lts`, the layer "Traffic stress for people on bikes" (Walkability and people, below) |
 
 **SEPTA's license (checked 2026-10-04).** SEPTA's Open Data license agreement
 (https://wwww.septa.org/license-agreement/, SEPTA's own spelling of its host) covers every dataset
@@ -188,10 +188,10 @@ login or a key.
 | Philadelphia's Magic Gardens mosaic map (Google My Maps KML) | 231 (three current folders) | Unstated | Ask permission first |
 | Mural Arts Philadelphia artworks | 2,012 pages | Terms forbid building a database from their content | **Link out only**; ask about a data partnership |
 | Public Art Archive | Not counted | Fair use, education and press only | Link out only |
-| EPA National Walkability Index (2021, block groups, 405 MB) | | Federal, public domain | Use |
+| EPA National Walkability Index (2021, block groups, 405 MB) | 1,336 block groups in the city | Federal, public domain | Used (M3.3): source `epa_walkability`, Philadelphia's block groups only, from the EPA's own feature service (Walkability and people, below) |
 | Walk Score | | Terms forbid storing scores | **Do not use** |
-| DVRPC pedestrian portal (sidewalks, crosswalks, curb ramps) | | Not stated | Use with its "2018 imagery, not field checked" caveat shown |
-| Census 2020 blocks | | Public domain | Use (API key needed) |
+| DVRPC pedestrian portal (sidewalks, crosswalks, curb ramps) | 206,638 lines in a box around the city | DVRPC data license | Not used yet: its sidewalk gap products have unclear terms, and the raw sidewalk lines need their own work (Walkability and people, below) |
+| Census 2020 blocks | 17,554 blocks, 1,603,797 people | Public domain | Used (M3.3): source `census_blocks_2020`, from the Census Bureau's bulk redistricting file, so no API key is needed (Walkability and people, below) |
 | TPL ParkServe 10 minute walk areas | | Terms unreachable (403) | Ask before use |
 | Amenities from OpenStreetMap | benches about 2,822; drinking water 46; toilets 116; public bookcases 192; community fridges 0 (Overpass, a box around the city) | ODbL | Used (M3.5): layers `benches`, `picnic_tables`, `drinking_water`, `toilets` and `bookcases` in `tiles/amenities.pmtiles`, from the weekly extract (`osm_philadelphia`). Inside the city limits on 2026-10-05: 2,069 benches, 306 picnic tables, 30 drinking water points, 73 public toilets (one more closed to the public is left out) and 150 public bookcases. Fridges need a community list |
 | 311 requests (Carto, since 2014-12-08) | Illegal dumping, street and alley light outages, graffiti, dangerous sidewalk, street trees | City terms | Use for conditions only, never for people. Used (M3.5): source `philly311_conditions`, below |
@@ -217,6 +217,45 @@ The map shows the 311 requests from the 90 days up to the newest one, counted on
 block within 50 meters, never at an address: on 2026-10-05 the median request lay 9 meters from its
 block and 99 percent within 50 meters. Requests about people, such as "Homeless Encampment
 Request", are never asked for (docs/ETHICS.md).
+
+### Walkability and people (M3.3)
+
+Used from M3.3 (2026-10-05) by the walking measures and the Walking, cycling and people layers
+(docs/DESIGN.md section 5.8). Each was fetched live once on 2026-10-05; the times are this laptop's,
+the memory the whole command's peak.
+
+| Source id | Endpoint | What we keep | Size, time and memory | Terms | Health |
+|---|---|---|---|---|---|
+| `epa_walkability` | The EPA's own feature service of the Smart Location Database, version 3 (2021): `Smart_Location_Database_` in the EPA's ArcGIS Online organization (`services.arcgis.com/cJ9YHowT8TU7DUyn`, owned by its Office of Community Revitalization, last edited 2022-02-11). Only Philadelphia's block groups are asked for (`STATEFP = '42' AND COUNTYFP = '101'`), in one page, never the 405 MB national file. The EPA's map service of the same index (`geodata.epa.gov/.../OA/WalkabilityIndex/MapServer`) carries a catalog label for internal use, so it is not used | Each block group's id (`GEOID10`, the 2019 block groups, the same as 2010's), the National Walkability Index (`NatWalkInd`, 1 to 20), its four ranked parts (intersection density, distance to transit, the two mix measures), their raw values, 2018 population, land acres and the shape | 1,336 block groups; 3.0 seconds; a 676 kB snapshot; 147 MB | Public domain: a work of the U.S. government (data.gov lists the index under CC0); the EPA's own web map of this service says "Free for public use, with proper attribution", so the map credits the EPA | At least 1,300 rows, no more than 2 percent fewer, and every index from 1 to 20 |
+| `census_blocks_2020` | The Census Bureau's 2020 redistricting file for Pennsylvania (P.L. 94-171), `pa2020.pl.zip` on www2.census.gov (57 MB, no key). Only the geographic header (`pageo2020.pl`, 97 pipe separated fields with no header row, in the order of the Census Bureau's own import scripts) is read | Philadelphia's blocks (summary level 750, county 101): id, tract, block group, total population (`POP100`), housing units, land and water area, and the internal point (`INTPTLAT`, `INTPTLON`) as the shape | 17,554 blocks with 1,603,797 people (the 2020 count exactly); 4.4 seconds to download, 3.0 to read; a 744 kB snapshot; 216 MB. Frozen: downloaded once | Public domain | At least 17,000 rows, none fewer, and between 1.4 and 1.8 million people |
+| `dvrpc_lts` | DVRPC's Level of Traffic Stress network, `transportation/lts_network` on DVRPC's ArcGIS server (`arcgis.dvrpc.org/portal`), listed in its data catalog (catalog.dvrpc.org/dataset/dvrpc-level-of-traffic-stress-lts-network, modified 2026-09-03). Only Philadelphia's rows (`county_code = 42101`) | Link number, nodes, link type, bike facility, lanes, speed and level of traffic stress (1 to 4), with the line; each direction of a street is its own row | 60,867 rows (39,258 links); 31 pages in 32.9 seconds; a 3.2 MB snapshot; 273 MB | The catalog marks it "Unrestricted: can be shared internally and externally without data sharing agreement"; DVRPC's data license (catalog.dvrpc.org/dvrpc_data_license.html) provides it as is, asks users to hold DVRPC harmless and to credit DVRPC as the source. License id `dvrpc_data_license` | At least 50,000 rows, no more than 10 percent fewer, and at least 95 percent rated 1 to 4 |
+| `snap_retailers` | The USDA's list of stores authorized to take SNAP benefits, the data of its retailer locator (`snap_retailer_location_data` in the ArcGIS Online organization of the USDA's SNAP retailer office, updated every two weeks; www.fns.usda.gov/snap/retailer/data). Only Philadelphia's stores (`State = 'PA' AND County = 'PHILADELPHIA'`) | Each store's kind and point, and the layer's last edit day; never the names or addresses | 1,460 stores (98 supermarkets, 72 super stores, 457 grocery stores, 69 specialty stores, 17 farmers markets and markets, 582 convenience stores, 165 other); 2 pages in 3.3 seconds; a 28 kB snapshot; 199 MB | Public domain: a work of the U.S. government | At least 1,000 rows, no more than 25 percent fewer, last edited within 120 days |
+
+The walking measures also read sources other milestones keep: the City's street centerlines
+(`street_centerlines`, for street corners), Free Library locations, Parks and Recreation's program
+sites, pools, spraygrounds and hydration stations, the City's schools, SEPTA's schedules (every stop
+with a departure, in the city or near it), and, for the city's land, the 2020 census tracts and the
+land use map's water.
+
+**Left out, and why.**
+
+* **DVRPC's sidewalk gaps.** DVRPC publishes two products about missing sidewalks: the Pedestrian
+  Network Coverage Ratio (the share of each road segment with a sidewalk on each side) and the
+  Sidewalk Priority Score (1 to 10 for every segment missing sidewalks). Both are built on Overture
+  Maps road segments (2025), whose transportation data are under the Open Database License because
+  they come largely from OpenStreetMap, and the Priority Score also on NJDOT, PennDOT, NCES and SEPTA
+  data. DVRPC marks both "unrestricted" under its own license without saying how the Open Database
+  License of their roads carries over, so their terms are unclear, and they are left out until DVRPC
+  confirms them. Asking DVRPC (data@dvrpc.org) is an owner action.
+* **DVRPC's pedestrian network itself** (sidewalk, crosswalk and trail lines, credited to DVRPC, the
+  four suburban counties and the City) has clear terms (the same DVRPC license), but it is an
+  inventory, not a measure of gaps: turning it into "sidewalk on both sides of this block" means
+  matching about 200,000 lines to the City's street blocks, a piece of work of its own. For
+  Philadelphia it was drawn from 2018 aerial photos and never checked on the ground, and DVRPC says
+  it has become outdated. Left for a later milestone, with that caveat shown when it comes.
+* **Walk Score** (its terms forbid storing scores) and **Trust for Public Land's ParkServe** walk
+  areas (its terms page refuses automated requests) are not sources.
+* **Routing along the streets.** Distances are straight lines (docs/DESIGN.md section 5.8).
 
 ### History and displacement
 
@@ -247,6 +286,7 @@ Inequality (license text to confirm).
   and never again within six days unless forced, or unless the registry's tag list changed since
   the last copy.
 - philart.net rejects bare HTTP clients; send a normal browser style User-Agent.
-- The Census API needs a free key (an owner action) for block level data.
+- The Census API needs a free key (an owner action) for block level data. The block populations
+  come from the bulk redistricting file instead (`census_blocks_2020`, M3.3), which needs none.
 - The original project's PHS LandCare layer names in its docs are dead; its code already used
   `phs_landcare`.

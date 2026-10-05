@@ -81,10 +81,30 @@ def _closeness(d4a: object) -> float | None:
     return -1e9 if d4a < 0 else -float(d4a)
 
 
+def land_of(paths: dict[str, Path]):
+    """The city's land, in longitude and latitude: the census tracts joined, less the land use
+    map's water; None when the tracts are missing."""
+    if "census_tracts_2020" not in paths:
+        return None
+    _, tracts = load_tracts(paths["census_tracts_2020"])
+    land = shapely.union_all(shapely.make_valid(tracts))
+    water = water_shapes(paths.get("land_use"))
+    if len(water):
+        land = shapely.difference(land, shapely.union_all(shapely.make_valid(water)))
+    return land
+
+
 def build_block_groups(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) -> BuildResult:
+    """The EPA's block groups, trimmed to the city's land: the Census Bureau's block groups run to
+    the middle of the rivers, which would shade the water as if it were a walkable place."""
     table = pq.read_table(paths["epa_walkability"])
     rows = [r for r in table.to_pylist() if r.get("geometry") is not None]
     rows.sort(key=lambda r: str(r.get("geoid10") or ""))
+    land = land_of(paths)
+    shapes = shapely.make_valid(shapely.from_wkb([r["geometry"] for r in rows]))
+    if land is not None and len(shapes):
+        shapely.prepare(land)
+        shapes = shapely.intersection(shapes, land)
     city = {
         "qw": fifths([r.get("natwalkind") for r in rows]),
         "qc": fifths([r.get("d3b") for r in rows]),
@@ -112,11 +132,22 @@ def build_block_groups(ctx: Context, paths: dict[str, Path], out: Path, as_of: d
             for key, values in city.items():
                 if values[i] is not None:
                     properties[key] = values[i]
-            writer.write(properties, geometry_json(row["geometry"], 6))
+            shape = shapes[i]
+            if shape.is_empty:
+                continue
+            if shape.geom_type == "GeometryCollection":
+                shape = shapely.union_all(
+                    [g for g in shape.geoms if g.geom_type.endswith("Polygon")]
+                )
+            writer.write(properties, geometry_json(shape, 6))
     words = ("least walkable", "below average", "above average", "most walkable")
     line = f"walkability: {writer.count:,} block groups; by the EPA's classes " + ", ".join(
         f"{classes[i + 1]:,} {w}" for i, w in enumerate(words)
     )
+    if land is None:
+        line += "; the census tracts are missing, so the shapes are not trimmed to the city's land"
+    elif writer.count < len(rows):
+        line += f"; {len(rows) - writer.count:,} lying wholly on water left out"
     return BuildResult(writer.count, [line])
 
 
@@ -249,7 +280,13 @@ def build_stress(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) -
 
 
 WALK_BUILDERS: tuple[LayerBuilder, ...] = (
-    LayerBuilder(WALK_FILE, "block_groups", ("epa_walkability",), build_block_groups),
+    LayerBuilder(
+        WALK_FILE,
+        "block_groups",
+        ("epa_walkability",),
+        build_block_groups,
+        extras=("census_tracts_2020", "land_use"),
+    ),
     LayerBuilder(
         WALK_FILE,
         "cells",
