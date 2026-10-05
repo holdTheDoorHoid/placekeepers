@@ -122,7 +122,8 @@ A few things people often ask about do not have a clear City process yet:
   Pennsylvania or Philadelphia position has been found. **Check with the City first before you
   plan one.**
 - **A bus shelter.** **Not yet confirmed:** shelters are placed under the City's advertising
-  contract, and we found no resident request path; ask OTIS directly.
+  contract, and we found no resident request path; ask OTIS directly. Meanwhile you can help show
+  which stops have a shelter or a bench: see [Survey bus stops](../streetcomplete/).
 - **A roadside memorial or ghost bike.** There is no City rule, but the Bicycle Coalition handles
   ghost bike requests through a simple form, and the norm is to ask the family's blessing first.
 

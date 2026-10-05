@@ -15,6 +15,13 @@ here.
 
 [Suggest a data source](https://github.com/holdTheDoorHoid/placekeepers/issues/new?template=data-source.yml)
 
+## A bus stop, shelter or bench is missing or wrong
+
+Bus stops, shelters and benches on our map come from OpenStreetMap, the free map anyone can
+improve, so the fastest fix is to correct OpenStreetMap itself. Our guide to
+[surveying bus stops](../streetcomplete/) shows how, with a free phone app. Your change reaches our
+map within about a week.
+
 ## Ask for a memorial name to come down
 
 Anyone can ask for a name to be removed from the map, no questions asked. {{REMOVAL_EMAIL}}
