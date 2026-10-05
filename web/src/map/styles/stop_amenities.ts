@@ -1,6 +1,6 @@
-// Bus and trolley stops from OpenStreetMap (M2.2), by what riders find there (`c` in the tiles,
-// docs/CONTRACTS.md section 4): 3 a shelter or roof, 2 a bench but no shelter mapped, 1 neither,
-// 0 not yet surveyed. Known answers are filled circles; a stop not yet surveyed is a hollow gray
+// Shelters and benches at the bus and trolley stops OpenStreetMap knows (M2.2), by what riders
+// find there (`c` of `stops` in tiles/amenities.pmtiles, docs/CONTRACTS.md section 4): 3 a shelter
+// or roof, 2 a bench but no shelter mapped, 1 neither, 0 not yet surveyed. Known answers are filled circles; a stop not yet surveyed is a hollow gray
 // ring, because unknown is not the same as missing. The legend's "not yet surveyed" entry links
 // to the layer's guide (the StreetComplete survey page). Setting:
 //   show  every stop, only stops someone has surveyed, or only stops not yet surveyed
@@ -44,7 +44,7 @@ export function stopFilter(ctx: LegendContext): FilterSpecification {
 const radius: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 10, 2.5, 14, 5, 17, 8];
 const selectedRadius: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 10, 6, 14, 9, 17, 12];
 
-export const busStops: StyleModule = {
+export const stopAmenities: StyleModule = {
   zIndex: 45,
   settings: ['show'],
   clickable: ['dot', 'ring'],

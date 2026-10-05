@@ -1,14 +1,15 @@
 <script lang="ts">
-  // A bus or trolley stop someone tapped (M2.2): its name and number, what the map shows, and
-  // each answer OpenStreetMap has, with "not yet surveyed" where it has none yet, never "no".
-  // Links to the survey guide (the layer's guide page) and to the stop on OpenStreetMap.
+  // The shelter and bench at a stop someone tapped (M2.2): the stop's name and number, what the
+  // map shows, and each answer OpenStreetMap has, with "not yet surveyed" where it has none yet,
+  // never "no". Links to the survey guide (the layer's guide page) and to the stop on
+  // OpenStreetMap.
   import { strings } from '../../strings.ts';
-  import { describeStop } from '../../transit/describe.ts';
+  import { describeStopAmenities } from '../../transit/amenities.ts';
 
   let { properties, guide }: { properties: Record<string, unknown>; guide?: string } = $props();
 
-  const stop = $derived(describeStop(properties));
-  const s = strings.stops;
+  const stop = $derived(describeStopAmenities(properties));
+  const s = strings.stopAmenities;
   // The site root from the build (not config, so the details also render outside a browser).
   const siteBase = import.meta.env.BASE_URL;
 </script>

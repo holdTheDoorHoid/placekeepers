@@ -282,8 +282,8 @@
         "memorial_names"
       ]
     },
-    "bus_stops": {
-      "file": "tiles/transit.pmtiles",
+    "stop_amenities": {
+      "file": "tiles/amenities.pmtiles",
       "source_layer": "stops",
       "sources": [
         "osm_philadelphia"
@@ -338,7 +338,7 @@
       "bytes": 6870,
       "sha256": "7dacd780736a10a2f3c8a2a3f28839491aa326d4936ae139bcf825c55d5d3c35"
     },
-    "tiles/transit.stops.geojson": {
+    "tiles/amenities.stops.geojson": {
       "bytes": 1235,
       "sha256": "80a02058dbddc5adfc4efdb6504a88622f3515a97af52a87c315d2d2f06ceb71"
     },
@@ -361,6 +361,6 @@
   },
   "notes": [
     "This is synthetic sample data for testing the map.",
-    "Street, boundary and transit tiles were skipped for this sample, so those layers are published as GeoJSON."
+    "Street, boundary and amenity tiles were skipped for this sample, so those layers are published as GeoJSON."
   ]
 }

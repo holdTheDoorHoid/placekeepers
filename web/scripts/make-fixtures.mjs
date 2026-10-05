@@ -296,11 +296,12 @@ const memorials = MEMORIAL_SAMPLES.map(([d, m, sg], i) => {
   };
 });
 
-// Bus and trolley stops (M2.2): a few made up stops along the sample streets, one for each thing
-// the map can show (a shelter, a roof, a bench only, neither, not yet surveyed), with the short
-// properties of docs/CONTRACTS.md section 4. No random numbers, so every other fixture stays the
-// same. Published as GeoJSON, as the pipeline does when it skips a tile file.
-const STOP_SAMPLES = [
+// Shelters and benches at stops, from OpenStreetMap (M2.2): a few made up stops along the sample
+// streets, one for each thing the map can show (a shelter, a roof, a bench only, neither, not yet
+// surveyed), with the short properties of docs/CONTRACTS.md section 4 (`stops` in
+// tiles/amenities.pmtiles). No random numbers, so every other fixture stays the same. Published as
+// GeoJSON, as the pipeline does when it skips a tile file.
+const AMENITY_STOP_SAMPLES = [
   [168, -20, { id: 'n9000001', c: 3, md: 1, sh: 1, bn: 1, bi: 1, lt: 1, tp: 0, nm: 'Broad St & Sample 1 St', ref: '90001' }],
   [152, 100, { id: 'n9000002', c: 3, md: 1, sh: 1, nb: 1, nm: 'Broad St & Sample 6 St' }],
   [160, 188, { id: 'n9000003', c: 3, md: 3, cv: 1, nm: 'Sample transit center' }],
@@ -309,7 +310,7 @@ const STOP_SAMPLES = [
   [640, -52, { id: 'n9000006', c: 0, md: 2, nm: 'Sample 3 St & Sample 24 Ave' }],
   [800, 172, { id: 'w9000007', c: 0, md: 2, sh: 0 }],
 ];
-const stops = STOP_SAMPLES.map(([x, y, properties]) => ({ type: 'Feature', properties, geometry: { type: 'Point', coordinates: toLngLat([x, y]) } }));
+const amenityStops = AMENITY_STOP_SAMPLES.map(([x, y, properties]) => ({ type: 'Feature', properties, geometry: { type: 'Point', coordinates: toLngLat([x, y]) } }));
 
 const collection = (features) => JSON.stringify({ type: 'FeatureCollection', features }) + '\n';
 // The lot dossier files in data/dossiers/ (a shard and common.json) and the owners table in
@@ -345,7 +346,7 @@ writeFileSync(path('data/tiles/boundaries.neighborhoods.geojson'), collection(ne
 writeFileSync(path('data/tiles/streets.segments.geojson'), collection(segments));
 writeFileSync(path('data/tiles/streets.crashes.geojson'), collection(crashes));
 writeFileSync(path('data/tiles/streets.memorials.geojson'), collection(memorials));
-writeFileSync(path('data/tiles/transit.stops.geojson'), collection(stops));
+writeFileSync(path('data/tiles/amenities.stops.geojson'), collection(amenityStops));
 
 // Run from the fixtures folder with relative paths, because tippecanoe records its command
 // line in the file's metadata and local folder names do not belong in committed files.
@@ -462,7 +463,7 @@ const manifest = {
       sources: ['crashes_2020_2024', 'crashes_2016_2020', 'crashes_2007_2017'],
     },
     memorials: { file: 'tiles/streets.pmtiles', source_layer: 'memorials', sources: ['fatal_crashes', 'memorial_names'] },
-    bus_stops: { file: 'tiles/transit.pmtiles', source_layer: 'stops', sources: ['osm_philadelphia'] },
+    stop_amenities: { file: 'tiles/amenities.pmtiles', source_layer: 'stops', sources: ['osm_philadelphia'] },
     basemap: { file: 'basemap/philly.pmtiles', source_layer: 'earth', sources: ['basemap_openstreetmap'] },
   },
   files: Object.fromEntries(
@@ -477,7 +478,7 @@ const manifest = {
       'tiles/streets.hin.geojson',
       'tiles/streets.memorials.geojson',
       'tiles/streets.segments.geojson',
-      'tiles/transit.stops.geojson',
+      'tiles/amenities.stops.geojson',
       ...handWritten.map(([name]) => name).filter((name) => !shardFiles.some(([shard]) => shard === name)),
     ].map((p) => [p, fileInfo(p)]),
   ),
@@ -491,12 +492,12 @@ const manifest = {
     : null,
   notes: [
     'This is synthetic sample data for testing the map.',
-    'Street, boundary and transit tiles were skipped for this sample, so those layers are published as GeoJSON.',
+    'Street, boundary and amenity tiles were skipped for this sample, so those layers are published as GeoJSON.',
   ],
 };
 writeFileSync(new URL('manifest.json', ROOT), JSON.stringify(manifest, null, 2) + '\n');
 console.log(
   `Wrote ${parcels.length} parcels, ${cells.length} cells, ${lines.length} lines, ${landcareLots.length} LandCare lots, ` +
     `${gardenPoints.length} gardens, ${councilDistricts.length + communityOrganizations.length + neighborhoods.length} boundaries, ` +
-    `${segments.length} blocks, ${crashes.length} crashes, ${memorials.length} memorials and ${stops.length} stops to ${ROOT.pathname}`,
+    `${segments.length} blocks, ${crashes.length} crashes, ${memorials.length} memorials and ${amenityStops.length} stops with shelter and bench answers to ${ROOT.pathname}`,
 );

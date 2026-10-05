@@ -1,10 +1,11 @@
-// What the details panel says about a bus or trolley stop someone tapped (M2.2), from the tile
-// properties of the `stops` layer (docs/CONTRACTS.md section 4). Every answer comes from
-// OpenStreetMap; one it does not have yet reads "not yet surveyed", never "no".
+// What the details panel says about the shelter and bench at a stop someone tapped (M2.2), from
+// the tile properties of `stops` in tiles/amenities.pmtiles (docs/CONTRACTS.md section 4). Every
+// answer comes from OpenStreetMap; one it does not have yet reads "not yet surveyed", never "no".
+// SEPTA's own stops have their own wording, in ./describe.ts.
 
 import { strings } from '../strings.ts';
 
-export interface StopAnswer {
+export interface AmenityAnswer {
   key: string;
   label: string;
   value: string;
@@ -13,13 +14,13 @@ export interface StopAnswer {
   nearby: boolean;
 }
 
-export interface StopView {
+export interface StopAmenitiesView {
   name: string | null;
   ref: string | null;
   served: string;
   c: number;
   comfort: string;
-  answers: StopAnswer[];
+  answers: AmenityAnswer[];
   anyUnknown: boolean;
   osmUrl: string | null;
 }
@@ -47,10 +48,10 @@ export function osmUrl(id: unknown): string | null {
   return `https://www.openstreetmap.org/${match[1] === 'n' ? 'node' : 'way'}/${match[2]}`;
 }
 
-export function describeStop(properties: Record<string, unknown>): StopView {
-  const s = strings.stops;
+export function describeStopAmenities(properties: Record<string, unknown>): StopAmenitiesView {
+  const s = strings.stopAmenities;
   const nearby = int(properties.nb) ?? 0;
-  const answers: StopAnswer[] = [];
+  const answers: AmenityAnswer[] = [];
   for (const key of [...ALWAYS, ...WHEN_KNOWN]) {
     const value = int(properties[key]);
     if (value === null && (WHEN_KNOWN as readonly string[]).includes(key)) continue;

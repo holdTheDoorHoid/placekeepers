@@ -7,7 +7,7 @@ OpenStreetMap, the free map of the world that anyone can improve. OpenStreetMap 
 little about the city's stops. You can help fill that gap with a free phone app called
 StreetComplete, a few minutes at a time.
 
-[Open the map with the stops that are not yet surveyed](../#l=bus_stops&s=bus_stops.show:unsurveyed)
+[Open the map with the stops that are not yet surveyed](../#l=stop_amenities&s=stop_amenities.show:unsurveyed)
 
 We last checked the app details on this page against StreetComplete's own website, its
 [questions and answers page](https://wiki.openstreetmap.org/wiki/StreetComplete/FAQ) and its

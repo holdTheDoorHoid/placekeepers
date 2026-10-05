@@ -1,12 +1,17 @@
-"""The transit layer of tiles/transit.pmtiles (docs/CONTRACTS.md section 4), added by M2.2.
+"""The amenity layers of tiles/amenities.pmtiles (docs/CONTRACTS.md section 4), added by M2.2.
+
+Amenities that OpenStreetMap knows about, from the weekly extract (`osm_philadelphia`). M2.2 adds
+the first layer; later milestones (M3.5: drinking water, toilets and more) add theirs to the same
+file.
 
 * `stops`: every bus and trolley stop OpenStreetMap knows inside the city, with what riders find
   there (shelter, bench, waste basket, light, tactile paving, wheelchair access, departures board,
   roof) and `c`, what the map shows: a shelter or roof, a bench but no shelter mapped, neither,
-  or not yet surveyed. The rules are in placekeepers.derive.bus_stops.
+  or not yet surveyed. The rules are in placekeepers.derive.bus_stops. SEPTA's own stops are a
+  separate layer (`stops` in tiles/transit.pmtiles, M2.1); M2.3 joins the two.
 
-Everything here comes from OpenStreetMap, so the published layer is under the Open Database
-License, credited "© OpenStreetMap contributors" (registry source `osm_philadelphia`).
+Everything here comes from OpenStreetMap, so the published layers are under the Open Database
+License, credited "© OpenStreetMap contributors".
 """
 
 from __future__ import annotations
@@ -24,7 +29,7 @@ from placekeepers.publish.layers import BuildResult, LayerBuilder
 
 log = logging.getLogger(__name__)
 
-TRANSIT_FILE = "tiles/transit.pmtiles"
+AMENITIES_FILE = "tiles/amenities.pmtiles"
 STOP_COLUMNS = ["osm_type", "osm_id", "tags", "lat", "lng", "in_city", "extract_date", "geometry"]
 
 
@@ -44,6 +49,6 @@ def build_stops(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) ->
     return BuildResult(writer.count, notes)
 
 
-TRANSIT_BUILDERS: tuple[LayerBuilder, ...] = (
-    LayerBuilder(TRANSIT_FILE, "stops", ("osm_philadelphia",), build_stops),
+AMENITY_BUILDERS: tuple[LayerBuilder, ...] = (
+    LayerBuilder(AMENITIES_FILE, "stops", ("osm_philadelphia",), build_stops),
 )

@@ -317,7 +317,7 @@ def stops_ctx(context_factory):
 def test_the_stops_layer_carries_the_contract_properties(stops_ctx, tmp_path: Path) -> None:
     out = tmp_path / "data"
     result = publish(stops_ctx, out)
-    data = json.loads((out / "tiles" / "transit.stops.geojson").read_text())
+    data = json.loads((out / "tiles" / "amenities.stops.geojson").read_text())
     features = data["features"]
     assert len(features) == 13
     assert all(f["geometry"]["type"] == "Point" for f in features)
@@ -341,9 +341,9 @@ def test_the_stops_layer_carries_the_contract_properties(stops_ctx, tmp_path: Pa
     assert all(set(f["properties"]) <= allowed for f in features)
     first = next(f for f in features if f["properties"]["id"] == "n1")
     assert first["geometry"]["coordinates"] == [-75.158, 39.954]
-    assert "tiles/transit.stops.geojson" in result.manifest["files"]
-    assert result.manifest["layers"]["bus_stops"] == {
-        "file": "tiles/transit.pmtiles",
+    assert "tiles/amenities.stops.geojson" in result.manifest["files"]
+    assert result.manifest["layers"]["stop_amenities"] == {
+        "file": "tiles/amenities.pmtiles",
         "source_layer": "stops",
         "sources": ["osm_philadelphia"],
     }
@@ -354,9 +354,9 @@ def test_the_stops_layer_carries_the_contract_properties(stops_ctx, tmp_path: Pa
 
 
 @pytest.mark.skipif(shutil.which("tippecanoe") is None, reason="tippecanoe is not installed")
-def test_with_tippecanoe_the_stops_become_transit_tiles(stops_ctx, tmp_path, monkeypatch) -> None:
+def test_with_tippecanoe_the_stops_become_amenity_tiles(stops_ctx, tmp_path, monkeypatch) -> None:
     monkeypatch.setenv("PK_TIPPECANOE", "tippecanoe")
     out = tmp_path / "data"
     result = publish(stops_ctx, out)
-    assert "tiles/transit.pmtiles" in result.tiles_built
-    assert pmtiles_layer_names(out / "tiles" / "transit.pmtiles") == ["stops"]
+    assert "tiles/amenities.pmtiles" in result.tiles_built
+    assert pmtiles_layer_names(out / "tiles" / "amenities.pmtiles") == ["stops"]

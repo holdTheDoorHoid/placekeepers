@@ -271,20 +271,21 @@
       type: toggle
       default: false
   release: v0.1
-- id: bus_stops
-  label: Bus and trolley stops
+- id: stop_amenities
+  label: Shelters and benches at stops
   group: transit
   description: >-
-    Bus and trolley stops OpenStreetMap knows about, colored by what riders find there: a shelter
-    or a roof, a bench but no shelter, neither, or not yet surveyed. Not yet surveyed means no one
-    has recorded it yet; it does not mean the stop has nothing. OpenStreetMap has only about one
-    stop in ten so far. Neighbors can survey stops with the StreetComplete phone app, and their
-    answers appear here within about a week.
+    What riders find at the bus and trolley stops OpenStreetMap knows about: a shelter or a roof, a
+    bench but no shelter, neither, or not yet surveyed. Not yet surveyed means no one has recorded
+    it yet; it does not mean the stop has nothing. OpenStreetMap has only about one stop in ten so
+    far (SEPTA's full list of stops is its own layer). Neighbors can survey stops with the
+    StreetComplete phone app, and their answers appear here within about a week.
   sources: [osm_philadelphia]
-  file: tiles/transit.pmtiles
+  # Amenities from OpenStreetMap share one tile file; M3.5 adds water, toilets and more to it.
+  file: tiles/amenities.pmtiles
   source_layer: stops
   geometry: point
-  style: bus_stops
+  style: stop_amenities
   evidence: not_violence
   # The transit comfort lens comes in M2.3; until then the stops stay off unless switched on.
   default: {field: false, analysis: false}

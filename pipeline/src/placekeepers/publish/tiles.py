@@ -79,8 +79,9 @@ TILE_OPTIONS: dict[str, list[str]] = {
         "--extend-zooms-if-still-dropping",
         "--no-tiny-polygon-reduction-at-maximum-zoom",
     ],
-    # Bus and trolley stops (M2.2): every stop at every zoom, so none disappears when zoomed out.
-    "tiles/transit.pmtiles": [
+    # Amenities from OpenStreetMap (M2.2: shelters and benches at stops; M3.5 adds more): every
+    # point at every zoom, so none disappears when zoomed out.
+    "tiles/amenities.pmtiles": [
         "--minimum-zoom=10",
         "--maximum-zoom=16",
         "--base-zoom=10",

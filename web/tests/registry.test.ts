@@ -54,7 +54,7 @@ describe('OpenStreetMap extracts and layer guides (M2.2)', () => {
     const osm = reg.sources.find((s) => s.id === 'osm_philadelphia')!;
     expect(osm.endpoint.url).toMatch(/pennsylvania-latest\.osm\.pbf$/);
     expect(osm.endpoint.tags).toContain('highway=bus_stop');
-    expect(reg.layers.find((l) => l.id === 'bus_stops')?.guide).toBe('streetcomplete');
+    expect(reg.layers.find((l) => l.id === 'stop_amenities')?.guide).toBe('streetcomplete');
   });
 
   it('needs both a url and tags, or neither', () => {
@@ -82,8 +82,8 @@ describe('OpenStreetMap extracts and layer guides (M2.2)', () => {
 
   it('accepts a guide only as a page slug', () => {
     const files = raw();
-    layer(files, 'bus_stops').guide = '../streetcomplete';
-    expect(errorsFor(files)).toContain('layers.yaml entry "bus_stops".guide has an invalid value "../streetcomplete"');
+    layer(files, 'stop_amenities').guide = '../streetcomplete';
+    expect(errorsFor(files)).toContain('layers.yaml entry "stop_amenities".guide has an invalid value "../streetcomplete"');
   });
 });
 

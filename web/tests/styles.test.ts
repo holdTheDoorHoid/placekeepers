@@ -4,7 +4,7 @@ import { loadRegistry } from '../plugins/registry.ts';
 import { STYLE_IDS } from '../src/map/styles/ids.ts';
 import { STYLES, styleFor } from '../src/map/styles/index.ts';
 import { restyleBase } from '../src/map/styles/basemap.ts';
-import { SHOW_CHOICES } from '../src/map/styles/bus_stops.ts';
+import { SHOW_CHOICES } from '../src/map/styles/stop_amenities.ts';
 import { COUNT_BINS, HIN_COLOR, PLAIN_BACKGROUND, PRIORITY_RAMP, STOP_COLORS, STOP_UNKNOWN_FILL } from '../src/map/styles/palette.ts';
 import { WINDOWS } from '../src/map/styles/shootings_hex.ts';
 import { defaultState, type AppState } from '../src/state/defaults.ts';
@@ -23,7 +23,7 @@ function states(): AppState[] {
   busy.settings.crashes = { years: 'all', severity: '0', mode: 'walk_cycle' };
   busy.settings.memorials = { show_names: false, all_fatal: true };
   busy.settings.segments = { min_score: '60' };
-  busy.settings.bus_stops = { show: 'unsurveyed' };
+  busy.settings.stop_amenities = { show: 'unsurveyed' };
   busy.weights.street_safety = { high_injury_network: 0, walking_cycling_harm: 5, recent_death: 1, school_nearby: 0 };
   const off = defaultState(reg, 'field');
   off.weights.violence = { untreated_vacancy: 0, shootings_nearby: 0, poverty: 0, canopy_gap: 0 };
@@ -199,8 +199,8 @@ describe('shootings style', () => {
   });
 });
 
-describe('bus stops style', () => {
-  const layer = reg.layers.find((l) => l.style === 'bus_stops')!;
+describe('shelters and benches at stops style', () => {
+  const layer = reg.layers.find((l) => l.style === 'stop_amenities')!;
   const parts = (state: AppState) => styleFor(layer)!.layers({ layer, registry: reg, state, sourceId: 'tiles', sourceLayer: 'stops' });
   const drawnBy = (state: AppState, c: number): string[] =>
     parts(state)
@@ -210,8 +210,8 @@ describe('bus stops style', () => {
 
   it('is off by default in both views, until the transit comfort lens comes', () => {
     expect(layer.default).toEqual({ field: false, analysis: false });
-    expect(defaultState(reg, 'field').layers).not.toContain('bus_stops');
-    expect(defaultState(reg, 'analysis').layers).not.toContain('bus_stops');
+    expect(defaultState(reg, 'field').layers).not.toContain('stop_amenities');
+    expect(defaultState(reg, 'analysis').layers).not.toContain('stop_amenities');
   });
 
   it('draws a stop not yet surveyed as a hollow ring, never like a stop with nothing', () => {
@@ -229,9 +229,9 @@ describe('bus stops style', () => {
     const state = defaultState(reg, 'analysis');
     const setting = layer.settings.find((s) => s.id === 'show');
     expect(setting?.type === 'choice' && setting.options.map((o) => o.value)).toEqual(Object.keys(SHOW_CHOICES));
-    state.settings.bus_stops = { show: 'surveyed' };
+    state.settings.stop_amenities = { show: 'surveyed' };
     expect([0, 1, 2, 3].map((c) => drawnBy(state, c).length)).toEqual([0, 1, 1, 1]);
-    state.settings.bus_stops = { show: 'unsurveyed' };
+    state.settings.stop_amenities = { show: 'unsurveyed' };
     expect([0, 1, 2, 3].map((c) => drawnBy(state, c).length)).toEqual([1, 0, 0, 0]);
   });
 
@@ -248,7 +248,7 @@ describe('bus stops style', () => {
     const unknown = circles.at(-1)!;
     expect(unknown.kind === 'circle' && unknown.link).toEqual({ page: 'streetcomplete', label: strings.legend.stopSurvey });
     expect(circles.slice(0, 3).every((e) => e.kind === 'circle' && !e.link)).toBe(true);
-    state.settings.bus_stops = { show: 'surveyed' };
+    state.settings.stop_amenities = { show: 'surveyed' };
     expect(styleFor(layer)!.legend({ layer, registry: reg, state }).some((e) => e.kind === 'circle' && e.label === strings.legend.stopUnknown)).toBe(false);
   });
 

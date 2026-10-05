@@ -282,9 +282,11 @@ def test_the_base_map_extract_needs_no_keys() -> None:
 
 
 def test_a_layer_guide_must_be_a_content_page(repo_copy: Path) -> None:
-    edit(repo_copy, "layers", lambda layers: by_id(layers, "bus_stops").update(guide="no-such"))
+    edit(
+        repo_copy, "layers", lambda layers: by_id(layers, "stop_amenities").update(guide="no-such")
+    )
     assert problems(repo_copy) == [
-        "registry/layers.yaml: bus_stops: guide page content/no-such.md does not exist"
+        "registry/layers.yaml: stop_amenities: guide page content/no-such.md does not exist"
     ]
-    edit(repo_copy, "layers", lambda layers: by_id(layers, "bus_stops").update(guide="../x"))
+    edit(repo_copy, "layers", lambda layers: by_id(layers, "stop_amenities").update(guide="../x"))
     assert any("'../x' does not match" in p for p in problems(repo_copy))

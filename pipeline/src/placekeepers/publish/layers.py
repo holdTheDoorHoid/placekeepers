@@ -475,8 +475,8 @@ def builder_for(file: str, source_layer: str) -> LayerBuilder | None:
 
 
 # The street safety layers (segments, crashes, memorials) live in their own module (M1.5), and
-# the transit layer (bus and trolley stops from OpenStreetMap) in another (M2.2).
+# the amenities from OpenStreetMap (shelters and benches at stops) in another (M2.2).
+from placekeepers.publish.amenities import AMENITY_BUILDERS  # noqa: E402
 from placekeepers.publish.streets import STREET_BUILDERS  # noqa: E402
-from placekeepers.publish.transit import TRANSIT_BUILDERS  # noqa: E402
 
-BUILDERS = (*BUILDERS, *STREET_BUILDERS, *TRANSIT_BUILDERS)
+BUILDERS = (*BUILDERS, *STREET_BUILDERS, *AMENITY_BUILDERS)

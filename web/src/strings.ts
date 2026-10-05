@@ -540,7 +540,8 @@ export const strings = {
     /** While there is no private way to ask for a name to come down, no name can appear (D7). */
     memorialNamesWaiting: 'No names are shown yet. They will appear only once families have a private way to ask for one to come down.',
     memorialNamesHidden: 'Names are hidden.',
-    // Bus and trolley stops (src/map/styles/bus_stops.ts). Unknown is never worded as missing.
+    // Shelters and benches at stops (src/map/styles/stop_amenities.ts). Unknown is never worded
+    // as missing.
     stopShelter: 'A shelter, or the whole stop is under a roof',
     stopBench: 'A bench, but no shelter mapped',
     stopNeither: 'No shelter and no bench',
@@ -558,8 +559,8 @@ export const strings = {
           ? 'Crash'
           : style === 'street_segments'
             ? 'Street block'
-            : style === 'bus_stops'
-              ? 'Bus or trolley stop'
+            : style === 'stop_amenities'
+              ? 'Shelter and bench'
               : 'Details',
     memorialTitle: 'In memory',
     peopleHere: (n: number) => `${plural(n, 'person is', 'people are')} remembered here`,
@@ -614,9 +615,9 @@ export const strings = {
     school: 'A school within 400 meters',
   },
 
-  // A bus or trolley stop someone tapped (src/components/streets/StopDetails.svelte), from
-  // OpenStreetMap. An answer OpenStreetMap does not have yet reads "not yet surveyed".
-  stops: {
+  // Shelters and benches at a stop someone tapped (src/components/transit/StopAmenityDetails.svelte),
+  // from OpenStreetMap. An answer OpenStreetMap does not have yet reads "not yet surveyed".
+  stopAmenities: {
     unnamed: 'A stop with no name in OpenStreetMap',
     number: (ref: string) => `Stop number ${ref}`,
     served: { 1: 'Bus stop', 2: 'Trolley stop', 3: 'Bus and trolley stop' } as Record<number, string>,
