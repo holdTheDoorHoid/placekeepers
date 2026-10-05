@@ -5,9 +5,11 @@ how often service comes and how many people board, and its routes as context.
   Saturday or Sunday (bus, trolley, subway and El platforms, Regional Rail stations), from the
   `septa_gtfs` snapshot, with SEPTA's average weekday boardings where a count matches the stop
   (placekeepers.derive.transit.match_counts). A stop with no matching count gets no boardings,
-  never an estimate. Bus and trolley stops also get what riders find there from OpenStreetMap,
-  the transit comfort lens factors and their suggestions (placekeepers.derive.transit_comfort,
-  M2.3).
+  never an estimate. Bus and trolley stops on the street also get the transit comfort lens
+  factors from SEPTA's and the City's data, the suggestion those decide, and the id of the
+  OpenStreetMap stop at the same pole (placekeepers.derive.transit_comfort, M2.3). What
+  OpenStreetMap says there is never stored here: the browser joins it from
+  tables/stop_amenities.json (decision D1).
 * `routes`: every route that stops in Philadelphia, as the lines its trips follow, cut to a
   generous box around the city.
 
@@ -38,6 +40,7 @@ from placekeepers.derive.transit import (
     split_side,
     sum_counts,
 )
+from placekeepers.derive.transit_comfort import LINKS as COMFORT_LINKS
 from placekeepers.derive.transit_comfort import SOURCES as COMFORT_SOURCES
 from placekeepers.derive.transit_comfort import TUNNEL_STATIONS, SeptaStop, comfort_for_stops
 from placekeepers.geo import GeoJSONWriter, geometry_json
@@ -368,6 +371,9 @@ TRANSIT_BUILDERS: tuple[LayerBuilder, ...] = (
         build_transit_stops,
         # Ridership, the city's shape, and what the transit comfort lens reads (M2.3).
         extras=tuple(dict.fromkeys((*RIDERSHIP, *CITY_SOURCES, *COMFORT_SOURCES))),
+        # OpenStreetMap's stops, only to link each SEPTA stop to its OpenStreetMap stop by id
+        # (`o`): their answers are published in tables/stop_amenities.json (decision D1).
+        links=COMFORT_LINKS,
     ),
     LayerBuilder(TRANSIT_FILE, "routes", (GTFS,), build_transit_routes, extras=CITY_SOURCES),
 )

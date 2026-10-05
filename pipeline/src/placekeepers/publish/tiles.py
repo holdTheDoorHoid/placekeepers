@@ -168,6 +168,16 @@ TILE_OPTIONS: dict[str, list[str]] = {
         "--no-feature-limit",
         "--no-tile-size-limit",
     ],
+    # Public art (M3.2): several hundred points, every one kept at every zoom, so no work
+    # disappears when the map is zoomed out. Zoom 14 places a point within about half a meter, and
+    # the map stretches it further in: 241 kB in all instead of 385 kB at zoom 16 (2026-10-05).
+    "tiles/art.pmtiles": [
+        "--minimum-zoom=10",
+        "--maximum-zoom=14",
+        "--base-zoom=10",
+        "--no-feature-limit",
+        "--no-tile-size-limit",
+    ],
     # Walkability by block group and the walking distance hexagons (M3.3): a few thousand
     # polygons, every one at every zoom, borders kept shared, stretched by the map past zoom 14.
     "tiles/walk.pmtiles": [

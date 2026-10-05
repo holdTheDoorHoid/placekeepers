@@ -24,6 +24,7 @@ from placekeepers.publish.dossiers import DossierResult, build_dossiers
 from placekeepers.publish.layers import builder_for
 from placekeepers.publish.manifest import MANIFEST, build_manifest, git_short_hash
 from placekeepers.publish.route_sheets import RouteSheetsResult, build_route_sheets
+from placekeepers.publish.stop_table import StopTableResult, build_stop_table
 from placekeepers.publish.tiles import (
     TILES_SKIPPED_NOTE,
     TileError,
@@ -57,6 +58,9 @@ class PublishResult:
     dossiers: DossierResult | None = None
     #: the route survey sheets (publish/route_sheets.py)
     route_sheets: RouteSheetsResult | None = None
+    #: what OpenStreetMap says at each stop, keyed by its id, for the browser to join to SEPTA's
+    #: stops (publish/stop_table.py, decision D1)
+    stop_table: StopTableResult | None = None
 
 
 def geojson_name(file: str, source_layer: str) -> str:
@@ -179,7 +183,7 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
                 log.warning("publish: no builder yet for layer %s", layer.id)
                 continue
             paths = {}
-            for source_id in (*builder.sources, *builder.extras):
+            for source_id in (*builder.sources, *builder.extras, *builder.links):
                 status = statuses.get(source_id)
                 if status is not None and status.snapshot is not None:
                     paths[source_id] = SnapshotStore(ctx.cache, source_id).path_for(status.snapshot)
@@ -206,8 +210,11 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
                 f"{built.features:,}",
             )
             layers_by_file.setdefault(layer.file, []).append((layer.source_layer, target))
+            # Sources read only to link by id store nothing here, so they are not credited here.
             attributions.setdefault(layer.file, []).extend(
-                registry.sources[source_id].attribution for source_id in paths
+                registry.sources[source_id].attribution
+                for source_id in paths
+                if source_id not in builder.links
             )
 
         notes.extend(vacancy_notes(ctx))
@@ -216,6 +223,8 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
         notes.extend(result.dossiers.notes)
         result.route_sheets = build_route_sheets(ctx, statuses, staging, as_of)
         notes.extend(result.route_sheets.notes)
+        result.stop_table = build_stop_table(ctx, statuses, staging)
+        notes.extend(result.stop_table.notes)
 
         exe = find_tippecanoe()
         if exe is None:

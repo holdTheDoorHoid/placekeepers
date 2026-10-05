@@ -327,6 +327,24 @@
       "newest_record": "2026-10-02",
       "message": null
     },
+    "percent_for_art": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 239,
+      "newest_record": "2025-08-19",
+      "message": null
+    },
+    "wikidata_art": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 72,
+      "newest_record": null,
+      "message": null
+    },
     "epa_walkability": {
       "status": "ok",
       "last_attempt": "2026-10-04T10:00:05Z",
@@ -598,6 +616,15 @@
         "street_centerlines"
       ]
     },
+    "public_art": {
+      "file": "tiles/art.pmtiles",
+      "source_layer": "art",
+      "sources": [
+        "percent_for_art",
+        "osm_philadelphia",
+        "wikidata_art"
+      ]
+    },
     "walkability": {
       "file": "tiles/walk.pmtiles",
       "source_layer": "block_groups",
@@ -679,8 +706,8 @@
       "sha256": "ba6d52260354a67d1609cfa76aa2696ba0dacded44f23dba816aead9ffdd08c0"
     },
     "tiles/transit.stops.geojson": {
-      "bytes": 3630,
-      "sha256": "18689d0b5b7f208a17ea58474a3f5381bed737c19d4383086169ea9effd6f89b"
+      "bytes": 3174,
+      "sha256": "515c594b418fb995680c228136aa05c84e5d82acf0eb4a8949b1ebbc2f133849"
     },
     "tiles/amenities.stops.geojson": {
       "bytes": 1235,
@@ -746,6 +773,10 @@
       "bytes": 202,
       "sha256": "5f785fcbc81bffd5e4dbacffbcda299119e99f30141e03c30098b35c5976022f"
     },
+    "tiles/art.art.geojson": {
+      "bytes": 2022,
+      "sha256": "9fccf97daec1c6b914c4ce98bd1dd3367e6d54108e5d28552478050893d92181"
+    },
     "tiles/walk.block_groups.geojson": {
       "bytes": 1206,
       "sha256": "c798a7bc409ba7e18c7d7741e19da154c02dc38038323d012d4009c4fedb6d7d"
@@ -759,8 +790,12 @@
       "sha256": "db3f13d6ca3ce820b90a9f7a2e760764ba7ee66164dfa3808271217aee22f24c"
     },
     "tables/routes/index.json": {
-      "bytes": 846,
-      "sha256": "9244225df95bdee51d45a9fe6ec98bc2fa5f835611b1a937a9d569e914a5d9cc"
+      "bytes": 1009,
+      "sha256": "01d11edc7bc2753a818222918f2fb5ed042bcdca16e6b3035495189721127b7f"
+    },
+    "tables/stop_amenities.json": {
+      "bytes": 763,
+      "sha256": "28b139874ea1f6a099b26faaec67230cbd44da8de648de9a9af66df2cacbcb17"
     },
     "dossiers/common.json": {
       "bytes": 6273,
@@ -781,6 +816,8 @@
   },
   "notes": [
     "This is synthetic sample data for testing the map.",
-    "Street, boundary, transit, amenity, heat, tree, floodplain and walking tiles were skipped for this sample, so those layers are published as GeoJSON."
+    "Street, boundary, transit, amenity, heat, tree and floodplain tiles were skipped for this sample, so those layers are published as GeoJSON.",
+    "Public art tiles were skipped for this sample too, so its layer is published as GeoJSON.",
+    "Walking tiles were skipped for this sample too, so those layers are published as GeoJSON."
   ]
 }

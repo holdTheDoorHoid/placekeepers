@@ -463,6 +463,8 @@
     kind: osm_extract
     url: https://download.geofabrik.de/north-america/us/pennsylvania-latest.osm.pbf
     tags:
+      # Public art (M3.2): artworks of every kind, merged with the City's and Wikidata's.
+      - tourism=artwork
       - highway=bus_stop
       - public_transport=platform
       - amenity=shelter
@@ -561,6 +563,37 @@
   attribution: "311 requests: City of Philadelphia, Philly311"
   cadence: daily
   health: {min_rows: 2000, max_drop_pct: 50, newest_field: requested, max_age_days: 10}
+  release: v0.3
+# Milestone M3.2: public art. OpenStreetMap's artworks come with osm_philadelphia (tourism=artwork,
+# above); these are the City's list and Wikidata's. philart.net, the Association for Public Art's
+# map and Philadelphia's Magic Gardens' mosaic map are not used until their owners agree, and
+# Mural Arts' catalog is never copied: its terms forbid building a database from it
+# (docs/DATA_SOURCES.md, "Public art").
+- id: percent_for_art
+  name: Percent for Art collection
+  publisher: City of Philadelphia, Department of Planning and Development
+  homepage: https://opendataphilly.org/datasets/percent-for-art-locations/
+  # The OpenDataPhilly dataset "Percent for Art Locations": one record per work, on the parcel it
+  # stands on. The same list is the Carto table percent_for_art_public; the ArcGIS layer says when
+  # it was last edited (pipeline/src/placekeepers/adapters/art.py).
+  endpoint: {kind: arcgis, service: Percent_for_Art_Public, layer: 0}
+  license: city_terms
+  attribution: "Public art: City of Philadelphia, Percent for Art"
+  cadence: irregular
+  health: {min_rows: 200, max_drop_pct: 10, newest_field: source_date}
+  release: v0.3
+- id: wikidata_art
+  name: Public art in Wikidata
+  publisher: Wikidata contributors (Wikimedia Foundation)
+  homepage: https://www.wikidata.org/wiki/Wikidata:Licensing
+  # One small query a week to Wikidata's query service: artworks of a fixed list of kinds with a
+  # coordinate in a box around the city (pipeline/src/placekeepers/adapters/art.py). Wikidata is
+  # CC0 and asks for no credit; the map credits it anyway.
+  endpoint: {kind: sparql, url: "https://query.wikidata.org/sparql"}
+  license: public_domain
+  attribution: "Public art: Wikidata (CC0)"
+  cadence: weekly
+  health: {min_rows: 40, max_drop_pct: 25}
   release: v0.3
 # Milestone M3.3: walkability and people. The EPA's National Walkability Index by block group
 # (only Philadelphia's are downloaded), population by census block from the 2020 census, DVRPC's

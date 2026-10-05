@@ -1,0 +1,442 @@
+{
+ "not_surveyed": 50,
+ "cases": [
+  {
+   "name": "a shelter, a bench and a light, the stop numbers agreeing",
+   "tile": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n1"
+   },
+   "osm": {
+    "c": 3,
+    "sh": 1,
+    "bn": 1,
+    "lt": 1,
+    "n": [
+     "100"
+    ]
+   },
+   "joined": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n1",
+    "a": 3,
+    "om": 1,
+    "sh": 1,
+    "bn": 1,
+    "li": 1,
+    "f_noshelter": 0,
+    "f_nobench": 0
+   }
+  },
+  {
+   "name": "neither a shelter nor a bench, not lit, and little shade nearby",
+   "tile": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 90,
+    "tc": 1,
+    "o": "n2",
+    "sg": "stop_shade_trees"
+   },
+   "osm": {
+    "c": 1,
+    "sh": 0,
+    "bn": 0,
+    "lt": 0
+   },
+   "joined": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 90,
+    "tc": 1,
+    "o": "n2",
+    "a": 1,
+    "om": 2,
+    "sh": 0,
+    "bn": 0,
+    "li": 0,
+    "f_noshelter": 100,
+    "f_nobench": 100,
+    "sg": "stop_shelter_request,stop_bench_request,stop_streetlight_report,stop_shade_trees"
+   }
+  },
+  {
+   "name": "a bench but no shelter, matched by place",
+   "tile": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n3"
+   },
+   "osm": {
+    "c": 2,
+    "sh": 0,
+    "bn": 1
+   },
+   "joined": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n3",
+    "a": 2,
+    "om": 2,
+    "sh": 0,
+    "bn": 1,
+    "f_noshelter": 100,
+    "f_nobench": 0,
+    "sg": "stop_shelter_request"
+   }
+  },
+  {
+   "name": "in OpenStreetMap, but no one has answered yet",
+   "tile": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n4"
+   },
+   "osm": {
+    "c": 0
+   },
+   "joined": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n4",
+    "a": 0,
+    "om": 2,
+    "f_noshelter": 50,
+    "f_nobench": 50,
+    "sg": "stop_survey"
+   }
+  },
+  {
+   "name": "only the shelter answered: none",
+   "tile": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n5"
+   },
+   "osm": {
+    "c": 0,
+    "sh": 0
+   },
+   "joined": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n5",
+    "a": 0,
+    "om": 2,
+    "sh": 0,
+    "f_noshelter": 100,
+    "f_nobench": 50,
+    "sg": "stop_survey,stop_shelter_request"
+   }
+  },
+  {
+   "name": "the whole stop under a roof, the bench not answered",
+   "tile": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n6"
+   },
+   "osm": {
+    "c": 3,
+    "cv": 1
+   },
+   "joined": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n6",
+    "a": 3,
+    "om": 2,
+    "cv": 1,
+    "f_noshelter": 0,
+    "f_nobench": 50,
+    "sg": "stop_survey"
+   }
+  },
+  {
+   "name": "lit, nothing else answered",
+   "tile": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n7"
+   },
+   "osm": {
+    "c": 0,
+    "lt": 1
+   },
+   "joined": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n7",
+    "a": 0,
+    "om": 2,
+    "li": 1,
+    "f_noshelter": 50,
+    "f_nobench": 50,
+    "sg": "stop_survey"
+   }
+  },
+  {
+   "name": "a waste basket only: no answer the lens reads",
+   "tile": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n8"
+   },
+   "osm": {
+    "c": 0,
+    "bi": 1
+   },
+   "joined": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n8",
+    "a": 0,
+    "om": 2,
+    "f_noshelter": 50,
+    "f_nobench": 50,
+    "sg": "stop_survey"
+   }
+  },
+  {
+   "name": "the stop numbers agreeing through a number the stop had before",
+   "tile": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n9",
+    "fid": "99,98"
+   },
+   "osm": {
+    "c": 1,
+    "sh": 0,
+    "bn": 0,
+    "n": [
+     "98"
+    ]
+   },
+   "joined": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n9",
+    "fid": "99,98",
+    "a": 1,
+    "om": 1,
+    "sh": 0,
+    "bn": 0,
+    "f_noshelter": 100,
+    "f_nobench": 100,
+    "sg": "stop_shelter_request,stop_bench_request"
+   }
+  },
+  {
+   "name": "another stop's number: the place decides",
+   "tile": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n10"
+   },
+   "osm": {
+    "c": 1,
+    "sh": 0,
+    "bn": 0,
+    "n": [
+     "200"
+    ]
+   },
+   "joined": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n10",
+    "a": 1,
+    "om": 2,
+    "sh": 0,
+    "bn": 0,
+    "f_noshelter": 100,
+    "f_nobench": 100,
+    "sg": "stop_shelter_request,stop_bench_request"
+   }
+  },
+  {
+   "name": "no OpenStreetMap stop at all",
+   "tile": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1
+   },
+   "osm": null,
+   "joined": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "f_noshelter": 50,
+    "f_nobench": 50,
+    "sg": "stop_survey"
+   }
+  },
+  {
+   "name": "an id the table does not have",
+   "tile": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n404"
+   },
+   "osm": null,
+   "joined": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n404",
+    "f_noshelter": 50,
+    "f_nobench": 50,
+    "sg": "stop_survey"
+   }
+  },
+  {
+   "name": "no OpenStreetMap stop, with a published suggestion",
+   "tile": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 80,
+    "tc": 1,
+    "sg": "stop_shade_trees"
+   },
+   "osm": null,
+   "joined": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 80,
+    "tc": 1,
+    "f_noshelter": 50,
+    "f_nobench": 50,
+    "sg": "stop_survey,stop_shade_trees"
+   }
+  },
+  {
+   "name": "a subway station: left as it is",
+   "tile": {
+    "id": "sp102",
+    "sid": "102",
+    "md": 4
+   },
+   "osm": {
+    "c": 1,
+    "sh": 0
+   },
+   "joined": {
+    "id": "sp102",
+    "sid": "102",
+    "md": 4
+   }
+  },
+  {
+   "name": "a trolley tunnel station: no mark, left as it is",
+   "tile": {
+    "id": "sp283",
+    "sid": "283",
+    "md": 2,
+    "b": 12
+   },
+   "osm": null,
+   "joined": {
+    "id": "sp283",
+    "sid": "283",
+    "md": 2,
+    "b": 12
+   }
+  }
+ ]
+}

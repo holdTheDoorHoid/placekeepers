@@ -14,6 +14,7 @@ import type { AppStore } from '../src/state/store.svelte.ts';
 import { strings } from '../src/strings.ts';
 import { describeRoute, describeRoutes } from '../src/survey/route.ts';
 import SurveySheet from '../src/survey/SurveySheet.svelte';
+import { parseStopTable } from '../src/transit/answers.ts';
 import {
   answeredCount,
   answersKey,
@@ -22,8 +23,10 @@ import {
   formatDuration,
   formatMiles,
   isTrolley,
+  joinSheet,
   loadAnswers,
   metersAlong,
+  moveLegacyAnswers,
   osmEditUrl,
   osmViewUrl,
   parseIndex,
@@ -42,7 +45,9 @@ import {
 const t = strings.survey;
 const read = (name: string) => JSON.parse(readFileSync(new URL(`../fixtures/data/tables/routes/${name}`, import.meta.url), 'utf8'));
 const index = parseIndex(read('index.json'))!;
-const route60 = parseSheet(read('60.json'))!;
+/** What OpenStreetMap says at each stop, joined to the sheets on the page (decision D1). */
+const TABLE = parseStopTable(JSON.parse(readFileSync(new URL('../fixtures/data/tables/stop_amenities.json', import.meta.url), 'utf8')))!;
+const route60 = joinSheet(parseSheet(read('60.json'))!, TABLE);
 const east = route60.directions[0]!;
 
 function stops(n: number, spacing = 100): SheetStop[] {
@@ -59,18 +64,31 @@ describe('reading the published sheets', () => {
       { d: 0, dir: 'Eastbound', to: 'Sample Loop', n: 6 },
       { d: 1, dir: 'Westbound', to: 'Sample 1 Ave', n: 3 },
     ]);
-    expect(r60.s).toEqual({ '0': 2, '1': 1, '2': 1, '3': 1, none: 4 });
+    // What OpenStreetMap says is not in the route files: no counts by what it shows (decision D1).
+    expect('s' in r60).toBe(false);
     expect(routeLabel(r60)).toBe('60: Sample route across town');
     expect(isTrolley(index.routes[0]!.md)).toBe(true);
     expect(isTrolley(r60.md)).toBe(false);
   });
 
-  it('reads a route with each stop and what OpenStreetMap shows there', () => {
+  it('joins what OpenStreetMap shows at each stop from the stop table, by its id', () => {
+    // The file holds SEPTA's stops and only the link to OpenStreetMap's.
+    const plain = parseSheet(read('60.json'))!;
+    expect(plain.directions[0]!.stops[0]).toEqual({ k: 'sp1201', sid: '1201', nm: 'Sample 2 St & Sample 1 Ave', lat: plain.directions[0]!.stops[0]!.lat, lng: plain.directions[0]!.stops[0]!.lng, osm: 'n9000001' });
     expect(route60.r).toBe('60');
     expect(east.stops.map(statusOf)).toEqual(['shelter', 'bench', 'neither', 'missing', 'unsurveyed', 'missing']);
     expect(east.stops[0]).toMatchObject({ k: 'sp1201', sid: '1201', c: 3, osm: 'n9000001', sh: 1, bn: 1, bi: 1, lt: 1 });
     expect(statusCounts(east.stops)).toEqual({ shelter: 1, bench: 1, neither: 1, unsurveyed: 1, missing: 2 });
     expect(route60.directions[1]!.out).toBe(1);
+  });
+
+  it('shows linked stops as not yet surveyed when the stop table could not be loaded', () => {
+    const plain = parseSheet(read('60.json'))!;
+    const without = joinSheet(plain, null).directions[0]!.stops;
+    expect(without.map(statusOf)).toEqual(['unsurveyed', 'unsurveyed', 'unsurveyed', 'missing', 'unsurveyed', 'missing']);
+    // A stop whose id the table does not list is not found in OpenStreetMap.
+    const empty = joinSheet(plain, { asOf: null, credit: null, license: null, stops: new Map() }).directions[0]!.stops;
+    expect(empty.map(statusOf).every((status) => status === 'missing')).toBe(true);
   });
 
   it('refuses what is not a sheet, and skips files outside the routes folder', () => {
@@ -158,6 +176,12 @@ describe('the boxes someone ticks, kept on this device', () => {
     removeItem(key: string) {
       this.items.delete(key);
     }
+    get length() {
+      return this.items.size;
+    }
+    key(i: number) {
+      return [...this.items.keys()][i] ?? null;
+    }
   }
 
   it('lets Yes and No replace each other, and a second tick clear the box', () => {
@@ -172,12 +196,28 @@ describe('the boxes someone ticks, kept on this device', () => {
   it('keeps what was filled in for each route and direction', () => {
     const storage = new Memory();
     const key = answersKey('60', 0);
-    expect(key).toBe('pk-survey:60:0');
+    expect(key).toBe('placekeepers:v1:survey:60:0');
     expect(saveAnswers(storage, key, { sp1201: { sh: 'y', rp: true, nt: 'Glass cracked' }, sp1202: {} })).toBe(true);
     expect(loadAnswers(storage, key)).toEqual({ sp1201: { sh: 'y', rp: true, nt: 'Glass cracked' } });
     expect(answeredCount(loadAnswers(storage, key), east.stops)).toBe(1);
     saveAnswers(storage, key, {});
     expect(storage.items.has(key)).toBe(false);
+  });
+
+  it('moves ticks kept under the old name to the site\'s own, once', () => {
+    const storage = new Memory();
+    storage.setItem('pk-survey:60:0', JSON.stringify({ sp1201: { sh: 'y' } }));
+    storage.setItem('pk-survey:47:1', JSON.stringify({ sp9: { bn: 'n' } }));
+    storage.setItem(answersKey('47', 1), JSON.stringify({ sp9: { bn: 'y' } }));
+    storage.setItem('placekeepers:v1:options', '{}');
+    moveLegacyAnswers(storage);
+    expect([...storage.items.keys()].sort()).toEqual(['placekeepers:v1:options', 'placekeepers:v1:survey:47:1', 'placekeepers:v1:survey:60:0']);
+    expect(loadAnswers(storage, answersKey('60', 0))).toEqual({ sp1201: { sh: 'y' } });
+    // Ticks already kept under the new name win.
+    expect(loadAnswers(storage, answersKey('47', 1))).toEqual({ sp9: { bn: 'y' } });
+    moveLegacyAnswers(storage);
+    expect(storage.items.size).toBe(3);
+    moveLegacyAnswers(null);
   });
 
   it('carries on without storage, and ignores what it cannot read', () => {

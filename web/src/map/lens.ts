@@ -32,8 +32,19 @@ function sum(terms: ExpressionSpecification[]): ExpressionSpecification {
   return terms.length === 1 ? terms[0]! : (['+', ...terms] as ExpressionSpecification);
 }
 
-function hasNumber(field: string): ExpressionSpecification {
-  return ['==', ['typeof', ['get', field]], 'number'];
+function hasNumber(value: ExpressionSpecification | number): ExpressionSpecification {
+  return ['==', ['typeof', value], 'number'];
+}
+
+/**
+ * For a lens whose features do not carry every factor themselves (decision D1: SEPTA's stops get
+ * OpenStreetMap's answers in the browser, src/transit/answers.ts).
+ */
+export interface LensExpressionOptions {
+  /** An expression (or a number) giving a factor's value, by field, instead of the feature's property. */
+  values?: Record<string, ExpressionSpecification | number>;
+  /** Only features where this holds are scored; the rest get NO_SCORE. */
+  when?: ExpressionSpecification;
 }
 
 /**
@@ -41,16 +52,21 @@ function hasNumber(field: string): ExpressionSpecification {
  * none of the weighted factors has data. Returns null when every weight is zero, because
  * then there is nothing to rank by.
  */
-export function lensScoreExpression(lens: Lens, weights: Record<string, number> | undefined): ExpressionSpecification | null {
+export function lensScoreExpression(
+  lens: Lens,
+  weights: Record<string, number> | undefined,
+  options: LensExpressionOptions = {},
+): ExpressionSpecification | null {
   const factors = activeFactors(lens, weights);
   if (factors.length === 0) return null;
+  const value = (field: string): ExpressionSpecification | number => options.values?.[field] ?? ['get', field];
   const numerator = sum(
-    factors.map(({ factor, weight }) => ['case', hasNumber(factor.field), ['*', weight, ['get', factor.field]], 0] as ExpressionSpecification),
+    factors.map(({ factor, weight }) => ['case', hasNumber(value(factor.field)), ['*', weight, value(factor.field)], 0] as ExpressionSpecification),
   );
   const denominator = sum(
-    factors.map(({ factor, weight }) => ['case', hasNumber(factor.field), weight, 0] as ExpressionSpecification),
+    factors.map(({ factor, weight }) => ['case', hasNumber(value(factor.field)), weight, 0] as ExpressionSpecification),
   );
-  return [
+  const score: ExpressionSpecification = [
     'let',
     'pk_num',
     numerator,
@@ -58,6 +74,7 @@ export function lensScoreExpression(lens: Lens, weights: Record<string, number> 
     denominator,
     ['case', ['==', ['var', 'pk_den'], 0], NO_SCORE, ['/', ['var', 'pk_num'], ['var', 'pk_den']]],
   ];
+  return options.when ? ['case', options.when, score, NO_SCORE] : score;
 }
 
 export interface ColorRamp {
@@ -74,8 +91,9 @@ export function lensColorExpression(
   lens: Lens,
   weights: Record<string, number> | undefined,
   ramp: ColorRamp,
+  options: LensExpressionOptions = {},
 ): ExpressionSpecification | string {
-  const score = lensScoreExpression(lens, weights);
+  const score = lensScoreExpression(lens, weights, options);
   if (!score) return ramp.allOff;
   const step = 100 / (ramp.stops.length - 1);
   const stops = ramp.stops.flatMap((color, i) => [Math.round(i * step), color]);

@@ -17,6 +17,7 @@
   import TransitStopDetails from '../transit/TransitStopDetails.svelte';
   import StopAmenityDetails from '../transit/StopAmenityDetails.svelte';
   import TreeDetails from '../heat/TreeDetails.svelte';
+  import ArtDetails from '../art/ArtDetails.svelte';
   import RouteDetails from '../transit/RouteDetails.svelte';
   import AmenityDetails from '../amenities/AmenityDetails.svelte';
   import ConditionDetails from '../amenities/ConditionDetails.svelte';
@@ -123,6 +124,13 @@
     {#each target.features.slice(0, 4) as properties, i (i)}
       <ConditionDetails layerId={target.layerId} {properties} route={store.registry.routes.find((r) => r.id === 'report_to_311')} />
     {/each}
+  {:else if style === STYLES.public_art}
+    <ArtDetails
+      features={target.features}
+      lngLat={target.lngLat}
+      registry={store.registry}
+      related={(g) => store.controller?.featuresWith(target.layerId, 'g', g) ?? []}
+    />
   {:else if style === STYLES.traffic_stress}
     <StressDetails features={target.features} />
   {/if}

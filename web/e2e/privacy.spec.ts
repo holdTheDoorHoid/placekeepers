@@ -160,16 +160,24 @@ test.describe('privacy', () => {
     expect(seen.urls.filter((url) => url.includes('Shelter') || url.includes('survey:'))).toEqual([]);
   });
 
-  test.fixme('survey ticks are kept under the site\'s own prefix, like every other setting', async ({ page }) => {
+  test('survey ticks are kept under the site\'s own prefix, like every other setting', async ({ page }) => {
     // The site shares the github.io origin with the owner's other sites, so everything it keeps
-    // in the browser is named placekeepers:v1: (docs/DESIGN.md section 5.2). The survey page keeps
-    // its ticks under pk-survey: instead (web/src/survey/sheet.ts, answersKey). Found by the v0.2
-    // review; turn this test on when the key moves (keeping ticks saved under the old key).
+    // in the browser is named placekeepers:v1: (docs/DESIGN.md section 5.2). The survey page once
+    // kept its ticks under pk-survey: (finding F3 of the v0.2 review); they move over once.
     await page.route(/^https?:\/\/(?!localhost[:/])/, (route) => route.abort());
+    await page.addInitScript(() => {
+      if (!sessionStorage.getItem('seeded')) {
+        localStorage.setItem('pk-survey:60:1', JSON.stringify({ sp1206: { sh: 'y' } }));
+        sessionStorage.setItem('seeded', '1');
+      }
+    });
     await page.goto('./survey/?route=60&d=0');
     await page.getByRole('checkbox', { name: 'Stop 1, Sample 2 St & Sample 1 Ave: Shelter, Yes' }).check();
     const keys = await page.evaluate(() => Object.keys(localStorage));
     for (const key of keys) expect(key).toMatch(/^placekeepers:v1:/);
+    // The ticks kept under the old name came along.
+    const moved = await page.evaluate(() => localStorage.getItem('placekeepers:v1:survey:60:1'));
+    expect(JSON.parse(moved ?? '{}')).toEqual({ sp1206: { sh: 'y' } });
   });
 
   test('links that open a new tab carry no opener and no referrer', async ({ page }, info) => {

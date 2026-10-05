@@ -3,8 +3,8 @@
 Placekeepers is free to use. It is built for taking care of your community and acting lawfully,
 not for anything else.
 
-**This is not legal advice**, and Placekeepers is not affiliated with the City of Philadelphia or
-any other government agency. For anything that depends on being right, such as who owns a
+**This is not legal advice**, and Placekeepers is not affiliated with the City of Philadelphia,
+SEPTA or any other government agency. For anything that depends on being right, such as who owns a
 property or whether a legal route applies to you, confirm it with the City office that holds the
 record, or with a lawyer. [How to do it](https://holdthedoorhoid.github.io/placekeepers/how/)
 points to free legal help.

@@ -3,10 +3,11 @@
 
 For every SEPTA bus and trolley route that stops in Philadelphia, each direction's stops in
 Philadelphia in SEPTA's own order (`stop_order` of the `septa_gtfs` snapshot, from
-placekeepers.derive.route_stops), each with what OpenStreetMap knows about it: the same answers
-and the same kind (`c`) as the shelters and benches layer, from the OpenStreetMap stop that is the
-same pole (placekeepers.derive.bus_stops.match_septa). A stop OpenStreetMap does not have yet gets
-no `c`. The web page `survey/` turns a route's file into a printable survey sheet.
+placekeepers.derive.route_stops), each with the id of the OpenStreetMap stop that is the same pole
+(`osm`, placekeepers.derive.bus_stops.match_septa). What OpenStreetMap says there is not stored in
+these files: the web page `survey/` joins it from tables/stop_amenities.json by that id, so
+OpenStreetMap's answers are never published in the same records as SEPTA's data (decision D1 of
+docs/VERIFICATION_V0_2.md). The page turns a route's file into a printable survey sheet.
 
 "In Philadelphia" is SEPTA's own rule for its stops layer: inside the City Council districts
 widened by 100 meters (placekeepers.publish.transit.city_shape).
@@ -51,8 +52,10 @@ ROUTES_DIR = "tables/routes"
 INDEX = f"{ROUTES_DIR}/index.json"
 SCHEMA = 1
 OSM = "osm_philadelphia"
-#: The answers a sheet shows beside each stop, as in the shelters and benches layer.
-SHEET_ANSWERS = ("sh", "bn", "bi", "lt")
+#: The credit and license lines of every route file and the index (finding F7): the files hold
+#: SEPTA's stops and their order, and OpenStreetMap ids that link to tables/stop_amenities.json.
+CREDIT = "Stops and their order: SEPTA. Each osm id links to tables/stop_amenities.json."
+LICENSE_SOURCE = "septa_gtfs"
 SAFE_NAME = re.compile(r"^[A-Za-z0-9_-]{1,40}$")
 
 STOP_COLUMNS = [
@@ -119,6 +122,13 @@ def meters_along(points: list[tuple[float, float]]) -> int:
     return round(sum(float(a.distance(b)) for a, b in zip(projected, projected[1:], strict=False)))
 
 
+def _license_line(ctx: Context) -> str:
+    """SEPTA's license, from the registry: its name and address."""
+    source = ctx.registry.sources[LICENSE_SOURCE]
+    license_ = ctx.registry.licenses[source.license]
+    return f"{license_.label}, {license_.url}"
+
+
 def _index_direction(direction: dict[str, Any]) -> dict[str, Any]:
     entry = {
         "d": direction["d"],
@@ -175,8 +185,9 @@ def build_route_sheets(
             "city was used"
         )
 
-    # What OpenStreetMap knows about each SEPTA stop on a sheet.
+    # The OpenStreetMap stop at each SEPTA stop on a sheet, and what the map shows there.
     known: dict[str, dict[str, Any]] = {}
+    kinds: dict[str, int] = {}
     osm_day: str | None = None
     osm_path = _current(ctx, statuses, OSM)
     on_sheets = {
@@ -206,13 +217,13 @@ def build_route_sheets(
             for i in wanted
         ]
         for s, o in match_septa(osm_stops, points).items():
-            properties = osm_stops[o].properties()
-            entry = {"c": properties["c"], "osm": properties["id"]}
-            entry.update({k: properties[k] for k in SHEET_ANSWERS if k in properties})
-            known[wanted[s]] = entry
+            # Only the link is stored; the kind is kept for the build note's counts.
+            known[wanted[s]] = {"osm": osm_stops[o].id}
+            kinds[wanted[s]] = osm_stops[o].c
 
     version = next((row["feed_version"] for row in septa.values() if row.get("feed_version")), None)
     as_of_block = {"schedules": version, "osm": osm_day}
+    license_line = _license_line(ctx)
     generated = iso_z(ctx.now())
     index: list[dict[str, Any]] = []
     totals: Counter = Counter()
@@ -241,7 +252,7 @@ def build_route_sheets(
                     "lng": round(row["lng"], 6),
                 }
                 stop.update(known.get(stop_id, {}))
-                summary[stop.get("c", "none")] += 1
+                summary[kinds.get(stop_id, "none")] += 1
                 stops.append(stop)
             destination = direction.get("destination")
             entry = {
@@ -259,6 +270,8 @@ def build_route_sheets(
             "schema": SCHEMA,
             "generated_at": generated,
             "as_of": as_of_block,
+            "credit": CREDIT,
+            "license": license_line,
             "id": route["route_id"],
             "r": route["route_name"],
             "nm": str(plain_name(route.get("route_long_name") or "")),
@@ -269,7 +282,6 @@ def build_route_sheets(
         write_compact(path, sheet)
         result.files += 1
         result.bytes += path.stat().st_size
-        counts = {str(k): v for k, v in sorted(summary.items(), key=lambda kv: str(kv[0]))}
         totals.update(summary)
         index.append(
             {
@@ -279,7 +291,6 @@ def build_route_sheets(
                 "md": sheet["md"],
                 "file": name,
                 "dirs": [_index_direction(d) for d in directions],
-                "s": counts,
             }
         )
     result.routes = len(index)
@@ -288,7 +299,14 @@ def build_route_sheets(
         return result
     write_compact(
         out_dir / INDEX,
-        {"schema": SCHEMA, "generated_at": generated, "as_of": as_of_block, "routes": index},
+        {
+            "schema": SCHEMA,
+            "generated_at": generated,
+            "as_of": as_of_block,
+            "credit": CREDIT,
+            "license": license_line,
+            "routes": index,
+        },
     )
     stops = sum(totals.values())
     in_osm = stops - totals.get("none", 0)

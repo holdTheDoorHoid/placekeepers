@@ -72,7 +72,7 @@ export const strings = {
     hideNote: 'Hide',
     hideNoteLabel: 'Hide this note',
     close: 'Close',
-    notAffiliated: 'Not affiliated with the City of Philadelphia. Not legal advice.',
+    notAffiliated: 'Not affiliated with the City of Philadelphia or SEPTA. Not legal advice.',
     licenses: 'Code: GPL-3.0. Data: each source has its own license. Writing: Creative Commons BY-SA 4.0.',
   },
 
@@ -591,9 +591,11 @@ export const strings = {
                         ? 'Place'
                         : style === 'condition'
                           ? 'Reported to 311'
-                          : style === 'traffic_stress'
-                            ? 'Traffic stress for bikes'
-                            : 'Details',
+                          : style === 'public_art'
+                            ? 'Public art'
+                            : style === 'traffic_stress'
+                              ? 'Traffic stress for bikes'
+                              : 'Details',
     memorialTitle: 'In memory',
     peopleHere: (n: number) => `${plural(n, 'person is', 'people are')} remembered here`,
     killed: {
@@ -668,6 +670,7 @@ export const strings = {
     lensTitle: 'Priority under the transit comfort lens',
     lensUnsurveyed: 'Where no one has surveyed a stop yet, its shelter and bench count halfway.',
     lensStations: 'The lens scores bus and trolley stops only, so stations are hollow.',
+    lensTunnel: 'The trolley stops in the tunnel under Center City and University City are hollow too: the lens leaves them out, as it does stations.',
     // The transit comfort lens at a stop (src/transit/comfort.ts).
     findTitle: 'What riders find here',
     notInOsm: 'We found no matching stop in OpenStreetMap yet, so no one has recorded whether it has a shelter or a bench.',
@@ -678,6 +681,9 @@ export const strings = {
       `Tree canopy covers about ${formatNumber(percent)} percent of the land around the stop, in an area about two blocks across (the City's 2018 tree canopy survey).`,
     onHin: 'The stop is on the High Injury Network, the streets where most traffic deaths and serious injuries in Philadelphia happen.',
     noScore: 'The transit comfort lens scores bus and trolley stops only.',
+    tunnelStation: 'This trolley stop is underground, in the tunnel, so the transit comfort lens leaves it out, as it does the subway and rail stations.',
+    answersLoading: 'Loading what OpenStreetMap says at this stop.',
+    answersUnavailable: 'What OpenStreetMap says at this stop could not be loaded right now, so its shelter and bench count as not yet surveyed.',
     canDo: 'What neighbors can do here',
     routeDetails: 'Steps, contacts and links',
     surveyGuide: 'How to survey a stop with StreetComplete',
@@ -808,6 +814,66 @@ export const strings = {
     treeSource: "From Parks and Recreation's tree inventory, the trees the City keeps on its streets and in its parks.",
   },
 
+  // Public art (M3.2): the legend of src/map/styles/public_art.ts and a work someone tapped
+  // (src/components/art/ArtDetails.svelte, src/art/describe.ts). A memorial artwork shows no title,
+  // artist, year or place in words, only that it is a memorial and its sources (docs/ETHICS.md).
+  art: {
+    legend: {
+      mural: 'Murals and wall paintings',
+      sculpture: 'Sculptures and statues',
+      mosaic: 'Mosaics',
+      other: 'Other kinds: installations, fountains, monuments and more',
+    },
+    allOff: "Every kind of art is switched off in this layer's settings.",
+    insideHidden: 'Works inside buildings are hidden.',
+    memorialNote: 'Artworks that remember someone are shown without names.',
+    coverage:
+      "From the City's Percent for Art list, OpenStreetMap and Wikidata. Many murals are not in them yet; Mural Arts Philadelphia keeps the largest list on its own site.",
+    kinds: {
+      0: 'A work of public art',
+      1: 'A mural',
+      2: 'A painting',
+      3: 'Street art',
+      4: 'A mosaic',
+      5: 'A sculpture',
+      6: 'A statue',
+      7: 'A bust',
+      8: 'A relief',
+      9: 'An installation',
+      10: 'A fountain',
+      11: 'A monument',
+      12: 'A memorial',
+      13: 'Stained glass',
+      14: 'A plaque',
+    } as Record<number, string>,
+    untitled: 'No title is recorded.',
+    by: (artist: string) => `By ${artist}.`,
+    made: (year: number) => `Made in ${year}.`,
+    medium: (medium: string) => `Made of: ${medium}.`,
+    where: (place: string) => `Where: ${place}.`,
+    inside: 'Inside a building, so it can be seen only when the building is open.',
+    memorialTitle: 'Memorial artwork',
+    memorialText:
+      'This artwork remembers someone. Placekeepers shows no names on memorials; the sources below say more about it.',
+    worksHere: (n: number) => `${plural(n, 'work', 'works')} of art at this spot`,
+    sourcesTitle: 'Sources',
+    cityRecord: "The City's record of this work (PDF)",
+    cityList: "The City's Percent for Art list",
+    openOsm: 'See it on OpenStreetMap',
+    openWikidata: 'See it on Wikidata',
+    openWikipedia: 'Read about it on Wikipedia',
+    website: (site: string) => `More about it on ${site}`,
+    siteNames: {
+      'associationforpublicart.org': "the Association for Public Art's site",
+      'muralarts.org': "Mural Arts Philadelphia's site",
+      'philart.net': 'philart.net',
+    } as Record<string, string>,
+    muralArts: "Search Mural Arts Philadelphia's own list of murals",
+    fix: 'Something missing or wrong? Add or fix it on OpenStreetMap; changes reach this map within about a week.',
+    fixLink: 'Edit on OpenStreetMap',
+    credit: 'Public art from the City of Philadelphia, OpenStreetMap (© OpenStreetMap contributors) and Wikidata.',
+  },
+
   // The route survey sheet page (M2.4, web/survey/, src/survey/). Times are our own estimate and
   // say so. "Not found in OpenStreetMap" rather than "missing": the stop may be drawn a few steps
   // away, under no number we could match.
@@ -836,6 +902,8 @@ export const strings = {
     summary: (stops: number, miles: string) =>
       `${plural(stops, 'stop', 'stops')} in Philadelphia, ${miles} from the first to the last in straight lines.`,
     outside: (n: number) => `${plural(n, 'more stop is', 'more stops are')} outside Philadelphia and not on this sheet.`,
+    answersMissing:
+      'What OpenStreetMap says at these stops could not be loaded right now, so the stops it knows show as not yet surveyed.',
     statusTitle: 'What OpenStreetMap shows now',
     status: {
       shelter: 'Shelter',

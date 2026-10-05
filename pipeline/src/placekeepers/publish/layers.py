@@ -73,6 +73,10 @@ class LayerBuilder:
     build: Callable[[Context, dict[str, Path], Path, date], BuildResult]
     #: used when available, never required
     extras: tuple[str, ...] = ()
+    #: read only to link this layer's features to records published in another file, by id:
+    #: none of their data is stored here, so the file's credit line leaves them out (decision D1
+    #: of docs/VERIFICATION_V0_2.md: SEPTA's stops link to OpenStreetMap's by id, `o`)
+    links: tuple[str, ...] = ()
 
 
 # High Injury Network
@@ -512,3 +516,8 @@ BUILDERS = (
     # Walking, cycling and people (M3.3).
     *WALK_BUILDERS,
 )
+
+# Public art (M3.2), from the City, OpenStreetMap and Wikidata.
+from placekeepers.publish.art import ART_BUILDERS  # noqa: E402
+
+BUILDERS = (*BUILDERS, *ART_BUILDERS)

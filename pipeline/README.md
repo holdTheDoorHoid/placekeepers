@@ -87,6 +87,8 @@ the City's public places and 311 conditions (`adapters/city_places.py`, `adapter
 | `septa_ridership_bus`, `septa_ridership_trolley` | SEPTA's ArcGIS stop summaries, the newest spring or fall count for each mode | Average boardings and alightings per route, direction and stop number, with the count's period and the layer used |
 | `osm_philadelphia` | Geofabrik's Pennsylvania extract of OpenStreetMap (`.osm.pbf`, about 350 MB, weekly; read with DuckDB's `ST_ReadOSM`) | Not the extract: the nodes and ways with a tag the registry lists (`endpoint.tags`) inside the city limits (the 2020 census tracts joined) and 200 meters around them, with all their tags (JSON), shape, a point on each, whether that point is in the city, and the extract's date. 3,338 rows on 2026-10-04. Most of its stops must lie inside the city |
 | `heat_vulnerability` | City ArcGIS `heat_vulnerability_ct` (by the Department of Public Health and the Office of Sustainability) | Every 2010 census tract with its heat exposure, heat sensitivity and heat vulnerability scores (data of 2017 to 2019), with the shape; 384 tracts |
+| `percent_for_art` | City ArcGIS `Percent_for_Art_Public` (the OpenDataPhilly "Percent for Art Locations", the same list as Carto `percent_for_art_public`) | Every work with its number, status, title, artist, year, medium, where it is in words, the City's document about it, the parcel it stands on and the layer's last edit day; not its Street View links. 239 works on 2026-10-05, in 2.3 seconds |
+| `wikidata_art` | Wikidata's query service, one small query a week (endpoint kind `sparql`) | Artworks of a fixed list of art classes with a coordinate in a box around the city: label, classes, point, year made, creators, what it commemorates and whether that is a person, English Wikipedia article, linked pages, whether it is gone, and whether it lies inside the city. 72 items on 2026-10-05, 69 inside the city, in under 5 seconds |
 | `epa_walkability` | The EPA's ArcGIS Online feature service of the Smart Location Database (version 3, 2021), Philadelphia's block groups only | Each block group's National Walkability Index (1 to 20), its four ranked parts and their raw values, with the shape; 1,336 block groups in one page |
 | `census_blocks_2020` | The Census Bureau's 2020 redistricting file for Pennsylvania (`pa2020.pl.zip`, 57 MB, no key; frozen) | Only its geographic header is read: Philadelphia's 17,554 blocks with their population, housing units, land and water area, and a point inside each |
 | `dvrpc_lts` | DVRPC's ArcGIS service `transportation/lts_network`, Philadelphia's rows only | Each street link's level of traffic stress for cycling (1 to 4), bike facility, lanes and speed, with the line, one row per direction; 60,867 rows in 31 pages |
@@ -182,7 +184,7 @@ square kilometer and the share of the parcel in each flood area) with a summary 
 
 `pk derive` then measures what lies within a short walk of the same parcels, in
 `placekeepers/derive/walk.py` (definitions in `docs/CONTRACTS.md` section 4, the method in
-`docs/DESIGN.md` section 5.8): the people within a 5 minute walk (the 2020 census blocks whose
+`docs/DESIGN.md` section 5.9): the people within a 5 minute walk (the 2020 census blocks whose
 point lies within 400 meters), the kinds of everyday places within a 10 minute walk (seven kinds
 within 800 meters: libraries, recreation centers, pools and spraygrounds, park drinking fountains,
 schools, grocery stores and markets that take SNAP, and SEPTA stops), the street corners within a
@@ -231,8 +233,9 @@ DuckDB: `SELECT * FROM '~/.cache/placekeepers/snapshots/opa_properties/current.p
 `benches`, `picnic_tables`, `water`, `toilets` and `bookcases`), `tiles/environment.pmtiles` (layers
 `heat_tracts` and `floodplain`), `tiles/trees.pmtiles` (layer `trees`, zoom 14 only),
 `tiles/places.pmtiles` (layers `park_water`, `libraries`, `recreation` and `pools`),
-`tiles/conditions.pmtiles` (layers `dumping`, `lights` and `graffiti`), `tiles/walk.pmtiles`
-(layers `block_groups` and `cells`) and `tiles/cycling.pmtiles` (layer `stress`). It builds in a
+`tiles/conditions.pmtiles` (layers `dumping`, `lights` and `graffiti`), `tiles/art.pmtiles` (layer
+`art`), `tiles/walk.pmtiles` (layers `block_groups` and `cells`) and `tiles/cycling.pmtiles` (layer
+`stress`). It builds in a
 hidden folder and swaps it into place at the end, and it refuses to replace a folder that is not an
 earlier data root. A layer with nothing to show is left out with a note, so it never breaks the rest
 of its tile file. It also writes the lot dossiers, `dossiers/<first four digits>.json` with
@@ -351,6 +354,36 @@ Philadelphia, and an index (docs/CONTRACTS.md section 7), for the web page `surv
   stop that is the same stop (`match_septa` in `derive/bus_stops.py`): by SEPTA's number in `ref`
   or `gtfs:stop_id` within 15 meters, then by distance within 15 meters, each stop once.
 * The manifest lists the index but not each route's file. The whole step takes about a second.
+
+### Public art
+
+`publish/art.py` builds the `art` layer of `tiles/art.pmtiles` (docs/CONTRACTS.md section 4) from
+three snapshots, with the rules in `derive/art.py`: the City's Percent for Art list
+(`percent_for_art`, the works whose status is Active), OpenStreetMap's artworks (`tourism=artwork`
+in `osm_philadelphia`, inside the city) and Wikidata's (`wikidata_art`, inside the city and not
+gone). In short:
+
+* **One work, one point.** Records of different sources are the same work by OpenStreetMap's
+  `wikidata` tag, by names and place, by artist at the same place, or, for a work with no name and
+  no artist, when it is the only candidate a few meters from a named work of the same kind. Two
+  works whose sources name different artists are never joined, and a work holds one record of each
+  source.
+* **Records kept apart.** Each source's record is published on its own, with only what that source
+  says, sharing the work's id (decision D1 of docs/VERIFICATION_V0_2.md, as for SEPTA's stops). The
+  map draws one record per work (OpenStreetMap's place first) and the browser joins the others when
+  the work is opened: the City's title, Wikidata's artist and every source's link.
+  `derive.art.join_published` is the reference join, and `tests/art_join_cases.py` writes the cases
+  both test suites check (`python pipeline/tests/art_join_cases.py` after changing it).
+* **Memorial artworks** (docs/ETHICS.md): a work any source marks as a memorial (tags, Wikidata's
+  "commemorates", or words such as "in memory of" and "RIP") is published with its kind and its
+  links by number only, never a title, artist, year or inscription. `tests/test_art.py` guards it.
+* The build notes give each source's count, the works found in two and three sources, the works on
+  the map, the memorial artworks and the works left out (never a name). On 2026-10-05: 224 from the
+  City, 410 from OpenStreetMap and 69 from Wikidata (703 records) are 651 works, 50 of them in more
+  than one source; 45 memorial artworks. The whole step takes about a second.
+
+OpenStreetMap's records are under the Open Database License and credited "© OpenStreetMap
+contributors"; the City's and Wikidata's records keep their own terms and credits.
 
 ### Lot dossiers and owner flags
 

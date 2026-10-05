@@ -15,7 +15,8 @@
 import type { ExpressionSpecification, FilterSpecification, LayerSpecification } from 'maplibre-gl';
 import type { Lens } from '../../registry/types.ts';
 import { strings } from '../../strings.ts';
-import { lensColorExpression, lensScoreExpression, type ColorRamp } from '../lens.ts';
+import { IN_LENS, answerExpression } from '../../transit/answers.ts';
+import { lensColorExpression, lensScoreExpression, type ColorRamp, type LensExpressionOptions } from '../lens.ts';
 import { hasMode } from './crashes.ts';
 import { SELECTED } from './palette.ts';
 import {
@@ -73,10 +74,25 @@ export function colorBy(ctx: LegendContext): ColorBy {
   return stopLens(ctx) ? 'lens' : 'wait';
 }
 
+/**
+ * How the lens reads a stop: SEPTA's and the City's factors from the stop itself, the shelter and
+ * bench from what OpenStreetMap says at the linked stop (decision D1: joined here in the browser,
+ * from tables/stop_amenities.json, and halfway when unknown), and only for stops it scores (`tc`).
+ */
+export function stopLensOptions(ctx: LegendContext): LensExpressionOptions {
+  return {
+    values: {
+      f_noshelter: answerExpression(ctx.stopAnswers?.f_noshelter),
+      f_nobench: answerExpression(ctx.stopAnswers?.f_nobench),
+    },
+    when: ['==', ['to-number', ['get', IN_LENS], 0], 1],
+  };
+}
+
 /** The lens score of a stop as a style expression, or null when every weight is off. */
 export function stopScore(ctx: LegendContext): ExpressionSpecification | null {
   const lens = stopLens(ctx);
-  return lens ? lensScoreExpression(lens, ctx.state.weights[lens.id]) : null;
+  return lens ? lensScoreExpression(lens, ctx.state.weights[lens.id], stopLensOptions(ctx)) : null;
 }
 
 export function withStations(ctx: LegendContext): boolean {
@@ -96,7 +112,7 @@ export function stopFilter(ctx: LegendContext): FilterSpecification {
 export function stopColor(by: ColorBy, ctx: LegendContext): ExpressionSpecification | string {
   if (by === 'lens') {
     const lens = stopLens(ctx);
-    return lens ? lensColorExpression(lens, ctx.state.weights[lens.id], TRANSIT_PRIORITY_RAMP) : TRANSIT_PRIORITY_RAMP.allOff;
+    return lens ? lensColorExpression(lens, ctx.state.weights[lens.id], TRANSIT_PRIORITY_RAMP, stopLensOptions(ctx)) : TRANSIT_PRIORITY_RAMP.allOff;
   }
   const [c0, c1, c2, c3, c4] = TRANSIT_RAMP;
   if (by === 'boardings') {
@@ -217,6 +233,7 @@ function lensLegend(ctx: LegendContext): LegendEntry[] {
   if (stopScore(ctx)) {
     entries.push({ kind: 'ramp', title: t.lensTitle, stops: TRANSIT_RAMP, low: strings.lens.legendLow, high: strings.lens.legendHigh });
     entries.push({ kind: 'note', text: t.lensUnsurveyed });
+    entries.push({ kind: 'note', text: t.lensTunnel });
   } else {
     entries.push({ kind: 'note', text: strings.lens.allOffFor('stop') });
   }

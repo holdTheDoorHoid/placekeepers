@@ -129,6 +129,15 @@ export const CONDITION_COLORS: Record<string, string> = {
 };
 
 /**
+ * Public art (M3.2), by kind, from the Okabe and Ito palette, which people with the common kinds
+ * of color blindness can tell apart: murals and wall paintings a reddish purple, sculptures and
+ * statues a deep blue, mosaics a yellow, other kinds a slate gray, each with a darker ring of its
+ * own so every kind reads on the light and the gray base map.
+ */
+export const ART_COLORS = { mural: '#cc79a7', sculpture: '#0072b2', mosaic: '#f0e442', other: '#6b7c8c' } as const;
+export const ART_RINGS = { mural: '#7d3c66', sculpture: '#003d61', mosaic: '#6b6400', other: '#2f3a45' } as const;
+
+/**
  * Walkability by block group (M3.3), from least to most walkable: ColorBrewer PuBuGn, a cool
  * teal ramp clear of the lots' yellow greens, the heat oranges and the shootings' purples, drawn
  * faintly under everything else. The EPA's four national classes use the ramp's two ends and its

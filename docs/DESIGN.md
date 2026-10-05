@@ -207,10 +207,13 @@ counts, which use older numbers, and later neighbors' notes keep following the p
 **Buses and trains** group holds every SEPTA stop and station in Philadelphia, with how often
 service comes on a typical weekday, Saturday and Sunday and SEPTA's own weekday boardings (97.8% of
 bus and trolley stops had a count on 2026-10-04), and the routes as context; both layers are off by
-default. From M2.3 (2026-10-05) the stops carry the transit comfort lens (section 5.3) and what
+default. From M2.3 (2026-10-05) the stops carry the transit comfort lens (section 5.3) and show what
 OpenStreetMap knows about their shelter, bench and light, matched to OpenStreetMap's stops the same
 way the route survey sheets are (M2.4); the field view's Bus stops chip and using the lens turn them
-on. The method is in [TRANSIT_METHOD.md](TRANSIT_METHOD.md).
+on. OpenStreetMap's answers are published apart from SEPTA's records and joined in the visitor's
+browser by the OpenStreetMap id (decision D1 of [VERIFICATION_V0_2.md](VERIFICATION_V0_2.md)): the
+Open Database License would otherwise ask the combination to be shared under it, which SEPTA's
+license does not let us grant. The method is in [TRANSIT_METHOD.md](TRANSIT_METHOD.md).
 
 As built (M3.5, 2026-10-05): three new groups. **Benches, water, toilets and more** holds five
 layers from OpenStreetMap, each labeled "as mapped in OpenStreetMap" (benches, picnic tables,
@@ -224,6 +227,10 @@ request is still open (a setting shows only those). Drinking water, the park fou
 are on by default in the field view, because a neighbor on foot needs them; everything else is off
 in both views until someone turns it on. 311 requests describe physical conditions only, and the
 details panel offers Philly311 as the next step, never the police.
+
+As built (M3.2, 2026-10-05): a work of public art is known by the City's Percent for Art number
+when the City lists it (`pa` and the number), else by its Wikidata item, else by its OpenStreetMap
+element; the same work in two or three sources is one dot on the map (section 5.8).
 
 ### 5.2 The registry: one source of truth for every toggle
 
@@ -265,7 +272,7 @@ needed). Every score has a "why" breakdown showing each factor's contribution.
 | Street safety | Street segments and crash sites | On the High Injury Network; people killed or seriously injured walking or cycling in 5 years; any fatal crash in 2 years; school within 400 m; later, busy bus stop nearby | First |
 | Heat and shade | Vacant parcels | Neighborhood heat vulnerability, from the City's index (Context); few trees nearby, 2018 canopy within about a quarter mile (Mixed); few City trees on the block, within 100 meters (Mixed); people this would reach, residents per square kilometer of the tract (Context). FEMA's floodplain is shown beside the score, never in it | v0.3 (M3.1) |
 | Transit comfort | SEPTA bus and trolley stops | People getting on each weekday (Context); no shelter (Weak); no bench (Weak); little shade nearby (Mixed); hot neighborhood in summer (Context); on the High Injury Network (Context); long waits at midday (Weak). A shelter or bench not yet surveyed counts halfway | v0.2 (M2.3) |
-| Placemaking | Lots and area cells | Walkability; people within a 5 minute walk; distance to a park; art nearby or absent; commercial corridor. M3.3 computes the walking factors (section 5.8) | Later |
+| Placemaking | Lots and area cells | Walkability; people within a 5 minute walk; distance to a park; art nearby or absent; commercial corridor. M3.3 computes the walking factors (section 5.9) | Later |
 
 As built (M2.3, 2026-10-05): the transit comfort lens colors SEPTA's bus and trolley stops (the
 stops layer's coloring setting offers the lens, waits or riders, and defaults to the lens), with
@@ -519,7 +526,48 @@ As built (M1.5, 2026-10-04):
   Police records. The analysis view shows its sliders beside the violence lens; the field view's
   Streets chip still shows the High Injury Network, and the blocks layer is under "More layers".
 
-### 5.8 Walking, cycling and people
+### 5.8 Public art
+
+As built (M3.2, 2026-10-05): a **Public art** layer in a new **Art and placemaking** group, one dot
+for each work, colored by its kind (murals and wall paintings, sculptures and statues, mosaics, and
+other kinds such as installations, fountains and monuments), with a switch for each kind and one for
+works inside buildings. It is off by default in both views: several hundred dots would crowd the
+lots and streets the first releases are about, and the placemaking lens (M3.4) will use it.
+Tapping a work shows its kind, title, artist, year, material and where it is, as its sources give
+them, and links to each source: the City's record, OpenStreetMap, Wikidata, a Wikipedia article,
+and any page OpenStreetMap or Wikidata names (often the Association for Public Art's page on the
+work). Beside a mural it links to Mural Arts Philadelphia's own list of murals, and every work
+links to OpenStreetMap's editor, where anyone can add or fix a work; changes reach the map within
+about a week.
+
+**Sources.** The City's Percent for Art list (224 works on view on 2026-10-05), OpenStreetMap's
+artworks from the weekly extract (410) and Wikidata's (69). Mural Arts' catalog is never copied: its
+terms forbid building a database from it. philart.net, the Association for Public Art's map,
+Philadelphia's Magic Gardens' mosaic map and Parks and Recreation's list of art in its parks wait
+for their owners' agreement (docs/DATA_SOURCES.md, "Public art").
+
+**One work, one dot.** The same work often appears in two or three sources. The pipeline finds
+them by OpenStreetMap's link to the Wikidata item, or by names and place (and artist), cautiously:
+two works whose sources name different artists are never joined, and an unnamed work joins a named
+one only when each is the other's single candidate a few steps away. On 2026-10-05, 703 records
+are 651 works, 50 of them found in more than one source (48 in two, 2 in all three). Each source's
+record stays apart in the published file, with only what that source says, and the browser joins a
+work's records when someone opens it, so OpenStreetMap's data never shares a record with the City's
+(decision D1 of VERIFICATION_V0_2.md, as for SEPTA's stops). The rules are in docs/CONTRACTS.md
+section 4.
+
+**Memorial artworks.** Some murals and plaques remember a person. Names of people killed come only
+from the hand curated memorials list (ETHICS.md), so a work any source marks as a memorial is shown
+only as "Memorial artwork", with its sources: no title, artist, year or inscription, in the
+published files or on the map. The rule is cautious on purpose. On 2026-10-05 it covers 45 works,
+all of them monuments to famous people, wars or events (statues OpenStreetMap tags as memorials,
+such as Joan of Arc and the Washington Monument, and war memorials), whose names stay one tap away
+at their sources. A hand curated list of memorial artworks whose names may be shown would let the
+owner restore those names; it is not built.
+
+The layer carries the "Not about violence" badge (EVIDENCE.md, "Murals and public art").
+
+### 5.9 Walking, cycling and people
 
 As built (M3.3, 2026-10-05). **What the owner sees:** a new group, **Walking, cycling and
 people**, with three layers, off by default in both views (their fills would compete with the
@@ -878,3 +926,7 @@ docs/            design, roadmap, research
 3. Confirm the default licenses (GPL-3.0, ODbL, CC BY-SA 4.0).
 4. Decide on outreach: Clean & Green Philly founders, Bicycle Coalition (memorial list), PHS, GJLI.
 5. Optional custom domain (placekeepersphl.org appeared unregistered on 2026-10-04).
+6. Public art (M3.2): ask philart.net, the Association for Public Art, Philadelphia's Magic Gardens
+   and Parks and Recreation whether the map may include their art lists (docs/ROUTES.md section 6),
+   and decide whether famous monuments that sources mark as memorials may show their names, from a
+   hand curated list (section 5.8).

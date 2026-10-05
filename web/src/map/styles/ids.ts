@@ -23,6 +23,8 @@ export const STYLE_IDS = [
   'amenity',
   'public_place',
   'condition',
+  // Public art (M3.2)
+  'public_art',
   // M3.3: walkability by block group, people and places within walking distance, traffic stress
   'walkability',
   'walking_distance',

@@ -9,6 +9,7 @@ import { TRANSIT_NONE, TRANSIT_PRIORITY_RAMP, TRANSIT_RAMP } from '../src/map/st
 import type { Layer, SettingValue } from '../src/registry/types.ts';
 import { defaultState, type AppState } from '../src/state/defaults.ts';
 import { strings } from '../src/strings.ts';
+import { parseStopTable, stopAnswerIndex, type StopAnswerIndex } from '../src/transit/answers.ts';
 import { clock, describeStop, stopKind, waitWords } from '../src/transit/describe.ts';
 
 const reg = loadRegistry();
@@ -18,8 +19,8 @@ const routes = layer('transit_routes');
 
 type Part = LayerSpecification & { filter: unknown; paint: Record<string, unknown> };
 
-function part(l: Layer, state: AppState, name: string): Part {
-  const parts = styleFor(l)!.layers({ layer: l, registry: reg, state, sourceId: 'tiles', sourceLayer: l.source_layer });
+function part(l: Layer, state: AppState, name: string, stopAnswers: StopAnswerIndex | null = null): Part {
+  const parts = styleFor(l)!.layers({ layer: l, registry: reg, state, sourceId: 'tiles', sourceLayer: l.source_layer, stopAnswers });
   return parts.find((p) => p.id.endsWith(`:${name}`)) as Part;
 }
 
@@ -33,8 +34,8 @@ function shown(l: Layer, state: AppState, name: string, properties: Record<strin
   return featureFilter(part(l, state, name).filter as never).filter({ zoom: 15 } as never, { type, properties } as never);
 }
 
-function color(state: AppState, properties: Record<string, unknown>): string {
-  const parsed = createPropertyExpression(part(stops, state, 'circle').paint['circle-color'], latest.paint_circle['circle-color'] as never);
+function color(state: AppState, properties: Record<string, unknown>, stopAnswers: StopAnswerIndex | null = null): string {
+  const parsed = createPropertyExpression(part(stops, state, 'circle', stopAnswers).paint['circle-color'], latest.paint_circle['circle-color'] as never);
   if (parsed.result !== 'success') throw new Error(JSON.stringify(parsed.value));
   const value = parsed.value.evaluate({ zoom: 15 } as never, { type: 'Point', properties } as never) as { r: number; g: number; b: number };
   const hex = (n: number) => Math.round(n * 255).toString(16).padStart(2, '0');
@@ -42,6 +43,8 @@ function color(state: AppState, properties: Record<string, unknown>): string {
 }
 
 const FACTOR_FIELDS = reg.lenses.find((l) => l.id === 'transit_comfort')!.factors.map((f) => f.field);
+/** What OpenStreetMap says at two stops: none of either (n1), and both (n2). */
+const TABLE = parseStopTable({ stops: { n1: { c: 1, sh: 0, bn: 0 }, n2: { c: 3, sh: 1, bn: 1 } } });
 const BUS = { md: 1, hm: 9, b: 848 };
 const QUIET_BUS = { md: 1, hm: 60 };
 const NO_MIDDAY = { md: 1 };
@@ -82,25 +85,40 @@ describe('the stops layer', () => {
   it('colors by the transit comfort lens by default, darkest for the highest priority', () => {
     const state = defaultState(reg, 'analysis');
     expect(state.settings.transit_stops?.color).toBe('lens');
-    const all = (value: number) => ({ md: 1, ...Object.fromEntries(FACTOR_FIELDS.map((f) => [f, value])) });
-    expect(color(state, all(100))).toBe(TRANSIT_RAMP[4]);
-    expect(color(state, all(0))).toBe(TRANSIT_RAMP[0]);
-    expect(color(state, all(50))).toBe(TRANSIT_RAMP[2]);
-    // Missing factors are left out: a stop with only an unsurveyed shelter and bench scores 50.
-    expect(color(state, { md: 1, f_noshelter: 50, f_nobench: 50 })).toBe(TRANSIT_RAMP[2]);
-    // Stations and stops without any data have no score: hollow, never a guess.
-    expect(color(withSetting(stops, 'stations', true), { md: 4, hm: 5 })).toBe(TRANSIT_NONE);
+    // SEPTA's and the City's factors come with the stop; the shelter and bench come from what
+    // OpenStreetMap says at its linked stop, joined in the browser (decision D1).
+    const answers = stopAnswerIndex(TABLE);
+    const own = FACTOR_FIELDS.filter((f) => f !== 'f_noshelter' && f !== 'f_nobench');
+    const all = (value: number, o: string) => ({ md: 1, tc: 1, o, ...Object.fromEntries(own.map((f) => [f, value])) });
+    expect(color(state, all(100, 'n1'), answers)).toBe(TRANSIT_RAMP[4]);
+    expect(color(state, all(0, 'n2'), answers)).toBe(TRANSIT_RAMP[0]);
+    // A stop OpenStreetMap does not have yet: its shelter and bench count halfway.
+    expect(color(state, all(50, 'n404'), answers)).toBe(TRANSIT_RAMP[2]);
+    expect(color(state, { md: 1, tc: 1 }, answers)).toBe(TRANSIT_RAMP[2]);
+    // Until the answers have loaded, every stop counts its shelter and bench halfway.
+    expect(color(state, all(100, 'n1'))).not.toBe(TRANSIT_RAMP[4]);
+    // Stations, and the trolley tunnel stations the lens leaves out, have no score: hollow.
+    expect(color(withSetting(stops, 'stations', true), { md: 4, hm: 5 }, answers)).toBe(TRANSIT_NONE);
+    expect(color(state, { md: 2, hm: 5, b: 500, o: 'n1' }, answers)).toBe(TRANSIT_NONE);
+  });
+
+  it('never reads a shelter or bench from the stop itself, only from the joined answers', () => {
+    const state = defaultState(reg, 'analysis');
+    const onlyOwn = { md: 1, tc: 1, f_noshelter: 100, f_nobench: 100 };
+    expect(color(state, onlyOwn)).toBe(TRANSIT_RAMP[2]);
   });
 
   it('recolors stops when a lens weight moves, and paints them all one quiet color when every weight is off', () => {
     const state = defaultState(reg, 'analysis');
-    const busyButSheltered = { md: 1, f_riders: 100, f_noshelter: 0, f_nobench: 0, f_shade: 0, f_heat: 0, f_hin: 0, f_wait: 0 };
-    const before = color(state, busyButSheltered);
+    const answers = stopAnswerIndex(TABLE);
+    const busyButSheltered = { md: 1, tc: 1, o: 'n2', f_riders: 100, f_shade: 0, f_heat: 0, f_hin: 0, f_wait: 0 };
+    const color2 = (s: AppState) => color(s, busyButSheltered, answers);
+    const before = color2(state);
     state.weights.transit_comfort = { ...state.weights.transit_comfort, riders: 5, no_shelter: 0, no_bench: 0, little_shade: 0, heat: 0, high_injury_network: 0, long_wait: 0 };
-    expect(color(state, busyButSheltered)).toBe(TRANSIT_RAMP[4]);
-    expect(color(state, busyButSheltered)).not.toBe(before);
+    expect(color2(state)).toBe(TRANSIT_RAMP[4]);
+    expect(color2(state)).not.toBe(before);
     state.weights.transit_comfort = Object.fromEntries(Object.keys(state.weights.transit_comfort!).map((k) => [k, 0]));
-    expect(color(state, busyButSheltered)).toBe(TRANSIT_PRIORITY_RAMP.allOff);
+    expect(color2(state)).toBe(TRANSIT_PRIORITY_RAMP.allOff);
   });
 
   it('colors by the midday wait, darkest for the most frequent, hollow without midday service', () => {

@@ -1,9 +1,13 @@
 // The route survey sheets (M2.4): reads tables/routes/index.json and tables/routes/<route>.json
-// (docs/CONTRACTS.md section 7), splits a direction's stops among volunteers, estimates how long a
-// walk takes, and keeps the boxes someone ticks on this device. Kept apart from the components so
-// it can be tested without a browser.
+// (docs/CONTRACTS.md section 7), joins what OpenStreetMap says at each stop from
+// tables/stop_amenities.json (section 8) by the stop's OpenStreetMap id, splits a direction's stops
+// among volunteers, estimates how long a walk takes, and keeps the boxes someone ticks on this
+// device. The route files hold SEPTA's stops and only the link to OpenStreetMap's: the two are
+// joined here, in the browser, never stored together (decision D1 of docs/VERIFICATION_V0_2.md).
+// Kept apart from the components so it can be tested without a browser.
 
 import { strings } from '../strings.ts';
+import type { StopTable } from '../transit/answers.ts';
 
 export const MODE_BUS = 1;
 export const MODE_TROLLEY = 2;
@@ -27,8 +31,6 @@ export interface IndexRoute {
   md: number;
   file: string;
   dirs: IndexDirection[];
-  /** stops by `c`, "none" for stops not found in OpenStreetMap */
-  s: Record<string, number>;
 }
 
 export interface AsOf {
@@ -50,9 +52,9 @@ export interface SheetStop {
   nm: string;
   lat: number;
   lng: number;
-  /** what OpenStreetMap shows; absent when no OpenStreetMap stop matches */
+  /** what OpenStreetMap shows, joined from the stop table (joinSheet); absent when no OpenStreetMap stop matches */
   c?: number;
-  /** the matching OpenStreetMap element, such as n8878395954 */
+  /** the matching OpenStreetMap element, such as n8878395954: the link the route file carries */
   osm?: string;
   sh?: number;
   bn?: number;
@@ -104,9 +106,7 @@ export function parseIndex(json: unknown): RouteIndex | null {
       const which = num(d.d);
       return which === undefined || n === undefined ? [] : [{ d: which, dir: text(d.dir), to: text(d.to), n }];
     });
-    const counts: Record<string, number> = {};
-    if (isObject(raw.s)) for (const [key, value] of Object.entries(raw.s)) if (num(value) !== undefined) counts[key] = value as number;
-    routes.push({ id, r: text(raw.r) ?? id, nm: text(raw.nm) ?? '', md: num(raw.md) ?? MODE_BUS, file, dirs, s: counts });
+    routes.push({ id, r: text(raw.r) ?? id, nm: text(raw.nm) ?? '', md: num(raw.md) ?? MODE_BUS, file, dirs });
   }
   return { generated_at: text(json.generated_at) ?? null, as_of: asOf(json.as_of), routes };
 }
@@ -119,15 +119,27 @@ function parseStop(raw: unknown): SheetStop | null {
   const lng = num(raw.lng);
   if (!k || !sid || lat === undefined || lng === undefined) return null;
   const stop: SheetStop = { k, sid, nm: text(raw.nm) ?? sid, lat, lng };
-  const c = num(raw.c);
-  if (c !== undefined && c in STATUS_BY_CODE) stop.c = c;
   const osm = text(raw.osm);
   if (osm && /^[nw]\d+$/.test(osm)) stop.osm = osm;
-  for (const key of ['sh', 'bn', 'bi', 'lt'] as const) {
-    const value = num(raw[key]);
-    if (value === 0 || value === 1) stop[key] = value;
-  }
   return stop;
+}
+
+/**
+ * The sheet with what OpenStreetMap says at each stop joined in from the stop table, by the
+ * stop's OpenStreetMap id. A stop the table does not list is not found in OpenStreetMap. Without
+ * the table (it could not be loaded), a linked stop shows as not yet surveyed, and the page says so.
+ */
+export function joinSheet(sheet: RouteSheet, table: StopTable | null): RouteSheet {
+  const join = (stop: SheetStop): SheetStop => {
+    if (!stop.osm) return stop;
+    if (!table) return { ...stop, c: 0 };
+    const entry = table.stops.get(stop.osm);
+    if (!entry) return stop;
+    const joined: SheetStop = { ...stop, c: entry.c };
+    for (const key of ['sh', 'bn', 'bi', 'lt'] as const) if (entry[key] !== undefined) joined[key] = entry[key];
+    return joined;
+  };
+  return { ...sheet, directions: sheet.directions.map((d) => ({ ...d, stops: d.stops.map(join) })) };
 }
 
 /** A route's file, or null when it is not one. Unreadable stops are skipped. */
@@ -281,8 +293,36 @@ export interface StopAnswers {
 
 export type Answers = Record<string, StopAnswers>;
 
+/** Where the ticks of one route and direction are kept: under the site's own prefix (docs/DESIGN.md section 5.2). */
 export function answersKey(routeId: string, direction: number): string {
-  return `pk-survey:${routeId}:${direction}`;
+  return `placekeepers:v1:survey:${routeId}:${direction}`;
+}
+
+/** The prefix the first survey pages kept ticks under, before v0.2 (finding F3 of docs/VERIFICATION_V0_2.md). */
+const LEGACY_PREFIX = 'pk-survey:';
+
+/**
+ * Moves ticks kept under the old prefix to the site's own, once: each old key is copied over
+ * (unless ticks were already kept under the new one) and then removed.
+ */
+export function moveLegacyAnswers(storage: Pick<Storage, 'length' | 'key' | 'getItem' | 'setItem' | 'removeItem'> | null): void {
+  try {
+    if (!storage) return;
+    const old: string[] = [];
+    for (let i = 0; i < storage.length; i++) {
+      const key = storage.key(i);
+      if (key?.startsWith(LEGACY_PREFIX)) old.push(key);
+    }
+    for (const key of old) {
+      const value = storage.getItem(key);
+      const [route, direction] = key.slice(LEGACY_PREFIX.length).split(':');
+      const moved = route && direction !== undefined && /^\d+$/.test(direction) ? answersKey(route, Number(direction)) : null;
+      if (moved && value !== null && storage.getItem(moved) === null) storage.setItem(moved, value);
+      storage.removeItem(key);
+    }
+  } catch {
+    // Storage that refuses is left as it is: the ticks there still show nowhere else.
+  }
 }
 
 /** The answers kept for one route and direction; nothing when storage is unavailable or broken. */
