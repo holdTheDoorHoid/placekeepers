@@ -32,7 +32,7 @@ export type LegendEntry =
   | { kind: 'line'; label: string; color: string; casing?: string; width: number }
   | { kind: 'bins'; title: string; bins: { color: string; label: string }[]; opacity: number }
   | { kind: 'circle'; label: string; fill: string; stroke: string; radius: number; link?: LegendLink }
-  | { kind: 'note'; text: string };
+  | { kind: 'note'; text: string; link?: LegendLink };
 
 export interface StyleModule {
   /** Draw order: lower numbers are drawn first, underneath. */

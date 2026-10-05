@@ -11,7 +11,7 @@ The order is kept as SEPTA publishes it, less the stops that no trip of that rou
 serves in the feed (on 2026-10-05, 126 of SEPTA's 21,050 entries, mostly stops service no longer
 reaches). Stops a trip serves that SEPTA's list leaves out (33 that day) are left out too: the list
 gives them no place in the order. The notes count both. Without `route_stops.txt` no route has an
-order and the survey sheets keep last week's copy of the schedules.
+order, and publish writes no survey sheets and says so in the build notes.
 """
 
 from __future__ import annotations

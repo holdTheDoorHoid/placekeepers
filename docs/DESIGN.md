@@ -650,6 +650,22 @@ docs/            design, roadmap, research
   and Contact pages. StreetComplete only asks about stops already in OpenStreetMap, so the guide
   also shows how to add a missing stop with the app's Things overlay or a note. Answers reach the
   map within about a week.
+
+  As built (M2.4, 2026-10-05): a **Survey a route** page (`survey/`) for neighborhood groups. Pick
+  a SEPTA bus or trolley route, a direction and how many people or pairs share it, and get a survey
+  sheet: the route's stops in Philadelphia in SEPTA's order, what OpenStreetMap shows at each one
+  now (shelter, bench only, neither, not yet surveyed, or not found in OpenStreetMap), Yes and No
+  boxes for a shelter, a bench, a waste basket and a light, a box for "needs repair", and a notes
+  column. Split among volunteers, each part prints on its own pages with its own time estimate
+  (ours, labeled as such: about 3 miles an hour from stop to stop and a minute at each stop),
+  safety tips, and how to get the answers into OpenStreetMap with StreetComplete or, without a
+  phone app, in OpenStreetMap's own editor. It prints in black and white on letter paper; on a
+  phone each stop is a card, and what someone ticks stays in that browser only. Trolley sheets say
+  to leave out the tunnel stations. The page is linked from the survey guide (which gained a
+  section on surveying a route as a group), from the shelters and benches legend and a tapped
+  stop, and from a route's details: tapping a bus, trolley or subway route line now opens it. On
+  2026-10-05 there are sheets for 123 routes (117 bus, 6 trolley); OpenStreetMap matched about
+  660 of SEPTA's stops on them, so most rows read "not found in OpenStreetMap" for now.
 - Corrections use a GitHub issue form prefilled with the parcel or place id.
 - Takedown requests go to a dedicated email address (the owner creates it; the owner's personal email
   is never published). Memorial removals are honored without questions.
