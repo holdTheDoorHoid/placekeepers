@@ -487,7 +487,8 @@ The lot dossier (milestone M1.6) reads them.
 **Which parcels.** Every candidate parcel (`pipeline/src/placekeepers/candidates.py`: on either City
 vacancy list, owned by the City, the Land Bank, the Redevelopment Authority or PHDC, in PHS
 LandCare, vacant land or a vacant exterior to the assessor, cleaned and sealed or demolished since
-2016, or on the unsafe or imminently dangerous lists), and every parcel the vacancy model shows,
+2016, on the unsafe or imminently dangerous lists, or the subject of a vacancy complaint to L&I
+since 2023), and every parcel the vacancy model shows,
 that OPA or the City's list of public property still knows (outside the candidates, a dossier says
 in `partial` which records it was not built from). Any other parcel is looked up live.
 
