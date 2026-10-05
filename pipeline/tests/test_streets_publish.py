@@ -24,11 +24,19 @@ from placekeepers.adapters.curated import MemorialNames
 from placekeepers.adapters.fatal_crashes import FatalCrashes
 from placekeepers.adapters.street_centerlines import StreetCenterlines
 from placekeepers.cache import RawFetch
+from placekeepers.curated import REMOVAL_EMAIL_FILE, removal_address
 from placekeepers.publish import publish
 from placekeepers.publish.tiles import TILE_OPTIONS, pmtiles_layer_names
 
 from . import streets_fixtures as fx
-from .conftest import FakeArcgis, FakeCarto, arcgis_feature, install_snapshot, load_fixture
+from .conftest import (
+    REPO_ROOT,
+    FakeArcgis,
+    FakeCarto,
+    arcgis_feature,
+    install_snapshot,
+    load_fixture,
+)
 
 NOW = datetime(2026, 10, 4, 15, 0, tzinfo=UTC)
 FORBIDDEN = (*FatalCrashes.never_fetch, "age", "sex", "arrest", "hit")
@@ -189,6 +197,14 @@ def write_curated(repo: Path, memorials: list[dict], suppressed: list) -> None:
     (folder / "suppressed.yaml").write_text(yaml.safe_dump(suppressed), encoding="utf-8")
 
 
+def write_removal_email(repo: Path, address: str | None) -> None:
+    """The web app's one place for the removal address, as the owner will fill it in."""
+    path = repo / REMOVAL_EMAIL_FILE
+    path.parent.mkdir(parents=True, exist_ok=True)
+    value = "null" if address is None else f"'{address}'"
+    path.write_text(f"export const REMOVAL_EMAIL: string | null = {value};\n", encoding="utf-8")
+
+
 def test_the_memorial_names_snapshot_holds_no_names(context_factory, repo_copy, tmp_path) -> None:
     write_curated(repo_copy, [INVENTED, REMOVED], [])
     ctx = context_factory(repo_root=repo_copy)
@@ -199,12 +215,30 @@ def test_the_memorial_names_snapshot_holds_no_names(context_factory, repo_copy, 
     assert table.column("id").to_pylist() == ["m2026_0001", "m2023_0001"]
     text = json.dumps(table.to_pylist(), default=str)
     assert "Alex Example" not in text and "Robin Placeholder" not in text
+    # The memorial page link names the person too (here in its address), and snapshots go on
+    # the public data-snapshots release, so links are never kept.
+    assert "source" not in table.column_names
+    assert "alex-example" not in text and "example.org" not in text
+
+
+def test_the_memorial_names_snapshot_leaves_out_removed_entries(
+    context_factory, repo_copy, tmp_path
+) -> None:
+    write_curated(repo_copy, [INVENTED, REMOVED], ["m2023_0001"])
+    ctx = context_factory(repo_root=repo_copy)
+    adapter = MemorialNames(ctx.registry.sources["memorial_names"], ctx)
+    _, out = run(adapter, tmp_path)
+    table = pq.read_table(out)
+    assert table.column("id").to_pylist() == ["m2026_0001"]
+    assert "2023-05-05" not in json.dumps(table.to_pylist(), default=str)
 
 
 # Publishing the streets layers ----------------------------------------------------------------
 @pytest.fixture
 def streets_ctx(context_factory, repo_copy):
     write_curated(repo_copy, [INVENTED, REMOVED], ["m2023_0001"])
+    # Names are published only once the removal address exists (owner decision, 2026-10-04).
+    write_removal_email(repo_copy, "removals@example.org")
     ctx = context_factory(repo_root=repo_copy, now=NOW)
     at = "2026-10-04T14:00:00Z"
     lines, points = ["LineString"], ["Point"]
@@ -333,6 +367,47 @@ def test_a_broken_removal_list_publishes_no_memorials(streets_ctx, repo_copy, tm
     result = publish(streets_ctx, tmp_path / "data")
     assert "tiles/streets.memorials.geojson" not in result.manifest["files"]
     assert any(n.startswith("memorials are not published") for n in result.manifest["notes"])
+
+
+@pytest.mark.parametrize("removal", ["null", "missing", "unreadable"])
+def test_no_names_until_the_removal_email_exists(streets_ctx, repo_copy, tmp_path, removal) -> None:
+    """Owner decision, 2026-10-04: ETHICS.md promises families that one email takes a name down,
+    so while there is no removal address, no name and no memorial page link reaches any file,
+    even with names in memorials.yaml."""
+    path = repo_copy / REMOVAL_EMAIL_FILE
+    if removal == "null":
+        write_removal_email(repo_copy, None)
+    elif removal == "missing":
+        path.unlink()
+    else:
+        path.write_text("export const REMOVAL_EMAIL = getAddress();\n", encoding="utf-8")
+    out = tmp_path / "data"
+    result = publish(streets_ctx, out)
+    memorials = features(out / "tiles" / "streets.memorials.geojson")
+    assert memorials and all(not {"nm", "src"} & set(item["properties"]) for item in memorials)
+    published = "".join(p.read_text() for p in out.rglob("*") if p.is_file())
+    for text in ("Alex Example", "alex-example", "Robin Placeholder", "robin-placeholder"):
+        assert text not in published
+    assert (
+        "memorials: 1 name waits for the removal email address, so no names are shown yet"
+        in (result.manifest["notes"])
+    )
+
+
+def test_the_removal_address_is_read_from_its_one_place(repo_copy) -> None:
+    write_removal_email(repo_copy, "removals@example.org")
+    assert removal_address(repo_copy) == "removals@example.org"
+    write_removal_email(repo_copy, None)
+    assert removal_address(repo_copy) is None
+    (repo_copy / REMOVAL_EMAIL_FILE).unlink()
+    assert removal_address(repo_copy) is None
+
+
+def test_the_live_build_publishes_no_names_today() -> None:
+    """The repository as it stands: no removal address yet, so the weekly build can publish no
+    name even if one is added to memorials.yaml by mistake. When the owner creates the address
+    and sets it in web/src/content/removal-email.ts, change this test with milestone M1.9."""
+    assert removal_address(REPO_ROOT) is None
 
 
 def test_the_streets_tiles_keep_every_point(streets_ctx, tmp_path, monkeypatch) -> None:

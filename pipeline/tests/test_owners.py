@@ -87,6 +87,31 @@ def kind(*names: str | None, agency: str | None = None) -> str:
         (["ADMINISTRATOR VET AFFA"], "other_public"),
         (["P.A.I.D."], "other_public"),
         (["DEL RIVER PORT AUTH"], "other_public"),
+        # Public bodies OPA spells many ways or cuts short (found by the M1.10 review: typed as
+        # people or unknown, they got the flags about a person, the deed fraud notice, a place in
+        # the owners table and the conservatorship route).
+        (["PHILA AUTH IND DEV"], "other_public"),
+        (["PHILA AUTH & IND DEV", "SOMERTON IND PARK"], "other_public"),
+        (["PHILADELPHIA AUTHORITY FO"], "other_public"),
+        (["PHILADELPHIA AUTHORITY", "FOR INDUSTRAIL DEV"], "other_public"),
+        (["PHILADELPHIA REGIONAL POR"], "other_public"),
+        (["PHILADELPHIA REGINAL PORT"], "other_public"),
+        (["PENNDOT"], "other_public"),
+        (["PA DEPT OF TRANSPORTATION"], "other_public"),
+        (["COMM OF PENNA", "DEPT OF PUBLC PROP"], "other_public"),
+        (["COMMONWEALTH PA"], "other_public"),
+        (["PENNSYLVANIA HOUSING FINANCE AGENCY"], "other_public"),
+        (["OFFICE OF THE DISTRICT AT"], "other_public"),
+        (["PHILA MUNICIPAL AUTH"], "other_public"),
+        (["STATE PUBLIC SCHOOL", "BLDG AUTH"], "other_public"),
+        (["U S A"], "other_public"),
+        (["REDEVEL AUTH OF PHILA"], "redevelopment_authority"),
+        (["REDEVLOPMENT AUTHORITY", "OF PHILADELPHIA"], "redevelopment_authority"),
+        (["CITY OF PHLADELPHIA", "DEPARTMENT OF COMMERCE"], "city"),
+        # ...and private names that look a little like them stay private.
+        (["COMMONWEALTH IMPROVEMENT"], "individual"),
+        (["KENSINGTON REDEVELOPMENT"], "individual"),
+        (["PORT PETER SOPHAL"], "individual"),
         # Not enough to tell.
         (["HACE"], "unknown"),
         (["LSF9 MASTER PARTICIPATON"], "unknown"),
@@ -157,6 +182,11 @@ def test_reasons_say_why_in_plain_words() -> None:
         ["DUNCAN FREDERICK", " EXECUTOR OF THE ESTATE OF LUZ CLASS"],
         ["HARTMAN ELEANOR M T/U/W", "MC GINLEY SOPHIE L DEC'D"],
         ["RIVERSIDE BANK AND TRUST CO", "MCLAREN NIKKI ESTATE OF"],
+        # A person's estate written name first is a whole name, even when a bank or a trust
+        # follows it (found by the M1.10 review: these were read as one bank's or trust's name).
+        ["ESPINAL MARISOL ESTATE OF", "BNY MELLON N A"],
+        ["ACKERLY GREGORY K ESTATE OF", "LINDA A ACKERLY TRUST"],
+        ["THE ESTATE OF", "JOHN WHITTAKER"],
     ],
 )
 def test_possible_estate_names(names: list[str]) -> None:

@@ -27,6 +27,12 @@ remembered.
                                       if the Police correct the record and its id changes
 
 Problems in these files never publish a name: a broken entry is skipped and reported.
+
+Names wait for the removal address (owner decision, 2026-10-04, docs/ROADMAP.md owner action 2):
+ETHICS.md promises families that one email takes a name down, so no name or memorial page link is
+published until that address exists. The address lives in one place, the web app's
+`web/src/content/removal-email.ts` (`REMOVAL_EMAIL`, null until the owner creates it), and
+`removal_address` reads it from there. Anything it cannot read counts as no address.
 """
 
 from __future__ import annotations
@@ -42,6 +48,12 @@ import yaml
 
 MEMORIALS_FILE = "data/curated/memorials.yaml"
 SUPPRESSED_FILE = "data/curated/suppressed.yaml"
+#: Where the removal address lives (the one place the web app reads it from too).
+REMOVAL_EMAIL_FILE = "web/src/content/removal-email.ts"
+_REMOVAL_EMAIL = re.compile(
+    r"^\s*export\s+const\s+REMOVAL_EMAIL\b[^=\n]*=\s*(?:'([^'\s]+@[^'\s]+)'|\"([^\"\s]+@[^\"\s]+)\")",
+    re.MULTILINE,
+)
 
 #: Modes a curated entry may give, and the mode bits they set (docs/CONTRACTS.md: 1 walking,
 #: 2 cycling, 4 motorcycle, 8 scooter; 0 a person in a car or other vehicle).
@@ -227,6 +239,18 @@ def read_memorials_file(path: Path) -> CuratedMemorials:
         seen.add(entry.id)
         entries.append(entry)
     return CuratedMemorials(entries, problems)
+
+
+def removal_address(repo_root: Path) -> str | None:
+    """The address families write to for a removal, or None while there is none (the file is
+    missing, the address is null, or it cannot be read). Names are published only with one."""
+    path = repo_root / REMOVAL_EMAIL_FILE
+    try:
+        text = path.read_text(encoding="utf-8")
+    except OSError:
+        return None
+    found = _REMOVAL_EMAIL.search(text)
+    return (found.group(1) or found.group(2)) if found else None
 
 
 def read_suppressed(repo_root: Path) -> tuple[list[Suppression], list[str]]:

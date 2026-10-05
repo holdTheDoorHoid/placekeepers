@@ -98,9 +98,10 @@ def _p(type_: str, pattern: str, label: str, body: str | None = None) -> PublicP
 
 PUBLIC_PATTERNS: tuple[PublicPattern, ...] = (
     _p("land_bank", r"\bLAND BANK\b", "the Philadelphia Land Bank"),
+    # Also the misspellings OPA carries ("REDEVEL AUTH OF PHILA", "REDEVLOPMENT AUTHORITY").
     _p(
         "redevelopment_authority",
-        r"\bREDEV(ELOPMENT)? AUTH|\bPHILA(DELPHIA)? REDEVELOP",
+        r"\bREDEV\w* AUTH|\bPHILA(DELPHIA)? REDEVELOP",
         "the Philadelphia Redevelopment Authority",
     ),
     _p(
@@ -123,7 +124,7 @@ PUBLIC_PATTERNS: tuple[PublicPattern, ...] = (
     ),
     _p(
         "city",
-        r"\bCITY OF PHILA|\bPHILA(DELPHIA)? CITY OF\b|\bFAIRMOUNT PARK COMM",
+        r"\bCITY OF PHI?LA|\bPHILA(DELPHIA)? CITY OF\b|\bFAIRMOUNT PARK COMM",
         "the City of Philadelphia",
     ),
     _p(
@@ -140,12 +141,18 @@ PUBLIC_PATTERNS: tuple[PublicPattern, ...] = (
     _p("other_public", r"\bSEPTA\b|\bSOUTHEASTERN PENN\w* TRANS", "SEPTA"),
     _p(
         "other_public",
-        r"\bCOMMONWEALTH OF P(ENN\w*|A)\b|\bGENERAL STATE AUTH|\bSTATE OF PENN",
+        r"\bCOMMONWEALTH (OF )?P(ENN\w*|A)\b|\bCOMM OF PENN|\bGENERAL STATE AUTH|\bSTATE OF PENN"
+        r"|\bPENNDOT\b|\bDEP(AR)?T(MENT)? OF TRANSP",
         "the Commonwealth of Pennsylvania",
     ),
     _p(
         "other_public",
-        r"\bUNITED STATES OF AMERICA\b|\bUNITED STATES POSTAL|\bU S POSTAL",
+        r"\bHOUSING FINANCE AGENCY\b|\bPHFA\b",
+        "the Pennsylvania Housing Finance Agency",
+    ),
+    _p(
+        "other_public",
+        r"\bUNITED STATES OF AMERICA\b|\bUNITED STATES POSTAL|\bU S POSTAL|^U S A$",
         "the United States government",
     ),
     _p(
@@ -158,14 +165,27 @@ PUBLIC_PATTERNS: tuple[PublicPattern, ...] = (
         r"\bVET(ERANS?)? AFF|\bVETERANS ADMIN",
         "the U.S. Department of Veterans Affairs",
     ),
+    # OPA writes this one many ways, often cut short: "PHILA AUTH IND DEV", "PHILA AUTH & IND
+    # DEV", "PHILADELPHIA AUTHORITY FO".
     _p(
         "other_public",
-        r"\bAUTH(ORITY)? FOR IND(USTRIAL)? DEV|\bP A I D\b",
+        r"\bAUTH(ORITY)? FOR IND(USTRIAL)? DEV|\bP A I D\b|\bPHILA(DELPHIA)? AUTH(ORITY)?\b",
         "the Philadelphia Authority for Industrial Development",
     ),
     _p(
         "other_public",
-        r"\bPARKING AUTH|\bPORT AUTH|\bREGIONAL PORT\b|\bCONVENTION CENTER AUTH|\bTURNPIKE COMM",
+        r"\bPHILA(DELPHIA)? REG\w* POR",
+        "the Philadelphia Regional Port Authority",
+    ),
+    _p(
+        "other_public",
+        r"\bOFFICE OF THE DISTRICT AT|\bDISTRICT ATTORNEY",
+        "the Philadelphia District Attorney's Office",
+    ),
+    _p(
+        "other_public",
+        r"\bPARKING AUTH|\bPORT AUTH|\bREGIONAL PORT\b|\bCONVENTION CENTER AUTH|\bTURNPIKE COMM"
+        r"|\bMUNICIPAL AUTH|\bIND(USTRIAL)? DEV(ELOPMENT)? AUTH|\bSCHOOL (BLDG|BUILDING) AUTH",
         "a public authority",
     ),
     _p("other_public", r"\bGAS WORKS\b", "Philadelphia Gas Works"),
@@ -206,8 +226,10 @@ ESTATE = re.compile(
     r"|\bEXRS\b|\bADMINISTRAT(OR|ORS|RIX)\b|\bADM(R|RX|X)\b|\bPERSONAL REP\w*|\bPERS REP\b"
 )
 # An owner_1 ending like this continues in owner_2 ("THE TRUSTEES OF THE", "EST OF STEPHEN
-# GIRARD").
+# GIRARD"), except a person's estate written OPA's way, name first: "ESPADA MILAGROS ESTATE OF"
+# is a whole name even when a bank or a trust follows it in owner_2.
 DANGLING = re.compile(r"\b(OF|THE|AND|&|FOR|FBO|TO)$")
+ESTATE_OF_END = re.compile(r"(.+) (EST|ESTATE) OF")
 
 
 @dataclass(frozen=True)
@@ -268,6 +290,12 @@ def owner_type(names: list[str], agency: str | None) -> OwnerType:
     return from_names
 
 
+def _estate_of_whole(unit: str) -> bool:
+    """ "SMITH JOHN ESTATE OF": a person's estate, written name first, complete on its own."""
+    found = ESTATE_OF_END.fullmatch(unit)
+    return bool(found) and found.group(1) not in {"THE", "AND", "&"}
+
+
 def _name_units(names: list[str]) -> list[str]:
     """Owner names as separate units, joining an owner_1 that runs on into owner_2."""
     units: list[str] = []
@@ -275,7 +303,7 @@ def _name_units(names: list[str]) -> list[str]:
         form = match_form(name)
         if not form:
             continue
-        if units and DANGLING.search(units[-1]):
+        if units and DANGLING.search(units[-1]) and not _estate_of_whole(units[-1]):
             units[-1] = f"{units[-1]} {form}"
         else:
             units.append(form)
