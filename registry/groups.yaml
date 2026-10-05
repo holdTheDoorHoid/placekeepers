@@ -10,7 +10,7 @@
   description: The High Injury Network, crashes, and people killed on our streets.
 - id: transit
   label: Buses and trains
-  description: SEPTA stops and routes, how often service comes, and how many people get on.
+  description: SEPTA stops and routes, how often service comes, how many people get on, and which stops have a shelter or a bench.
 - id: safety_context
   label: Where care is needed most
   description: Context that shows where improvements are likely to help most.
