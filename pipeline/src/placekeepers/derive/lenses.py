@@ -47,7 +47,7 @@ from shapely import STRtree
 from placekeepers.cache import atomic_output, atomic_write_json
 from placekeepers.config import iso_z
 from placekeepers.context import Context
-from placekeepers.derive.street_safety import percentile_rank, to_meters
+from placekeepers.derive.street_safety import percentile_rank, plural, to_meters
 from placekeepers.derive.vacancy import opa9
 from placekeepers.snapshots import SnapshotStore
 from placekeepers.sql import quote_literal
@@ -328,6 +328,31 @@ def water_shapes(path: Path | None) -> np.ndarray:
     return shapely.from_wkb(shapes) if shapes else np.array([], dtype=object)
 
 
+def poverty_note(
+    tracts: Sequence[str | None],
+    rates: Sequence[float | None],
+    have_tracts: bool,
+    have_rates: bool,
+) -> str | None:
+    """A note counting every parcel with no poverty rate, and why (finding F11): outside every
+    census tract, or in a tract the survey gives no estimate for (people in no household, such
+    as a park or the airport). None when every parcel has one, or when a whole source is
+    missing (the missing source note covers that)."""
+    if not (have_tracts and have_rates):
+        return None
+    outside = sum(1 for t in tracts if t is None)
+    no_estimate = sum(1 for t, r in zip(tracts, rates, strict=True) if t is not None and r is None)
+    if not outside and not no_estimate:
+        return None
+    parts = []
+    if outside:
+        parts.append(f"{outside:,} outside every census tract")
+    if no_estimate:
+        parts.append(f"{plural(no_estimate, 'in a tract', 'in tracts')} with no survey estimate")
+    total = plural(outside + no_estimate, "parcel on the map has", "parcels on the map have")
+    return f"{total} no poverty rate: " + " and ".join(parts)
+
+
 # The run
 
 
@@ -372,12 +397,9 @@ def run(ctx: Context, as_of: date | None = None, out: Path | None = None) -> Len
     if paths["acs_poverty"] is not None:
         rates = poverty_by_tract(paths["acs_poverty"])
         poverty_pct = [None if t is None else rates.get(t) for t in tracts]
-    outside = sum(1 for t in tracts if t is None) if city is not None else 0
-    if outside:
-        notes.append(
-            f"{outside:,} parcels on the map are outside every census tract, so they have no "
-            "poverty rate"
-        )
+    note = poverty_note(tracts, poverty_pct, city is not None, paths["acs_poverty"] is not None)
+    if note:
+        notes.append(note)
 
     # Tree canopy nearby
     canopy_pct: list[float | None] = [None] * len(parcels)
