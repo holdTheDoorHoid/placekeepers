@@ -206,7 +206,10 @@ export class MapController {
     this.map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), 'top-right');
     this.map.getCanvas().setAttribute('aria-label', strings.app.mapLabel);
 
-    this.map.on('load', () => {
+    // The data layers go on as soon as the starting style is ready, so their files download beside
+    // the base map's; MapLibre's "load" waits for the base map to finish drawing, which on a slow
+    // connection held the lots back by seconds.
+    this.map.once('style.load', () => {
       this.loaded = true;
       const layers = this.map.getStyle().layers;
       // A hosted style (OpenFreeMap) brings its own layers, known only now, drawn as it styles them.
