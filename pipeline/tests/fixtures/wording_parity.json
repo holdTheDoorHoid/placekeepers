@@ -576,6 +576,167 @@
       ],
       "type": "company",
       "reason": "The owner name includes \"PROPERTIES\"."
+    },
+    {
+      "names": [
+        "PHILA AUTH IND DEV"
+      ],
+      "type": "other_public",
+      "reason": "City records name the Philadelphia Authority for Industrial Development as the owner."
+    },
+    {
+      "names": [
+        "PHILA AUTH & IND DEV",
+        "SOMERTON IND PARK"
+      ],
+      "type": "other_public",
+      "reason": "City records name the Philadelphia Authority for Industrial Development as the owner."
+    },
+    {
+      "names": [
+        "PHILADELPHIA AUTHORITY FO"
+      ],
+      "type": "other_public",
+      "reason": "City records name the Philadelphia Authority for Industrial Development as the owner."
+    },
+    {
+      "names": [
+        "PHILADELPHIA AUTHORITY",
+        "FOR INDUSTRAIL DEV"
+      ],
+      "type": "other_public",
+      "reason": "City records name the Philadelphia Authority for Industrial Development as the owner."
+    },
+    {
+      "names": [
+        "PHILADELPHIA REGIONAL POR"
+      ],
+      "type": "other_public",
+      "reason": "City records name the Philadelphia Regional Port Authority as the owner."
+    },
+    {
+      "names": [
+        "PHILADELPHIA REGINAL PORT"
+      ],
+      "type": "other_public",
+      "reason": "City records name the Philadelphia Regional Port Authority as the owner."
+    },
+    {
+      "names": [
+        "PENNDOT"
+      ],
+      "type": "other_public",
+      "reason": "City records name the Commonwealth of Pennsylvania as the owner."
+    },
+    {
+      "names": [
+        "PA DEPT OF TRANSPORTATION"
+      ],
+      "type": "other_public",
+      "reason": "City records name the Commonwealth of Pennsylvania as the owner."
+    },
+    {
+      "names": [
+        "COMM OF PENNA",
+        "DEPT OF PUBLC PROP"
+      ],
+      "type": "other_public",
+      "reason": "City records name the Commonwealth of Pennsylvania as the owner."
+    },
+    {
+      "names": [
+        "COMMONWEALTH PA"
+      ],
+      "type": "other_public",
+      "reason": "City records name the Commonwealth of Pennsylvania as the owner."
+    },
+    {
+      "names": [
+        "PENNSYLVANIA HOUSING FINANCE AGENCY"
+      ],
+      "type": "other_public",
+      "reason": "City records name the Pennsylvania Housing Finance Agency as the owner."
+    },
+    {
+      "names": [
+        "OFFICE OF THE DISTRICT AT"
+      ],
+      "type": "other_public",
+      "reason": "City records name the Philadelphia District Attorney's Office as the owner."
+    },
+    {
+      "names": [
+        "PHILA MUNICIPAL AUTH"
+      ],
+      "type": "other_public",
+      "reason": "City records name a public authority as the owner."
+    },
+    {
+      "names": [
+        "STATE PUBLIC SCHOOL",
+        "BLDG AUTH"
+      ],
+      "type": "other_public",
+      "reason": "City records name a public authority as the owner."
+    },
+    {
+      "names": [
+        "U S A"
+      ],
+      "type": "other_public",
+      "reason": "City records name the United States government as the owner."
+    },
+    {
+      "names": [
+        "REDEVEL AUTH OF PHILA"
+      ],
+      "type": "redevelopment_authority",
+      "reason": "City records name the Philadelphia Redevelopment Authority as the owner."
+    },
+    {
+      "names": [
+        "REDEVLOPMENT AUTHORITY",
+        "OF PHILADELPHIA"
+      ],
+      "type": "redevelopment_authority",
+      "reason": "City records name the Philadelphia Redevelopment Authority as the owner."
+    },
+    {
+      "names": [
+        "CITY OF PHLADELPHIA",
+        "DEPARTMENT OF COMMERCE"
+      ],
+      "type": "city",
+      "reason": "City records name the City of Philadelphia as the owner."
+    },
+    {
+      "names": [
+        "COMMONWEALTH IMPROVEMENT"
+      ],
+      "type": "individual",
+      "reason": "The owner name looks like a person's name."
+    },
+    {
+      "names": [
+        "KENSINGTON REDEVELOPMENT"
+      ],
+      "type": "individual",
+      "reason": "The owner name looks like a person's name."
+    },
+    {
+      "names": [
+        "PORT PETER SOPHAL"
+      ],
+      "type": "individual",
+      "reason": "The owner name looks like a person's name."
+    },
+    {
+      "names": [
+        "SMITH JOHN 1/2 INT",
+        "SMITH MARY 1/2 INT"
+      ],
+      "type": "individual",
+      "reason": "The owner name looks like a person's name."
     }
   ],
   "possible_estate": [
@@ -658,6 +819,34 @@
         "SMITH JOHN"
       ],
       "estate": false
+    },
+    {
+      "names": [
+        "ESPINAL MARISOL ESTATE OF",
+        "BNY MELLON N A"
+      ],
+      "estate": true
+    },
+    {
+      "names": [
+        "ACKERLY GREGORY K ESTATE OF",
+        "LINDA A ACKERLY TRUST"
+      ],
+      "estate": true
+    },
+    {
+      "names": [
+        "THE ESTATE OF",
+        "JOHN WHITTAKER"
+      ],
+      "estate": true
+    },
+    {
+      "names": [
+        "RIVERSIDE BANK AND TRUST CO",
+        "MCLAREN NIKKI ESTATE OF"
+      ],
+      "estate": true
     }
   ],
   "absentee": [
@@ -738,6 +927,22 @@
       "mailing_street": null,
       "mailing_city_state": null,
       "mailing_zip": null,
+      "scope": null,
+      "text": null
+    },
+    {
+      "location": "2215 MCKEAN ST",
+      "mailing_street": "2215 MC KEAN ST",
+      "mailing_city_state": "PHILADELPHIA PA",
+      "mailing_zip": "19145-2715",
+      "scope": null,
+      "text": null
+    },
+    {
+      "location": "9011 AYRDALE CRESCENT",
+      "mailing_street": "9011 AYRDALECRESCENT ST",
+      "mailing_city_state": "PHILADELPHIA PA",
+      "mailing_zip": "19128",
       "scope": null,
       "text": null
     }

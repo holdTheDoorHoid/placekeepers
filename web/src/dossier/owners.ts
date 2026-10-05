@@ -12,6 +12,10 @@
 //
 // The pipeline also reads the City's list of public property, which a browser lookup does not
 // have, so a live lookup keeps the snapshot's owner type whenever the owner names have not changed.
+//
+// tests/dossier_parity.test.ts checks these rules against the pipeline's answers. On 2026-10-04
+// they were also run over every owner name (459,980 pairs) and mailing address (565,546) in OPA's
+// records, with the same answers as the pipeline for every one.
 
 import { strings } from '../strings.ts';
 import type { OwnerType } from './types.ts';
@@ -38,12 +42,13 @@ const P = (type: OwnerType, pattern: string, label: string): PublicPattern => ({
 
 const PUBLIC_PATTERNS: PublicPattern[] = [
   P('land_bank', String.raw`\bLAND BANK\b`, 'the Philadelphia Land Bank'),
-  P('redevelopment_authority', String.raw`\bREDEV(ELOPMENT)? AUTH|\bPHILA(DELPHIA)? REDEVELOP`, 'the Philadelphia Redevelopment Authority'),
+  // Also the misspellings OPA carries ("REDEVEL AUTH OF PHILA", "REDEVLOPMENT AUTHORITY").
+  P('redevelopment_authority', String.raw`\bREDEV\w* AUTH|\bPHILA(DELPHIA)? REDEVELOP`, 'the Philadelphia Redevelopment Authority'),
   P('housing_authority', String.raw`\bPHILA(DELPHIA)? HOUSING AUTH`, 'the Philadelphia Housing Authority'),
   P('housing_authority', String.raw`\bHOUSING AUTH`, 'a housing authority'),
   P('other_public', String.raw`\bPHDC\b|\bPHILA(DELPHIA)? HOUSING DEV`, 'the Philadelphia Housing Development Corporation (PHDC)'),
   P('other_public', String.raw`^PHILA(DELPHIA)? HOUSING$`, 'the Philadelphia Housing Authority or PHDC (the name is cut short)'),
-  P('city', String.raw`\bCITY OF PHILA|\bPHILA(DELPHIA)? CITY OF\b|\bFAIRMOUNT PARK COMM`, 'the City of Philadelphia'),
+  P('city', String.raw`\bCITY OF PHI?LA|\bPHILA(DELPHIA)? CITY OF\b|\bFAIRMOUNT PARK COMM`, 'the City of Philadelphia'),
   P(
     'other_public',
     String.raw`\bSCHOOL DIST(RICT)? OF PHILA|\bPHILA(DELPHIA)? SCHOOL DIST|\bBOARD OF (PUBLIC )?EDUCATION\b`,
@@ -51,12 +56,30 @@ const PUBLIC_PATTERNS: PublicPattern[] = [
   ),
   P('other_public', String.raw`\bCOMM(UNITY)? COLLEGE OF PHIL`, 'the Community College of Philadelphia'),
   P('other_public', String.raw`\bSEPTA\b|\bSOUTHEASTERN PENN\w* TRANS`, 'SEPTA'),
-  P('other_public', String.raw`\bCOMMONWEALTH OF P(ENN\w*|A)\b|\bGENERAL STATE AUTH|\bSTATE OF PENN`, 'the Commonwealth of Pennsylvania'),
-  P('other_public', String.raw`\bUNITED STATES OF AMERICA\b|\bUNITED STATES POSTAL|\bU S POSTAL`, 'the United States government'),
+  P(
+    'other_public',
+    String.raw`\bCOMMONWEALTH (OF )?P(ENN\w*|A)\b|\bCOMM OF PENN|\bGENERAL STATE AUTH|\bSTATE OF PENN` + String.raw`|\bPENNDOT\b|\bDEP(AR)?T(MENT)? OF TRANSP`,
+    'the Commonwealth of Pennsylvania',
+  ),
+  P('other_public', String.raw`\bHOUSING FINANCE AGENCY\b|\bPHFA\b`, 'the Pennsylvania Housing Finance Agency'),
+  P('other_public', String.raw`\bUNITED STATES OF AMERICA\b|\bUNITED STATES POSTAL|\bU S POSTAL|^U S A$`, 'the United States government'),
   P('other_public', String.raw`\bSEC(RETARY)? OF HOUSING|\bHOUSING (AND|&) URBAN DEV`, 'the U.S. Department of Housing and Urban Development'),
   P('other_public', String.raw`\bVET(ERANS?)? AFF|\bVETERANS ADMIN`, 'the U.S. Department of Veterans Affairs'),
-  P('other_public', String.raw`\bAUTH(ORITY)? FOR IND(USTRIAL)? DEV|\bP A I D\b`, 'the Philadelphia Authority for Industrial Development'),
-  P('other_public', String.raw`\bPARKING AUTH|\bPORT AUTH|\bREGIONAL PORT\b|\bCONVENTION CENTER AUTH|\bTURNPIKE COMM`, 'a public authority'),
+  // OPA writes this one many ways, often cut short: "PHILA AUTH IND DEV", "PHILA AUTH & IND DEV",
+  // "PHILADELPHIA AUTHORITY FO".
+  P(
+    'other_public',
+    String.raw`\bAUTH(ORITY)? FOR IND(USTRIAL)? DEV|\bP A I D\b|\bPHILA(DELPHIA)? AUTH(ORITY)?\b`,
+    'the Philadelphia Authority for Industrial Development',
+  ),
+  P('other_public', String.raw`\bPHILA(DELPHIA)? REG\w* POR`, 'the Philadelphia Regional Port Authority'),
+  P('other_public', String.raw`\bOFFICE OF THE DISTRICT AT|\bDISTRICT ATTORNEY`, "the Philadelphia District Attorney's Office"),
+  P(
+    'other_public',
+    String.raw`\bPARKING AUTH|\bPORT AUTH|\bREGIONAL PORT\b|\bCONVENTION CENTER AUTH|\bTURNPIKE COMM` +
+      String.raw`|\bMUNICIPAL AUTH|\bIND(USTRIAL)? DEV(ELOPMENT)? AUTH|\bSCHOOL (BLDG|BUILDING) AUTH`,
+    'a public authority',
+  ),
   P('other_public', String.raw`\bGAS WORKS\b`, 'Philadelphia Gas Works'),
 ];
 
@@ -83,15 +106,26 @@ const COMPANY = new RegExp(
     String.raw`|AMTRAK|BNY|MELLON)\b|\b(FB|N A)$`,
 );
 const UNKNOWN_NAME = /\bUNKNOWN\b|\bNOT AVAILABLE\b|\bNONE\b/;
-/** Generational suffixes are part of a person's name: 2ND, 03RD. */
-const GENERATION = /\b0?\d(ST|ND|RD|TH)\b/g;
+/** Generational suffixes and shares of ownership are part of a person's name: 2ND, 03RD, "1/2 INT". */
+const GENERATION = /\b0?\d(ST|ND|RD|TH)\b|\b\d+ \d+ INT(EREST)?\b/g;
 const ESTATE_IGNORE = /\b(LIFE|LF) (EST(ATE)?|TENANT)\b|\bREAL EST(ATE)?\b/g;
 const ESTATE = new RegExp(
   String.raw`\bEST(ATE)?\b|\bHEIRS?\b|\bDECEASED\b|\bDEC'?D\b|\bEXECUT(OR|ORS|RIX|RICES)\b|\bEXRX?\b` +
     String.raw`|\bEXRS\b|\bADMINISTRAT(OR|ORS|RIX)\b|\bADM(R|RX|X)\b|\bPERSONAL REP\w*|\bPERS REP\b`,
 );
-/** An owner_1 ending like this continues in owner_2 ("THE TRUSTEES OF THE"). */
+/**
+ * An owner_1 ending like this continues in owner_2 ("THE TRUSTEES OF THE", "EST OF STEPHEN
+ * GIRARD"), except a person's estate written OPA's way, name first: "ESPADA MILAGROS ESTATE OF" is
+ * a whole name even when a bank or a trust follows it in owner_2.
+ */
 const DANGLING = /\b(OF|THE|AND|&|FOR|FBO|TO)$/;
+const ESTATE_OF_END = /^(.+) (EST|ESTATE) OF$/;
+
+/** "SMITH JOHN ESTATE OF": a person's estate, written name first, complete on its own. */
+function estateOfWhole(unit: string): boolean {
+  const found = ESTATE_OF_END.exec(unit);
+  return !!found && !['THE', 'AND', '&'].includes(found[1]!);
+}
 
 /** Abbreviations explained when an owner name is typed by one of them. */
 const MARKER_NOTES: Record<string, string> = strings.dossier.ownerType.markers;
@@ -116,7 +150,7 @@ export function nameUnits(names: string[]): string[] {
     const form = matchForm(name);
     if (!form) continue;
     const last = units.length - 1;
-    if (last >= 0 && DANGLING.test(units[last]!)) units[last] = `${units[last]} ${form}`;
+    if (last >= 0 && DANGLING.test(units[last]!) && !estateOfWhole(units[last]!)) units[last] = `${units[last]} ${form}`;
     else units.push(form);
   }
   return units;
@@ -225,7 +259,8 @@ export function compareAddresses(parcel: string | null, mailing: string | null):
   const a = parseAddress(parcel);
   const b = parseAddress(mailing);
   if (!a || !b) return 'unknown';
-  if (a.street.join(' ') !== b.street.join(' ')) return 'different';
+  // "MC CLELLAN" and "MCCLELLAN" are one street.
+  if (a.street.join('') !== b.street.join('')) return 'different';
   if ((a.low <= b.low && b.low <= a.high) || (b.low <= a.low && a.low <= b.high)) return 'same';
   const hundred = Math.floor(b.low / 100);
   if (hundred === Math.floor(a.low / 100) || hundred === Math.floor(a.high / 100)) return 'same_block';

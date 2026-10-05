@@ -129,6 +129,31 @@ OWNER_NAMES = [
     ["420 W SCHOOL HOUSE LANE"],
     ["SCHOOLHOUSE PROPERTY INVESTMENTS LLC"],
     ["ACADEMIC PROPERTIES INC"],
+    # Public bodies OPA spells many ways or cuts short (found by the M1.10 review, c6663a8), and
+    # private names that look a little like them.
+    ["PHILA AUTH IND DEV"],
+    ["PHILA AUTH & IND DEV", "SOMERTON IND PARK"],
+    ["PHILADELPHIA AUTHORITY FO"],
+    ["PHILADELPHIA AUTHORITY", "FOR INDUSTRAIL DEV"],
+    ["PHILADELPHIA REGIONAL POR"],
+    ["PHILADELPHIA REGINAL PORT"],
+    ["PENNDOT"],
+    ["PA DEPT OF TRANSPORTATION"],
+    ["COMM OF PENNA", "DEPT OF PUBLC PROP"],
+    ["COMMONWEALTH PA"],
+    ["PENNSYLVANIA HOUSING FINANCE AGENCY"],
+    ["OFFICE OF THE DISTRICT AT"],
+    ["PHILA MUNICIPAL AUTH"],
+    ["STATE PUBLIC SCHOOL", "BLDG AUTH"],
+    ["U S A"],
+    ["REDEVEL AUTH OF PHILA"],
+    ["REDEVLOPMENT AUTHORITY", "OF PHILADELPHIA"],
+    ["CITY OF PHLADELPHIA", "DEPARTMENT OF COMMERCE"],
+    ["COMMONWEALTH IMPROVEMENT"],
+    ["KENSINGTON REDEVELOPMENT"],
+    ["PORT PETER SOPHAL"],
+    # A share of ownership is part of a person's name.
+    ["SMITH JOHN 1/2 INT", "SMITH MARY 1/2 INT"],
 ]
 
 ESTATE_NAMES = [
@@ -145,6 +170,12 @@ ESTATE_NAMES = [
     ["SAMPLE CHARTER SCHOOL EST"],
     ["CITY OF PHILA"],
     ["SMITH JOHN"],
+    # A person's estate written name first is a whole name, even when a bank or a trust follows
+    # it (found by the M1.10 review, 353e9b7).
+    ["ESPINAL MARISOL ESTATE OF", "BNY MELLON N A"],
+    ["ACKERLY GREGORY K ESTATE OF", "LINDA A ACKERLY TRUST"],
+    ["THE ESTATE OF", "JOHN WHITTAKER"],
+    ["RIVERSIDE BANK AND TRUST CO", "MCLAREN NIKKI ESTATE OF"],
 ]
 
 ABSENTEE = [
@@ -158,6 +189,10 @@ ABSENTEE = [
     ("3134 N 8TH ST", "3134 N EIGHTH ST", "PHILADELPHIA PA", "19133"),
     ("1304-08 E PASSYUNK AVE", "1306 E PASSYUNK AVE UNIT 2", "PHILADELPHIA PA", "19147"),
     ("3134 N 8TH ST", None, None, None),
+    # "MC KEAN" and "MCKEAN" are one street: an owner at the parcel is not absentee (1,464 real
+    # addresses were read wrongly by the web app before 2026-10-04).
+    ("2215 MCKEAN ST", "2215 MC KEAN ST", "PHILADELPHIA PA", "19145-2715"),
+    ("9011 AYRDALE CRESCENT", "9011 AYRDALECRESCENT ST", "PHILADELPHIA PA", "19128"),
 ]
 
 #: Whole lot pages' worth of facts: the flags the web app works out from live records. `vacant`
