@@ -41,7 +41,8 @@ TREES_FILE = "tiles/trees.pmtiles"
 DIAMETER_RANGE = (1, 80)
 #: How the inventory writes a tree it could not name.
 UNNAMED = {"", "UNKNOWN", "UNKNOWN UNKNOWN"}
-_SPECIES_SPLIT = re.compile(r"\s+[-–—]+\s+")
+#: A hyphen, an en dash or an em dash between spaces (written as escapes).
+_SPECIES_SPLIT = re.compile("\\s+[-\u2013\u2014]+\\s+")
 
 
 def fifths(values: list[float | None]) -> list[int | None]:
@@ -53,9 +54,10 @@ def fifths(values: list[float | None]) -> list[int | None]:
 
 
 def common_name(tree_name: object) -> str | None:
-    """The common name in the inventory's "GENUS SPECIES - COMMON NAME", in title case, with the
-    inventory's "OTHER" (species not recorded) dropped: "PRUNUS SPECIES - OTHER CHERRY" is
-    "Cherry". None for a tree the inventory could not name."""
+    """The common name in title case: the part of the inventory's tree name after the genus and
+    species and the dash between them, with the inventory's "OTHER" (species not recorded)
+    dropped, so the inventory's name for a cherry of unrecorded species reads "Cherry". None for a
+    tree the inventory could not name."""
     if not isinstance(tree_name, str):
         return None
     parts = _SPECIES_SPLIT.split(tree_name.strip(), maxsplit=1)

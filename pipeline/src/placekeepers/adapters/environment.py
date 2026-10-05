@@ -2,14 +2,15 @@
 
 **Street trees.** Philadelphia Parks and Recreation's tree inventory (OpenDataPhilly "Philadelphia
 Tree Inventory"; the City's metadata calls it the street tree inventory): one point per tree the
-City keeps, with its species ("ACER RUBRUM - RED MAPLE"), its trunk diameter at breast height in
-inches, and the inventory year. The City publishes one ArcGIS layer per year
-(`PPR_Tree_Inventory_2021` to `ppr_tree_inventory_2025`), so each run lists the City's services and
-takes the newest year, never one older than the layer the registry names; the snapshot says which
-in `layer` and `inventory_year`, and keeps the layer's last edit day as `source_date`. Only the
-tree's place, species, trunk size and year are kept (the layer holds nothing personal; its
-`loc_x` and `loc_y` repeat the point). Verified against the live service on 2026-10-05: 151,726
-trees, all from 2025, last edited 2025-11-20.
+City keeps, with its species (its genus, species and common name, such as Acer rubrum, red maple),
+its trunk diameter at breast height in inches, and the inventory year. The City publishes one
+ArcGIS layer per year (`PPR_Tree_Inventory_2021` to `ppr_tree_inventory_2025`), so each run lists
+the City's services and takes the newest year, never one older than the layer the registry names;
+the snapshot says which in `layer` and `inventory_year`, and keeps the layer's last edit day as
+`source_date`. Only the tree's place, species, trunk size and year are kept (the layer holds
+nothing personal; its `loc_x` and `loc_y` repeat the point). Verified against the live service on
+2026-10-05: 151,726 trees, all from 2025, last edited 2025-11-20. About 29 percent of them stand
+on Parks and Recreation property, so the inventory covers park trees as well as street trees.
 
 **The floodplain.** FEMA's flood hazard areas as the City publishes them, clipped to Philadelphia
 (`fema_floodplain_2023`, OpenDataPhilly "FEMA Flood Plain"). Only two kinds of area are downloaded:

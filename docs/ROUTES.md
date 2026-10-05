@@ -61,6 +61,21 @@ to Grounded in Philly's sheriff sale guide.
 - **Neighborhood Gardens Trust** (ngtrust.org, 215-988-1630, ngtrust@pennhort.org) preserves
   community gardens permanently. Intake criteria **to confirm**.
 
+### Trees on and along a lot (heat and shade)
+
+Added 2026-10-05 for the heat and shade lens (milestone M3.1). Both routes were last checked on
+**2026-10-05** against the programs' own pages; both stay **confirm** until the questions below are
+answered. The lot's own permission routes above come first: planting on a lot, or in the sidewalk
+in front of it, needs its owner.
+
+| Route | What it involves | Cost | Time | Status |
+|---|---|---|---|---|
+| Free street trees along the lot (`street_trees_for_a_lot`) | Street trees go in the sidewalk in front of a property when its owner asks Parks and Recreation's Street Tree Management Division: online through the City's service request, by email at StreetTree.Info@phila.gov, or by phone at 215 685 4363 or 215 685 4362, weekdays from 7:30 a.m. to 3 p.m. Neighbors ask the lot's owner to request them; for a City or Land Bank lot, the Land Bank. The City inspects the spot, chooses the tree, cuts the concrete and plants it, then waters and mulches it for the first year and replaces a tree that dies within a year. After that, TreePhilly asks for about 20 gallons of water a week from March through December | Free | The next planting season: mid April to mid June, or mid October to mid November | **Confirm**: whether the City plants in front of a vacant lot the City or the Land Bank owns, and who asks for it (sources: phila.gov "Get a street tree" and treephilly.org "Street trees", 2026-10-05) |
+| Free trees from a TreePhilly giveaway (`treephilly_yard_trees`) | For Philadelphia residents, to plant in the ground on private property, never in a container, the sidewalk or the public right of way. Sign up for TreePhilly's newsletter; register with the community group hosting a giveaway, which opens about two weeks to a month before it and closes when the trees run out; pick up the tree (2 to 10 feet tall, in a 5 gallon bucket, with a free bag of mulch). Giveaways run in spring (March to May) and fall (September to December), in priority ZIP codes | Free | The next spring or fall giveaway | **Confirm**: whether a giveaway tree may go on a private vacant lot whose owner agrees in writing (source: treephilly.org "Yard trees", 2026-10-05) |
+
+TreePhilly's street tree page also names PHS Tree Tenders as another way to get street trees; PHS's
+own pages refuse automated access, so its steps are not described here.
+
 ### Helping families keep their homes
 
 - **Tangled Title Fund** (Philadelphia VIP; tangledtitlefund@gmail.com; 215-523-9553): up to $6,500
@@ -161,3 +176,7 @@ These go into outreach drafts for the owner to send; agents never send them.
    would families like it done?
 6. Mural Arts, the Association for Public Art, philart.net, and Philadelphia's Magic Gardens: may we
    include their artwork locations?
+7. Parks and Recreation (Street Tree Management Division) and the Land Bank: will the City plant
+   street trees in front of a vacant lot the City or the Land Bank owns, and who should ask?
+8. TreePhilly: may a resident plant a giveaway tree on a private vacant lot whose owner agrees in
+   writing, or a lot the neighbor holds under a garden agreement?
