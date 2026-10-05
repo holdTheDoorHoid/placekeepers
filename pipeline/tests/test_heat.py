@@ -450,6 +450,14 @@ def test_the_lots_layer_and_the_lot_pages_carry_the_heat_lens(heat_ctx, tmp_path
     for opa, dossier in dossiers.items():
         if opa in properties:
             assert ",".join(dossier["suggestions"]) == properties[opa]["sg"]
+            # The lens values of its tile too, for a lot page opened from a link (issue #31).
+            tile = properties[opa]
+            assert dossier.get("lens", {}) == {
+                k: v for k, v in tile.items() if k.startswith("f_") or k == "fp"
+            }
+        else:
+            assert "lens" not in dossier
+    assert dossiers["500000002"]["lens"]["fp"] == 1
     assert any("no heat vulnerability score" in note for note in published.manifest["notes"])
 
 
