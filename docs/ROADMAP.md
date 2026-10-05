@@ -59,19 +59,19 @@ check.
 
 ## Phase 1: First public release, v0.1 "Lots and streets"
 
-| Id | Milestone | Agent | Depends on |
-|---|---|---|---|
-| M1.1 | Property and context adapters | Opus | M0.2 |
-| M1.2 | Vacancy model v1 in the pipeline | Opus | M0.5, M1.1 |
-| M1.3 | Owner flags and legal routes | Opus | M1.1 |
-| M1.4 | Violence reduction lens | Opus | M1.2 |
-| M1.5 | Street safety lens and memorials | Opus | M0.2 |
-| M1.6 | Lot dossier and live City lookups | Opus | M0.3, M1.3 |
-| M1.7 | Field view and analysis view, complete | Opus | M1.4, M1.5, M1.6 |
-| M1.8 | Site content | Sonnet | M0.3 |
-| M1.9 | Memorial names, curated by hand | Sonnet, after the owner hears from the Bicycle Coalition and the removal email exists | M1.5 |
-| M1.10 | Verification | Opus | M1.7, M1.8 |
-| M1.11 | Release v0.1 | Sonnet | M1.10 |
+| Id | Milestone | Agent | Depends on | Status |
+|---|---|---|---|---|
+| M1.1 | Property and context adapters | Opus | M0.2 | Done, 2026-10-04 |
+| M1.2 | Vacancy model v1 in the pipeline | Opus | M0.5, M1.1 | Done, 2026-10-04 |
+| M1.3 | Owner flags and legal routes | Opus | M1.1 | Done, 2026-10-04 |
+| M1.4 | Violence reduction lens | Opus | M1.2 | Done, 2026-10-04 |
+| M1.5 | Street safety lens and memorials | Opus | M0.2 | Done, 2026-10-04 |
+| M1.6 | Lot dossier and live City lookups | Opus | M0.3, M1.3 | Done, 2026-10-04 |
+| M1.7 | Field view and analysis view, complete | Opus | M1.4, M1.5, M1.6 | Done, 2026-10-04 |
+| M1.8 | Site content | Sonnet | M0.3 | Done, 2026-10-04 |
+| M1.9 | Memorial names, curated by hand | Sonnet, after the owner hears from the Bicycle Coalition and the removal email exists | M1.5 | Waiting on the owner |
+| M1.10 | Verification | Opus | M1.7, M1.8 | Done, 2026-10-04 |
+| M1.11 | Release v0.1 | Sonnet | M1.10 | Done, 2026-10-04 |
 
 **M1.1 Property and context adapters.** Real estate transfers (for candidate parcels in bulk and any
 parcel on demand), assessment history, violations, complaints (filtered), permits, unsafe, imminently

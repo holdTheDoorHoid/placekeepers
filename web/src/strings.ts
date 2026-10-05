@@ -65,8 +65,7 @@ export const strings = {
     loadingMap: 'Loading the map',
     mapFailed: 'The map could not start in this browser. Try another browser, or update this one.',
     sampleData: 'Sample data for testing. These are not real places.',
-    earlyPreview:
-      'Early preview: the map shows real City data, but lot pages, scores and legal steps are still being built.',
+    earlyPreview: 'Version 0.1: a first public version. Check facts with the City before you act.',
     followAlong: 'Follow along',
     repoUrl: 'https://github.com/holdTheDoorHoid/placekeepers',
     skipToList: 'Skip to the list of places',
