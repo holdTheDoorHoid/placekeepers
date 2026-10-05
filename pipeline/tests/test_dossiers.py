@@ -1201,6 +1201,28 @@ def test_no_claim_of_no_sale_from_deeds_never_downloaded(context_factory, tmp_pa
     assert "years_since_sale" not in {flag["id"] for flag in outside["owner"]["flags"]}
 
 
+def test_lens_values_are_read_from_the_lots_layer_as_published(tmp_path: Path) -> None:
+    # Each parcel's lens factors and floodplain mark, exactly as its map tile carries them, so a lot
+    # page opened from a link shows the same breakdown as one opened from the map (issue #31).
+    from placekeepers.geo import GeoJSONWriter
+    from placekeepers.publish.dossiers import read_lot_lens
+
+    path = tmp_path / "lots.parcels.geojson"
+    point = {"type": "Point", "coordinates": [-75.14, 39.99]}
+    with GeoJSONWriter(path) as writer:
+        writer.write(
+            {"id": "371000001", "k": 1, "vc": 3, "f_vacant": 100, "f_shoot": 57, "fp": 2}, point
+        )
+        writer.write({"id": "371000002", "k": 1, "vc": 2, "sg": "clean_and_green"}, point)
+        writer.write({"id": "371000003", "k": 2, "vc": 1, "f_canopy": 0, "f_walk": 12}, point)
+    assert read_lot_lens(path) == {
+        "371000001": {"f_vacant": 100, "f_shoot": 57, "fp": 2},
+        "371000003": {"f_canopy": 0, "f_walk": 12},
+    }
+    assert read_lot_lens(tmp_path / "missing.geojson") == {}
+    assert read_lot_lens(None) == {}
+
+
 def test_deeds_carry_the_date_and_price_the_city_page_shows(tmp_path: Path) -> None:
     """The date on the deed (else the document date, else the recording date) and the adjusted
     total (this property's share), else the total consideration, as the City's property page

@@ -224,6 +224,21 @@ function landcare(v: unknown): LandCare | null {
   return { program: text(v.program), year: year !== null && year >= 1950 && year <= 2200 ? year : null };
 }
 
+const LENS_FACTOR = /^f_[a-z0-9_]{1,40}$/;
+
+/** The lens values a tile carries: factors from 0 to 100 (`f_*`) and the floodplain mark (`fp`, 1 or 2); null when none. */
+function lensValues(v: unknown): Record<string, number> | null {
+  if (!isObj(v)) return null;
+  const out: Record<string, number> = {};
+  for (const [key, raw] of Object.entries(v)) {
+    const n = int(raw);
+    if (n === null) continue;
+    if (LENS_FACTOR.test(key) && n >= 0 && n <= 100) out[key] = n;
+    else if (key === 'fp' && (n === 1 || n === 2)) out[key] = n;
+  }
+  return Object.keys(out).length ? out : null;
+}
+
 function list<T>(v: unknown, read: (item: unknown) => T | null, where: string, problems: string[]): T[] | null {
   if (v === undefined || v === null) return null;
   if (!Array.isArray(v)) {
@@ -258,6 +273,7 @@ export function parseShardParcel(raw: unknown, where = 'parcel', problems: strin
     nearby: nearby(raw.nearby),
     landcare: landcare(raw.landcare),
     garden: raw.garden === true,
+    lens: lensValues(raw.lens),
   };
 }
 

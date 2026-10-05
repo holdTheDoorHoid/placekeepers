@@ -207,6 +207,12 @@ export interface ShardParcel {
   nearby: Nearby | null;
   landcare: LandCare | null;
   garden: boolean;
+  /**
+   * The lens factors (`f_*`) and floodplain mark (`fp`) the parcel's map tile carries, so a lot
+   * page opened from a link, a search or a saved list shows the same score breakdown and flood
+   * note as one opened from the map (issue #31). Null for a parcel not on the map.
+   */
+  lens: Record<string, number> | null;
 }
 
 export interface Shard {

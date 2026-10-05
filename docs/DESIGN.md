@@ -257,7 +257,11 @@ The base map is a layer too (`basemap`, in the "Base map" group, added by M1.7):
 streets and place names off, leaving a plain background, and its look can be light or gray, so the
 data stands out. Links made before it had a switch still show it. Its file is made by the site, not
 the pipeline (CONTRACTS.md section 2), so the pipeline leaves it alone and the Data status page
-judges it by the base map's own build date.
+judges it by the base map's own build date. The base map never draws works of art, memorials,
+monuments, tombs, graves or wayside shrines, at any zoom (added 2026-10-05 after M3.2): their names
+can name a person who died, and names of people who died come only from the hand curated memorials
+file (ETHICS.md). The public art layer shows works of art without such names (section 5.8), and
+everything else is drawn as Protomaps draws it.
 
 ### 5.3 Lenses
 
@@ -420,7 +424,9 @@ As built (M1.6, 2026-10-04):
   nearby", or a link with the parcel in it opens its page: a full screen sheet on phones, the right
   panel on larger screens. Close in (zoom 16 and up), tapping any other spot asks the City's parcel
   map which parcel is there, outlines it, and opens its page, built live. With live data off, only
-  parcels on our list open, from the snapshot.
+  parcels on our list open, from the snapshot. However it was opened, a lot on the map shows the
+  same score breakdown and flood note: from the map's data when the map has it, else from the
+  lot's own dossier, which carries the same values (issue #31, 2026-10-05).
 - **Where each part comes from.** A line at the top and a line under each part say whether it is
   live from the City (with the time), from the weekly snapshot (with its date), still loading, or
   why a lookup failed (no answer within 10 seconds, the City could not be reached, or it answered
@@ -431,8 +437,8 @@ As built (M1.6, 2026-10-04):
   and why, each flag in its three parts, the deed fraud notice wherever the owner may be a person
   (a person, an owner whose type we could not tell, or a possible estate), help for families (the
   Tangled Title Fund and Fraud Guard) beside any flag on a private owner, and taxes, always dated
-  July 2025 with a link to the Tax Center. A many parcels flag opens the owner's list. When the City names a different owner than the snapshot, the flags
-  about the earlier owner are left out.
+  July 2025 with a link to the Tax Center. A many parcels flag opens the owner's list. When the
+  City names a different owner than the snapshot, the flags about the earlier owner are left out.
 - **History** shows every deed newest first (the date on the deed, the document in plain
   words, the price, from and to), the City's assessments as a small chart and the same numbers as a
   table, and the L&I timeline (violations, permits, demolitions, unsafe and imminently dangerous
@@ -559,7 +565,7 @@ section 4.
 **Memorial artworks.** Some murals and plaques remember a person. Names of people killed come only
 from the hand curated memorials list (ETHICS.md), so a work any source marks as a memorial is shown
 only as "Memorial artwork", with its sources: no title, artist, year or inscription, in the
-published files or on the map. The rule is cautious on purpose. On 2026-10-05 it covers 45 works,
+published files or on the map, and the base map draws no labels of art or memorials (section 5.2). The rule is cautious on purpose. On 2026-10-05 it covers 45 works,
 all of them monuments to famous people, wars or events (statues OpenStreetMap tags as memorials,
 such as Joan of Arc and the Washington Monument, and war memorials), whose names stay one tap away
 at their sources. A hand curated list of memorial artworks whose names may be shown would let the
