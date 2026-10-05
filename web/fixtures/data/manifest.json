@@ -303,8 +303,8 @@
       "sha256": "1d746dd64887fc690edb3dbd6c056b1630ce99ec1cec269ad1ea21b9890d3717"
     },
     "tiles/lots.pmtiles": {
-      "bytes": 12180,
-      "sha256": "332739b2a61ac8a80eac323250d9ea1fe68714f4360dc86879f5837375b49387"
+      "bytes": 12144,
+      "sha256": "540a7af16cfa7e10106f4ccb7d9f40b51683276c73a082b4d4c5d8843d2a8baa"
     },
     "tiles/streets.crashes.geojson": {
       "bytes": 23183,
@@ -337,7 +337,7 @@
       "9900"
     ],
     "files": 1,
-    "bytes": 21910
+    "bytes": 21943
   },
   "notes": [
     "This is synthetic sample data for testing the map.",

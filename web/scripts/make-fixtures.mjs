@@ -132,7 +132,9 @@ RUNS.forEach((length, run) => {
       f_vacant: landcare ? between(20, 45) : between(55, 100),
       f_shoot: Math.min(100, Math.max(0, Math.round(25 + 60 * xNorm + between(-10, 10)))),
       f_poverty: Math.min(100, Math.max(0, poverty + between(-3, 3))),
-      sg: building ? 'seal_abandoned_building' : landcare ? '' : 'clean_and_green',
+      // As the pipeline does: every vacant lot gets clean and green (for a LandCare lot, through
+      // Community LandCare), every vacant building gets sealed.
+      sg: building ? 'seal_abandoned_building' : 'clean_and_green',
     };
     if (OWNER_OVERRIDES[n] !== undefined) properties.ot = OWNER_OVERRIDES[n];
     properties.rt = firstStepFor(properties, n);

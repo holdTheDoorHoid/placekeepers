@@ -508,6 +508,7 @@ def test_the_map_shows_the_models_parcels_with_their_reasons(run_ctx, tmp_path) 
         "lc": 0,
         "rs": bits("city_building", "sealed"),
         "n": 1,
+        "sg": "seal_abandoned_building",
         "sy": 2025,
     }
     assert properties["400000003"]["dy"] == 2024
@@ -515,6 +516,9 @@ def test_the_map_shows_the_models_parcels_with_their_reasons(run_ctx, tmp_path) 
     assert properties["400000007"]["lc"] == 1
     # LandCare by its shape (no account on PHS's record): Community LandCare comes first.
     assert properties["400000007"]["rt"] == 1
+    # The same suggestions as each parcel's dossier: lots are greened, buildings sealed.
+    assert properties["400000004"]["sg"] == "clean_and_green"
+    assert properties["400000007"]["sg"] == "clean_and_green"
     notes = published.manifest["notes"]
     assert (
         "Vacancy model as of 2026-10-04: lots 1 very likely vacant, 2 probably, 5 not sure; "

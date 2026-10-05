@@ -321,6 +321,11 @@ list of public property decides first (`PUB` 3, `PLB` 4, `PRA` 5, `PHDC` 8), the
 as OPA publishes them, by documented patterns (public bodies, company forms, nonprofit words, a
 person's name). The dossier's `owner.type` gives the same type by name (section 6).
 
+`sg` is written for every parcel from 2026-10-04 (M1.7; the table listed it before the pipeline
+wrote it): the parcel's suggestion ids as its dossier lists them (`derive.routes.suggestions_for`),
+`clean_and_green` for a vacant lot (a LandCare lot too, whose first step is then Community LandCare)
+and `seal_abandoned_building` for a vacant building, limited to the suggestions the registry has.
+
 `rt`, the first lawful step to get permission for the parcel (added 2026-10-04): the first route
 the parcel's dossier lists (`placekeepers.derive.routes.routes_for`, from the same owner type, owner
 names and LandCare record), so a lot's map value and its dossier always agree. Codes never change
