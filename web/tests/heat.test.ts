@@ -280,6 +280,23 @@ describe('the heat and shade lens', () => {
     expect(view.summary.lens?.id).toBe('heat');
     expect(view.summary.flood).toBe(strings.dossier.summary.flood[1]);
     expect(view.summary.why?.factors.some((f) => f.id === 'flood')).toBe(false);
+    // Planting shade trees lists, after the permission to use the land, the free street trees
+    // and TreePhilly's giveaway trees.
+    const plantView = buildDossier({
+      opa: '990000022',
+      registry: reg,
+      state,
+      manifest: null,
+      shard: { status: 'loading' } as never,
+      tile: { ...fixtureLots.find((f) => f.properties.id === '990000022')!.properties },
+      live: IDLE_PARTS,
+      liveOn: false,
+      center: null,
+      now: new Date('2026-10-05T12:00:00Z'),
+    });
+    const plant = plantView.actions.suggestions.find((s) => s.suggestion.id === 'plant_shade_trees')!;
+    expect(plant.routes.map((r) => r.route.id).slice(-2)).toEqual(['street_tree_request', 'treephilly_yard_trees']);
+    expect(plantView.actions.suggestions[0]!.suggestion.id).toBe('plant_shade_trees');
     const withoutFlood = { ...tile };
     delete withoutFlood.fp;
     const scoreWith = explainScore(heatLens, state.weights.heat, tile).score;
