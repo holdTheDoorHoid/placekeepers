@@ -9,6 +9,8 @@ export const GREENING_SUGGESTIONS: ReadonlySet<string> = new Set([
   // The heat and shade lens (M3.1): planting trees and greening to cool are greening too.
   'plant_shade_trees',
   'cool_green_lot',
+  // Shade trees at a bus stop (M2.3) are greening as well.
+  'stop_shade_trees',
 ]);
 
 export function isGreening(suggestionId: string): boolean {
