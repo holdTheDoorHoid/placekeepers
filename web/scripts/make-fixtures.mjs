@@ -556,8 +556,7 @@ const manifest = {
     street_centerlines: ok(41252, null),
     memorial_names: ok(0, null),
     osm_philadelphia: ok(3338, '2026-10-03'),
-    // Heat, trees and the floodplain (M3.1)
-    heat_vulnerability: ok(384, null),
+    // Heat, trees and the floodplain (M3.1); heat_vulnerability is listed with M2.3's sources below
     street_trees: ok(151726, '2025-11-20'),
     fema_floodplain: ok(883, null),
     // The pipeline lists the base map's source but never fetches it: the site makes the base map.
