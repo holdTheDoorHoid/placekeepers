@@ -462,9 +462,10 @@ class SeptaStopRidership(ArcgisAdapter):
         except Exception as exc:  # the registry's layer still works
             self.notes.append(f"SEPTA's list of layers could not be read ({exc})")
             return self.endpoint.service
+        services = listing.get("services") if isinstance(listing, dict) else None
         names = [
             str(service.get("name") or "")
-            for service in (listing.get("services") or [])
+            for service in (services if isinstance(services, list) else [])
             if isinstance(service, dict)
         ]
         return newest_layer(names, self.mode, self.endpoint.service)
