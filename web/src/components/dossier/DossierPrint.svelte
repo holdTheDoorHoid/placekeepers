@@ -45,12 +45,14 @@
     {#if m.owner.mailing}<p>{s.owner.mailing}: {m.owner.mailing}</p>{/if}
     <p>{s.owner.type}: {m.owner.type}</p>
     {#each m.owner.flags as flag (flag.title + flag.text)}<p><strong>{flag.title}:</strong> {flag.text}</p>{/each}
+    {#if m.owner.held}<p>{m.owner.held}</p>{/if}
     <p>{m.owner.tax}</p>
     {#if m.owner.deedFraud}<p class="note">{m.owner.deedFraud}</p>{/if}
   </section>
 
   <section>
     <h2>{s.print.recent}</h2>
+    {#if m.history.notInCopy}<p>{m.history.notInCopy}</p>{/if}
     {#if m.history.transfers.length}
       <table>
         <caption>{s.history.transfersCaption}</caption>

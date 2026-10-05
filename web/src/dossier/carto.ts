@@ -53,12 +53,16 @@ export function pointSql(lng: unknown, lat: unknown): string {
   return `ST_SetSRID(ST_MakePoint(${lng.toFixed(6)}, ${lat.toFixed(6)}), 4326)`;
 }
 
-/** The property record: owner, mailing address, the City's description and the point. */
+/**
+ * The property record: owner, mailing address, the City's description, the point, and whether the
+ * owner has a homestead exemption (only whether it is there: it rules out conservatorship and the
+ * possible estate flag, docs/CONTRACTS.md section 6).
+ */
 export function propertySql(opa: string): string {
   return (
     'SELECT parcel_number, location, owner_1, owner_2, mailing_care_of, mailing_address_1, mailing_address_2, ' +
     'mailing_street, mailing_city_state, mailing_zip, category_code_description, building_code_description, ' +
-    'sale_date, sale_price, market_value, ST_Y(the_geom) AS lat, ST_X(the_geom) AS lng ' +
+    'sale_date, sale_price, market_value, homestead_exemption, ST_Y(the_geom) AS lat, ST_X(the_geom) AS lng ' +
     `FROM opa_properties_public WHERE parcel_number = ${accountLiteral(opa)} LIMIT 1`
   );
 }
@@ -204,6 +208,7 @@ export function readProperty(opa: string, rows: Row[]): LiveProperty | null {
     saleDate: cityDate(row.sale_date),
     salePrice: wholeDollars(row.sale_price),
     marketValue: wholeDollars(row.market_value),
+    homestead: (num(row.homestead_exemption) ?? 0) > 0,
     lng: lng !== null && lat !== null ? lng : null,
     lat: lng !== null && lat !== null ? lat : null,
   };

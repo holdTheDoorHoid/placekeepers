@@ -202,7 +202,7 @@ data/
     boundaries.pmtiles    layers "council_districts", "rcos", "neighborhoods"
   tables/
     parcels.json          compact columnar table for ranking and lists
-    owners.json           owners holding many vacant parcels, with their parcels (section 6)
+    owners.json           organizations holding many vacant parcels, with their parcels (section 6)
   dossiers/
     <first four digits of the OPA account>.json
     common.json           the parts of every flag that are the same for all parcels (section 6)
@@ -487,8 +487,10 @@ The lot dossier (milestone M1.6) reads them.
 **Which parcels.** Every candidate parcel (`pipeline/src/placekeepers/candidates.py`: on either City
 vacancy list, owned by the City, the Land Bank, the Redevelopment Authority or PHDC, in PHS
 LandCare, vacant land or a vacant exterior to the assessor, cleaned and sealed or demolished since
-2016, or on the unsafe or imminently dangerous lists), and every parcel the vacancy model shows,
-that OPA or the City's list of public property still knows. Any other parcel is looked up live.
+2016, on the unsafe or imminently dangerous lists, or the subject of a vacancy complaint to L&I
+since 2023), and every parcel the vacancy model shows,
+that OPA or the City's list of public property still knows (outside the candidates, a dossier says
+in `partial` which records it was not built from). Any other parcel is looked up live.
 
 **Files** (changed 2026-10-04 by the orchestrator, so one lot opens fast on a phone): a parcel's
 dossier is in `dossiers/<first four digits of its 9 digit OPA account>.json`, which holds only
@@ -577,9 +579,9 @@ lines as the City publishes them, joined with commas (or `null`); `type`, one of
 `other_public`, `unknown` (the names of the `ot` codes, section 4); `type_reason`, a sentence saying
 why; `city_owned` (only for parcels on the City's list of public property): `agency` (`PUB` the City,
 `PLB` the Land Bank, `PRA` the Redevelopment Authority, `PHDC`), `status` as the City writes it, and
-`side_yard_eligible`; `flags`; `notice` (`"deed_fraud"`, shown with the flags of an owner who is a
-person or may be an estate); and `help` (the Tangled Title Fund and Fraud Guard route ids, on every
-dossier of a private owner with a flag).
+`side_yard_eligible`; `flags`; `notice` (`"deed_fraud"`, on the dossier of an owner who is a person
+or may be an estate whenever it shows any flag); and `help` (the Tangled Title Fund and Fraud Guard
+route ids, on every dossier of a private owner with a flag).
 
 Flags, in this order, with their `data`:
 
@@ -590,7 +592,7 @@ Flags, in this order, with their `data`:
 | `tax_debt_2025` | every owner | `as_of` ("2025-07-09"), `total_due` (dollars), `years` (tax years owed) |
 | `sheriff_sales` | every owner | `sales`: `date` and `price` of each, oldest first |
 | `years_since_sale` | private owners | `year`; with a known sale `date`, `price` and `source` (`opa_properties` when it comes from the assessor, before the deed records begin in 2000); with none, `sold: false` and `year` is the year since which there has been no sale on the open market |
-| `many_parcels` | private owners with at least 5 parcels we call vacant with high or medium confidence | `count`, `list` (a key of `tables/owners.json`) |
+| `many_parcels` | private owners with at least 5 parcels we call vacant with high or medium confidence | `count`; for an organization `list` (a key of `tables/owners.json`); for an owner who may be a person `parcels`, their other parcels (each `id`, `address`, `kind`, `confidence`, as in `tables/owners.json`), never a `list` |
 | `fast_resales` | every owner | `count`, `dates` (two or more sales within 24 months of each other) |
 | `open_violations` | every owner | `count`, `last` (date), `title` (the City's violation title) |
 | `unsafe`, `imminently_dangerous` | every owner | `since` (date) |
@@ -598,6 +600,15 @@ Flags, in this order, with their `data`:
 Private owners are a person, a company, a nonprofit, or an owner name we could not type. How each
 flag is computed is in `pipeline/src/placekeepers/derive/` (`owners.py`, `transfers.py`,
 `flags.py`); every sentence is in `wording.py`.
+
+**Held back on a parcel that may be someone's home** (added 2026-10-04, docs/VERIFICATION.md D5
+and D6). For an owner who may be a person (`type` `individual` or `unknown`, or a private owner
+whose names carry an estate), the flags about the owner (`absentee`, `possible_estate`,
+`tax_debt_2025`, `many_parcels`) appear only when `vacancy.confidence` is `high` or `medium`.
+`possible_estate` never appears on a parcel with a homestead exemption. The owner's names and
+mailing address, and the flags about the parcel (`sheriff_sales`, `years_since_sale`,
+`fast_resales`, `open_violations`, `unsafe`, `imminently_dangerous`), are unchanged; organizations
+keep every flag. The rule is `owner_flag_allowed` in `derive/flags.py`.
 
 **`transfers`**: every deed, newest first: every document type that names a deed, and certificates
 of stock transfer. Mortgages and other filings are left out. Changed 2026-10-04 by M1.6b, as the
@@ -621,9 +632,22 @@ market value]` pairs, newest year first.
 `imminently_dangerous_since`, `sealed` (the last completed clean and seal) and `demolished` (the
 last completed demolition). L&I case numbers are never published.
 
+**`partial`** (added 2026-10-04, docs/VERIFICATION.md D9; only when not empty): the parts this
+dossier was not built from, in this order: `transfers`, `assessments`, `li`. Deeds, assessments and
+L&I violations are downloaded only for the candidate parcels, so a parcel the vacancy model shows
+outside them (or any parcel, while one of those sources has no snapshot) has no such records in the
+weekly copy. A part named here is `null` (`transfers`, `assessments`) or has `open_violations`,
+`last_violation` and `violations` `null` (`li`; its unsafe, imminently dangerous, clean and seal and
+demolition entries come from citywide lists and stay), and `years_since_sale` is left out unless
+OPA's own last sale gives it. The lot page then says these records are not in the weekly copy and
+offers live City data, never "No deeds on record." or zero violations. A parcel that is no longer a
+candidate but has records in the snapshot is not partial.
+
 **`routes`**: registry route ids in the order to try them (docs/ROUTES.md; rules in
 `derive/routes.py`). Conservatorship appears only for a private parcel we call vacant with high or
-medium confidence: a parcel we are not sure about may be someone's home.
+medium confidence: a parcel we are not sure about may be someone's home. It never appears for a
+parcel with a homestead exemption (OPA's `homestead_exemption` above 0), at any confidence: the
+City's own record that someone lives there, or did (added 2026-10-04, docs/VERIFICATION.md D1).
 **`suggestions`**: registry suggestion ids (a vacant lot gets `clean_and_green`, a vacant building
 `seal_abandoned_building`).
 
@@ -638,7 +662,9 @@ out when the parcel has no point.
 
 Never in a dossier (docs/ETHICS.md, checked by `tests/test_dossiers.py`): an acquisition price
 estimate, any score or order of how easy a parcel would be to take, letters to owners, and personal
-details beyond the owner names and mailing address the City publishes.
+details beyond the names of owners past and present and the current mailing address. Seller and
+buyer names on deeds (`from` and `to` in `transfers`) are published: they are owners of record over
+time, as the City shows them (decided 2026-10-04, docs/VERIFICATION.md D4).
 
 The live refresh in the browser may update `owner`, `transfers`, `assessments` and `li` from the
 City's Carto API; anything it cannot refresh stays as in the shard, labeled with the shard's date.
@@ -646,7 +672,9 @@ City's Carto API; anything it cannot refresh stays as in the shard, labeled with
 How the web app does it (added 2026-10-04 by M1.6, `web/src/dossier/`). Each part is one request to
 `https://phl.carto.com/api/v2/sql`, built only from the nine digit account (or, to find the parcel
 under a tap, a point inside the city), never from typed text, with a 10 second limit:
-`opa_properties_public` for the owner names, mailing address and the City's description;
+`opa_properties_public` for the owner names, mailing address, the City's description and whether
+the owner has a homestead exemption (with one, the page drops conservatorship from the shard's
+routes);
 `rtt_summary` for every deed with the same fields as `transfers` (the date on the deed and the
 adjusted total, with the same fallbacks); `assessments`; and one query over `violations`, `permits`, `demolitions`, `unsafe`,
 `imm_dang` and `clean_seal` for the L&I timeline. A part that answers replaces the shard's part
@@ -657,7 +685,11 @@ pipeline's rules (`absentee` and `possible_estate` from the owner, `sheriff_sale
 `imminently_dangerous` from L&I), giving exactly the pipeline's sentences:
 `pipeline/tests/fixtures/wording_parity.json`, written by `pipeline/tests/wording_cases.py`, holds
 cases with the pipeline's answers, and the pipeline's and the web app's tests both check it.
-`tax_debt_2025` and `many_parcels` stay as in the shard. When the
+`tax_debt_2025` and `many_parcels` stay as in the shard. Every flag is then held back by the
+pipeline's rule above (`ownerFlagAllowed` in `web/src/dossier/flags.ts`, checked against the same
+parity cases), with the vacancy call from the shard (or the map, for a parcel without a dossier)
+and the homestead exemption from the live record; the page then says why notes about the owner are
+not shown, and never that there is no tax debt. When the
 City names different owners than the shard, the flags about the earlier owner are left out. A
 parcel with no dossier (its prefix is not in the manifest's `dossiers.prefixes`, or it is not in
 its shard) gets a page built only from these lookups, plus counts within 500 feet of its point
@@ -680,10 +712,15 @@ from City records is shown as published, except that a dash used as punctuation 
 }
 ```
 
-Every private owner holding at least `min_parcels` parcels we call vacant with high or medium
-confidence, keyed by the `list` id of its `many_parcels` flag, with each parcel's OPA account, address
-and vacancy `kind` and `confidence`, so "this owner's list" shows without opening any shard. Owners
+Every organization (a company or a nonprofit) holding at least `min_parcels` parcels we call vacant
+with high or medium confidence, keyed by the `list` id of its `many_parcels` flag, with each parcel's
+OPA account, address and vacancy `kind` and `confidence`, so "this owner's list" shows without
+opening any shard. An owner who may be a person (typed `individual` or `unknown`, or whose names
+carry an estate) is never in this file, so no citywide file lists people's holdings: each of their
+parcels' `many_parcels` flag carries their other parcels in `data.parcels`, and the lot page lists
+them from there (changed 2026-10-04, docs/VERIFICATION.md D3). Owners
 are matched conservatively: two parcels share an owner only when all their owner names match after
 spelling is evened out (capitals, no punctuation, "L.L.C." as LLC, "&" as AND), so one owner under
 two spellings counts twice and two owners are never merged. Public owners are left out: the City
-lists its own holdings. On 2026-10-04: 464 owners, 449 kB (70 kB compressed), one file.
+lists its own holdings. On 2026-10-04: 366 organizations, 374 kB (57 kB compressed), one file; the
+95 owners who may be people that hold five or more are listed on their own 819 parcels instead.

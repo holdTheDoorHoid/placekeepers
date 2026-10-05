@@ -16,7 +16,8 @@ The made up parcels, all near Fairhill (every name and record is invented):
     374000002  WALLACE GLORIA, cleaned and sealed in 2019, not on a vacancy list
     375000001  CEDAR HOLDINGS LLC, a lot with a community garden on it, in Community LandCare
     376000001  an account only an old L&I record knows (no dossier)
-    885000001  OWENS TERRENCE, a vacant lot with a different account prefix
+    885000001  OWENS TERRENCE, a vacant lot with a different account prefix; he has a homestead
+               exemption (the City's record that someone lives there), so no conservatorship
     372000006  KENSINGTON LOTS LLC again, a lot only the vacancy model finds (the model test)
 """
 
@@ -35,7 +36,7 @@ import shapely
 from shapely.geometry import Point, box
 
 from placekeepers.derive import wording
-from placekeepers.derive.flags import FLAG_NOTES, NOTICES, full_flag
+from placekeepers.derive.flags import FLAG_NOTES, HELP_ROUTES, NOTICES, full_flag
 from placekeepers.publish import publish
 from placekeepers.registry import load_registry
 
@@ -185,8 +186,18 @@ OPA_ROWS = [
 ]
 
 
-def opa_table() -> pa.Table:
+def opa_table(
+    homestead: dict[str, int] | None = None,
+    owners: dict[str, str] | None = None,
+    changes: dict[str, dict[str, Any]] | None = None,
+) -> pa.Table:
+    """OPA's records of the made up parcels; `homestead` replaces the homestead exemptions,
+    `owners` the first owner name of the accounts it names, and `changes` any other fields."""
+    exemptions = HOMESTEAD if homestead is None else homestead
     rows = [dict(zip(OPA_KEYS, row, strict=True)) for row in OPA_ROWS]
+    for row in rows:
+        row["owner_1"] = (owners or {}).get(row["parcel_number"], row["owner_1"])
+        row.update((changes or {}).get(row["parcel_number"], {}))
     out: dict[str, list[Any]] = {name: [] for name in OPA_COLUMNS}
     for row in rows:
         lng, lat = where(row["parcel_number"])
@@ -206,14 +217,23 @@ def opa_table() -> pa.Table:
         out["lng"].append(lng)
         out["category_code"].append(row["category_code"])
         out["exterior_condition"].append(None)
+        out["homestead_exemption"].append(exemptions.get(row["parcel_number"], 0))
     return pa.table(
         {
-            **{k: out[k] for k in OPA_COLUMNS if k not in {"sale_date", "sale_price"}},
+            **{
+                k: out[k]
+                for k in OPA_COLUMNS
+                if k not in {"sale_date", "sale_price", "homestead_exemption"}
+            },
             "sale_date": pa.array(out["sale_date"], pa.date32()),
             "sale_price": pa.array(out["sale_price"], pa.int64()),
+            "homestead_exemption": pa.array(out["homestead_exemption"], pa.int64()),
         }
     )
 
+
+#: owner occupied homestead exemptions, in dollars, by account (every other account has none)
+HOMESTEAD = {"885000001": 100000}
 
 OPA_KEYS = (
     "parcel_number",
@@ -244,6 +264,7 @@ OPA_COLUMNS = (
     "lng",
     "category_code",
     "exterior_condition",
+    "homestead_exemption",
 )
 
 
@@ -636,6 +657,45 @@ def test_an_owner_with_many_vacant_parcels_links_to_the_list(built) -> None:
     assert parcel(out, "372000005")["li"]["demolished"] == "2017-02-01"
 
 
+def test_a_person_with_many_vacant_parcels_is_never_in_the_owners_table(
+    context_factory, tmp_path
+) -> None:
+    # docs/VERIFICATION.md D3: the citywide owners table lists organizations only. A person who
+    # holds five or more vacant parcels keeps the flag on those parcels, and each of their lot
+    # pages lists their other parcels from its own dossier entry.
+    ctx = context_factory(now=NOW)
+    install_everything(ctx)
+    lots = [f"37200000{i}" for i in range(1, 6)]
+    install_snapshot(
+        ctx,
+        "opa_properties",
+        opa_table(owners=dict.fromkeys(lots, "PARKER JAMES")),
+        geometry=False,
+        fetched_at="2026-10-04T14:30:00Z",
+    )
+    out = tmp_path / "data"
+    result = publish(ctx, out)
+    table = json.loads((out / "tables" / "owners.json").read_text(encoding="utf-8"))
+    assert table["owners"] == {}
+    assert "PARKER" not in (out / "tables" / "owners.json").read_text(encoding="utf-8")
+    assert result.dossiers.owners_listed == 0 and result.dossiers.people_listed == 1
+    for account in lots:
+        record = parcel(out, account)
+        assert record["owner"]["type"] == "individual"
+        many = {flag["id"]: flag for flag in record["owner"]["flags"]}["many_parcels"]
+        assert many["text"] == "This owner holds 5 vacant parcels in the city."
+        assert "list" not in many["data"]
+        others = many["data"]["parcels"]
+        assert [item["id"] for item in others] == [a for a in lots if a != account]
+        assert others[0] == {
+            "id": lots[1] if account == lots[0] else lots[0],
+            "address": "2904 N 5TH ST" if account == lots[0] else "2902 N 5TH ST",
+            "kind": "lot",
+            "confidence": "medium",
+        }
+        assert record["owner"]["notice"] == "deed_fraud"
+
+
 def test_land_bank_and_redevelopment_authority_lots(built) -> None:
     _, out = built
     land_bank = parcel(out, "373000001")
@@ -686,6 +746,17 @@ def test_no_conservatorship_where_we_do_not_call_the_parcel_vacant(built) -> Non
     assert record["li"]["sealed"] == "2019-06-01"
     sale = {flag["id"]: flag for flag in record["owner"]["flags"]}["years_since_sale"]
     assert sale["text"] == "Not sold on the open market since at least 1999."
+
+
+def test_no_conservatorship_on_a_parcel_with_a_homestead_exemption(built) -> None:
+    # docs/VERIFICATION.md D1: a homestead exemption is the City's own record that someone lives
+    # there (or did), so conservatorship is never offered, whatever the vacancy call.
+    _, out = built
+    home = parcel(out, "885000001")
+    assert home["owner"]["type"] == "individual"
+    assert home["vacancy"]["confidence"] == "medium"
+    assert home["routes"] == ["ask_the_owner"]
+    assert parcel(out, "371000001")["routes"] == ["ask_the_owner", "conservatorship"]
 
 
 def test_a_garden_lot_in_community_landcare(built) -> None:
@@ -977,7 +1048,7 @@ def test_the_dossier_and_the_map_follow_the_vacancy_model(context_factory, tmp_p
         ],
     )
     out = tmp_path / "data"
-    publish(ctx, out)
+    notes = publish(ctx, out).manifest["notes"]
 
     assert parcel(out, "371000001")["vacancy"] == {
         "kind": "lot",
@@ -999,8 +1070,18 @@ def test_the_dossier_and_the_map_follow_the_vacancy_model(context_factory, tmp_p
     left_out = parcel(out, "885000001")
     assert left_out["vacancy"] is None and left_out["suggestions"] == []
     assert left_out["routes"] == ["ask_the_owner"]
-    # The vacancy model's own parcels get dossiers too, even outside the candidates.
-    assert parcel(out, "372000006")["vacancy"]["confidence"] == "medium"
+    # The vacancy model's own parcels get dossiers too, even outside the candidates. Their deeds,
+    # assessments and violations were never downloaded, so the dossier says so instead of
+    # claiming there are none (docs/VERIFICATION.md D9).
+    outside = parcel(out, "372000006")
+    assert outside["vacancy"]["confidence"] == "medium"
+    assert outside["partial"] == ["transfers", "assessments", "li"]
+    assert outside["transfers"] is None and outside["assessments"] is None
+    assert outside["li"]["open_violations"] is None and outside["li"]["violations"] is None
+    assert outside["li"]["last_violation"] is None and outside["li"]["unsafe"] is False
+    assert "years_since_sale" in {f["id"] for f in outside["owner"]["flags"]}  # OPA's last sale
+    assert "partial" not in parcel(out, "372000001")
+    assert any("lack records downloaded only for candidate parcels" in note for note in notes)
     # Five parcels called vacant with high or medium confidence; the low one does not count.
     flags = {flag["id"]: flag for flag in parcel(out, "372000001")["owner"]["flags"]}
     assert flags["many_parcels"]["text"] == "This owner holds 5 vacant parcels in the city."
@@ -1040,6 +1121,82 @@ def test_the_dossier_and_the_map_follow_the_vacancy_model(context_factory, tmp_p
         "373000001": 4,
         "374000002": 1,
     }
+
+
+def test_flags_about_an_owner_who_may_be_a_person_wait_for_a_vacancy_call(
+    context_factory, tmp_path
+) -> None:
+    # docs/VERIFICATION.md D5 and D6: on a parcel we do not call vacant with high or medium
+    # confidence, which may be someone's home, the flags about an owner who may be a person are
+    # held back; possible estate never shows with a homestead exemption.
+    ctx = context_factory(now=NOW)
+    install_everything(ctx)
+    install_snapshot(
+        ctx,
+        "opa_properties",
+        opa_table({**HOMESTEAD, "374000001": 100000}),
+        geometry=False,
+        fetched_at="2026-10-04T14:30:00Z",
+    )
+    write_model(
+        ctx,
+        [
+            # opa, kind, k, confidence, vc, lc, rs, n, dy, sy, ny
+            ("371000001", "lot", 1, "low", 1, 0, 1, 1, None, None, None),
+            *[(f"37200000{i}", "lot", 1, "low", 1, 0, 1, 1, None, None, None) for i in range(1, 6)],
+            ("374000001", "building", 2, "high", 3, 0, 2, 2, None, None, None),
+        ],
+    )
+    out = tmp_path / "data"
+    publish(ctx, out)
+
+    home = parcel(out, "371000001")
+    owner = home["owner"]
+    # Absentee and tax debt are held back; the facts about the parcel stay, and so do the
+    # owner's name and mailing address as the City publishes them.
+    assert [flag["id"] for flag in owner["flags"]] == [
+        "sheriff_sales",
+        "years_since_sale",
+        "open_violations",
+    ]
+    assert owner["names"] == ["MORALES ROSA"]
+    assert owner["mailing"] == "41 ORCHARD RD, CHERRY HILL NJ 08002"
+    assert owner["notice"] == "deed_fraud" and owner["help"] == HELP_ROUTES
+    assert home["routes"] == ["ask_the_owner"]
+    # A company keeps every flag on a parcel we are not sure about.
+    company = {flag["id"] for flag in parcel(out, "372000001")["owner"]["flags"]}
+    assert "years_since_sale" in company
+    # A possible estate on a parcel with a homestead exemption: no estate flag and no
+    # conservatorship, even where we call the building very likely vacant.
+    estate = parcel(out, "374000001")
+    assert [flag["id"] for flag in estate["owner"]["flags"]] == [
+        "years_since_sale",
+        "unsafe",
+        "imminently_dangerous",
+    ]
+    assert estate["owner"]["notice"] == "deed_fraud"
+    assert estate["routes"] == ["ask_the_owner"]
+
+
+def test_no_claim_of_no_sale_from_deeds_never_downloaded(context_factory, tmp_path) -> None:
+    # A parcel outside the candidates has no deeds in the snapshot, so "Not sold on the open
+    # market since at least 2000" would rest on records never downloaded: without OPA's own last
+    # sale, the dossier leaves the flag out.
+    ctx = context_factory(now=NOW)
+    install_everything(ctx)
+    install_snapshot(
+        ctx,
+        "opa_properties",
+        opa_table(changes={"372000006": {"sale_date": None, "sale_price": None}}),
+        geometry=False,
+        fetched_at="2026-10-04T14:30:00Z",
+    )
+    write_model(ctx, [("372000006", "lot", 1, "medium", 2, 0, 4 | 8, 2, None, None, None)])
+    out = tmp_path / "data"
+    publish(ctx, out)
+    outside = parcel(out, "372000006")
+    assert outside["partial"] == ["transfers", "assessments", "li"]
+    assert "years_since_sale" not in {flag["id"] for flag in outside["owner"]["flags"]}
 
 
 def test_deeds_carry_the_date_and_price_the_city_page_shows(tmp_path: Path) -> None:

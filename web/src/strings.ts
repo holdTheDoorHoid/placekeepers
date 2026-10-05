@@ -812,6 +812,8 @@ export const strings = {
       type: 'Kind of owner',
       flagsTitle: 'What City records suggest',
       noFlags: 'Nothing in City records calls for a note about this owner.',
+      heldBack:
+        'We are not sure this parcel is vacant, so it may be someone\'s home. Notes about an owner who may be a person (where they get mail, a possible estate, tax debt, other parcels they own) appear only on parcels we call very likely or probably vacant.',
       ownerChanged:
         'City records name a different owner than our weekly snapshot did, so notes that were about the earlier owner are left out.',
       parts: { meaning: 'What it means', careful: 'Be careful', next: 'A careful next step' },
@@ -832,6 +834,8 @@ export const strings = {
       taxNoDebt:
         'The City no longer publishes each property\'s tax balance as open data. The July 2025 snapshot we have does not show unpaid taxes here.',
       taxUnknown: 'The City no longer publishes each property\'s tax balance as open data.',
+      taxHeld:
+        'The City no longer publishes each property\'s tax balance as open data. Our July 2025 snapshot is shown for an owner who may be a person only on parcels we call very likely or probably vacant.',
       taxCenter: 'Check today\'s balance on the City\'s Tax Center',
       deedFraudTitle: 'Protect this property from deed theft',
       deedFraud:
@@ -945,6 +949,11 @@ export const strings = {
       share: (n: number) => `this property's share of one deed for ${n} properties`,
       more: (n: number) => `and ${plural(n, 'other', 'others')}`,
       noTransfers: 'No deeds on record.',
+      notInCopy: (parts: string[]) =>
+        `Our weekly copy does not include ${parts.length > 1 ? `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}` : parts[0]} for this parcel, so this page cannot say whether there are any.`,
+      partialParts: { transfers: 'deed records', assessments: 'assessments', li: 'L&I violation records' } as Record<string, string>,
+      notInCopyOff: 'Live City data can show them.',
+      notInCopyFailed: 'The City did not answer. Try again to see them.',
       recordsNote: 'City deed records are complete from 2000 on. Older sales may be missing.',
       datesNote:
         'Each date is the date on the deed and each price is rounded to the dollar, as the City\'s property page shows them; the City records a deed days or weeks later. When one deed covered several properties, the price is this property\'s share.',
@@ -1034,6 +1043,7 @@ export const strings = {
     ownerList: {
       title: 'This owner\'s parcels on our list',
       intro: (names: string) => `Parcels on our list whose owner is recorded as ${names}.`,
+      others: 'Other parcels on our list whose owner is recorded under the same names as this one.',
       loading: 'Loading the list',
       missing: 'This list is not available right now.',
       open: (address: string) => `Open the lot page for ${address}`,

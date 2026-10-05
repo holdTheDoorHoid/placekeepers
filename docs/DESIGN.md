@@ -320,12 +320,25 @@ As built (M1.6, 2026-10-04):
   complete only from 2000; before that the assessor's last sale is used.
 - "Owner holds many vacant parcels" starts at five parcels the map calls vacant with high or medium
   confidence. Owners are matched by their exact names, so one owner under two spellings counts
-  twice, but two different owners are never merged.
+  twice, but two different owners are never merged. The citywide list of such owners
+  (`tables/owners.json`) holds organizations only; a person's other parcels are listed only on the
+  lot pages of their own parcels (decided 2026-10-04 by the orchestrator, docs/VERIFICATION.md D3).
 - Conservatorship appears only for a private parcel the map calls vacant with high or medium
   confidence, never for a parcel we are not sure about, which may be someone's home. Changed from
-  the first plan, which listed it for every private lot.
+  the first plan, which listed it for every private lot. It never appears for a parcel with a
+  homestead exemption, at any confidence: that is the City's own record that someone lives there,
+  or did (decided 2026-10-04 by the orchestrator, docs/VERIFICATION.md D1).
 - Every dossier of a private owner with a flag links to the Tangled Title Fund and Fraud Guard, and
   every dossier of a person (or a possible estate) with a flag shows the deed fraud notice.
+- On a parcel the map does not call very likely or probably vacant, which may be someone's home,
+  the notes about an owner who may be a person (where they get mail, a possible estate, tax debt,
+  other parcels they own) are held back, and the page says why. A possible estate is never shown
+  on a parcel with a homestead exemption. Organizations keep every note, and the facts about the
+  parcel (deeds, sheriff sales, violations) are always shown (decided 2026-10-04 by the
+  orchestrator, docs/VERIFICATION.md D5 and D6).
+- A lot page whose dossier was built without deeds, assessments or violation records (a parcel
+  outside the downloaded candidates) says those records are not in the weekly copy and offers live
+  City data; it never says "No deeds on record." or shows zero violations for them (D9).
 
 ### 5.7 Street safety and memorials
 

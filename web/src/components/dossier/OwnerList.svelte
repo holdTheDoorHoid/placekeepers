@@ -1,36 +1,45 @@
 <script lang="ts">
-  // An owner's parcels on our list (tables/owners.json), from the "many vacant parcels" flag. In
-  // the order the file gives (by account), never ranked; each opens its own lot page. The flag's
-  // careful note is repeated here: one owner can appear under several spellings, and holding
-  // vacant land is not wrongdoing by itself.
-  import { loadOwnerList, type OwnerList } from '../../dossier/owners-table.ts';
+  // An owner's parcels on our list, from the "many vacant parcels" flag: an organization's from
+  // tables/owners.json, a person's other parcels from the lot's own record (no citywide file lists
+  // people). In the order given (by account), never ranked; each opens its own lot page. The
+  // flag's careful note is repeated here: one owner can appear under several spellings, and
+  // holding vacant land is not wrongdoing by itself.
+  import { loadOwnerList, type OwnerList, type OwnerListTarget } from '../../dossier/owners-table.ts';
   import type { AppStore } from '../../state/store.svelte.ts';
   import { strings } from '../../strings.ts';
 
-  let { store, listId, dataBase, onOpen }: { store: AppStore; listId: string; dataBase: string; onOpen: (id: string) => void } =
-    $props();
+  let {
+    store,
+    target,
+    dataBase,
+    onOpen,
+  }: { store: AppStore; target: OwnerListTarget; dataBase: string; onOpen: (id: string) => void } = $props();
 
-  let list = $state.raw<OwnerList | null>(null);
-  let loading = $state(true);
   const s = strings.dossier;
+  // A person's other parcels are already here; an organization's list is fetched once.
+  const inline = $derived<OwnerList | null>('parcels' in target ? { names: [], parcels: target.parcels } : null);
+  let fetched = $state.raw<OwnerList | null>(null);
+  let loading = $state(true);
+  const list = $derived(inline ?? fetched);
 
   $effect(() => {
-    const id = listId;
+    const current = target;
+    if (!('listId' in current)) return;
     loading = true;
-    store.manifestReady.then(() => loadOwnerList(dataBase, id, store.manifest?.files ?? null)).then((found) => {
-      if (id !== listId) return;
-      list = found;
+    store.manifestReady.then(() => loadOwnerList(dataBase, current.listId, store.manifest?.files ?? null)).then((found) => {
+      if (current !== target) return;
+      fetched = found;
       loading = false;
     });
   });
 </script>
 
-{#if loading}
+{#if !inline && loading}
   <p class="muted">{s.ownerList.loading}</p>
 {:else if !list}
   <p class="notice">{s.ownerList.missing}</p>
 {:else}
-  <p>{s.ownerList.intro(list.names.join('; '))}</p>
+  <p>{inline ? s.ownerList.others : s.ownerList.intro(list.names.join('; '))}</p>
   <p class="muted small">{s.flags.many_parcels.careful}</p>
   <ul class="parcels">
     {#each list.parcels as parcel (parcel.id)}
