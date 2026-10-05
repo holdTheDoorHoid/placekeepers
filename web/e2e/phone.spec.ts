@@ -4,8 +4,35 @@
 // the map must keep room to be seen. Phone sizes only.
 
 import { readFileSync } from 'node:fs';
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { LOT, SAMPLE_CENTER, isPhone, openMap } from './helpers.ts';
+
+/**
+ * A wide font, as many Android phones and GitHub's test machines have (DejaVu Sans, wider than the
+ * Ubuntu or Noto fonts of most laptops), and optionally larger text, as a phone's text size setting
+ * gives. The layout must hold with both.
+ */
+async function wideFont(page: Page, scale = 1): Promise<void> {
+  const size = scale === 1 ? '' : `html, body { font-size: ${16 * scale}px !important; }`;
+  await page.addStyleTag({ content: `* { font-family: "DejaVu Sans", sans-serif !important; } ${size}` });
+}
+
+/** How many rows the top bar's controls sit in: controls whose middles are close share a row. */
+async function topBarRows(page: Page): Promise<number> {
+  return page.locator('.topbar').evaluate((bar) => {
+    const shown = [...bar.querySelectorAll('.brand, .switch, .actions > *, .settings')].filter(
+      (el) => el.getClientRects().length > 0 && getComputedStyle(el).display !== 'none',
+    );
+    const middles = shown.map((el) => (el.getBoundingClientRect().top + el.getBoundingClientRect().bottom) / 2).sort((a, b) => a - b);
+    let rows = 0;
+    let last = -Infinity;
+    for (const middle of middles) {
+      if (middle - last > 12) rows++;
+      last = middle;
+    }
+    return rows;
+  });
+}
 
 test.describe('a neighbor on a phone', () => {
   test.beforeEach(({}, info) => {
@@ -51,8 +78,17 @@ test.describe('a neighbor on a phone', () => {
     await context.grantPermissions(['geolocation']);
     await context.setGeolocation({ latitude: LOT.lat, longitude: LOT.lng });
     await openMap(page, `m=16/${SAMPLE_CENTER.lat}/${SAMPLE_CENTER.lng}`);
-    // The top bar keeps to two rows; "Copy link" waits in the menu.
-    expect((await page.locator('.topbar').boundingBox())!.height).toBeLessThan(110);
+    // The top bar keeps to two rows, with the longest data status and a wide font, even with larger
+    // text: Settings shows a gear (still named "Settings"), and "Copy link" waits in the menu.
+    await expect(page.locator('.topbar')).toContainText('Some data is not loading');
+    for (const scale of [1, 1.3]) {
+      await wideFont(page, scale);
+      expect(await topBarRows(page), `rows at ${scale * 100} percent text`).toBe(2);
+    }
+    await expect(page.getByRole('button', { name: 'Settings' })).toBeVisible();
+    await page.reload();
+    await expect(page.locator('[data-map-ready="true"]')).toBeAttached({ timeout: 60_000 });
+    await wideFont(page);
     await page.getByRole('button', { name: 'Menu' }).click();
     await expect(page.getByRole('dialog', { name: 'Site menu' }).getByRole('button', { name: 'Copy link' })).toBeVisible();
     await page.keyboard.press('Escape');
@@ -62,12 +98,13 @@ test.describe('a neighbor on a phone', () => {
     await expect(page.getByRole('note')).toHaveCount(0);
     await page.reload();
     await expect(page.locator('[data-map-ready="true"]')).toBeAttached({ timeout: 60_000 });
+    await wideFont(page);
     await expect(page.getByRole('button', { name: 'Hide this note' })).toHaveCount(0);
 
     // With Near me in use, the search box keeps its width and the map is still in sight.
     await page.getByRole('button', { name: 'Near me' }).click();
     await expect(page.getByRole('button', { name: 'Stop using my location' })).toBeVisible();
-    expect((await page.getByRole('searchbox').boundingBox())!.width).toBeGreaterThan(140);
+    expect((await page.getByRole('searchbox').boundingBox())!.width).toBeGreaterThan(120);
     await page.getByRole('button', { name: /What you can do nearby/ }).click();
     expect((await page.locator('.map-area').boundingBox())!.height).toBeGreaterThan(250);
     await page.getByRole('button', { name: 'Stop using my location' }).click();

@@ -157,10 +157,11 @@ As built (M1.10, interface review, 2026-10-04; details in
   (newest first). An entry says what the marker says before it is opened (how the person was
   traveling, the date and the place), never a name; opening it shows the same details as the marker.
 - **Phones.** Phones get the field view held either way up; turned sideways, the open sheet runs down
-  the left of the map. On the narrowest phones "Copy link" moves into the menu, so the top bar keeps
-  to two rows. The early preview note can be hidden once read (this browser remembers, under
-  `placekeepers:v1:note`). "Stop" sits beside the note that the location is in use, so the search
-  box keeps its width. The chips row fades at its edge to show it scrolls. Buttons, chips and
+  the left of the map. On the narrowest phones "Copy link" moves into the menu and Settings shows a
+  gear (still named "Settings" for screen readers), so the top bar keeps to two rows even with a
+  wide font or larger text. The note at the top (since v0.1, "Version 0.1: a first public
+  version") can be hidden once read (this browser remembers, under `placekeepers:v1:note`). "Stop"
+  sits beside the note that the location is in use, so the search box keeps its width. The chips row fades at its edge to show it scrolls. Buttons, chips and
   sliders are at least 40 pixels tall on touch screens.
 - **Loading.** The data layers download beside the base map instead of after it has drawn, and the
   label font is asked for early. On an emulated mid range phone (four times slower than this

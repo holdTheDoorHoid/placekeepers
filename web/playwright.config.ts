@@ -5,7 +5,14 @@
 
 import { defineConfig } from '@playwright/test';
 
-const PORT = 4317;
+// The port the tests build and serve their own copy of the site on: 4317, or another one named
+// with PK_E2E_PORT, so agents working side by side on one machine each test their own build:
+//   PK_E2E_PORT=4329 npm run e2e
+// If something already listens on that port the run stops at once with "is already used" (and
+// vite's --strictPort refuses it too), rather than silently testing another worktree's build. To
+// test a server you started yourself on purpose (for example `npm run preview:e2e`), add
+// PK_E2E_REUSE=1.
+const PORT = Number(process.env.PK_E2E_PORT ?? 4317);
 
 export default defineConfig({
   testDir: './e2e',
@@ -37,9 +44,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run build:e2e && npm run preview:e2e',
+    command: `npm run build:e2e && PK_E2E=1 npx vite preview --port ${PORT} --strictPort`,
     url: `http://localhost:${PORT}/placekeepers/`,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: process.env.PK_E2E_REUSE === '1',
     timeout: 240_000,
     stdout: 'ignore',
     stderr: 'pipe',
