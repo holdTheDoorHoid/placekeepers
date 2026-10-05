@@ -467,7 +467,7 @@ start at zoom 12.
 
 | Property | Type | Meaning |
 |---|---|---|
-| `id` | string | the Placekeepers stop key: `sp` and the SEPTA stop number when the stop was first seen (`sr` for Regional Rail), with `_2` and so on when that key is taken. It never changes and never moves to another stop. When SEPTA renumbers a stop in place (a new number within 30 meters with a similar name, the week the old one disappears), the stop keeps its key |
+| `id` | string | the Placekeepers stop key: `sp` and the SEPTA stop number when the stop was first seen (`sr` for Regional Rail), with `_2` and so on when that key is taken. It never changes and never moves to another stop. When SEPTA renumbers a stop in place (a new number within 30 meters with a similar name, when the old one disappears or within a year after), the stop keeps its key |
 | `sid` | string | SEPTA's stop number today (GTFS `stop_id`, also its `stop_code`) |
 | `fid` | string | earlier SEPTA numbers of this stop, newest first, comma separated; only when there are any |
 | `nm` | string | the stop name as SEPTA writes it, with its side of the street in words ("Broad St & Erie Av (far side)") and any other dash used as punctuation as a comma |
