@@ -110,6 +110,57 @@ test.describe('accessibility', () => {
     await expectAccessible(page, 'lot page');
   });
 
+  test('street blocks and crashes can be reached without the map, in both views', async ({ page }, info) => {
+    // Both layers on (the crash layer is off by default, the blocks layer in the field view).
+    const layers = 'l=vacant_parcels,segments,crashes,memorials';
+
+    // The field view: the sheet lists the blocks and crashes nearby, after the places and memorials.
+    await openMap(page, `v=f&m=16/${SAMPLE_CENTER.lat}/${SAMPLE_CENTER.lng}&${layers}`);
+    const sheet = page.getByRole('button', { name: /What you can do nearby/ });
+    await sheet.click();
+    await expect(page.getByRole('heading', { name: /Street blocks nearby/ })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Crashes nearby/ })).toBeVisible();
+    await expect(page.locator('[data-block]').first()).toContainText(/Priority \d+ of 100 for street safety\. Main reason: |No street safety score/);
+    await expect(page.locator('[data-block]').first()).toContainText(/feet from the middle of the map\./);
+    await expectAccessible(page, 'street blocks nearby');
+    // A block opens by keyboard to the same details as tapping it, and Escape gives focus back.
+    await page.locator('[data-block] button').first().focus();
+    const name = (await page.locator('[data-block] .name').first().textContent())!.trim();
+    await page.keyboard.press('Enter');
+    const details = page.getByRole('dialog', { name: 'Street block' });
+    await expect(details).toBeVisible();
+    await expect(details.getByRole('heading', { name })).toBeVisible();
+    await expectAccessible(page, 'street block details');
+    await page.keyboard.press('Escape');
+    await expect(details).toBeHidden();
+    await expect(page.locator('[data-block] button').first()).toBeFocused();
+    await page.locator('[data-crash] button').first().focus();
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('dialog', { name: 'Crash' })).toContainText(/Crash in \d{4}/);
+    await page.keyboard.press('Escape');
+
+    // The analysis view: a "Street blocks" tab in the drawer, highest priority first, then crashes.
+    await page.goto('about:blank');
+    await openMap(page, `v=a&m=15.4/${SAMPLE_CENTER.lat}/${SAMPLE_CENTER.lng}&${layers}`);
+    const tab = page.locator('#places-section').getByRole('button', { name: /Street blocks/ });
+    await expect(tab).toContainText(/\d+ blocks?/);
+    await tab.click();
+    const drawer = page.locator('#pk-drawer-blocks');
+    await expect(drawer.locator('[data-block]').first()).toBeVisible();
+    await expect(drawer.getByRole('heading', { name: /Crashes in view/ })).toBeVisible();
+    await expectAccessible(page, 'street blocks tab');
+    // Tab moves from the drawer's tab into the list; Enter opens the block in the details panel.
+    await tab.focus();
+    for (let i = 0; i < 10 && !(await drawer.locator('[data-block] button').first().evaluate((b) => b === document.activeElement)); i++) {
+      await page.keyboard.press('Tab');
+    }
+    await expect(drawer.locator('[data-block] button').first()).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(page.locator('#pk-right').getByRole('heading', { name: 'Street block' })).toBeVisible();
+    await expect(drawer.locator('[data-block] button').first()).toHaveAttribute('aria-pressed', 'true');
+    if (!isPhone(info)) await expectAccessible(page, 'street block in the details panel');
+  });
+
   test('content pages pass the checks and never scroll sideways', async ({ page }, info) => {
     await page.route(/^https?:\/\/(?!localhost[:/])/, (route) => route.abort());
     if (isPhone(info)) await page.setViewportSize({ width: 320, height: 640 });

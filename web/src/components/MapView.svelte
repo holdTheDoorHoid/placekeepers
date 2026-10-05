@@ -24,6 +24,8 @@
     store.viewBounds = controller.bounds();
     store.parcelsInView = controller.parcelsInView();
     store.memorialsInView = controller.memorialsInView();
+    store.segmentsInView = controller.segmentsInView();
+    store.crashesInView = controller.crashesInView();
     store.stopsInView = controller.stopsInView();
     const selected = store.state.selected;
     if (selected && !store.selectedProperties) {

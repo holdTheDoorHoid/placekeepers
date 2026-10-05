@@ -401,6 +401,7 @@ export const strings = {
     tabPlot: 'Need and first step',
     tabLists: 'Saved lists',
     tabMemorials: 'Memorials',
+    tabBlocks: 'Street blocks',
   },
 
   // The plot of need against the first step to get permission (docs/DESIGN.md section 5.4).
@@ -617,6 +618,22 @@ export const strings = {
     memorialsMore: (n: number) => `${plural(n, 'more memorial is', 'more memorials are')} in view. Zoom in to list them here.`,
     memorialsLayerOff: 'Turn on the Memorials layer to list the memorials in view.',
     memorialsNone: 'No memorials in this part of the map.',
+    // The street blocks and crashes drawn on the map, as lists (src/streets/blocks.ts).
+    blocksNearby: 'Street blocks nearby',
+    blocksInView: 'Street blocks in view',
+    blocksIntro: 'Each block drawn on the map, with its street safety priority and the main reason. Open one to read why.',
+    blockCount: (n: number) => plural(n, 'block', 'blocks'),
+    blockNoScore: 'No street safety score.',
+    blocksMore: (n: number) => `${plural(n, 'more block is', 'more blocks are')} in view. Zoom in to list them here.`,
+    blocksLayerOff: (layer: string) => `Turn on the layer "${layer}" to list the street blocks in view.`,
+    blocksNone: 'No street blocks are drawn in this part of the map.',
+    crashesNearby: 'Crashes nearby',
+    crashesInView: 'Crashes in view',
+    crashesIntro: 'From PennDOT crash records, as the crash layer\'s settings choose them. Open one to read more.',
+    crashCount: (n: number) => plural(n, 'crash', 'crashes'),
+    crashesMore: (n: number) => `${plural(n, 'more crash is', 'more crashes are')} in view. Zoom in to list them here.`,
+    crashNear: (street: string) => `Near ${street}`,
+    crashesNone: 'No crashes are drawn in this part of the map.',
     removal: 'Request removal',
     /** Beside "Request removal". No text promises an email address before it exists (docs/VERIFICATION.md, D7). */
     removalNote: (hasEmail: boolean) =>

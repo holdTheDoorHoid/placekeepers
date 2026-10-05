@@ -21,6 +21,9 @@
   import AddressSearch from '../search/AddressSearch.svelte';
   import FeatureDetails from '../streets/FeatureDetails.svelte';
   import MemorialList from '../streets/MemorialList.svelte';
+  import BlockList from '../streets/BlockList.svelte';
+  import CrashList from '../streets/CrashList.svelte';
+  import { blockEntries, crashEntries, nearestBlocks } from '../../streets/blocks.ts';
   import StopCard from '../transit/StopCard.svelte';
 
   let { store }: { store: AppStore } = $props();
@@ -35,6 +38,8 @@
   const MAX_CARDS = 25;
   /** Memorials listed under the cards, nearest first. */
   const MAX_MEMORIALS = 10;
+  /** Street blocks and crashes listed under the memorials, nearest first. */
+  const MAX_STREET = 10;
 
   let layersOpen = $state(false);
   let listsOpen = $state(false);
@@ -90,6 +95,21 @@
       ? [...store.memorialsInView].sort((a, b) => distanceMeters(anchor, a.lngLat) - distanceMeters(anchor, b.lngLat))
       : [],
   );
+
+  const shown = (style: unknown) => registry.layers.some((l) => styleFor(l) === style && store.state.layers.includes(l.id));
+  /** The street blocks and crashes drawn on the map, nearest first: the way to reach them without the map. */
+  const blocksShown = $derived(shown(STYLES.street_segments));
+  const crashesShown = $derived(shown(STYLES.crashes));
+  const blockList = $derived(nearby && (blocksShown || crashesShown) ? blockEntries(registry, store.state, store.segmentsInView) : []);
+  const blocks = $derived(blocksShown ? nearestBlocks(blockList, anchor) : []);
+  const crashes = $derived(
+    nearby && crashesShown
+      ? crashEntries(store.crashesInView, blockList)
+          .map((crash) => ({ ...crash, distance: distanceMeters(anchor, crash.lngLat) }))
+          .sort((a, b) => a.distance - b.distance || a.key.localeCompare(b.key))
+      : [],
+  );
+  const streetLens = $derived(registry.lenses.find((l) => l.applies_to === 'segment')?.label ?? '');
 
   /** The sheet's own button: where keyboard focus goes when the sheet closes under it. */
   let sheetToggle: HTMLButtonElement | undefined = $state();
@@ -232,6 +252,26 @@
         <p class="muted small">{strings.streets.memorialsIntro}</p>
         <MemorialList {store} memorials={memorials.slice(0, MAX_MEMORIALS)} />
         {#if memorials.length > MAX_MEMORIALS}<p class="muted small">{strings.streets.memorialsMore(memorials.length - MAX_MEMORIALS)}</p>{/if}
+      </section>
+    {/if}
+    {#if blocks.length > 0}
+      <section class="memorials" aria-labelledby="pk-sheet-blocks">
+        <h3 id="pk-sheet-blocks">
+          {strings.streets.blocksNearby} <span class="count">{strings.streets.blockCount(blocks.length)}</span>
+        </h3>
+        <p class="muted small">{strings.streets.blocksIntro}</p>
+        <BlockList {store} blocks={blocks.slice(0, MAX_STREET)} lensLabel={streetLens} {fromYou} />
+        {#if blocks.length > MAX_STREET}<p class="muted small">{strings.streets.blocksMore(blocks.length - MAX_STREET)}</p>{/if}
+      </section>
+    {/if}
+    {#if crashes.length > 0}
+      <section class="memorials" aria-labelledby="pk-sheet-crashes">
+        <h3 id="pk-sheet-crashes">
+          {strings.streets.crashesNearby} <span class="count">{strings.streets.crashCount(crashes.length)}</span>
+        </h3>
+        <p class="muted small">{strings.streets.crashesIntro}</p>
+        <CrashList {store} crashes={crashes.slice(0, MAX_STREET)} {fromYou} />
+        {#if crashes.length > MAX_STREET}<p class="muted small">{strings.streets.crashesMore(crashes.length - MAX_STREET)}</p>{/if}
       </section>
     {/if}
   </div>

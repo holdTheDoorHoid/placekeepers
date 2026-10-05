@@ -11,6 +11,7 @@ import { AddressBook } from '../places/addresses.svelte.ts';
 import { ListStore } from '../places/lists.svelte.ts';
 import { isSample } from '../places/sample.ts';
 import type { InspectTarget, LayerStatus, MapController, MemorialInView, ParcelInView, StopInView } from '../map/controller.ts';
+import type { CrashInView, LineInView } from '../streets/blocks.ts';
 import { lensChanges } from '../map/lens-layers.ts';
 import { STOP_TABLE, loadStopTable, type StopTable } from '../transit/answers.ts';
 import type { Registry, SettingValue, ViewName } from '../registry/types.ts';
@@ -78,6 +79,9 @@ export class AppStore {
   readonly parcelsSampled: boolean = $derived.by(() => isSample(this.state.map.zoom, this.parcelsInView));
   /** Memorial markers drawn in view, for the memorial lists that stand in for the map. */
   memorialsInView = $state.raw<MemorialInView[]>([]);
+  /** Street blocks and crashes drawn in view, for the lists that stand in for the map. */
+  segmentsInView = $state.raw<LineInView[]>([]);
+  crashesInView = $state.raw<CrashInView[]>([]);
   /** SEPTA stops drawn in view, for "What you can do nearby" in the field view. */
   stopsInView = $state.raw<StopInView[]>([]);
   /**
