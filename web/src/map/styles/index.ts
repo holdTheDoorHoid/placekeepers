@@ -15,6 +15,7 @@ import { hin } from './hin.ts';
 import type { StyleId } from './ids.ts';
 import { landcare } from './landcare.ts';
 import { memorials } from './memorials.ts';
+import { publicArt } from './public_art.ts';
 import { publicPlace } from './public_place.ts';
 import { shootingsHex } from './shootings_hex.ts';
 import { stopAmenities } from './stop_amenities.ts';
@@ -44,6 +45,7 @@ export const STYLES: Record<StyleId, StyleModule> = {
   amenity,
   public_place: publicPlace,
   condition,
+  public_art: publicArt,
 };
 
 export function styleFor(layer: Layer): StyleModule | null {

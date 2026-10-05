@@ -730,3 +730,44 @@
         - {value: open, label: A request still open}
       default: any
   release: v0.3
+# Public art (M3.2): one point per work from the City, OpenStreetMap and Wikidata, off by default
+# in both views (several hundred points would crowd the lots and streets).
+- id: public_art
+  label: Public art
+  group: placemaking
+  description: >-
+    Murals, sculptures and statues, mosaics and other public art, from the City's Percent for Art
+    list, OpenStreetMap and Wikidata. When two or three of them list the same work, the map shows
+    it once and links to each. Artworks that remember someone are shown only as memorial
+    artworks, without names. Mural Arts Philadelphia keeps the largest list of the city's murals
+    on its own site; its terms do not allow copying it, so the map links to it instead. If a work
+    is missing, add it to OpenStreetMap and it appears here within about a week.
+  sources: [percent_for_art, osm_philadelphia, wikidata_art]
+  file: tiles/art.pmtiles
+  source_layer: art
+  geometry: point
+  style: public_art
+  evidence: not_violence
+  default: {field: false, analysis: false}
+  settings:
+    - id: murals
+      label: Murals and wall paintings
+      type: toggle
+      default: true
+    - id: sculptures
+      label: Sculptures and statues
+      type: toggle
+      default: true
+    - id: mosaics
+      label: Mosaics
+      type: toggle
+      default: true
+    - id: other
+      label: Other kinds of art
+      type: toggle
+      default: true
+    - id: inside
+      label: Works inside buildings
+      type: toggle
+      default: true
+  release: v0.3
