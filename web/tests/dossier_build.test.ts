@@ -57,6 +57,7 @@ function liveProperty(over: Partial<LiveProperty> = {}): LiveProperty {
     saleDate: '1987-06-12',
     salePrice: 15000,
     marketValue: 12000,
+    homestead: false,
     lng: -75.15572,
     lat: 39.98513,
     ...over,
@@ -194,6 +195,15 @@ describe('live City data', () => {
     expect(view.banner.text).toMatch(/Some City lookups did not work/);
     expect(view.owner.provenance.tone).toBe('live');
     expect(view.history.transfersProvenance.text).toBe("The City's servers could not be reached, so this is the weekly snapshot of October 4, 2026.");
+  });
+
+  it('never offers conservatorship when the City\'s live record shows a homestead exemption', () => {
+    const routeIds = (view: ReturnType<typeof buildDossier>) =>
+      [...view.actions.suggestions.flatMap((s) => s.routes), ...view.actions.otherRoutes].map((r) => r.route.id);
+    expect(routeIds(buildDossier(input('990000005', { live: allLive() })))).toContain('conservatorship');
+    const home = routeIds(buildDossier(input('990000005', { live: allLive(liveProperty({ homestead: true })) })));
+    expect(home).not.toContain('conservatorship');
+    expect(home).toContain('ask_the_owner');
   });
 
   it('leaves out notes about an earlier owner when the City names a new one', () => {

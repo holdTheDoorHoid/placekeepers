@@ -608,7 +608,9 @@ last completed demolition). L&I case numbers are never published.
 
 **`routes`**: registry route ids in the order to try them (docs/ROUTES.md; rules in
 `derive/routes.py`). Conservatorship appears only for a private parcel we call vacant with high or
-medium confidence: a parcel we are not sure about may be someone's home.
+medium confidence: a parcel we are not sure about may be someone's home. It never appears for a
+parcel with a homestead exemption (OPA's `homestead_exemption` above 0), at any confidence: the
+City's own record that someone lives there, or did (added 2026-10-04, docs/VERIFICATION.md D1).
 **`suggestions`**: registry suggestion ids (a vacant lot gets `clean_and_green`, a vacant building
 `seal_abandoned_building`).
 
@@ -631,7 +633,9 @@ City's Carto API; anything it cannot refresh stays as in the shard, labeled with
 How the web app does it (added 2026-10-04 by M1.6, `web/src/dossier/`). Each part is one request to
 `https://phl.carto.com/api/v2/sql`, built only from the nine digit account (or, to find the parcel
 under a tap, a point inside the city), never from typed text, with a 10 second limit:
-`opa_properties_public` for the owner names, mailing address and the City's description;
+`opa_properties_public` for the owner names, mailing address, the City's description and whether
+the owner has a homestead exemption (with one, the page drops conservatorship from the shard's
+routes);
 `rtt_summary` for every deed with the same fields as `transfers` (the date on the deed and the
 adjusted total, with the same fallbacks); `assessments`; and one query over `violations`, `permits`, `demolitions`, `unsafe`,
 `imm_dang` and `clean_seal` for the L&I timeline. A part that answers replaces the shard's part

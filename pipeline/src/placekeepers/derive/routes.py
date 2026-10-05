@@ -11,7 +11,10 @@ Routes, by owner, the lawful route first:
 * Private lots (a person, a company, a nonprofit, or a name we could not type): ask the owner;
   where the lot is already a garden, garden adverse possession (2024 law, still to confirm with
   legal aid); and, only where we call the parcel vacant, conservatorship, which always carries
-  the abuse warning in its registry entry. A parcel we do not call vacant may be someone's home.
+  the abuse warning in its registry entry. A parcel we do not call vacant may be someone's home,
+  and one with a homestead exemption is, by the City's own records (someone told the City they
+  live there, or did): conservatorship is never offered there, whatever the vacancy call
+  (decided 2026-10-04 by the orchestrator, docs/VERIFICATION.md D1).
 * LandCare lots, whoever owns them: Community LandCare first, since PHS already cares for them.
 
 Suggestions come from the vacancy call: a vacant lot gets "clean and green", a vacant building
@@ -33,8 +36,11 @@ def routes_for(
     side_yard_eligible: bool = False,
     in_landcare: bool = False,
     gardened: bool = False,
+    homestead: bool = False,
 ) -> list[str]:
-    """Route ids for one parcel, in the order a person should try them."""
+    """Route ids for one parcel, in the order a person should try them. `vacant` is the vacancy
+    call at high or medium confidence; `homestead`, an owner occupied homestead exemption in OPA's
+    records."""
     routes: list[str] = []
     if in_landcare:
         routes.append("community_landcare")
@@ -51,7 +57,7 @@ def routes_for(
         routes.append("ask_the_owner")
         if gardened:
             routes.append("garden_adverse_possession")
-        if vacant:
+        if vacant and not homestead:
             routes.append("conservatorship")
     return routes
 

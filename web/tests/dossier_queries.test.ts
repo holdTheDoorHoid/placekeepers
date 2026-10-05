@@ -238,6 +238,7 @@ describe('reading the City\'s answers', () => {
         sale_date: '2025-11-24T05:00:00Z',
         sale_price: 18540,
         market_value: 13000,
+        homestead_exemption: 100000,
         lat: 39.9995727885081,
         lng: -75.1438045080555,
       },
@@ -251,7 +252,10 @@ describe('reading the City\'s answers', () => {
       saleDate: '2025-11-24',
       salePrice: 18540,
       marketValue: 13000,
+      homestead: true,
     });
+    expect(readProperty('372106400', [{ parcel_number: '372106400', homestead_exemption: 0 }])!.homestead).toBe(false);
+    expect(readProperty('372106400', [{ parcel_number: '372106400' }])!.homestead).toBe(false);
     expect(readProperty('372106400', [{ parcel_number: '999999999' }])).toBeNull();
   });
 

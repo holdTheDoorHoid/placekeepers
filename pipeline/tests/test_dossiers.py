@@ -16,7 +16,8 @@ The made up parcels, all near Fairhill (every name and record is invented):
     374000002  WALLACE GLORIA, cleaned and sealed in 2019, not on a vacancy list
     375000001  CEDAR HOLDINGS LLC, a lot with a community garden on it, in Community LandCare
     376000001  an account only an old L&I record knows (no dossier)
-    885000001  OWENS TERRENCE, a vacant lot with a different account prefix
+    885000001  OWENS TERRENCE, a vacant lot with a different account prefix; he has a homestead
+               exemption (the City's record that someone lives there), so no conservatorship
     372000006  KENSINGTON LOTS LLC again, a lot only the vacancy model finds (the model test)
 """
 
@@ -206,14 +207,23 @@ def opa_table() -> pa.Table:
         out["lng"].append(lng)
         out["category_code"].append(row["category_code"])
         out["exterior_condition"].append(None)
+        out["homestead_exemption"].append(HOMESTEAD.get(row["parcel_number"], 0))
     return pa.table(
         {
-            **{k: out[k] for k in OPA_COLUMNS if k not in {"sale_date", "sale_price"}},
+            **{
+                k: out[k]
+                for k in OPA_COLUMNS
+                if k not in {"sale_date", "sale_price", "homestead_exemption"}
+            },
             "sale_date": pa.array(out["sale_date"], pa.date32()),
             "sale_price": pa.array(out["sale_price"], pa.int64()),
+            "homestead_exemption": pa.array(out["homestead_exemption"], pa.int64()),
         }
     )
 
+
+#: owner occupied homestead exemptions, in dollars, by account (every other account has none)
+HOMESTEAD = {"885000001": 100000}
 
 OPA_KEYS = (
     "parcel_number",
@@ -244,6 +254,7 @@ OPA_COLUMNS = (
     "lng",
     "category_code",
     "exterior_condition",
+    "homestead_exemption",
 )
 
 
@@ -686,6 +697,17 @@ def test_no_conservatorship_where_we_do_not_call_the_parcel_vacant(built) -> Non
     assert record["li"]["sealed"] == "2019-06-01"
     sale = {flag["id"]: flag for flag in record["owner"]["flags"]}["years_since_sale"]
     assert sale["text"] == "Not sold on the open market since at least 1999."
+
+
+def test_no_conservatorship_on_a_parcel_with_a_homestead_exemption(built) -> None:
+    # docs/VERIFICATION.md D1: a homestead exemption is the City's own record that someone lives
+    # there (or did), so conservatorship is never offered, whatever the vacancy call.
+    _, out = built
+    home = parcel(out, "885000001")
+    assert home["owner"]["type"] == "individual"
+    assert home["vacancy"]["confidence"] == "medium"
+    assert home["routes"] == ["ask_the_owner"]
+    assert parcel(out, "371000001")["routes"] == ["ask_the_owner", "conservatorship"]
 
 
 def test_a_garden_lot_in_community_landcare(built) -> None:

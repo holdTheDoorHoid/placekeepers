@@ -15,7 +15,8 @@ tables/owners.json. The tests below check, in every one of them:
   to owners), no suggestion that involves the police, never "owner deceased" or "no heirs", and
   never "dangerous", "high crime" or "hot spot" about a place;
 * the possible estate flag reads the ETHICS.md text word for word, with the deed fraud notice;
-* conservatorship only for a private parcel called vacant with high or medium confidence;
+* conservatorship only for a private parcel called vacant with high or medium confidence, and
+  never on a parcel with a homestead exemption;
 * names only from memorials.yaml, and everything in suppressed.yaml gone from every file.
 
 Rules that need a person to judge (care framing, quiet design, what the interface shows) are
@@ -38,7 +39,7 @@ from placekeepers.publish import publish
 
 from . import streets_fixtures as fx
 from .conftest import REPO_ROOT, install_snapshot
-from .test_dossiers import NOW, dates, install_everything
+from .test_dossiers import HOMESTEAD, NOW, dates, install_everything
 
 LATER = "2026-10-04T14:30:00Z"
 ETHICS = (REPO_ROOT / "docs" / "ETHICS.md").read_text(encoding="utf-8")
@@ -288,13 +289,15 @@ def test_conservatorship_only_for_private_parcels_called_vacant(built) -> None:
     for name, body in published_files(out).items():
         if not re.fullmatch(r"dossiers/\d{4}\.json", name):
             continue
-        for record in body["parcels"].values():
+        for account, record in body["parcels"].items():
             if "conservatorship" in record["routes"]:
                 seen += 1
+                assert account not in HOMESTEAD, account
                 assert record["owner"]["type"] in {"individual", "company", "nonprofit", "unknown"}
                 assert record["owner"]["names"]
                 assert (record["vacancy"] or {}).get("confidence") in {"high", "medium"}
     assert seen  # the fixture has private lots called vacant
+    assert HOMESTEAD  # and a home among them that must not get it
 
 
 def test_names_come_only_from_the_curated_file(built) -> None:

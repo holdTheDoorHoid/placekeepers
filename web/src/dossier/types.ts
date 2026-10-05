@@ -212,6 +212,11 @@ export interface LiveProperty {
   saleDate: string | null;
   salePrice: number | null;
   marketValue: number | null;
+  /**
+   * The owner has a homestead exemption: the City's record that someone lives there, or did. A
+   * lot page then never offers conservatorship or shows a possible estate (docs/ETHICS.md).
+   */
+  homestead: boolean;
   lng: number | null;
   lat: number | null;
 }

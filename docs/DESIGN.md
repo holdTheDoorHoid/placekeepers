@@ -323,7 +323,9 @@ As built (M1.6, 2026-10-04):
   twice, but two different owners are never merged.
 - Conservatorship appears only for a private parcel the map calls vacant with high or medium
   confidence, never for a parcel we are not sure about, which may be someone's home. Changed from
-  the first plan, which listed it for every private lot.
+  the first plan, which listed it for every private lot. It never appears for a parcel with a
+  homestead exemption, at any confidence: that is the City's own record that someone lives there,
+  or did (decided 2026-10-04 by the orchestrator, docs/VERIFICATION.md D1).
 - Every dossier of a private owner with a flag links to the Tangled Title Fund and Fraud Guard, and
   every dossier of a person (or a possible estate) with a flag shows the deed fraud notice.
 

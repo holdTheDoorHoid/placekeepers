@@ -433,7 +433,13 @@ export function buildDossier(input: DossierInput): DossierView {
   const suggestions = placeSuggestions(registry, state, { sg: Array.isArray(suggestionIds) ? suggestionIds.join(',') : suggestionIds }).filter(
     (sg) => sg.applies_to === 'parcel',
   );
-  const parcelRoutes = (parcel?.routes ?? []).map((id) => registry.routes.find((r) => r.id === id)).filter((r): r is Route => !!r);
+  // A homestead exemption in the City's live record rules out conservatorship, as the pipeline
+  // does for the snapshot (docs/ETHICS.md): the City's records say someone lives there, or did.
+  const homestead = property?.homestead === true;
+  const parcelRoutes = (parcel?.routes ?? [])
+    .filter((id) => !(homestead && id.includes('conservatorship')))
+    .map((id) => registry.routes.find((r) => r.id === id))
+    .filter((r): r is Route => !!r);
   const used = new Set<string>();
   const suggestionViews: SuggestionView[] = suggestions.map((suggestion) => {
     let routes = parcelRoutes.filter((r) => suggestion.routes.includes(r.id));

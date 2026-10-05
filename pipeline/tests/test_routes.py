@@ -69,6 +69,30 @@ def test_no_conservatorship_where_we_do_not_call_the_parcel_vacant() -> None:
     assert routes(["MORALES ROSA"], gardened=True) == ["ask_the_owner", "garden_adverse_possession"]
 
 
+@pytest.mark.parametrize(
+    "names", [["MORALES ROSA"], ["KENSINGTON LOTS LLC"], ["GRACE BAPTIST CHURCH"], ["HACE"]]
+)
+def test_never_conservatorship_on_a_parcel_with_a_homestead_exemption(names: list[str]) -> None:
+    # docs/VERIFICATION.md D1: the City's records say someone lives there, or did.
+    assert routes(names, vacant=True, homestead=True) == ["ask_the_owner"]
+    assert routes(names, vacant=True, gardened=True, homestead=True) == [
+        "ask_the_owner",
+        "garden_adverse_possession",
+    ]
+    assert routes(names, vacant=True, in_landcare=True, homestead=True) == [
+        "community_landcare",
+        "ask_the_owner",
+    ]
+
+
+def test_a_homestead_exemption_changes_no_other_route() -> None:
+    assert routes(["PHILADELPHIA LAND BANK"], "PLB", side_yard_eligible=True, homestead=True) == [
+        "land_bank_garden_agreement",
+        "land_bank_side_yard",
+    ]
+    assert routes(["PHILADELPHIA HOUSING AUTH"], vacant=True, homestead=True) == ["ask_the_owner"]
+
+
 def test_landcare_lots_get_community_landcare_first() -> None:
     assert routes(["MORALES ROSA"], vacant=True, in_landcare=True) == [
         "community_landcare",

@@ -282,6 +282,8 @@ class Opa:
     sale_price: float | None
     lat: float | None
     lng: float | None
+    #: an owner occupied homestead exemption: the City's record that someone lives there (or did)
+    homestead: bool = False
 
 
 OPA_COLUMNS = (
@@ -299,6 +301,7 @@ OPA_COLUMNS = (
     "sale_price",
     "lat",
     "lng",
+    "homestead_exemption",
 )
 
 
@@ -324,6 +327,7 @@ def read_opa(con: Any, path: Path) -> dict[str, Opa]:
         sale_price,
         lat,
         lng,
+        homestead,
     ) in rows:
         last_line = " ".join(part for part in (city_state, zip_code) if part) or None
         out[account] = Opa(
@@ -337,6 +341,7 @@ def read_opa(con: Any, path: Path) -> dict[str, Opa]:
             sale_price=sale_price,
             lat=lat,
             lng=lng,
+            homestead=bool(homestead and homestead > 0),
         )
     return out
 
@@ -896,6 +901,7 @@ def build_dossiers(
                 side_yard_eligible=bool(owned and owned["side_yard"]),
                 in_landcare=in_landcare(account, landcare, call),
                 gardened=account in gardened,
+                homestead=bool(record and record.homestead),
             )
             if route in known_routes
         ]
