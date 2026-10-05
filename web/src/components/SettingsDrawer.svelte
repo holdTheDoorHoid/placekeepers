@@ -9,6 +9,7 @@
   import EvidenceBadge from './common/EvidenceBadge.svelte';
   import LayerList from './layers/LayerList.svelte';
   import LensPanel from './lens/LensPanel.svelte';
+  import DisplacementNote from './places/DisplacementNote.svelte';
   import BlessingNote from './streets/BlessingNote.svelte';
 
   let { store, open = $bindable(false) }: { store: AppStore; open?: boolean } = $props();
@@ -114,7 +115,7 @@
           <label for="pk-suggestion-{suggestion.id}">{suggestion.label}</label>
           <EvidenceBadge level={suggestion.evidence} />
         </div>
-        <div class="note"><BlessingNote suggestionId={suggestion.id} /></div>
+        <div class="note"><BlessingNote suggestionId={suggestion.id} /><DisplacementNote suggestionId={suggestion.id} /></div>
         <p class="muted small">{suggestion.summary}</p>
       </div>
     {/each}

@@ -424,6 +424,7 @@ export const strings = {
     ownerLine:
       'Owner names and mailing addresses are as the City publishes them. Every owner flag has a careful note and a protective next step: read them on the lot page before you act. Not legal advice.',
     scoreLine: (lens: string, weights: string) => `Scores use the ${lens} lens with these weights: ${weights}.`,
+    greeningLine: (caution: string) => `About greening suggestions: ${caution}`,
   },
 
   // Saved lists, kept only in this browser (src/places/lists.svelte.ts).
@@ -473,6 +474,13 @@ export const strings = {
     importFailed: 'That file has no parcel numbers we could read.',
     importTooBig: 'That file is too large to be a list.',
     importLeftOut: (n: number, limit: number) => `${plural(n, 'place was', 'places were')} left out: a list holds up to ${formatNumber(limit)}.`,
+  },
+
+  // The caution beside every greening suggestion until the displacement watch overlay exists
+  // (docs/ETHICS.md, "Displacement", word for word; docs/VERIFICATION.md, decision D12).
+  displacement: {
+    caution: 'Greening can raise nearby prices. Consider pairing it with protections.',
+    protections: 'Ways to protect neighbors',
   },
 
   evidence: {

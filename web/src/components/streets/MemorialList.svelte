@@ -3,7 +3,6 @@
   // keyboard or a screen reader. Each entry says what the marker says before it is opened (how
   // the person was traveling, the date and the place), never a name; opening one shows the same
   // details as tapping its marker, where a name appears only under the rules of docs/ETHICS.md.
-  import { config } from '../../config/index.ts';
   import { REMOVAL_EMAIL } from '../../content/removal-email.ts';
   import type { MemorialInView } from '../../map/controller.ts';
   import type { AppStore } from '../../state/store.svelte.ts';
@@ -12,7 +11,7 @@
 
   let { store, memorials }: { store: AppStore; memorials: MemorialInView[] } = $props();
 
-  const links = { removalEmail: REMOVAL_EMAIL, contactUrl: `${config.siteBase}contact/` };
+  const links = { removalEmail: REMOVAL_EMAIL, contactUrl: `${import.meta.env.BASE_URL}contact/` };
 
   function open(memorial: MemorialInView) {
     store.inspect({ layerId: memorial.layerId, features: [memorial.properties], lngLat: memorial.lngLat });
