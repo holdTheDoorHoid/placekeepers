@@ -152,6 +152,15 @@ TILE_OPTIONS: dict[str, list[str]] = {
         "--no-feature-limit",
         "--no-tile-size-limit",
     ],
+    # Public art (M3.2): several hundred points, every one kept at every zoom, so no work
+    # disappears when the map is zoomed out.
+    "tiles/art.pmtiles": [
+        "--minimum-zoom=10",
+        "--maximum-zoom=16",
+        "--base-zoom=10",
+        "--no-feature-limit",
+        "--no-tile-size-limit",
+    ],
     # Boundaries are few, large shapes: simplified at low zooms, borders kept shared, and
     # detailed enough at zoom 14 to be stretched further by the map.
     "tiles/boundaries.pmtiles": [

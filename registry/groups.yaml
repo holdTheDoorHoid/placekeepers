@@ -14,6 +14,9 @@
 - id: heat
   label: Heat, trees and flooding
   description: How hard summer heat hits each neighborhood, the trees the City keeps on its streets and in its parks, and where FEMA expects flooding.
+- id: placemaking
+  label: Art and placemaking
+  description: Murals, sculptures, mosaics and other public art, from the City, OpenStreetMap and Wikidata.
 - id: safety_context
   label: Where care is needed most
   description: Context that shows where improvements are likely to help most.

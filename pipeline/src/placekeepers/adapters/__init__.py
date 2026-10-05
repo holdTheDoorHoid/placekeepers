@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from placekeepers.adapters import li, places
 from placekeepers.adapters.arcgis import ArcgisAdapter
+from placekeepers.adapters.art import PercentForArt, WikidataArt
 from placekeepers.adapters.base import Adapter, AdapterMismatch, FetchError, Validation
 from placekeepers.adapters.bulk_files import AcsPoverty, CagpTax2025
 from placekeepers.adapters.carto import CartoAccountsAdapter, CartoAdapter, Column
@@ -83,6 +84,9 @@ ADAPTERS: dict[str, type[Adapter]] = {
     "osm_philadelphia": OsmExtract,
     # Heat at bus stops, for the transit comfort lens (M2.3)
     "heat_vulnerability": HeatVulnerability,
+    # Public art (M3.2); OpenStreetMap's artworks come with osm_philadelphia
+    "percent_for_art": PercentForArt,
+    "wikidata_art": WikidataArt,
 }
 
 
