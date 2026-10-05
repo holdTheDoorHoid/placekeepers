@@ -409,6 +409,24 @@ const floodAreas = [
   [{ z: 2 }, box(640, 60, 850, 140)],
 ].map(([properties, geometry]) => ({ type: 'Feature', properties, geometry }));
 
+// Public art (M3.2), made up and without random draws, with the short properties of
+// docs/CONTRACTS.md section 4 (`art` in tiles/art.pmtiles): a statue the City, OpenStreetMap and
+// Wikidata all list, merged into one point with every link; a mural and an untitled mural from
+// OpenStreetMap; a mosaic from Wikidata; an installation inside a City building; and a memorial
+// artwork, which carries no title, artist or year, only its sources by number (docs/ETHICS.md).
+// Published as GeoJSON, as the pipeline does when it skips a tile file.
+const ART_SAMPLES = [
+  [[110, 100], { id: 'pa9001', k: 2, src: 7, ty: 6, nm: 'Sample Figure', ar: 'Avery Example', y: 1976, md: 'Bronze', pa: 9001,
+    doc: 'https://example.org/percent-for-art/9001.pdf', osm: 'n9200001', wd: 'Q9200001', wp: 'https://en.wikipedia.org/wiki/Sample_Figure',
+    w: 'https://www.associationforpublicart.org/artwork/sample-figure/' }],
+  [[270, 100], { id: 'n9200002', k: 1, src: 2, ty: 1, nm: 'Sample Street Mural', ar: 'Jordan Painter', y: 2019, osm: 'n9200002' }],
+  [[430, 100], { id: 'n9200003', k: 1, src: 2, ty: 1, osm: 'n9200003' }],
+  [[600, 100], { id: 'Q9200004', k: 3, src: 4, ty: 4, nm: 'Sample Mosaic Wall', y: 2005, wd: 'Q9200004' }],
+  [[720, 100], { id: 'pa9005', k: 0, src: 1, ty: 9, nm: 'Sample Light Work', ar: 'Casey Maker', y: 2015, lc: 'Sample Library (interior)', in: 1, pa: 9005 }],
+  [[270, -20], { id: 'Q9200006', k: 2, src: 6, mem: 1, osm: 'n9200006', wd: 'Q9200006' }],
+];
+const artWorks = ART_SAMPLES.map(([xy, properties]) => ({ type: 'Feature', properties, geometry: { type: 'Point', coordinates: toLngLat(xy) } }));
+
 const collection = (features) => JSON.stringify({ type: 'FeatureCollection', features }) + '\n';
 // The lot dossier files in data/dossiers/ (a shard and common.json) and the owners table in
 // data/tables/ are written by hand (docs/CONTRACTS.md section 6: every flag type, and parcels the
@@ -460,6 +478,7 @@ writeFileSync(path('data/tiles/amenities.stops.geojson'), collection(amenityStop
 writeFileSync(path('data/tiles/environment.heat_tracts.geojson'), collection(heatTracts));
 writeFileSync(path('data/tiles/environment.floodplain.geojson'), collection(floodAreas));
 writeFileSync(path('data/tiles/trees.trees.geojson'), collection(cityTrees));
+writeFileSync(path('data/tiles/art.art.geojson'), collection(artWorks));
 // The route survey sheets (scripts/route-fixtures.mjs): the index is listed in files, each route's
 // sheet is not (docs/CONTRACTS.md section 7).
 mkdirSync(path('data/tables/routes'), { recursive: true });
@@ -576,6 +595,9 @@ const manifest = {
     census_tracts_2020: ok(408, null),
     land_use: ok(560515, null),
     heat_vulnerability: ok(384, null),
+    // Public art (M3.2); OpenStreetMap's artworks come with osm_philadelphia
+    percent_for_art: ok(239, '2025-08-19'),
+    wikidata_art: ok(72, null),
   },
   layers: {
     vacant_parcels: {
@@ -622,6 +644,7 @@ const manifest = {
       ],
     },
     transit_routes: { file: 'tiles/transit.pmtiles', source_layer: 'routes', sources: ['septa_gtfs'] },
+    public_art: { file: 'tiles/art.pmtiles', source_layer: 'art', sources: ['percent_for_art', 'osm_philadelphia', 'wikidata_art'] },
   },
   files: Object.fromEntries(
     [
@@ -641,6 +664,7 @@ const manifest = {
       'tiles/environment.heat_tracts.geojson',
       'tiles/environment.floodplain.geojson',
       'tiles/trees.trees.geojson',
+      'tiles/art.art.geojson',
       'tables/routes/index.json',
       ...handWritten.map(([name]) => name).filter((name) => !shardFiles.some(([shard]) => shard === name)),
     ].map((p) => [p, fileInfo(p)]),
@@ -656,6 +680,7 @@ const manifest = {
   notes: [
     'This is synthetic sample data for testing the map.',
     'Street, boundary, transit, amenity, heat, tree and floodplain tiles were skipped for this sample, so those layers are published as GeoJSON.',
+    'Public art tiles were skipped for this sample too, so its layer is published as GeoJSON.',
   ],
 };
 writeFileSync(new URL('manifest.json', ROOT), JSON.stringify(manifest, null, 2) + '\n');

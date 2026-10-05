@@ -272,6 +272,24 @@
       "rows": 384,
       "newest_record": null,
       "message": null
+    },
+    "percent_for_art": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 239,
+      "newest_record": "2025-08-19",
+      "message": null
+    },
+    "wikidata_art": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 72,
+      "newest_record": null,
+      "message": null
     }
   },
   "layers": {
@@ -419,6 +437,15 @@
       "sources": [
         "septa_gtfs"
       ]
+    },
+    "public_art": {
+      "file": "tiles/art.pmtiles",
+      "source_layer": "art",
+      "sources": [
+        "percent_for_art",
+        "osm_philadelphia",
+        "wikidata_art"
+      ]
     }
   },
   "files": {
@@ -486,6 +513,10 @@
       "bytes": 4520,
       "sha256": "8f5ba15713fbdbbf988c833a1c8834d6ec42825574c98f7590cf53037f66e894"
     },
+    "tiles/art.art.geojson": {
+      "bytes": 1413,
+      "sha256": "d1b74b6802a750b967dbf1e967618538cd279fd28839316a08d083e604dd1d20"
+    },
     "tables/routes/index.json": {
       "bytes": 846,
       "sha256": "9244225df95bdee51d45a9fe6ec98bc2fa5f835611b1a937a9d569e914a5d9cc"
@@ -509,6 +540,7 @@
   },
   "notes": [
     "This is synthetic sample data for testing the map.",
-    "Street, boundary, transit, amenity, heat, tree and floodplain tiles were skipped for this sample, so those layers are published as GeoJSON."
+    "Street, boundary, transit, amenity, heat, tree and floodplain tiles were skipped for this sample, so those layers are published as GeoJSON.",
+    "Public art tiles were skipped for this sample too, so its layer is published as GeoJSON."
   ]
 }

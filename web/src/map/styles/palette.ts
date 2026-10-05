@@ -86,3 +86,12 @@ export const TREE_RING = '#f4fbef';
 export const FLOOD_COLORS = { high: '#2171b5', moderate: '#9ecae1', floodway: '#08519c' } as const;
 export const FLOOD_LINES = { high: '#08519c', moderate: '#4292c6' } as const;
 export const FLOOD_OPACITY = { high: 0.28, moderate: 0.22, floodway: 0.4 } as const;
+
+/**
+ * Public art (M3.2), by kind, from the Okabe and Ito palette, which people with the common kinds
+ * of color blindness can tell apart: murals and wall paintings a reddish purple, sculptures and
+ * statues a deep blue, mosaics a yellow, other kinds a slate gray, each with a darker ring of its
+ * own so every kind reads on the light and the gray base map.
+ */
+export const ART_COLORS = { mural: '#cc79a7', sculpture: '#0072b2', mosaic: '#f0e442', other: '#6b7c8c' } as const;
+export const ART_RINGS = { mural: '#7d3c66', sculpture: '#003d61', mosaic: '#6b6400', other: '#2f3a45' } as const;

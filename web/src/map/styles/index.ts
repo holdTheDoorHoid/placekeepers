@@ -13,6 +13,7 @@ import { hin } from './hin.ts';
 import type { StyleId } from './ids.ts';
 import { landcare } from './landcare.ts';
 import { memorials } from './memorials.ts';
+import { publicArt } from './public_art.ts';
 import { shootingsHex } from './shootings_hex.ts';
 import { stopAmenities } from './stop_amenities.ts';
 import { streetSegments } from './street_segments.ts';
@@ -38,6 +39,7 @@ export const STYLES: Record<StyleId, StyleModule> = {
   heat_tracts: heatTracts,
   city_trees: cityTrees,
   floodplain,
+  public_art: publicArt,
 };
 
 export function styleFor(layer: Layer): StyleModule | null {

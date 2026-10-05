@@ -198,6 +198,8 @@ const ENDPOINT_REQUIRED: Record<string, string[]> = {
   url: ['url', 'format'],
   curated: ['path'],
   osm_extract: [],
+  // A SPARQL query service such as Wikidata's (M3.2); the query lives in the pipeline's adapter.
+  sparql: ['url'],
 };
 
 function isPlainObject(v: unknown): v is Record<string, unknown> {
@@ -410,6 +412,9 @@ export function validateRegistry(raw: RawRegistryFiles, options: ValidateOptions
       if (source.endpoint.url !== undefined && !OSM_EXTRACT_URL_PATTERN.test(source.endpoint.url)) {
         errors.push(`${where}.endpoint.url should be an https link to an .osm.pbf file`);
       }
+    }
+    if (source.endpoint.kind === 'sparql' && source.endpoint.url !== undefined && !source.endpoint.url.startsWith('https://')) {
+      errors.push(`${where}.endpoint.url should be an https link to a query service`);
     }
   }
 

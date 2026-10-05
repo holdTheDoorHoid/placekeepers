@@ -19,5 +19,7 @@ export const STYLE_IDS = [
   'heat_tracts',
   'city_trees',
   'floodplain',
+  // Public art (M3.2)
+  'public_art',
 ] as const;
 export type StyleId = (typeof STYLE_IDS)[number];

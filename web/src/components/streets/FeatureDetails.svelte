@@ -17,6 +17,7 @@
   import TransitStopDetails from '../transit/TransitStopDetails.svelte';
   import StopAmenityDetails from '../transit/StopAmenityDetails.svelte';
   import TreeDetails from '../heat/TreeDetails.svelte';
+  import ArtDetails from '../art/ArtDetails.svelte';
   import RouteDetails from '../transit/RouteDetails.svelte';
 
   let {
@@ -107,6 +108,8 @@
     <RouteDetails features={target.features} />
   {:else if style === STYLES.city_trees}
     <TreeDetails features={target.features} />
+  {:else if style === STYLES.public_art}
+    <ArtDetails features={target.features} lngLat={target.lngLat} registry={store.registry} />
   {/if}
   {#if onClose}
     <button class="button quiet small" type="button" onclick={onClose}>{strings.place.clearSelection}</button>

@@ -11,7 +11,7 @@ export type Geometry = (typeof GEOMETRIES)[number];
 export const CADENCES = ['daily', 'weekly', 'monthly', 'yearly', 'irregular', 'frozen'] as const;
 export type Cadence = (typeof CADENCES)[number];
 
-export const ENDPOINT_KINDS = ['carto', 'arcgis', 'url', 'osm_extract', 'curated'] as const;
+export const ENDPOINT_KINDS = ['carto', 'arcgis', 'url', 'osm_extract', 'curated', 'sparql'] as const;
 export type EndpointKind = (typeof ENDPOINT_KINDS)[number];
 
 export const URL_FORMATS = ['csv', 'geojson', 'parquet', 'zip'] as const;

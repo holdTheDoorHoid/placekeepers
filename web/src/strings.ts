@@ -585,7 +585,9 @@ export const strings = {
                   ? 'Shelter and bench'
                   : style === 'city_trees'
                     ? 'Tree'
-                    : 'Details',
+                    : style === 'public_art'
+                      ? 'Public art'
+                      : 'Details',
     memorialTitle: 'In memory',
     peopleHere: (n: number) => `${plural(n, 'person is', 'people are')} remembered here`,
     killed: {
@@ -798,6 +800,66 @@ export const strings = {
     treeYoung: 'A young tree needs about 20 gallons of water a week from March through December, TreePhilly says.',
     treesHere: (n: number) => `${plural(n, 'tree', 'trees')} at this spot`,
     treeSource: "From Parks and Recreation's tree inventory, the trees the City keeps on its streets and in its parks.",
+  },
+
+  // Public art (M3.2): the legend of src/map/styles/public_art.ts and a work someone tapped
+  // (src/components/art/ArtDetails.svelte, src/art/describe.ts). A memorial artwork shows no title,
+  // artist, year or place in words, only that it is a memorial and its sources (docs/ETHICS.md).
+  art: {
+    legend: {
+      mural: 'Murals and wall paintings',
+      sculpture: 'Sculptures and statues',
+      mosaic: 'Mosaics',
+      other: 'Other public art: installations, fountains, monuments and more',
+    },
+    allOff: "Every kind of art is switched off in this layer's settings.",
+    insideHidden: 'Works inside buildings are hidden.',
+    memorialNote: 'Artworks that remember someone are shown without names.',
+    coverage:
+      "From the City's Percent for Art list, OpenStreetMap and Wikidata. Many murals are not in them yet; Mural Arts Philadelphia keeps the largest list on its own site.",
+    kinds: {
+      0: 'A work of public art',
+      1: 'A mural',
+      2: 'A painting',
+      3: 'Street art',
+      4: 'A mosaic',
+      5: 'A sculpture',
+      6: 'A statue',
+      7: 'A bust',
+      8: 'A relief',
+      9: 'An installation',
+      10: 'A fountain',
+      11: 'A monument',
+      12: 'A memorial',
+      13: 'Stained glass',
+      14: 'A plaque',
+    } as Record<number, string>,
+    untitled: 'No title is recorded.',
+    by: (artist: string) => `By ${artist}.`,
+    made: (year: number) => `Made in ${year}.`,
+    medium: (medium: string) => `Made of: ${medium}.`,
+    where: (place: string) => `Where: ${place}.`,
+    inside: 'Inside a building, so it can be seen only when the building is open.',
+    memorialTitle: 'Memorial artwork',
+    memorialText:
+      'This artwork remembers someone. Placekeepers shows no names on memorials; the sources below say more about it.',
+    worksHere: (n: number) => `${plural(n, 'work', 'works')} of art at this spot`,
+    sourcesTitle: 'Sources',
+    cityRecord: "The City's record of this work (PDF)",
+    cityList: "The City's Percent for Art list",
+    openOsm: 'See it on OpenStreetMap',
+    openWikidata: 'See it on Wikidata',
+    openWikipedia: 'Read about it on Wikipedia',
+    website: (site: string) => `More about it on ${site}`,
+    siteNames: {
+      'associationforpublicart.org': "the Association for Public Art's site",
+      'muralarts.org': "Mural Arts Philadelphia's site",
+      'philart.net': 'philart.net',
+    } as Record<string, string>,
+    muralArts: "Search Mural Arts Philadelphia's own list of murals",
+    fix: 'Something missing or wrong? Add or fix it on OpenStreetMap; changes reach this map within about a week.',
+    fixLink: 'Edit on OpenStreetMap',
+    credit: 'Sources: the City of Philadelphia, OpenStreetMap (© OpenStreetMap contributors) and Wikidata.',
   },
 
   // The route survey sheet page (M2.4, web/survey/, src/survey/). Times are our own estimate and
