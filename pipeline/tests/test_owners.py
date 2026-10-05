@@ -182,6 +182,11 @@ def test_reasons_say_why_in_plain_words() -> None:
         ["DUNCAN FREDERICK", " EXECUTOR OF THE ESTATE OF LUZ CLASS"],
         ["HARTMAN ELEANOR M T/U/W", "MC GINLEY SOPHIE L DEC'D"],
         ["RIVERSIDE BANK AND TRUST CO", "MCLAREN NIKKI ESTATE OF"],
+        # A person's estate written name first is a whole name, even when a bank or a trust
+        # follows it (found by the M1.10 review: these were read as one bank's or trust's name).
+        ["ESPINAL MARISOL ESTATE OF", "BNY MELLON N A"],
+        ["ACKERLY GREGORY K ESTATE OF", "LINDA A ACKERLY TRUST"],
+        ["THE ESTATE OF", "JOHN WHITTAKER"],
     ],
 )
 def test_possible_estate_names(names: list[str]) -> None:

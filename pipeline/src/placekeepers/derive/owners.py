@@ -226,8 +226,10 @@ ESTATE = re.compile(
     r"|\bEXRS\b|\bADMINISTRAT(OR|ORS|RIX)\b|\bADM(R|RX|X)\b|\bPERSONAL REP\w*|\bPERS REP\b"
 )
 # An owner_1 ending like this continues in owner_2 ("THE TRUSTEES OF THE", "EST OF STEPHEN
-# GIRARD").
+# GIRARD"), except a person's estate written OPA's way, name first: "ESPADA MILAGROS ESTATE OF"
+# is a whole name even when a bank or a trust follows it in owner_2.
 DANGLING = re.compile(r"\b(OF|THE|AND|&|FOR|FBO|TO)$")
+ESTATE_OF_END = re.compile(r"(.+) (EST|ESTATE) OF")
 
 
 @dataclass(frozen=True)
@@ -288,6 +290,12 @@ def owner_type(names: list[str], agency: str | None) -> OwnerType:
     return from_names
 
 
+def _estate_of_whole(unit: str) -> bool:
+    """ "SMITH JOHN ESTATE OF": a person's estate, written name first, complete on its own."""
+    found = ESTATE_OF_END.fullmatch(unit)
+    return bool(found) and found.group(1) not in {"THE", "AND", "&"}
+
+
 def _name_units(names: list[str]) -> list[str]:
     """Owner names as separate units, joining an owner_1 that runs on into owner_2."""
     units: list[str] = []
@@ -295,7 +303,7 @@ def _name_units(names: list[str]) -> list[str]:
         form = match_form(name)
         if not form:
             continue
-        if units and DANGLING.search(units[-1]):
+        if units and DANGLING.search(units[-1]) and not _estate_of_whole(units[-1]):
             units[-1] = f"{units[-1]} {form}"
         else:
             units.append(form)
