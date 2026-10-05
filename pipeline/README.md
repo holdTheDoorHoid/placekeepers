@@ -82,6 +82,7 @@ fetches it). Field lists and the reasons for them are in each adapter's docstrin
 | `septa_gtfs` | SEPTA's GTFS zip (22 MB, two feeds: bus and Metro, Regional Rail) | Not the timetables: one row per stop with its key, history and service on a typical weekday, Saturday and Sunday, one row per route with its lines, and stop ids that disappeared in the last year (see "Transit" below) |
 | `septa_ridership_bus`, `septa_ridership_trolley` | SEPTA's ArcGIS stop summaries, the newest spring or fall count for each mode | Average boardings and alightings per route, direction and stop number, with the count's period and the layer used |
 | `osm_philadelphia` | Geofabrik's Pennsylvania extract of OpenStreetMap (`.osm.pbf`, about 350 MB, weekly; read with DuckDB's `ST_ReadOSM`) | Not the extract: the nodes and ways with a tag the registry lists (`endpoint.tags`) inside the city limits (the 2020 census tracts joined) and 200 meters around them, with all their tags (JSON), shape, a point on each, whether that point is in the city, and the extract's date. 3,338 rows on 2026-10-04. Most of its stops must lie inside the city |
+| `heat_vulnerability` | City ArcGIS `heat_vulnerability_ct` (by the Department of Public Health and the Office of Sustainability) | Every 2010 census tract with its heat exposure, heat sensitivity and heat vulnerability scores (data of 2017 to 2019), with the shape; 384 tracts |
 
 **Candidate parcels.** Transfers, assessments and violations are too large to download for the
 whole city every week, so they come down for every parcel with any sign of vacancy (see
@@ -261,11 +262,26 @@ layers. The method is in `docs/TRANSIT_METHOD.md`; in short:
 The stops layer keeps places in Philadelphia (the Council districts widened by 100 meters) with
 any departure on the typical days; the routes layer keeps routes that stop there.
 
+**The transit comfort lens** (M2.3, `derive/transit_comfort.py`) adds to every bus and trolley stop:
+
+* **What riders find**: the OpenStreetMap stop that is the same stop (`match_septa` in
+  `derive/bus_stops.py`, as for the route survey sheets: by number, then by distance, both within
+  15 meters), with its shelter, bench and light answers. A stop OpenStreetMap does not have, or has
+  without answers, is not yet surveyed, never "missing".
+* **Factors** from 0 to 100 among the stops: riders (SEPTA's count), no shelter and no bench (100 no,
+  0 yes, 50 not yet surveyed), little canopy in the stop's H3 cell (`tree_canopy_2018`, with
+  `census_tracts_2020` and `land_use` for the land), the tract's heat exposure (`heat_vulnerability`),
+  the High Injury Network within 30 meters, and the midday wait. Without a source, its factor is
+  left out.
+* **Suggestions** (`sg`): survey the stop, ask for a shelter, ask for a bench, report a dark
+  streetlight, plant shade trees, each by a rule in the module. The build notes give the match
+  counts, the surveyed counts and each suggestion's count.
+
 ### Shelters and benches at stops
 
 `publish/amenities.py` builds the `stops` layer of `tiles/amenities.pmtiles` from the
 `osm_philadelphia` snapshot, with the rules in `derive/bus_stops.py` (docs/CONTRACTS.md section 4).
-These are OpenStreetMap's stops, a separate layer from SEPTA's, which M2.3 joins to them. The rules:
+These are OpenStreetMap's stops, a separate layer from SEPTA's, which M2.3 joins to them (above). The rules:
 
 * **Stops**: `highway=bus_stop` (not a stop position in the road) and platforms for buses,
   trolleybuses and trolleys; station platforms of trains and subways, platforms underground or

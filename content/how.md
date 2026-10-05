@@ -116,14 +116,19 @@ A few things people often ask about do not have a clear City process yet:
 - **A new streetlight.** We found no request path. The City's LED upgrade only swaps bulbs; it
   does not add new lights.
 - **A bench on a sidewalk.** **Not yet confirmed:** we could not find a permit path; ask OTIS
-  directly.
+  directly. Benches at bus stops belong to the City's street furniture program, run by OTIS, with
+  no public request form; write to otis@phila.gov with the stop's number.
 - **Asphalt or crosswalk art.** We found no City process. In July 2025 the federal government
   began urging cities to remove this kind of street art, and Florida has ordered removals. No
   Pennsylvania or Philadelphia position has been found. **Check with the City first before you
   plan one.**
 - **A bus shelter.** **Not yet confirmed:** shelters are placed under the City's advertising
-  contract, and we found no resident request path; ask OTIS directly. Meanwhile you can help show
-  which stops have a shelter or a bench: see [Survey bus stops](../streetcomplete/).
+  contract, and we found no resident request path. OTIS runs the program and aims to put shelters
+  at the busiest 15 percent of bus stops; write to otis@phila.gov or call 215-686-9003 with the
+  stop's number and how many people get on there, copy your City Council district office, and tell
+  SEPTA through its comment form. On the map, tap a bus stop to see its riders and what neighbors
+  can do there. Meanwhile you can help show which stops have a shelter or a bench: see
+  [Survey bus stops](../streetcomplete/).
 - **A roadside memorial or ghost bike.** There is no City rule, but the Bicycle Coalition handles
   ghost bike requests through a simple form, and the norm is to ask the family's blessing first.
 

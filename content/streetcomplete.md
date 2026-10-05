@@ -156,7 +156,16 @@ feet), when that stop does not answer the question itself. A stop's own answer a
 
 ## What happens next
 
-As far as we know, bus shelters are placed under the City's advertising contract, and we found no
-way for residents to request one. **Not yet confirmed:** ask OTIS directly. See
-[How to do it](../how/) for what we know about asking for a shelter or a bench. A clear count of
-the stops where riders wait without either is a strong place to start that conversation.
+Your answers feed the map's **transit comfort** lens, which ranks bus and trolley stops by where a
+shelter, a bench or shade would help riders most. A stop where a survey found nothing to sit under
+or on moves up; a stop no one has surveyed yet counts halfway until someone does. Turn on the bus
+stops (the **Bus stops** chip, or **Bus and trolley stops** in the layer list) and tap a stop to see
+its priority and what neighbors can do there.
+
+The City's bus shelter program is run by its transportation office (OTIS) and paid for by the
+advertising on the shelters, and the City aims to put shelters at the busiest 15 percent of bus
+stops. We found no public form to ask for a shelter or a bench. **Not yet confirmed:** whether OTIS
+takes requests by email; write to otis@phila.gov or call 215-686-9003 with the stop's number and
+how many people get on there, and copy your City Council district office. See
+[How to do it](../how/) for more. A clear count of the stops where riders wait without either is a
+strong place to start that conversation.

@@ -31,6 +31,7 @@ the Philadelphia results are real, but they are not a law of nature.
 | **Mixed** | Good studies disagree, or the effect depends on context. |
 | **Weak** | Only perception surveys or correlations, or one small study. |
 | **Not about violence** | The intervention is valuable for other reasons; no violence claim is made. |
+| **Context** | Background that shows where care can help most, such as how many people wait at a stop. It is not a claim about what works. |
 
 ## Greening vacant lots: Strong
 
@@ -175,7 +176,58 @@ spaces built around it, saw homicide fall 66% more than comparable neighborhoods
 colleagues, *American Journal of Epidemiology* 2012,
 [doi:10.1093/aje/kwr428](https://doi.org/10.1093/aje/kwr428); rate ratio 0.33, 95% CI 0.18 to 0.61).
 Medellin's circumstances were very different from Philadelphia's. Evidence about shelters and lighting
-at bus stops specifically is thin; transit comfort is its own lens.
+at bus stops specifically is thin; transit comfort is its own lens, with no violence claim (below).
+
+## Bus stop comfort: Weak, Mixed and Context
+
+Added 2026-10-05 for the transit comfort lens (milestone M2.3). The lens claims only that a shelter,
+a bench and shade make waiting at a stop easier to bear, and that some stops need them more than
+others. It makes no claim about violence or crime, and none that a shelter brings more riders; the
+one stop suggestion with a crime finding behind it is reporting a dark streetlight, which carries
+the street lighting evidence above. Each factor's badge, and why:
+
+- **No shelter, no bench: Weak.** In Minneapolis and Saint Paul, researchers surveyed riders at
+  stops and filmed the stops to time the real waits. Riders reported waits about 1.21 times as long
+  as they were; at stops with no amenities, waits felt at least 1.3 times as long, and benches and
+  shelters significantly shortened how long the wait felt. The authors recommend amenities
+  especially where service is infrequent (Fan, Guthrie and Levinson 2016, *Transportation Research
+  Part A* 88:251 to 264, [doi:10.1016/j.tra.2016.04.012](https://doi.org/10.1016/j.tra.2016.04.012)).
+  It is a perception study in one region, so the badge is Weak.
+- **Long waits: Weak.** The same study is the reason a long wait counts: a seat and a roof matter
+  most where riders wait longest, and its authors single out routes with infrequent service.
+- **Little shade nearby: Mixed.** At 36 stops in the same region, mature trees made waits of more
+  than 5 minutes feel shorter, while traffic and pollution made them feel longer (Lagune-Reutler,
+  Guthrie, Fan and Levinson 2016, *Transportation Research Record* 2543:82 to 90,
+  [doi:10.3141/2543-09](https://doi.org/10.3141/2543-09)). In Phoenix in the summer of 2018, shade
+  lowered the felt temperature at stops (the physiologically equivalent temperature) by 19 °C on
+  average and almost half of riders felt hot, but a vegetated awning did not help in the afternoon
+  (Dzyuban, Hondula, Coseo and Redman, *International Journal of Biometeorology* 66(2):345 to 356,
+  2022, published online in 2021,
+  [doi:10.1007/s00484-021-02074-4](https://doi.org/10.1007/s00484-021-02074-4)). In Austin, across
+  2,271 stops, shelters did not soften the drop in riders on hot days, while tree canopy softened it
+  slightly (a 1.6 percent drop instead of 1.7) (Lanza and Durand 2021, *International Journal of
+  Environmental Research and Public Health* 18(2):463,
+  [doi:10.3390/ijerph18020463](https://doi.org/10.3390/ijerph18020463)). Shade helps people wait;
+  how much, and what kind of shade, depends on the climate and the design. So Mixed.
+- **Riders and a hot neighborhood: Context.** How many people get on at a stop (SEPTA's count) and
+  how hot its census tract runs in summer (the City's heat exposure score) say where a shelter or
+  shade would help the most people and the people most exposed. They are not claims about what
+  works. The City itself aims its shelters at the busiest 15 percent of stops (OTIS, May 2024,
+  docs/ROUTES.md).
+- **On the High Injury Network: Context.** On state highways and arterials in the Seattle region,
+  bus stop use was associated with collisions involving people on foot, with traffic volume and the
+  number of lanes also playing a part (Hess, Moudon and Matlick 2004, *Journal of Public
+  Transportation* 7(2):73 to 93, [doi:10.5038/2375-0901.7.2.5](https://doi.org/10.5038/2375-0901.7.2.5)).
+  Across the United States, among crashes that killed someone on foot, crashes in the middle of a
+  block had 4.7 to 5.2 times the odds of being tied to a bus stop (Rewalt, Brakewood and Cherry 2025,
+  *Journal of Safety Research* 95:147 to 159,
+  [doi:10.1016/j.jsr.2025.09.002](https://doi.org/10.1016/j.jsr.2025.09.002)). These studies show
+  where the risk gathers, not what removes it, so the factor is Context: it marks stops where a safe
+  crossing matters most.
+- **The suggestions.** Asking for a shelter or a bench: Weak, from the perception study above.
+  Planting shade trees: Mixed, as above. Reporting a dark streetlight: Moderate, the street
+  lighting evidence above. Surveying the stop with StreetComplete: Context; it changes what the map
+  knows, not the stop.
 
 ## Street safety quick builds
 

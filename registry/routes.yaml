@@ -200,3 +200,62 @@
     - {label: "City of Philadelphia: Fraud Guard", url: "https://www.phila.gov/2022-09-06-own-property-in-philadelphia-get-free-deed-fraud-protection-with-fraud-guard/"}
   last_checked: 2026-10-04
   status: verified
+# Milestone M2.3: routes for bus and trolley stops. No public request path exists for a shelter or
+# a bench (checked 2026-10-05); these routes say so and name the office that runs the program.
+- id: bus_shelter_request
+  label: Ask the City for a bus shelter
+  who: Anyone
+  steps:
+    - Note the stop's SEPTA number (on the sign, and on this map), the corner, and how many people get on there each weekday.
+    - Write to the City's Office of Transportation and Infrastructure Systems (OTIS) at otis@phila.gov, or call 215-686-9003. OTIS runs the City's bus shelter program; there is no public request form.
+    - Copy your City Council district office, and tell SEPTA too, through its online comment form or at 215-580-7800.
+  cost: Free to ask
+  timeline: Not stated. OTIS sends new shelter locations to the City's Art Commission for review (eight in December 2025)
+  links:
+    - {label: "OTIS street furniture request for information (May 2024), with the City's shelter goal", url: "https://www.phila.gov/media/20240521160603/RFI-OTIS-street-furniture-20240521.pdf"}
+    - {label: "Eight new bus shelters sent to the Art Commission (December 2025)", url: "https://www.phila.gov/media/20251205094032/Bus-Shelter-Upgrades-submission.pdf"}
+    # wwww is SEPTA's own spelling of its host: its Customer Service page links the form this way.
+    - {label: SEPTA comment form, url: "https://wwww.septa.org/customer-service/comment-form/"}
+  last_checked: 2026-10-05
+  status: confirm
+- id: stop_bench_request
+  label: Ask the City for a bench at a stop
+  who: Anyone
+  steps:
+    - Note the stop's SEPTA number (on the sign, and on this map) and the corner.
+    - Write to OTIS at otis@phila.gov, or call 215-686-9003, and ask for a bench at the stop. Benches at stops belong to the City's street furniture program; we found no public request form.
+    - Copy your City Council district office.
+  cost: Free to ask
+  timeline: Not stated
+  links:
+    - {label: "OTIS street furniture request for information (May 2024)", url: "https://www.phila.gov/media/20240521160603/RFI-OTIS-street-furniture-20240521.pdf"}
+  last_checked: 2026-10-05
+  status: confirm
+- id: street_tree_request
+  label: Ask for a free street tree
+  who: The owner of the home, business or other property beside the stop
+  steps:
+    - Street trees are planted in the sidewalk in front of a property when its owner asks. Talk with the owners of the buildings beside the stop.
+    - The owner asks Parks and Recreation's Street Tree Management Division for a free street tree, online, by email at StreetTree.Info@phila.gov, or by phone at 215-685-4363.
+    - A City arborist visits to decide which tree fits. The City plants it for free in a planting season (mid April to mid June, or mid October to mid November) and waters and mulches it for the first year.
+  cost: Free
+  timeline: The next planting season after the arborist's visit
+  links:
+    - {label: "City of Philadelphia: get a street tree", url: "https://www.phila.gov/services/trees-parks-the-environment/tree-related-services/get-a-street-tree/"}
+    - {label: "TreePhilly: street trees", url: "https://treephilly.org/street-trees/"}
+  last_checked: 2026-10-05
+  status: verified
+- id: streetcomplete_survey
+  label: Survey the stop with StreetComplete
+  who: Anyone with an Android phone (a first iPhone test version appeared in September 2026)
+  steps:
+    - Install the free StreetComplete app and make a free OpenStreetMap account so your answers are published.
+    - At the stop, tap the app's marker and answer its questions about the shelter, the bench, the light and the stop's number.
+    - If the app has no question at the stop, add the stop with its Things overlay, or leave a note so another mapper can.
+  cost: Free
+  timeline: Answers reach this map within about a week
+  links:
+    - {label: "Placekeepers: survey bus stops", url: "https://holdthedoorhoid.github.io/placekeepers/streetcomplete/"}
+    - {label: StreetComplete, url: "https://streetcomplete.app/"}
+  last_checked: 2026-10-05
+  status: verified

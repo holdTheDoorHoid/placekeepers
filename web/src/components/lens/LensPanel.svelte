@@ -1,6 +1,7 @@
 <script lang="ts">
   // Lens sliders and presets. Moving a slider changes one weight in the state; the map
   // recolors at once through a paint property, without reloading data.
+  import { lensLayers, lensShown } from '../../map/lens-layers.ts';
   import { matchingPreset } from '../../state/defaults.ts';
   import type { Lens } from '../../registry/types.ts';
   import type { AppStore } from '../../state/store.svelte.ts';
@@ -23,6 +24,8 @@
   const weights = $derived(store.state.weights[lens.id] ?? {});
   const active = $derived(matchingPreset(lens, weights));
   const allOff = $derived(lens.factors.every((f) => (weights[f.id] ?? f.default_weight) === 0));
+  /** The layer that draws this lens's places, when the map is not showing the lens on it. */
+  const hidden = $derived(lensShown(store.registry, store.state, lens) ? null : (lensLayers(store.registry, lens)[0] ?? null));
 </script>
 
 <section class="lens" aria-labelledby="{idPrefix}-lens-{lens.id}">
@@ -43,6 +46,12 @@
   {/if}
 
   {#if allOff}<p class="notice" role="status">{strings.lens.allOffFor(lens.applies_to)}</p>{/if}
+  {#if hidden}
+    <p class="hidden-note small">
+      {strings.lens.notShown(hidden.label)}
+      <button class="button quiet small" type="button" onclick={() => store.showLens(lens.id)}>{strings.lens.showOnMap}</button>
+    </p>
+  {/if}
 
   {#each lens.factors as factor (factor.id)}
     {@const w = weights[factor.id] ?? factor.default_weight}
@@ -118,6 +127,13 @@
   }
   .notice {
     margin-bottom: 8px;
+  }
+  .hidden-note {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+    margin: 0 0 8px;
   }
   .lens > .button {
     margin-top: 8px;

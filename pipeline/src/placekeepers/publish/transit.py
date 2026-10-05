@@ -5,7 +5,9 @@ how often service comes and how many people board, and its routes as context.
   Saturday or Sunday (bus, trolley, subway and El platforms, Regional Rail stations), from the
   `septa_gtfs` snapshot, with SEPTA's average weekday boardings where a count matches the stop
   (placekeepers.derive.transit.match_counts). A stop with no matching count gets no boardings,
-  never an estimate.
+  never an estimate. Bus and trolley stops also get what riders find there from OpenStreetMap,
+  the transit comfort lens factors and their suggestions (placekeepers.derive.transit_comfort,
+  M2.3).
 * `routes`: every route that stops in Philadelphia, as the lines its trips follow, cut to a
   generous box around the city.
 
@@ -36,6 +38,8 @@ from placekeepers.derive.transit import (
     split_side,
     sum_counts,
 )
+from placekeepers.derive.transit_comfort import SOURCES as COMFORT_SOURCES
+from placekeepers.derive.transit_comfort import SeptaStop, comfort_for_stops
 from placekeepers.geo import GeoJSONWriter, geometry_json
 from placekeepers.publish.layers import BuildResult, LayerBuilder, plain_name
 
@@ -245,6 +249,16 @@ def build_transit_stops(
     matches = match_counts(candidates, counts, known)
     by_row = {surface[index]: match for index, match in matches.items()}
 
+    # The transit comfort lens and the suggestions, for bus and trolley stops (M2.3).
+    comfort = comfort_for_stops(
+        [SeptaStop(sid, tuple(former), place.lat, place.lng) for sid, former, place in candidates],
+        [counts[by_row[i].code].weekday if i in by_row else None for i in surface],
+        [headway(rows[i].get("midday_wk"), MIDDAY_MINUTES) for i in surface],
+        paths,
+        set(ctx.registry.suggestions),
+    )
+    extra = {surface[index]: props for index, props in enumerate(comfort.properties)}
+
     with GeoJSONWriter(out) as writer:
         order = sorted(range(len(rows)), key=lambda i: rows[i]["key"])
         for index in order:
@@ -252,7 +266,7 @@ def build_transit_stops(
             match = by_row.get(index)
             count = counts.get(match.code) if match else None
             point = {"type": "Point", "coordinates": [round(row["lng"], 6), round(row["lat"], 6)]}
-            writer.write(stop_properties(row, count, match), point)
+            writer.write({**stop_properties(row, count, match), **extra.get(index, {})}, point)
 
     if rows:
         # The typical days of the bus and Metro schedules (Regional Rail's may differ).
@@ -285,6 +299,7 @@ def build_transit_stops(
             f"{plural(how['nearby'], 'from a retired stop', 'from retired stops')} within 30 "
             "meters with a similar name; the rest have none"
         )
+    notes.extend(comfort.notes)
     if used:
         log.info("transit: Philadelphia from %s", used)
     return BuildResult(writer.count, notes)
@@ -337,7 +352,8 @@ TRANSIT_BUILDERS: tuple[LayerBuilder, ...] = (
         "stops",
         (GTFS,),
         build_transit_stops,
-        extras=(*RIDERSHIP, *CITY_SOURCES),
+        # Ridership, the city's shape, and what the transit comfort lens reads (M2.3).
+        extras=tuple(dict.fromkeys((*RIDERSHIP, *CITY_SOURCES, *COMFORT_SOURCES))),
     ),
     LayerBuilder(TRANSIT_FILE, "routes", (GTFS,), build_transit_routes, extras=CITY_SOURCES),
 )

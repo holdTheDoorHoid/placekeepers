@@ -53,12 +53,18 @@ export interface ParcelInView {
   center: [number, number];
 }
 
-/** A memorial marker drawn in the current view: one person, with where the marker stands. */
-export interface MemorialInView {
+/** A point drawn in the current view, with its registry layer and where it stands. */
+export interface PointInView {
   layerId: string;
   properties: Record<string, unknown>;
   lngLat: [number, number];
 }
+
+/** A memorial marker drawn in the current view: one person, with where the marker stands. */
+export type MemorialInView = PointInView;
+
+/** A SEPTA stop drawn in the current view (the stops layer, under its settings). */
+export type StopInView = PointInView;
 
 /** A memorial, crash or street block someone tapped: shown in the details panel. */
 export interface InspectTarget {
@@ -323,9 +329,21 @@ export class MapController {
    * for the map can offer each one to keyboards and screen readers.
    */
   memorialsInView(): MemorialInView[] {
-    const ids = this.parts((style) => style === STYLES.memorials, 'clickable');
+    return this.pointsInView(STYLES.memorials);
+  }
+
+  /**
+   * SEPTA stops drawn in the current view, one entry per stop, for "What you can do nearby". Only
+   * stops the map draws count, so the stops layer's settings apply to the list too.
+   */
+  stopsInView(): StopInView[] {
+    return this.pointsInView(STYLES.transit_stops);
+  }
+
+  private pointsInView(style: StyleModule): PointInView[] {
+    const ids = this.parts((s) => s === style, 'clickable');
     if (!this.loaded || ids.length === 0) return [];
-    const seen = new Map<string, MemorialInView>();
+    const seen = new Map<string, PointInView>();
     for (const feature of this.map.queryRenderedFeatures({ layers: ids })) {
       const layerId = this.layerOf(feature.layer.id);
       const properties = { ...feature.properties };
