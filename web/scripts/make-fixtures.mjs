@@ -22,6 +22,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync
 import { cellToBoundary, gridDisk, latLngToCell } from 'h3-js';
 import { AMENITY_LAYERS, AMENITY_SOURCES, amenityFixtures } from './amenity-fixtures.mjs';
 import { routeSheetFixtures } from './route-fixtures.mjs';
+import { WALK_LAYERS, WALK_SOURCES, walkFixtures } from './walk-fixtures.mjs';
 
 const FIXTURES = new URL('../fixtures/', import.meta.url);
 const ROOT = new URL('data/', FIXTURES);
@@ -464,6 +465,9 @@ writeFileSync(path('data/tiles/trees.trees.geojson'), collection(cityTrees));
 // Amenities from OpenStreetMap, public places from the City and conditions reported to 311 (M3.5,
 // scripts/amenity-fixtures.mjs).
 for (const [name, text] of amenityFixtures(toLngLat)) writeFileSync(path(`data/${name}`), text);
+// Walkability by block group, people and places within walking distance, and traffic stress for
+// people on bikes (M3.3, scripts/walk-fixtures.mjs).
+for (const [name, text] of walkFixtures(toLngLat)) writeFileSync(path(`data/${name}`), text);
 // The route survey sheets (scripts/route-fixtures.mjs): the index is listed in files, each route's
 // sheet is not (docs/CONTRACTS.md section 7).
 mkdirSync(path('data/tables/routes'), { recursive: true });
@@ -581,6 +585,7 @@ const manifest = {
     land_use: ok(560515, null),
     heat_vulnerability: ok(384, null),
     ...Object.fromEntries(Object.entries(AMENITY_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
+    ...Object.fromEntries(Object.entries(WALK_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
   },
   layers: {
     vacant_parcels: {
@@ -628,6 +633,7 @@ const manifest = {
     },
     transit_routes: { file: 'tiles/transit.pmtiles', source_layer: 'routes', sources: ['septa_gtfs'] },
     ...AMENITY_LAYERS,
+    ...WALK_LAYERS,
   },
   files: Object.fromEntries(
     [
@@ -648,6 +654,7 @@ const manifest = {
       'tiles/environment.floodplain.geojson',
       'tiles/trees.trees.geojson',
       ...amenityFixtures(toLngLat).map(([name]) => name),
+      ...walkFixtures(toLngLat).map(([name]) => name),
       'tables/routes/index.json',
       ...handWritten.map(([name]) => name).filter((name) => !shardFiles.some(([shard]) => shard === name)),
     ].map((p) => [p, fileInfo(p)]),
@@ -662,7 +669,7 @@ const manifest = {
     : null,
   notes: [
     'This is synthetic sample data for testing the map.',
-    'Street, boundary, transit, amenity, heat, tree and floodplain tiles were skipped for this sample, so those layers are published as GeoJSON.',
+    'Street, boundary, transit, amenity, heat, tree, floodplain and walking tiles were skipped for this sample, so those layers are published as GeoJSON.',
   ],
 };
 writeFileSync(new URL('manifest.json', ROOT), JSON.stringify(manifest, null, 2) + '\n');

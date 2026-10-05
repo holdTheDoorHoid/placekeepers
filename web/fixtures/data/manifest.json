@@ -326,6 +326,42 @@
       "rows": 6496,
       "newest_record": "2026-10-02",
       "message": null
+    },
+    "epa_walkability": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 1336,
+      "newest_record": null,
+      "message": null
+    },
+    "census_blocks_2020": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 17554,
+      "newest_record": null,
+      "message": null
+    },
+    "dvrpc_lts": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 60867,
+      "newest_record": null,
+      "message": null
+    },
+    "snap_retailers": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 1460,
+      "newest_record": "2026-09-17",
+      "message": null
     }
   },
   "layers": {
@@ -561,6 +597,38 @@
         "philly311_conditions",
         "street_centerlines"
       ]
+    },
+    "walkability": {
+      "file": "tiles/walk.pmtiles",
+      "source_layer": "block_groups",
+      "sources": [
+        "epa_walkability"
+      ]
+    },
+    "walking_distance": {
+      "file": "tiles/walk.pmtiles",
+      "source_layer": "cells",
+      "sources": [
+        "census_blocks_2020",
+        "street_centerlines",
+        "library_locations",
+        "ppr_program_sites",
+        "ppr_swimming_pools",
+        "ppr_spraygrounds",
+        "ppr_hydration_stations",
+        "schools",
+        "snap_retailers",
+        "septa_gtfs",
+        "census_tracts_2020",
+        "land_use"
+      ]
+    },
+    "traffic_stress": {
+      "file": "tiles/cycling.pmtiles",
+      "source_layer": "stress",
+      "sources": [
+        "dvrpc_lts"
+      ]
     }
   },
   "files": {
@@ -676,6 +744,18 @@
       "bytes": 202,
       "sha256": "5f785fcbc81bffd5e4dbacffbcda299119e99f30141e03c30098b35c5976022f"
     },
+    "tiles/walk.block_groups.geojson": {
+      "bytes": 1206,
+      "sha256": "c798a7bc409ba7e18c7d7741e19da154c02dc38038323d012d4009c4fedb6d7d"
+    },
+    "tiles/walk.cells.geojson": {
+      "bytes": 6945,
+      "sha256": "14f61b3aedb941bb3777b6bbf3724a2dba4a697723a37e09a1474721028732b1"
+    },
+    "tiles/cycling.stress.geojson": {
+      "bytes": 846,
+      "sha256": "db3f13d6ca3ce820b90a9f7a2e760764ba7ee66164dfa3808271217aee22f24c"
+    },
     "tables/routes/index.json": {
       "bytes": 846,
       "sha256": "9244225df95bdee51d45a9fe6ec98bc2fa5f835611b1a937a9d569e914a5d9cc"
@@ -699,6 +779,6 @@
   },
   "notes": [
     "This is synthetic sample data for testing the map.",
-    "Street, boundary, transit, amenity, heat, tree and floodplain tiles were skipped for this sample, so those layers are published as GeoJSON."
+    "Street, boundary, transit, amenity, heat, tree, floodplain and walking tiles were skipped for this sample, so those layers are published as GeoJSON."
   ]
 }

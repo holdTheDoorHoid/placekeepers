@@ -21,6 +21,7 @@
   import AmenityDetails from '../amenities/AmenityDetails.svelte';
   import ConditionDetails from '../amenities/ConditionDetails.svelte';
   import PlaceDetails from '../amenities/PlaceDetails.svelte';
+  import StressDetails from '../walk/StressDetails.svelte';
 
   let {
     store,
@@ -122,6 +123,8 @@
     {#each target.features.slice(0, 4) as properties, i (i)}
       <ConditionDetails layerId={target.layerId} {properties} route={store.registry.routes.find((r) => r.id === 'report_to_311')} />
     {/each}
+  {:else if style === STYLES.traffic_stress}
+    <StressDetails features={target.features} />
   {/if}
   {#if onClose}
     <button class="button quiet small" type="button" onclick={onClose}>{strings.place.clearSelection}</button>

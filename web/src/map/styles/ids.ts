@@ -23,5 +23,9 @@ export const STYLE_IDS = [
   'amenity',
   'public_place',
   'condition',
+  // M3.3: walkability by block group, people and places within walking distance, traffic stress
+  'walkability',
+  'walking_distance',
+  'traffic_stress',
 ] as const;
 export type StyleId = (typeof STYLE_IDS)[number];

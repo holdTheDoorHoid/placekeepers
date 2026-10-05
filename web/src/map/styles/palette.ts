@@ -127,3 +127,29 @@ export const CONDITION_COLORS: Record<string, string> = {
   dark_lights: '#3a3a4a',
   graffiti: '#8e4585',
 };
+
+/**
+ * Walkability by block group (M3.3), from least to most walkable: ColorBrewer PuBuGn, a cool
+ * teal ramp clear of the lots' yellow greens, the heat oranges and the shootings' purples, drawn
+ * faintly under everything else. The EPA's four national classes use the ramp's two ends and its
+ * fourth step, skipping the middle, so the classes never look like fifths.
+ */
+export const WALK_BINS = ['#f6eff7', '#bdc9e1', '#67a9cf', '#1c9099', '#016c59'] as const;
+export const WALK_NATION_BINS = ['#f6eff7', '#bdc9e1', '#1c9099', '#016c59'] as const;
+export const WALK_OPACITY = 0.5;
+
+/**
+ * People and places within walking distance (M3.3), hexagons from few to many: ColorBrewer Blues,
+ * a quiet single hue that reads in grayscale, clear of the shootings' purple hexagons beside it.
+ */
+export const REACH_BINS = ['#eff3ff', '#bdd7e7', '#6baed6', '#3182bd', '#08519c'] as const;
+export const REACH_OPACITY = 0.5;
+
+/**
+ * Traffic stress for people on bikes (M3.3), level 1 to 4: two blues for calm streets, then an
+ * orange and a deep brown for stressful ones, never an alarm red, and clear of the High Injury
+ * Network's amber (#b35806), which is drawn above them. A thin white casing keeps the lighter
+ * colors visible on the base map.
+ */
+export const STRESS_COLORS: Record<number, string> = { 1: '#2166ac', 2: '#67a9cf', 3: '#e08214', 4: '#7f3b08' };
+export const STRESS_CASING = '#ffffff';

@@ -591,7 +591,9 @@ export const strings = {
                         ? 'Place'
                         : style === 'condition'
                           ? 'Reported to 311'
-                          : 'Details',
+                          : style === 'traffic_stress'
+                            ? 'Traffic stress for bikes'
+                            : 'Details',
     memorialTitle: 'In memory',
     peopleHere: (n: number) => `${plural(n, 'person is', 'people are')} remembered here`,
     killed: {
@@ -1031,6 +1033,99 @@ export const strings = {
     meaning: 'A request shows that someone noticed and asked the City for help. Some blocks ask more often than others.',
     report: 'Report it to Philly311',
     source: "From the City's 311 records (Philly311), refreshed every week.",
+  },
+
+  // Walking, cycling and people (M3.3): the legends of src/map/styles/walkability.ts,
+  // walking_distance.ts and traffic_stress.ts, and a street someone tapped
+  // (src/components/walk/StressDetails.svelte). Distances are straight lines and say so.
+  walk: {
+    // Walkability by block group, from the EPA
+    walkTitle: {
+      index: 'How walkable each area is (the EPA walkability index)',
+      corners: 'Street corners: how connected the streets are (EPA)',
+      transit: 'How close the nearest transit stop is (EPA)',
+      mix: 'How well homes, jobs and shops are mixed (EPA)',
+    } as Record<string, string>,
+    walkCompared: {
+      city: 'Compared within Philadelphia: each shade holds about a fifth of the city\'s block groups.',
+      nation: 'Compared with the whole country, as the EPA ranks every block group in the United States.',
+    } as Record<string, string>,
+    walkFifths: {
+      index: ['Least walkable fifth', 'Less walkable', 'Middle fifth', 'More walkable', 'Most walkable fifth'],
+      corners: ['Fewest corners', 'Fewer', 'Middle fifth', 'More', 'Most corners'],
+      transit: ['Farthest from transit', 'Farther', 'Middle fifth', 'Closer', 'Closest to transit'],
+      mix: ['Least mixed', 'Less mixed', 'Middle fifth', 'More mixed', 'Most mixed'],
+    } as Record<string, string[]>,
+    walkNationFifths: ['Bottom fifth of the country', 'Below the middle', 'Middle fifth', 'Above the middle', 'Top fifth of the country'],
+    walkClasses: [
+      'Least walkable: an index of 1 to 5.75',
+      'Below average: 5.76 to 10.5',
+      'Above average: 10.51 to 15.25',
+      'Most walkable: 15.26 to 20',
+    ],
+    walkNationNote:
+      'Compared with the whole country, nearly all of Philadelphia is above average or among the most walkable, so comparing within the city shows its differences better.',
+    walkParts:
+      'The index scores from 1 to 20. Street corners and transit count for a third of it each, and two measures of the mix of homes, jobs and shops for a sixth each.',
+    walkSource: "From the EPA's Smart Location Database (2021), built from data of about 2017 to 2019.",
+
+    // People and places within walking distance, by hexagon
+    reachTitle: {
+      people: 'People who live within a 5 minute walk (2020 census)',
+      places: 'Kinds of everyday places within a 10 minute walk',
+      corners: 'Street corners within a 5 minute walk',
+    } as Record<string, string>,
+    reachBins: {
+      people: ['Fewer than 1,000 people', '1,000 to 2,499', '2,500 to 3,999', '4,000 to 5,999', '6,000 or more'],
+      places: ['2 or fewer of the 7 kinds', '3 or 4 kinds', '5 kinds', '6 kinds', 'All 7 kinds'],
+      corners: ['Fewer than 10 corners', '10 to 24', '25 to 49', '50 to 74', '75 or more'],
+    } as Record<string, string[]>,
+    reachKinds:
+      'The seven kinds: a library, a recreation center, a pool or sprayground in service, a drinking fountain in a park, a school, a grocery store or market that takes SNAP, and a bus, trolley or train stop.',
+    reachCorners: 'A corner is where three or more streets people can walk on meet. More corners mean shorter blocks and more ways to get somewhere on foot.',
+    reachMeasured:
+      'Counted from the middle of each hexagon in a straight line: 400 meters for a 5 minute walk, 800 for a 10 minute walk. That reaches a little farther than a walk along the streets, and it crosses rail lines, expressways and rivers.',
+    reachSource: {
+      people: 'People from the 2020 census, counted by block.',
+      places: 'Places from the City, Parks and Recreation, the USDA and SEPTA. Places just across the city line are not counted.',
+      corners: "Corners from the City's street centerlines.",
+    } as Record<string, string>,
+
+    // Traffic stress for people on bikes, from DVRPC
+    stressLevels: {
+      1: 'Level 1: calm enough for most people of all ages',
+      2: 'Level 2: fine for most adults',
+      3: 'Level 3: only for confident riders',
+      4: 'Level 4: only for the most fearless riders',
+    } as Record<number, string>,
+    stressShown: {
+      stressful: 'Only stressful streets, levels 3 and 4, are shown.',
+      calm: 'Only calm streets, levels 1 and 2, are shown.',
+    } as Record<string, string>,
+    stressZoom: 'Zoomed out, the map shows stressful streets and streets with a bike lane or a trail. Zoom in to see every street.',
+    stressSource:
+      "From the Delaware Valley Regional Planning Commission's Level of Traffic Stress network (DVRPC): rated from the lanes, the speed of traffic and the kind of bike lane, not from riding every street.",
+    stressTitle: (level: number) => `Level ${level} of 4`,
+    stressMeaning: {
+      1: 'Calm enough for most people of all ages, children too.',
+      2: 'Fine for most adults: a little traffic stress.',
+      3: 'Only confident riders feel at ease here.',
+      4: 'Busy, fast traffic: only the most fearless riders.',
+    } as Record<number, string>,
+    stressOtherWay: (level: number) => `Riding the other way is calmer: level ${level}.`,
+    facilities: {
+      0: 'No bike lane',
+      1: 'A signed bike route',
+      2: 'Shared lane markings (sharrows)',
+      3: 'A bike lane',
+      4: 'A buffered bike lane',
+      5: 'A protected bike lane',
+      6: 'A trail or path away from traffic',
+    } as Record<number, string>,
+    stressSpeed: (mph: number) => `Traffic moves at about ${formatNumber(mph)} miles an hour, by the speed limit or DVRPC's estimate.`,
+    stressLanes: (n: number) => `${plural(n, 'lane', 'lanes')} in all.`,
+    streetsHere: (n: number) => `${plural(n, 'street', 'streets')} here`,
+    stressDetailsSource: "From DVRPC's Level of Traffic Stress network, rated from lanes, speeds and bike lanes.",
   },
 
   basemap: {
