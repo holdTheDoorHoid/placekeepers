@@ -72,8 +72,10 @@ describe('the details panel for a tapped stop', () => {
     const html = details({ id: 'n6', c: 0, md: 1, nm: 'Sample St & Test Ave' });
     expect(html).toContain('Sample St &amp; Test Ave');
     expect(html).toContain(strings.stops.unknownNote);
-    expect(html).not.toContain(`${strings.stops.answers.sh}: ${strings.stops.no}`);
-    expect(html).toContain('href="/placekeepers/streetcomplete/"');
+    // "No" on its own, not the start of "Not yet surveyed".
+    expect(html).not.toMatch(new RegExp(`${strings.stops.answers.sh}: ${strings.stops.no}(?!t)`));
+    expect(html).toContain(`${strings.stops.answers.sh}: ${strings.stops.unknown}`);
+    expect(html).toContain(`href="${import.meta.env.BASE_URL}streetcomplete/"`);
     expect(html).toContain('href="https://www.openstreetmap.org/node/6"');
     expect(html).toContain(strings.stops.source);
   });
