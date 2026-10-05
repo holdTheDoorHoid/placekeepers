@@ -5,6 +5,7 @@
   import type { Snippet } from 'svelte';
   import type { Manifest } from '../../data/manifest.ts';
   import type { DossierView } from '../../dossier/build.ts';
+  import type { OwnerListTarget } from '../../dossier/owners-table.ts';
   import { strings } from '../../strings.ts';
   import DossierActions from './DossierActions.svelte';
   import DossierHistory from './DossierHistory.svelte';
@@ -20,7 +21,7 @@
     onPrint?: () => void;
     onShowOnMap?: () => void;
     onClear?: () => void;
-    onShowOwnerList?: (listId: string) => void;
+    onShowOwnerList?: (target: OwnerListTarget) => void;
   }
 
   let {

@@ -174,9 +174,12 @@ class OwnerFacts:
     history: list[Transfer] = field(default_factory=list)
     last_sale: LastSale | None = None
     resales: Resales | None = None
-    #: how many vacant parcels this owner holds, and the id of the list of them
+    #: how many vacant parcels this owner holds, and the id of the list of them in the owners
+    #: table (an organization) or the owner's other parcels themselves (an owner who may be a
+    #: person: no citywide file lists people, docs/VERIFICATION.md D3)
     holdings: int = 0
     holdings_list: str | None = None
+    holdings_parcels: list[dict[str, Any]] | None = None
     li: LiSummary = field(default_factory=LiSummary)
     #: we call the parcel vacant with high or medium confidence
     called_vacant: bool = False
@@ -189,9 +192,14 @@ class OwnerFacts:
 
     @property
     def person_like(self) -> bool:
-        """The owner may be a person: typed as one, of a type we could not tell, or a private
-        owner whose names carry an estate."""
-        return self.owner_type.type in PERSON_TYPES or (self.private and self.possible_estate)
+        return person_like(self.owner_type, self.has_names, self.possible_estate)
+
+
+def person_like(owner_type: OwnerType, has_names: bool, possible_estate: bool) -> bool:
+    """The owner may be a person: typed as one, of a type we could not tell, or a private owner
+    whose names carry an estate."""
+    private = not owner_type.public and (owner_type.type != "unknown" or has_names)
+    return owner_type.type in PERSON_TYPES or (private and possible_estate)
 
 
 def owner_flag_allowed(flag_id: str, facts: OwnerFacts) -> bool:
@@ -274,10 +282,14 @@ def sale_flag(found: LastSale) -> dict[str, Any]:
     )
 
 
-def many_parcels_flag(count: int, list_id: str | None) -> dict[str, Any]:
+def many_parcels_flag(
+    count: int, list_id: str | None, parcels: list[dict[str, Any]] | None = None
+) -> dict[str, Any]:
     data: dict[str, Any] = {"count": count}
     if list_id:
         data["list"] = list_id
+    if parcels is not None:
+        data["parcels"] = parcels
     return make_flag("many_parcels", wording.many_parcels_text(count), data)
 
 
@@ -328,7 +340,7 @@ def owner_flags(facts: OwnerFacts, as_of: date) -> list[dict[str, Any]]:
     if private and facts.last_sale is not None:
         flags.append(sale_flag(facts.last_sale))
     if private and facts.holdings >= MANY_PARCELS_MIN:
-        flags.append(many_parcels_flag(facts.holdings, facts.holdings_list))
+        flags.append(many_parcels_flag(facts.holdings, facts.holdings_list, facts.holdings_parcels))
     if facts.resales is not None:
         flags.append(resale_flag(facts.resales))
     if facts.li.open_violations > 0:

@@ -62,6 +62,14 @@ export interface Link {
   url: string;
 }
 
+/** One parcel of an owner's list: its account, address, and how the map calls it. */
+export interface OwnerListParcel {
+  id: string;
+  address: string | null;
+  kind: VacancyKind | null;
+  confidence: Confidence | null;
+}
+
 /**
  * An owner flag (docs/ETHICS.md): what it means (`text`), why to be careful, and a protective
  * next step. A shard may carry only `id` and `text`; the page then uses its own wording for the
@@ -73,8 +81,13 @@ export interface OwnerFlag {
   careful: string | null;
   nextStep: string | null;
   links: Link[];
-  /** For the many_parcels flag: the owner's list in tables/owners.json. */
+  /** For the many_parcels flag of an organization: its list in tables/owners.json. */
   list?: string | null;
+  /**
+   * For the many_parcels flag of an owner who may be a person: their other parcels, from this
+   * lot's own dossier entry. No citywide file lists people (docs/VERIFICATION.md D3).
+   */
+  parcels?: OwnerListParcel[] | null;
 }
 
 /** The City's list of public property: which agency, its status, and side yard eligibility. */

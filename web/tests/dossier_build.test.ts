@@ -266,6 +266,16 @@ describe('a parcel that may be someone\'s home (docs/VERIFICATION.md D5 and D6)'
     expect(view.owner.held).not.toBeNull();
   });
 
+  it('takes a person\'s other parcels from the lot\'s own record, never from the owners table', () => {
+    const parcel = structuredClone(shard.parcels.get('990000005')!);
+    const others = [{ id: '990000006', address: '1307 N EXAMPLE AVE', kind: 'lot' as const, confidence: 'high' as const }];
+    parcel.owner!.flags.push({ id: 'many_parcels', text: 'This owner holds 5 vacant parcels in the city.', careful: null, nextStep: null, links: [], list: null, parcels: others });
+    const view = buildDossier(input('990000005', { shard: { status: 'found', parcel, generatedAt: shard.generatedAt, notes }, liveOn: false }));
+    const many = view.owner.flags.find((f) => f.id === 'many_parcels')!;
+    expect(many.parcels).toEqual(others);
+    expect(many.list).toBeNull();
+  });
+
   it('keeps every flag of an organization on any parcel', () => {
     const view = buildDossier(input('990000004', { shard: at('990000004', 'low'), liveOn: false }));
     expect(ids(view)).toEqual(['absentee', 'years_since_sale', 'many_parcels']);

@@ -5,11 +5,12 @@
   // City's Tax Center for today's balance (docs/ETHICS.md). On a parcel that may be someone's
   // home, a line says why the notes about an owner who may be a person are not shown.
   import type { DossierView } from '../../dossier/build.ts';
+  import type { OwnerListTarget } from '../../dossier/owners-table.ts';
   import { strings } from '../../strings.ts';
   import FlagItem from './FlagItem.svelte';
   import ProvenanceLine from './ProvenanceLine.svelte';
 
-  let { owner, onShowList }: { owner: DossierView['owner']; onShowList?: (listId: string) => void } = $props();
+  let { owner, onShowList }: { owner: DossierView['owner']; onShowList?: (target: OwnerListTarget) => void } = $props();
   const o = strings.dossier.owner;
 </script>
 

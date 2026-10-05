@@ -52,6 +52,7 @@ import type {
   Link,
   Nearby,
   OwnerFlag,
+  OwnerListParcel,
   OwnerType,
   ShardParcel,
   Transfer,
@@ -132,8 +133,10 @@ export interface FlagView {
   careful: string | null;
   nextStep: string | null;
   links: Link[];
-  /** For the many_parcels flag: the owner's list in tables/owners.json. */
+  /** For the many_parcels flag: an organization's list in tables/owners.json. */
   list?: string | null;
+  /** For the many_parcels flag of an owner who may be a person: their other parcels, from this lot's record. */
+  parcels?: OwnerListParcel[] | null;
   provenance: Provenance;
 }
 

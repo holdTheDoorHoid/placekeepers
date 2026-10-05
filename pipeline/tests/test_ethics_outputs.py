@@ -20,7 +20,8 @@ tables/owners.json. The tests below check, in every one of them:
   parcels) only on parcels called vacant with high or medium confidence;
 * conservatorship only for a private parcel called vacant with high or medium confidence, and
   never on a parcel with a homestead exemption;
-* names only from memorials.yaml, and everything in suppressed.yaml gone from every file.
+* names only from memorials.yaml, and everything in suppressed.yaml gone from every file;
+* the citywide owners table lists organizations only, never a person.
 
 Rules that need a person to judge (care framing, quiet design, what the interface shows) are
 listed in docs/VERIFICATION.md.
@@ -38,6 +39,7 @@ import pytest
 import yaml
 
 from placekeepers.curated import REMOVAL_EMAIL_FILE
+from placekeepers.derive import owners as ow
 from placekeepers.derive.flags import ABOUT_THE_OWNER
 from placekeepers.publish import publish
 
@@ -303,6 +305,16 @@ def test_flags_about_a_person_only_on_parcels_called_vacant(built) -> None:
                 ids = {flag["id"] for flag in owner["flags"]}
                 assert not ids & set(ABOUT_THE_OWNER), (name, ids)
     assert held  # WALLACE GLORIA's parcel is not called vacant
+
+
+def test_the_owners_table_lists_organizations_only(built) -> None:
+    out, _, _ = built
+    owners = published_files(out)["tables/owners.json"]["owners"]
+    assert owners  # KENSINGTON LOTS LLC
+    for entry in owners.values():
+        found = ow.type_from_name(entry["names"])
+        assert found.type not in {"individual", "unknown"}, entry["names"]
+        assert not ow.possible_estate(entry["names"]), entry["names"]
 
 
 def test_conservatorship_only_for_private_parcels_called_vacant(built) -> None:

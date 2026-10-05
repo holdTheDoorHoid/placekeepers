@@ -1037,6 +1037,7 @@ export const strings = {
     ownerList: {
       title: 'This owner\'s parcels on our list',
       intro: (names: string) => `Parcels on our list whose owner is recorded as ${names}.`,
+      others: 'Other parcels on our list whose owner is recorded under the same names as this one.',
       loading: 'Loading the list',
       missing: 'This list is not available right now.',
       open: (address: string) => `Open the lot page for ${address}`,

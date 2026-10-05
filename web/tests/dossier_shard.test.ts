@@ -129,8 +129,8 @@ describe('reading a shard', () => {
       type: 'individual',
       typeReason: "The owner name looks like a person's name.",
       flags: [
-        { id: 'absentee', text: 'The owner gets mail somewhere else: Cherry Hill, NJ (out of state).', careful: null, nextStep: null, links: [], list: null },
-        { id: 'years_since_sale', text: 'Last sold in 1987.', careful: null, nextStep: null, links: [], list: null },
+        { id: 'absentee', text: 'The owner gets mail somewhere else: Cherry Hill, NJ (out of state).', careful: null, nextStep: null, links: [], list: null, parcels: null },
+        { id: 'years_since_sale', text: 'Last sold in 1987.', careful: null, nextStep: null, links: [], list: null, parcels: null },
       ],
       cityOwned: null,
       notice: 'deed_fraud',
@@ -257,6 +257,35 @@ describe('reading a shard', () => {
     expect(parcel.transfers![0]).toMatchObject({ price: null, fromMore: 3, toMore: 0, properties: 4 });
     expect(parcel.landcare).toEqual({ program: 'community_landcare', year: 2019 });
     expect(parcel.garden).toBe(true);
+  });
+
+  it('reads a person\'s other parcels from the flag itself, never from the owners table', () => {
+    const parcel = parseShardParcel({
+      owner: {
+        names: ['PARKER JAMES'],
+        type: 'individual',
+        flags: [
+          {
+            id: 'many_parcels',
+            text: 'This owner holds 5 vacant parcels in the city.',
+            data: {
+              count: 5,
+              parcels: [
+                { id: '372000002', address: '2904 N 5TH ST', kind: 'lot', confidence: 'medium' },
+                { id: '37200000x', address: 'not an account' },
+                { id: '372000003', address: '2906 N 5TH ST', kind: 'shed', confidence: 'sure' },
+              ],
+            },
+          },
+        ],
+      },
+    })!;
+    const flag = parcel.owner!.flags[0]!;
+    expect(flag.list).toBeNull();
+    expect(flag.parcels).toEqual([
+      { id: '372000002', address: '2904 N 5TH ST', kind: 'lot', confidence: 'medium' },
+      { id: '372000003', address: '2906 N 5TH ST', kind: null, confidence: null },
+    ]);
   });
 });
 

@@ -8,6 +8,8 @@ import { describe, expect, it } from 'vitest';
 import { loadRegistry } from '../plugins/registry.ts';
 import Dossier from '../src/components/dossier/Dossier.svelte';
 import DossierPrint from '../src/components/dossier/DossierPrint.svelte';
+import OwnerList from '../src/components/dossier/OwnerList.svelte';
+import type { AppStore } from '../src/state/store.svelte.ts';
 import RouteDetails from '../src/components/dossier/RouteDetails.svelte';
 import { parseManifest } from '../src/data/manifest.ts';
 import { IDLE_PARTS, buildDossier, routeView, type DossierInput } from '../src/dossier/build.ts';
@@ -128,6 +130,20 @@ describe('the lot page', () => {
     const parcel = parseShardParcel(raw)!;
     const page = html('990000005', { shard: { status: 'found', parcel, generatedAt: null, notes } });
     for (const word of ['4321', 'very easy', '215 555', 'owner@example.org', '98765']) expect(page).not.toContain(word);
+  });
+
+  it('lists a person\'s other parcels from the lot\'s own record, each opening its lot page', () => {
+    const parcels = [
+      { id: '372000002', address: '2904 N 5TH ST', kind: 'lot' as const, confidence: 'medium' as const },
+      { id: '372000003', address: null, kind: null, confidence: null },
+    ];
+    const body = render(OwnerList, { props: { store: {} as AppStore, target: { parcels }, dataBase: '/data/', onOpen: () => {} } }).body;
+    const text = textOf(body);
+    expect(text).toContain(strings.dossier.ownerList.others);
+    expect(text).toContain('2904 N 5TH ST');
+    expect(text).toContain('Vacant lot, probably vacant');
+    expect(text).toContain(strings.dossier.parcel('372000003'));
+    expect(text).not.toContain(strings.dossier.ownerList.loading);
   });
 
   it('says plainly when there is nothing to show', () => {

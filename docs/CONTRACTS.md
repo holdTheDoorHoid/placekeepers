@@ -202,7 +202,7 @@ data/
     boundaries.pmtiles    layers "council_districts", "rcos", "neighborhoods"
   tables/
     parcels.json          compact columnar table for ranking and lists
-    owners.json           owners holding many vacant parcels, with their parcels (section 6)
+    owners.json           organizations holding many vacant parcels, with their parcels (section 6)
   dossiers/
     <first four digits of the OPA account>.json
     common.json           the parts of every flag that are the same for all parcels (section 6)
@@ -575,7 +575,7 @@ Flags, in this order, with their `data`:
 | `tax_debt_2025` | every owner | `as_of` ("2025-07-09"), `total_due` (dollars), `years` (tax years owed) |
 | `sheriff_sales` | every owner | `sales`: `date` and `price` of each, oldest first |
 | `years_since_sale` | private owners | `year`; with a known sale `date`, `price` and `source` (`opa_properties` when it comes from the assessor, before the deed records begin in 2000); with none, `sold: false` and `year` is the year since which there has been no sale on the open market |
-| `many_parcels` | private owners with at least 5 parcels we call vacant with high or medium confidence | `count`, `list` (a key of `tables/owners.json`) |
+| `many_parcels` | private owners with at least 5 parcels we call vacant with high or medium confidence | `count`; for an organization `list` (a key of `tables/owners.json`); for an owner who may be a person `parcels`, their other parcels (each `id`, `address`, `kind`, `confidence`, as in `tables/owners.json`), never a `list` |
 | `fast_resales` | every owner | `count`, `dates` (two or more sales within 24 months of each other) |
 | `open_violations` | every owner | `count`, `last` (date), `title` (the City's violation title) |
 | `unsafe`, `imminently_dangerous` | every owner | `since` (date) |
@@ -682,9 +682,13 @@ from City records is shown as published, except that a dash used as punctuation 
 }
 ```
 
-Every private owner holding at least `min_parcels` parcels we call vacant with high or medium
-confidence, keyed by the `list` id of its `many_parcels` flag, with each parcel's OPA account, address
-and vacancy `kind` and `confidence`, so "this owner's list" shows without opening any shard. Owners
+Every organization (a company or a nonprofit) holding at least `min_parcels` parcels we call vacant
+with high or medium confidence, keyed by the `list` id of its `many_parcels` flag, with each parcel's
+OPA account, address and vacancy `kind` and `confidence`, so "this owner's list" shows without
+opening any shard. An owner who may be a person (typed `individual` or `unknown`, or whose names
+carry an estate) is never in this file, so no citywide file lists people's holdings: each of their
+parcels' `many_parcels` flag carries their other parcels in `data.parcels`, and the lot page lists
+them from there (changed 2026-10-04, docs/VERIFICATION.md D3). Owners
 are matched conservatively: two parcels share an owner only when all their owner names match after
 spelling is evened out (capitals, no punctuation, "L.L.C." as LLC, "&" as AND), so one owner under
 two spellings counts twice and two owners are never merged. Public owners are left out: the City

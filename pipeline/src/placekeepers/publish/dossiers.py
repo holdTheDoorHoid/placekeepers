@@ -13,9 +13,11 @@ Written under the data root:
     dossiers/<first four digits of the OPA account>.json    the parcels, one file per prefix
     dossiers/common.json  the parts of each flag that are the same for every parcel (its careful
                           note, next step, routes, links and sources) and the notices, fetched once
-    tables/owners.json    every private owner holding many vacant parcels, with each parcel's
+    tables/owners.json    every organization holding many vacant parcels, with each parcel's
                           account, address, kind and confidence, so "this owner's list" needs no
-                          other file
+                          other file. An owner who may be a person is never listed there: each of
+                          their parcels carries their other parcels in its own many_parcels flag
+                          (docs/VERIFICATION.md D3)
 
 The vacancy call is the vacancy model's (placekeepers.derive.vacancy), read from the same file
 the lots layer reads, so the dossier and the map always agree; without the model, both show the
@@ -60,6 +62,7 @@ from placekeepers.derive.flags import (
     OwnerFacts,
     TaxDebt,
     owner_flags,
+    person_like,
     shows_deed_fraud_notice,
 )
 from placekeepers.derive.routes import first_route_code, routes_for, suggestions_for
@@ -151,7 +154,10 @@ class DossierResult:
     largest: int = 0
     common_bytes: int = 0
     owners_bytes: int = 0
+    #: organizations in tables/owners.json, and owners who may be people listed on their own
+    #: parcels' pages instead
     owners_listed: int = 0
+    people_listed: int = 0
     notes: list[str] = field(default_factory=list)
     #: the account prefixes that have a shard, sorted
     prefixes: list[str] = field(default_factory=list)
@@ -837,6 +843,13 @@ def build_dossiers(
                 if confident(account):
                     holdings[key].append(account)
     listed = {key: found for key, found in holdings.items() if len(found) >= MANY_PARCELS_MIN}
+    # Owners who may be people are never in the citywide owners table: each of their parcels lists
+    # their other parcels itself (docs/VERIFICATION.md D3).
+    people = {
+        key
+        for key, found in listed.items()
+        if person_like(types[found[0]], True, ow.possible_estate(opa[found[0]].names))
+    }
 
     known_suggestions = set(ctx.registry.suggestions)
     known_routes = set(ctx.registry.routes)
@@ -872,7 +885,14 @@ def build_dossiers(
         key = keys.get(account)
         if key in listed:
             facts.holdings = len(listed[key])
-            facts.holdings_list = ow.owner_list_id(key)
+            if key in people:
+                facts.holdings_parcels = [
+                    owner_list_entry(other, opa, vacancy)
+                    for other in sorted(listed[key])
+                    if other != account
+                ]
+            else:
+                facts.holdings_list = ow.owner_list_id(key)
         flags = owner_flags(facts, as_of)
 
         owner: dict[str, Any] = {
@@ -939,17 +959,21 @@ def build_dossiers(
     generated_at = iso_z(ctx.now())
     write_shards(result, out_root, shards, generated_at)
     write_common(result, out_root, generated_at)
-    write_owners_table(result, out_root, listed, opa, vacancy, generated_at)
+    organizations = {key: found for key, found in listed.items() if key not in people}
+    write_owners_table(result, out_root, organizations, opa, vacancy, generated_at)
+    result.people_listed = len(people)
     if candidates.missing:
         result.notes.append(
             "lot dossiers were built without " + ", ".join(sorted(candidates.missing))
         )
     log.info(
-        "dossiers: %s parcels in %s files (%.1f MB), %s owners with many vacant parcels",
+        "dossiers: %s parcels in %s files (%.1f MB); many vacant parcels: %s organizations in "
+        "the owners table, %s other owners listed on their own lot pages",
         f"{result.parcels:,}",
         result.shards,
         result.bytes / 1e6,
         result.owners_listed,
+        result.people_listed,
     )
     return result
 
@@ -1028,6 +1052,19 @@ def write_common(result: DossierResult, out_root: Path, generated_at: str) -> No
     result.common_bytes = target.stat().st_size
 
 
+def owner_list_entry(
+    account: str, opa: dict[str, Opa], vacancy: dict[str, dict[str, Any]]
+) -> dict[str, Any]:
+    """One parcel of an owner's list: its account, address, and vacancy kind and confidence."""
+    call = vacancy.get(account) or {}
+    return {
+        "id": account,
+        "address": opa[account].location,
+        "kind": call.get("kind"),
+        "confidence": call.get("confidence"),
+    }
+
+
 def write_owners_table(
     result: DossierResult,
     out_root: Path,
@@ -1036,23 +1073,14 @@ def write_owners_table(
     vacancy: dict[str, dict[str, Any]],
     generated_at: str,
 ) -> None:
-    """tables/owners.json: each listed owner's parcels with what "this owner's list" shows."""
+    """tables/owners.json: each listed organization's parcels with what "this owner's list"
+    shows."""
     table = out_root / OWNERS_TABLE
     table.parent.mkdir(parents=True, exist_ok=True)
-
-    def entry(account: str) -> dict[str, Any]:
-        call = vacancy.get(account) or {}
-        return {
-            "id": account,
-            "address": opa[account].location,
-            "kind": call.get("kind"),
-            "confidence": call.get("confidence"),
-        }
-
     owners = {
         ow.owner_list_id(key): {
             "names": opa[found[0]].names,
-            "parcels": [entry(account) for account in sorted(found)],
+            "parcels": [owner_list_entry(account, opa, vacancy) for account in sorted(found)],
         }
         for key, found in listed.items()
     }

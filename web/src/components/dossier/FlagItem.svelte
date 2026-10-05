@@ -2,11 +2,14 @@
   // One owner flag in its three parts (docs/ETHICS.md): what it means, why to be careful, and a
   // protective next step, with its links and where it came from.
   import type { FlagView } from '../../dossier/build.ts';
+  import type { OwnerListTarget } from '../../dossier/owners-table.ts';
   import { strings } from '../../strings.ts';
   import ProvenanceLine from './ProvenanceLine.svelte';
 
-  let { flag, onShowList }: { flag: FlagView; onShowList?: (listId: string) => void } = $props();
+  let { flag, onShowList }: { flag: FlagView; onShowList?: (target: OwnerListTarget) => void } = $props();
   const parts = strings.dossier.owner.parts;
+  // An organization's list is in the owners table; a person's other parcels come with the flag.
+  const target = $derived<OwnerListTarget | null>(flag.list ? { listId: flag.list } : flag.parcels?.length ? { parcels: flag.parcels } : null);
 </script>
 
 <article class="flag" data-flag={flag.id}>
@@ -23,8 +26,8 @@
       <dd>{flag.nextStep}</dd>
     {/if}
   </dl>
-  {#if flag.list && onShowList}
-    <p><button class="button small quiet" type="button" onclick={() => onShowList(flag.list!)}>{strings.dossier.owner.seeList}</button></p>
+  {#if target && onShowList}
+    <p><button class="button small quiet" type="button" onclick={() => onShowList(target)}>{strings.dossier.owner.seeList}</button></p>
   {/if}
   {#if flag.links.length}
     <ul class="links">

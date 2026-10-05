@@ -320,7 +320,9 @@ As built (M1.6, 2026-10-04):
   complete only from 2000; before that the assessor's last sale is used.
 - "Owner holds many vacant parcels" starts at five parcels the map calls vacant with high or medium
   confidence. Owners are matched by their exact names, so one owner under two spellings counts
-  twice, but two different owners are never merged.
+  twice, but two different owners are never merged. The citywide list of such owners
+  (`tables/owners.json`) holds organizations only; a person's other parcels are listed only on the
+  lot pages of their own parcels (decided 2026-10-04 by the orchestrator, docs/VERIFICATION.md D3).
 - Conservatorship appears only for a private parcel the map calls vacant with high or medium
   confidence, never for a parcel we are not sure about, which may be someone's home. Changed from
   the first plan, which listed it for every private lot. It never appears for a parcel with a

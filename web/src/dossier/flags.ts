@@ -155,6 +155,7 @@ export function completeFlag(flag: OwnerFlag, note: FlagNote | null = null, rout
     nextStep: estate ? f.possible_estate.next : (note?.nextStep ?? flag.nextStep ?? parts?.nextStep ?? null),
     links: mergeLinks(flag.links, note?.links ?? [], routeLinks, flagLinks(flag.id)),
     list: flag.list ?? null,
+    parcels: flag.parcels ?? null,
   };
 }
 

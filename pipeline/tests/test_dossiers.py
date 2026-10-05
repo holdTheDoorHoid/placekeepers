@@ -186,10 +186,15 @@ OPA_ROWS = [
 ]
 
 
-def opa_table(homestead: dict[str, int] | None = None) -> pa.Table:
-    """OPA's records of the made up parcels; `homestead` replaces the homestead exemptions."""
+def opa_table(
+    homestead: dict[str, int] | None = None, owners: dict[str, str] | None = None
+) -> pa.Table:
+    """OPA's records of the made up parcels; `homestead` replaces the homestead exemptions and
+    `owners` the first owner name of the accounts it names."""
     exemptions = HOMESTEAD if homestead is None else homestead
     rows = [dict(zip(OPA_KEYS, row, strict=True)) for row in OPA_ROWS]
+    for row in rows:
+        row["owner_1"] = (owners or {}).get(row["parcel_number"], row["owner_1"])
     out: dict[str, list[Any]] = {name: [] for name in OPA_COLUMNS}
     for row in rows:
         lng, lat = where(row["parcel_number"])
@@ -647,6 +652,45 @@ def test_an_owner_with_many_vacant_parcels_links_to_the_list(built) -> None:
     assert flags["fast_resales"]["text"] == "Sold 2 times since 2024."
     assert "notice" not in record["owner"]  # a company: no deed fraud notice
     assert parcel(out, "372000005")["li"]["demolished"] == "2017-02-01"
+
+
+def test_a_person_with_many_vacant_parcels_is_never_in_the_owners_table(
+    context_factory, tmp_path
+) -> None:
+    # docs/VERIFICATION.md D3: the citywide owners table lists organizations only. A person who
+    # holds five or more vacant parcels keeps the flag on those parcels, and each of their lot
+    # pages lists their other parcels from its own dossier entry.
+    ctx = context_factory(now=NOW)
+    install_everything(ctx)
+    lots = [f"37200000{i}" for i in range(1, 6)]
+    install_snapshot(
+        ctx,
+        "opa_properties",
+        opa_table(owners=dict.fromkeys(lots, "PARKER JAMES")),
+        geometry=False,
+        fetched_at="2026-10-04T14:30:00Z",
+    )
+    out = tmp_path / "data"
+    result = publish(ctx, out)
+    table = json.loads((out / "tables" / "owners.json").read_text(encoding="utf-8"))
+    assert table["owners"] == {}
+    assert "PARKER" not in (out / "tables" / "owners.json").read_text(encoding="utf-8")
+    assert result.dossiers.owners_listed == 0 and result.dossiers.people_listed == 1
+    for account in lots:
+        record = parcel(out, account)
+        assert record["owner"]["type"] == "individual"
+        many = {flag["id"]: flag for flag in record["owner"]["flags"]}["many_parcels"]
+        assert many["text"] == "This owner holds 5 vacant parcels in the city."
+        assert "list" not in many["data"]
+        others = many["data"]["parcels"]
+        assert [item["id"] for item in others] == [a for a in lots if a != account]
+        assert others[0] == {
+            "id": lots[1] if account == lots[0] else lots[0],
+            "address": "2904 N 5TH ST" if account == lots[0] else "2902 N 5TH ST",
+            "kind": "lot",
+            "confidence": "medium",
+        }
+        assert record["owner"]["notice"] == "deed_fraud"
 
 
 def test_land_bank_and_redevelopment_authority_lots(built) -> None:

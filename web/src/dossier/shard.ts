@@ -7,6 +7,7 @@
 
 import type { Manifest } from '../data/manifest.ts';
 import { cityDate } from './dates.ts';
+import { parseOwnerListParcel } from './owners-table.ts';
 import { COMMON_PATH, isOpaAccount, shardPath, shardPaths } from './opa.ts';
 import type {
   Assessment,
@@ -21,6 +22,7 @@ import type {
   Nearby,
   Owner,
   OwnerFlag,
+  OwnerListParcel,
   OwnerType,
   Shard,
   ShardParcel,
@@ -108,7 +110,11 @@ function flag(v: unknown): OwnerFlag | null {
   if (!id || !ID.test(id) || !body) return null;
   const data = isObj(v.data) ? v.data : {};
   const list = typeof data.list === 'string' && /^[A-Za-z0-9_-]{1,64}$/.test(data.list) ? data.list : null;
-  return { id, text: body, careful: text(v.careful), nextStep: text(v.next_step), links: links(v.links), list };
+  // A person's other parcels travel with the flag itself (no citywide file lists people).
+  const parcels = Array.isArray(data.parcels)
+    ? data.parcels.map(parseOwnerListParcel).filter((p): p is OwnerListParcel => p !== null)
+    : null;
+  return { id, text: body, careful: text(v.careful), nextStep: text(v.next_step), links: links(v.links), list, parcels };
 }
 
 function cityOwned(v: unknown): CityOwned | null {
