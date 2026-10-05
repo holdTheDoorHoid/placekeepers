@@ -272,7 +272,7 @@ def dangerous_text(since: date | None) -> str:
     )
 
 
-# The deed fraud notice (ETHICS.md: shown on any dossier with an individual owner flag)
+# The deed fraud notice (ETHICS.md: shown on every dossier whose owner may be a person)
 DEED_FRAUD_NOTICE = (
     "Deed theft happens when someone files a fake deed to take a property, often one whose owner "
     "has died or lives elsewhere. Owners and families can sign up for the City's free Fraud Guard "

@@ -278,10 +278,10 @@ As built (M1.6, 2026-10-04):
   says plainly that it cannot be shown. Parcels with no published dossier say so and show what the
   City's servers say right now.
 - **Who owns it** shows the names and mailing address as the City publishes them, the kind of owner
-  and why, each flag in its three parts, the deed fraud notice wherever a person owns the parcel or
-  it may be an estate, help for families (the Tangled Title Fund and Fraud Guard) beside any flag on
-  a private owner, and taxes, always dated July 2025 with a link to the Tax Center. A many parcels
-  flag opens the owner's list. When the City names a different owner than the snapshot, the flags
+  and why, each flag in its three parts, the deed fraud notice wherever the owner may be a person
+  (a person, an owner whose type we could not tell, or a possible estate), help for families (the
+  Tangled Title Fund and Fraud Guard) beside any flag on a private owner, and taxes, always dated
+  July 2025 with a link to the Tax Center. A many parcels flag opens the owner's list. When the City names a different owner than the snapshot, the flags
   about the earlier owner are left out.
 - **History** shows every deed newest first (the date on the deed, the document in plain
   words, the price, from and to), the City's assessments as a small chart and the same numbers as a
@@ -329,7 +329,8 @@ As built (M1.6, 2026-10-04):
   homestead exemption, at any confidence: that is the City's own record that someone lives there,
   or did (decided 2026-10-04 by the orchestrator, docs/VERIFICATION.md D1).
 - Every dossier of a private owner with a flag links to the Tangled Title Fund and Fraud Guard, and
-  every dossier of a person (or a possible estate) with a flag shows the deed fraud notice.
+  every dossier whose owner may be a person shows the deed fraud notice, even where the notes about
+  the owner are held back (decided 2026-10-04 by the orchestrator).
 - On a parcel the map does not call very likely or probably vacant, which may be someone's home,
   the notes about an owner who may be a person (where they get mail, a possible estate, tax debt,
   other parcels they own) are held back, and the page says why. A possible estate is never shown

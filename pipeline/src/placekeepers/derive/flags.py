@@ -31,9 +31,11 @@ flag, and facts about the parcel (deeds, sheriff sales, violations) are always s
 2026-10-04 by the orchestrator, docs/VERIFICATION.md D5 and D6).
 
 A dossier whose private owner has any flag also carries `help` (the Tangled Title Fund and Fraud
-Guard routes: ETHICS.md puts "Fraud Guard and Tangled Title links on every flagged dossier"), and
-one whose owner is a person, or may be an estate, carries the deed fraud notice with any flag it
-shows.
+Guard routes: ETHICS.md puts "Fraud Guard and Tangled Title links on every flagged dossier"). Every
+dossier whose owner may be a person (a person, an owner whose type we could not tell, or a possible
+estate) carries the deed fraud notice, even where the flags about the owner are held back: those
+are mostly homes, and the notice protects the family living there while saying nothing about the
+owner (decided 2026-10-04 by the orchestrator).
 """
 
 from __future__ import annotations
@@ -352,9 +354,9 @@ def owner_flags(facts: OwnerFacts, as_of: date) -> list[dict[str, Any]]:
     return [flag for flag in flags if owner_flag_allowed(flag["id"], facts)]
 
 
-def shows_deed_fraud_notice(facts: OwnerFacts, flags: list[dict[str, Any]]) -> bool:
-    """ETHICS.md: any dossier showing an individual owner flag also shows the deed fraud notice.
-    Here: the owner is a person, or a name may be an estate, and the dossier shows a flag (the
-    flags as shown, after owner_flags held any back)."""
-    person = facts.owner_type.type == "individual" or (facts.private and facts.possible_estate)
-    return person and bool(flags)
+def shows_deed_fraud_notice(facts: OwnerFacts) -> bool:
+    """ETHICS.md: the deed fraud notice appears whenever the owner may be a person (typed as
+    one, of a type we could not tell, or a private owner whose names carry an estate), with or
+    without flags: it says how deed theft works and how families can protect a home, and nothing
+    about the owner."""
+    return facts.person_like

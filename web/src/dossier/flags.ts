@@ -75,10 +75,12 @@ export function ownerFlagAllowed(id: string, rule: OwnerFlagRule): boolean {
   return !(ABOUT_THE_OWNER.includes(id) && rule.personLike && !rule.calledVacant);
 }
 
-/** The deed fraud notice goes with any flag shown on the page of an owner who is a person or may be an estate. */
-export function showsDeedFraudNotice(type: OwnerType, names: string[], flagsShown: number): boolean {
-  const person = type === 'individual' || (isPrivate(type, names.length > 0) && possibleEstate(names));
-  return person && flagsShown > 0;
+/**
+ * The deed fraud notice appears whenever the owner may be a person, flags or not (the pipeline's
+ * shows_deed_fraud_notice): it protects the family living there and says nothing about the owner.
+ */
+export function showsDeedFraudNotice(type: OwnerType, names: string[]): boolean {
+  return personLike(type, names);
 }
 
 /** Which live lookup each flag is worked out from; the rest come only from the weekly snapshot. */

@@ -1270,7 +1270,7 @@
       "homestead": false,
       "type": "unknown",
       "flags": [],
-      "notice": false
+      "notice": true
     },
     {
       "names": [
@@ -1400,7 +1400,7 @@
           "text": "Last sold in 2001."
         }
       ],
-      "notice": false
+      "notice": true
     },
     {
       "names": [
@@ -1485,7 +1485,8 @@
         "possible_estate",
         "tax_debt_2025",
         "many_parcels"
-      ]
+      ],
+      "notice": true
     },
     {
       "names": [
@@ -1499,7 +1500,8 @@
         "absentee",
         "tax_debt_2025",
         "many_parcels"
-      ]
+      ],
+      "notice": true
     },
     {
       "names": [
@@ -1509,7 +1511,8 @@
       "homestead": false,
       "type": "individual",
       "person": true,
-      "shown": []
+      "shown": [],
+      "notice": true
     },
     {
       "names": [
@@ -1519,7 +1522,8 @@
       "homestead": true,
       "type": "individual",
       "person": true,
-      "shown": []
+      "shown": [],
+      "notice": true
     },
     {
       "names": [
@@ -1534,7 +1538,8 @@
         "possible_estate",
         "tax_debt_2025",
         "many_parcels"
-      ]
+      ],
+      "notice": true
     },
     {
       "names": [
@@ -1548,7 +1553,8 @@
         "absentee",
         "tax_debt_2025",
         "many_parcels"
-      ]
+      ],
+      "notice": true
     },
     {
       "names": [
@@ -1558,7 +1564,8 @@
       "homestead": false,
       "type": "individual",
       "person": true,
-      "shown": []
+      "shown": [],
+      "notice": true
     },
     {
       "names": [
@@ -1568,7 +1575,8 @@
       "homestead": true,
       "type": "individual",
       "person": true,
-      "shown": []
+      "shown": [],
+      "notice": true
     },
     {
       "names": [
@@ -1583,7 +1591,8 @@
         "possible_estate",
         "tax_debt_2025",
         "many_parcels"
-      ]
+      ],
+      "notice": true
     },
     {
       "names": [
@@ -1597,7 +1606,8 @@
         "absentee",
         "tax_debt_2025",
         "many_parcels"
-      ]
+      ],
+      "notice": true
     },
     {
       "names": [
@@ -1607,7 +1617,8 @@
       "homestead": false,
       "type": "unknown",
       "person": true,
-      "shown": []
+      "shown": [],
+      "notice": true
     },
     {
       "names": [
@@ -1617,7 +1628,8 @@
       "homestead": true,
       "type": "unknown",
       "person": true,
-      "shown": []
+      "shown": [],
+      "notice": true
     },
     {
       "names": [],
@@ -1630,7 +1642,8 @@
         "possible_estate",
         "tax_debt_2025",
         "many_parcels"
-      ]
+      ],
+      "notice": true
     },
     {
       "names": [],
@@ -1642,7 +1655,8 @@
         "absentee",
         "tax_debt_2025",
         "many_parcels"
-      ]
+      ],
+      "notice": true
     },
     {
       "names": [],
@@ -1650,7 +1664,8 @@
       "homestead": false,
       "type": "unknown",
       "person": true,
-      "shown": []
+      "shown": [],
+      "notice": true
     },
     {
       "names": [],
@@ -1658,7 +1673,8 @@
       "homestead": true,
       "type": "unknown",
       "person": true,
-      "shown": []
+      "shown": [],
+      "notice": true
     },
     {
       "names": [
@@ -1673,7 +1689,8 @@
         "possible_estate",
         "tax_debt_2025",
         "many_parcels"
-      ]
+      ],
+      "notice": false
     },
     {
       "names": [
@@ -1687,7 +1704,8 @@
         "absentee",
         "tax_debt_2025",
         "many_parcels"
-      ]
+      ],
+      "notice": false
     },
     {
       "names": [
@@ -1702,7 +1720,8 @@
         "possible_estate",
         "tax_debt_2025",
         "many_parcels"
-      ]
+      ],
+      "notice": false
     },
     {
       "names": [
@@ -1716,7 +1735,8 @@
         "absentee",
         "tax_debt_2025",
         "many_parcels"
-      ]
+      ],
+      "notice": false
     },
     {
       "names": [
@@ -1731,7 +1751,8 @@
         "possible_estate",
         "tax_debt_2025",
         "many_parcels"
-      ]
+      ],
+      "notice": false
     },
     {
       "names": [
@@ -1745,7 +1766,8 @@
         "absentee",
         "tax_debt_2025",
         "many_parcels"
-      ]
+      ],
+      "notice": false
     },
     {
       "names": [
@@ -1760,7 +1782,8 @@
         "possible_estate",
         "tax_debt_2025",
         "many_parcels"
-      ]
+      ],
+      "notice": false
     },
     {
       "names": [
@@ -1774,7 +1797,8 @@
         "absentee",
         "tax_debt_2025",
         "many_parcels"
-      ]
+      ],
+      "notice": false
     },
     {
       "names": [
@@ -1790,7 +1814,8 @@
         "possible_estate",
         "tax_debt_2025",
         "many_parcels"
-      ]
+      ],
+      "notice": true
     },
     {
       "names": [
@@ -1805,7 +1830,8 @@
         "absentee",
         "tax_debt_2025",
         "many_parcels"
-      ]
+      ],
+      "notice": true
     },
     {
       "names": [
@@ -1816,7 +1842,8 @@
       "homestead": false,
       "type": "company",
       "person": true,
-      "shown": []
+      "shown": [],
+      "notice": true
     },
     {
       "names": [
@@ -1827,42 +1854,14 @@
       "homestead": true,
       "type": "company",
       "person": true,
-      "shown": []
+      "shown": [],
+      "notice": true
     },
     {
       "names": [
         "CITY OF PHILA"
       ],
       "vacant": true,
-      "homestead": false,
-      "type": "city",
-      "person": false,
-      "shown": [
-        "absentee",
-        "possible_estate",
-        "tax_debt_2025",
-        "many_parcels"
-      ]
-    },
-    {
-      "names": [
-        "CITY OF PHILA"
-      ],
-      "vacant": true,
-      "homestead": true,
-      "type": "city",
-      "person": false,
-      "shown": [
-        "absentee",
-        "tax_debt_2025",
-        "many_parcels"
-      ]
-    },
-    {
-      "names": [
-        "CITY OF PHILA"
-      ],
-      "vacant": false,
       "homestead": false,
       "type": "city",
       "person": false,
@@ -1871,7 +1870,39 @@
         "possible_estate",
         "tax_debt_2025",
         "many_parcels"
-      ]
+      ],
+      "notice": false
+    },
+    {
+      "names": [
+        "CITY OF PHILA"
+      ],
+      "vacant": true,
+      "homestead": true,
+      "type": "city",
+      "person": false,
+      "shown": [
+        "absentee",
+        "tax_debt_2025",
+        "many_parcels"
+      ],
+      "notice": false
+    },
+    {
+      "names": [
+        "CITY OF PHILA"
+      ],
+      "vacant": false,
+      "homestead": false,
+      "type": "city",
+      "person": false,
+      "shown": [
+        "absentee",
+        "possible_estate",
+        "tax_debt_2025",
+        "many_parcels"
+      ],
+      "notice": false
     },
     {
       "names": [
@@ -1885,7 +1916,8 @@
         "absentee",
         "tax_debt_2025",
         "many_parcels"
-      ]
+      ],
+      "notice": false
     }
   ]
 }

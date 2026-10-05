@@ -256,13 +256,14 @@ describe('a parcel that may be someone\'s home (docs/VERIFICATION.md D5 and D6)'
     expect(ids(view)).toContain('absentee');
   });
 
-  it('shows no deed fraud notice when no flag is left to show', () => {
+  it('keeps the deed fraud notice when no flag is left to show', () => {
     const parcel = structuredClone(shard.parcels.get('990000005')!);
     parcel.vacancy = { ...parcel.vacancy!, confidence: 'low' };
     parcel.owner!.flags = parcel.owner!.flags.filter((f) => ['absentee', 'tax_debt_2025'].includes(f.id));
     const view = buildDossier(input('990000005', { shard: { status: 'found', parcel, generatedAt: shard.generatedAt, notes }, liveOn: false }));
     expect(ids(view)).toEqual([]);
-    expect(view.owner.deedFraud).toBeNull();
+    // The notice protects the family that may live there, and says nothing about the owner.
+    expect(view.owner.deedFraud!.text).toBe(notes!.notices.deed_fraud!.text);
     expect(view.owner.held).not.toBeNull();
   });
 

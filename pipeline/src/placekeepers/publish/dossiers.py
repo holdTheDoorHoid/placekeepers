@@ -935,7 +935,7 @@ def build_dossiers(
                 "side_yard_eligible": owned["side_yard"],
             }
         owner["flags"] = flags
-        if shows_deed_fraud_notice(facts, flags):
+        if shows_deed_fraud_notice(facts):
             owner["notice"] = "deed_fraud"
         if flags and facts.private:
             owner["help"] = list(HELP_ROUTES)

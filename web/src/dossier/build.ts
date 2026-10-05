@@ -552,7 +552,7 @@ export function buildDossier(input: DossierInput): DossierView {
   const sortedFlags = sortFlags(flagViews.filter((flag) => ownerFlagAllowed(flag.id, flagRule)));
   const taxFlag = sortedFlags.find((x) => x.id === 'tax_debt_2025') ?? null;
   const listedFlags = sortedFlags.filter((x) => x.id !== 'tax_debt_2025');
-  const showDeedFraud = showsDeedFraudNotice(ownerType, rawNames, sortedFlags.length);
+  const showDeedFraud = showsDeedFraudNotice(ownerType, rawNames);
   const deedNote = notes?.notices.deed_fraud ?? null;
   const helpRoutes = !ownerChanged && shardOwner?.help.length ? routeLinks(shardOwner.help) : [];
   const ownerPart = live.property;

@@ -743,6 +743,8 @@ def test_no_conservatorship_where_we_do_not_call_the_parcel_vacant(built) -> Non
     record = parcel(out, "374000002")
     assert record["vacancy"] is None
     assert record["routes"] == ["ask_the_owner"]
+    # A person's parcel that may be her home keeps the deed fraud notice.
+    assert record["owner"]["notice"] == "deed_fraud"
     assert record["li"]["sealed"] == "2019-06-01"
     sale = {flag["id"]: flag for flag in record["owner"]["flags"]}["years_since_sale"]
     assert sale["text"] == "Not sold on the open market since at least 1999."
