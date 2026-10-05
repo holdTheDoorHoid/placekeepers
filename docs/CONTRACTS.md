@@ -113,6 +113,7 @@ The pipeline's registry check fails when the page does not exist.
 
 `registry/groups.yaml` lists groups in display order: `lots`, `care`, `streets`, `transit` (added
 2026-10-04 by M2.1 for SEPTA's layers; M2.2 adds the shelters and benches at stops to it),
+`amenities`, `public_places` and `conditions` (added 2026-10-05 by M3.5),
 `safety_context`, `boundaries`, `basemap`, each with a label and a one line
 description.
 
@@ -232,7 +233,10 @@ data/
     care.pmtiles          layers "landcare", "gardens"
     boundaries.pmtiles    layers "council_districts", "rcos", "neighborhoods"
     transit.pmtiles       layers "stops", "routes"   (SEPTA, added 2026-10-04 by M2.1)
-    amenities.pmtiles     layer "stops"     (shelters and benches at stops, from OpenStreetMap; M2.2)
+    amenities.pmtiles     layers "stops" (shelters and benches at stops, M2.2), "benches",
+                          "picnic_tables", "water", "toilets", "bookcases" (M3.5): from OpenStreetMap
+    places.pmtiles        layers "park_water", "libraries", "recreation", "pools" (the City's; M3.5)
+    conditions.pmtiles    layers "dumping", "lights", "graffiti" (311 requests by block; M3.5)
   tables/
     parcels.json          compact columnar table for ranking and lists
     owners.json           organizations holding many vacant parcels, with their parcels (section 6)
@@ -568,6 +572,79 @@ These are OpenStreetMap's stops, not SEPTA's: SEPTA's own stops are `stops` in `
 against SEPTA's `sid`, then by distance for the stops that do not match by number. The route survey
 sheets (section 7, M2.4) already join them this way, with `match_septa` in
 `pipeline/src/placekeepers/derive/bus_stops.py`, which M2.3 can reuse.
+
+Added 2026-10-05 by M3.5, five more layers of `amenities.pmtiles`, one per OpenStreetMap tag, every
+element inside the city limits with that tag that is not closed to the public (`access` no or
+private) or disused, one point each (`pipeline/src/placekeepers/derive/amenities.py`). As for the
+stops, an answer OpenStreetMap does not have is left out, never shown as no, and yes and no are
+read as in `YES_NO` above. Every feature has `id` (the element, such as `n10554560825`) and `nm`
+(its name, only when it has one); the other properties are each 1 yes and 0 no unless the table
+says otherwise:
+
+| Layer (tag) | Properties |
+|---|---|
+| `benches` (`amenity=bench`) | `br` a backrest, `cv` under a roof (`covered`) |
+| `picnic_tables` (`leisure=picnic_table`) | `cv` under a roof |
+| `water` (`amenity=drinking_water`) | `bt` a bottle can be filled (`bottle`), `sn` only part of the year (`seasonal`: 0 for no, 1 for yes or a season), `in` indoors (`indoor`, or `location` indoor or outdoor) |
+| `toilets` (`amenity=toilets`) | `ac` who may use them (`access`: 1 yes, public, permissive or designated; 2 customers; absent otherwise), `fee`, `wc` wheelchair access (1 yes or designated, 0 no, 2 limited), `ct` a changing table, `in` indoors, `oh` the opening hours exactly as mapped (OpenStreetMap's notation, at most 120 characters) |
+| `bookcases` (`amenity=public_bookcase`, little free libraries) | none beyond `id` and `nm` |
+
+The build notes carry one sentence per layer with the count inside the city. On 2026-10-05 (data of
+2026-10-03): 2,069 benches (1,062 with a backrest), 306 picnic tables, 30 drinking water points, 73
+public toilets (one more closed to the public left out) and 150 public bookcases.
+
+**`park_water`, `libraries`, `recreation` and `pools` (places.pmtiles, points)**, added 2026-10-05 by
+M3.5: public places as the City lists them (`pipeline/src/placekeepers/publish/city_places.py`), in
+their own file because the City's data is under its own terms while data built from OpenStreetMap
+must stay under the Open Database License. Every feature has `id` (the City's object id after a
+prefix naming its layer: `water`, `lib`, `rec`, `pool` or `spray`, so ids never collide) and `nm`.
+Points outside a box around the city are left out and counted in the notes.
+
+| Layer | Source | Properties |
+|---|---|---|
+| `park_water` | `ppr_hydration_stations` | `nm` where it is (the City's `amenity_name`), `pk` the park when it differs, `k` 1 drinking fountain, 2 bottle filling station, `in` 1 indoors, 0 outdoors |
+| `libraries` | `library_locations` | `nm` the branch, `ad` street address, `zip` five digit ZIP code, `ph` phone, `url` the branch's page on freelibrary.org (only links to `https://libwww.freelibrary.org/` or `https://www.freelibrary.org/` are kept) |
+| `recreation` | `ppr_program_sites` | `nm`, `k` 1 recreation center, 2 older adult center, 3 environmental education center (the program sites that are pools are left to `pools`), `bd` 1 a building, 0 a site without one, `gym` 1 has a gym, 0 none |
+| `pools` | `ppr_swimming_pools`, `ppr_spraygrounds` | `k` 1 pool, 2 sprayground, 3 sprinkler, `st` 1 in service this year, 0 not (the City's `pool_status` or `spray_status`, ACTIVE or INACTIVE; absent when the City says UNKNOWN), and for pools `in` 1 indoor, 0 outdoor, `ada` 1 listed as accessible, 0 not, `ad` street address, `op` the day it opened this season, only when in service |
+
+Each property is absent when the City leaves it empty.
+
+**`dumping`, `lights` and `graffiti` (conditions.pmtiles, points)**, added 2026-10-05 by M3.5, from
+`philly311_conditions` (311 requests about physical conditions only, never people;
+`pipeline/src/placekeepers/publish/conditions.py`):
+
+* `dumping`: the City's service code SR-ST02, Illegal Dumping;
+* `lights`: SR-ST04, Street Light Outage, and SR-ST06, Alley Light Outage;
+* `graffiti`: SR-CL01, Graffiti Removal.
+
+They count requests **by block, never by address**: each request made in the 90 days up to the
+newest request in the snapshot counts on the nearest street block within 50 meters of where it was
+reported (the City's street centerlines, the blocks of the `segments` layer; a request farther from
+any block, or without a point, is left out and counted in the notes). Each block with at least one
+request is one point, at the middle of the block:
+
+| Property | Type | Meaning |
+|---|---|---|
+| `id` | int | the block's `seg_id`, the same `id` as the block in `segments` (streets.pmtiles) |
+| `name` | string | the street, as the City writes it ("N BROAD ST") |
+| `n` | int | requests on the block in the window |
+| `o` | int | how many of them were still open in the City's table when the snapshot was made |
+| `d` | string | the day of the newest request on the block, YYYY-MM-DD in Philadelphia |
+| `a` | int | `lights` only: how many of the `n` were about an alley light; absent when none |
+
+The window's last day is the source's `newest_record` in the manifest (the City's table runs a day
+or two behind). Nothing else from 311 is published or even downloaded: no request number, address,
+subject, notes, photo or agency (`never_fetch` in `pipeline/src/placekeepers/adapters/philly311.py`).
+On 2026-10-05 (window 2026-07-05 to 2026-10-02): 3,919 dumping requests on 2,675 blocks (190 still
+open), 919 light requests on 700 blocks (432 still open) and 297 graffiti requests on 232 blocks (31
+still open).
+
+For M3.4 (placemaking suggestions): join these to street blocks by `id`, and to a lot through the
+blocks it faces. A count says that people asked the City for help there, not how often the
+condition occurs: some blocks ask more often than others, so no count or a low one is not a sign
+of a clean block. Suggestions built on them must stay with physical conditions and the City's
+own services (Philly311, the route `report_to_311` in `registry/routes.yaml`), never the police
+(docs/ETHICS.md).
 
 ## 5. Hand curated memorial files (`data/curated/`)
 

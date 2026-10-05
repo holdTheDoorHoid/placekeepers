@@ -136,7 +136,7 @@ license is `septa_license` in `registry/licenses.yaml`.
 |---|---|
 | File | `https://download.geofabrik.de/north-america/us/pennsylvania-latest.osm.pbf`, Geofabrik's Pennsylvania extract. The link redirects to the dated file (`pennsylvania-261003.osm.pbf` on 2026-10-04), which the pipeline follows |
 | Size and time | 348,105,893 bytes (348 MB) on 2026-10-04, data as of 2026-10-03 20:20 UTC. On this laptop the download took 31 seconds and the filtering 18 seconds (peak memory 1.4 GB); the extract is deleted once the snapshot is made, so the weekly refresh needs about 350 MB of disk for under a minute |
-| What we keep | The nodes and ways carrying a tag the registry lists (`endpoint.tags`: `highway=bus_stop`, `public_transport=platform`, `amenity=shelter`, `amenity=bench`) inside the city limits (the 2020 census tracts joined) and 200 meters around them, each with all its tags, its shape and a point on it. 3,338 elements on 2026-10-04 (3,243 inside the city), a 197 kB snapshot. Relations are not read (three in all of Pennsylvania carried these tags). `railway=tram_stop` is not listed: in Philadelphia all 390 mark where a trolley halts on its tracks, while riders wait at the platform beside it |
+| What we keep | The nodes and ways carrying a tag the registry lists (`endpoint.tags`: `highway=bus_stop`, `public_transport=platform`, `amenity=shelter`, `amenity=bench`, and since M3.5 `amenity=drinking_water`, `amenity=toilets`, `amenity=public_bookcase` and `leisure=picnic_table`) inside the city limits (the 2020 census tracts joined) and 200 meters around them, each with all its tags, its shape and a point on it. 3,338 elements on 2026-10-04 (3,243 inside the city), a 197 kB snapshot; 3,909 with the M3.5 tags on 2026-10-05 (the extract's data of 2026-10-03; inside the city 2,069 benches, 306 picnic tables, 150 public bookcases, 74 toilets and 30 drinking water points). Relations are not read (three in all of Pennsylvania carried these tags). `railway=tram_stop` is not listed: in Philadelphia all 390 mark where a trolley halts on its tracks, while riders wait at the platform beside it |
 | Cadence | Weekly, with the Monday refresh. Geofabrik remakes the extract every day; a good copy younger than six days is never downloaded again unless forced (`pk fetch --force`), as Geofabrik asks automated downloaders not to fetch the same file over and over |
 | License | Open Database License (ODbL). Credit "© OpenStreetMap contributors" with a link to openstreetmap.org/copyright; anything published from it (the `stops` layer of `tiles/amenities.pmtiles`) is ODbL too |
 | Health rules | At least 2,500 rows; no more than 10 percent fewer than the last good copy; the extract's data no older than 14 days (the replication timestamp in the file's header, else the server's Last-Modified date); at least 90 percent of the stops kept inside the city limits (98 percent on 2026-10-04). A download that is not an `.osm.pbf` file (an error page sent as a file) is retried, then fails, and the last good copy stays |
@@ -181,10 +181,30 @@ and the NOAA and CAPA Heat Watch campaign (data link still to find).
 | DVRPC pedestrian portal (sidewalks, crosswalks, curb ramps) | | Not stated | Use with its "2018 imagery, not field checked" caveat shown |
 | Census 2020 blocks | | Public domain | Use (API key needed) |
 | TPL ParkServe 10 minute walk areas | | Terms unreachable (403) | Ask before use |
-| Amenities from OpenStreetMap | benches about 2,822; drinking water 46; toilets 116; public bookcases 192; community fridges 0 | ODbL | Use; fridges need a community list. The weekly extract (`osm_philadelphia`) carries them once their tags join its registry list: on 2026-10-04 it held 2,069 benches inside the city |
-| 311 requests (Carto, since 2014-12-08) | Illegal dumping, street and alley light outages, graffiti, dangerous sidewalk, street trees | City terms | Use for conditions only, never for people |
+| Amenities from OpenStreetMap | benches about 2,822; drinking water 46; toilets 116; public bookcases 192; community fridges 0 (Overpass, a box around the city) | ODbL | Used (M3.5): layers `benches`, `picnic_tables`, `drinking_water`, `toilets` and `bookcases` in `tiles/amenities.pmtiles`, from the weekly extract (`osm_philadelphia`). Inside the city limits on 2026-10-05: 2,069 benches, 306 picnic tables, 30 drinking water points, 73 public toilets (one more closed to the public is left out) and 150 public bookcases. Fridges need a community list |
+| 311 requests (Carto, since 2014-12-08) | Illegal dumping, street and alley light outages, graffiti, dangerous sidewalk, street trees | City terms | Use for conditions only, never for people. Used (M3.5): source `philly311_conditions`, below |
 | Street poles, commercial corridors, schools | | City terms | Use |
-| Free Library branches | | Site blocked (403) | Use OpenStreetMap `amenity=library` |
+| Free Library branches | 54 | City terms | Used (M3.5): the City publishes them as `library_locations` (below). The Free Library's own website refuses automated requests (403) and is never read |
+
+### Public places and conditions reported to 311 (M3.5)
+
+Checked against the live services on 2026-10-05. All are "City terms", credited to the City (and to
+Parks and Recreation or Philly311), fetched with an explicit list of fields, and published by
+`pk publish` into `tiles/places.pmtiles` and `tiles/conditions.pmtiles` (docs/CONTRACTS.md section 4).
+
+| Source id | Endpoint | What we keep | Count and date | Health |
+|---|---|---|---|---|
+| `library_locations` | City ArcGIS `library_locations` ("Active Free Library of Philadelphia Locations"; not on OpenDataPhilly, listed in the City's metadata catalog, metadata.phila.gov) | `building`, `address`, `zip_code`, `phone_number`, `library_url` and the point | 54, last edited 2026-07-22 | At least 45 rows, no more than 15 percent fewer than the last good copy |
+| `ppr_program_sites` | City ArcGIS `PPR_Program_Sites` (OpenDataPhilly "Parks & Recreation Program Sites") | `park_name`, `program_type`, `site_class`, `building`, `gym`; not the free text comments | 168 (157 recreation centers, 6 older adult centers, 3 environmental education centers, 2 pools), last edited 2026-06-05 | At least 140 rows, 15 percent |
+| `ppr_swimming_pools` | City ArcGIS `PPR_Swimming_Pools` (OpenDataPhilly "PPR Swimming Pools") | `pool_name`, `park_name`, `address_911`, `zip_code`, `pool_type`, `pool_status`, `pool_open_date`, `ada_access`, `ada_lift`; not the police, council or staff districts | 72 (64 in service), last edited 2026-08-07 | At least 60 rows, 15 percent |
+| `ppr_spraygrounds` | City ArcGIS `PPR_Spraygrounds` (OpenDataPhilly "PPR Spraygrounds") | `park_name`, `spray_type`, `spray_status` | 114 (67 spraygrounds, 47 sprinklers; 104 in service), last edited 2026-08-04 | At least 90 rows, 15 percent |
+| `ppr_hydration_stations` | City ArcGIS `PPR_Hydration_Stations` (OpenDataPhilly "PPR Hydration Stations") | `amenity_name`, `park_name`, `station_type`, `location` | 147 (93 drinking fountains, 54 bottle filling stations), last edited 2026-09-29 | At least 120 rows, 15 percent |
+| `philly311_conditions` | Carto `public_cases_fc` (OpenDataPhilly "311 Service and Information Requests", updated daily), only `service_code` SR-ST02 (Illegal Dumping), SR-ST04 (Street Light Outage), SR-ST06 (Alley Light Outage) and SR-CL01 (Graffiti Removal), made in the last 120 days | the code, `status` (Open or Closed), the days the request was made and closed (in Philadelphia) and the point. Never the request number, address, subject, notes, photo link or agency: they are not even downloaded | 6,496 requests on 2026-10-05 (4,877 dumping, 888 street lights, 345 alley lights, 386 graffiti; 6 without a point), the newest made 2026-10-02 | At least 2,000 rows; no more than 50 percent fewer than last week (these requests rise and fall with the seasons); the newest request no older than 10 days |
+
+The map shows the 311 requests from the 90 days up to the newest one, counted on the nearest street
+block within 50 meters, never at an address: on 2026-10-05 the median request lay 9 meters from its
+block and 99 percent within 50 meters. Requests about people, such as "Homeless Encampment
+Request", are never asked for (docs/ETHICS.md).
 
 ### History and displacement
 
