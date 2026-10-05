@@ -499,6 +499,19 @@ def test_a_missing_kind_of_place_is_not_counted_and_the_notes_say_so(walk_ctx) -
     assert any("Free Library location" in note for note in result.notes)
 
 
+def test_an_unreadable_input_leaves_out_its_measure_only(walk_ctx) -> None:
+    # The City's centerlines without their node ids: no street corners, everything else as before.
+    store = SnapshotStore(walk_ctx.cache, "street_centerlines")
+    table = pq.read_table(store.path_for(store.current())).drop_columns(["fnode_", "tnode_"])
+    install_snapshot(walk_ctx, "street_centerlines", table, geometry=True,
+                     fetched_at="2026-10-04T15:00:00Z", geometry_types=["LineString"])  # fmt: skip
+    result = walk.run(walk_ctx, AS_OF)
+    found = walk.load_walk(result.path, walk.FACTORS)
+    assert all("f_corners" not in f for f in found.values())
+    assert any("f_neighbors" in f for f in found.values())
+    assert any("the street centerlines could not be read" in note for note in result.notes)
+
+
 def test_the_walking_measures_need_the_vacancy_model(context_factory) -> None:
     with pytest.raises(RuntimeError, match="vacancy model"):
         walk.run(context_factory(now=NOW), AS_OF)

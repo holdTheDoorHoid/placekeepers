@@ -303,37 +303,72 @@ class WalkInputs:
 
     @classmethod
     def load(cls, paths: dict[str, Path | None]) -> WalkInputs:
+        """Read every input that has a snapshot. One that cannot be read (a column gone, a broken
+        file) leaves its measure out with a note, never the rest: the map must still publish."""
         found = cls()
         found.missing_sources = [s for s in SOURCES if paths.get(s) is None]
-        if paths.get("census_blocks_2020") is not None:
-            table = pq.read_table(paths["census_blocks_2020"], columns=["population", "geometry"])
+        present = {s: p for s, p in paths.items() if p is not None}
+
+        def attempt(what: str, read) -> None:
+            try:
+                read()
+            except Exception as exc:  # one unreadable input never stops the others
+                found.notes.append(
+                    f"Walking distance: {what} could not be read ({exc}), so it is left out"
+                )
+                log.warning("walk: %s could not be read", what, exc_info=True)
+
+        def blocks() -> None:
+            table = pq.read_table(present["census_blocks_2020"], columns=["population", "geometry"])
             people = np.array([v or 0 for v in table.column("population").to_pylist()], dtype=float)
             found.blocks_m = to_meters(shapely.from_wkb(table.column("geometry").to_pylist()))
             found.population = people
-        if paths.get("street_centerlines") is not None:
+
+        def corners() -> None:
             table = pq.read_table(
-                paths["street_centerlines"],
+                present["street_centerlines"],
                 columns=["seg_id", "class", "fnode_", "tnode_", "geometry"],
             )
-            corners = corner_points(table)
-            found.corners_m = to_meters(corners) if len(corners) else corners
-        for kind, _, _ in PLACE_KINDS:
-            points = place_points(kind, {s: p for s, p in paths.items() if p is not None})
+            points = corner_points(table)
+            found.corners_m = to_meters(points) if len(points) else points
+
+        def places(kind: str) -> None:
+            points = place_points(kind, present)
             if points is None:
                 found.notes.append(
                     f"Walking distance: no snapshot lists any {PLACE_WORDS[kind]}, so that kind of "
                     "place is not counted"
                 )
-                continue
+                return
             found.places_m[kind] = to_meters(points) if len(points) else points
-        if paths.get("epa_walkability") is not None:
-            found.block_groups = load_block_groups(paths["epa_walkability"])
+
+        def groups() -> None:
+            found.block_groups = load_block_groups(present["epa_walkability"])
+
+        if "census_blocks_2020" in present:
+            attempt("the census blocks", blocks)
+        if "street_centerlines" in present:
+            attempt("the street centerlines", corners)
+        for kind, _, _ in PLACE_KINDS:
+            attempt(f"the list of {PLACE_PLURALS[kind]}", lambda kind=kind: places(kind))
+        if "epa_walkability" in present:
+            attempt("the walkability index", groups)
         return found
 
     def place_counts(self) -> dict[str, int]:
         return {kind: len(points) for kind, points in self.places_m.items()}
 
 
+#: Plain words for the places of each kind, for the build notes.
+PLACE_PLURALS = {
+    "library": "Free Library locations",
+    "recreation": "recreation centers",
+    "pool": "pools and spraygrounds",
+    "water": "drinking fountains in parks",
+    "school": "schools",
+    "food": "grocery stores and markets",
+    "transit": "transit stops",
+}
 #: Plain words for each kind, for the build notes.
 PLACE_WORDS = {
     "library": "Free Library location",
