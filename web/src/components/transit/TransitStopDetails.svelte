@@ -42,7 +42,7 @@
       {#if comfort.score !== null}
         <p class="score">
           <strong>{strings.place.priority(comfort.score, comfort.lens.label)}.</strong>
-          {#if comfort.why?.main}{strings.place.mainReason(comfort.why.main.label)} <EvidenceBadge level={comfort.why.main.evidence} />{/if}
+          {#if comfort.main}{strings.place.mainReason(comfort.main.label)} <EvidenceBadge level={comfort.main.evidence} />{/if}
         </p>
       {:else if comfort.why?.allOff}
         <p class="muted small">{strings.lens.allOffFor('stop')}</p>
@@ -96,7 +96,13 @@
       {/if}
 
       {#if comfort.why && comfort.lens && !comfort.why.allOff}
-        <WhyBreakdown why={comfort.why} idPrefix="stop-{i}" level={4} appliesTo="stop" />
+        <WhyBreakdown
+          why={comfort.why}
+          idPrefix="stop-{i}"
+          level={4}
+          appliesTo="stop"
+          valueNotes={Object.fromEntries(comfort.unsurveyed.map((id) => [id, s.unknown.toLowerCase()]))}
+        />
         {#if comfort.halfway}<p class="muted small">{t.halfway}</p>{/if}
       {/if}
     {/if}

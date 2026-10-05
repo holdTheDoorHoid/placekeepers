@@ -39,10 +39,10 @@
     </button>
   </h3>
   <p class="meta">{strings.sheet.distance(stop.distance, fromYou)}.{#if stop.routes}{' '}{stop.routes}{/if}</p>
-  {#if stop.score !== null && stop.why?.main}
+  {#if stop.score !== null}
     <p>
-      {strings.place.priority(stop.score, lensLabel)}. {strings.place.mainReason(stop.why.main.label)}
-      <EvidenceBadge level={stop.why.main.evidence} />
+      {strings.place.priority(stop.score, lensLabel)}.{#if stop.main}{' '}{strings.place.mainReason(stop.main.label)}
+        <EvidenceBadge level={stop.main.evidence} />{/if}
     </p>
   {/if}
   {#if suggestion}

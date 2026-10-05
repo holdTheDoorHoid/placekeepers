@@ -10,7 +10,7 @@
 // shows, hides and explains them.
 
 import { routeView, type RouteView } from '../dossier/build.ts';
-import { explainScore, wholeScore, type ScoreExplanation } from '../map/lens.ts';
+import { explainScore, wholeScore, type FactorExplanation, type ScoreExplanation } from '../map/lens.ts';
 import { distanceMeters, firstStepFor, placeSuggestions } from '../places/rank.ts';
 import type { Lens, Partner, Registry, Route, Suggestion } from '../registry/types.ts';
 import type { AppState } from '../state/defaults.ts';
@@ -50,6 +50,13 @@ export interface StopComfortView {
   why: ScoreExplanation | null;
   /** Rounded score from 0 to 100, or null (a station, or every weight off). */
   score: number | null;
+  /**
+   * The factor adding the most that rests on something known: an answer no one has given yet
+   * counts halfway in the score, but is never called the main reason.
+   */
+  main: FactorExplanation | null;
+  /** Factor ids whose value stands in for an answer no one has given yet. */
+  unsurveyed: string[];
   /** OpenStreetMap has this stop (matched by the pipeline). */
   inOsm: boolean;
   /** What riders find, in one line: "A bench, but no shelter mapped", or "not in OpenStreetMap yet". */
@@ -72,6 +79,28 @@ const ANSWERS = [
   ['bn', 'bn'],
   ['li', 'lt'],
 ] as const;
+
+/**
+ * The lens factors whose value stands in for an answer no one has given yet (the pipeline's
+ * halfway value, docs/TRANSIT_METHOD.md): no shelter while the shelter is unknown and the stop is
+ * not under a roof, no bench while the bench is unknown.
+ */
+export function unsurveyedFactors(lens: Lens | null, properties: Record<string, unknown>): string[] {
+  if (!lens) return [];
+  const fields: string[] = [];
+  if (int(properties.sh) === null && int(properties.cv) !== 1) fields.push('f_noshelter');
+  if (int(properties.bn) === null) fields.push('f_nobench');
+  return lens.factors.filter((f) => fields.includes(f.field) && properties[f.field] !== undefined).map((f) => f.id);
+}
+
+/** The factor adding the most to the score, leaving out answers no one has given yet. */
+export function knownMainReason(why: ScoreExplanation | null, unsurveyed: string[]): FactorExplanation | null {
+  if (!why) return null;
+  return why.factors.reduce<FactorExplanation | null>(
+    (best, f) => (f.contribution > 0 && !unsurveyed.includes(f.id) && (!best || f.contribution > best.contribution) ? f : best),
+    null,
+  );
+}
 
 /** The suggestions named in the stop's `sg` that exist and are switched on, with their routes. */
 export function stopSuggestionViews(reg: Registry, state: AppState, properties: Record<string, unknown>): StopSuggestionView[] {
@@ -102,16 +131,9 @@ export function describeComfort(reg: Registry, state: AppState, properties: Reco
   const covered = int(properties.cv);
   if (covered !== null) answers.push({ key: 'cv', label: s.answers.cv ?? 'cv', value: covered === 1 ? s.yes : s.no, known: true });
 
-  const weightOf = (field: string) => {
-    const factor = lens?.factors.find((f) => f.field === field);
-    return factor ? (state.weights[lens!.id]?.[factor.id] ?? factor.default_weight) : 0;
-  };
-  const shelterUnknown = int(properties.sh) === null && covered !== 1;
-  const benchUnknown = int(properties.bn) === null;
-  const halfway =
-    why !== null &&
-    why.score !== null &&
-    ((shelterUnknown && weightOf('f_noshelter') > 0) || (benchUnknown && weightOf('f_nobench') > 0));
+  const unsurveyed = unsurveyedFactors(lens, properties);
+  // The score counts an unknown answer halfway only while its factor has a weight.
+  const halfway = why !== null && why.score !== null && why.factors.some((f) => unsurveyed.includes(f.id) && f.weight > 0);
 
   const facts: string[] = [];
   const canopy = int(properties.cp);
@@ -123,6 +145,8 @@ export function describeComfort(reg: Registry, state: AppState, properties: Reco
     lens,
     why,
     score: wholeScore(why?.score),
+    main: knownMainReason(why, unsurveyed),
+    unsurveyed,
     inOsm,
     summary: inOsm ? (s.comfort[code] ?? s.comfort[0]!) : t.notInOsm,
     answers,
@@ -148,6 +172,8 @@ export interface NearbyStop {
   routes: string | null;
   why: ScoreExplanation | null;
   score: number | null;
+  /** The main reason, never an answer no one has given yet. */
+  main: FactorExplanation | null;
   suggestions: StopSuggestionView[];
 }
 
@@ -181,6 +207,7 @@ export function nearestStops(
         routes: view.routes,
         why,
         score: wholeScore(why?.score),
+        main: knownMainReason(why, unsurveyedFactors(lens, stop.properties)),
         suggestions,
       } satisfies NearbyStop;
     })

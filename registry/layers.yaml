@@ -312,10 +312,11 @@
     - septa_gtfs
     - septa_ridership_bus
     - septa_ridership_trolley
-    # The transit comfort lens (M2.3)
+    # The transit comfort lens (M2.3); land use gives the water left out of the canopy measure
     - osm_philadelphia
     - tree_canopy_2018
     - census_tracts_2020
+    - land_use
     - heat_vulnerability
     - high_injury_network
   file: tiles/transit.pmtiles
