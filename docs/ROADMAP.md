@@ -69,7 +69,7 @@ check.
 | M1.6 | Lot dossier and live City lookups | Opus | M0.3, M1.3 |
 | M1.7 | Field view and analysis view, complete | Opus | M1.4, M1.5, M1.6 |
 | M1.8 | Site content | Sonnet | M0.3 |
-| M1.9 | Memorial names, curated by hand | Sonnet, after the owner hears from the Bicycle Coalition | M1.5 |
+| M1.9 | Memorial names, curated by hand | Sonnet, after the owner hears from the Bicycle Coalition and the removal email exists | M1.5 |
 | M1.10 | Verification | Opus | M1.7, M1.8 |
 | M1.11 | Release v0.1 | Sonnet | M1.10 |
 
@@ -180,7 +180,10 @@ ready for the owner.
 None of these block Phase 0.
 
 1. Run `sudo apt install tippecanoe` on this laptop (map tile builder; needed locally from M0.2).
-2. Create a dedicated email address for corrections and removal requests (needed by M1.8).
+2. Create a dedicated email address for corrections and removal requests. Owner decision
+   (2026-10-04): the prototype and v0.1 go ahead without it, and the Contact page says "coming soon"
+   until it exists. Names of people killed (M1.9) stay off the map until it exists, because ETHICS.md
+   promises families removal by email.
 3. Send, edit or skip the outreach drafts in `docs/outreach/` (Clean & Green Philly founders, Bicycle
    Coalition and Families for Safe Streets, PHS, Garden Justice Legal Initiative, OTIS, Land Bank,
    art data holders).
