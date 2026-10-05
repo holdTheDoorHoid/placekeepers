@@ -510,7 +510,7 @@ export const strings = {
     sureHigh: 'Very likely vacant',
     sureMedium: 'Probably vacant',
     sureLow: 'Not very sure',
-    parcelPoint: 'A vacant parcel with no mapped shape, shown at its address',
+    parcelPoint: 'Dots: zoomed out, a sample of the vacant parcels; up close, a parcel with no mapped shape',
     selected: 'Selected place',
     landcare: 'Lot kept up by PHS LandCare: already cared for',
     garden: 'Community garden or farm',
