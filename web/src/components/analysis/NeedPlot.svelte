@@ -147,7 +147,7 @@
   }
   .mark {
     fill: var(--pk-accent);
-    fill-opacity: 0.8;
+    fill-opacity: 0.55;
     stroke: #ffffff;
     stroke-width: 1;
   }
