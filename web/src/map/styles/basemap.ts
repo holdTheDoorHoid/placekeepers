@@ -23,9 +23,31 @@ export function basemapLook(ctx: LegendContext): BasemapLook {
   return typeof value === 'string' && value in BASEMAP_FLAVORS ? (value as BasemapLook) : 'light';
 }
 
+/**
+ * Points of interest the base map never draws, at any zoom: works of art, memorials, monuments,
+ * tombs, graves and wayside shrines or crosses (the kinds Protomaps gives OpenStreetMap's
+ * `tourism=artwork`, `historic=memorial`, `monument`, `tomb`, `wayside_shrine` and `wayside_cross`,
+ * and `amenity=grave_yard`). Their names can name a person who died, and names of people who died
+ * come only from the hand curated memorials file (docs/ETHICS.md); the public art layer shows works
+ * of art and memorials without such names (src/map/styles/public_art.ts). On 2026-10-05 the
+ * Philadelphia extract held 427 artworks, 235 memorials, 19 monuments, 25 tombs, 17 grave yards and
+ * 2 wayside shrines; Protomaps' light look drew the artworks' names close in. Everything else on
+ * the base map is drawn as Protomaps draws it.
+ */
+export const HIDDEN_POI_KINDS = ['artwork', 'memorial', 'monument', 'tomb', 'grave_yard', 'wayside_shrine', 'wayside_cross'] as const;
+
+/** The base layers with every point of interest of a hidden kind left out. */
+function withoutMemorialPois(layers: LayerSpecification[]): LayerSpecification[] {
+  const hidden = ['!', ['in', ['get', 'kind'], ['literal', [...HIDDEN_POI_KINDS]]]];
+  return layers.map((spec) => {
+    if (spec.type !== 'symbol' || spec['source-layer'] !== 'pois') return spec;
+    return { ...spec, filter: spec.filter ? ['all', spec.filter, hidden] : hidden } as LayerSpecification;
+  });
+}
+
 /** The Protomaps layers for one look. Every look's layers are a subset of the light look's. */
 export function flavorLayers(sourceId: string, look: BasemapLook): LayerSpecification[] {
-  return protomapsLayers(sourceId, namedFlavor(BASEMAP_FLAVORS[look]), { lang: 'en' }) as LayerSpecification[];
+  return withoutMemorialPois(protomapsLayers(sourceId, namedFlavor(BASEMAP_FLAVORS[look]), { lang: 'en' }) as LayerSpecification[]);
 }
 
 function withVisibility(spec: LayerSpecification, visible: boolean): LayerSpecification {
