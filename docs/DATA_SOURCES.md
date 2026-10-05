@@ -106,13 +106,29 @@ the site. No keys, no third party tile service.
 
 | Source | Notes | Status |
 |---|---|---|
-| SEPTA GTFS, `https://www3.septa.org/developer/gtfs_public.zip` (22 MB, 2026-09-25) | Stops and schedules. License must be accepted; redistribution allowed (non exclusive, revocable) | Live |
-| SEPTA ridership statistics (OpenDataPhilly, "stop summary files") | Average daily boardings per stop | Exists; exact file to confirm |
-| SEPTA New Bus Network | Phase 1 began 2026-08-23; phases 2 to 4 run to August 2027, so stop ids will churn | Plan for it |
+| SEPTA GTFS, `https://www3.septa.org/developer/gtfs_public.zip` (22,054,912 bytes; release v202609270 of 2026-09-25, downloaded in 3 seconds on 2026-10-04) | One zip holding two feeds: `google_bus.zip` (bus, trolley, trackless trolley, SEPTA Metro subway and El; 13,495 boarding places, 163 routes with service, good 2026-09-27 to 2027-02-20) and `google_rail.zip` (Regional Rail; 156 stations, 13 lines, good to 2026-10-17). SEPTA keeps the link on its newest release, also published at github.com/septadev/GTFS with a changelog. The snapshot keeps service measures per stop and per route, not the timetables (docs/TRANSIT_METHOD.md). License: SEPTA's license agreement (below). Health: at least 9,000 rows, no more than 15% fewer than last week, and a release no older than 90 days (`source_date`, the file's Last-Modified) | Used (M2.1): source `septa_gtfs` |
+| SEPTA stop ridership, bus: SEPTA's ArcGIS layer `Spring_2026_Stop_Summary_Bus` (services2.arcgis.com/9U43PSoL47wawX5S, listed on SEPTA's portal data-septa.opendata.arcgis.com; OpenDataPhilly's "SEPTA Ridership Statistics" lists the same "stop summary files" up to Summer 2025) | Average weekday, Saturday and Sunday boardings and alightings per route, direction and SEPTA stop number for the Spring 2026 schedule period (2026-02-22 to 2026-06-13); 18,201 rows, 12,967 stop numbers, 414,543 weekday boardings across the region; SEPTA published it on 2026-08-20; downloads in 10 pages without a login (12 seconds). SEPTA adds a layer for each period (spring, summer, fall; Fall 2025 came out in February 2026), so each run takes the newest spring or fall one; summer counts are lower and miss school trips. Health: at least 15,000 rows, no more than 25% fewer, published within 400 days | Used (M2.1): source `septa_ridership_bus` |
+| SEPTA stop ridership, trolley: `Spring_2026_Stop_Summary_Trolley` (same folder) | As for buses, for T1 to T5, G1, D1 and D2: 719 rows. Health: at least 500 rows | Used (M2.1): source `septa_ridership_trolley` |
+| SEPTA Metro and Regional Rail ridership | No count per platform is published; `Regional_Rail_Station_Summary` (2025) has stations and the M1 (Norristown High Speed Line) has its own stop summaries, outside the city | Not used |
+| SEPTA New Bus Network | Phase 1 began 2026-08-23; phases 2 to 4 run to August 2027, so stop numbers change. Between the last schedules before phase 1 (v202608091) and v202609270, 358 stop numbers disappeared and 185 appeared; 4 were renumbered in place. Placekeepers keeps a stable key per stop and links renumbered stops (docs/TRANSIT_METHOD.md). SEPTA's folder also holds `Stops_Eliminated_with_NBN_Phase_1_(Single_Points)` (486 stops) and `NBN_Stops_updated_data` (stop signage work), not used yet | Handled (M2.1) |
 | Bus shelters | **No public inventory exists.** OpenStreetMap on 2026-10-04: 83 stops tagged with a shelter, 224 tagged without, 199 tagged without a bench, 35 shelter outlines | Gap: neighbor survey (StreetComplete) plus a Right to Know request to OTIS for the advertising contractor's shelter list |
 | Indego GBFS `https://gbfs.bcycle.com/bcycle_indego/gbfs.json`, trips, stations | Bike share context | Live |
 | City bike network (City ArcGIS `Bike_Network`) | No stress rating field | Live |
 | DVRPC Level of Traffic Stress | License: "Unrestricted"; updated 2026-09-03 | Live |
+
+**SEPTA's license (checked 2026-10-04).** SEPTA's Open Data license agreement
+(https://wwww.septa.org/license-agreement/, SEPTA's own spelling of its host) covers every dataset
+on its open data portal, and the GTFS download page (https://www3.septa.org/developer/) shows the
+same terms for the schedules (its version dated 2014-03-18). SEPTA grants a non exclusive, non
+assignable, limited and revocable right to use, reproduce and redistribute the data, free of
+charge, as is, with no warranty. Conditions: SEPTA's trademarks and copyrighted materials may not be
+used for any commercial or profit making use and may not be altered (Placekeepers uses no SEPTA logo
+or artwork); the licensee holds SEPTA harmless; disputes go to courts in Philadelphia County; the
+newest version of the agreement always applies, and SEPTA may change or revoke it. Downloading the
+data means accepting it; there is no login and no key. Nothing forbids publishing stop locations,
+schedule measures or counts on a public, free map. SEPTA asks for no particular credit line, so the
+map credits "SEPTA" for schedules and ridership and never suggests SEPTA endorses Placekeepers. The
+license is `septa_license` in `registry/licenses.yaml`.
 
 ### Heat and shade
 

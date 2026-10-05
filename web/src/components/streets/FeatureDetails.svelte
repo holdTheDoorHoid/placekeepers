@@ -14,6 +14,7 @@
   import EvidenceBadge from '../common/EvidenceBadge.svelte';
   import WhyBreakdown from '../lens/WhyBreakdown.svelte';
   import BlessingNote from './BlessingNote.svelte';
+  import TransitStopDetails from '../transit/TransitStopDetails.svelte';
 
   let {
     store,
@@ -93,6 +94,8 @@
       {#each segment.facts as fact (fact)}<li>{fact}</li>{/each}
     </ul>
     {#if segment.why}<WhyBreakdown why={segment.why} idPrefix="feature" />{/if}
+  {:else if style === STYLES.transit_stops}
+    <TransitStopDetails features={target.features} />
   {/if}
   {#if onClose}
     <button class="button quiet small" type="button" onclick={onClose}>{strings.place.clearSelection}</button>

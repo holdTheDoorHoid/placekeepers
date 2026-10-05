@@ -7,6 +7,7 @@ here.
 
 Companion documents:
 [EVIDENCE.md](EVIDENCE.md) (what the research supports),
+[TRANSIT_METHOD.md](TRANSIT_METHOD.md) (how service and riders at SEPTA stops are measured),
 [ETHICS.md](ETHICS.md) (safeguards),
 [DATA_SOURCES.md](DATA_SOURCES.md) (every source, its status and license),
 [ROUTES.md](ROUTES.md) (legal routes and the intervention playbook),
@@ -181,6 +182,17 @@ As built (M1.10, interface review, 2026-10-04; details in
 | Area cell | H3 hexagon, resolution 9 (about two blocks across) | Yes |
 | Bus stop | SEPTA stop id (expect churn during the New Bus Network rollout) | Later |
 | Artwork | OpenStreetMap or Wikidata id, plus any licensed source | Later |
+
+As built (M2.1, 2026-10-04): a stop's identity is a Placekeepers key, `sp` and its SEPTA stop number
+when first seen (`sr` for Regional Rail), which never changes. When SEPTA renumbers a stop in place
+(a new number within 30 meters with a similar name, when the old one disappears or within a year
+after), the stop keeps its key and the old number goes into its history, so SEPTA's ridership
+counts, which use older numbers, and later neighbors' notes keep following the place. The map's
+**Buses and trains** group holds every SEPTA stop and station in Philadelphia, with how often
+service comes on a typical weekday, Saturday and Sunday and SEPTA's own weekday boardings (97.8% of
+bus and trolley stops had a count on 2026-10-04), and the routes as context; both layers are off by
+default until the transit comfort lens (M2.3) gives them a job. The method is in
+[TRANSIT_METHOD.md](TRANSIT_METHOD.md).
 
 ### 5.2 The registry: one source of truth for every toggle
 
