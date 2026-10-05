@@ -91,6 +91,15 @@ TILE_OPTIONS: dict[str, list[str]] = {
         "--feature-filter",
         json.dumps({"stops": [">=", "$zoom", 12]}, separators=(",", ":")),
     ],
+    # Amenities from OpenStreetMap (M2.2: shelters and benches at stops; M3.5 adds more): every
+    # point at every zoom, so none disappears when zoomed out.
+    "tiles/amenities.pmtiles": [
+        "--minimum-zoom=10",
+        "--maximum-zoom=16",
+        "--base-zoom=10",
+        "--no-feature-limit",
+        "--no-tile-size-limit",
+    ],
     # Boundaries are few, large shapes: simplified at low zooms, borders kept shared, and
     # detailed enough at zoom 14 to be stretched further by the map.
     "tiles/boundaries.pmtiles": [

@@ -111,7 +111,7 @@ the site. No keys, no third party tile service.
 | SEPTA stop ridership, trolley: `Spring_2026_Stop_Summary_Trolley` (same folder) | As for buses, for T1 to T5, G1, D1 and D2: 719 rows. Health: at least 500 rows | Used (M2.1): source `septa_ridership_trolley` |
 | SEPTA Metro and Regional Rail ridership | No count per platform is published; `Regional_Rail_Station_Summary` (2025) has stations and the M1 (Norristown High Speed Line) has its own stop summaries, outside the city | Not used |
 | SEPTA New Bus Network | Phase 1 began 2026-08-23; phases 2 to 4 run to August 2027, so stop numbers change. Between the last schedules before phase 1 (v202608091) and v202609270, 358 stop numbers disappeared and 185 appeared; 4 were renumbered in place. Placekeepers keeps a stable key per stop and links renumbered stops (docs/TRANSIT_METHOD.md). SEPTA's folder also holds `Stops_Eliminated_with_NBN_Phase_1_(Single_Points)` (486 stops) and `NBN_Stops_updated_data` (stop signage work), not used yet | Handled (M2.1) |
-| Bus shelters | **No public inventory exists.** OpenStreetMap on 2026-10-04: 83 stops tagged with a shelter, 224 tagged without, 199 tagged without a bench, 35 shelter outlines | Gap: neighbor survey (StreetComplete) plus a Right to Know request to OTIS for the advertising contractor's shelter list |
+| Bus shelters | **No public inventory exists.** OpenStreetMap is the source (`osm_philadelphia`, below): on 2026-10-04 it had 829 bus and trolley stops in the city, about 1 in 10 of SEPTA's 7,927 bus and trolley stops in Philadelphia (docs/TRANSIT_METHOD.md). 97 show a shelter or roof, 12 a bench but no shelter, 236 neither, and 484 are not yet surveyed | Used (M2.2): layer `stop_amenities` ("Shelters and benches at stops", in `tiles/amenities.pmtiles`). Gap: neighbor survey (StreetComplete, the "Survey bus stops" page) plus a Right to Know request to OTIS for the advertising contractor's shelter list |
 | Indego GBFS `https://gbfs.bcycle.com/bcycle_indego/gbfs.json`, trips, stations | Bike share context | Live |
 | City bike network (City ArcGIS `Bike_Network`) | No stress rating field | Live |
 | DVRPC Level of Traffic Stress | License: "Unrestricted"; updated 2026-09-03 | Live |
@@ -129,6 +129,33 @@ data means accepting it; there is no login and no key. Nothing forbids publishin
 schedule measures or counts on a public, free map. SEPTA asks for no particular credit line, so the
 map credits "SEPTA" for schedules and ridership and never suggests SEPTA endorses Placekeepers. The
 license is `septa_license` in `registry/licenses.yaml`.
+
+### OpenStreetMap, weekly extract (`osm_philadelphia`, used from M2.2)
+
+| | |
+|---|---|
+| File | `https://download.geofabrik.de/north-america/us/pennsylvania-latest.osm.pbf`, Geofabrik's Pennsylvania extract. The link redirects to the dated file (`pennsylvania-261003.osm.pbf` on 2026-10-04), which the pipeline follows |
+| Size and time | 348,105,893 bytes (348 MB) on 2026-10-04, data as of 2026-10-03 20:20 UTC. On this laptop the download took 31 seconds and the filtering 18 seconds (peak memory 1.4 GB); the extract is deleted once the snapshot is made, so the weekly refresh needs about 350 MB of disk for under a minute |
+| What we keep | The nodes and ways carrying a tag the registry lists (`endpoint.tags`: `highway=bus_stop`, `public_transport=platform`, `amenity=shelter`, `amenity=bench`) inside the city limits (the 2020 census tracts joined) and 200 meters around them, each with all its tags, its shape and a point on it. 3,338 elements on 2026-10-04 (3,243 inside the city), a 197 kB snapshot. Relations are not read (three in all of Pennsylvania carried these tags). `railway=tram_stop` is not listed: in Philadelphia all 390 mark where a trolley halts on its tracks, while riders wait at the platform beside it |
+| Cadence | Weekly, with the Monday refresh. Geofabrik remakes the extract every day; a good copy younger than six days is never downloaded again unless forced (`pk fetch --force`), as Geofabrik asks automated downloaders not to fetch the same file over and over |
+| License | Open Database License (ODbL). Credit "© OpenStreetMap contributors" with a link to openstreetmap.org/copyright; anything published from it (the `stops` layer of `tiles/amenities.pmtiles`) is ODbL too |
+| Health rules | At least 2,500 rows; no more than 10 percent fewer than the last good copy; the extract's data no older than 14 days (the replication timestamp in the file's header, else the server's Last-Modified date); at least 90 percent of the stops kept inside the city limits (98 percent on 2026-10-04). A download that is not an `.osm.pbf` file (an error page sent as a file) is retried, then fails, and the last good copy stays |
+
+Stops on 2026-10-04 (data of 2026-10-03), inside the city: 829 (464 bus, 348 trolley, 17 both; 55
+drawn as a line or an area, the rest as points). Their own answers: shelter yes 88, no 277, not
+said 464; bench yes 68, no 250, not said 511. What the map shows: 97 a shelter or roof (88 by
+their own answer, 7 from a shelter drawn on its own beside them, 2 under a roof), 12 a bench but no
+shelter mapped, 236 neither, 484 not yet surveyed (451 say nothing about either, 32 say only
+that they have no shelter, 1 only that it has no bench).
+
+Why 10 meters for a shelter or bench drawn on its own: of the 73 stop shelters in the snapshot
+(`shelter_type=public_transport` or no type), the 10 near a mapped stop all lay within 3.5 meters
+of it, and the next closest was 42 meters from any stop. Of the other 63, 29 are tagged as public
+transport shelters, and most of those likely stand at stops OpenStreetMap does not have yet; the 34
+with no type may be shelters of any kind. Meanwhile 95 percent of stops have
+no other stop within 15 meters (the median is 30 meters), so 10 meters credits a stop with its
+own shelter and not with the one across the street. 2,128 benches are mapped in and around the
+city; 7 stops that do not say whether they have a bench have one drawn within 10 meters.
 
 ### Heat and shade
 
@@ -154,7 +181,7 @@ and the NOAA and CAPA Heat Watch campaign (data link still to find).
 | DVRPC pedestrian portal (sidewalks, crosswalks, curb ramps) | | Not stated | Use with its "2018 imagery, not field checked" caveat shown |
 | Census 2020 blocks | | Public domain | Use (API key needed) |
 | TPL ParkServe 10 minute walk areas | | Terms unreachable (403) | Ask before use |
-| Amenities from OpenStreetMap | benches about 2,822; drinking water 46; toilets 116; public bookcases 192; community fridges 0 | ODbL | Use; fridges need a community list |
+| Amenities from OpenStreetMap | benches about 2,822; drinking water 46; toilets 116; public bookcases 192; community fridges 0 | ODbL | Use; fridges need a community list. The weekly extract (`osm_philadelphia`) carries them once their tags join its registry list: on 2026-10-04 it held 2,069 benches inside the city |
 | 311 requests (Carto, since 2014-12-08) | Illegal dumping, street and alley light outages, graffiti, dangerous sidewalk, street trees | City terms | Use for conditions only, never for people |
 | Street poles, commercial corridors, schools | | City terms | Use |
 | Free Library branches | | Site blocked (403) | Use OpenStreetMap `amenity=library` |
@@ -181,7 +208,11 @@ Inequality (license text to confirm).
 
 - OpenStreetMap's public Overpass server rejects the default curl and Python user agents (HTTP 406)
   and is often overloaded (HTTP 504). Send a descriptive User-Agent for small queries, and use a
-  weekly Geofabrik Pennsylvania extract filtered locally for anything bulk.
+  weekly Geofabrik Pennsylvania extract filtered locally for anything bulk (`osm_philadelphia`).
+- Geofabrik's `-latest` links answer with a redirect to the dated file (since September 2025);
+  follow it. Geofabrik asks automated downloaders to send a descriptive User-Agent, to watch their
+  scripts, and not to download the same file again and again; the pipeline downloads once a week
+  and never again within six days unless forced.
 - philart.net rejects bare HTTP clients; send a normal browser style User-Agent.
 - The Census API needs a free key (an owner action) for block level data.
 - The original project's PHS LandCare layer names in its docs are dead; its code already used

@@ -86,6 +86,9 @@ class Adapter(ABC):
     required_columns: ClassVar[tuple[str, ...]] = ()
     #: sources whose current snapshots this one's download needs (they are refreshed first)
     depends_on: ClassVar[tuple[str, ...]] = ()
+    #: a good copy younger than this is not downloaded again unless forced, whatever the
+    #: cadence (for publishers who ask not to be downloaded too often, such as Geofabrik)
+    min_refetch: ClassVar[timedelta | None] = None
 
     def __init__(self, source: Source, ctx: Context):
         if source.endpoint.kind != self.kind:

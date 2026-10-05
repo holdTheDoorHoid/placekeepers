@@ -39,6 +39,7 @@ export default defineConfig({
         terms: 'terms/index.html',
         privacy: 'privacy/index.html',
         contact: 'contact/index.html',
+        streetcomplete: 'streetcomplete/index.html',
       },
     },
   },

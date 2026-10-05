@@ -4,7 +4,8 @@ import { loadRegistry } from '../plugins/registry.ts';
 import { STYLE_IDS } from '../src/map/styles/ids.ts';
 import { STYLES, styleFor } from '../src/map/styles/index.ts';
 import { restyleBase } from '../src/map/styles/basemap.ts';
-import { COUNT_BINS, HIN_COLOR, PLAIN_BACKGROUND, PRIORITY_RAMP } from '../src/map/styles/palette.ts';
+import { SHOW_CHOICES } from '../src/map/styles/stop_amenities.ts';
+import { COUNT_BINS, HIN_COLOR, PLAIN_BACKGROUND, PRIORITY_RAMP, STOP_COLORS, STOP_UNKNOWN_FILL } from '../src/map/styles/palette.ts';
 import { WINDOWS } from '../src/map/styles/shootings_hex.ts';
 import { defaultState, type AppState } from '../src/state/defaults.ts';
 import { collectStrings, strings } from '../src/strings.ts';
@@ -22,6 +23,7 @@ function states(): AppState[] {
   busy.settings.crashes = { years: 'all', severity: '0', mode: 'walk_cycle' };
   busy.settings.memorials = { show_names: false, all_fatal: true };
   busy.settings.segments = { min_score: '60' };
+  busy.settings.stop_amenities = { show: 'unsurveyed' };
   busy.weights.street_safety = { high_injury_network: 0, walking_cycling_harm: 5, recent_death: 1, school_nearby: 0 };
   const off = defaultState(reg, 'field');
   off.weights.violence = { untreated_vacancy: 0, shootings_nearby: 0, poverty: 0, canopy_gap: 0 };
@@ -183,7 +185,7 @@ describe('shootings style', () => {
   });
 
   it('uses no reds and labels its classes in plain numbers', () => {
-    for (const color of [...COUNT_BINS, HIN_COLOR, ...PRIORITY_RAMP.stops]) {
+    for (const color of [...COUNT_BINS, HIN_COLOR, ...PRIORITY_RAMP.stops, ...Object.values(STOP_COLORS)]) {
       const r = parseInt(color.slice(1, 3), 16);
       const g = parseInt(color.slice(3, 5), 16);
       const b = parseInt(color.slice(5, 7), 16);
@@ -194,6 +196,64 @@ describe('shootings style', () => {
     const legend = styleFor(layer)!.legend({ layer, registry: reg, state });
     const bins = legend.find((e) => e.kind === 'bins');
     expect(bins && bins.kind === 'bins' && bins.bins.map((b) => b.label)).toEqual(['1', '2', '3 to 4', '5 to 7', '8 or more']);
+  });
+});
+
+describe('shelters and benches at stops style', () => {
+  const layer = reg.layers.find((l) => l.style === 'stop_amenities')!;
+  const parts = (state: AppState) => styleFor(layer)!.layers({ layer, registry: reg, state, sourceId: 'tiles', sourceLayer: 'stops' });
+  const drawnBy = (state: AppState, c: number): string[] =>
+    parts(state)
+      .filter((l) => !l.id.endsWith(':selected'))
+      .filter((l) => featureFilter((l as { filter: unknown }).filter as never).filter({ zoom: 15 } as never, { type: 1, properties: { c } } as never))
+      .map((l) => l.id.split(':').at(-1)!);
+
+  it('is off by default in both views, until the transit comfort lens comes', () => {
+    expect(layer.default).toEqual({ field: false, analysis: false });
+    expect(defaultState(reg, 'field').layers).not.toContain('stop_amenities');
+    expect(defaultState(reg, 'analysis').layers).not.toContain('stop_amenities');
+  });
+
+  it('draws a stop not yet surveyed as a hollow ring, never like a stop with nothing', () => {
+    const state = defaultState(reg, 'analysis');
+    expect(drawnBy(state, 0)).toEqual(['ring']);
+    for (const c of [1, 2, 3]) expect(drawnBy(state, c)).toEqual(['dot']);
+    const ring = parts(state).find((l) => l.id.endsWith(':ring')) as { paint: Record<string, unknown> };
+    const dot = parts(state).find((l) => l.id.endsWith(':dot')) as { paint: Record<string, unknown> };
+    expect(ring.paint['circle-color']).toBe(STOP_UNKNOWN_FILL);
+    expect(JSON.stringify(dot.paint['circle-color'])).not.toContain(STOP_UNKNOWN_FILL);
+    expect(styleFor(layer)!.clickable).toEqual(['dot', 'ring']);
+  });
+
+  it('shows every stop, the surveyed ones, or the ones not yet surveyed', () => {
+    const state = defaultState(reg, 'analysis');
+    const setting = layer.settings.find((s) => s.id === 'show');
+    expect(setting?.type === 'choice' && setting.options.map((o) => o.value)).toEqual(Object.keys(SHOW_CHOICES));
+    state.settings.stop_amenities = { show: 'surveyed' };
+    expect([0, 1, 2, 3].map((c) => drawnBy(state, c).length)).toEqual([0, 1, 1, 1]);
+    state.settings.stop_amenities = { show: 'unsurveyed' };
+    expect([0, 1, 2, 3].map((c) => drawnBy(state, c).length)).toEqual([1, 0, 0, 0]);
+  });
+
+  it('explains each kind of stop, and links "not yet surveyed" to the survey guide', () => {
+    const state = defaultState(reg, 'analysis');
+    const legend = styleFor(layer)!.legend({ layer, registry: reg, state });
+    const circles = legend.filter((e) => e.kind === 'circle');
+    expect(circles.map((e) => e.kind === 'circle' && e.label)).toEqual([
+      strings.legend.stopShelter,
+      strings.legend.stopBench,
+      strings.legend.stopNeither,
+      strings.legend.stopUnknown,
+    ]);
+    const unknown = circles.at(-1)!;
+    expect(unknown.kind === 'circle' && unknown.link).toEqual({ page: 'streetcomplete', label: strings.legend.stopSurvey });
+    expect(circles.slice(0, 3).every((e) => e.kind === 'circle' && !e.link)).toBe(true);
+    state.settings.stop_amenities = { show: 'surveyed' };
+    expect(styleFor(layer)!.legend({ layer, registry: reg, state }).some((e) => e.kind === 'circle' && e.label === strings.legend.stopUnknown)).toBe(false);
+  });
+
+  it('names a guide page that the site builds', () => {
+    expect(strings.nav.pages.map((p) => p.slug)).toContain(layer.guide);
   });
 });
 

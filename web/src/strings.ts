@@ -101,6 +101,7 @@ export const strings = {
       { slug: 'how', label: 'How to do it' },
       { slug: 'responsibly', label: 'Use this responsibly' },
       { slug: 'vacant-land', label: 'How we find vacant land' },
+      { slug: 'streetcomplete', label: 'Survey bus stops' },
       { slug: 'terms', label: 'Terms' },
       { slug: 'privacy', label: 'Privacy' },
       { slug: 'contact', label: 'Contact' },
@@ -337,6 +338,7 @@ export const strings = {
     dataError: 'This layer could not be loaded.',
     resetAll: 'Reset to defaults',
     resetDone: 'Settings are back to their defaults.',
+    guide: 'How you can help improve this layer',
   },
 
   settings: {
@@ -538,6 +540,14 @@ export const strings = {
     /** While there is no private way to ask for a name to come down, no name can appear (D7). */
     memorialNamesWaiting: 'No names are shown yet. They will appear only once families have a private way to ask for one to come down.',
     memorialNamesHidden: 'Names are hidden.',
+    // Shelters and benches at stops (src/map/styles/stop_amenities.ts). Unknown is never worded
+    // as missing.
+    stopShelter: 'A shelter, or the whole stop is under a roof',
+    stopBench: 'A bench, but no shelter mapped',
+    stopNeither: 'No shelter and no bench',
+    stopUnknown: 'Not yet surveyed: OpenStreetMap does not say yet',
+    stopSurvey: 'How to survey a stop with StreetComplete',
+    stopsCoverage: 'Only stops someone has added to OpenStreetMap appear here, so many stops are not shown yet.',
   },
 
   streets: {
@@ -551,7 +561,9 @@ export const strings = {
             ? 'Street block'
             : style === 'transit_stops'
               ? 'Stop'
-              : 'Details',
+              : style === 'stop_amenities'
+                ? 'Shelter and bench'
+                : 'Details',
     memorialTitle: 'In memory',
     peopleHere: (n: number) => `${plural(n, 'person is', 'people are')} remembered here`,
     killed: {
@@ -676,6 +688,41 @@ export const strings = {
       2: 'SEPTA lists this stop as not reachable in a wheelchair.',
     } as Record<number, string>,
     source: "From SEPTA's schedules for a typical week. Waits are averages: buses bunch and gaps grow.",
+  },
+
+  // Shelters and benches at a stop someone tapped, from OpenStreetMap
+  // (src/components/transit/StopAmenityDetails.svelte). An answer OpenStreetMap does not have yet
+  // reads "not yet surveyed".
+  stopAmenities: {
+    unnamed: 'A stop with no name in OpenStreetMap',
+    number: (ref: string) => `Stop number ${ref}`,
+    served: { 1: 'Bus stop', 2: 'Trolley stop', 3: 'Bus and trolley stop' } as Record<number, string>,
+    comfort: {
+      3: 'A shelter, or the whole stop is under a roof',
+      2: 'A bench, but no shelter mapped',
+      1: 'No shelter and no bench',
+      0: 'Not yet surveyed',
+    } as Record<number, string>,
+    factsTitle: 'What OpenStreetMap says',
+    answers: {
+      sh: 'Shelter',
+      bn: 'Bench',
+      bi: 'Waste basket',
+      lt: 'Lit at night',
+      tp: 'Tactile paving for people who are blind',
+      wc: 'Wheelchair access',
+      db: 'Departures board',
+      cv: 'Whole stop under a roof',
+    } as Record<string, string>,
+    yes: 'Yes',
+    no: 'No',
+    limited: 'Limited',
+    unknown: 'Not yet surveyed',
+    nearby: 'mapped on its own beside the stop',
+    unknownNote: 'Not yet surveyed means no one has recorded it yet. It does not mean the stop has nothing.',
+    survey: 'How to survey this stop with StreetComplete',
+    openOsm: 'See this stop on OpenStreetMap',
+    source: 'From OpenStreetMap, © OpenStreetMap contributors, updated every week.',
   },
 
   basemap: {

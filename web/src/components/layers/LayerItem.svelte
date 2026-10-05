@@ -1,6 +1,7 @@
 <script lang="ts">
   // One registry layer: its switch, evidence badge, settings and legend (while shown), and an
-  // "About this layer" section with the plain description, sources, licenses and credits.
+  // "About this layer" section with the plain description, a link to its guide when it has one
+  // (how anyone can help improve its data), sources, licenses and credits.
   import { styleFor } from '../../map/styles/index.ts';
   import type { Layer } from '../../registry/types.ts';
   import type { AppStore } from '../../state/store.svelte.ts';
@@ -30,6 +31,8 @@
     layer.sources.map((id) => registry.sources.find((s) => s.id === id)).filter((s) => s !== undefined),
   );
   const switchId = $derived(`${idPrefix}-layer-${layer.id}`);
+  // The site root from the build (not config, so the layer also renders outside a browser).
+  const siteBase = import.meta.env.BASE_URL;
 
   function licenseOf(id: string) {
     return registry.licenses.find((l) => l.id === id);
@@ -70,6 +73,7 @@
   <details>
     <summary>{strings.layers.details}</summary>
     <p>{layer.description}</p>
+    {#if layer.guide}<p><a href="{siteBase}{layer.guide}/">{strings.layers.guide}</a></p>{/if}
     <svelte:element this={`h${level}`} class="sources-title">{strings.layers.sources}</svelte:element>
     <ul class="sources">
       {#each sources as source (source.id)}

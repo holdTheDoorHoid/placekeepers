@@ -20,12 +20,18 @@ export interface StyleContext {
 
 export type LegendContext = Omit<StyleContext, 'sourceId' | 'sourceLayer'>;
 
+/** A link a legend entry offers to one of the site's content pages, named by its slug (M2.2). */
+export interface LegendLink {
+  page: string;
+  label: string;
+}
+
 export type LegendEntry =
   | { kind: 'ramp'; title: string; stops: readonly string[]; low: string; high: string }
   | { kind: 'swatch'; label: string; fill: string; stroke: string; strokeWidth: number; dashed?: boolean; fillOpacity?: number }
   | { kind: 'line'; label: string; color: string; casing?: string; width: number }
   | { kind: 'bins'; title: string; bins: { color: string; label: string }[]; opacity: number }
-  | { kind: 'circle'; label: string; fill: string; stroke: string; radius: number }
+  | { kind: 'circle'; label: string; fill: string; stroke: string; radius: number; link?: LegendLink }
   | { kind: 'note'; text: string };
 
 export interface StyleModule {

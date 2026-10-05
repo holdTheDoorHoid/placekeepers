@@ -29,6 +29,11 @@ const FIELD_PATTERN = /^f_[a-z0-9_]+$/;
 // one side accepts never breaks the other.
 const URL_PATTERN = /^https?:\/\/\S+$/;
 const DATA_PATH_PATTERN = /^[A-Za-z0-9_][A-Za-z0-9_.-]*(\/[A-Za-z0-9_][A-Za-z0-9_.-]*)*$/;
+/** An OpenStreetMap tag an extract keeps: "key=value", or "key" for any value (added by M2.2). */
+const OSM_TAG_PATTERN = /^[A-Za-z0-9_:.-]+(=[A-Za-z0-9_:;.-]+)?$/;
+const OSM_EXTRACT_URL_PATTERN = /^https:\/\/\S+\.osm\.pbf$/;
+/** A layer's guide: the slug of a content page (content/<slug>.md). */
+const GUIDE_PATTERN = /^[a-z][a-z0-9-]*$/;
 
 type Spec =
   | { t: 'string'; optional?: boolean; pattern?: RegExp; oneOf?: readonly string[]; allowEmpty?: boolean }
@@ -68,6 +73,7 @@ const SCHEMAS: Record<keyof Registry, Fields> = {
         url: str({ optional: true, pattern: URL_PATTERN }),
         format: str({ optional: true, oneOf: URL_FORMATS }),
         path: str({ optional: true }),
+        tags: { t: 'strings', optional: true, pattern: OSM_TAG_PATTERN, nonEmpty: true },
       },
     },
     license: id(),
@@ -96,6 +102,7 @@ const SCHEMAS: Record<keyof Registry, Fields> = {
     style: id(),
     evidence: evidence(),
     default: { t: 'object', fields: { field: { t: 'boolean' }, analysis: { t: 'boolean' } } },
+    guide: str({ optional: true, pattern: GUIDE_PATTERN }),
     settings: {
       t: 'objects',
       optional: true,
@@ -394,6 +401,15 @@ export function validateRegistry(raw: RawRegistryFiles, options: ValidateOptions
     if (!licenses.has(source.license)) errors.push(`${where} names an unknown license "${source.license}"`);
     for (const key of ENDPOINT_REQUIRED[source.endpoint.kind] ?? []) {
       if (!(key in source.endpoint)) errors.push(`${where}.endpoint of kind ${source.endpoint.kind} needs "${key}"`);
+    }
+    if (source.endpoint.kind === 'osm_extract') {
+      // An extract the pipeline downloads has both; the base map, which the site makes, has neither.
+      if (('url' in source.endpoint) !== ('tags' in source.endpoint)) {
+        errors.push(`${where}.endpoint of kind osm_extract needs both "url" and "tags", or neither`);
+      }
+      if (source.endpoint.url !== undefined && !OSM_EXTRACT_URL_PATTERN.test(source.endpoint.url)) {
+        errors.push(`${where}.endpoint.url should be an https link to an .osm.pbf file`);
+      }
     }
   }
 

@@ -1,7 +1,7 @@
 # Content
 
 These files are the words neighbors read on the site: About, Why this works, How to do it, Use
-this responsibly, How we find vacant land, Terms, Privacy, and Contact. The web app turns each
+this responsibly, How we find vacant land, Survey bus stops, Terms, Privacy, and Contact. The web app turns each
 file into its own page when the site is built. See `web/plugins/content.ts` for how, and
 `docs/DESIGN.md` section 8.6 for where this folder fits in the project.
 

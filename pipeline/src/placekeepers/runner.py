@@ -57,7 +57,8 @@ def select_sources(registry: Registry, ids: list[str] | None) -> list[Source]:
 
 
 # How long a good snapshot is kept before fetching again, by the source's registry cadence. A frozen
-# source is fetched once; a yearly one at most monthly. Everything else is fetched on every run.
+# source is fetched once; a yearly one at most monthly. Everything else is fetched on every run,
+# unless its adapter sets a minimum wait (`min_refetch`, such as the OpenStreetMap extract's).
 REFETCH_AFTER = {"frozen": None, "yearly": timedelta(days=30)}
 
 
@@ -73,17 +74,26 @@ def min_free_gb() -> float:
 
 def refetch_due(ctx: Context, source: Source) -> str | None:
     """None when the source should be fetched now, or the reason it does not need to be."""
-    if source.cadence not in REFETCH_AFTER:
+    adapter = ADAPTERS.get(source.id)
+    floor = adapter.min_refetch if adapter else None
+    if source.cadence not in REFETCH_AFTER and floor is None:
         return None
     current = SnapshotStore(ctx.cache, source.id).current()
     if current is None:
         return None
-    wait = REFETCH_AFTER[source.cadence]
     since = local_date(parse_iso_z(current.fetched_at)).isoformat()
-    if wait is None:
-        return f"Frozen source, kept from {since}"
-    if ctx.now() - parse_iso_z(current.fetched_at) < wait:
-        return f"Changes yearly; the copy from {since} is recent enough"
+    age = ctx.now() - parse_iso_z(current.fetched_at)
+    if source.cadence in REFETCH_AFTER:
+        wait = REFETCH_AFTER[source.cadence]
+        if wait is None:
+            return f"Frozen source, kept from {since}"
+        if age < wait:
+            return f"Changes yearly; the copy from {since} is recent enough"
+    if floor is not None and age < floor:
+        return (
+            f"The copy from {since} is less than {floor.days} days old, and the publisher asks "
+            "not to be downloaded again so soon"
+        )
     return None
 
 
