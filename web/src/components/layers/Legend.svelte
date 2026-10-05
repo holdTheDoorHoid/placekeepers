@@ -1,10 +1,11 @@
 <script lang="ts">
   // Draws a style module's legend entries: color ramps, swatches, lines, count classes, notes.
   // An entry may link to one of the site's content pages (such as the bus stop survey guide).
-  import { config } from '../../config/index.ts';
   import type { LegendEntry } from '../../map/styles/index.ts';
 
   let { entries }: { entries: LegendEntry[] } = $props();
+  // The site root from the build (not config, so the legend also renders outside a browser).
+  const siteBase = import.meta.env.BASE_URL;
 </script>
 
 <ul class="legend">
@@ -46,7 +47,7 @@
           <circle cx="14" cy="9" r={entry.radius} fill={entry.fill} stroke={entry.stroke} stroke-width="1.5" />
         </svg>
         <span>
-          {entry.label}{#if entry.link}<br /><a href="{config.siteBase}{entry.link.page}/">{entry.link.label}</a>{/if}
+          {entry.label}{#if entry.link}<br /><a href="{siteBase}{entry.link.page}/">{entry.link.label}</a>{/if}
         </span>
       </li>
     {:else if entry.kind === 'bins'}

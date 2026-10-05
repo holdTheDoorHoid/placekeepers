@@ -12,7 +12,7 @@
 
 import type { StyleSpecification } from 'maplibre-gl';
 import { strings } from '../strings.ts';
-import type { BasemapMode } from './basemap-mode.ts';
+import { basemapTilesUrl, extractAvailable, type BasemapMode } from './basemap-mode.ts';
 import { flavorLayers } from './styles/basemap.ts';
 import { PLAIN_BACKGROUND } from './styles/palette.ts';
 
@@ -22,10 +22,23 @@ export const BASEMAP_SOURCE = 'protomaps';
 export function basemapFiles(dataBase: string) {
   const dir = `${dataBase}basemap/`;
   return {
-    tiles: `${dir}philly.pmtiles`,
+    tiles: basemapTilesUrl(dataBase),
     glyphs: `${dir}fonts/{fontstack}/{range}.pbf`,
     sprite: `${dir}sprites/v4/light`,
   };
+}
+
+/** The font the base map draws street and place names with, and its first range (Latin letters). */
+export const LABEL_FONT = { stack: 'Noto Sans Regular', range: '0-255' } as const;
+
+/**
+ * Asks for the label font while the map is still being built. The map asks for it only after its
+ * first base map tile arrives, which on a slow connection leaves it waiting a second or more for
+ * one small file; the browser keeps this copy and hands it to the map.
+ */
+export function warmLabelFont(dataBase: string, fetchImpl: typeof fetch = fetch): void {
+  const url = basemapFiles(dataBase).glyphs.replace('{fontstack}', LABEL_FONT.stack).replace('{range}', LABEL_FONT.range);
+  fetchImpl(url).catch(() => {});
 }
 
 export function plainStyle(): StyleSpecification {
@@ -54,19 +67,7 @@ export function isProtomaps(style: StyleSpecification | string): style is StyleS
   return typeof style !== 'string' && BASEMAP_SOURCE in (style.sources ?? {});
 }
 
-/** True when the extract exists and starts like a PMTiles file. */
-export async function extractAvailable(dataBase: string, fetchImpl: typeof fetch = fetch): Promise<boolean> {
-  try {
-    // Not from the browser cache: a cached range of an older copy of the file would make the server
-    // send the whole 45 MB file (see pmtiles-source.ts).
-    const response = await fetchImpl(basemapFiles(dataBase).tiles, { headers: { Range: 'bytes=0-6' }, cache: 'no-store' });
-    if (!response.ok) return false;
-    const head = new Uint8Array(await response.arrayBuffer()).slice(0, 7);
-    return new TextDecoder().decode(head) === 'PMTiles';
-  } catch {
-    return false;
-  }
-}
+export { extractAvailable };
 
 export interface BasemapChoice {
   style: StyleSpecification | string;
@@ -74,10 +75,19 @@ export interface BasemapChoice {
   missing: boolean;
 }
 
-export async function chooseBasemap(mode: BasemapMode, dataBase: string, fetchImpl: typeof fetch = fetch): Promise<BasemapChoice> {
+/**
+ * The base map to start with. `available` is the answer of extractAvailable when the page already
+ * asked (it asks while the map library downloads, which saves a round trip on slow connections).
+ */
+export async function chooseBasemap(
+  mode: BasemapMode,
+  dataBase: string,
+  fetchImpl: typeof fetch = fetch,
+  available?: Promise<boolean>,
+): Promise<BasemapChoice> {
   if (mode === 'none') return { style: plainStyle(), missing: false };
   if (mode === 'openfreemap') return { style: OPENFREEMAP_STYLE, missing: false };
-  if (await extractAvailable(dataBase, fetchImpl)) return { style: protomapsStyle(dataBase), missing: false };
+  if (await (available ?? extractAvailable(dataBase, fetchImpl))) return { style: protomapsStyle(dataBase), missing: false };
   return { style: plainStyle(), missing: true };
 }
 

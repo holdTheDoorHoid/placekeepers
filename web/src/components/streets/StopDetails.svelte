@@ -2,7 +2,6 @@
   // A bus or trolley stop someone tapped (M2.2): its name and number, what the map shows, and
   // each answer OpenStreetMap has, with "not yet surveyed" where it has none yet, never "no".
   // Links to the survey guide (the layer's guide page) and to the stop on OpenStreetMap.
-  import { config } from '../../config/index.ts';
   import { strings } from '../../strings.ts';
   import { describeStop } from '../../transit/describe.ts';
 
@@ -10,6 +9,8 @@
 
   const stop = $derived(describeStop(properties));
   const s = strings.stops;
+  // The site root from the build (not config, so the details also render outside a browser).
+  const siteBase = import.meta.env.BASE_URL;
 </script>
 
 <section class="stop">
@@ -23,7 +24,7 @@
     {/each}
   </ul>
   {#if stop.anyUnknown}<p class="muted small">{s.unknownNote}</p>{/if}
-  {#if guide}<p><a href="{config.siteBase}{guide}/">{s.survey}</a></p>{/if}
+  {#if guide}<p><a href="{siteBase}{guide}/">{s.survey}</a></p>{/if}
   {#if stop.osmUrl}
     <p class="small"><a href={stop.osmUrl} target="_blank" rel="noopener noreferrer">{s.openOsm}</a></p>
   {/if}

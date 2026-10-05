@@ -19,12 +19,15 @@
     places,
     title,
     idPrefix,
+    headingId,
   }: {
     store: AppStore;
     /** What to download, highest priority first: only the first EXPORT_LIMIT go in the file. */
     places: () => ExportPlace[];
     title: string;
     idPrefix: string;
+    /** A heading the page already shows above the buttons; without one they bring their own. */
+    headingId?: string;
   } = $props();
 
   const e = strings.export;
@@ -71,8 +74,8 @@
   }
 </script>
 
-<div class="export" role="group" aria-labelledby="{idPrefix}-export-title" aria-describedby="{idPrefix}-export-help">
-  <h3 id="{idPrefix}-export-title" class="sr-only">{e.title}</h3>
+<div class="export" role="group" aria-labelledby={headingId ?? `${idPrefix}-export-title`} aria-describedby="{idPrefix}-export-help">
+  {#if !headingId}<h3 id="{idPrefix}-export-title" class="sr-only">{e.title}</h3>{/if}
   <div class="buttons">
     <button class="button small" type="button" disabled={busy} onclick={() => download('csv')}>{e.csv}</button>
     <button class="button small" type="button" disabled={busy} onclick={() => download('geojson')}>{e.geojson}</button>
@@ -93,7 +96,8 @@
   .note {
     margin: 4px 0 0;
   }
+  /* An empty status line takes no room but stays in place, so screen readers hear what fills it. */
   .status:empty {
-    display: none;
+    margin: 0;
   }
 </style>

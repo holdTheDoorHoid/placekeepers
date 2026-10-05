@@ -164,6 +164,12 @@ carried by `memorials` markers in `sg`. The memorial suggestion (`memorial_or_gh
 shown with the line "Only with the family's blessing." and a link to Families for Safe Streets
 (docs/ETHICS.md); the web app adds that line wherever the suggestion is listed.
 
+Greening suggestions (`clean_and_green` in this release, listed in
+`web/src/config/suggestions.ts`; added 2026-10-04 by M1.10, decision D12 of VERIFICATION.md) are
+shown with the caution of docs/ETHICS.md, "Greening can raise nearby prices. Consider pairing it
+with protections.", until the displacement watch overlay exists; the web app adds it wherever the
+suggestion is listed and in downloads. No registry key changes.
+
 ### `registry/routes.yaml` and `registry/partners.yaml`
 
 Routes carry `id`, `label`, `who`, `steps` (list), `cost`, `timeline`, `links` (label and url),

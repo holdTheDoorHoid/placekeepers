@@ -7,7 +7,7 @@
 // memorial page when there is one; "request removal" on every memorial; and "only with the
 // family's blessing" beside every memorial suggestion. Nothing else about the person.
 
-import { explainScore, type ScoreExplanation } from '../map/lens.ts';
+import { explainScore, wholeScore, type ScoreExplanation } from '../map/lens.ts';
 import { placeSuggestions } from '../places/rank.ts';
 import type { Lens, Registry, Route, Suggestion } from '../registry/types.ts';
 import type { AppState } from '../state/defaults.ts';
@@ -165,7 +165,7 @@ export function describeSegment(reg: Registry, state: AppState, properties: Reco
   return {
     name: titleStreet(text(properties.name) ?? ''),
     lens,
-    score: why?.score === null || why?.score === undefined ? null : Math.round(why.score),
+    score: wholeScore(why?.score),
     why,
     facts,
   };

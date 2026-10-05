@@ -61,18 +61,24 @@ export const strings = {
   app: {
     name: 'Placekeepers',
     tagline: 'A free map for Philadelphia neighbors who care for their blocks.',
-    mapLabel: 'Map of Philadelphia. The list of places below the map shows the same places as text.',
+    mapLabel: 'Map of Philadelphia. The lists of places and memorials on this page show the same things as text.',
     loadingMap: 'Loading the map',
     mapFailed: 'The map could not start in this browser. Try another browser, or update this one.',
     sampleData: 'Sample data for testing. These are not real places.',
-    earlyPreview:
-      'Early preview: the map shows real City data, but lot pages, scores and legal steps are still being built.',
+    earlyPreview: 'Version 0.1: a first public version. Check facts with the City before you act.',
     followAlong: 'Follow along',
     repoUrl: 'https://github.com/holdTheDoorHoid/placekeepers',
     skipToList: 'Skip to the list of places',
+    hideNote: 'Hide',
+    hideNoteLabel: 'Hide this note',
     close: 'Close',
     notAffiliated: 'Not affiliated with the City of Philadelphia. Not legal advice.',
     licenses: 'Code: GPL-3.0. Data: each source has its own license. Writing: Creative Commons BY-SA 4.0.',
+  },
+
+  content: {
+    /** The name screen readers give a table box on a content page, which scrolls sideways. */
+    tableLabel: 'Table, scrolls sideways',
   },
 
   header: {
@@ -132,8 +138,9 @@ export const strings = {
     nearMePrivacy: 'Your location stays on your device. Placekeepers never sends it anywhere and never puts it in a link.',
     youAreHere: 'You are here',
     stopLocation: 'Stop using my location',
-    locationInUse:
-      'Using your location. It stays on this device, and links leave out where the map is until you move the map yourself.',
+    locationInUse: 'Using your location. It stays on this device, and out of any link you copy.',
+    /** The short button beside that note; its full name for screen readers is stopLocation. */
+    stop: 'Stop',
     myLists: 'My lists',
     listsTitle: 'Saved lists',
     chipsLabel: 'Main layers',
@@ -378,6 +385,7 @@ export const strings = {
     tabTable: 'Ranked list',
     tabPlot: 'Need and first step',
     tabLists: 'Saved lists',
+    tabMemorials: 'Memorials',
   },
 
   // The plot of need against the first step to get permission (docs/DESIGN.md section 5.4).
@@ -421,6 +429,7 @@ export const strings = {
     ownerLine:
       'Owner names and mailing addresses are as the City publishes them. Every owner flag has a careful note and a protective next step: read them on the lot page before you act. Not legal advice.',
     scoreLine: (lens: string, weights: string) => `Scores use the ${lens} lens with these weights: ${weights}.`,
+    greeningLine: (caution: string) => `About greening suggestions: ${caution}`,
   },
 
   // Saved lists, kept only in this browser (src/places/lists.svelte.ts).
@@ -442,6 +451,9 @@ export const strings = {
     saveName: 'Save the name',
     cancel: 'Cancel',
     delete: 'Delete this list',
+    made: (name: string) => `Made the list "${name}". Places you save now go to it.`,
+    renamed: (name: string) => `The list is now called "${name}".`,
+    deleted: (name: string) => `Deleted "${name}" from this browser.`,
     confirmDelete: (name: string, n: number) =>
       `Delete "${name}" and its ${plural(n, 'place', 'places')} from this browser? It cannot be brought back unless you downloaded it.`,
     count: (n: number) => plural(n, 'place', 'places'),
@@ -467,6 +479,13 @@ export const strings = {
     importFailed: 'That file has no parcel numbers we could read.',
     importTooBig: 'That file is too large to be a list.',
     importLeftOut: (n: number, limit: number) => `${plural(n, 'place was', 'places were')} left out: a list holds up to ${formatNumber(limit)}.`,
+  },
+
+  // The caution beside every greening suggestion until the displacement watch overlay exists
+  // (docs/ETHICS.md, "Displacement", word for word; docs/VERIFICATION.md, decision D12).
+  displacement: {
+    caution: 'Greening can raise nearby prices. Consider pairing it with protections.',
+    protections: 'Ways to protect neighbors',
   },
 
   evidence: {
@@ -518,6 +537,8 @@ export const strings = {
     memorial: 'A person killed while walking, cycling or riding a scooter',
     memorialEveryone: 'A person killed in a traffic crash',
     memorialNames: 'A fuller ring means a public memorial list shares the person\'s name. Open the marker to read it.',
+    /** While there is no private way to ask for a name to come down, no name can appear (D7). */
+    memorialNamesWaiting: 'No names are shown yet. They will appear only once families have a private way to ask for one to come down.',
     memorialNamesHidden: 'Names are hidden.',
     // Bus and trolley stops (src/map/styles/bus_stops.ts). Unknown is never worded as missing.
     stopShelter: 'A shelter, or the whole stop is under a roof',
@@ -556,8 +577,19 @@ export const strings = {
     canDo: 'What neighbors can do here',
     firstStep: 'First step',
     cost: (cost: string) => `Cost: ${cost}`,
+    memorialsNearby: 'Memorials nearby',
+    memorialsInView: 'Memorials in view',
+    memorialsIntro: 'Each one remembers a person killed in a traffic crash. Open one to read more.',
+    memorialCount: (n: number) => plural(n, 'memorial', 'memorials'),
+    memorialsMore: (n: number) => `${plural(n, 'more memorial is', 'more memorials are')} in view. Zoom in to list them here.`,
+    memorialsLayerOff: 'Turn on the Memorials layer to list the memorials in view.',
+    memorialsNone: 'No memorials in this part of the map.',
     removal: 'Request removal',
-    removalNote: 'Anyone can ask us to remove a name or a marker. We do it without asking why.',
+    /** Beside "Request removal". No text promises an email address before it exists (docs/VERIFICATION.md, D7). */
+    removalNote: (hasEmail: boolean) =>
+      hasEmail
+        ? 'Anyone can ask us to take this memorial down, by private email. We do it without asking why.'
+        : 'Anyone can ask us to take this memorial down, without giving a reason. A private email address for this is coming soon; until then the Contact page says how to ask in a GitHub issue, which anyone can read.',
     removalSubject: (id: string) => `Memorial removal request ${id}`,
     removalBody: (id: string) =>
       `Please remove memorial ${id} from Placekeepers. You do not need to give a reason or any proof.`,

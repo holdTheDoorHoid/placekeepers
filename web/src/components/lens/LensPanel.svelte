@@ -7,7 +7,18 @@
   import { strings } from '../../strings.ts';
   import EvidenceBadge from '../common/EvidenceBadge.svelte';
 
-  let { store, lens, idPrefix }: { store: AppStore; lens: Lens; idPrefix: string } = $props();
+  let {
+    store,
+    lens,
+    idPrefix,
+    level = 3,
+  }: {
+    store: AppStore;
+    lens: Lens;
+    idPrefix: string;
+    /** The heading level of the lens title, so headings stay in order wherever the panel sits. */
+    level?: 2 | 3 | 4;
+  } = $props();
 
   const weights = $derived(store.state.weights[lens.id] ?? {});
   const active = $derived(matchingPreset(lens, weights));
@@ -15,7 +26,7 @@
 </script>
 
 <section class="lens" aria-labelledby="{idPrefix}-lens-{lens.id}">
-  <h3 id="{idPrefix}-lens-{lens.id}">{strings.lens.title}: {lens.label}</h3>
+  <svelte:element this={`h${level}`} id="{idPrefix}-lens-{lens.id}" class="lens-title">{strings.lens.title}: {lens.label}</svelte:element>
   <p class="muted small">{lens.description}</p>
 
   {#if lens.presets.length}
@@ -67,6 +78,9 @@
 <style>
   .lens {
     margin-bottom: 12px;
+  }
+  .lens-title {
+    font-size: 1rem;
   }
   .presets {
     display: flex;

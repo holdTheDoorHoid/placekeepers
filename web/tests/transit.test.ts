@@ -1,4 +1,9 @@
+import { render } from 'svelte/server';
 import { describe, expect, it } from 'vitest';
+import { loadRegistry } from '../plugins/registry.ts';
+import FeatureDetails from '../src/components/streets/FeatureDetails.svelte';
+import { defaultState } from '../src/state/defaults.ts';
+import type { AppStore } from '../src/state/store.svelte.ts';
 import { strings } from '../src/strings.ts';
 import { describeStop, osmUrl } from '../src/transit/describe.ts';
 
@@ -54,5 +59,22 @@ describe('what a tapped bus stop says', () => {
     expect(osmUrl('n12')).toBe('https://www.openstreetmap.org/node/12');
     expect(osmUrl('x12')).toBeNull();
     expect(osmUrl(undefined)).toBeNull();
+  });
+});
+
+describe('the details panel for a tapped stop', () => {
+  const registry = loadRegistry();
+  const store = { registry, state: defaultState(registry, 'field'), inspected: null } as unknown as AppStore;
+  const details = (properties: Record<string, unknown>) =>
+    render(FeatureDetails, { props: { store, target: { layerId: 'bus_stops', features: [properties], lngLat: [-75.2, 39.95] } } }).body;
+
+  it('says not yet surveyed, never no, and links to the survey guide and to OpenStreetMap', () => {
+    const html = details({ id: 'n6', c: 0, md: 1, nm: 'Sample St & Test Ave' });
+    expect(html).toContain('Sample St &amp; Test Ave');
+    expect(html).toContain(strings.stops.unknownNote);
+    expect(html).not.toContain(`${strings.stops.answers.sh}: ${strings.stops.no}`);
+    expect(html).toContain('href="/placekeepers/streetcomplete/"');
+    expect(html).toContain('href="https://www.openstreetmap.org/node/6"');
+    expect(html).toContain(strings.stops.source);
   });
 });

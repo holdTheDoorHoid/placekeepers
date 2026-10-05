@@ -123,8 +123,9 @@
   .search-button {
     padding: 6px 10px;
   }
+  /* An empty status line takes no room but stays in place, so screen readers hear what fills it. */
   .message:empty {
-    display: none;
+    margin: 0;
   }
   .message {
     margin: 4px 0 0;

@@ -26,6 +26,7 @@
     "pmtiles": "^4.5.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@maplibre/maplibre-gl-style-spec": "^24.8.1",
     "@playwright/test": "^1.63.0",
     "@sveltejs/vite-plugin-svelte": "^7.3.1",

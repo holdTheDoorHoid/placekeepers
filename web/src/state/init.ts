@@ -16,8 +16,11 @@ export interface InitialState {
   from: 'link' | 'saved' | 'defaults';
 }
 
-export function initialState(reg: Registry, input: { hash: string; width: number; saved: string | null }): InitialState {
-  const auto = autoView(input.width);
+export function initialState(
+  reg: Registry,
+  input: { hash: string; width: number; height?: number; touch?: boolean; saved: string | null },
+): InitialState {
+  const auto = autoView(input.width, input.height, input.touch);
   const link = decodeState(reg, input.hash, auto);
   if (link.found) return { state: link.state, viewPinned: link.hasView, from: 'link' };
   if (input.saved) {

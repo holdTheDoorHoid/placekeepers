@@ -160,6 +160,15 @@ export function explainScore(
  * exactly to the displayed score (largest remainder rounding). Rounding each one on its own
  * could leave the column a tenth away from the total. Returns the displayed score too.
  */
+/**
+ * The whole number a card, the ranked list or the plot shows for a score: the shown tenth
+ * rounded, so it agrees with the breakdown on the lot page (57.46 shows there as 57.5, so here
+ * as 58, not 57).
+ */
+export function wholeScore(score: number | null | undefined): number | null {
+  return score === null || score === undefined ? null : Math.round(Math.round(score * 10) / 10);
+}
+
 export function displayedBreakdown(why: ScoreExplanation): { contributions: number[]; score: number | null } {
   if (why.score === null) return { contributions: why.factors.map(() => 0), score: null };
   const tenths = why.factors.map((f) => f.contribution * 10);
