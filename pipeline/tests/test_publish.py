@@ -388,9 +388,9 @@ def care_ctx(ctx):
         "neighborhoods",
         pa.table(
             {
-                "name": ["BRIDESBURG"],
-                "listname": ["Bridesburg"],
-                "geometry": [wkb(shapes[0])],
+                "name": ["BRIDESBURG", "FISHTOWN"],
+                "listname": ["Bridesburg", "Fishtown - Lower Kensington"],
+                "geometry": [wkb(shapes[0]), wkb(shapes[1])],
             }
         ),
         geometry=True,
@@ -421,8 +421,10 @@ def test_care_and_boundary_layers_carry_the_contract_properties(care_ctx, tmp_pa
         {"id": 77, "nm": "Girard Estate Neighbors", "t": "Other", "w": "https://example.org/ge"},
         {"id": 78, "nm": "Ward 5"},
     ]
+    # A dash as punctuation in a City name becomes a comma on the map (finding F14).
     assert [f["properties"] for f in features(tiles / "boundaries.neighborhoods.geojson")] == [
-        {"id": "BRIDESBURG", "nm": "Bridesburg"}
+        {"id": "BRIDESBURG", "nm": "Bridesburg"},
+        {"id": "FISHTOWN", "nm": "Fishtown, Lower Kensington"},
     ]
     parcels = {
         f["properties"]["id"]: f["properties"]["lc"]
@@ -430,6 +432,16 @@ def test_care_and_boundary_layers_carry_the_contract_properties(care_ctx, tmp_pa
     }
     assert parcels == {"370000001": 1, "370000002": 0, "380000003": 0}
     assert result.features["tiles/care.pmtiles gardens"] == 3
+
+
+def test_map_labels_have_no_dash_as_punctuation() -> None:
+    from placekeepers.publish.layers import plain_name
+
+    assert plain_name("Fishtown - Lower Kensington") == "Fishtown, Lower Kensington"
+    assert plain_name("Garden \u2014 North") == "Garden, North"
+    assert plain_name("Smith-Jones Farm") == "Smith-Jones Farm"
+    assert plain_name("1304-08 Garden") == "1304-08 Garden"
+    assert plain_name(None) is None
 
 
 @pytest.mark.skipif(shutil.which("tippecanoe") is None, reason="tippecanoe is not installed")
