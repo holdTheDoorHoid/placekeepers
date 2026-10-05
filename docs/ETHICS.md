@@ -60,9 +60,11 @@ Flags in the first release:
   to this property and may not know it. If you know the family, the Tangled Title Fund (up to $6,500
   in legal help) and Philadelphia VIP can help them keep it. Families can also sign up for the City's
   free Fraud Guard alerts."* It never reads "owner deceased" or "no heirs".
-- Any dossier showing an individual owner flag also shows a short deed fraud notice: how deed theft
-  works in Philadelphia, the City's Fraud Guard sign up, and the City's November 2025 automated check
-  that blocks deeds signed by people already dead.
+- Every dossier whose owner may be a person (a person, an owner whose type we could not tell, or a
+  possible estate) shows a short deed fraud notice, even where the flags about the owner are held
+  back: how deed theft works in Philadelphia, the City's Fraud Guard sign up, and the City's
+  November 2025 automated check that blocks deeds signed by people already dead. It protects the
+  family who may live there and says nothing about the owner (orchestrator, 2026-10-04).
 - The conservatorship route always carries this note: *"Conservatorship can take a property away from
   its owner. Researchers found it is used disproportionately in neighborhoods facing gentrification.
   Talk to the Garden Justice Legal Initiative before you consider it."*

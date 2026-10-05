@@ -62,7 +62,7 @@ interface Fixture {
     flags: { id: string; text: string }[];
     notice: boolean;
   }[];
-  owner_flag_rule: { names: string[]; vacant: boolean; homestead: boolean; type: string; person: boolean; shown: string[] }[];
+  owner_flag_rule: { names: string[]; vacant: boolean; homestead: boolean; type: string; person: boolean; shown: string[]; notice: boolean }[];
 }
 
 const fixture = JSON.parse(readFileSync(new URL('../../pipeline/tests/fixtures/wording_parity.json', import.meta.url), 'utf8')) as Fixture;
@@ -153,7 +153,7 @@ describe('the web app says what the pipeline says', () => {
     ]);
     const flags = all.filter((flag) => ownerFlagAllowed(flag.id, rule));
     expect(flags.map((flag) => ({ id: flag.id, text: flag.text }))).toEqual(c.flags);
-    expect(showsDeedFraudNotice(type.type, c.names, flags.length)).toBe(c.notice);
+    expect(showsDeedFraudNotice(type.type, c.names)).toBe(c.notice);
   });
 
   it.each(fixture.owner_flag_rule)('which flags about the owner show: $names, vacant $vacant, homestead $homestead', (c) => {
@@ -162,5 +162,6 @@ describe('the web app says what the pipeline says', () => {
     expect(personLike(type, c.names)).toBe(c.person);
     const rule = { personLike: c.person, calledVacant: c.vacant, homestead: c.homestead };
     expect(ABOUT_THE_OWNER.filter((id) => ownerFlagAllowed(id, rule))).toEqual(c.shown);
+    expect(showsDeedFraudNotice(type, c.names)).toBe(c.notice);
   });
 });

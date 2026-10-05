@@ -1,6 +1,6 @@
 <script lang="ts">
   // Who owns it: the owner names and mailing address as the City publishes them, the kind of
-  // owner and why, the deed fraud notice with any flag on a person's parcel, each flag in its three
+  // owner and why, the deed fraud notice wherever the owner may be a person, each flag in its three
   // parts, help for owners and families, and taxes, always dated July 2025 with a link to the
   // City's Tax Center for today's balance (docs/ETHICS.md). On a parcel that may be someone's
   // home, a line says why the notes about an owner who may be a person are not shown.

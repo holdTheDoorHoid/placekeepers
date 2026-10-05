@@ -221,21 +221,22 @@ def test_public_owners_get_only_the_flags_about_the_property() -> None:
     facts = all_facts("PHILADELPHIA LAND BANK", agency="PLB")
     ids = [flag["id"] for flag in owner_flags(facts, AS_OF)]
     assert ids == ["tax_debt_2025", "sheriff_sales", "fast_resales", "open_violations", "unsafe"]
-    assert not shows_deed_fraud_notice(facts, owner_flags(facts, AS_OF))
+    assert not shows_deed_fraud_notice(facts)
 
 
-def test_the_deed_fraud_notice_goes_with_a_person_or_a_possible_estate() -> None:
+def test_the_deed_fraud_notice_goes_with_every_owner_who_may_be_a_person() -> None:
+    # Decided 2026-10-04 by the orchestrator: whenever the owner may be a person, flags or not.
     facts = person()
     facts.tax = TaxDebt(500, 1)
-    assert shows_deed_fraud_notice(facts, owner_flags(facts, AS_OF))
-    unflagged = person()
-    assert not shows_deed_fraud_notice(unflagged, owner_flags(unflagged, AS_OF))
+    assert shows_deed_fraud_notice(facts)
+    assert shows_deed_fraud_notice(person())  # no flag at all
+    assert shows_deed_fraud_notice(person("HACE"))  # a name we could not type
     company = person("KENSINGTON LOTS LLC")
     company.tax = TaxDebt(500, 1)
-    assert not shows_deed_fraud_notice(company, owner_flags(company, AS_OF))
+    assert not shows_deed_fraud_notice(company)
     trust_estate = person("HARTMAN ELEANOR M T/U/W", "MC GINLEY SOPHIE L DEC'D")
     trust_estate.possible_estate = True
-    assert shows_deed_fraud_notice(trust_estate, owner_flags(trust_estate, AS_OF))
+    assert shows_deed_fraud_notice(trust_estate)
     notice = NOTICES["deed_fraud"]
     assert "Fraud Guard" in notice["text"] and "November 2025" in notice["text"]
     assert notice["routes"] == ["fraud_guard"]
@@ -261,6 +262,7 @@ def test_flags_about_an_owner_who_may_be_a_person_wait_for_a_vacancy_call(names)
     shown = owner_flags(home, AS_OF)
     assert [flag["id"] for flag in shown] == PARCEL_FACTS
     assert not set(ABOUT_THE_OWNER) & {flag["id"] for flag in shown}
+    assert shows_deed_fraud_notice(home)
     vacant = all_facts(*names)
     assert set(ABOUT_THE_OWNER) <= {flag["id"] for flag in owner_flags(vacant, AS_OF)}
 
@@ -290,18 +292,16 @@ def test_possible_estate_never_with_a_homestead_exemption() -> None:
     assert "possible_estate" not in ids
     # The other flags about the owner of a parcel we call vacant stay.
     assert {"absentee", "tax_debt_2025", "many_parcels"} <= set(ids)
-    assert shows_deed_fraud_notice(facts, owner_flags(facts, AS_OF))
+    assert shows_deed_fraud_notice(facts)
 
 
-def test_the_deed_fraud_notice_follows_the_flags_shown() -> None:
+def test_the_deed_fraud_notice_stays_where_the_flags_are_held_back() -> None:
+    # A parcel that may be someone's home keeps the notice: it protects the family living there
+    # and says nothing about the owner.
     home = person(called_vacant=False)
     home.tax = TaxDebt(500, 1)
-    # The tax flag is held back on a parcel that may be a home, so no flag and no notice.
     assert owner_flags(home, AS_OF) == []
-    assert not shows_deed_fraud_notice(home, owner_flags(home, AS_OF))
-    home.li = LiSummary(open_violations=2)
-    assert [flag["id"] for flag in owner_flags(home, AS_OF)] == ["open_violations"]
-    assert shows_deed_fraud_notice(home, owner_flags(home, AS_OF))
+    assert shows_deed_fraud_notice(home)
 
 
 @pytest.mark.parametrize("flag_id", FLAG_IDS)

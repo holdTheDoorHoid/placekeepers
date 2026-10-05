@@ -17,7 +17,8 @@ tables/owners.json. The tests below check, in every one of them:
 * the possible estate flag reads the ETHICS.md text word for word, with the deed fraud notice,
   and never shows on a parcel with a homestead exemption;
 * the flags about an owner who may be a person (absentee, possible estate, tax debt, many vacant
-  parcels) only on parcels called vacant with high or medium confidence;
+  parcels) only on parcels called vacant with high or medium confidence, and the deed fraud notice
+  on every dossier whose owner may be a person, flags or not;
 * conservatorship only for a private parcel called vacant with high or medium confidence, and
   never on a parcel with a homestead exemption;
 * names only from memorials.yaml, and everything in suppressed.yaml gone from every file;
@@ -301,6 +302,8 @@ def test_flags_about_a_person_only_on_parcels_called_vacant(built) -> None:
             owner = record["owner"]
             person = owner["type"] in {"individual", "unknown"} or owner.get("notice")
             called = (record["vacancy"] or {}).get("confidence") in {"high", "medium"}
+            if owner["type"] in {"individual", "unknown"}:
+                assert owner.get("notice") == "deed_fraud", name
             if person and not called:
                 held += 1
                 ids = {flag["id"] for flag in owner["flags"]}

@@ -579,9 +579,10 @@ lines as the City publishes them, joined with commas (or `null`); `type`, one of
 `other_public`, `unknown` (the names of the `ot` codes, section 4); `type_reason`, a sentence saying
 why; `city_owned` (only for parcels on the City's list of public property): `agency` (`PUB` the City,
 `PLB` the Land Bank, `PRA` the Redevelopment Authority, `PHDC`), `status` as the City writes it, and
-`side_yard_eligible`; `flags`; `notice` (`"deed_fraud"`, on the dossier of an owner who is a person
-or may be an estate whenever it shows any flag); and `help` (the Tangled Title Fund and Fraud Guard
-route ids, on every dossier of a private owner with a flag).
+`side_yard_eligible`; `flags`; `notice` (`"deed_fraud"`, on every dossier whose owner may be a
+person: typed `individual` or `unknown`, or a private owner whose names carry an estate, with or
+without flags; changed 2026-10-04 by the orchestrator); and `help` (the Tangled Title Fund and Fraud
+Guard route ids, on every dossier of a private owner with a flag).
 
 Flags, in this order, with their `data`:
 

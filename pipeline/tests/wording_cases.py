@@ -387,7 +387,7 @@ def parcel_flags(case: dict[str, Any]) -> dict[str, Any]:
         "homestead": homestead,
         "type": owner_type.type,
         "flags": [{"id": f["id"], "text": f["text"]} for f in flags],
-        "notice": shows_deed_fraud_notice(facts, flags),
+        "notice": shows_deed_fraud_notice(facts),
     }
 
 
@@ -407,6 +407,7 @@ def owner_rule(names: list[str], vacant: bool, homestead: bool) -> dict[str, Any
         "type": owner_type.type,
         "person": facts.person_like,
         "shown": [flag_id for flag_id in ABOUT_THE_OWNER if owner_flag_allowed(flag_id, facts)],
+        "notice": shows_deed_fraud_notice(facts),
     }
 
 
