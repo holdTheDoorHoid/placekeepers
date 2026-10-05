@@ -64,17 +64,18 @@ export function propertySql(opa: string): string {
 }
 
 /**
- * Every deed (and certificate of stock transfer), newest first, with the same fields as the weekly
- * snapshot (docs/CONTRACTS.md section 6): the day the City recorded it and the total
- * consideration. (The City's property page shows the document's own date and the adjusted
- * total instead, which can differ by days and dollars.)
+ * Every deed (and certificate of stock transfer), newest first, with the date and price the City's
+ * property page shows, as the weekly snapshot has them (docs/CONTRACTS.md section 6): the date on
+ * the deed (`display_date`, else the recording date) and the adjusted total (this property's share
+ * when one deed covered several), else the total consideration.
  */
 export function transfersSql(opa: string): string {
   return (
-    'SELECT document_id, document_type, recording_date, grantors, grantees, total_consideration, property_count ' +
+    'SELECT document_id, document_type, display_date, recording_date, grantors, grantees, ' +
+    'adjusted_total_consideration, total_consideration, property_count ' +
     `FROM rtt_summary WHERE opa_account_num = ${accountLiteral(opa)} ` +
     "AND (document_type LIKE '%DEED%' OR document_type = 'CERTIFICATE OF STOCK TRANSFER') " +
-    `ORDER BY recording_date DESC, document_id DESC LIMIT ${MAX_TRANSFERS}`
+    `ORDER BY COALESCE(display_date, recording_date) DESC, document_id DESC LIMIT ${MAX_TRANSFERS}`
   );
 }
 
@@ -157,6 +158,12 @@ function wholeDollars(value: unknown): number | null {
   return n === null ? null : Math.round(n);
 }
 
+/** A price to the cent: an adjusted total can be a share such as $17,500.25. */
+function dollars(value: unknown): number | null {
+  const n = num(value);
+  return n === null ? null : Math.round(n * 100) / 100;
+}
+
 /** Grantors or grantees: the City separates names with semicolons. */
 export function splitNames(value: unknown): string[] {
   const t = typeof value === 'string' ? value : '';
@@ -210,8 +217,9 @@ export function readTransfers(rows: Row[]): Transfer[] {
     const type = text(row.document_type);
     if (!type) continue;
     const id = num(row.document_id);
-    const date = cityDate(row.recording_date);
-    const price = wholeDollars(row.total_consideration);
+    // The day in Philadelphia, as the City's property page shows it.
+    const date = cityDate(row.display_date) ?? cityDate(row.recording_date);
+    const price = dollars(row.adjusted_total_consideration) ?? dollars(row.total_consideration);
     const key = id !== null ? String(id) : `${date}|${type}|${price}`;
     if (seen.has(key)) continue;
     seen.add(key);

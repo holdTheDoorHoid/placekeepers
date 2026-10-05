@@ -191,8 +191,32 @@ def test_column_types_are_known() -> None:
                 "SMALLINT",
                 "DOUBLE",
                 "DATE",
+                "LOCAL_DATE",
                 "WKB",
             }
+
+
+def test_a_local_date_is_the_day_in_philadelphia() -> None:
+    """The City's property page shows a deed signed at 9:46 PM on December 28 (stored as 02:46 UTC
+    on December 29) as December 28; LOCAL_DATE columns read it the same way."""
+    import duckdb
+
+    from placekeepers.adapters.carto import _cast
+
+    con = duckdb.connect()
+    con.execute("SET TimeZone = 'UTC'")
+    column = Column("display_date", "display_date", "LOCAL_DATE")
+    values = ["2023-12-29 02:46:39+00", "2025-11-24 10:00:00+00", "2025-11-24", "not a date", None]
+    rows = con.execute(
+        f"SELECT {_cast(column)} FROM (SELECT unnest(?::VARCHAR[]) AS display_date)", [values]
+    ).fetchall()
+    assert [row[0] for row in rows] == [
+        date(2023, 12, 28),
+        date(2025, 11, 24),
+        date(2025, 11, 24),
+        None,
+        None,
+    ]
 
 
 def test_a_url_source_becomes_a_snapshot(context_factory, tmp_path: Path) -> None:

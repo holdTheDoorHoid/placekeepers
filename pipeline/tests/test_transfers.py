@@ -175,3 +175,11 @@ def test_no_fast_resale_when_sales_are_more_than_24_months_apart_or_token() -> N
 def test_add_months_clamps_to_the_end_of_the_month() -> None:
     assert tr.add_months(date(2024, 2, 29), 24) == date(2026, 2, 28)
     assert tr.add_months(date(2026, 10, 4), -24) == date(2024, 10, 4)
+
+
+def test_prices_keep_their_cents_when_they_have_them() -> None:
+    """An adjusted total is this property's share of a deed for several properties, such as
+    $277,272.73 of $3,050,000 for 11; whole dollars stay whole numbers."""
+    assert deed("2022-11-02", price=277272.727).to_json()["price"] == 277272.73
+    assert deed("2022-11-02", price=1600.0).to_json()["price"] == 1600
+    assert isinstance(deed("2022-11-02", price=1600.0).to_json()["price"], int)

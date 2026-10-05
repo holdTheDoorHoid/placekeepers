@@ -66,10 +66,11 @@ describe('queries are built only from a nine digit account', () => {
     }
     expect(propertySql('372106400')).toContain("FROM opa_properties_public WHERE parcel_number = '372106400'");
     expect(transfersSql('372106400')).toContain("FROM rtt_summary WHERE opa_account_num = '372106400'");
-    // The same fields as the weekly snapshot: the day the City recorded the deed and the total price.
-    expect(transfersSql('372106400')).toContain('recording_date');
-    expect(transfersSql('372106400')).toContain('total_consideration');
-    expect(transfersSql('372106400')).toContain('ORDER BY recording_date DESC');
+    // The date and price the City's property page shows, with the older fields to fall back on.
+    for (const column of ['display_date', 'recording_date', 'adjusted_total_consideration', 'total_consideration']) {
+      expect(transfersSql('372106400')).toContain(column);
+    }
+    expect(transfersSql('372106400')).toContain('ORDER BY COALESCE(display_date, recording_date) DESC');
     expect(assessmentsSql('372106400')).toContain("FROM assessments WHERE parcel_number = '372106400'");
     for (const table of ['violations', 'permits', 'demolitions', 'unsafe', 'imm_dang', 'clean_seal']) {
       expect(liSql('372106400')).toContain(`FROM ${table} WHERE opa_account_num = '372106400'`);
@@ -259,16 +260,17 @@ describe('reading the City\'s answers', () => {
     expect(mailingText([null, ''])).toBeNull();
   });
 
-  it('reads deeds newest first, once each, on the day the City recorded them in Philadelphia', () => {
+  it('reads deeds newest first, once each, with the date on the deed and the adjusted total', () => {
     const transfers = readTransfers([
-      { document_id: 2, document_type: 'DEED', recording_date: '2022-12-27T15:00:00Z', grantors: 'KWAJIN VAN', grantees: 'FAN HENMEI', total_consideration: 8000, property_count: 1 },
-      { document_id: 3, document_type: 'DEED', recording_date: '2025-11-25T01:15:43Z', grantors: 'FAN HENMEI', grantees: 'JEREZ JUNIOR A CELESTE', total_consideration: 18540, property_count: 1 },
-      { document_id: 3, document_type: 'DEED', recording_date: '2025-11-25T01:15:43Z', grantors: 'FAN HENMEI', grantees: 'JEREZ JUNIOR A CELESTE' },
+      { document_id: 2, document_type: 'DEED', display_date: '2022-12-26T10:00:00Z', recording_date: '2023-01-04T15:00:00Z', grantors: 'KWAJIN VAN', grantees: 'FAN HENMEI', adjusted_total_consideration: 8000, total_consideration: 8000, property_count: 1 },
+      { document_id: 3, document_type: 'DEED', display_date: '2023-12-29T02:46:39Z', recording_date: '2024-01-03T18:23:31Z', grantors: 'FAN HENMEI', grantees: 'JEREZ JUNIOR A CELESTE', adjusted_total_consideration: 17500.25, total_consideration: 70001, property_count: 4 },
+      { document_id: 3, document_type: 'DEED', display_date: '2023-12-29T02:46:39Z', grantors: 'FAN HENMEI', grantees: 'JEREZ JUNIOR A CELESTE' },
       { document_id: 1, document_type: 'DEED SHERIFF', recording_date: '2017-01-21T05:00:00Z', grantors: 'OWENS BRUCE S; OWENS CARLETTA MILLS', grantees: 'VAN QIANJIANG KWAJIN', total_consideration: 1600, property_count: 2 },
     ]);
-    // 01:15 UTC on November 25 is the evening of November 24 in Philadelphia.
-    expect(transfers.map((t) => t.date)).toEqual(['2025-11-24', '2022-12-27', '2017-01-21']);
-    expect(transfers[0]).toMatchObject({ price: 18540, from: ['FAN HENMEI'], to: ['JEREZ JUNIOR A CELESTE'] });
+    // 02:46 UTC on December 29 is the evening of December 28 in Philadelphia, as the City's page shows it.
+    expect(transfers.map((t) => t.date)).toEqual(['2023-12-28', '2022-12-26', '2017-01-21']);
+    // The adjusted total is this property's share, to the cent; without one, the total is used.
+    expect(transfers[0]).toMatchObject({ price: 17500.25, from: ['FAN HENMEI'], to: ['JEREZ JUNIOR A CELESTE'], properties: 4 });
     expect(transfers[2]).toMatchObject({ type: 'DEED SHERIFF', price: 1600, from: ['OWENS BRUCE S', 'OWENS CARLETTA MILLS'], properties: 2 });
     expect(splitNames(' A ;B;; C ')).toEqual(['A', 'B', 'C']);
   });

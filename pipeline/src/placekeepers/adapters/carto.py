@@ -43,7 +43,9 @@ csv.field_size_limit(min(sys.maxsize, 64 * MAX_LINE_BYTES))
 class Column:
     """One output column: its name, the SQL that produces it on Carto, and its stored type.
 
-    Types: VARCHAR, BIGINT, INTEGER, SMALLINT, DOUBLE, DATE, or WKB (hex WKB stored as binary).
+    Types: VARCHAR, BIGINT, INTEGER, SMALLINT, DOUBLE, DATE, LOCAL_DATE, or WKB (hex WKB stored as
+    binary). DATE is the day in UTC. LOCAL_DATE is the day in Philadelphia, as the City's own sites
+    show it: a deed signed at 9:46 PM on December 28 is stored as 02:46 UTC on December 29.
     """
 
     name: str
@@ -63,6 +65,12 @@ def _cast(column: Column) -> str:
     if kind == "DATE":
         # Carto writes timestamps like 2026-07-15 04:00:00+00 and dates like 2026-07-15.
         return f"CAST(TRY_CAST({ref} AS TIMESTAMPTZ) AS DATE)"
+    if kind == "LOCAL_DATE":
+        # A bare date is kept as written; a timestamp becomes its day in Philadelphia.
+        return (
+            f"CASE WHEN length({ref}) = 10 THEN TRY_CAST({ref} AS DATE) ELSE CAST(timezone("
+            f"'America/New_York', TRY_CAST({ref} AS TIMESTAMPTZ)) AS DATE) END"
+        )
     if kind == "WKB":
         return f"from_hex({ref})"
     raise ValueError(f"unknown column type {kind} for {column.name}")

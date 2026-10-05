@@ -44,7 +44,12 @@ const PUBLIC_PATTERNS: PublicPattern[] = [
   P('other_public', String.raw`\bPHDC\b|\bPHILA(DELPHIA)? HOUSING DEV`, 'the Philadelphia Housing Development Corporation (PHDC)'),
   P('other_public', String.raw`^PHILA(DELPHIA)? HOUSING$`, 'the Philadelphia Housing Authority or PHDC (the name is cut short)'),
   P('city', String.raw`\bCITY OF PHILA|\bPHILA(DELPHIA)? CITY OF\b|\bFAIRMOUNT PARK COMM`, 'the City of Philadelphia'),
-  P('other_public', String.raw`\bSCHOOL DIST(RICT)? OF PHILA|\bBOARD OF (PUBLIC )?EDUCATION\b`, 'the School District of Philadelphia'),
+  P(
+    'other_public',
+    String.raw`\bSCHOOL DIST(RICT)? OF PHILA|\bPHILA(DELPHIA)? SCHOOL DIST|\bBOARD OF (PUBLIC )?EDUCATION\b`,
+    'the School District of Philadelphia',
+  ),
+  P('other_public', String.raw`\bCOMM(UNITY)? COLLEGE OF PHIL`, 'the Community College of Philadelphia'),
   P('other_public', String.raw`\bSEPTA\b|\bSOUTHEASTERN PENN\w* TRANS`, 'SEPTA'),
   P('other_public', String.raw`\bCOMMONWEALTH OF P(ENN\w*|A)\b|\bGENERAL STATE AUTH|\bSTATE OF PENN`, 'the Commonwealth of Pennsylvania'),
   P('other_public', String.raw`\bUNITED STATES OF AMERICA\b|\bUNITED STATES POSTAL|\bU S POSTAL`, 'the United States government'),
@@ -62,7 +67,11 @@ const NONPROFIT = new RegExp(
     String.raw`|KINGDOM HALL|EVANGELICAL|APOSTOLIC|CATHOLIC|NON ?PROFIT|CHARIT(Y|IES|ABLE)|FOUNDATION` +
     String.raw`|COMMUNITY DEV\w* CORP\w*|CDC|LAND TRUST|NEIGHBORHOOD GARDENS|HABITAT FOR HUMANITY|YMCA` +
     String.raw`|YWCA|UNIVERSITY(?! CITY)|HOSPITAL|HORTICULTURAL SOCIETY|CIVIC ASS\w*|COMMUNITY ASS\w*` +
-    String.raw`|NEIGHBORHOOD ASS\w*|TOWN WATCH|AMERICAN LEGION)\b`,
+    String.raw`|NEIGHBORHOOD ASS\w*|TOWN WATCH|AMERICAN LEGION` +
+    // Schools, including charter schools whose names OPA cut short ("ILADELPHIA CHARTER SCHOOL",
+    // "FRANKLIN TOWNE CHARTER HI"); a "SCHOOL HOUSE" in an address is not a school.
+    String.raw`|SCHOOLS?(?! ?HOUSE)|CHARTER (SCH\w*|SC|HI\w*|ACADEM\w*)|CHARTER$|ACADEMY|ACADEMIES|COLLEGE` +
+    String.raw`|SEMINARY|MONTESSORI|PREPARATORY)\b`,
 );
 const COMPANY = new RegExp(
   String.raw`\b(INC|INCORPORATED|CORP|CORPORATION|CO|COMPANY|COMPANIES|PARTNERS|PARTNERSHIP` +

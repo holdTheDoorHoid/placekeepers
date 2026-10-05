@@ -22,7 +22,7 @@
         "flags": [
           {
             "id": "sheriff_sales",
-            "text": "Sold at sheriff sale on March 14, 2019 for $1,600.",
+            "text": "Sold at sheriff sale on March 14, 2019, for $1,600.",
             "data": {
               "sales": [
                 {
@@ -235,7 +235,7 @@
         "flags": [
           {
             "id": "sheriff_sales",
-            "text": "Sold at sheriff sale on February 1, 2006 for $900.",
+            "text": "Sold at sheriff sale on February 1, 2006, for $900.",
             "data": {
               "sales": [
                 {
@@ -522,7 +522,7 @@
           },
           {
             "id": "open_violations",
-            "text": "L&I lists 1 open violation, from August 1, 2025, for exterior area weeds.",
+            "text": "L&I lists 1 open violation, for exterior area weeds, from August 1, 2025.",
             "data": {
               "count": 1,
               "last": "2025-08-01",
@@ -635,7 +635,7 @@
         "flags": [
           {
             "id": "sheriff_sales",
-            "text": "Sold at sheriff sale on May 5, 2003 for $800.",
+            "text": "Sold at sheriff sale on May 5, 2003, for $800.",
             "data": {
               "sales": [
                 {
