@@ -94,3 +94,92 @@
       label: Recorded harm only
       weights: {high_injury_network: 0, walking_cycling_harm: 3, recent_death: 2, school_nearby: 0}
   release: v0.1
+# The transit comfort lens (M2.3): SEPTA's bus and trolley stops. Factors are computed by the
+# pipeline (placekeepers.derive.transit_comfort); the method is in docs/TRANSIT_METHOD.md and the
+# evidence behind each badge in docs/EVIDENCE.md ("Bus stop comfort").
+- id: transit_comfort
+  label: Transit comfort
+  applies_to: stop
+  description: >-
+    Bus and trolley stops where a shelter, a bench or shade would help riders most: busy stops,
+    stops where a survey found nothing to sit under or on, stops with little shade in hot
+    neighborhoods, stops on dangerous streets, and stops with long waits. Where no one has surveyed
+    a stop yet, its shelter and bench count halfway.
+  factors:
+    - id: riders
+      label: People getting on each weekday
+      field: f_riders
+      evidence: context
+      default_weight: 3
+      explain: >-
+        How many people get on here on an average weekday, from SEPTA's own count. The rank is the
+        share of stops with fewer riders. More riders means more people helped by a shelter or a
+        bench; the City aims to put shelters at the busiest 15 percent of bus stops. Stops SEPTA
+        has not counted yet are left out of this factor.
+    - id: no_shelter
+      label: No shelter
+      field: f_noshelter
+      evidence: weak
+      default_weight: 3
+      explain: >-
+        100 where a survey found no shelter, 0 where there is a shelter or the whole stop is under a
+        roof. Where no one has surveyed the stop yet it counts as 50, halfway, so a stop is never
+        scored as missing a shelter it may have; survey it to find out. In a study in Minneapolis
+        and Saint Paul, riders at stops without a bench or a shelter felt their waits were longer
+        than they were.
+    - id: no_bench
+      label: No bench
+      field: f_nobench
+      evidence: weak
+      default_weight: 2
+      explain: >-
+        100 where a survey found no bench, 0 where there is one, and 50, halfway, where no one has
+        surveyed the stop yet. The same study found that a bench makes a wait feel shorter.
+    - id: little_shade
+      label: Little shade nearby
+      field: f_shade
+      evidence: mixed
+      default_weight: 2
+      explain: >-
+        Tree canopy on the land within about a block of the stop, from the City's 2018 tree canopy
+        survey. The rank is the share of stops with more trees around them, so fewer trees rank
+        higher. Shade cools people waiting in the sun, but how much it helps depends on the climate
+        and on what gives the shade.
+    - id: heat
+      label: Hot neighborhood in summer
+      field: f_heat
+      evidence: context
+      default_weight: 1
+      explain: >-
+        How hot the stop's census tract runs on summer days, from the heat exposure part of the
+        City's Heat Vulnerability Index (satellite surface temperatures and how much of the tract
+        is paved, built or green). The rank is the share of stops in cooler tracts.
+    - id: high_injury_network
+      label: On the High Injury Network
+      field: f_hin
+      evidence: context
+      default_weight: 2
+      explain: >-
+        The stop stands on or at one of the streets where most traffic deaths and serious injuries
+        happen in Philadelphia, so many riders cross a dangerous street to reach it or to leave it.
+        Studies elsewhere found pedestrian crashes concentrated at busy bus stops on wide roads.
+    - id: long_wait
+      label: Long waits at midday
+      field: f_wait
+      evidence: weak
+      default_weight: 1
+      explain: >-
+        The typical time between buses or trolleys from 10 to 2 on weekdays, from SEPTA's schedules.
+        The rank is the share of stops with shorter waits. A long wait is when a seat and a roof
+        matter most. Stops with no midday service are left out of this factor.
+  presets:
+    - id: balanced
+      label: Balanced
+      weights: {riders: 3, no_shelter: 3, no_bench: 2, little_shade: 2, heat: 1, high_injury_network: 2, long_wait: 1}
+    - id: busiest_first
+      label: Busiest stops first
+      weights: {riders: 5, no_shelter: 3, no_bench: 2, little_shade: 0, heat: 0, high_injury_network: 0, long_wait: 0}
+    - id: heat_and_shade
+      label: Heat and shade
+      weights: {riders: 2, no_shelter: 2, no_bench: 0, little_shade: 4, heat: 4, high_injury_network: 0, long_wait: 1}
+  release: v0.2

@@ -10,6 +10,7 @@ from placekeepers.adapters.carto import CartoAccountsAdapter, CartoAdapter, Colu
 from placekeepers.adapters.crashes import Crashes20072017, Crashes20162020, Crashes20202024
 from placekeepers.adapters.curated import MemorialNames
 from placekeepers.adapters.fatal_crashes import FatalCrashes
+from placekeepers.adapters.heat import HeatVulnerability
 from placekeepers.adapters.high_injury_network import HighInjuryNetwork
 from placekeepers.adapters.lens_context import CensusTracts2020, TreeCanopy2018
 from placekeepers.adapters.opa_properties import OpaProperties
@@ -76,6 +77,8 @@ ADAPTERS: dict[str, type[Adapter]] = {
     "septa_ridership_trolley": SeptaRidershipTrolley,
     # Shelters and benches from OpenStreetMap (M2.2)
     "osm_philadelphia": OsmExtract,
+    # Heat at bus stops, for the transit comfort lens (M2.3)
+    "heat_vulnerability": HeatVulnerability,
 }
 
 

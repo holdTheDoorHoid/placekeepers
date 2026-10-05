@@ -167,7 +167,8 @@ def test_repeated_ids_and_repeated_yaml_keys_fail(repo_copy: Path) -> None:
         encoding="utf-8",
     )
     found = problems(repo_copy)
-    assert "registry/partners.yaml: entry 7 (phs): id 'phs' is used more than once" in found
+    count = len(yaml.safe_load((repo_copy / "registry" / "partners.yaml").read_text()))
+    assert f"registry/partners.yaml: entry {count} (phs): id 'phs' is used more than once" in found
     assert any(
         item.startswith("registry/groups.yaml: not valid YAML") and "appears twice" in item
         for item in found
