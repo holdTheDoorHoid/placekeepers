@@ -61,11 +61,11 @@ def osm_stop(osm_id: int, lat: float, lng: float, in_city: bool = True, **tags: 
 
 
 SEPTA = [
-    SeptaStop("100", (), "Broad St & Erie Av - FS", 39.96, -75.15),
-    SeptaStop("200", (), "Broad St & Erie Av", *moved(39.96, -75.15, east=20)),
-    SeptaStop("300", ("299",), "Erie Av & 5th St", 39.96, -75.16),
-    SeptaStop("400", (), "Erie Av & 2nd St", 39.96, -75.17),
-    SeptaStop("401", (), "Erie Av & 2nd St", *moved(39.96, -75.17, east=9)),
+    SeptaStop("100", (), 39.96, -75.15),
+    SeptaStop("200", (), *moved(39.96, -75.15, east=20)),
+    SeptaStop("300", ("299",), 39.96, -75.16),
+    SeptaStop("400", (), 39.96, -75.17),
+    SeptaStop("401", (), *moved(39.96, -75.17, east=9)),
 ]
 
 

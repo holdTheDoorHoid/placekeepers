@@ -251,10 +251,7 @@ def build_transit_stops(
 
     # The transit comfort lens and the suggestions, for bus and trolley stops (M2.3).
     comfort = comfort_for_stops(
-        [
-            SeptaStop(sid, tuple(former), place.name, place.lat, place.lng)
-            for sid, former, place in candidates
-        ],
+        [SeptaStop(sid, tuple(former), place.lat, place.lng) for sid, former, place in candidates],
         [counts[by_row[i].code].weekday if i in by_row else None for i in surface],
         [headway(rows[i].get("midday_wk"), MIDDAY_MINUTES) for i in surface],
         paths,

@@ -110,7 +110,6 @@ class SeptaStop:
 
     sid: str
     former: tuple[str, ...]
-    name: str
     lat: float
     lng: float
 
