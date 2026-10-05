@@ -43,6 +43,8 @@ from placekeepers.derive.transit import (
 from placekeepers.derive.transit_comfort import LINKS as COMFORT_LINKS
 from placekeepers.derive.transit_comfort import SOURCES as COMFORT_SOURCES
 from placekeepers.derive.transit_comfort import TUNNEL_STATIONS, SeptaStop, comfort_for_stops
+from placekeepers.derive.walk import SOURCES as WALK_SOURCES
+from placekeepers.derive.walk import factors_at
 from placekeepers.geo import GeoJSONWriter, geometry_json
 from placekeepers.publish.layers import BuildResult, LayerBuilder, plain_name
 
@@ -268,6 +270,13 @@ def build_transit_stops(
         set(ctx.registry.suggestions),
     )
     extra = {surface[street[index]]: props for index, props in enumerate(comfort.properties)}
+    # What lies within a short walk of each of those stops (M3.3), for the placemaking lens: the
+    # walking factors the lots carry, ranked among these stops (placekeepers.derive.walk).
+    walking = factors_at(
+        [candidates[k][2].lat for k in street], [candidates[k][2].lng for k in street], paths
+    )
+    for index, props in enumerate(walking):
+        extra.setdefault(surface[street[index]], {}).update(props)
     if len(street) < len(surface):
         left_out = len(surface) - len(street)
         stations = plural(left_out, "trolley tunnel station", "trolley tunnel stations")
@@ -369,8 +378,13 @@ TRANSIT_BUILDERS: tuple[LayerBuilder, ...] = (
         "stops",
         (GTFS,),
         build_transit_stops,
-        # Ridership, the city's shape, and what the transit comfort lens reads (M2.3).
-        extras=tuple(dict.fromkeys((*RIDERSHIP, *CITY_SOURCES, *COMFORT_SOURCES))),
+        # Ridership, the city's shape, what the transit comfort lens reads (M2.3) and what the
+        # walking factors read (M3.3).
+        extras=tuple(
+            s
+            for s in dict.fromkeys((*RIDERSHIP, *CITY_SOURCES, *COMFORT_SOURCES, *WALK_SOURCES))
+            if s != GTFS
+        ),
         # OpenStreetMap's stops, only to link each SEPTA stop to its OpenStreetMap stop by id
         # (`o`): their answers are published in tables/stop_amenities.json (decision D1).
         links=COMFORT_LINKS,

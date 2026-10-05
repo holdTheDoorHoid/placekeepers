@@ -512,6 +512,23 @@ def test_an_unreadable_input_leaves_out_its_measure_only(walk_ctx) -> None:
     assert any("the street centerlines could not be read" in note for note in result.notes)
 
 
+def test_any_points_get_the_walking_factors_ranked_among_themselves(walk_ctx) -> None:
+    # As SEPTA's bus and trolley stops do (publish.transit): by the first parcel, by the third,
+    # and far to the north east.
+    paths = {s: walk.current_snapshot(walk_ctx, s) for s in walk.SOURCES}
+    places = [at(5, 5), at(605, 5), at(5005, 5005)]
+    found = walk.factors_at([p[0] for p in places], [p[1] for p in places], paths)
+    assert [sorted(f) for f in found[:2]] == [["f_dest", "f_neighbors", "f_walk"]] * 2
+    assert "f_walk" not in found[2]  # in no block group
+    # The most people, places and walkability by the first parcel, ranked among the three.
+    assert [f["f_neighbors"] for f in found] == [67, 33, 0]  # 1,500, 500 and 7 people
+    assert found[0]["f_walk"] > found[1]["f_walk"]
+    assert walk.factors_at([], [], paths) == []
+    # Without the census blocks, no people factor.
+    paths["census_blocks_2020"] = None
+    assert all("f_neighbors" not in f for f in walk.factors_at([39.98], [-75.15], paths))
+
+
 def test_the_walking_measures_need_the_vacancy_model(context_factory) -> None:
     with pytest.raises(RuntimeError, match="vacancy model"):
         walk.run(context_factory(now=NOW), AS_OF)

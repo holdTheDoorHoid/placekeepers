@@ -774,6 +774,7 @@ contributors".
 | `cp` | int | percent of the land of the stop's H3 cell under tree canopy in 2018; absent without canopy data |
 | `hin` | int | 1 when the stop is on the High Injury Network; absent otherwise |
 | `sg` | string | the suggestions SEPTA's and the City's data decide, comma separated: `stop_shade_trees` (`f_shade` of 75 or more); absent when none |
+| `f_walk`, `f_neighbors`, `f_dest` | int | the walking factors of the lots (added 2026-10-05 by M3.3; `parcels` above), measured from the stop and ranked among the stops `tc` marks, more ranking higher; no lens lists them yet (`factors_at` in `derive/walk.py`) |
 
 What the browser adds by the join (never published here): `a` (the linked stop's `c`: 3 a shelter
 or roof, 2 a bench but no shelter mapped, 1 neither, 0 not yet surveyed; absent when no

@@ -524,6 +524,22 @@ def run(ctx: Context, as_of: date | None = None, out: Path | None = None) -> Wal
     return result
 
 
+def factors_at(
+    lats: Sequence[float], lngs: Sequence[float], paths: dict[str, Path]
+) -> list[dict[str, int]]:
+    """The factors the lots carry (PARCEL_FACTORS), for any other points, ranked among those
+    points: SEPTA's bus and trolley stops on the street use it (publish.transit). A factor whose
+    source has no snapshot is left out."""
+    if not lats:
+        return []
+    inputs = WalkInputs.load({source: paths.get(source) for source in SOURCES})
+    factors = measure(shapely.points(list(lngs), list(lats)), inputs).factors()
+    return [
+        {name: factors[name][i] for name in PARCEL_FACTORS if factors[name][i] is not None}
+        for i in range(len(lats))
+    ]
+
+
 def load_walk(path: Path, fields: Sequence[str] = PARCEL_FACTORS) -> dict[str, dict[str, int]]:
     """The factor fields per OPA account (by default those the lots tiles carry), without the
     ones a parcel has no data for."""

@@ -344,6 +344,17 @@
     - land_use
     - heat_vulnerability
     - high_injury_network
+    # The walking factors for the placemaking lens (M3.3)
+    - epa_walkability
+    - census_blocks_2020
+    - street_centerlines
+    - library_locations
+    - ppr_program_sites
+    - ppr_swimming_pools
+    - ppr_spraygrounds
+    - ppr_hydration_stations
+    - schools
+    - snap_retailers
   file: tiles/transit.pmtiles
   source_layer: stops
   geometry: point

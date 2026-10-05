@@ -637,7 +637,9 @@ EPA's index counts intersections already, and each factor adds about 3 to 4 perc
 tiles (the three together about 10 percent, 8.0 to 8.8 MB, on 2026-10-05). The hexagons carry all
 four, ranked among the cells, for a placemaking lens on cells. CONTRACTS.md section 4 has the
 details, and `derived/walk_factors.parquet` holds the counts behind each parcel's ranks. No lens
-uses these fields yet; M3.4 builds the placemaking lens on them.
+uses these fields yet; M3.4 builds the placemaking lens on them. SEPTA's bus and trolley stops on
+the street carry the same three factors, measured from each stop and ranked among the stops, for
+any lens that wants the people and places a stop serves.
 
 **Checked on 2026-10-05**, from a point at each place: by Rittenhouse Square about 11,700 people
 live within a 5 minute walk, with 102 street corners and 5 of the 7 kinds of places (no
@@ -656,9 +658,7 @@ License, while DVRPC offers them under its own license without saying how that c
 their terms are unclear (asking DVRPC is an owner action). DVRPC's sidewalk lines themselves have
 clear terms but are an inventory from 2018 aerial photos that was never checked on the ground;
 turning them into gaps by block is work for a later milestone. Walk Score's terms forbid storing
-its scores. Stops do not carry the walking factors yet: the measures take any point, so adding
-them is a few lines once SEPTA's stop tiles settle (they were being restructured at the same
-time). Details are in DATA_SOURCES.md, "Walkability and people".
+its scores. Details are in DATA_SOURCES.md, "Walkability and people".
 
 ## 6. Finding vacant land without depending on one source
 

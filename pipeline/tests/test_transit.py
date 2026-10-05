@@ -629,6 +629,9 @@ def test_stops_carry_the_contract_properties(context_factory, tmp_path) -> None:
         "f_riders": 67,
         "f_wait": 0,
         "tc": 1,
+        # The walking factors (M3.3, tests/test_walk.py): only SEPTA's stops are in this cache,
+        # so everyday places count transit stops alone, ranked among the three street stops.
+        "f_dest": 33,
     }
     assert (
         "b" not in stops["102"] and stops["102"]["wc"] == 2
