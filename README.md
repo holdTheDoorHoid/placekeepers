@@ -65,8 +65,12 @@ on the site, or the full rules in [docs/ETHICS.md](docs/ETHICS.md).
 
 ## Credit
 
-Placekeepers revives and extends Clean & Green Philly, built by volunteers at Code for Philly from
-2023 to 2025 (MIT license). Code adapted from it keeps that project's original license notice.
+Placekeepers continues the idea behind Clean & Green Philly, built by volunteers at Code for
+Philly from 2023 to 2025, and credits it throughout. It reuses none of that project's code today,
+but does use its final snapshot of parcel tax debt from July 2025 (MIT license), credited on the
+Data status page. If any of its code is reused later, that code will keep the project's MIT
+notice in the file header and be listed in a NOTICE file, as the project's own rules require. No
+NOTICE file is needed until then.
 
 Map data comes from the City of Philadelphia and other public sources. Every source, with its
 publisher and license, is listed on the
@@ -84,10 +88,10 @@ publisher and license, is listed on the
 
 ## License
 
-- Code: the GNU General Public License, version 3 or later. Files adapted from Clean & Green
-  Philly keep that project's original MIT notice in the file header.
+- Code: the GNU General Public License, version 3 or later.
 - Published data: the Open Database License where OpenStreetMap data is included, otherwise each
-  source's own terms (see [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md)).
+  source's own terms, such as the MIT licensed Clean & Green Philly tax snapshot (see
+  [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md)).
 - Written guides, including this file: Creative Commons Attribution ShareAlike 4.0.
 
 Read the full [LICENSE](LICENSE).
