@@ -543,7 +543,9 @@ longer in the schedules within 30 meters with a similar name; each count goes to
 Added 2026-10-05 by M2.3 (the transit comfort lens; the method in plain words is in
 [TRANSIT_METHOD.md](TRANSIT_METHOD.md), the code in `pipeline/src/placekeepers/derive/transit_comfort.py`).
 Bus and trolley stops (`md` bit 1 or 2) also carry these; stations of the subway, the El and
-Regional Rail carry none of them. `o`, `a`, `sh`, `bn`, `li` and `cv` come from OpenStreetMap, so
+Regional Rail carry none of them, nor do the 15 trolley tunnel stations underground from 13th
+Street to 37th Street (`TUNNEL_STATIONS` in `derive/transit_comfort.py`, added 2026-10-05 by the
+v0.2 review). `o`, `a`, `sh`, `bn`, `li` and `cv` come from OpenStreetMap, so
 the layer lists `osm_philadelphia` among its sources and is credited "© OpenStreetMap contributors",
 and those properties are under the Open Database License, as amenities.pmtiles is.
 

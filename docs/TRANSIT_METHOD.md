@@ -167,11 +167,19 @@ an OpenStreetMap stop pairs by place only with its nearest SEPTA stop: when that
 taken, it stays unpaired instead of moving to a farther stop. At 30th Street a street stop had
 moved on to the trolley platform underground and asked the City for a shelter there.
 
-On 2026-10-05: **660 of the 7,927 bus and trolley stops** match one of the 829 stops OpenStreetMap
+**The trolley tunnel stations are left out.** Trolleys T1 to T5 stop underground from 13th Street
+to 37th Street. A shelter, a bench, shade trees or a survey with StreetComplete make no sense on
+those 15 platforms, and the route survey sheets already tell people to leave them out, so the lens
+leaves them out like the subway, El and Regional Rail stations: they keep their service and riders
+on the map but get no priority and no suggestion. The list is `TUNNEL_STATIONS` in
+`derive/transit_comfort.py`, by SEPTA stop number (a renumbered stop keeps its old number in its
+history, which counts too); the build notes say how many it found. (Added by the v0.2 review.)
+
+On 2026-10-05: **660 of the 7,912 bus and trolley stops the lens scores** match one of the 829 stops OpenStreetMap
 has in the city, 181 where the stop numbers agree and 479 by place; 55 OpenStreetMap stops carry the
 number of a SEPTA stop they are not paired with. **278 stops have their shelter or bench surveyed**:
-75 with a shelter or roof, 7 with a bench but no shelter mapped, 196 with neither. The other 7,649
-are not yet surveyed (7,267 have no OpenStreetMap stop matched to them, and 382 have one that no one
+75 with a shelter or roof, 7 with a bench but no shelter mapped, 196 with neither. The other 7,634
+are not yet surveyed (7,252 have no OpenStreetMap stop matched to them, and 382 have one that no one
 has answered for yet). The route
 sheets pair every stop the same way except one: a berth of the 69th Street Transportation Center,
 just across the city line, whose OpenStreetMap stop the sheets give to a berth outside the city.
@@ -181,13 +189,13 @@ the share of stops ranking lower.
 
 | Factor | Measure | Badge | Default weight | Stops with data |
 |---|---|---|---|---|
-| People getting on each weekday | SEPTA's count (`b`); the share of stops with fewer | Context | 3 | 7,755 |
-| No shelter | 100 a survey found none, 0 a shelter or the whole stop under a roof, 50 not yet surveyed | Weak | 3 | all (7,623 halfway) |
-| No bench | 100 a survey found none, 0 a bench, 50 not yet surveyed | Weak | 2 | all (7,661 halfway) |
-| Little shade nearby | tree canopy of 2018 on the land of the stop's hexagon (H3 resolution 9, about two blocks across; water left out); the share of stops with more canopy | Mixed | 2 | 7,926 |
-| Hot neighborhood in summer | the heat exposure score of the stop's census tract, from the City's heat vulnerability data; the share of stops in cooler tracts | Context | 1 | 7,559 |
-| On the High Injury Network | 100 within 30 meters of the network, else 0 | Context | 2 | all (4,041 on it) |
-| Long waits at midday | the weekday wait from 10 to 2 (`hm`); the share of stops with shorter waits | Weak | 1 | 7,712 |
+| People getting on each weekday | SEPTA's count (`b`); the share of stops with fewer | Context | 3 | 7,740 |
+| No shelter | 100 a survey found none, 0 a shelter or the whole stop under a roof, 50 not yet surveyed | Weak | 3 | all (7,608 halfway) |
+| No bench | 100 a survey found none, 0 a bench, 50 not yet surveyed | Weak | 2 | all (7,646 halfway) |
+| Little shade nearby | tree canopy of 2018 on the land of the stop's hexagon (H3 resolution 9, about two blocks across; water left out); the share of stops with more canopy | Mixed | 2 | 7,911 |
+| Hot neighborhood in summer | the heat exposure score of the stop's census tract, from the City's heat vulnerability data; the share of stops in cooler tracts | Context | 1 | 7,545 |
+| On the High Injury Network | 100 within 30 meters of the network, else 0 | Context | 2 | all (4,030 on it) |
+| Long waits at midday | the weekday wait from 10 to 2 (`hm`); the share of stops with shorter waits | Weak | 1 | 7,697 |
 
 Presets: **Balanced** (the default weights), **Busiest stops first** (riders 5, no shelter 3, no
 bench 2, the rest off) and **Heat and shade** (riders 2, no shelter 2, little shade 4, hot
@@ -201,16 +209,16 @@ suggestion to survey it. The stop's page never names a halfway answer as the mai
 "why" table marks it "not yet surveyed". On 2026-10-05, 39 of the 100 stops ranked highest under
 the default weights were not yet surveyed, and 61 were surveyed with neither a shelter nor a bench.
 
-**Suggestions,** in the order a stop lists them, with the count of stops on 2026-10-05 (7,902 of
-the 7,927 have at least one):
+**Suggestions,** in the order a stop lists them, with the count of stops on 2026-10-05 (7,887 of
+the 7,912 the lens scores have at least one):
 
 | Suggestion | When | Stops | First step |
 |---|---|---|---|
-| Survey this stop with StreetComplete | the shelter or the bench is not known yet | 7,664 | install the free app and answer its questions at the stop |
+| Survey this stop with StreetComplete | the shelter or the bench is not known yet | 7,649 | install the free app and answer its questions at the stop |
 | Ask the City for a shelter at this stop | a survey found no shelter, and the stop is not under a roof | 229 | there is no public request form: write to OTIS (otis@phila.gov, 215-686-9003) with the stop's number and its riders, and copy the Council office and SEPTA |
 | Ask the City for a bench at this stop | a survey found no bench | 210 | the same: no public form, write to OTIS |
 | Report a dark streetlight at this stop | OpenStreetMap says the stop is not lit | 17 | report an outage to Philly311; a stop with no light at all is a question for OTIS |
-| Plant shade trees by this stop | among the quarter of stops with the least canopy (`f_shade` 75 or more) | 1,998 | the owners of the buildings beside the stop ask for a free street tree |
+| Plant shade trees by this stop | among the quarter of stops with the least canopy (`f_shade` 75 or more) | 1,987 | the owners of the buildings beside the stop ask for a free street tree |
 
 The contacts, their sources and the dates we checked them are in [ROUTES.md](ROUTES.md). Never the
 police: SEPTA's customer service page also offers a safety and incident report to the transit
