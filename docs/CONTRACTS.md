@@ -1012,7 +1012,7 @@ Every route with a file, in SEPTA's order of routes: its id, names and mode, its
 with `n` stops on the sheet, and `s`, the stops of all its directions by `c` (`none` for stops with
 no match). The route files are not in the manifest's `files` (section 3); the index is. On
 2026-10-05: 123 routes (117 bus, 6 trolley), 237 directions with a median of 55 stops, files of
-0.4 to 28 kB (median 11 kB, about 4 kB compressed), 1.4 MB in all; the index is 31 kB (6 kB
+0.4 to 28 kB (median 11 kB, about 2 kB compressed), 1.4 MB in all; the index is 31 kB (6 kB
 compressed).
 
 The page's time estimate is the site's own, not data: walking about 80 meters a minute (3 miles an
