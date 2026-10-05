@@ -7,8 +7,10 @@
 // circle with the same color and the same strength for how sure we are. Zoomed out (below zoom 13)
 // the tiles carry a light sample of the parcels as points (issue #26), drawn the same way with a
 // hairline edge, so the lens colors show where lots cluster.
-// Settings: min_confidence (hide parcels below a confidence) and kinds (lots, buildings or
-// both). The owner type filter from the analysis view applies here too.
+// Settings: min_confidence (hide parcels below a confidence), kinds (lots, buildings or both) and
+// lens (M3.1: which lens colors the lots, violence reduction or heat and shade; using a lens's
+// sliders sets it too, src/map/lens-layers.ts). The owner type filter from the analysis view
+// applies here too.
 
 import type { ExpressionSpecification, FilterSpecification, LayerSpecification } from 'maplibre-gl';
 import { FILTERS } from '../../config/filters.ts';
@@ -21,9 +23,12 @@ const vc: ExpressionSpecification = ['to-number', ['get', 'vc'], 0];
 const kind: ExpressionSpecification = ['to-number', ['get', 'k'], 0];
 const isPoint: ExpressionSpecification = ['==', ['geometry-type'], 'Point'];
 
-/** The lens that colors parcels: the first registry lens that applies to parcels. */
+/** The lens that colors parcels: the one the `lens` setting names, else the first registry lens
+ *  that applies to parcels (the same rule as parcelLensOf in src/places/rank.ts). */
 export function parcelLens(ctx: LegendContext) {
-  return ctx.registry.lenses.find((l) => l.applies_to === 'parcel') ?? null;
+  const lenses = ctx.registry.lenses.filter((l) => l.applies_to === 'parcel');
+  const chosen = settingValue(ctx, 'lens');
+  return lenses.find((l) => l.id === chosen) ?? lenses[0] ?? null;
 }
 
 export function parcelFilter(ctx: LegendContext): ExpressionSpecification {
@@ -66,7 +71,7 @@ const selectedRadius: ExpressionSpecification = ['interpolate', ['linear'], ['zo
 
 export const vacantParcels: StyleModule = {
   zIndex: 20,
-  settings: ['min_confidence', 'kinds'],
+  settings: ['min_confidence', 'kinds', 'lens'],
   clickable: ['fill', 'point'],
 
   layers(ctx: StyleContext): LayerSpecification[] {
@@ -149,7 +154,7 @@ export const vacantParcels: StyleModule = {
     const l = strings.legend;
     const entries: ReturnType<StyleModule['legend']> = [];
     if (lens && typeof fillColor(ctx) !== 'string') {
-      entries.push({ kind: 'ramp', title: l.parcelsFill, stops: PRIORITY_RAMP.stops, low: strings.lens.legendLow, high: strings.lens.legendHigh });
+      entries.push({ kind: 'ramp', title: l.parcelsFillLens(lens!.label), stops: PRIORITY_RAMP.stops, low: strings.lens.legendLow, high: strings.lens.legendHigh });
       entries.push({ kind: 'swatch', label: strings.lens.legendNoData, fill: PRIORITY_RAMP.noData, stroke: PARCEL_OUTLINE, strokeWidth: 1 });
     } else {
       entries.push({ kind: 'note', text: strings.lens.allOff });

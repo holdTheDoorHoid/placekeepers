@@ -33,7 +33,7 @@
     will grow tall, so they shade the street and neighbors can still see across the lot.
   evidence: mixed
   cost: Free trees from the City and TreePhilly. Young trees need about 20 gallons of water a week from March through December
-  routes: [land_bank_garden_agreement, ask_the_owner, community_landcare, street_trees_for_a_lot, treephilly_yard_trees]
+  routes: [land_bank_garden_agreement, ask_the_owner, community_landcare, street_tree_request, treephilly_yard_trees]
   partners: [treephilly, phs]
   default_on: true
   release: v0.3

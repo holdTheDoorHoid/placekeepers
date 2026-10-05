@@ -56,6 +56,15 @@
         - {value: lots, label: Lots only}
         - {value: buildings, label: Buildings only}
       default: both
+    # Which lens colors the lots (M3.1). Each value is the id of a lens that applies to parcels;
+    # moving a lens's sliders sets it to that lens (docs/CONTRACTS.md section 1).
+    - id: lens
+      label: Color lots by
+      type: choice
+      options:
+        - {value: violence, label: The violence reduction lens}
+        - {value: heat, label: The heat and shade lens}
+      default: violence
   release: v0.1
 - id: hin_2025
   label: High Injury Network

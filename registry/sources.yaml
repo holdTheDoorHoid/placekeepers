@@ -478,10 +478,12 @@
   publisher: City of Philadelphia, Department of Public Health and Office of Sustainability
   homepage: https://opendataphilly.org/datasets/heat-vulnerability-by-census-tract/
   # One polygon per 2010 census tract with heat exposure, heat sensitivity and heat vulnerability
-  # scores (data of 2017 to 2019). The lens uses the heat exposure score at each stop.
+  # scores (data of 2017 to 2019). The transit comfort lens uses the heat exposure score at each
+  # stop; the heat and shade lens (M3.1) the heat vulnerability of each lot's tract, and the map
+  # shades the tracts by all three.
   endpoint: {kind: arcgis, service: heat_vulnerability_ct, layer: 0}
   license: city_terms
-  attribution: "Heat exposure: City of Philadelphia, Department of Public Health and Office of Sustainability"
+  attribution: "Heat vulnerability: City of Philadelphia, Department of Public Health and Office of Sustainability"
   cadence: irregular
   health: {min_rows: 350, max_drop_pct: 5}
   release: v0.2

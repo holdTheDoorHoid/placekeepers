@@ -524,6 +524,7 @@ export const strings = {
 
   legend: {
     parcelsFill: 'Fill color: priority under your lens blend',
+    parcelsFillLens: (lens: string) => `Fill color: priority under the ${lens.toLowerCase()} lens`,
     parcelsSure: 'Outline: how sure we are that it is vacant',
     sureHigh: 'Very likely vacant',
     sureMedium: 'Probably vacant',
@@ -1094,6 +1095,17 @@ export const strings = {
       landcare: 'Already maintained by PHS LandCare.',
       landcareSince: (year: number) => `Already maintained by PHS LandCare since ${year}.`,
       garden: 'People already garden here. Ask them before you plan anything.',
+      /** The lens behind the score on the lot page (M3.1: the lots can be colored by either lens). */
+      lensLine: (lens: string) => `Priority under the ${lens.toLowerCase()} lens, the lens the map colors the lots by.`,
+      /**
+       * FEMA's floodplain on the lot (`fp`, M3.1): a reason for care, never part of a score
+       * (docs/DESIGN.md section 5.3).
+       */
+      flood: {
+        1: "Part of this lot lies in FEMA's 1 percent annual chance floodplain, where a flood has at least a 1 in 100 chance each year. That is a reason for care, not part of any score: plants here must stand wet ground, anything built must follow the City's floodplain rules, and greening that soaks up rain helps.",
+        2: "Part of this lot lies in FEMA's 0.2 percent annual chance flood area, where a flood has a 1 in 500 chance each year. That is a reason for care, not part of any score: plants here should stand wet ground, and greening that soaks up rain helps.",
+      } as Record<number, string>,
+      floodTitle: 'Flood risk',
       linksTitle: 'See it on other sites',
       propertyPage: 'The City\'s property page',
       atlas: 'Atlas, the City\'s map of this address',

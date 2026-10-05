@@ -14,3 +14,12 @@ export const GREENING_SUGGESTIONS: ReadonlySet<string> = new Set([
 export function isGreening(suggestionId: string): boolean {
   return GREENING_SUGGESTIONS.has(suggestionId);
 }
+
+/**
+ * Suggestions that answer a lens (M3.1). When that lens colors the lots, a place lists these first,
+ * so its card leads with them: under the heat and shade lens, plant shade trees and green the lot
+ * to cool the block.
+ */
+export const LENS_SUGGESTIONS: Readonly<Record<string, readonly string[]>> = {
+  heat: ['plant_shade_trees', 'cool_green_lot'],
+};
