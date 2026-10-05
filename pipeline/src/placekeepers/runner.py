@@ -58,7 +58,9 @@ def select_sources(registry: Registry, ids: list[str] | None) -> list[Source]:
 
 # How long a good snapshot is kept before fetching again, by the source's registry cadence. A frozen
 # source is fetched once; a yearly one at most monthly. Everything else is fetched on every run,
-# unless its adapter sets a minimum wait (`min_refetch`, such as the OpenStreetMap extract's).
+# unless its adapter sets a minimum wait (`min_refetch`, such as the OpenStreetMap extract's). A
+# snapshot made with another recipe (Adapter.recipe, such as the extract's tag list), or with none
+# recorded, is fetched again at once whatever the wait, so a registry change reaches the next run.
 REFETCH_AFTER = {"frozen": None, "yearly": timedelta(days=30)}
 
 
@@ -80,6 +82,15 @@ def refetch_due(ctx: Context, source: Source) -> str | None:
         return None
     current = SnapshotStore(ctx.cache, source.id).current()
     if current is None:
+        return None
+    recipe = adapter(source, ctx).recipe() if adapter else None
+    if recipe is not None and current.recipe != recipe:
+        log.info(
+            "%s: the current copy was made with %s, not what the registry asks for now, so it is "
+            "downloaded again",
+            source.id,
+            "other settings" if current.recipe else "no record of its settings",
+        )
         return None
     since = local_date(parse_iso_z(current.fetched_at)).isoformat()
     age = ctx.now() - parse_iso_z(current.fetched_at)
@@ -251,6 +262,7 @@ def validate_source(ctx: Context, source: Source) -> StepResult:
             columns=validation.columns,
             notes=list(adapter.notes),
             raw_fetch_id=raw.fetch_id,
+            recipe=adapter.recipe(),
         )
         store.record(meta)
         if validation.ok:

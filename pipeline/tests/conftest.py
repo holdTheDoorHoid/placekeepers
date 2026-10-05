@@ -253,6 +253,7 @@ def install_snapshot(
     result: str = "ok",
     message: str | None = None,
     geometry_types: list[str] | None = None,
+    recipe: str | None = None,
 ) -> None:
     """Put a good snapshot in the cache, as a successful run would have."""
     store = SnapshotStore(ctx.cache, source_id)
@@ -274,6 +275,7 @@ def install_snapshot(
         bytes=path.stat().st_size,
         newest_record="2026-09-27",
         status="good",
+        recipe=recipe,
     )
     store.record(meta)
     store.promote(meta)
