@@ -141,10 +141,10 @@
       evidence: mixed
       default_weight: 2
       explain: >-
-        Tree canopy on the land within about a block of the stop, from the City's 2018 tree canopy
-        survey. The rank is the share of stops with more trees around them, so fewer trees rank
-        higher. Shade cools people waiting in the sun, but how much it helps depends on the climate
-        and on what gives the shade.
+        Tree canopy on the land around the stop, in an area about two blocks across, from the City's
+        2018 tree canopy survey. The rank is the share of stops with more trees around them, so fewer
+        trees rank higher. Shade cools people waiting in the sun, but how much it helps depends on
+        the climate and on what gives the shade.
     - id: heat
       label: Hot neighborhood in summer
       field: f_heat

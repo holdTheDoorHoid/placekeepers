@@ -661,7 +661,7 @@ export const strings = {
     matchedByPlace: 'Matched to the OpenStreetMap stop at the same place, within 20 meters.',
     halfway: 'Not yet surveyed answers count halfway (50 of 100) in the score until someone records them.',
     canopy: (percent: number) =>
-      `Tree canopy covers about ${formatNumber(percent)} percent of the land within about a block of the stop (the City's 2018 tree canopy survey).`,
+      `Tree canopy covers about ${formatNumber(percent)} percent of the land around the stop, in an area about two blocks across (the City's 2018 tree canopy survey).`,
     onHin: 'The stop is on the High Injury Network, the streets where most traffic deaths and serious injuries in Philadelphia happen.',
     noScore: 'The transit comfort lens scores bus and trolley stops only.',
     canDo: 'What neighbors can do here',
