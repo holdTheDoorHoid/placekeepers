@@ -14,20 +14,26 @@
 
   /** The most dots drawn at once, the highest scores first. */
   const MAX_DOTS = 1000;
-  const ROW = 34;
-  const TOP = 8;
+  /** Each row: its label on top, its dots below, so labels never crowd the dots on a phone. */
+  const ROW = 48;
+  const LABEL = 16;
+  const TOP = 4;
   const BOTTOM = 40;
   const p = strings.plot;
 
   let width = $state(640);
-  const narrow = $derived(width < 480);
-  const left = $derived(narrow ? 120 : 190);
-  const right = 16;
+  const left = 12;
+  const right = 18;
   const height = $derived(TOP + ROW * PERMISSION_CODES.length + BOTTOM);
   const x = (score: number) => left + (score / 100) * Math.max(10, width - left - right);
 
   const scored = $derived(places.filter((place) => place.score !== null && place.permission !== null));
-  const drawn = $derived([...scored].sort((a, b) => (b.score ?? 0) - (a.score ?? 0)).slice(0, MAX_DOTS));
+  const drawn = $derived(
+    [...scored]
+      .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+      .slice(0, MAX_DOTS)
+      .sort((a, b) => Number(a.id === store.state.selected) - Number(b.id === store.state.selected)),
+  );
   const noScore = $derived(places.filter((place) => place.score === null).length);
   const noStep = $derived(places.filter((place) => place.score !== null && place.permission === null).length);
   const counts = $derived(PERMISSION_CODES.map((code) => scored.filter((place) => place.permission === code).length));
@@ -37,11 +43,11 @@
   function jitter(id: string): number {
     let h = 0;
     for (const c of id) h = (h * 31 + c.charCodeAt(0)) >>> 0;
-    return ((h % 1000) / 1000 - 0.5) * (ROW - 14);
+    return ((h % 1000) / 1000 - 0.5) * (ROW - LABEL - 14);
   }
 
   function rowY(code: number): number {
-    return TOP + ROW * PERMISSION_CODES.indexOf(code as (typeof PERMISSION_CODES)[number]) + ROW / 2;
+    return TOP + ROW * PERMISSION_CODES.indexOf(code as (typeof PERMISSION_CODES)[number]) + LABEL + (ROW - LABEL) / 2;
   }
 
   function choose(event: MouseEvent) {
@@ -64,21 +70,28 @@
         <desc id="{idPrefix}-plot-desc">{summary} {p.tableNote}</desc>
         {#each PERMISSION_CODES as code, i (code)}
           <rect class="band" class:odd={i % 2 === 1} x="0" y={TOP + ROW * i} {width} height={ROW} />
-          <text class="row-label" x={left - 8} y={TOP + ROW * i + ROW / 2} text-anchor="end" dominant-baseline="middle">
+          <g>
             <title>{permissionText(code)}</title>
-            {permissionLabel(code)} ({counts[i]})
-          </text>
+            <text class="row-label" x={left - 4} y={TOP + ROW * i + 13}>{permissionLabel(code)} ({counts[i]})</text>
+          </g>
         {/each}
         {#each [0, 25, 50, 75, 100] as tick (tick)}
-          <line class="grid" x1={x(tick)} x2={x(tick)} y1={TOP} y2={TOP + ROW * PERMISSION_CODES.length} />
+          <line class="grid" x1={x(tick)} x2={x(tick)} y1={TOP + LABEL} y2={TOP + ROW * PERMISSION_CODES.length} />
           <text class="tick" x={x(tick)} y={TOP + ROW * PERMISSION_CODES.length + 14} text-anchor="middle">{tick}</text>
         {/each}
         <text class="axis" x={left + (width - left - right) / 2} y={height - 6} text-anchor="middle">{p.axisX}</text>
+        <!-- The selected place last, so it is drawn on top. -->
         {#each drawn as place (place.id)}
           {@const selected = store.state.selected === place.id}
-          <g class="dot" class:selected data-place={place.id} transform="translate({x(place.score ?? 0)} {rowY(place.permission ?? 0) + jitter(place.id)})">
+          <g
+            class="dot"
+            class:selected
+            data-place={place.id}
+            data-code={place.permission}
+            transform="translate({x(place.score ?? 0)} {rowY(place.permission ?? 0) + jitter(place.id)})"
+          >
             <title>{p.dot(store.addresses.get(place.id) ?? strings.place.parcel(place.id), place.score ?? 0, permissionLabel(place.permission))}</title>
-            <circle class="hit" r="9" />
+            <circle class="hit" r="7" />
             <circle class="mark" r={selected ? 7 : 4.5} />
           </g>
         {/each}

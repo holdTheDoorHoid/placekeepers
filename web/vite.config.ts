@@ -5,14 +5,21 @@ import { contentPlugin } from './plugins/content.ts';
 import { dataRootPlugin } from './plugins/data-root.ts';
 import { registryPlugin } from './plugins/registry.ts';
 
+// End to end tests (playwright.config.ts) build the same production site into dist-e2e/ without
+// public/, which holds only a local copy of the data root, so the tests always read the committed
+// sample in fixtures/data/ (served by plugins/data-root.ts) and never real data.
+const e2e = process.env.PK_E2E === '1';
+
 export default defineConfig({
   // The site is published on GitHub Pages at https://<owner>.github.io/placekeepers/.
   base: '/placekeepers/',
+  publicDir: e2e ? false : 'public',
   // The map, the data status page, every content page, and real 404s for missing files, as on
   // Pages. Each content page is its own entry below, following the pattern status/index.html set.
   appType: 'mpa',
   plugins: [registryPlugin(), contentPlugin(), dataRootPlugin(), svelte()],
   build: {
+    outDir: e2e ? 'dist-e2e' : 'dist',
     target: 'es2022',
     // MapLibre alone is about 1 MB (280 kB compressed). It loads after the page appears.
     chunkSizeWarningLimit: 1200,

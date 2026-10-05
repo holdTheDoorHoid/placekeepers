@@ -17,6 +17,7 @@ import type { Geometry } from 'geojson';
 import { Protocol } from 'pmtiles';
 import { resolveLayerData, type LayerData, type Manifest } from '../data/manifest.ts';
 import { basemapCredit, isProtomaps } from './basemap.ts';
+import { NO_PADDING, type Padding } from './covered.ts';
 import { registerArchive, styleArchives } from './pmtiles-source.ts';
 import type { Layer, Registry, ViewName } from '../registry/types.ts';
 import type { AppState, MapPosition } from '../state/defaults.ts';
@@ -85,6 +86,11 @@ export interface ControllerOptions {
   events: MapEvents;
   /** The site root, for the link to the Data status page in the credits line. */
   siteBase?: string;
+  /**
+   * How much of the map the page covers now (src/map/covered.ts), or null when nothing useful is
+   * left uncovered. The map flies with it as padding, so places land where people can see them.
+   */
+  padding?: () => Padding | null;
 }
 
 interface Applied {
@@ -145,6 +151,10 @@ export class MapController {
   private readyFired = false;
   /** The look and visibility the base layers are drawn with now (see baseKey). */
   private baseDrawn = '';
+  private readonly padding: () => Padding | null;
+  /** A camera move waiting for the next frame, when panels have opened or closed. */
+  private pendingMove: { center: [number, number]; zoom: number | null; animate: boolean } | null = null;
+  private moveFrame = 0;
 
   constructor(options: ControllerOptions) {
     for (const url of styleArchives(options.style)) registerArchive(pmtilesProtocol(), url);
@@ -154,6 +164,7 @@ export class MapController {
     this.manifest = options.manifest;
     this.state = options.state;
     this.protomaps = isProtomaps(options.style);
+    this.padding = options.padding ?? (() => NO_PADDING);
     let style = options.style;
     if (typeof style !== 'string') {
       // The base map starts in the look and visibility the state asks for, with no flash of the
@@ -269,6 +280,7 @@ export class MapController {
   }
 
   destroy(): void {
+    cancelAnimationFrame(this.moveFrame);
     this.map.remove();
   }
 
@@ -290,8 +302,8 @@ export class MapController {
     return [...seen.values()];
   }
 
-  /** The properties of a parcel in loaded data, for a selection that came from a link. */
-  findParcel(id: string): Record<string, unknown> | null {
+  /** A parcel in loaded data, with a point on it, for a selection that came from a link. */
+  findParcel(id: string): { properties: Record<string, unknown>; center: [number, number] } | null {
     if (!this.loaded) return null;
     for (const applied of this.applied.values()) {
       if (applied.style !== STYLES.vacant_parcels) continue;
@@ -299,14 +311,44 @@ export class MapController {
         sourceLayer: applied.sourceLayer ?? undefined,
         filter: ['==', ['to-string', ['get', 'id']], id] as FilterSpecification,
       });
-      if (features[0]) return { ...features[0].properties };
+      if (features[0]) return { properties: { ...features[0].properties }, center: centerOf(features[0].geometry) };
     }
     return null;
   }
 
+  /** How much of the map the page covers now, or null when nothing useful is left uncovered. */
+  coverPadding(): Padding | null {
+    return this.padding();
+  }
+
+  /**
+   * Flies to a place, zooming in to at least `zoom`, and lands it in the middle of the part of the
+   * map people can see: the move waits for the next frame, so a panel that opens or closes with the
+   * same tap is already in place, and flies with that panel or sheet as MapLibre's padding.
+   */
   flyTo(center: [number, number], zoom = 17): void {
-    // Not essential, so MapLibre skips the animation for people who prefer reduced motion.
-    this.map.flyTo({ center, zoom: Math.max(this.map.getZoom(), zoom), essential: false });
+    this.queueMove({ center, zoom, animate: true });
+  }
+
+  /** Brings a place to the middle of the visible part of the map without zooming, as a link opens. */
+  showPlace(center: [number, number], animate = false): void {
+    this.queueMove({ center, zoom: null, animate });
+  }
+
+  private queueMove(move: { center: [number, number]; zoom: number | null; animate: boolean }): void {
+    this.pendingMove = move;
+    if (this.moveFrame) return;
+    this.moveFrame = requestAnimationFrame(() => {
+      this.moveFrame = 0;
+      const next = this.pendingMove;
+      this.pendingMove = null;
+      if (!next) return;
+      const padding = this.padding() ?? NO_PADDING;
+      const zoom = next.zoom === null ? this.map.getZoom() : Math.max(this.map.getZoom(), next.zoom);
+      // Not essential, so MapLibre skips the animation for people who prefer reduced motion.
+      if (next.animate) this.map.flyTo({ center: next.center, zoom, padding, essential: false });
+      else this.map.easeTo({ center: next.center, zoom, padding, duration: 0 });
+    });
   }
 
   showUserLocation(lng: number, lat: number): void {
@@ -318,7 +360,7 @@ export class MapController {
       this.marker = new maplibregl.Marker({ element: dot });
     }
     this.marker.setLngLat([lng, lat]).addTo(this.map);
-    this.map.flyTo({ center: [lng, lat], zoom: 16, essential: false });
+    this.queueMove({ center: [lng, lat], zoom: 16, animate: true });
   }
 
   /** Takes the "you are here" dot off the map. */

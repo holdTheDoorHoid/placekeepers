@@ -1,9 +1,10 @@
 <script lang="ts">
   // Hosts the MapLibre map. The map code is loaded after the page appears, so the panels
   // and text show up first on slow connections.
-  import { onMount } from 'svelte';
+  import { onMount, untrack } from 'svelte';
   import { config } from '../config/index.ts';
   import type { MapController } from '../map/controller.ts';
+  import { pagePadding } from '../map/covered.ts';
   import type { AppStore } from '../state/store.svelte.ts';
   import { strings } from '../strings.ts';
 
@@ -12,6 +13,8 @@
   /** Until the map has drawn once with its data, a loading note covers it. */
   let ready = $state(false);
   let failed = $state(false);
+  /** A selection from the link the page opened with, to bring into view once its place is known. */
+  let restoring = untrack(() => store.state.selected !== null);
 
   function refreshFromMap() {
     const controller = store.controller;
@@ -19,7 +22,14 @@
     store.viewBounds = controller.bounds();
     store.parcelsInView = controller.parcelsInView();
     const selected = store.state.selected;
-    if (selected && !store.selectedProperties) store.selectedProperties = controller.findParcel(selected);
+    if (selected && !store.selectedProperties) {
+      const found = controller.findParcel(selected);
+      if (found) {
+        // A point on the parcel, for "Show on map" and street imagery, when nothing else gave one.
+        if (store.dossier.opa === selected && !store.dossier.center) store.dossier.center = found.center;
+        store.selectedProperties = found.properties;
+      }
+    }
   }
 
   onMount(() => {
@@ -38,6 +48,7 @@
         registry: store.registry,
         dataBase: config.dataBase,
         siteBase: config.siteBase,
+        padding: () => pagePadding(container),
         style: basemap.style,
         state: $state.snapshot(store.state),
         manifest: store.manifest,
@@ -82,6 +93,15 @@
     store.controller?.setInspected(inspected);
   });
 
+  // A link that opens with a lot page: once the map has drawn and the parcel's place is known, bring
+  // it to the middle of the part of the map the lot page leaves uncovered, at the link's zoom.
+  $effect(() => {
+    const center = store.dossier.center;
+    if (!restoring || !ready || !center || !store.controller || store.dossier.opa !== store.state.selected) return;
+    restoring = false;
+    store.controller.showPlace(center);
+  });
+
   // After a search by parcel number, fly there once the parcel's place is known.
   $effect(() => {
     const center = store.dossier.center;
@@ -118,7 +138,7 @@
       >
     </p>
   {/if}
-  {#if store.basemapMissing}<p class="notice basemap-note">{strings.basemap.missing}</p>{/if}
+  {#if store.basemapMissing}<p class="notice basemap-note" class:below-credits={store.state.view === 'field'}>{strings.basemap.missing}</p>{/if}
 </div>
 
 <style>
@@ -185,5 +205,9 @@
     max-width: min(360px, calc(100% - 70px));
     z-index: 2;
     box-shadow: var(--pk-shadow);
+  }
+  /* In the field view the credits line has the top left corner. */
+  .basemap-note.below-credits {
+    top: 48px;
   }
 </style>

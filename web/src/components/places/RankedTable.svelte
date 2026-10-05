@@ -45,15 +45,13 @@
         <tr>
           <th scope="col">{a.rank}</th>
           <th scope="col">{a.place}</th>
-          <th scope="col">{a.kind}</th>
-          <th scope="col">{a.sure}</th>
           <th scope="col" aria-sort={order === 'desc' ? 'descending' : 'ascending'}>
             <button
               class="sort"
               type="button"
               aria-label="{a.score}. {order === 'desc' ? a.sortHighFirst : a.sortLowFirst}"
               onclick={() => onOrder(order === 'desc' ? 'asc' : 'desc')}
-              >{a.score} <span aria-hidden="true">{order === 'desc' ? '▼' : '▲'}</span></button
+              >{a.score} <span aria-hidden="true">{order === 'desc' ? '\u25BC' : '\u25B2'}</span></button
             >
           </th>
           <th scope="col">{a.reason}</th>
@@ -76,9 +74,8 @@
                   store.controller?.flyTo(place.center);
                 }}>{name}</button
               >
+              <span class="about">{kindLabel(place.kind)}. {strings.place.confidence[place.confidence] ?? ''}</span>
             </td>
-            <td>{kindLabel(place.kind)}</td>
-            <td>{strings.place.confidence[place.confidence] ?? ''}</td>
             <td class="score">{place.score ?? ''}</td>
             <td>{place.why?.main?.label ?? ''}</td>
             <td>{permissionLabel(place.permission)}</td>
@@ -98,7 +95,12 @@
   }
   table {
     font-size: 0.875rem;
-    min-width: 760px;
+    min-width: 560px;
+  }
+  .about {
+    display: block;
+    color: var(--pk-muted);
+    font-size: 0.8rem;
   }
   .selected {
     background: var(--pk-accent-soft);

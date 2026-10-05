@@ -122,7 +122,7 @@
   </div>
 </div>
 
-<section class="sheet" class:open={sheetOpen} id="places-section" tabindex="-1" aria-labelledby="pk-sheet-title">
+<section class="sheet" class:open={sheetOpen} id="places-section" tabindex="-1" aria-labelledby="pk-sheet-title" data-map-cover>
   <h2 id="pk-sheet-title">
     <button type="button" class="sheet-toggle" aria-expanded={sheetOpen} aria-controls="pk-places" onclick={() => (sheetOpen = !sheetOpen)}>
       <span class="grip" aria-hidden="true"></span>

@@ -107,7 +107,7 @@ function fromText(body: string): SavedPlace[] {
 
 export function parseListFile(body: string, fileName: string, fallbackName: string): ImportResult {
   if (body.length > MAX_IMPORT_BYTES) return { ok: false, reason: 'too_big' };
-  const clean = body.replace(/^﻿/, '');
+  const clean = body.replace(/^\uFEFF/, '');
   let name: string | null = null;
   let places: SavedPlace[] = [];
   let json: unknown = undefined;

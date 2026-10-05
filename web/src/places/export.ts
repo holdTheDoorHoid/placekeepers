@@ -274,7 +274,7 @@ export function toCsv(result: ExportResult): string {
     );
   }
   // A byte order mark, so spreadsheet programs read the text as UTF-8.
-  return `﻿${lines.join('\r\n')}\r\n`;
+  return `\uFEFF${lines.join('\r\n')}\r\n`;
 }
 
 /** The GeoJSON file, with the terms of use as its first line. */

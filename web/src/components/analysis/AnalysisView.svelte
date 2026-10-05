@@ -34,6 +34,14 @@
   ];
   const listCount = $derived(store.lists.active?.places.length ?? 0);
 
+  /** Flies to the open lot. On phones the details panel covers the whole map, so it closes first. */
+  function showOnMap() {
+    const center = store.dossier.center;
+    if (!center || !store.controller) return;
+    if (store.controller.coverPadding() === null) rightOpen = false;
+    store.controller.flyTo(center);
+  }
+
   function toggle(id: Panel) {
     panel = panel === id ? null : id;
   }
@@ -59,7 +67,7 @@
   >
 </div>
 
-<aside id="pk-left" class="panel left" class:open={leftOpen} aria-label={strings.analysis.leftTitle}>
+<aside id="pk-left" class="panel left" class:open={leftOpen} aria-label={strings.analysis.leftTitle} data-map-cover>
   <div class="panel-close narrow-only">
     <button class="icon-button" type="button" aria-label={strings.analysis.closePanel} onclick={() => (leftOpen = false)}>&times;</button>
   </div>
@@ -74,7 +82,7 @@
   </section>
 </aside>
 
-<aside id="pk-right" class="panel right" class:open={rightOpen} aria-label={strings.analysis.rightTitle}>
+<aside id="pk-right" class="panel right" class:open={rightOpen} aria-label={strings.analysis.rightTitle} data-map-cover>
   <div class="panel-close not-wide">
     <button class="icon-button" type="button" aria-label={strings.analysis.closePanel} onclick={() => (rightOpen = false)}>&times;</button>
   </div>
@@ -90,7 +98,7 @@
       {store}
       showTitle
       idPrefix="pk-analysis-dossier"
-      onShowOnMap={store.dossier.center ? () => store.controller?.flyTo(store.dossier.center!) : undefined}
+      onShowOnMap={store.dossier.center ? showOnMap : undefined}
     />
   {:else}
     <AreaSummary places={ranked} />
