@@ -229,6 +229,11 @@ export class MapController {
       }
       this.events.idle();
     });
+    // The base map's icon set has no picture for a few kinds of place (such as "townhall"). Those
+    // get an empty picture, so the map draws only their name and the browser console stays quiet.
+    this.map.on('styleimagemissing', (e: { id: string }) => {
+      if (!this.map.hasImage(e.id)) this.map.addImage(e.id, { width: 1, height: 1, data: new Uint8Array(4) });
+    });
     this.map.on('click', (e) => this.handleClick(e));
     this.map.on('mousemove', (e) => this.handleHover(e));
     this.map.on('error', (e) => this.handleError(e as unknown as { sourceId?: string; error?: Error }));
