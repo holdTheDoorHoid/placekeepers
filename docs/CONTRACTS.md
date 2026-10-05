@@ -249,6 +249,12 @@ header's freshness badge.
     "tiles/context.pmtiles": {"bytes": 1234567, "sha256": "..."}
   },
   "dossiers": {"prefix_digits": 4, "prefixes": ["0011", "0012", "8850"], "files": 929, "bytes": 108300000},
+  "vacancy": {
+    "as_of": "2026-10-04",
+    "lots": {"high": 24162, "medium": 6160, "low": 10454},
+    "buildings": {"high": 5045, "medium": 3819, "low": 9054},
+    "left_out": 1727
+  },
   "notes": ["8 shooting victims in the last 36 months have no usable location"]
 }
 ```
@@ -266,6 +272,14 @@ shard), `prefixes` (sorted, only the prefixes that have a file; the shard for pr
 `dossiers/3710.json`), `files` (how many shards) and `bytes` (their total size). It is `null` when
 no dossiers were written. `dossiers/common.json` and `tables/owners.json` are listed in `files` as
 usual. On 2026-10-04 the manifest is about 28 kB (5 kB compressed).
+
+`vacancy` (added 2026-10-04, decision D10 in VERIFICATION.md) holds the vacancy model's counts for
+this build, so a page can quote the current numbers: `as_of` (the build date the model's time
+windows counted from), `lots` and `buildings` (parcels by confidence, `high`, `medium` and `low`;
+lots include the ones where a footprint stands), and `left_out` (parks, gardens, parking and similar
+that never show). Every parcel counted is in the `parcels` layer except units inside a larger parcel
+and the few with no shape and no point (the notes say how many of each). It is `null` when the
+model has not run (the map then shows the City's lists alone).
 
 `notes` (added 2026-10-04 by M0.2) is a list of plain sentences about the build, possibly empty:
 data quality remarks, a layer with no usable data yet, or `tiles skipped: tippecanoe not installed`.
@@ -324,6 +338,7 @@ never change meaning once published. The id names each reason in the pipeline
 | 15 | 32768 | `land_use_shows_use` | Planning's land use map shows a use other than vacant (lots only, from 2026-10-04 M1.4: the map shows a use for nearly every building) | against |
 | 16 | 65536 | `recent_permit` | A permit for building work (alterations, trades, new construction) or zoning in the last two years | against |
 | 17 | 131072 | `building_stands` | A building footprint stands although records say vacant land | against |
+| 18 | 262144 | `homestead` | The owner has a homestead exemption: City records say someone lives here, or did (added 2026-10-04, decision D1). Lowers a building one level; on a lot it changes no level | against |
 
 `ot` is filled from 2026-10-04 by M1.3 (`pipeline/src/placekeepers/derive/owners.py`): the City's
 list of public property decides first (`PUB` 3, `PLB` 4, `PRA` 5, `PHDC` 8), then the owner names

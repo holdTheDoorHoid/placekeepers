@@ -67,6 +67,9 @@ with a first line pointing to the terms of use.
 - Presentation: a quiet marker (no red, no skulls, no crash imagery), the name, the date, "walking" or
   "cycling", and a link to the public memorial page. No driver details, no case numbers, no arrest
   information, even though the Police dataset has some of these.
+- A crash's id on the map is PennDOT's crash record number, which PennDOT and the City publish; it is
+  not a Police case number, and it stays so a crash can be found again to correct or remove it
+  (decision D11, docs/VERIFICATION.md).
 - Memorial suggestions ("memorial garden", "ghost bike") always say "only with the family's blessing"
   and link to Families for Safe Streets.
 - A "show names" setting (on by default) hides every name at once.

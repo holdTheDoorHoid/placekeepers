@@ -10,7 +10,10 @@ so the vacancy model (milestone M1.2) can apply its rules without new downloads:
 * classed by OPA as vacant land (category 6, 12 or 13), or noted by the assessor as having a
   vacant or sealed exterior (exterior condition 6 or 7);
 * cleaned and sealed by the City, or demolished, since 2016;
-* on the City's unsafe or imminently dangerous building lists.
+* on the City's unsafe or imminently dangerous building lists;
+* the subject of a vacancy complaint to L&I (codes VL, VA, VO and BDNO, since 2023, the complaints
+  the vacancy model counts), so that every parcel the map can show has its deeds, assessments and
+  violations in the weekly copy (decision D9, docs/VERIFICATION.md).
 
 Each part comes from that source's current good snapshot. A source with no snapshot yet is
 skipped and named in `missing`.
@@ -31,6 +34,9 @@ from placekeepers.sql import quote_literal
 log = logging.getLogger(__name__)
 
 SINCE = "2016-01-01"
+#: The L&I complaint codes the vacancy model counts (derive/vacancy.py): a vacant lot (VL), and a
+#: vacant or open building (VA, VO, BDNO).
+VACANCY_COMPLAINTS = "('VL', 'VA', 'VO', 'BDNO')"
 
 # For each source: the column holding the OPA account, the condition a row must meet (None for every
 # row), and further conditions that also qualify a row when the snapshot has their column.
@@ -52,6 +58,7 @@ SIGNALS: dict[str, tuple[str, str | None, dict[str, str]]] = {
     ),
     "li_unsafe": ("opa_account_num", None, {}),
     "li_imminently_dangerous": ("opa_account_num", None, {}),
+    "li_complaints": ("opa_account_num", f"complaintcode IN {VACANCY_COMPLAINTS}", {}),
 }
 CANDIDATE_SOURCES = tuple(SIGNALS)
 

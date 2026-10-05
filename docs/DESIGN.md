@@ -362,7 +362,8 @@ As built (M1.5, 2026-10-04):
 ## 6. Finding vacant land without depending on one source
 
 The City's vacancy indicator stopped being accurate in June 2024, and that alone ended the original
-project. On 2026-09-27 the City recalculated both indicator layers (28,771 lots and 9,519 buildings).
+project. On 2026-09-27 the City recalculated both indicator layers (28,771 lots and 9,519 buildings),
+and rebuilt them again on 2026-10-04 (28,770 lots and 9,569 buildings, every record dated that day).
 Compared with the June 2024 list L&I gave the original project, 69% of today's lots and 39% of
 today's buildings were already listed, so this is a real recalculation, not old records with a new
 date. Placekeepers uses the indicator, but never alone: losing any one signal lowers confidence on the
@@ -383,6 +384,7 @@ photos. Its rules are adopted (2026-10-04):
 | Planning land use (2023) shows a use | A contradiction: lowers a lot one level (catches yards and parking) |
 | New construction permit | 2021 to early 2025 makes a lot low; since April 2025 caps it at medium |
 | City vacant lot cleanups | Context only (hexagon counts); not published per parcel since 2013 |
+| Owner occupied homestead exemption (OPA) | Added after the study (decision D1, 2026-10-04, docs/VERIFICATION.md): the City's own record that someone lives there, or did. A reason against: lowers a building one level (high to medium, medium to low); on a lot it is shown without changing the level |
 
 The kind comes from the footprint, not from which City list a parcel is on: no footprint, or a
 demolition after the footprint was drawn, means lot. This moves 1,110 parcels from the City's building
@@ -390,8 +392,14 @@ list to lots. LandCare lots stay in the vacant set, marked "already maintained".
 
 | Kind | High | Medium | Low |
 |---|---|---|---|
-| Lots (2026-10-04) | 24,166 | 6,147 | 10,465 |
-| Buildings (2026-10-04) | 6,553 | 2,876 | 8,503 |
+| Lots, the study (2026-10-04) | 24,166 | 6,147 | 10,465 |
+| Buildings, the study (2026-10-04) | 6,553 | 2,876 | 8,503 |
+| Lots on the map (2026-10-04, with the homestead rule) | 24,162 | 6,160 | 10,454 |
+| Buildings on the map (2026-10-04, with the homestead rule) | 5,045 | 3,819 | 9,054 |
+
+The homestead rule moves 1,552 high buildings to medium and 579 medium buildings to low; it changes no
+lot's level, and 610 lots carry it as a reason against. The map's counts change every week;
+`manifest.json` carries the current ones.
 
 Parks, gardens, parking, rail, utilities, cemeteries, water and streets never show as vacant (1,727
 parcels). High and medium show by default; low sits behind the confidence filter. Where the City and
@@ -404,7 +412,7 @@ in the tile as bits of `rs` (CONTRACTS.md section 4), and the details panel turn
 
 **If the City indicator breaks again:** keep its last copy for twelve months, labeled with its date,
 then drop it. Without it, high lots become medium (about 29,000 lots stay on the map at medium) and
-2,936 buildings stay high. The health check also flags the City list as stale if its date stops
+2,387 buildings stay high (2,936 under the study's rules, before the homestead rule). The health check also flags the City list as stale if its date stops
 advancing for six months while demolitions keep being recorded.
 
 **Still open:** buildings cannot be judged from the air. A person should check the 41 parcels in
@@ -488,7 +496,12 @@ Built in M0.4 (2026-10-04). Changes from the original plan are marked.
   the sample data (`web/e2e/`, `npm run e2e`).
 - `refresh.yml`: every Monday at 10:00 UTC, and on demand from the Actions tab. Five jobs:
   - `pipeline` restores the last good snapshot of every source from the rolling `data-snapshots`
-    release, runs `pk all` with tippecanoe, and packs the new good snapshots. It reuses the base map
+    release, runs `pk all` with tippecanoe, and packs the new good snapshots. Snapshots are never
+    published in plain form (decision D2, VERIFICATION.md): they are encrypted with the
+    `PK_SNAPSHOT_KEY` repository secret (GnuPG, symmetric AES256) before they leave the runner and
+    decrypted on the next run; only those two steps see the key, and they run nothing but `gh` and
+    the standard library helper. Without the secret, or when last week's copies do not decrypt, no
+    snapshot is saved that week and the run carries on without them. It reuses the base map
     extract (a release asset named after its Protomaps build date) for up to 30 days, then makes a
     new one; if that fails, the saved one is used.
   - `save` puts the new snapshots, the new manifest and any new base map on the release, and removes

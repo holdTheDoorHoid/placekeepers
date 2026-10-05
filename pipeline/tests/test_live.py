@@ -106,15 +106,18 @@ def test_the_vacancy_model_lands_near_the_studys_counts(tmp_path: Path) -> None:
         ctx.close()
 
     print(f"\nVacancy model as of {result.as_of} against the study (2026-10-04):")
+    # The study's rules alone: the homestead rule added after it (decision D1) moves about 1,500
+    # buildings down a level, so it is left out of this comparison and shown on its own below.
     far = []
     for kind, levels in STUDY_COUNTS.items():
         for level, study in levels.items():
-            ours = result.counts[kind][level]
+            ours = result.study_rules[kind][level]
             change = (ours - study) / study
             print(f"  {kind:8} {level:6} ours {ours:7,}  study {study:7,}  ({change:+.1%})")
             if abs(change) > TOLERANCE:
                 far.append(f"{kind} {level}: {ours:,} against {study:,} ({change:+.1%})")
     print(f"  left out as parks, gardens, parking and similar: {result.counts['excluded']:,}")
+    print(f"  on the map, with the homestead rule: {result.counts}")
     for note in result.notes:
         print(f"  note: {note}")
     assert not missing, f"the model ran without {', '.join(missing)}"

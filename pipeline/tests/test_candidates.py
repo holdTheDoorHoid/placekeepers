@@ -50,6 +50,15 @@ def test_candidates_join_every_signal_and_clean_the_accounts(context_factory) ->
         },
     )
     put(ctx, "li_unsafe", {"opa_account_num": ["37000001"]})
+    # Vacancy complaints count (a vacant lot, a vacant or open building); others do not.
+    put(
+        ctx,
+        "li_complaints",
+        {
+            "opa_account_num": ["400000001", "400000002", "400000003", "400000004", "400000005"],
+            "complaintcode": ["VL", "VA", "VO", "BDNO", "PMHW"],
+        },
+    )
 
     found = candidate_accounts(ctx)
     assert found.accounts == [
@@ -62,6 +71,10 @@ def test_candidates_join_every_signal_and_clean_the_accounts(context_factory) ->
         "300000002",  # demolished since 2016 (the 2010 one and the undated one are left out)
         "370000001",
         "370000002",
+        "400000001",  # vacancy complaints: VL, VA, VO and BDNO (high weeds is not one)
+        "400000002",
+        "400000003",
+        "400000004",
         "472058210",
     ]
     assert found.by_source == {
@@ -71,6 +84,7 @@ def test_candidates_join_every_signal_and_clean_the_accounts(context_factory) ->
         "li_clean_and_seal": 1,
         "li_demolitions": 1,
         "li_unsafe": 1,
+        "li_complaints": 4,
     }
     assert found.missing == ["vacant_indicators_bldg", "phs_landcare", "li_imminently_dangerous"]
     assert set(found.by_source) | set(found.missing) == set(CANDIDATE_SOURCES)

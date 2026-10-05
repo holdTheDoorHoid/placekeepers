@@ -136,6 +136,20 @@ def test_land_leaves_out_water_and_everything_outside_the_city() -> None:
     )
 
 
+def test_the_poverty_note_counts_every_parcel_without_a_rate() -> None:
+    tracts = ["A", "A", None, "B", "B", None]
+    rates = [30.0, 30.0, None, None, None, None]
+    assert lenses.poverty_note(tracts, rates, True, True) == (
+        "4 parcels on the map have no poverty rate: 2 outside every census tract and 2 in tracts "
+        "with no survey estimate"
+    )
+    assert lenses.poverty_note(["A", "B"], [1.0, None], True, True) == (
+        "1 parcel on the map has no poverty rate: 1 in a tract with no survey estimate"
+    )
+    assert lenses.poverty_note(["A"], [1.0], True, True) is None
+    assert lenses.poverty_note([None], [None], False, True) is None  # no tracts: another note
+
+
 # The tree canopy adapter
 
 
@@ -356,7 +370,7 @@ def test_a_run_gives_every_parcel_on_the_map_its_factors(lens_ctx) -> None:
     assert summary["spread"]["f_poverty"]["missing"] == 1
     assert summary["treated"] == {"landcare": 1, "doors_and_windows": 1}
     assert (
-        "1 parcels on the map are outside every census tract, so they have no poverty rate"
+        "1 parcel on the map has no poverty rate: 1 outside every census tract"
         in (summary["notes"])
     )
 
@@ -389,9 +403,7 @@ def test_the_map_carries_the_factors_and_leaves_out_missing_ones(lens_ctx, tmp_p
     )
     assert properties["500000002"]["f_vacant"] == 0
     notes = published.manifest["notes"]
-    assert (
-        "1 parcels on the map are outside every census tract, so they have no poverty rate" in notes
-    )
+    assert "1 parcel on the map has no poverty rate: 1 outside every census tract" in notes
 
 
 def test_a_parcel_point_falls_inside_its_own_shape() -> None:

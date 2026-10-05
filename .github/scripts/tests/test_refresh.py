@@ -7,6 +7,7 @@ import io
 import json
 import os
 import re
+import shutil
 import tarfile
 from datetime import date
 from pathlib import Path
@@ -495,84 +496,231 @@ def test_issues_with_sources_json_need_no_yaml(tmp_path: Path, capsys, monkeypat
 
 def test_release_plan_replaces_snapshots_and_old_base_maps() -> None:
     files = [
-        "snapshot-shootings.tar",
-        "snapshot-opa_properties.tar",
+        "snapshot-shootings.tar.gpg",
+        "snapshot-opa_properties.tar.gpg",
         "manifest.json",
         "basemap-20261101.tar",
     ]
     existing = [
-        "snapshot-shootings.tar",
-        "snapshot-retired_source.tar",
+        "snapshot-shootings.tar.gpg",
+        "snapshot-retired_source.tar.gpg",
         "manifest.json",
         "basemap-20261004.tar",
     ]
     assert refresh.plan_release(files, existing) == [
         ("upload", "basemap-20261101.tar"),
         ("upload", "manifest.json"),
-        ("upload", "snapshot-opa_properties.tar"),
-        ("upload", "snapshot-shootings.tar"),
+        ("upload", "snapshot-opa_properties.tar.gpg"),
+        ("upload", "snapshot-shootings.tar.gpg"),
         ("delete", "basemap-20261004.tar"),
-        ("delete", "snapshot-retired_source.tar"),
+        ("delete", "snapshot-retired_source.tar.gpg"),
     ]
 
 
 def test_release_plan_never_empties_the_release() -> None:
-    existing = ["snapshot-shootings.tar", "basemap-20261004.tar", "manifest.json"]
+    existing = ["snapshot-shootings.tar.gpg", "basemap-20261004.tar", "manifest.json"]
     # No snapshots and no base map this run: nothing is deleted.
     assert refresh.plan_release(["manifest.json"], existing) == [("upload", "manifest.json")]
     assert refresh.plan_release([], existing) == []
 
 
+def test_release_plan_never_uploads_a_plain_snapshot_and_removes_old_plain_ones() -> None:
+    """Decision D2: the first run with encryption removes the plain copies on the release, even
+    in a week that saves no snapshot at all (no key)."""
+    existing = ["snapshot-shootings.tar", "snapshot-land_use.tar", "manifest.json"]
+    assert refresh.plan_release(["manifest.json", "snapshot-shootings.tar"], existing) == [
+        ("upload", "manifest.json"),
+        ("delete", "snapshot-land_use.tar"),
+        ("delete", "snapshot-shootings.tar"),
+        ("skip", "snapshot-shootings.tar"),
+    ]
+    encrypted = ["manifest.json", "snapshot-shootings.tar.gpg"]
+    assert refresh.plan_release(encrypted, existing) == [
+        ("upload", "manifest.json"),
+        ("upload", "snapshot-shootings.tar.gpg"),
+        ("delete", "snapshot-land_use.tar"),
+        ("delete", "snapshot-shootings.tar"),
+    ]
+
+
 def test_release_plan_skips_anything_unexpected(tmp_path: Path, capsys) -> None:
-    for name in ["snapshot-shootings.tar", "evil.sh", "snapshot-../x.tar", "manifest.json.bak"]:
+    names = ["snapshot-shootings.tar.gpg", "evil.sh", "snapshot-../x.tar.gpg", "manifest.json.bak"]
+    for name in names:
         if "/" not in name:
             (tmp_path / name).write_text("x", encoding="utf-8")
     assets = tmp_path.parent / "assets.txt"
-    assets.write_text("snapshot-shootings.tar\nsnapshot-old.tar\n", encoding="utf-8")
+    assets.write_text("snapshot-shootings.tar.gpg\nsnapshot-old.tar.gpg\n", encoding="utf-8")
     assert refresh.main(["release-plan", "--dir", str(tmp_path), "--assets", str(assets)]) == 0
     assert capsys.readouterr().out.splitlines() == [
-        "upload snapshot-shootings.tar",
-        "delete snapshot-old.tar",
+        "upload snapshot-shootings.tar.gpg",
+        "delete snapshot-old.tar.gpg",
         "skip evil.sh",
         "skip manifest.json.bak",
     ]
 
 
 def test_release_plan_keeps_unchanged_snapshots_instead_of_uploading_them() -> None:
-    files = ["snapshot-shootings.tar", "manifest.json", "unchanged.txt"]
+    files = ["snapshot-shootings.tar.gpg", "manifest.json", "unchanged.txt"]
     existing = [
-        "snapshot-shootings.tar",
-        "snapshot-cagp_tax_2025.tar",
-        "snapshot-retired_source.tar",
+        "snapshot-shootings.tar.gpg",
+        "snapshot-cagp_tax_2025.tar.gpg",
+        "snapshot-retired_source.tar.gpg",
         "manifest.json",
     ]
-    unchanged = ["snapshot-cagp_tax_2025.tar", "snapshot-land_use.tar", "not-a-snapshot.sh"]
+    unchanged = [
+        "snapshot-cagp_tax_2025.tar.gpg",
+        "snapshot-land_use.tar.gpg",
+        "snapshot-plain.tar",  # a plain name is never kept
+        "not-a-snapshot.sh",
+    ]
     assert refresh.plan_release(files, existing, unchanged) == [
         ("upload", "manifest.json"),
-        ("upload", "snapshot-shootings.tar"),
-        ("keep", "snapshot-cagp_tax_2025.tar"),
-        ("delete", "snapshot-retired_source.tar"),
-        ("missing", "snapshot-land_use.tar"),
+        ("upload", "snapshot-shootings.tar.gpg"),
+        ("keep", "snapshot-cagp_tax_2025.tar.gpg"),
+        ("delete", "snapshot-retired_source.tar.gpg"),
+        ("missing", "snapshot-land_use.tar.gpg"),
     ]
 
 
 def test_a_week_where_every_source_is_unchanged_still_keeps_them_all() -> None:
-    existing = ["snapshot-cagp_tax_2025.tar", "snapshot-acs_poverty.tar", "manifest.json"]
+    existing = ["snapshot-cagp_tax_2025.tar.gpg", "snapshot-acs_poverty.tar.gpg", "manifest.json"]
     plan = refresh.plan_release(["manifest.json"], existing, existing[:2])
     assert plan == [
         ("upload", "manifest.json"),
-        ("keep", "snapshot-acs_poverty.tar"),
-        ("keep", "snapshot-cagp_tax_2025.tar"),
+        ("keep", "snapshot-acs_poverty.tar.gpg"),
+        ("keep", "snapshot-cagp_tax_2025.tar.gpg"),
     ]
 
 
 def test_release_plan_command_reads_the_unchanged_list(tmp_path: Path, capsys) -> None:
-    (tmp_path / "snapshot-shootings.tar").write_text("x", encoding="utf-8")
-    (tmp_path / "unchanged.txt").write_text("snapshot-cagp_tax_2025.tar\n", encoding="utf-8")
+    (tmp_path / "snapshot-shootings.tar.gpg").write_text("x", encoding="utf-8")
+    (tmp_path / "unchanged.txt").write_text("snapshot-cagp_tax_2025.tar.gpg\n", encoding="utf-8")
     assets = tmp_path.parent / "assets-unchanged.txt"
-    assets.write_text("snapshot-shootings.tar\nsnapshot-cagp_tax_2025.tar\n", encoding="utf-8")
+    assets.write_text(
+        "snapshot-shootings.tar.gpg\nsnapshot-cagp_tax_2025.tar.gpg\n", encoding="utf-8"
+    )
     assert refresh.main(["release-plan", "--dir", str(tmp_path), "--assets", str(assets)]) == 0
     assert capsys.readouterr().out.splitlines() == [
-        "upload snapshot-shootings.tar",
-        "keep snapshot-cagp_tax_2025.tar",
+        "upload snapshot-shootings.tar.gpg",
+        "keep snapshot-cagp_tax_2025.tar.gpg",
     ]
+
+
+# Encrypted snapshots (decision D2) ---------------------------------------------------------------
+
+KEY = "correct horse battery staple, for tests only"
+needs_gpg = pytest.mark.skipif(shutil.which("gpg") is None, reason="GnuPG is not installed")
+
+
+def packed(tmp_path: Path) -> Path:
+    """A packed release folder, as pack writes it after a restore (one source unchanged)."""
+    cache = make_cache(tmp_path / "cache")
+    out = tmp_path / "release"
+    refresh.pack(cache, out)
+    (out / "unchanged.txt").write_text("snapshot-cagp_tax_2025.tar\n", encoding="utf-8")
+    return out
+
+
+@needs_gpg
+def test_snapshots_are_encrypted_and_decrypt_back_byte_for_byte(tmp_path: Path) -> None:
+    out = packed(tmp_path)
+    plain = {p.name: p.read_bytes() for p in out.glob("snapshot-*.tar")}
+    assert plain
+    written = refresh.encrypt_snapshots(out, KEY)
+    assert sorted(p.name for p in written) == sorted(f"{name}.gpg" for name in plain)
+    assert not list(out.glob("snapshot-*.tar")), "no plain snapshot may stay to be uploaded"
+    for path in written:
+        assert path.read_bytes()[:4] != b"ustar" and b"shootings" not in path.read_bytes()
+    assert (out / "unchanged.txt").read_text(encoding="utf-8") == "snapshot-cagp_tax_2025.tar.gpg\n"
+    download = tmp_path / "download"
+    download.mkdir()
+    for path in written:
+        (download / path.name).write_bytes(path.read_bytes())
+    decrypted, reason = refresh.decrypt_snapshots(download, KEY)
+    assert reason is None
+    assert {name: (download / name).read_bytes() for name in decrypted} == plain
+    assert not list(download.glob("*.gpg"))
+    # And the decrypted tars restore a cache the pipeline can read.
+    restored = refresh.restore(tmp_path / "fresh", download)
+    assert restored == ["high_injury_network", "shootings"]
+
+
+def test_without_the_key_no_snapshot_is_saved_and_nothing_fails(tmp_path: Path, capsys) -> None:
+    out = packed(tmp_path)
+    assert refresh.encrypt_snapshots(out, None) == []
+    assert not list(out.glob("snapshot-*")) and not (out / "unchanged.txt").exists()
+    assert "No snapshots are saved this week: there is no PK_SNAPSHOT_KEY secret" in (
+        capsys.readouterr().out
+    )
+    download = tmp_path / "download"
+    download.mkdir()
+    (download / "snapshot-shootings.tar.gpg").write_bytes(b"encrypted")
+    assert refresh.decrypt_snapshots(download, None) == ([], refresh.NO_KEY)
+    assert not list(download.iterdir())
+    assert refresh.snapshot_key({"PK_SNAPSHOT_KEY": "  "}) is None
+    assert refresh.snapshot_key({}) is None
+    assert refresh.snapshot_key({"PK_SNAPSHOT_KEY": KEY}) == KEY
+
+
+@needs_gpg
+def test_a_copy_that_does_not_decrypt_blocks_saving_this_week(tmp_path: Path, capsys) -> None:
+    out = packed(tmp_path)
+    written = refresh.encrypt_snapshots(out, KEY)
+    download = tmp_path / "download"
+    download.mkdir()
+    for path in written:
+        (download / path.name).write_bytes(path.read_bytes())
+    (download / "snapshot-old_plain.tar").write_bytes(b"from before encryption")
+    decrypted, reason = refresh.decrypt_snapshots(download, "the wrong key")
+    assert decrypted == [] and reason is not None and "could not be decrypted" in reason
+    # The unreadable copies are gone; a plain copy from before encryption is left to restore.
+    assert sorted(p.name for p in download.iterdir()) == ["snapshot-old_plain.tar"]
+    status = tmp_path / "status.txt"
+    refresh.write_status(status, reason)
+    again = packed(tmp_path / "next")
+    assert refresh.encrypt_snapshots(again, KEY, refresh.read_status(status)) == []
+    assert not list(again.glob("snapshot-*"))
+    assert "No snapshots are saved this week" in capsys.readouterr().out
+
+
+def test_status_file_round_trip(tmp_path: Path) -> None:
+    status = tmp_path / "status.txt"
+    refresh.write_status(status, None)
+    assert refresh.read_status(status) is None
+    refresh.write_status(status, refresh.NO_KEY)
+    assert refresh.read_status(status) == refresh.NO_KEY
+    assert refresh.read_status(tmp_path / "missing.txt") is not None
+
+
+def test_the_key_never_reaches_a_command_line(tmp_path: Path, monkeypatch) -> None:
+    seen: list[list[str]] = []
+
+    class Done:
+        returncode = 0
+
+    def fake_run(command, **kwargs):
+        seen.append(list(command))
+        if "--passphrase-fd" in command:
+            fd = int(command[command.index("--passphrase-fd") + 1])
+            assert kwargs.get("pass_fds") == (fd,)
+            assert os.read(fd, 1024).decode() == KEY  # the key travels on the pipe
+            output = Path(command[command.index("--output") + 1])
+            output.write_bytes(b"x")
+        return Done()
+
+    monkeypatch.setattr(refresh.subprocess, "run", fake_run)
+    out = packed(tmp_path)
+    assert refresh.encrypt_snapshots(out, KEY)
+    assert seen and all(KEY not in " ".join(command) for command in seen)
+
+
+def test_the_commands_never_fail_the_run(tmp_path: Path, monkeypatch, capsys) -> None:
+    monkeypatch.delenv("PK_SNAPSHOT_KEY", raising=False)
+    status = tmp_path / "status.txt"
+    assert (
+        refresh.main(["decrypt", "--dir", str(tmp_path / "assets"), "--status", str(status)]) == 0
+    )
+    assert status.read_text(encoding="utf-8").startswith("blocked:")
+    out = packed(tmp_path)
+    assert refresh.main(["encrypt", "--dir", str(out), "--status", str(status)]) == 0
+    assert not list(out.glob("snapshot-*"))
