@@ -210,6 +210,14 @@
         "s36": 11,
         "landcare_within_500ft": 2,
         "gardens_within_500ft": 1
+      },
+      "lens": {
+        "f_vacant": 88,
+        "f_shoot": 23,
+        "f_poverty": 92,
+        "f_heatvul": 17,
+        "f_strees": 31,
+        "f_people": 42
       }
     },
     "990000002": {
@@ -337,6 +345,15 @@
         "s36": 10,
         "landcare_within_500ft": 3,
         "gardens_within_500ft": 0
+      },
+      "lens": {
+        "f_vacant": 36,
+        "f_shoot": 27,
+        "f_poverty": 93,
+        "f_canopy": 60,
+        "f_heatvul": 19,
+        "f_strees": 37,
+        "f_people": 54
       }
     },
     "990000004": {
@@ -473,6 +490,15 @@
         "s36": 6,
         "landcare_within_500ft": 1,
         "gardens_within_500ft": 0
+      },
+      "lens": {
+        "f_vacant": 55,
+        "f_shoot": 31,
+        "f_poverty": 77,
+        "f_canopy": 70,
+        "f_heatvul": 37,
+        "f_strees": 25,
+        "f_people": 78
       }
     },
     "990000005": {
@@ -612,6 +638,15 @@
         "s36": 7,
         "landcare_within_500ft": 3,
         "gardens_within_500ft": 1
+      },
+      "lens": {
+        "f_vacant": 82,
+        "f_shoot": 40,
+        "f_poverty": 76,
+        "f_canopy": 1,
+        "f_heatvul": 39,
+        "f_strees": 31,
+        "f_people": 90
       }
     },
     "990000009": {
@@ -746,6 +781,15 @@
         "s36": 3,
         "landcare_within_500ft": 5,
         "gardens_within_500ft": 2
+      },
+      "lens": {
+        "f_vacant": 56,
+        "f_shoot": 49,
+        "f_poverty": 74,
+        "f_canopy": 88,
+        "f_heatvul": 35,
+        "f_strees": 31,
+        "f_people": 66
       }
     },
     "990000013": {
@@ -776,7 +820,16 @@
       "suggestions": [
         "clean_and_green"
       ],
-      "nearby": {}
+      "nearby": {},
+      "lens": {
+        "f_vacant": 79,
+        "f_shoot": 63,
+        "f_poverty": 95,
+        "f_canopy": 39,
+        "f_heatvul": 57,
+        "f_strees": 31,
+        "f_people": 42
+      }
     },
     "990000029": {
       "address": "1501 N SAMPLE ST",
@@ -887,6 +940,14 @@
         "s36": 8,
         "landcare_within_500ft": 0,
         "gardens_within_500ft": 0
+      },
+      "lens": {
+        "f_vacant": 85,
+        "f_shoot": 34,
+        "f_poverty": 59,
+        "f_heatvul": 19,
+        "f_strees": 66,
+        "f_people": 90
       }
     },
     "990000033": {
@@ -997,6 +1058,15 @@
         "s36": 2,
         "landcare_within_500ft": 4,
         "gardens_within_500ft": 3
+      },
+      "lens": {
+        "f_vacant": 64,
+        "f_shoot": 37,
+        "f_poverty": 57,
+        "f_canopy": 32,
+        "f_heatvul": 35,
+        "f_strees": 66,
+        "f_people": 66
       }
     },
     "990000098": {

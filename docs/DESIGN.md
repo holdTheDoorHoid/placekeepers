@@ -416,7 +416,9 @@ As built (M1.6, 2026-10-04):
   nearby", or a link with the parcel in it opens its page: a full screen sheet on phones, the right
   panel on larger screens. Close in (zoom 16 and up), tapping any other spot asks the City's parcel
   map which parcel is there, outlines it, and opens its page, built live. With live data off, only
-  parcels on our list open, from the snapshot.
+  parcels on our list open, from the snapshot. However it was opened, a lot on the map shows the
+  same score breakdown and flood note: from the map's data when the map has it, else from the
+  lot's own dossier, which carries the same values (issue #31, 2026-10-05).
 - **Where each part comes from.** A line at the top and a line under each part say whether it is
   live from the City (with the time), from the weekly snapshot (with its date), still loading, or
   why a lookup failed (no answer within 10 seconds, the City could not be reached, or it answered
@@ -427,8 +429,8 @@ As built (M1.6, 2026-10-04):
   and why, each flag in its three parts, the deed fraud notice wherever the owner may be a person
   (a person, an owner whose type we could not tell, or a possible estate), help for families (the
   Tangled Title Fund and Fraud Guard) beside any flag on a private owner, and taxes, always dated
-  July 2025 with a link to the Tax Center. A many parcels flag opens the owner's list. When the City names a different owner than the snapshot, the flags
-  about the earlier owner are left out.
+  July 2025 with a link to the Tax Center. A many parcels flag opens the owner's list. When the
+  City names a different owner than the snapshot, the flags about the earlier owner are left out.
 - **History** shows every deed newest first (the date on the deed, the document in plain
   words, the price, from and to), the City's assessments as a small chart and the same numbers as a
   table, and the L&I timeline (violations, permits, demolitions, unsafe and imminently dangerous
