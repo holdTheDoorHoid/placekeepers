@@ -56,7 +56,7 @@ def run(ctx, source: Source) -> SnapshotStore:
 
 # Carto
 def carto_value(column: Column, n: int) -> object:
-    if column.type == "DATE":
+    if column.type in ("DATE", "LOCAL_DATE"):
         return RECENT
     if column.type in ("BIGINT", "INTEGER", "SMALLINT"):
         return str(n)

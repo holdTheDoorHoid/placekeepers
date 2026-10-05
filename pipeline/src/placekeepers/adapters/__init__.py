@@ -7,6 +7,13 @@ from placekeepers.adapters.arcgis import ArcgisAdapter
 from placekeepers.adapters.base import Adapter, AdapterMismatch, FetchError, Validation
 from placekeepers.adapters.bulk_files import AcsPoverty, CagpTax2025
 from placekeepers.adapters.carto import CartoAccountsAdapter, CartoAdapter, Column
+from placekeepers.adapters.city_places import (
+    LibraryLocations,
+    PprHydrationStations,
+    PprProgramSites,
+    PprSpraygrounds,
+    PprSwimmingPools,
+)
 from placekeepers.adapters.crashes import Crashes20072017, Crashes20162020, Crashes20202024
 from placekeepers.adapters.curated import MemorialNames
 from placekeepers.adapters.fatal_crashes import FatalCrashes
@@ -14,6 +21,7 @@ from placekeepers.adapters.high_injury_network import HighInjuryNetwork
 from placekeepers.adapters.lens_context import CensusTracts2020, TreeCanopy2018
 from placekeepers.adapters.opa_properties import OpaProperties
 from placekeepers.adapters.osm import OsmExtract
+from placekeepers.adapters.philly311 import Philly311Conditions
 from placekeepers.adapters.property_records import AssessmentHistory, RealEstateTransfers
 from placekeepers.adapters.pwd_parcels import PwdParcels
 from placekeepers.adapters.schools import Schools
@@ -76,6 +84,13 @@ ADAPTERS: dict[str, type[Adapter]] = {
     "septa_ridership_trolley": SeptaRidershipTrolley,
     # Shelters and benches from OpenStreetMap (M2.2)
     "osm_philadelphia": OsmExtract,
+    # Public places from the City and conditions reported to 311 (M3.5)
+    "library_locations": LibraryLocations,
+    "ppr_program_sites": PprProgramSites,
+    "ppr_swimming_pools": PprSwimmingPools,
+    "ppr_spraygrounds": PprSpraygrounds,
+    "ppr_hydration_stations": PprHydrationStations,
+    "philly311_conditions": Philly311Conditions,
 }
 
 

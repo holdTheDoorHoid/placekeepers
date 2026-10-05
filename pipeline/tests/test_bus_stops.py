@@ -359,4 +359,5 @@ def test_with_tippecanoe_the_stops_become_amenity_tiles(stops_ctx, tmp_path, mon
     out = tmp_path / "data"
     result = publish(stops_ctx, out)
     assert "tiles/amenities.pmtiles" in result.tiles_built
-    assert pmtiles_layer_names(out / "tiles" / "amenities.pmtiles") == ["stops"]
+    # The sample's benches are an amenity layer of their own too (M3.5).
+    assert pmtiles_layer_names(out / "tiles" / "amenities.pmtiles") == ["benches", "stops"]
