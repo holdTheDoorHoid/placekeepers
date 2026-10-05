@@ -452,6 +452,19 @@
   cadence: weekly
   health: {min_rows: 2500, max_drop_pct: 10, newest_field: extract_date, max_age_days: 14}
   release: v0.2
+# Milestone M2.3: heat at bus stops for the transit comfort lens.
+- id: heat_vulnerability
+  name: Heat vulnerability by census tract
+  publisher: City of Philadelphia, Department of Public Health and Office of Sustainability
+  homepage: https://opendataphilly.org/datasets/heat-vulnerability-by-census-tract/
+  # One polygon per 2010 census tract with heat exposure, heat sensitivity and heat vulnerability
+  # scores (data of 2017 to 2019). The lens uses the heat exposure score at each stop.
+  endpoint: {kind: arcgis, service: heat_vulnerability_ct, layer: 0}
+  license: city_terms
+  attribution: "Heat exposure: City of Philadelphia, Department of Public Health and Office of Sustainability"
+  cadence: irregular
+  health: {min_rows: 350, max_drop_pct: 5}
+  release: v0.2
 # Milestone M3.5: public places from the City (libraries, recreation centers, pools and
 # spraygrounds, park drinking fountains) and conditions reported to 311. Each place layer is a
 # small point layer of the City's ArcGIS Online organization, fetched with an explicit field list

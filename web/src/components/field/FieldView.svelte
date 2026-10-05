@@ -1,15 +1,18 @@
 <script lang="ts">
-  // The field view, phones first: search, "Near me", the three main chips, and a bottom
-  // sheet listing what you can do nearby.
+  // The field view, phones first: search, "Near me", the main chips, and a bottom sheet listing
+  // what you can do nearby: vacant lots and, with the Bus stops chip on, bus and trolley stops,
+  // nearest first.
   import { tick } from 'svelte';
   import { FIELD_CHIPS } from '../../config/chips.ts';
   import { FILTERS, filterNarrows } from '../../config/filters.ts';
   import { STYLES, styleFor } from '../../map/styles/index.ts';
+  import { mergeNearby } from '../../places/nearby.ts';
   import { distanceMeters, nearestPlaces, parcelLensOf } from '../../places/rank.ts';
   import { LOTS_DETAIL_ZOOM, isSampleFeature } from '../../places/sample.ts';
   import { PHILLY_BOUNDS } from '../../state/defaults.ts';
   import type { AppStore } from '../../state/store.svelte.ts';
   import { strings } from '../../strings.ts';
+  import { nearestStops, stopLensOf } from '../../transit/comfort.ts';
   import Dialog from '../common/Dialog.svelte';
   import DossierPanel from '../dossier/DossierPanel.svelte';
   import LayerList from '../layers/LayerList.svelte';
@@ -18,6 +21,7 @@
   import AddressSearch from '../search/AddressSearch.svelte';
   import FeatureDetails from '../streets/FeatureDetails.svelte';
   import MemorialList from '../streets/MemorialList.svelte';
+  import StopCard from '../transit/StopCard.svelte';
 
   let { store }: { store: AppStore } = $props();
 
@@ -40,6 +44,7 @@
 
   const registry = $derived(store.registry);
   const lens = $derived(parcelLensOf(registry));
+  const stopLens = $derived(stopLensOf(registry));
   const chips = $derived(
     FIELD_CHIPS.map((chip) => {
       const layers = chip.layers.filter((id) => registry.layers.some((l) => l.id === id));
@@ -48,6 +53,9 @@
   );
   const lotsShown = $derived(
     registry.layers.some((l) => styleFor(l) === STYLES.vacant_parcels && store.state.layers.includes(l.id)),
+  );
+  const stopsShown = $derived(
+    registry.layers.some((l) => styleFor(l) === STYLES.transit_stops && store.state.layers.includes(l.id)),
   );
   const nearby = $derived(store.state.map.zoom >= NEARBY_MIN_ZOOM);
   /** The person's location, while they use it and it is on the map; otherwise the map's middle. */
@@ -62,8 +70,14 @@
    * the sample for a moment while the detailed tiles load.
    */
   const detailed = $derived(store.parcelsInView.filter((p) => !isSampleFeature(p.properties)));
-  const all = $derived(nearby ? nearestPlaces(registry, store.state, detailed, anchor, MAX_CARDS) : []);
-  const places = $derived(all.slice(0, cardCount));
+  const lots = $derived(nearby ? nearestPlaces(registry, store.state, detailed, anchor, MAX_CARDS) : []);
+  /** The stops drawn on the map with a suggestion switched on (the list follows the stops layer). */
+  const stops = $derived(nearby && stopsShown ? nearestStops(registry, store.state, store.stopsInView, anchor, MAX_CARDS) : []);
+  const all = $derived(mergeNearby(lots, stops, MAX_CARDS));
+  const items = $derived(all.slice(0, cardCount));
+  const places = $derived(items.flatMap((item) => (item.kind === 'place' ? [item.place] : [])));
+  /** Nothing of the kinds on show is drawn here at all. */
+  const empty = $derived((!lotsShown || detailed.length === 0) && (!stopsShown || store.stopsInView.length === 0));
   const narrowed = $derived(FILTERS.filter((f) => filterNarrows(f, store.state.filters[f.id])).length);
   const memorialsShown = $derived(
     registry.layers.some((l) => styleFor(l) === STYLES.memorials && store.state.layers.includes(l.id)),
@@ -170,20 +184,20 @@
     >
       <span class="grip" aria-hidden="true"></span>
       <span class="title">{strings.sheet.title}</span>
-      {#if places.length > 0}<span class="count">{strings.sheet.countLabel(places.length)}</span>{/if}
+      {#if items.length > 0}<span class="count">{strings.sheet.countLabel(items.length)}</span>{/if}
       <span class="sr-only">{sheetOpen ? strings.sheet.hide : strings.sheet.show}</span>
     </button>
   </h2>
   <div id="pk-places" class="body" hidden={!sheetOpen}>
-    {#if !lotsShown}
+    {#if !lotsShown && !stopsShown}
       <p>{strings.sheet.noLotsLayer}</p>
     {:else if !nearby}
       <p>{strings.sheet.zoomIn}</p>
-    {:else if detailed.length === 0 && store.parcelsSampled}
+    {:else if lotsShown && detailed.length === 0 && store.parcelsSampled}
       <p role="status">{strings.sheet.finding}</p>
-    {:else if detailed.length === 0}
-      <p>{strings.sheet.nothingHere}</p>
-    {:else if places.length === 0}
+    {:else if empty}
+      <p>{!stopsShown ? strings.sheet.nothingHere : !lotsShown ? strings.sheet.noStopsHere : strings.sheet.nothingHereStops}</p>
+    {:else if items.length === 0}
       <p>{strings.sheet.noneWithSuggestion}</p>
     {:else}
       <p class="muted small order">{fromYou ? strings.sheet.nearestToYou : strings.sheet.nearestToCenter}</p>
@@ -194,11 +208,17 @@
         </p>
       {/if}
       <ul class="cards" aria-label={strings.sheet.title}>
-        {#each places as place (place.id)}
-          <li><PlaceCard {store} {place} lensLabel={lens?.label ?? ''} {fromYou} onShow={() => void closeSheetForMap()} /></li>
+        {#each items as item (item.key)}
+          <li>
+            {#if item.kind === 'place'}
+              <PlaceCard {store} place={item.place} lensLabel={lens?.label ?? ''} {fromYou} onShow={() => void closeSheetForMap()} />
+            {:else}
+              <StopCard {store} stop={item.stop} lensLabel={stopLens?.label ?? ''} {fromYou} onShow={() => void closeSheetForMap()} />
+            {/if}
+          </li>
         {/each}
       </ul>
-      {#if all.length > places.length}
+      {#if all.length > items.length}
         <button class="button quiet small" type="button" onclick={() => (cardCount += CARDS_STEP)}>{strings.sheet.showMore}</button>
       {/if}
     {/if}
@@ -241,7 +261,7 @@
 </Dialog>
 
 <Dialog
-  bind:open={() => store.inspected !== null, (open) => !open && store.inspect(null)}
+  bind:open={() => store.inspected !== null && store.inspectedOpen, (open) => !open && store.inspect(null)}
   title={strings.streets.detailsTitle(store.registry.layers.find((l) => l.id === store.inspected?.layerId)?.style ?? '')}
   id="pk-field-feature"
 >

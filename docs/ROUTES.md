@@ -82,15 +82,26 @@ to Grounded in Philly's sheriff sale guide.
 | Philly Spring Cleanup | Streets and PHS | Register | Free brooms, gloves, bags | Spring | Verified |
 | Parklet | OTIS (Pedestrian Enhancement Permit) | Show community support; insurance | No fee listed | Seasonal, April 1 to November 30; review takes months | Verified |
 | Pedestrian plaza | OTIS | Follow City guidelines | Not stated | One year permit, renewable to three | Verified |
-| Street tree | Parks and Recreation (TreePhilly) | Request | Free if the City plants | Next planting season | Verified |
+| Street tree | Parks and Recreation's Street Tree Management Division (TreePhilly), StreetTree.Info@phila.gov, 215-685-4363 | The owner of the property in front of which the tree goes asks, online, by email or by phone; a City arborist visits and picks the tree | Free: the City plants it and waters and mulches it the first year | Planting seasons mid April to mid June and mid October to mid November | Verified 2026-10-05 (phila.gov "Get a street tree", treephilly.org) |
 | Bike rack | Streets | Application | Not stated | Not stated | Verified |
 | Wall mural | Mural Arts (applications due March 15 and November 15); the Art Commission for anything in the public right of way | Wall owner's permission | Free to apply | Months | Verified |
 | Report a dark streetlight, dumping, open vacant building | Philly311 | None | Free | Days to weeks | Verified |
 | New streetlight | None found. The City's LED conversion does not add lights; a Philadelphia Energy Authority "lighting equity study" may | n/a | n/a | n/a | Gap |
-| Bench on a sidewalk | No permit path found | n/a | n/a | n/a | **Confirm with OTIS** |
+| Bench on a sidewalk | No permit path found. At bus stops, benches belong to OTIS's street furniture program (shelters, benches, kiosks and transit head houses, paid for by advertising; OTIS request for information, May 2024), with no public request form: write to otis@phila.gov or call 215-686-9003 | n/a | Free to ask | Not stated | **Confirm with OTIS** (last checked 2026-10-05) |
 | Asphalt art or crosswalk art | No City process found. In July 2025 the US Department of Transportation began urging removal of crosswalk art ("SAFE ROADS"); Florida ordered removals; no Pennsylvania or Philadelphia position found | n/a | n/a | n/a | **Confirm with OTIS**; the site says "check with the City first" |
-| Bus shelter | No resident request path found; shelters are placed under the City's advertising contract | n/a | n/a | n/a | **Confirm with OTIS** |
+| Bus shelter | No resident request path found. OTIS runs the City's bus shelter program under its advertising contract; its May 2024 request for information sets the goal of 40 percent of bus boardings at stops with a shelter (from the Connect plan) and names the busiest 15 percent of stops as candidates. New shelter sites go to the Art Commission (eight new shelters at existing stops in December 2025, not paid for with City funds). Best contact: otis@phila.gov or 215-686-9003, with the stop's SEPTA number and riders; copy the City Council district office, and tell SEPTA through its comment form or at 215-580-7800 | n/a | Free to ask | Not stated | **Confirm with OTIS** (last checked 2026-10-05) |
+| Survey a bus stop (shelter, bench, light) | OpenStreetMap, with the free StreetComplete app (the "Survey bus stops" page) | A free OpenStreetMap account | Free | Answers reach the map within about a week | Verified 2026-10-05 |
 | Roadside memorial or ghost bike | No City or PennDOT rule found; the Bicycle Coalition handles ghost bike requests by form, with the family's blessing as the norm | n/a | n/a | n/a | Verified as community practice |
+
+**Bus and trolley stops (added 2026-10-05 by M2.3).** A stop's page offers five suggestions, each
+with a route in `registry/routes.yaml`: survey the stop (`streetcomplete_survey`), ask for a shelter
+(`bus_shelter_request`) or a bench (`stop_bench_request`), report a dark streetlight (`report_to_311`,
+then `otis_contact` for a stop with no light at all, since the City's streetlight program replaces
+lights but does not add new ones), and plant shade trees (`street_tree_request`, with TreePhilly).
+Where no public request path exists, the route says so and names the office that runs the program.
+SEPTA's customer service page also offers a safety and incident report that goes to the transit
+police; Placekeepers never points there. The OTIS staff contact named in the Art Commission papers
+is not published here; the routes use the office's general address.
 
 **Daylighting.** Pennsylvania law (Title 75, section 3353) already bans parking within 20 feet of a
 crosswalk at an intersection and within 30 feet of a stop sign or signal. Daylighting a corner
@@ -106,7 +117,7 @@ Evidence badges come from [EVIDENCE.md](EVIDENCE.md).
 | Cleanup and mowing only | Less than greening | Same | **Strong** for shootings in the trial | Regular | PHS, Block Captains |
 | Seal an abandoned house (doors and windows) | Owner's or City's cost | Report to 311; L&I clean and seal | **Strong** (violence) | None once sealed | L&I |
 | Community garden | Varies | Garden agreement or license, or owner permission | Builds on greening; no garden specific trial | Volunteer heavy | PHS, NGT, GJLI |
-| Tree planting | Free through TreePhilly | Request | **Mixed** for violence; strong for heat | Water 2 to 3 years | TreePhilly |
+| Tree planting | Free through TreePhilly | Request (a street tree: the owner of the property beside it asks) | **Mixed** for violence; **Mixed** for comfort at bus stops (EVIDENCE.md, "Bus stop comfort"); strong for heat | Water 2 to 3 years (the City waters a street tree the first year) | TreePhilly |
 | Stormwater planter or rain garden | Free for homeowners through Rain Check | Sign up (groups: **confirm**) | **Not about violence** | Occasional | Water Department |
 | Bench (open designs such as Better Block's Wikiblock) | Materials and cutting | Owner permission on a lot; sidewalk permit **to confirm** | **Not about violence** | Refinish yearly | Better Block (designs) |
 | Lighting (porch light campaign) | Near zero | None for your own porch | **Moderate** | Bulbs | Neighbors |

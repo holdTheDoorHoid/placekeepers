@@ -111,6 +111,12 @@ that shows how anyone can help improve the layer's data. The web app links it fr
 layer", and a style may link it from its legend (the shelters and benches layer's "not yet surveyed" entry does).
 The pipeline's registry check fails when the page does not exist.
 
+A choice setting with the option value `lens` (added 2026-10-05 by M2.3) colors the layer's places
+by the lens that applies to them; the other options color them by something else. The stops layer's
+`color` setting is the first (`lens`, `wait` or `boardings`, default `lens`). Using a lens in the web
+app (moving one of its sliders or choosing a preset) turns on the layers that draw its places and
+sets such a setting to `lens`.
+
 `registry/groups.yaml` lists groups in display order: `lots`, `care`, `streets`, `transit` (added
 2026-10-04 by M2.1 for SEPTA's layers; M2.2 adds the shelters and benches at stops to it),
 `amenities`, `public_places` and `conditions` (added 2026-10-05 by M3.5),
@@ -147,8 +153,17 @@ the share of places citywide with a strictly lower count, rounded, so a place wi
 the place with the most gets 100 (such as `f_ksi_vru`). A factor whose data is missing for a place is
 left out of its properties, so the map leaves it out of that place's average.
 
-Each lens colors its own kind of place: the first lens that applies to `parcel` colors the lots and
-the first that applies to `segment` colors the street blocks.
+Each lens colors its own kind of place: the first lens that applies to `parcel` colors the lots,
+the first that applies to `segment` colors the street blocks, and the first that applies to `stop`
+colors SEPTA's bus and trolley stops (`stops` in transit.pmtiles; added 2026-10-05 by M2.3).
+
+One exception to leaving missing data out (added 2026-10-05 by M2.3, the transit comfort lens): a
+stop's shelter or bench that no one has surveyed yet is not missing but 50, halfway between having
+one (0) and not (100), in `f_noshelter` and `f_nobench`. Leaving it out would let a stop known only
+for its heat and its street top the ranking; counting it as missing would score the stop as if it
+had nothing. The web app knows such a value from the stop's own answers (`sh` or `bn` absent, and
+for the shelter `cv` not 1), never calls it the main reason, and marks it "not yet surveyed" in the
+"why" breakdown.
 
 ### `registry/suggestions.yaml`
 
@@ -172,6 +187,11 @@ derive step, keyed by suggestion id). The web app only shows, hides and explains
 carried by `memorials` markers in `sg`. The memorial suggestion (`memorial_or_ghost_bike`) is always
 shown with the line "Only with the family's blessing." and a link to Families for Safe Streets
 (docs/ETHICS.md); the web app adds that line wherever the suggestion is listed.
+
+`applies_to: stop` (added 2026-10-05 by M2.3) marks suggestions for SEPTA's bus and trolley stops;
+they are carried by `stops` in transit.pmtiles in `sg`, in the order the stop lists them. None needs
+a landowner's permission, so the first step is always the first step of the suggestion's first
+route.
 
 Greening suggestions (`clean_and_green` in this release, listed in
 `web/src/config/suggestions.ts`; added 2026-10-04 by M1.10, decision D12 of VERIFICATION.md) are
@@ -232,7 +252,7 @@ data/
     context.pmtiles       layer "h3"        (area cells, resolution 9)
     care.pmtiles          layers "landcare", "gardens"
     boundaries.pmtiles    layers "council_districts", "rcos", "neighborhoods"
-    transit.pmtiles       layers "stops", "routes"   (SEPTA, added 2026-10-04 by M2.1)
+    transit.pmtiles       layers "stops", "routes"   (SEPTA, added 2026-10-04 by M2.1; the transit comfort lens on "stops", M2.3)
     amenities.pmtiles     layers "stops" (shelters and benches at stops, M2.2), "benches",
                           "picnic_tables", "water", "toilets", "bookcases" (M3.5): from OpenStreetMap
     places.pmtiles        layers "park_water", "libraries", "recreation", "pools" (the City's; M3.5)
@@ -524,6 +544,33 @@ start at zoom 12.
 A count matches a stop by its own number, then by a number in its history, then by a stop number no
 longer in the schedules within 30 meters with a similar name; each count goes to one stop at most.
 
+Added 2026-10-05 by M2.3 (the transit comfort lens; the method in plain words is in
+[TRANSIT_METHOD.md](TRANSIT_METHOD.md), the code in `pipeline/src/placekeepers/derive/transit_comfort.py`).
+Bus and trolley stops (`md` bit 1 or 2) also carry these; stations of the subway, the El and
+Regional Rail carry none of them. `o`, `a`, `sh`, `bn`, `li` and `cv` come from OpenStreetMap, so
+the layer lists `osm_philadelphia` among its sources and is credited "© OpenStreetMap contributors",
+and those properties are under the Open Database License, as amenities.pmtiles is.
+
+| Property | Type | Meaning |
+|---|---|---|
+| `o` | string | the OpenStreetMap stop matched to this one, as `id` in amenities.pmtiles (`n` or `w` and the element id); absent when none matched. The match is `match_septa` in `derive/bus_stops.py`, as for the route survey sheets (section 7): by stop number, then by distance, both only within 15 meters, closest pairs first, each stop once |
+| `om` | int | 1 when the stop numbers agree (the OpenStreetMap stop's `ref` or `gtfs:stop_id` names `sid` or a number in `fid`), 2 when the two only stand at the same place |
+| `a` | int | what riders find, the matched stop's `c` in amenities.pmtiles: 3 a shelter or roof, 2 a bench but no shelter mapped, 1 neither, 0 not yet surveyed; absent when no OpenStreetMap stop matched (also not yet surveyed, never "missing") |
+| `sh`, `bn`, `li`, `cv` | int | the matched stop's shelter, bench, lit and covered answers, 1 yes and 0 no; absent when unknown. Lit is `li` here because `lt` is the last departure |
+| `f_riders` | int | lens factor: the share of bus and trolley stops with fewer weekday boardings (`b`); absent without a count |
+| `f_noshelter` | int | 100 when a survey found no shelter, 0 with a shelter or the whole stop under a roof, 50 when not yet surveyed (section 1, lenses) |
+| `f_nobench` | int | 100 when a survey found no bench, 0 with one, 50 when not yet surveyed |
+| `f_shade` | int | the share of stops with more tree canopy (2018) on the land of their H3 cell (resolution 9, water left out); absent without canopy data |
+| `f_heat` | int | the share of stops whose census tract has a lower heat exposure score (`heat_vulnerability`, `hei_score`); absent outside the tracts or without the data |
+| `f_hin` | int | 100 when the stop stands within 30 meters of the High Injury Network, else 0 |
+| `f_wait` | int | the share of stops with a shorter midday weekday wait (`hm`); absent without midday service |
+| `cp` | int | percent of the land of the stop's H3 cell under tree canopy in 2018; absent without canopy data |
+| `hin` | int | 1 when the stop is on the High Injury Network; absent otherwise |
+| `sg` | string | suggestion ids, comma separated, in this order: `stop_survey` (shelter or bench not known yet), `stop_shelter_request` (a survey found no shelter, and the stop is not under a roof), `stop_bench_request` (a survey found no bench), `stop_streetlight_report` (OpenStreetMap says the stop is not lit), `stop_shade_trees` (`f_shade` of 75 or more); absent when none |
+
+Every rank is among the bus and trolley stops on the map, as in section 1 (lenses). The build notes
+carry the match counts, the surveyed counts and the count of each suggestion.
+
 **`routes` (transit.pmtiles, lines)**: every SEPTA route with a stop in Philadelphia on the typical
 days, as the lines its trips follow, merged, simplified to about 5 meters and cut to a box around
 the city. Routes whose trips have no shapes in the feed are left out.
@@ -570,8 +617,9 @@ the counts of each `c` inside the city.
 These are OpenStreetMap's stops, not SEPTA's: SEPTA's own stops are `stops` in `transit.pmtiles`
 (above). M2.3 joins the two by SEPTA's stop number first, an OpenStreetMap stop's `ref` (or `gs`)
 against SEPTA's `sid`, then by distance for the stops that do not match by number. The route survey
-sheets (section 7, M2.4) already join them this way, with `match_septa` in
-`pipeline/src/placekeepers/derive/bus_stops.py`, which M2.3 can reuse.
+sheets (section 7, M2.4) and SEPTA's stops on the map (`o` and `om` there, M2.3) both join them
+with `match_septa` in `pipeline/src/placekeepers/derive/bus_stops.py`, so a stop's sheet and its
+details on the map always describe the same OpenStreetMap stop.
 
 Added 2026-10-05 by M3.5, five more layers of `amenities.pmtiles`, one per OpenStreetMap tag, every
 element inside the city limits with that tag that is not closed to the public (`access` no or

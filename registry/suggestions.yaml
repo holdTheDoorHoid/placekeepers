@@ -73,3 +73,73 @@
   partners: [feet_first]
   default_on: true
   release: v0.1
+# Bus and trolley stops (M2.3). Which stops get which is decided in
+# pipeline/src/placekeepers/derive/transit_comfort.py; a stop lists them in this order.
+- id: stop_survey
+  label: Survey this stop with StreetComplete
+  applies_to: stop
+  summary: >-
+    No one has recorded yet whether this stop has a shelter or a bench. Anyone can find out in a
+    few minutes with the free StreetComplete phone app, and the answers reach this map within about
+    a week. If the app has no question here, the stop is not in OpenStreetMap yet: add it with the
+    app's Things overlay, or leave a note.
+  evidence: context
+  cost: Free; about three minutes a stop
+  routes: [streetcomplete_survey]
+  partners: []
+  default_on: true
+  release: v0.2
+- id: stop_shelter_request
+  label: Ask the City for a shelter at this stop
+  applies_to: stop
+  summary: >-
+    A survey found no shelter here. The City's bus shelter program, run by its transportation
+    office (OTIS), builds shelters paid for by the advertising on them and aims to put them at the
+    busiest 15 percent of bus stops. There is no public request form, so write to OTIS with the
+    stop's number and how many people get on here.
+  evidence: weak
+  cost: Free to ask
+  routes: [bus_shelter_request]
+  partners: []
+  default_on: true
+  release: v0.2
+- id: stop_bench_request
+  label: Ask the City for a bench at this stop
+  applies_to: stop
+  summary: >-
+    A survey found no bench here. Benches at stops belong to the City's street furniture program,
+    run by OTIS, and we found no public way to request one, so write to OTIS with the stop's
+    number. A bench you build yourself needs permission, and the City's permit path for a bench on
+    a sidewalk is not yet confirmed.
+  evidence: weak
+  cost: Free to ask
+  routes: [stop_bench_request]
+  partners: []
+  default_on: true
+  release: v0.2
+- id: stop_streetlight_report
+  label: Report a dark streetlight at this stop
+  applies_to: stop
+  summary: >-
+    OpenStreetMap says this stop is not lit. If a streetlight here is out, report it to Philly311.
+    The City's current streetlight program replaces lights but does not add new ones, so a stop
+    with no light at all is a question for OTIS.
+  evidence: moderate
+  cost: Free to report
+  routes: [report_to_311, otis_contact]
+  partners: []
+  default_on: true
+  release: v0.2
+- id: stop_shade_trees
+  label: Plant shade trees by this stop
+  applies_to: stop
+  summary: >-
+    Few trees shade this stop. The City plants free street trees in the sidewalk in front of a home
+    or business when its owner asks, and waters them the first year. Ask the owners of the
+    buildings beside the stop to request one; neighbors can help water it after that.
+  evidence: mixed
+  cost: Free street trees for property owners
+  routes: [street_tree_request]
+  partners: [treephilly]
+  default_on: true
+  release: v0.2
