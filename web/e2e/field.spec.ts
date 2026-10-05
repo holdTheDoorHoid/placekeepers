@@ -76,6 +76,10 @@ test.describe('field view', () => {
 
     await page.getByRole('button', { name: 'Stop using my location' }).click();
     await expect(page.getByRole('button', { name: 'Near me' })).toBeVisible();
+    // The map still shows where the person was, so links leave it out until they move the map.
+    await page.waitForTimeout(500);
+    expect((await hashParams(page)).has('m')).toBe(false);
+    await page.getByRole('button', { name: 'Zoom out' }).click();
     await expect.poll(async () => (await hashParams(page)).has('m')).toBe(true);
   });
 

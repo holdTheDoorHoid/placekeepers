@@ -18,7 +18,7 @@
 
   async function share() {
     // While the person's location is in use, the map position would show where they are.
-    const located = store.userLocation !== null;
+    const located = store.mapPrivate;
     const url = `${location.origin}${location.pathname}#${encodeState(store.registry, $state.snapshot(store.state), { includeMap: !located })}`;
     try {
       await navigator.clipboard.writeText(url);

@@ -62,7 +62,8 @@ export interface InspectTarget {
 }
 
 export interface MapEvents {
-  move(position: MapPosition): void;
+  /** The map moved; `byPerson` when someone dragged, zoomed or turned it themselves. */
+  move(position: MapPosition, byPerson: boolean): void;
   /** A tap on a parcel of the lots layer, with where it was tapped. */
   select(id: string | null, properties: Record<string, unknown> | null, lngLat?: [number, number]): void;
   /** A tap that hit nothing on the data layers: the app may look up the parcel there. */
@@ -210,7 +211,7 @@ export class MapController {
       this.sync();
       this.drawPickedShape();
     });
-    this.map.on('moveend', () => this.events.move(this.position()));
+    this.map.on('moveend', (e) => this.events.move(this.position(), 'originalEvent' in e && !!e.originalEvent));
     this.map.on('idle', () => {
       if (this.loaded && !this.readyFired) {
         this.readyFired = true;

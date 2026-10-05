@@ -108,9 +108,10 @@ As built (M1.7, 2026-10-04):
   its cost, and the first legal step. Tapping a card opens the lot page; "Show on map" and "Save to
   my list" sit beside it. Changed from the first plan, which listed the top places under the lens:
   standing on the block, the nearest place is the useful one, and the analysis view ranks by lens.
-- **Near me** keeps the location on the phone: it is never saved or sent, and while it is in use
-  the address bar and copied links leave out where the map is, because that would show where the
-  person stands. "Stop using my location" ends it.
+- **Near me** keeps the location on the phone: it is never saved or sent, and from the moment it is
+  used the address bar and copied links leave out where the map is, because that would show where
+  the person stands. "Stop using my location" ends it, and the map position returns to links once
+  the person moves the map themselves.
 - **Filters** (analysis view) are chips kept in the link: how sure we are and lot or building (the
   lots layer's own settings, so each has one control), owner type, already in LandCare, and the
   first step to get permission (5.4). Choosing chips shows only those; choosing none shows

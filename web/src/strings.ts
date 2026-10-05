@@ -79,7 +79,7 @@ export const strings = {
     settings: 'Settings',
     share: 'Copy link',
     shareDone: 'Link copied. Anyone who opens it sees this same map.',
-    shareDoneNoMap: 'Link copied. It leaves out where the map is, because your location is in use.',
+    shareDoneNoMap: 'Link copied. It leaves out where the map is, because the map is showing where you are.',
     shareFailed: 'Could not copy the link. Copy the address from your browser instead.',
     dataStatus: 'Data status',
   },
@@ -132,7 +132,7 @@ export const strings = {
     youAreHere: 'You are here',
     stopLocation: 'Stop using my location',
     locationInUse:
-      'Using your location. It stays on this device, and while it is in use, links leave out where the map is.',
+      'Using your location. It stays on this device, and links leave out where the map is until you move the map yourself.',
     myLists: 'My lists',
     listsTitle: 'Saved lists',
     chipsLabel: 'Main layers',

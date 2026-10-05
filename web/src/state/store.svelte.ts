@@ -78,6 +78,11 @@ export class AppStore {
    * sent anywhere, and while it is set, links leave out the map position (it would show where they are).
    */
   userLocation = $state.raw<[number, number] | null>(null);
+  /**
+   * True while the map shows where the person is: from "Near me" until they stop using their
+   * location and then move the map themselves. Meanwhile links leave out the map position.
+   */
+  mapPrivate = $state(false);
   /** Addresses for the places in cards, lists and the plot, from the dossier shards. */
   readonly addresses: AddressBook;
   /** Saved lists, kept only in this browser. */
@@ -244,8 +249,16 @@ export class AppStore {
     this.touch();
   }
 
-  setMap(position: MapPosition): void {
+  setMap(position: MapPosition, byPerson = false): void {
     this.state.map = position;
+    if (byPerson && !this.userLocation) this.mapPrivate = false;
+  }
+
+  /** Uses the person's location for "near me", or stops using it (null). */
+  setUserLocation(at: [number, number] | null): void {
+    this.userLocation = at;
+    // The map stays centered on where they were until they move it, so it stays out of links.
+    if (at) this.mapPrivate = true;
   }
 
   /**

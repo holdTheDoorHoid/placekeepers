@@ -24,7 +24,7 @@
   let hashTimer: ReturnType<typeof setTimeout> | undefined;
   $effect(() => {
     // While the person's location is in use, the map position would show where they are.
-    const text = encodeState(store.registry, $state.snapshot(store.state), { includeMap: !store.userLocation });
+    const text = encodeState(store.registry, $state.snapshot(store.state), { includeMap: !store.mapPrivate });
     clearTimeout(hashTimer);
     hashTimer = setTimeout(() => {
       if (text === lastHash) return;

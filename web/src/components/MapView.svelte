@@ -53,7 +53,7 @@
         state: $state.snapshot(store.state),
         manifest: store.manifest,
         events: {
-          move: (position) => store.setMap(position),
+          move: (position, byPerson) => store.setMap(position, byPerson),
           select: (id, properties, lngLat) => store.select(id, properties, { center: lngLat ?? null }),
           pick: (lngLat) => void store.pickAt(lngLat),
           inspect: (target) => store.inspect(target),
@@ -132,7 +132,7 @@
         class="button quiet small"
         type="button"
         onclick={() => {
-          store.userLocation = null;
+          store.setUserLocation(null);
           store.controller?.hideUserLocation();
         }}>{strings.field.stopLocation}</button
       >

@@ -73,7 +73,7 @@
           store.say(strings.field.nearMeOutside);
           return;
         }
-        store.userLocation = [lng, lat];
+        store.setUserLocation([lng, lat]);
         store.controller?.showUserLocation(lng, lat);
         cardCount = CARDS_STEP;
         sheetOpen = true;
@@ -87,7 +87,7 @@
   }
 
   function stopLocation() {
-    store.userLocation = null;
+    store.setUserLocation(null);
     store.controller?.hideUserLocation();
   }
 </script>
