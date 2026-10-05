@@ -11,6 +11,9 @@
 - id: transit
   label: Buses and trains
   description: SEPTA stops and routes, how often service comes, how many people get on, and which stops have a shelter or a bench.
+- id: heat
+  label: Heat, trees and flooding
+  description: How hard summer heat hits each neighborhood, the trees the City keeps on its streets and in its parks, and where FEMA expects flooding.
 - id: safety_context
   label: Where care is needed most
   description: Context that shows where improvements are likely to help most.

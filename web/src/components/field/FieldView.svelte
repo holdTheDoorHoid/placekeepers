@@ -43,7 +43,7 @@
   let cardCount = $state(CARDS_STEP);
 
   const registry = $derived(store.registry);
-  const lens = $derived(parcelLensOf(registry));
+  const lens = $derived(parcelLensOf(registry, store.state));
   const stopLens = $derived(stopLensOf(registry));
   const chips = $derived(
     FIELD_CHIPS.map((chip) => {

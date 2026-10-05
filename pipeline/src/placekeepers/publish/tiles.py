@@ -132,6 +132,26 @@ TILE_OPTIONS: dict[str, list[str]] = {
         "--no-feature-limit",
         "--no-tile-size-limit",
     ],
+    # Heat vulnerability by census tract and the floodplain (M3.1): a few hundred polygons each,
+    # simplified at low zooms like the boundaries and detailed enough at zoom 14 for the map to
+    # stretch.
+    "tiles/environment.pmtiles": [
+        "--minimum-zoom=8",
+        "--maximum-zoom=14",
+        "--no-feature-limit",
+        "--no-tile-size-limit",
+        "--detect-shared-borders",
+    ],
+    # The City's trees (M3.1): about 150,000 points, shown only close in, so the file holds them
+    # from zoom 14 (a few blocks across) and the map stretches zoom 14 further in. Every tree is
+    # kept.
+    "tiles/trees.pmtiles": [
+        "--minimum-zoom=14",
+        "--maximum-zoom=14",
+        "--base-zoom=14",
+        "--no-feature-limit",
+        "--no-tile-size-limit",
+    ],
     # Boundaries are few, large shapes: simplified at low zooms, borders kept shared, and
     # detailed enough at zoom 14 to be stretched further by the map.
     "tiles/boundaries.pmtiles": [

@@ -524,6 +524,7 @@ export const strings = {
 
   legend: {
     parcelsFill: 'Fill color: priority under your lens blend',
+    parcelsFillLens: (lens: string) => `Fill color: priority under the ${lens.toLowerCase()} lens`,
     parcelsSure: 'Outline: how sure we are that it is vacant',
     sureHigh: 'Very likely vacant',
     sureMedium: 'Probably vacant',
@@ -582,7 +583,9 @@ export const strings = {
                 ? 'Route'
                 : style === 'stop_amenities'
                   ? 'Shelter and bench'
-                  : 'Details',
+                  : style === 'city_trees'
+                    ? 'Tree'
+                    : 'Details',
     memorialTitle: 'In memory',
     peopleHere: (n: number) => `${plural(n, 'person is', 'people are')} remembered here`,
     killed: {
@@ -760,6 +763,41 @@ export const strings = {
     openOsm: 'See this stop on OpenStreetMap',
     surveyRoute: 'Survey a whole route with a printable sheet',
     source: 'From OpenStreetMap, © OpenStreetMap contributors, updated every week.',
+  },
+
+  // Heat, trees and the floodplain (M3.1): the legends of src/map/styles/heat_tracts.ts,
+  // city_trees.ts and floodplain.ts, and a tree someone tapped
+  // (src/components/heat/TreeDetails.svelte).
+  heat: {
+    tractsTitle: {
+      vulnerability: 'Heat vulnerability: the heat and the people at risk, by census tract',
+      exposure: 'Heat exposure: how hot each census tract gets in summer',
+      sensitivity: 'Heat sensitivity: how many people in each census tract are at risk in the heat',
+    } as Record<string, string>,
+    fifths: {
+      vulnerability: ['Least vulnerable fifth of tracts', 'Less vulnerable', 'Middle fifth', 'More vulnerable', 'Most vulnerable fifth'],
+      exposure: ['Coolest fifth of tracts', 'Cooler', 'Middle fifth', 'Hotter', 'Hottest fifth'],
+      sensitivity: ['Fifth with the fewest people at risk', 'Fewer', 'Middle fifth', 'More', 'Fifth with the most people at risk'],
+    } as Record<string, string[]>,
+    priority: 'Outlined: tracts the City rates very high in heat vulnerability',
+    tractsNone: 'Tracts the index does not report, such as large parks and the airport, are left clear.',
+    tractsSource:
+      "From the City's Heat Vulnerability Index (Department of Public Health and Office of Sustainability), data of 2017 to 2019.",
+    treeBig: 'A City tree: the bigger the dot, the wider its trunk',
+    treeSmall: 'A small tree, often a young one that needs watering',
+    treesZoom: 'Zoom in to a few blocks to see the trees.',
+    treesYards: "Trees in private yards are not in the City's inventory, so a block can be shadier than it looks here.",
+    floodHigh: 'The 1 percent annual chance floodplain: a flood has at least a 1 in 100 chance each year',
+    floodway: 'The floodway: the channel kept open so floods can pass',
+    floodModerate: 'The 0.2 percent annual chance area: a 1 in 500 chance each year',
+    floodCare:
+      "A reason for care, never part of a score: plants there must stand wet ground, and anything built follows the City's floodplain rules.",
+    treeUnnamed: 'A tree the inventory does not name',
+    treeTrunk: (inches: number) => `Its trunk is about ${formatNumber(inches)} inches across at chest height.`,
+    treeNoTrunk: 'The inventory does not give the size of its trunk.',
+    treeYoung: 'A young tree needs about 20 gallons of water a week from March through December, TreePhilly says.',
+    treesHere: (n: number) => `${plural(n, 'tree', 'trees')} at this spot`,
+    treeSource: "From Parks and Recreation's tree inventory, the trees the City keeps on its streets and in its parks.",
   },
 
   // The route survey sheet page (M2.4, web/survey/, src/survey/). Times are our own estimate and
@@ -1057,6 +1095,17 @@ export const strings = {
       landcare: 'Already maintained by PHS LandCare.',
       landcareSince: (year: number) => `Already maintained by PHS LandCare since ${year}.`,
       garden: 'People already garden here. Ask them before you plan anything.',
+      /** The lens behind the score on the lot page (M3.1: the lots can be colored by either lens). */
+      lensLine: (lens: string) => `Priority under the ${lens.toLowerCase()} lens, the lens the map colors the lots by.`,
+      /**
+       * FEMA's floodplain on the lot (`fp`, M3.1): a reason for care, never part of a score
+       * (docs/DESIGN.md section 5.3).
+       */
+      flood: {
+        1: "Part of this lot lies in FEMA's 1 percent annual chance floodplain, where a flood has at least a 1 in 100 chance each year. That is a reason for care, not part of any score: plants here must stand wet ground, anything built must follow the City's floodplain rules, and greening that soaks up rain helps.",
+        2: "Part of this lot lies in FEMA's 0.2 percent annual chance flood area, where a flood has a 1 in 500 chance each year. That is a reason for care, not part of any score: plants here should stand wet ground, and greening that soaks up rain helps.",
+      } as Record<number, string>,
+      floodTitle: 'Flood risk',
       linksTitle: 'See it on other sites',
       propertyPage: 'The City\'s property page',
       atlas: 'Atlas, the City\'s map of this address',

@@ -55,6 +55,72 @@
       label: Vacancy only
       weights: {untreated_vacancy: 1, shootings_nearby: 0, poverty: 0, canopy_gap: 0}
   release: v0.1
+# The heat and shade lens (M3.1): where planting trees or greening a vacant lot would cool people
+# most. The pipeline computes f_heatvul, f_strees and f_people (placekeepers.derive.heat);
+# f_canopy is the violence lens's measure, computed once. The floodplain appears beside the score,
+# never in it (docs/DESIGN.md section 5.3). Evidence badges follow docs/EVIDENCE.md, "Trees and
+# heat".
+- id: heat
+  label: Heat and shade
+  applies_to: parcel
+  description: >-
+    Where planting trees or greening a vacant lot would cool people most: lots in neighborhoods
+    where summer heat hits people hardest, with little shade around them, and many people to feel
+    the difference.
+  factors:
+    - id: heat_vulnerability
+      label: Neighborhood heat vulnerability
+      field: f_heatvul
+      evidence: context
+      default_weight: 3
+      explain: >-
+        How hard summer heat hits the people of the lot's census tract, from the City's Heat
+        Vulnerability Index (Department of Public Health and Office of Sustainability, data of
+        2017 to 2019): how hot the tract gets on summer days, as satellites measure it, together
+        with how many of the people living there are more at risk in the heat, by age, health,
+        income and more. The rank is the share of places on the map in tracts with a lower score.
+    - id: few_trees
+      label: Few trees nearby
+      field: f_canopy
+      evidence: mixed
+      default_weight: 3
+      explain: >-
+        Tree canopy on the land within about a quarter mile, from the City's 2018 tree canopy
+        survey, the same measure the violence lens uses. The rank is the share of places on the
+        map with more trees around them, so fewer trees rank higher. Trees cool streets with their
+        shade and the water their leaves give off. Studies agree they cool by day, most where
+        canopy covers more than about 40 percent of a block, and less at night.
+    - id: few_street_trees
+      label: Few City trees on the block
+      field: f_strees
+      evidence: mixed
+      default_weight: 2
+      explain: >-
+        Trees within 100 meters of the lot in Parks and Recreation's 2025 tree inventory, the
+        trees the City keeps on its streets and in its parks, not trees in private yards. The rank
+        is the share of places on the map with more of these trees around them, so fewer trees
+        rank higher. Street trees shade the sidewalks people walk and wait on.
+    - id: people_nearby
+      label: People this would reach
+      field: f_people
+      evidence: context
+      default_weight: 1
+      explain: >-
+        Residents per square kilometer of land in the lot's census tract (Census Bureau survey,
+        2020 to 2024). The rank is the share of places on the map in tracts with fewer people.
+        More people would feel the cooling. Population only counts who an improvement would
+        reach; it is never a measure of need on its own.
+  presets:
+    - id: balanced
+      label: Balanced
+      weights: {heat_vulnerability: 3, few_trees: 3, few_street_trees: 2, people_nearby: 1}
+    - id: people_at_risk
+      label: People most at risk
+      weights: {heat_vulnerability: 5, few_trees: 2, few_street_trees: 1, people_nearby: 2}
+    - id: fewest_trees
+      label: Fewest trees
+      weights: {heat_vulnerability: 0, few_trees: 3, few_street_trees: 3, people_nearby: 0}
+  release: v0.3
 - id: street_safety
   label: Street safety
   applies_to: segment

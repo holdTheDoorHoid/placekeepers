@@ -326,3 +326,21 @@ def derive_lenses(ctx: Context, as_of: date | None = None) -> StepResult:
     missing = ", ".join(result.missing_sources)
     detail = f"{result.parcels:,} parcels" + (f"; without {missing}" if missing else "")
     return StepResult("lenses", "derive", "ok", detail, time.monotonic() - started)
+
+
+def derive_heat(ctx: Context, as_of: date | None = None) -> StepResult:
+    """Compute the heat and shade lens factors for the vacancy model's parcels (M3.1). A failure
+    is reported, never raised: the map then shows the parcels without heat scores."""
+    from placekeepers.derive import heat
+
+    started = time.monotonic()
+    try:
+        result = heat.run(ctx, as_of)
+    except Exception as exc:  # the map must still publish
+        message = f"The heat lens factors could not be computed: {plain_error(exc)}"
+        log.error("derive: %s", message)
+        log.debug("derive: details", exc_info=True)
+        return StepResult("heat", "derive", "failed", message, time.monotonic() - started)
+    missing = ", ".join(result.missing_sources)
+    detail = f"{result.parcels:,} parcels" + (f"; without {missing}" if missing else "")
+    return StepResult("heat", "derive", "ok", detail, time.monotonic() - started)

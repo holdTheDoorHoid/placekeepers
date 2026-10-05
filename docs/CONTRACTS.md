@@ -117,8 +117,15 @@ by the lens that applies to them; the other options color them by something else
 app (moving one of its sliders or choosing a preset) turns on the layers that draw its places and
 sets such a setting to `lens`.
 
+When more than one lens ranks a layer's places, the setting's option values are those lenses' ids
+instead (added 2026-10-05 by M3.1): the lots layer's `lens` setting ("Color lots by", `violence` or
+`heat`, default `violence`) names the lens that colors the lots, and using a lens sets it to that
+lens's id. Its options must name every lens that applies to `parcel` and nothing else (a web test
+checks it).
+
 `registry/groups.yaml` lists groups in display order: `lots`, `care`, `streets`, `transit` (added
-2026-10-04 by M2.1 for SEPTA's layers; M2.2 adds the shelters and benches at stops to it),
+2026-10-04 by M2.1 for SEPTA's layers; M2.2 adds the shelters and benches at stops to it), `heat`
+(added 2026-10-05 by M3.1 for heat vulnerability, the City's trees and the floodplain),
 `safety_context`, `boundaries`, `basemap`, each with a label and a one line
 description.
 
@@ -154,7 +161,11 @@ left out of its properties, so the map leaves it out of that place's average.
 
 Each lens colors its own kind of place: the first lens that applies to `parcel` colors the lots,
 the first that applies to `segment` colors the street blocks, and the first that applies to `stop`
-colors SEPTA's bus and trolley stops (`stops` in transit.pmtiles; added 2026-10-05 by M2.3).
+colors SEPTA's bus and trolley stops (`stops` in transit.pmtiles; added 2026-10-05 by M2.3). Two
+lenses apply to `parcel` from M3.1 (violence reduction and heat and shade): the lots layer's `lens`
+setting chooses which one colors the lots (section 1, layers), the first by default. A factor field
+may appear in more than one lens: the heat and shade lens lists the violence lens's `f_canopy`,
+computed once.
 
 One exception to leaving missing data out (added 2026-10-05 by M2.3, the transit comfort lens): a
 stop's shelter or bench that no one has surveyed yet is not missing but 50, halfway between having
@@ -253,6 +264,8 @@ data/
     boundaries.pmtiles    layers "council_districts", "rcos", "neighborhoods"
     transit.pmtiles       layers "stops", "routes"   (SEPTA, added 2026-10-04 by M2.1; the transit comfort lens on "stops", M2.3)
     amenities.pmtiles     layer "stops"     (shelters and benches at stops, from OpenStreetMap; M2.2)
+    environment.pmtiles   layers "heat_tracts", "floodplain"   (heat vulnerability and FEMA's floodplain; M3.1)
+    trees.pmtiles         layer "trees"     (the City's street and park trees, zoom 14 only; M3.1)
   tables/
     parcels.json          compact columnar table for ranking and lists
     owners.json           organizations holding many vacant parcels, with their parcels (section 6)
@@ -446,8 +459,49 @@ layer:
 The parcel's place is a point on its shape (`point_on_surface`). A parcel's factors are left out of
 its properties when their data is missing, as for every factor.
 
+The heat and shade lens factors and the floodplain note (added 2026-10-05 by M3.1, computed by `pk
+derive` after the violence lens in `placekeepers.derive.heat`), each factor an integer from 0 to
+100 ranked among the parcels in this layer. The lens also lists `f_canopy` above, computed once:
+
+| Property | Meaning |
+|---|---|
+| `f_heatvul` | the heat vulnerability score (`hvi_score`) of the 2010 census tract of the City's Heat Vulnerability Index the parcel's point lies in (`heat_vulnerability`); the share of parcels in tracts with a strictly lower score. Absent outside the index's tracts and in the few tracts it does not report (large parks, the airport) |
+| `f_strees` | the trees of Parks and Recreation's tree inventory (`street_trees`) within 100 meters of any part of the parcel (measured in UTM zone 18 north); the share of parcels with strictly more, so fewer trees rank higher |
+| `f_people` | residents per square kilometer of land in the parcel's 2020 census tract: the American Community Survey's population for poverty status (`acs_poverty`, B17001) over the tract's land area (`aland` of `census_tracts_2020`); the share of parcels in tracts with strictly fewer. Absent outside every tract, or where the survey has no estimate or the tract no land |
+| `fp` | the floodplain, beside the score and never in it: 1 when at least a tenth of the parcel lies in FEMA's 1 percent annual chance floodplain (zones A and AE, with the floodway), 2 when at least a tenth lies in that and the 0.2 percent annual chance area together (a parcel with no shape counts by its point); absent otherwise (`fema_floodplain`) |
+
+From M3.1 `sg` may also hold the heat and shade suggestions, after the first ones, for vacant lots
+only: `plant_shade_trees` where `f_canopy` is at least 50 (or, for a parcel with no canopy rank,
+`f_strees`), and `cool_green_lot` where `f_heatvul` is at least 50. The lot's dossier lists the
+same suggestions in the same order (`suggestions`, section 6). The rule is `suggestions_for` in
+`derive/heat.py`.
+
 **`h3` (context.pmtiles)**: `h` (cell id), `s12` and `s36` (shooting victim counts), `f_*` (factor
 percentiles for cell level factors such as `f_poverty`).
+
+Added 2026-10-05 by M3.1 (heat, trees and the floodplain; `pipeline/src/placekeepers/publish/environment.py`):
+
+**`heat_tracts` (environment.pmtiles, polygons)**: one feature per 2010 census tract of the City's
+Heat Vulnerability Index (`heat_vulnerability`). `id` (the tract's `geoid10`); `hv`, `he` and `hs`,
+the tract's class from 1 to 5 for heat vulnerability, heat exposure and heat sensitivity: the
+fifth of the scored tracts it falls in by the share of tracts with a strictly lower score (1 the
+least, 5 the most), each absent where the index gives no score; and `vh`, 1 where the City rates
+the tract very high in heat vulnerability (its `n_veryhigh`, which the City's own heat
+vulnerability map calls its priority areas), absent otherwise.
+
+**`floodplain` (environment.pmtiles, polygons)**: FEMA's flood areas as the City publishes them
+(`fema_floodplain`). `z` 1 for the 1 percent annual chance floodplain (zones A and AE, `sfha_tf`
+T) and 2 for the 0.2 percent annual chance area; `fw` 1 on the floodway (the AE subtype
+FLOODWAY), absent otherwise. The rest of the city (FEMA's area of minimal flood hazard) and open
+water are not published.
+
+**`trees` (trees.pmtiles, points, zoom 14 only)**: every tree of Parks and Recreation's newest
+yearly tree inventory (`street_trees`): the trees the City keeps on its streets and in its parks,
+not trees in private yards. `sp`, the common name, title cased from the part of the inventory's
+tree name that follows the genus and species, with the inventory's "OTHER" (species not recorded)
+dropped, such as "Red Maple" or "Cherry"; absent for a tree the inventory does not name. `d`, the trunk diameter at
+chest height in whole inches, from 1 to 80; absent when unknown or out of that range. Nothing else
+about a tree is published.
 
 **`hin` (streets.pmtiles)**: `id`, `name` (street name), `len` (feet).
 
@@ -827,7 +881,8 @@ medium confidence: a parcel we are not sure about may be someone's home. It neve
 parcel with a homestead exemption (OPA's `homestead_exemption` above 0), at any confidence: the
 City's own record that someone lives there, or did (added 2026-10-04, docs/VERIFICATION.md D1).
 **`suggestions`**: registry suggestion ids (a vacant lot gets `clean_and_green`, a vacant building
-`seal_abandoned_building`).
+`seal_abandoned_building`; from M3.1 a vacant lot may also get `plant_shade_trees` and
+`cool_green_lot`, exactly as its `sg` in the lots layer, section 4).
 
 **Also, when they apply**: `landcare` (`program`: `landcare`, `community_landcare`, `land_bank`,
 `phdc` or `other`, and `year` joined when known) for a lot PHS LandCare maintains; `garden: true`
