@@ -1,6 +1,7 @@
 // Shared steps for the end to end tests: open the site on the sample data with nothing leaving the
 // machine, wait for the map, and find things on the drawn map by their color.
 
+import AxeBuilder from '@axe-core/playwright';
 import { expect, type Page, type TestInfo } from '@playwright/test';
 import { inflateSync } from 'node:zlib';
 
@@ -28,6 +29,21 @@ export async function openMap(page: Page, hash: string): Promise<void> {
   await page.route('**/data/basemap/**', (route) => route.abort());
   await page.goto(`./#${hash}`);
   await expect(page.locator('[data-map-ready="true"]')).toBeAttached({ timeout: 60_000 });
+}
+
+/** The axe rule sets checked: WCAG 2.0, 2.1 and 2.2 at levels A and AA, and axe's best practices. */
+export const AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22a', 'wcag22aa', 'best-practice'];
+
+/**
+ * Checks the page as it is now with axe and fails with every problem it finds, one line each.
+ * Text drawn on the map canvas cannot be read by axe; the lists stand in for it.
+ */
+export async function expectAccessible(page: Page, what: string): Promise<void> {
+  const results = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
+  const problems = results.violations.flatMap((rule) =>
+    rule.nodes.map((node) => `${rule.id} (${rule.impact}): ${rule.help}. At ${node.target.join(' ')}. ${node.failureSummary ?? ''}`.replace(/\s+/g, ' ')),
+  );
+  expect(problems, `${what}: problems found by axe`).toEqual([]);
 }
 
 /** The parameters in the address bar after "#". */

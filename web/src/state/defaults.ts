@@ -51,9 +51,15 @@ export const PHILLY_BOUNDS: [[number, number], [number, number]] = [
 
 /** Screens narrower than this start in the field view. */
 export const FIELD_VIEW_MAX_WIDTH = 768;
+/** Touch screens shorter than this (a phone turned sideways) start in the field view too. */
+export const FIELD_VIEW_MAX_HEIGHT = 500;
 
-export function autoView(width: number): ViewName {
-  return width < FIELD_VIEW_MAX_WIDTH ? 'field' : 'analysis';
+/**
+ * The view that suits a screen: the field view on phones, held either way up, and the analysis
+ * view on larger screens. A short window on a computer (no touch) keeps the analysis view.
+ */
+export function autoView(width: number, height = Infinity, touch = false): ViewName {
+  return width < FIELD_VIEW_MAX_WIDTH || (touch && height < FIELD_VIEW_MAX_HEIGHT) ? 'field' : 'analysis';
 }
 
 /**

@@ -1,10 +1,11 @@
 <script lang="ts">
   // The field view, phones first: search, "Near me", the three main chips, and a bottom
   // sheet listing what you can do nearby.
+  import { tick } from 'svelte';
   import { FIELD_CHIPS } from '../../config/chips.ts';
   import { FILTERS, filterNarrows } from '../../config/filters.ts';
   import { STYLES, styleFor } from '../../map/styles/index.ts';
-  import { nearestPlaces, parcelLensOf } from '../../places/rank.ts';
+  import { distanceMeters, nearestPlaces, parcelLensOf } from '../../places/rank.ts';
   import { PHILLY_BOUNDS } from '../../state/defaults.ts';
   import type { AppStore } from '../../state/store.svelte.ts';
   import { strings } from '../../strings.ts';
@@ -15,6 +16,7 @@
   import PlaceCard from '../places/PlaceCard.svelte';
   import AddressSearch from '../search/AddressSearch.svelte';
   import FeatureDetails from '../streets/FeatureDetails.svelte';
+  import MemorialList from '../streets/MemorialList.svelte';
 
   let { store }: { store: AppStore } = $props();
 
@@ -23,6 +25,8 @@
   /** Cards shown at first, and added by "Show more places", up to MAX_CARDS. */
   const CARDS_STEP = 5;
   const MAX_CARDS = 25;
+  /** Memorials listed under the cards, nearest first. */
+  const MAX_MEMORIALS = 10;
 
   let layersOpen = $state(false);
   let listsOpen = $state(false);
@@ -52,6 +56,25 @@
   const all = $derived(nearby ? nearestPlaces(registry, store.state, store.parcelsInView, anchor, MAX_CARDS) : []);
   const places = $derived(all.slice(0, cardCount));
   const narrowed = $derived(FILTERS.filter((f) => filterNarrows(f, store.state.filters[f.id])).length);
+  const memorialsShown = $derived(
+    registry.layers.some((l) => styleFor(l) === STYLES.memorials && store.state.layers.includes(l.id)),
+  );
+  /** The memorials drawn on the map, nearest first: the way to reach them without the map. */
+  const memorials = $derived(
+    nearby && memorialsShown
+      ? [...store.memorialsInView].sort((a, b) => distanceMeters(anchor, a.lngLat) - distanceMeters(anchor, b.lngLat))
+      : [],
+  );
+
+  /** The sheet's own button: where keyboard focus goes when the sheet closes under it. */
+  let sheetToggle: HTMLButtonElement | undefined = $state();
+
+  /** Closes the sheet to show the map, keeping keyboard focus on the sheet's button. */
+  async function closeSheetForMap() {
+    sheetOpen = false;
+    await tick();
+    sheetToggle?.focus();
+  }
 
   // Addresses come from the lot dossiers, for the cards on show.
   $effect(() => {
@@ -95,16 +118,20 @@
 <div class="field-controls">
   <div class="row">
     <AddressSearch {store} idPrefix="pk-field" />
+    <!-- Near me stays here while the location is in use (it finds the person again); stopping sits
+         beside the note below, so the search box keeps its width on a phone. -->
+    <button class="button small primary near-me" type="button" onclick={nearMe} disabled={locating} aria-describedby="pk-near-me-note">
+      {locating ? strings.field.nearMeBusy : strings.field.nearMe}
+    </button>
+    <span id="pk-near-me-note" class="sr-only">{strings.field.nearMePrivacy}</span>
+  </div>
+  <div class="location" class:in-use={store.userLocation !== null}>
+    <!-- Always in place, so screen readers announce the note when Near me fills it. -->
+    <p class="location-note small" role="status">{store.userLocation ? strings.field.locationInUse : ''}</p>
     {#if store.userLocation}
-      <button class="button small near-me" type="button" onclick={stopLocation}>{strings.field.stopLocation}</button>
-    {:else}
-      <button class="button small primary near-me" type="button" onclick={nearMe} disabled={locating} aria-describedby="pk-near-me-note">
-        {locating ? strings.field.nearMeBusy : strings.field.nearMe}
-      </button>
-      <span id="pk-near-me-note" class="sr-only">{strings.field.nearMePrivacy}</span>
+      <button class="button quiet small stop" type="button" aria-label={strings.field.stopLocation} onclick={stopLocation}>{strings.field.stop}</button>
     {/if}
   </div>
-  {#if store.userLocation}<p class="location-note small" role="status">{strings.field.locationInUse}</p>{/if}
   <div class="chips" role="group" aria-label={strings.field.chipsLabel}>
     {#each chips as chip (chip.id)}
       {#if chip.layers.length > 0}
@@ -124,7 +151,14 @@
 
 <section class="sheet" class:open={sheetOpen} id="places-section" tabindex="-1" aria-labelledby="pk-sheet-title" data-map-cover>
   <h2 id="pk-sheet-title">
-    <button type="button" class="sheet-toggle" aria-expanded={sheetOpen} aria-controls="pk-places" onclick={() => (sheetOpen = !sheetOpen)}>
+    <button
+      type="button"
+      class="sheet-toggle"
+      bind:this={sheetToggle}
+      aria-expanded={sheetOpen}
+      aria-controls="pk-places"
+      onclick={() => (sheetOpen = !sheetOpen)}
+    >
       <span class="grip" aria-hidden="true"></span>
       <span class="title">{strings.sheet.title}</span>
       {#if places.length > 0}<span class="count">{strings.sheet.countLabel(places.length)}</span>{/if}
@@ -148,14 +182,24 @@
           <button class="button quiet small" type="button" onclick={() => store.clearFilters()}>{strings.filters.clear}</button>
         </p>
       {/if}
-      <div class="cards">
+      <ul class="cards" aria-label={strings.sheet.title}>
         {#each places as place (place.id)}
-          <PlaceCard {store} {place} lensLabel={lens?.label ?? ''} {fromYou} onShow={() => (sheetOpen = false)} />
+          <li><PlaceCard {store} {place} lensLabel={lens?.label ?? ''} {fromYou} onShow={() => void closeSheetForMap()} /></li>
         {/each}
-      </div>
+      </ul>
       {#if all.length > places.length}
         <button class="button quiet small" type="button" onclick={() => (cardCount += CARDS_STEP)}>{strings.sheet.showMore}</button>
       {/if}
+    {/if}
+    {#if memorials.length > 0}
+      <section class="memorials" aria-labelledby="pk-sheet-memorials">
+        <h3 id="pk-sheet-memorials">
+          {strings.streets.memorialsNearby} <span class="count">{strings.streets.memorialCount(memorials.length)}</span>
+        </h3>
+        <p class="muted small">{strings.streets.memorialsIntro}</p>
+        <MemorialList {store} memorials={memorials.slice(0, MAX_MEMORIALS)} />
+        {#if memorials.length > MAX_MEMORIALS}<p class="muted small">{strings.streets.memorialsMore(memorials.length - MAX_MEMORIALS)}</p>{/if}
+      </section>
     {/if}
   </div>
 </section>
@@ -179,8 +223,8 @@
     idPrefix="pk-field-dossier"
     onShowOnMap={() => {
       store.dossierOpen = false;
-      sheetOpen = false;
       if (store.dossier.center) store.controller?.flyTo(store.dossier.center);
+      void closeSheetForMap();
     }}
   />
 </Dialog>
@@ -221,14 +265,16 @@
     flex-wrap: wrap;
     gap: 6px;
   }
-  /* Phones: one row of chips that scrolls sideways, so the map keeps its room. */
+  /* Phones: one row of chips that scrolls sideways, so the map keeps its room. Its right edge
+     fades, so it shows there is more to see; the last chip can scroll clear of the fade. */
   @media (max-width: 560px) {
     .chips {
       flex-wrap: nowrap;
       overflow-x: auto;
       scrollbar-width: none;
       margin: 0 -12px;
-      padding: 2px 12px;
+      padding: 2px 40px 2px 12px;
+      mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);
     }
     .chips .chip {
       flex: none;
@@ -246,6 +292,16 @@
     background: var(--pk-bg);
     border-radius: 14px 14px 0 0;
     box-shadow: var(--pk-shadow);
+  }
+  /* A phone turned sideways: the open sheet runs down the left of the map, so the map stays in
+     sight beside it instead of being squeezed under it. */
+  @media (max-height: 500px) and (min-width: 560px) {
+    .sheet.open {
+      align-self: stretch;
+      max-height: none;
+      width: min(55%, 440px);
+      border-radius: 0 14px 0 0;
+    }
   }
   .sheet h2 {
     margin: 0;
@@ -291,7 +347,17 @@
   .cards {
     display: grid;
     gap: 10px;
-    margin-bottom: 8px;
+    margin: 0 0 8px;
+    padding: 0;
+    list-style: none;
+  }
+  .memorials {
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid var(--pk-surface-2);
+  }
+  .memorials h3 {
+    margin-bottom: 2px;
   }
   .notice {
     margin-bottom: 8px;
@@ -299,8 +365,27 @@
   .order {
     margin-bottom: 8px;
   }
+  .location {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 10px;
+  }
+  /* Nothing to show until Near me is used: no room taken, but the status line stays in place. */
+  .location:not(.in-use) {
+    margin-top: -8px;
+  }
   .location-note {
+    flex: 1 1 14rem;
     margin: 0;
     color: var(--pk-muted);
+  }
+  .stop {
+    flex: none;
+  }
+  @media (max-width: 560px) {
+    .location-note {
+      font-size: 0.8rem;
+    }
   }
 </style>

@@ -1,0 +1,22 @@
+name: Ask for a memorial to come down
+description: Ask us to take a memorial marker, or a name, off the map. No reason or proof needed.
+title: "Memorial removal request"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        We take a memorial down when anyone asks, without asking why and without asking for proof.
+
+        Anyone can read a GitHub issue, so please write only what we need: the memorial's id or
+        where it is. You do not need to give a name, a reason, or who you are.
+
+        A private email address for these requests is coming soon. If you would rather wait for
+        it, the Contact page will give it as soon as it exists.
+  - type: input
+    id: memorial
+    attributes:
+      label: Memorial id or place
+      description: Where the marker is (the street corner the map shows when you open it), or its id if you have it.
+      placeholder: "fc20260820_1000, or 5th St and Example Ave"
+    validations:
+      required: true

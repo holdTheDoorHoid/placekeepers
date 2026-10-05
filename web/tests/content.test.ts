@@ -42,15 +42,40 @@ describe('readContentPages', () => {
     expect(pages.how).toMatch(/<table>/);
   });
 
+  it('puts every table in its own sideways scrolling box that a keyboard can reach', () => {
+    for (const slug of slugsOnDisk()) {
+      const tables = pages[slug]!.match(/<table>/g)?.length ?? 0;
+      const boxes = pages[slug]!.match(/<div class="table-scroll" tabindex="0" role="group" aria-label="[^"]+"><table>/g)?.length ?? 0;
+      expect(boxes, `content/${slug}.md`).toBe(tables);
+    }
+  });
+
+  it('gives every table header cell some text, for screen readers', () => {
+    for (const slug of slugsOnDisk()) expect(pages[slug], `content/${slug}.md`).not.toMatch(/<th>\s*<\/th>/);
+  });
+
   it('never leaves the removal email token in the rendered contact page', () => {
     expect(pages.contact).not.toContain('{{REMOVAL_EMAIL}}');
   });
 
-  it('says "coming soon" style text while REMOVAL_EMAIL is not set, and a mailto link once it is', () => {
+  it('says a private address is coming soon while REMOVAL_EMAIL is not set, and a mailto link once it is', () => {
     if (REMOVAL_EMAIL === null) {
-      expect(pages.contact).toMatch(/not finished setting up/);
+      // Decision D7 (docs/VERIFICATION.md): no promise of an email that does not exist yet, and
+      // the interim way to ask is a GitHub issue, said plainly to be public.
+      expect(pages.contact).toMatch(/private email address for these requests is coming soon/);
+      expect(pages.contact).toMatch(/Anyone can read a GitHub issue/);
+      expect(pages.contact).toContain('template=memorial-removal.yml');
     } else {
       expect(pages.contact).toContain(`mailto:${REMOVAL_EMAIL}`);
+    }
+  });
+
+  it('never promises removal by email while there is no removal address', () => {
+    if (REMOVAL_EMAIL !== null) return;
+    for (const slug of slugsOnDisk()) {
+      const text = pages[slug]!.replace(/<[^>]+>/g, ' ');
+      expect(text, `content/${slug}.md`).not.toMatch(/remov[a-z]*[^.]*by email|by email[^.]*remov/i);
+      expect(text, `content/${slug}.md`).not.toMatch(/follow up by email/i);
     }
   });
 });

@@ -8,6 +8,7 @@
 //   all_fatal   off: only people walking, cycling or riding a scooter; on: everyone killed
 
 import type { ExpressionSpecification, FilterSpecification, LayerSpecification } from 'maplibre-gl';
+import { REMOVAL_EMAIL } from '../../content/removal-email.ts';
 import { strings } from '../../strings.ts';
 import { hasMode } from './crashes.ts';
 import { MEMORIAL_FILL, MEMORIAL_GLOW, MEMORIAL_RING, SELECTED } from './palette.ts';
@@ -90,7 +91,8 @@ export const memorials: StyleModule = {
     const l = strings.legend;
     return [
       { kind: 'circle', label: everyone(ctx) ? l.memorialEveryone : l.memorial, fill: MEMORIAL_FILL, stroke: MEMORIAL_RING, radius: 5 },
-      { kind: 'note', text: showNames(ctx) ? l.memorialNames : l.memorialNamesHidden },
+      // No name can be published before the removal address exists, so the legend says so.
+      { kind: 'note', text: !showNames(ctx) ? l.memorialNamesHidden : REMOVAL_EMAIL ? l.memorialNames : l.memorialNamesWaiting },
     ];
   },
 };

@@ -6,6 +6,7 @@
   // Choosing a dot opens the lot page. The ranked list holds the same places for keyboards and
   // screen readers.
   import { PERMISSION_CODES, permissionLabel, permissionText } from '../../config/permission.ts';
+  import { beeswarm } from '../../places/beeswarm.ts';
   import type { RankedPlace } from '../../places/rank.ts';
   import type { AppStore } from '../../state/store.svelte.ts';
   import { strings } from '../../strings.ts';
@@ -14,9 +15,14 @@
 
   /** The most dots drawn at once, the highest scores first. */
   const MAX_DOTS = 1000;
-  /** Each row: its label on top, its dots below, so labels never crowd the dots on a phone. */
-  const ROW = 48;
+  /**
+   * Each row: its label on top, its dots below, so labels never crowd the dots on a phone. A row's
+   * band of dots grows when many places share a score, so each dot can be seen and chosen.
+   */
   const LABEL = 16;
+  const BAND = 32;
+  const MAX_BAND = 120;
+  const DOT = 4.5;
   const TOP = 4;
   const BOTTOM = 40;
   const p = strings.plot;
@@ -24,7 +30,6 @@
   let width = $state(640);
   const left = 12;
   const right = 18;
-  const height = $derived(TOP + ROW * PERMISSION_CODES.length + BOTTOM);
   const x = (score: number) => left + (score / 100) * Math.max(10, width - left - right);
 
   const scored = $derived(places.filter((place) => place.score !== null && place.permission !== null));
@@ -34,20 +39,27 @@
       .slice(0, MAX_DOTS)
       .sort((a, b) => Number(a.id === store.state.selected) - Number(b.id === store.state.selected)),
   );
+  const rowOf = (code: number | null) => PERMISSION_CODES.indexOf((code ?? 0) as (typeof PERMISSION_CODES)[number]);
+  const swarm = $derived(
+    beeswarm(
+      drawn.map((place) => ({ id: place.id, x: x(place.score ?? 0), row: rowOf(place.permission) })),
+      PERMISSION_CODES.length,
+      { radius: DOT + 0.5, minBand: BAND, maxBand: MAX_BAND },
+    ),
+  );
+  /** Where each row starts, top to bottom, and the whole plot's height. */
+  const rowTops = $derived(swarm.bands.reduce<number[]>((tops, band, i) => [...tops, (tops[i] ?? TOP) + LABEL + band], [TOP]));
+  const plotBottom = $derived(rowTops[PERMISSION_CODES.length]!);
+  const height = $derived(plotBottom + BOTTOM);
   const noScore = $derived(places.filter((place) => place.score === null).length);
   const noStep = $derived(places.filter((place) => place.score !== null && place.permission === null).length);
   const counts = $derived(PERMISSION_CODES.map((code) => scored.filter((place) => place.permission === code).length));
   const summary = $derived(p.summary(PERMISSION_CODES.map((code, i) => p.rowSummary(permissionLabel(code), counts[i]!)).join('; ')));
 
-  /** A steady spread within a row, from the parcel number, so dots do not jump as the map moves. */
-  function jitter(id: string): number {
-    let h = 0;
-    for (const c of id) h = (h * 31 + c.charCodeAt(0)) >>> 0;
-    return ((h % 1000) / 1000 - 0.5) * (ROW - LABEL - 14);
-  }
-
-  function rowY(code: number): number {
-    return TOP + ROW * PERMISSION_CODES.indexOf(code as (typeof PERMISSION_CODES)[number]) + LABEL + (ROW - LABEL) / 2;
+  /** The middle of a row's band of dots. */
+  function rowY(code: number | null): number {
+    const row = rowOf(code);
+    return rowTops[row]! + LABEL + swarm.bands[row]! / 2;
   }
 
   function choose(event: MouseEvent) {
@@ -69,15 +81,15 @@
       <svg {width} {height} viewBox="0 0 {width} {height}" role="img" aria-labelledby="{idPrefix}-plot-title {idPrefix}-plot-desc">
         <desc id="{idPrefix}-plot-desc">{summary} {p.tableNote}</desc>
         {#each PERMISSION_CODES as code, i (code)}
-          <rect class="band" class:odd={i % 2 === 1} x="0" y={TOP + ROW * i} {width} height={ROW} />
+          <rect class="band" class:odd={i % 2 === 1} x="0" y={rowTops[i]} {width} height={LABEL + swarm.bands[i]!} />
           <g>
             <title>{permissionText(code)}</title>
-            <text class="row-label" x={left - 4} y={TOP + ROW * i + 13}>{permissionLabel(code)} ({counts[i]})</text>
+            <text class="row-label" x={left - 4} y={rowTops[i]! + 13}>{permissionLabel(code)} ({counts[i]})</text>
           </g>
         {/each}
         {#each [0, 25, 50, 75, 100] as tick (tick)}
-          <line class="grid" x1={x(tick)} x2={x(tick)} y1={TOP + LABEL} y2={TOP + ROW * PERMISSION_CODES.length} />
-          <text class="tick" x={x(tick)} y={TOP + ROW * PERMISSION_CODES.length + 14} text-anchor="middle">{tick}</text>
+          <line class="grid" x1={x(tick)} x2={x(tick)} y1={TOP + LABEL} y2={plotBottom} />
+          <text class="tick" x={x(tick)} y={plotBottom + 14} text-anchor="middle">{tick}</text>
         {/each}
         <text class="axis" x={left + (width - left - right) / 2} y={height - 6} text-anchor="middle">{p.axisX}</text>
         <!-- The selected place last, so it is drawn on top. -->
@@ -88,11 +100,11 @@
             class:selected
             data-place={place.id}
             data-code={place.permission}
-            transform="translate({x(place.score ?? 0)} {rowY(place.permission ?? 0) + jitter(place.id)})"
+            transform="translate({x(place.score ?? 0)} {rowY(place.permission) + (swarm.offset.get(place.id) ?? 0)})"
           >
             <title>{p.dot(store.addresses.get(place.id) ?? strings.place.parcel(place.id), place.score ?? 0, permissionLabel(place.permission))}</title>
-            <circle class="hit" r="7" />
-            <circle class="mark" r={selected ? 7 : 4.5} />
+            <circle class="hit" r={DOT + 0.5} />
+            <circle class="mark" r={selected ? 7 : DOT} />
           </g>
         {/each}
       </svg>

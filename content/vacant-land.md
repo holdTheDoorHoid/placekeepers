@@ -18,7 +18,7 @@ matter what any list says.
 
 As of October 4, 2026:
 
-| | High confidence | Medium confidence | Low confidence | Not shown (parks, gardens, and similar) |
+| Kind | High confidence | Medium confidence | Low confidence | Not shown (parks, gardens, and similar) |
 |---|---|---|---|---|
 | Lots | 24,166 | 6,147 | 10,465 | 1,727 |
 | Buildings | 6,553 | 2,876 | 8,503 | |
