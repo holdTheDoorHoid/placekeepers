@@ -15,5 +15,9 @@ export const STYLE_IDS = [
   'transit_stops',
   'transit_routes',
   'stop_amenities',
+  // M3.5: amenities from OpenStreetMap, public places from the City, conditions reported to 311
+  'amenity',
+  'public_place',
+  'condition',
 ] as const;
 export type StyleId = (typeof STYLE_IDS)[number];

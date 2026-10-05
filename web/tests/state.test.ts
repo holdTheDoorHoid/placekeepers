@@ -34,7 +34,8 @@ function customized(): AppState {
 
 describe('defaults per view', () => {
   it('turns layers on according to each view in the registry', () => {
-    expect(defaultLayers(reg, 'field')).toEqual(['vacant_parcels', 'hin_2025', 'memorials', 'basemap']);
+    // Drinking water and toilets help a neighbor on foot, so they are on in the field view (M3.5).
+    expect(defaultLayers(reg, 'field')).toEqual(['vacant_parcels', 'hin_2025', 'memorials', 'basemap', 'drinking_water', 'toilets', 'park_water']);
     expect(defaultLayers(reg, 'analysis')).toEqual([
       'vacant_parcels',
       'hin_2025',
@@ -151,7 +152,7 @@ describe('address bar state', () => {
 
   it('stays compact: defaults add nothing beyond view, map and layers', () => {
     const text = encodeState(reg, defaultState(reg, 'field'));
-    expect(text).toBe('v=f&m=10.6/40/-75.135&l=vacant_parcels,hin_2025,memorials');
+    expect(text).toBe('v=f&m=10.6/40/-75.135&l=vacant_parcels,hin_2025,memorials,drinking_water,toilets,park_water');
   });
 
   it('writes only what differs from the registry defaults', () => {

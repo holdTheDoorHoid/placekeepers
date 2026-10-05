@@ -20,6 +20,7 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { cellToBoundary, gridDisk, latLngToCell } from 'h3-js';
+import { AMENITY_LAYERS, AMENITY_SOURCES, amenityFixtures } from './amenity-fixtures.mjs';
 import { routeSheetFixtures } from './route-fixtures.mjs';
 
 const FIXTURES = new URL('../fixtures/', import.meta.url);
@@ -387,6 +388,9 @@ writeFileSync(path('data/tiles/streets.memorials.geojson'), collection(memorials
 writeFileSync(path('data/tiles/transit.stops.geojson'), collection(transitStops));
 writeFileSync(path('data/tiles/transit.routes.geojson'), collection(transitRoutes));
 writeFileSync(path('data/tiles/amenities.stops.geojson'), collection(amenityStops));
+// Amenities from OpenStreetMap, public places from the City and conditions reported to 311 (M3.5,
+// scripts/amenity-fixtures.mjs).
+for (const [name, text] of amenityFixtures(toLngLat)) writeFileSync(path(`data/${name}`), text);
 // The route survey sheets (scripts/route-fixtures.mjs): the index is listed in files, each route's
 // sheet is not (docs/CONTRACTS.md section 7).
 mkdirSync(path('data/tables/routes'), { recursive: true });
@@ -496,6 +500,7 @@ const manifest = {
     septa_gtfs: ok(13827, '2026-09-25'),
     septa_ridership_bus: ok(18201, '2026-08-20'),
     septa_ridership_trolley: ok(719, '2026-08-20'),
+    ...Object.fromEntries(Object.entries(AMENITY_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
   },
   layers: {
     vacant_parcels: {
@@ -529,6 +534,7 @@ const manifest = {
       sources: ['septa_gtfs', 'septa_ridership_bus', 'septa_ridership_trolley'],
     },
     transit_routes: { file: 'tiles/transit.pmtiles', source_layer: 'routes', sources: ['septa_gtfs'] },
+    ...AMENITY_LAYERS,
   },
   files: Object.fromEntries(
     [
@@ -545,6 +551,7 @@ const manifest = {
       'tiles/transit.routes.geojson',
       'tiles/transit.stops.geojson',
       'tiles/amenities.stops.geojson',
+      ...amenityFixtures(toLngLat).map(([name]) => name),
       'tables/routes/index.json',
       ...handWritten.map(([name]) => name).filter((name) => !shardFiles.some(([shard]) => shard === name)),
     ].map((p) => [p, fileInfo(p)]),

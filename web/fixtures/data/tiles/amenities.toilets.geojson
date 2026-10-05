@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"id":"n9100031","ac":1,"fee":0,"wc":1,"oh":"Mo-Su 08:00-20:00","nm":"Sample Park toilets"},"geometry":{"type":"Point","coordinates":[-75.153076,39.984641]}},{"type":"Feature","properties":{"id":"n9100032","ac":2},"geometry":{"type":"Point","coordinates":[-75.149793,39.984641]}}]}

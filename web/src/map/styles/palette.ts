@@ -64,3 +64,39 @@ export const STOP_COLORS = { shelter: '#1f5c99', bench: '#8fbfe0', neither: '#e8
 export const STOP_OUTLINES = { shelter: '#0b2f55', bench: '#1f5c99', neither: '#7a4a05' } as const;
 export const STOP_UNKNOWN_FILL = '#ffffff';
 export const STOP_UNKNOWN_RING = '#5f6870';
+
+/**
+ * Amenities from OpenStreetMap (M3.5): a small dot with a white ring, one hue per kind, clear of
+ * the lots' greens, the selection blue and the stops' colors.
+ */
+export const AMENITY_COLORS: Record<string, string> = {
+  benches: '#8c6d31',
+  picnic_tables: '#6b7f1f',
+  drinking_water: '#1b8ac2',
+  toilets: '#7b5ea7',
+  bookcases: '#c0622f',
+};
+export const AMENITY_RING = '#ffffff';
+
+/**
+ * Public places from the City (M3.5): a larger dot with a white ring. Park drinking fountains share
+ * the drinking water blue; a pool or sprayground not in service this year is a hollow gray ring.
+ */
+export const PLACE_COLORS: Record<string, string> = {
+  park_water: '#1b8ac2',
+  libraries: '#3d3f7a',
+  recreation_centers: '#1f7a6d',
+};
+export const POOL_COLORS: Record<number, string> = { 1: '#0a7fb0', 2: '#33b5d6', 3: '#7fd0e6' };
+export const PLACE_RING = '#ffffff';
+export const NOT_IN_SERVICE_RING = '#6b747c';
+
+/**
+ * Conditions reported to 311, by block (M3.5): a filled circle where a request is still open, a
+ * hollow ring of the same color where every request is closed; bigger with more requests.
+ */
+export const CONDITION_COLORS: Record<string, string> = {
+  dumping: '#8c510a',
+  dark_lights: '#3a3a4a',
+  graffiti: '#8e4585',
+};
