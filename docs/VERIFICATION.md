@@ -405,6 +405,47 @@ a Police case number, but it identifies a crash report. Keep, or replace with an
 says "Greening can raise nearby prices. Consider pairing it with protections." Option: show it on
 every greening card until the overlay exists.
 
+## Decisions taken (orchestrator, 2026-10-04)
+
+The owner asked to get the prototype running and leaves design calls that keep the map from being
+misused to the orchestrator. Each decision can be undone if the owner disagrees.
+
+- **D1.** Conservatorship is never offered on a parcel with a homestead exemption, at any
+  confidence. The vacancy model gains a reason against, "The owner has a homestead exemption: City
+  records say someone lives here, or did", which lowers a building one level (high to medium, medium
+  to low). On a lot it is shown as a reason against without changing the level.
+- **D2.** No snapshot is published in plain form. The refresh encrypts each snapshot with a
+  repository secret before it goes on the `data-snapshots` release, and decrypts it on the next run.
+  Without the secret, snapshots are not uploaded at all and the run carries on without a last good
+  copy. The first run with the new code removes the plain copies on the release.
+- **D3.** The citywide owners table lists organizations only (companies, nonprofits, public bodies).
+  For a person who holds 5 or more vacant parcels, the flag stays on those parcels' own lot pages,
+  with the list of that person's parcels shown there, never in one citywide file.
+- **D4.** Seller and buyer names on deeds stay: they are owners of record over time, as the City
+  shows them. CONTRACTS section 6 says no personal details beyond the names of owners past and present
+  and the current mailing address.
+- **D5 and D6.** For an owner who is a person (or of unknown type), the flags about the owner
+  (absentee owner, possible estate, tax debt as of July 2025, owner holds many vacant parcels) appear
+  only on parcels called vacant with high or medium confidence, in the static files and on the lot
+  page with live data alike. Possible estate never appears on a parcel with a homestead exemption.
+  Facts about the parcel (deeds, sheriff sales, violations) and the owner's name and mailing address
+  as the City publishes them are unchanged. Organizations keep every flag.
+- **D7.** Until the removal email exists, no text promises one. The Contact page and the memorial
+  layer say a private address is coming soon, and that meanwhile a request can be made in a GitHub
+  issue, which anyone can read.
+- **D8.** Names of people killed are never committed to this public repository. M1.9 keeps the
+  curated names somewhere private that the refresh reads (for example an encrypted file), so a
+  removed name leaves no public history.
+- **D9.** Both options: vacancy complaints become download signals, and a dossier lists the parts it
+  was not built from (`partial`), so the lot page says those records are not in the weekly copy and
+  offers live data instead of claiming there are none.
+- **D10.** The vacancy counts go into the manifest. The vacant-land page reads them later (#23);
+  until then its numbers say "as of" their date.
+- **D11.** Keep PennDOT's crash record number as the crash id: PennDOT and the City publish it, it is
+  not a Police case number, and removal needs a stable id. ETHICS.md says so.
+- **D12.** Every greening suggestion carries the ETHICS.md caution, "Greening can raise nearby
+  prices. Consider pairing it with protections.", until the displacement watch overlay exists.
+
 ## Interface checks for the second half (after M1.7 merges)
 
 1. Port F7 and F8 to `web/src/dossier/owners.ts` (public body patterns; an estate name ending "ESTATE
