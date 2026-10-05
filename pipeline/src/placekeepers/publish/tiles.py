@@ -79,6 +79,18 @@ TILE_OPTIONS: dict[str, list[str]] = {
         "--extend-zooms-if-still-dropping",
         "--no-tiny-polygon-reduction-at-maximum-zoom",
     ],
+    # SEPTA stops and routes (M2.1). Every stop is kept at every zoom it appears in, from zoom 12
+    # (a few neighborhoods across): at zoom 11 the Center City tile would hold 650 kB of stops.
+    # Routes are context lines from zoom 10.
+    "tiles/transit.pmtiles": [
+        "--minimum-zoom=10",
+        "--maximum-zoom=16",
+        "--base-zoom=10",
+        "--no-feature-limit",
+        "--no-tile-size-limit",
+        "--feature-filter",
+        json.dumps({"stops": [">=", "$zoom", 12]}, separators=(",", ":")),
+    ],
     # Amenities from OpenStreetMap (M2.2: shelters and benches at stops; M3.5 adds more): every
     # point at every zoom, so none disappears when zoomed out.
     "tiles/amenities.pmtiles": [

@@ -106,13 +106,29 @@ the site. No keys, no third party tile service.
 
 | Source | Notes | Status |
 |---|---|---|
-| SEPTA GTFS, `https://www3.septa.org/developer/gtfs_public.zip` (22 MB, 2026-09-25) | Stops and schedules. License must be accepted; redistribution allowed (non exclusive, revocable) | Live |
-| SEPTA ridership statistics (OpenDataPhilly, "stop summary files") | Average daily boardings per stop | Exists; exact file to confirm |
-| SEPTA New Bus Network | Phase 1 began 2026-08-23; phases 2 to 4 run to August 2027, so stop ids will churn | Plan for it |
-| Bus shelters | **No public inventory exists.** OpenStreetMap is the source (`osm_philadelphia`, below): on 2026-10-04 it had 829 bus and trolley stops in the city, of the roughly 8,084 stops in SEPTA's bus, trolley and subway schedule data inside the city limits. 97 show a shelter or roof, 12 a bench but no shelter, 236 neither, and 484 are not yet surveyed | Used (M2.2): layer `bus_stops`. Gap: neighbor survey (StreetComplete, the "Survey bus stops" page) plus a Right to Know request to OTIS for the advertising contractor's shelter list |
+| SEPTA GTFS, `https://www3.septa.org/developer/gtfs_public.zip` (22,054,912 bytes; release v202609270 of 2026-09-25, downloaded in 3 seconds on 2026-10-04) | One zip holding two feeds: `google_bus.zip` (bus, trolley, trackless trolley, SEPTA Metro subway and El; 13,495 boarding places, 163 routes with service, good 2026-09-27 to 2027-02-20) and `google_rail.zip` (Regional Rail; 156 stations, 13 lines, good to 2026-10-17). SEPTA keeps the link on its newest release, also published at github.com/septadev/GTFS with a changelog. The snapshot keeps service measures per stop and per route, not the timetables (docs/TRANSIT_METHOD.md). License: SEPTA's license agreement (below). Health: at least 9,000 rows, no more than 15% fewer than last week, and a release no older than 90 days (`source_date`, the file's Last-Modified) | Used (M2.1): source `septa_gtfs` |
+| SEPTA stop ridership, bus: SEPTA's ArcGIS layer `Spring_2026_Stop_Summary_Bus` (services2.arcgis.com/9U43PSoL47wawX5S, listed on SEPTA's portal data-septa.opendata.arcgis.com; OpenDataPhilly's "SEPTA Ridership Statistics" lists the same "stop summary files" up to Summer 2025) | Average weekday, Saturday and Sunday boardings and alightings per route, direction and SEPTA stop number for the Spring 2026 schedule period (2026-02-22 to 2026-06-13); 18,201 rows, 12,967 stop numbers, 414,543 weekday boardings across the region; SEPTA published it on 2026-08-20; downloads in 10 pages without a login (12 seconds). SEPTA adds a layer for each period (spring, summer, fall; Fall 2025 came out in February 2026), so each run takes the newest spring or fall one; summer counts are lower and miss school trips. Health: at least 15,000 rows, no more than 25% fewer, published within 400 days | Used (M2.1): source `septa_ridership_bus` |
+| SEPTA stop ridership, trolley: `Spring_2026_Stop_Summary_Trolley` (same folder) | As for buses, for T1 to T5, G1, D1 and D2: 719 rows. Health: at least 500 rows | Used (M2.1): source `septa_ridership_trolley` |
+| SEPTA Metro and Regional Rail ridership | No count per platform is published; `Regional_Rail_Station_Summary` (2025) has stations and the M1 (Norristown High Speed Line) has its own stop summaries, outside the city | Not used |
+| SEPTA New Bus Network | Phase 1 began 2026-08-23; phases 2 to 4 run to August 2027, so stop numbers change. Between the last schedules before phase 1 (v202608091) and v202609270, 358 stop numbers disappeared and 185 appeared; 4 were renumbered in place. Placekeepers keeps a stable key per stop and links renumbered stops (docs/TRANSIT_METHOD.md). SEPTA's folder also holds `Stops_Eliminated_with_NBN_Phase_1_(Single_Points)` (486 stops) and `NBN_Stops_updated_data` (stop signage work), not used yet | Handled (M2.1) |
+| Bus shelters | **No public inventory exists.** OpenStreetMap is the source (`osm_philadelphia`, below): on 2026-10-04 it had 829 bus and trolley stops in the city, about 1 in 10 of SEPTA's 7,927 bus and trolley stops in Philadelphia (docs/TRANSIT_METHOD.md). 97 show a shelter or roof, 12 a bench but no shelter, 236 neither, and 484 are not yet surveyed | Used (M2.2): layer `stop_amenities` ("Shelters and benches at stops", in `tiles/amenities.pmtiles`). Gap: neighbor survey (StreetComplete, the "Survey bus stops" page) plus a Right to Know request to OTIS for the advertising contractor's shelter list |
 | Indego GBFS `https://gbfs.bcycle.com/bcycle_indego/gbfs.json`, trips, stations | Bike share context | Live |
 | City bike network (City ArcGIS `Bike_Network`) | No stress rating field | Live |
 | DVRPC Level of Traffic Stress | License: "Unrestricted"; updated 2026-09-03 | Live |
+
+**SEPTA's license (checked 2026-10-04).** SEPTA's Open Data license agreement
+(https://wwww.septa.org/license-agreement/, SEPTA's own spelling of its host) covers every dataset
+on its open data portal, and the GTFS download page (https://www3.septa.org/developer/) shows the
+same terms for the schedules (its version dated 2014-03-18). SEPTA grants a non exclusive, non
+assignable, limited and revocable right to use, reproduce and redistribute the data, free of
+charge, as is, with no warranty. Conditions: SEPTA's trademarks and copyrighted materials may not be
+used for any commercial or profit making use and may not be altered (Placekeepers uses no SEPTA logo
+or artwork); the licensee holds SEPTA harmless; disputes go to courts in Philadelphia County; the
+newest version of the agreement always applies, and SEPTA may change or revoke it. Downloading the
+data means accepting it; there is no login and no key. Nothing forbids publishing stop locations,
+schedule measures or counts on a public, free map. SEPTA asks for no particular credit line, so the
+map credits "SEPTA" for schedules and ridership and never suggests SEPTA endorses Placekeepers. The
+license is `septa_license` in `registry/licenses.yaml`.
 
 ### OpenStreetMap, weekly extract (`osm_philadelphia`, used from M2.2)
 
@@ -122,7 +138,7 @@ the site. No keys, no third party tile service.
 | Size and time | 348,105,893 bytes (348 MB) on 2026-10-04, data as of 2026-10-03 20:20 UTC. On this laptop the download took 31 seconds and the filtering 18 seconds (peak memory 1.4 GB); the extract is deleted once the snapshot is made, so the weekly refresh needs about 350 MB of disk for under a minute |
 | What we keep | The nodes and ways carrying a tag the registry lists (`endpoint.tags`: `highway=bus_stop`, `public_transport=platform`, `amenity=shelter`, `amenity=bench`) inside the city limits (the 2020 census tracts joined) and 200 meters around them, each with all its tags, its shape and a point on it. 3,338 elements on 2026-10-04 (3,243 inside the city), a 197 kB snapshot. Relations are not read (three in all of Pennsylvania carried these tags). `railway=tram_stop` is not listed: in Philadelphia all 390 mark where a trolley halts on its tracks, while riders wait at the platform beside it |
 | Cadence | Weekly, with the Monday refresh. Geofabrik remakes the extract every day; a good copy younger than six days is never downloaded again unless forced (`pk fetch --force`), as Geofabrik asks automated downloaders not to fetch the same file over and over |
-| License | Open Database License (ODbL). Credit "© OpenStreetMap contributors" with a link to openstreetmap.org/copyright; anything published from it (the `stops` layer) is ODbL too |
+| License | Open Database License (ODbL). Credit "© OpenStreetMap contributors" with a link to openstreetmap.org/copyright; anything published from it (the `stops` layer of `tiles/amenities.pmtiles`) is ODbL too |
 | Health rules | At least 2,500 rows; no more than 10 percent fewer than the last good copy; the extract's data no older than 14 days (the replication timestamp in the file's header, else the server's Last-Modified date); at least 90 percent of the stops kept inside the city limits (98 percent on 2026-10-04). A download that is not an `.osm.pbf` file (an error page sent as a file) is retried, then fails, and the last good copy stays |
 
 Stops on 2026-10-04 (data of 2026-10-03), inside the city: 829 (464 bus, 348 trolley, 17 both; 55

@@ -42,6 +42,13 @@ M1.1), for example `url: https://services2.arcgis.com/qjOOiLCYeUtwT7x7/arcgis/re
 gardens PHS and the Neighborhood Gardens Trust support. A `csv` file may use another delimiter (the
 Census Bureau's tables use `|`); the source's adapter reads it.
 
+Added 2026-10-04 by M2.1: a `zip` file needs a source specific adapter that knows what is inside
+(`septa_gtfs` holds two GTFS feeds). SEPTA publishes its stop ridership counts as one ArcGIS layer
+per schedule period, so for `septa_ridership_bus` and `septa_ridership_trolley` the `service` names
+the oldest layer to accept: each run lists that folder (`url`) and takes the newest spring or fall
+layer for the mode, and the snapshot says which in its `layer` column
+(`pipeline/src/placekeepers/adapters/septa.py`).
+
 An `osm_extract` endpoint (keys added 2026-10-04 by M2.2) names an OpenStreetMap extract the
 pipeline downloads, `url` (an https link to an `.osm.pbf` file, such as Geofabrik's Pennsylvania
 extract), and `tags`, the elements to keep: `key=value` (such as `highway=bus_stop`) or a key alone
@@ -101,11 +108,12 @@ option values appear in shared links, so they never change once published.
 
 `guide` (optional, added 2026-10-04 by M2.2) is the slug of a content page, `content/<slug>.md`,
 that shows how anyone can help improve the layer's data. The web app links it from "About this
-layer", and a style may link it from its legend (the bus stops' "not yet surveyed" entry does).
+layer", and a style may link it from its legend (the shelters and benches layer's "not yet surveyed" entry does).
 The pipeline's registry check fails when the page does not exist.
 
 `registry/groups.yaml` lists groups in display order: `lots`, `care`, `streets`, `transit` (added
-2026-10-04 by M2.2), `safety_context`, `boundaries`, `basemap`, each with a label and a one line
+2026-10-04 by M2.1 for SEPTA's layers; M2.2 adds the shelters and benches at stops to it),
+`safety_context`, `boundaries`, `basemap`, each with a label and a one line
 description.
 
 ### `registry/lenses.yaml`
@@ -222,8 +230,9 @@ data/
     streets.pmtiles       layers "hin", "segments", "crashes", "memorials"
     context.pmtiles       layer "h3"        (area cells, resolution 9)
     care.pmtiles          layers "landcare", "gardens"
-    transit.pmtiles       layer "stops"     (bus and trolley stops, from OpenStreetMap)
     boundaries.pmtiles    layers "council_districts", "rcos", "neighborhoods"
+    transit.pmtiles       layers "stops", "routes"   (SEPTA, added 2026-10-04 by M2.1)
+    amenities.pmtiles     layer "stops"     (shelters and benches at stops, from OpenStreetMap; M2.2)
   tables/
     parcels.json          compact columnar table for ranking and lists
     owners.json           organizations holding many vacant parcels, with their parcels (section 6)
@@ -465,15 +474,63 @@ when known). Areas overlap. Contact people's names, emails and phones are never 
 
 Every boundary layer has `nm`, so one style (`boundary`) can draw and label all three.
 
-Added 2026-10-04 by M2.2, from the `osm_philadelphia` snapshot (OpenStreetMap, so the layer is
-under the Open Database License and credited "© OpenStreetMap contributors"):
+Added 2026-10-04 by M2.1 (SEPTA data; the method in plain words is in
+[TRANSIT_METHOD.md](TRANSIT_METHOD.md)):
 
-**`stops` (transit.pmtiles, points)**: every bus and trolley stop OpenStreetMap knows inside the
-city limits, one point each (a stop drawn as a line or an area gets a point on it). A stop is an
-element tagged `highway=bus_stop` that is not a `public_transport=stop_position`, or a
-`public_transport=platform` for buses, trolleybuses or trolleys; station platforms of trains,
-subways and light rail, platforms underground or indoors, and stops closed to the public are left
-out (`pipeline/src/placekeepers/derive/bus_stops.py`).
+**`stops` (transit.pmtiles, points)**: every place in Philadelphia where people board a SEPTA bus,
+trolley, subway, El or Regional Rail train, with any departure on a typical weekday, Saturday or
+Sunday (a trip's last stop and stops where no one may board are not departures). One point per
+SEPTA stop: the two sides of a street, and the two platforms of a subway station, are separate.
+"In Philadelphia" is inside the City Council districts widened by 100 meters. In the tiles, stops
+start at zoom 12.
+
+| Property | Type | Meaning |
+|---|---|---|
+| `id` | string | the Placekeepers stop key: `sp` and the SEPTA stop number when the stop was first seen (`sr` for Regional Rail), with `_2` and so on when that key is taken. It never changes and never moves to another stop. When SEPTA renumbers a stop in place (a new number within 30 meters with a similar name, when the old one disappears or within a year after), the stop keeps its key |
+| `sid` | string | SEPTA's stop number today (GTFS `stop_id`, also its `stop_code`) |
+| `fid` | string | earlier SEPTA numbers of this stop, newest first, comma separated; only when there are any |
+| `nm` | string | the stop name as SEPTA writes it, with its side of the street in words ("Broad St & Erie Av (far side)") and any other dash used as punctuation as a comma |
+| `md` | int | modes, as bits: 1 bus (and trackless trolley), 2 trolley, 4 subway or El, 8 Regional Rail |
+| `r` | string | the routes that stop here on the typical days, SEPTA's short names in SEPTA's order, comma separated ("53,56", "B1,B2,B3") |
+| `tw`, `ts`, `tu` | int | departures on the typical weekday, Saturday and Sunday |
+| `bh` | int | departures in the busiest clock hour on the weekday |
+| `hp` | int | the typical wait between departures from 7 to 9 in the morning on the weekday, in whole minutes (120 divided by the departures); absent when none |
+| `hm`, `hs`, `hu` | int | the same from 10 to 2 on the weekday, Saturday and Sunday (240 divided by the departures); absent when none |
+| `ft`, `lt` | int | the first and last departure on the weekday, in minutes after midnight of SEPTA's service day, which runs past midnight (1530 is 1:30 at night); only with weekday service |
+| `ev` | int | weekday departures from 8 at night on; only with weekday service |
+| `nt` | int | how many of the clock hours from 1 to 4 in the morning have a weekday departure (1 to 3; 3 is service through the night); only when above 0 |
+| `wc` | int | SEPTA's wheelchair boarding: 1 reachable, 2 not; absent when SEPTA does not say |
+| `b` | int | average weekday boardings from SEPTA's newest spring or fall stop count, summed over the routes and directions counted there (0 when SEPTA counted no one); absent when no count matches, never estimated |
+| `bp` | string | the period of that count, such as "Spring 2026"; only with `b` |
+| `bx` | string | the SEPTA number the count was recorded under, when it is not `sid` (a number this stop had before, or a stop it replaced within 30 meters with a similar name); only with `b` |
+
+A count matches a stop by its own number, then by a number in its history, then by a stop number no
+longer in the schedules within 30 meters with a similar name; each count goes to one stop at most.
+
+**`routes` (transit.pmtiles, lines)**: every SEPTA route with a stop in Philadelphia on the typical
+days, as the lines its trips follow, merged, simplified to about 5 meters and cut to a box around
+the city. Routes whose trips have no shapes in the feed are left out.
+
+| Property | Type | Meaning |
+|---|---|---|
+| `id` | string | SEPTA's route id (GTFS `route_id`) |
+| `r` | string | SEPTA's short name, such as "47", "T1", "L1", "CHW" |
+| `nm` | string | SEPTA's long name, dashes used as punctuation turned into commas |
+| `md` | int | the mode, as for `stops` |
+| `tw` | int | trips on the typical weekday |
+| `hp`, `hm` | int | the typical wait from 7 to 9 and from 10 to 2 on the weekday, where the route runs most often (its busiest stop in its busiest direction); absent when none |
+
+Added 2026-10-04 by M2.2, from the `osm_philadelphia` snapshot (OpenStreetMap, so the layers of
+this file are under the Open Database License and credited "© OpenStreetMap contributors").
+`amenities.pmtiles` holds amenities from OpenStreetMap; M2.2 adds the first layer, and later
+milestones (M3.5: drinking water, toilets and more) add theirs to the same file:
+
+**`stops` (amenities.pmtiles, points)**: the shelters and benches at stops: every bus and trolley
+stop OpenStreetMap knows inside the city limits, one point each (a stop drawn as a line or an area
+gets a point on it). A stop is an element tagged `highway=bus_stop` that is not a
+`public_transport=stop_position`, or a `public_transport=platform` for buses, trolleybuses or
+trolleys; station platforms of trains, subways and light rail, platforms underground or indoors,
+and stops closed to the public are left out (`pipeline/src/placekeepers/derive/bus_stops.py`).
 
 | Property | Type | Meaning |
 |---|---|---|
@@ -483,7 +540,7 @@ out (`pipeline/src/placekeepers/derive/bus_stops.py`).
 | `sh`, `bn`, `bi`, `lt`, `tp`, `db`, `cv` | int | The stop's answers, 1 yes and 0 no, absent when OpenStreetMap does not say (or says something we do not recognize): shelter, bench, waste basket (`bin`), lit, tactile paving, departures board, and whether the whole stop is covered (`covered`) |
 | `wc` | int | Wheelchair access: 1 yes, 0 no, 2 limited; absent when unknown |
 | `nb` | int | Bits, present only when set: 1 the shelter, 2 the bench is mapped on its own beside the stop rather than answered on the stop |
-| `nm`, `ref`, `gs` | string | The stop's `name`, `ref` (SEPTA's stop number, where mapped) and `gtfs:stop_id` tags, only when it has them, so the stops can be matched with SEPTA's data (M2.3) |
+| `nm`, `ref`, `gs` | string | The stop's `name`, `ref` (SEPTA's stop number, where mapped) and `gtfs:stop_id` tags, only when it has them, so the stops can be matched with SEPTA's (M2.3) |
 
 Which values count as yes and as no is the `YES_NO` table in `derive/bus_stops.py` (for example
 `lit=automatic` is yes, `departures_board=realtime` is yes, `shelter=separate` is yes). A shelter
@@ -492,6 +549,10 @@ Which values count as yes and as no is the `YES_NO` table in `derive/bus_stops.p
 zone 18 north, and only when that stop has no answer of its own: a stop's own answer always wins.
 A shelter tagged `bench=yes` gives its stop a bench too. The build notes carry one sentence with
 the counts of each `c` inside the city.
+
+These are OpenStreetMap's stops, not SEPTA's: SEPTA's own stops are `stops` in `transit.pmtiles`
+(above). M2.3 joins the two by SEPTA's stop number first, an OpenStreetMap stop's `ref` (or `gs`)
+against SEPTA's `sid`, then by distance for the stops that do not match by number.
 
 ## 5. Hand curated memorial files (`data/curated/`)
 

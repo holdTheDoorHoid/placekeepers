@@ -191,6 +191,33 @@
       "rows": null,
       "newest_record": null,
       "message": "Not collected yet"
+    },
+    "septa_gtfs": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 13827,
+      "newest_record": "2026-09-25",
+      "message": null
+    },
+    "septa_ridership_bus": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 18201,
+      "newest_record": "2026-08-20",
+      "message": null
+    },
+    "septa_ridership_trolley": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 719,
+      "newest_record": "2026-08-20",
+      "message": null
     }
   },
   "layers": {
@@ -295,6 +322,22 @@
       "sources": [
         "basemap_openstreetmap"
       ]
+    },
+    "transit_stops": {
+      "file": "tiles/transit.pmtiles",
+      "source_layer": "stops",
+      "sources": [
+        "septa_gtfs",
+        "septa_ridership_bus",
+        "septa_ridership_trolley"
+      ]
+    },
+    "transit_routes": {
+      "file": "tiles/transit.pmtiles",
+      "source_layer": "routes",
+      "sources": [
+        "septa_gtfs"
+      ]
     }
   },
   "files": {
@@ -338,6 +381,14 @@
       "bytes": 6870,
       "sha256": "7dacd780736a10a2f3c8a2a3f28839491aa326d4936ae139bcf825c55d5d3c35"
     },
+    "tiles/transit.routes.geojson": {
+      "bytes": 1103,
+      "sha256": "ba6d52260354a67d1609cfa76aa2696ba0dacded44f23dba816aead9ffdd08c0"
+    },
+    "tiles/transit.stops.geojson": {
+      "bytes": 2632,
+      "sha256": "3452d8cbd96b82ac9b7b81a1ba12d0f1b2b64f2e45f950c1d8da5d898574d155"
+    },
     "tiles/amenities.stops.geojson": {
       "bytes": 1235,
       "sha256": "80a02058dbddc5adfc4efdb6504a88622f3515a97af52a87c315d2d2f06ceb71"
@@ -361,6 +412,6 @@
   },
   "notes": [
     "This is synthetic sample data for testing the map.",
-    "Street, boundary and amenity tiles were skipped for this sample, so those layers are published as GeoJSON."
+    "Street, boundary, transit and amenity tiles were skipped for this sample, so those layers are published as GeoJSON."
   ]
 }

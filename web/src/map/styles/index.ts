@@ -13,6 +13,8 @@ import { memorials } from './memorials.ts';
 import { shootingsHex } from './shootings_hex.ts';
 import { stopAmenities } from './stop_amenities.ts';
 import { streetSegments } from './street_segments.ts';
+import { transitRoutes } from './transit_routes.ts';
+import { transitStops } from './transit_stops.ts';
 import type { StyleModule } from './types.ts';
 import { vacantParcels } from './vacant_parcels.ts';
 
@@ -27,6 +29,8 @@ export const STYLES: Record<StyleId, StyleModule> = {
   crashes,
   memorials,
   basemap,
+  transit_stops: transitStops,
+  transit_routes: transitRoutes,
   stop_amenities: stopAmenities,
 };
 

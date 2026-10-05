@@ -9,8 +9,8 @@
   label: Streets and memorials
   description: The High Injury Network, crashes, and people killed on our streets.
 - id: transit
-  label: Transit comfort
-  description: Bus and trolley stops, and what riders find there, such as a shelter or a bench.
+  label: Buses and trains
+  description: SEPTA stops and routes, how often service comes, and how many people get on.
 - id: safety_context
   label: Where care is needed most
   description: Context that shows where improvements are likely to help most.

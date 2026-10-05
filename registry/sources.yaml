@@ -384,6 +384,46 @@
   cadence: daily
   health: {min_rows: 0, max_drop_pct: 100}
   release: v0.1
+# Milestone M2.1: SEPTA schedules and ridership. SEPTA's license agreement (registry/licenses.yaml,
+# docs/DATA_SOURCES.md) lets anyone use, reproduce and redistribute this data; downloading it
+# means accepting that agreement. No login is needed.
+- id: septa_gtfs
+  name: SEPTA schedules (GTFS)
+  publisher: Southeastern Pennsylvania Transportation Authority (SEPTA)
+  homepage: https://www3.septa.org/developer/
+  # One zip holding two GTFS feeds: bus, trolley and Metro (subway and El), and Regional Rail.
+  # The snapshot keeps one row per stop with its service measures and one per route, not the
+  # timetables (pipeline/src/placekeepers/adapters/septa.py).
+  endpoint: {kind: url, url: "https://www3.septa.org/developer/gtfs_public.zip", format: zip}
+  license: septa_license
+  attribution: "Transit schedules: SEPTA"
+  cadence: irregular
+  health: {min_rows: 9000, max_drop_pct: 15, newest_field: source_date, max_age_days: 90}
+  release: v0.2
+- id: septa_ridership_bus
+  name: SEPTA bus stop ridership
+  publisher: Southeastern Pennsylvania Transportation Authority (SEPTA)
+  homepage: https://data-septa.opendata.arcgis.com/search?tags=ridership
+  # SEPTA publishes a "stop summary" for each schedule period (spring, summer, fall) as its own
+  # layer. The newest spring or fall count is used (summer counts miss school trips); this names
+  # the newest on 2026-10-04, and each run looks for a newer one in SEPTA's ArcGIS folder.
+  endpoint: {kind: arcgis, service: Spring_2026_Stop_Summary_Bus, layer: 0, url: "https://services2.arcgis.com/9U43PSoL47wawX5S/arcgis/rest/services"}
+  license: septa_license
+  attribution: "Bus stop ridership: SEPTA"
+  cadence: irregular
+  health: {min_rows: 15000, max_drop_pct: 25, newest_field: source_date, max_age_days: 400}
+  release: v0.2
+- id: septa_ridership_trolley
+  name: SEPTA trolley stop ridership
+  publisher: Southeastern Pennsylvania Transportation Authority (SEPTA)
+  homepage: https://data-septa.opendata.arcgis.com/search?tags=ridership
+  # As for buses: the newest spring or fall trolley count.
+  endpoint: {kind: arcgis, service: Spring_2026_Stop_Summary_Trolley, layer: 0, url: "https://services2.arcgis.com/9U43PSoL47wawX5S/arcgis/rest/services"}
+  license: septa_license
+  attribution: "Trolley stop ridership: SEPTA"
+  cadence: irregular
+  health: {min_rows: 500, max_drop_pct: 25, newest_field: source_date, max_age_days: 400}
+  release: v0.2
 # Milestone M2.2: what OpenStreetMap knows about bus stops, shelters and benches. One weekly
 # download of Geofabrik's Pennsylvania extract (about 350 MB), filtered on this machine to the city
 # limits (with a 200 meter margin) and to the tags below; the extract itself is deleted once the

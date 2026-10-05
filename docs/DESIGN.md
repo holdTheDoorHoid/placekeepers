@@ -7,6 +7,7 @@ here.
 
 Companion documents:
 [EVIDENCE.md](EVIDENCE.md) (what the research supports),
+[TRANSIT_METHOD.md](TRANSIT_METHOD.md) (how service and riders at SEPTA stops are measured),
 [ETHICS.md](ETHICS.md) (safeguards),
 [DATA_SOURCES.md](DATA_SOURCES.md) (every source, its status and license),
 [ROUTES.md](ROUTES.md) (legal routes and the intervention playbook),
@@ -178,8 +179,19 @@ As built (M1.10, interface review, 2026-10-04; details in
 | Crash | PennDOT crash record number (City hosted copy); Police fatal crash record | Yes |
 | Memorial | Curated entry linked to a crash location and a public source | Yes |
 | Area cell | H3 hexagon, resolution 9 (about two blocks across) | Yes |
-| Bus stop | SEPTA stop id (expect churn during the New Bus Network rollout); until M2.3 joins SEPTA's stops, the OpenStreetMap element (M2.2) | v0.2 |
+| Bus stop | SEPTA stop id (expect churn during the New Bus Network rollout) | Later |
 | Artwork | OpenStreetMap or Wikidata id, plus any licensed source | Later |
+
+As built (M2.1, 2026-10-04): a stop's identity is a Placekeepers key, `sp` and its SEPTA stop number
+when first seen (`sr` for Regional Rail), which never changes. When SEPTA renumbers a stop in place
+(a new number within 30 meters with a similar name, when the old one disappears or within a year
+after), the stop keeps its key and the old number goes into its history, so SEPTA's ridership
+counts, which use older numbers, and later neighbors' notes keep following the place. The map's
+**Buses and trains** group holds every SEPTA stop and station in Philadelphia, with how often
+service comes on a typical weekday, Saturday and Sunday and SEPTA's own weekday boardings (97.8% of
+bus and trolley stops had a count on 2026-10-04), and the routes as context; both layers are off by
+default until the transit comfort lens (M2.3) gives them a job. The method is in
+[TRANSIT_METHOD.md](TRANSIT_METHOD.md).
 
 ### 5.2 The registry: one source of truth for every toggle
 
@@ -616,13 +628,16 @@ docs/            design, roadmap, research
   stops, so this survey is a real gap neighbors can fill.
 
   As built (M2.2, 2026-10-04): the pipeline reads Geofabrik's Pennsylvania extract of OpenStreetMap
-  every week (`osm_philadelphia`, docs/DATA_SOURCES.md) and the map has a **Bus and trolley stops**
-  layer in a new **Transit comfort** group: a stop with a shelter or roof, a bench but no shelter
-  mapped, neither, or not yet surveyed, which is a hollow ring so that unknown never looks like
-  missing. A shelter or bench drawn on its own counts for the nearest stop within 10 meters when the
-  stop does not answer itself. On 2026-10-04 OpenStreetMap had 829 of the roughly 8,000 stops in
-  SEPTA's data inside the city: 97 with a shelter or roof, 12 with a bench only, 236 with neither,
-  484 not yet surveyed. The layer is off by default in both views until the transit comfort lens
+  every week (`osm_philadelphia`, docs/DATA_SOURCES.md) and the map has a **Shelters and benches at
+  stops** layer (`stop_amenities`, in `tiles/amenities.pmtiles`, where later amenities such as water
+  and toilets will go) in the **Buses and trains** group, beside SEPTA's stops and routes (M2.1): a
+  stop with a shelter or roof, a bench but no shelter mapped, neither, or not yet surveyed, which is
+  a hollow ring so that unknown never looks like missing. A shelter or bench drawn on its own counts
+  for the nearest stop within 10 meters when the stop does not answer itself. On 2026-10-04
+  OpenStreetMap had 829 of SEPTA's 7,927 bus and trolley stops in the city: 97 with a shelter or
+  roof, 12 with a bench only, 236 with neither, 484 not yet surveyed. Its stops are OpenStreetMap's,
+  named by their OpenStreetMap element; M2.3 joins them to SEPTA's stops by SEPTA's stop number,
+  then by distance. The layer is off by default in both views until the transit comfort lens
   (M2.3), because a city full of rings for unsurveyed stops would crowd the lots and streets that
   v0.1 is about. The guide is the **Survey bus stops** page, linked from the layer's "About this
   layer", from its "not yet surveyed" legend entry, from a tapped stop, and from the How to do it

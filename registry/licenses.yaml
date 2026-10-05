@@ -23,3 +23,7 @@
   label: No license stated by the publisher (shared publicly; credited, and removed if the publisher asks)
   url: https://github.com/holdTheDoorHoid/placekeepers/blob/main/docs/DATA_SOURCES.md
   share_alike: false
+- id: septa_license
+  label: SEPTA open data license agreement (free to use, reproduce and redistribute; no commercial use of SEPTA's trademarks)
+  url: https://wwww.septa.org/license-agreement/
+  share_alike: false

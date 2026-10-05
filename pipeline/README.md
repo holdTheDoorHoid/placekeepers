@@ -43,10 +43,9 @@ download starts while less than 10 GB of disk is free (`PK_MIN_FREE_GB`).
 
 ## Sources
 
-Thirty eight sources the pipeline collects, each with an entry in `registry/sources.yaml` (the
-base map's source is the thirty ninth: the site makes the base map, so the pipeline never fetches
-it). Field lists and the reasons
-for them are in each adapter's docstring.
+Forty one sources the pipeline collects, each with an entry in `registry/sources.yaml` (the
+base map's source is the forty second: the site makes the base map, so the pipeline never
+fetches it). Field lists and the reasons for them are in each adapter's docstring.
 
 | Source | Where | What we keep |
 |---|---|---|
@@ -78,6 +77,8 @@ for them are in each adapter's docstring.
 | `memorial_names` | `data/curated/memorials.yaml` (in the repository) | Checks every entry; the snapshot keeps ids, dates, modes and places, never names or memorial page links, and leaves out removed entries |
 | `census_tracts_2020` | City ArcGIS `Census_Tracts_2020` (frozen) | Every field (tract id `geoid`, land and water area), with the shape |
 | `tree_canopy_2018` | City ArcGIS `TreeCanopyChange_2008_2018` (frozen; about 570 MB of pages, once) | Not the 665,748 canopy polygons: square meters of canopy in 2008 and 2018 per H3 resolution 9 cell, each polygon split exactly along the cell edges |
+| `septa_gtfs` | SEPTA's GTFS zip (22 MB, two feeds: bus and Metro, Regional Rail) | Not the timetables: one row per stop with its key, history and service on a typical weekday, Saturday and Sunday, one row per route with its lines, and stop ids that disappeared in the last year (see "Transit" below) |
+| `septa_ridership_bus`, `septa_ridership_trolley` | SEPTA's ArcGIS stop summaries, the newest spring or fall count for each mode | Average boardings and alightings per route, direction and stop number, with the count's period and the layer used |
 | `osm_philadelphia` | Geofabrik's Pennsylvania extract of OpenStreetMap (`.osm.pbf`, about 350 MB, weekly; read with DuckDB's `ST_ReadOSM`) | Not the extract: the nodes and ways with a tag the registry lists (`endpoint.tags`) inside the city limits (the 2020 census tracts joined) and 200 meters around them, with all their tags (JSON), shape, a point on each, whether that point is in the city, and the extract's date. 3,338 rows on 2026-10-04. Most of its stops must lie inside the city |
 
 **Candidate parcels.** Transfers, assessments and violations are too large to download for the
@@ -178,8 +179,9 @@ DuckDB: `SELECT * FROM '~/.cache/placekeepers/snapshots/opa_properties/current.p
 `pk publish` follows `docs/CONTRACTS.md`: `manifest.json`, `tiles/lots.pmtiles` (layer `parcels`),
 `tiles/streets.pmtiles` (layers `hin`, `segments`, `crashes` and `memorials`),
 `tiles/context.pmtiles` (layer `h3`), `tiles/care.pmtiles` (layers `landcare` and `gardens`),
-`tiles/transit.pmtiles` (layer `stops`) and `tiles/boundaries.pmtiles` (layers
-`council_districts`, `rcos` and `neighborhoods`). It builds in a
+`tiles/boundaries.pmtiles` (layers `council_districts`, `rcos` and `neighborhoods`),
+`tiles/transit.pmtiles` (layers `stops` and `routes`) and `tiles/amenities.pmtiles` (layer
+`stops`). It builds in a
 hidden folder and swaps it into place at the end, and it refuses to replace a folder that is not an
 earlier data root. A layer with nothing to show is left out with a note, so it never breaks the rest
 of its tile file. It also writes the lot dossiers, `dossiers/<first four digits>.json` with
@@ -210,10 +212,36 @@ of its tile file. It also writes the lot dossiers, `dossiers/<first four digits>
 The streets tiles keep every point at every zoom (tippecanoe would otherwise thin them), and carry
 only deaths, serious injuries and blocks with recorded harm at low zooms.
 
-### Bus and trolley stops
+### Transit
 
-`publish/transit.py` builds the `stops` layer from the `osm_philadelphia` snapshot, with the rules
-in `derive/bus_stops.py` (docs/CONTRACTS.md section 4):
+`adapters/septa.py` and `derive/transit.py` turn SEPTA's schedules into measures per stop when the
+download is checked (about 10 seconds and under 1 GB of memory for the whole region), so the
+snapshot is about 1 MB instead of 2.1 million stop times; `publish/transit.py` builds the map
+layers. The method is in `docs/TRANSIT_METHOD.md`; in short:
+
+* **Typical days**: for a weekday, a Saturday and a Sunday, the first date in the four weeks from
+  the download with the most common set of running services, so holidays and events never count.
+* **Measures per stop**: departures (never at a trip's last stop, nor where no one may board), the
+  busiest hour, departures from 7 to 9 and from 10 to 2 (the map turns them into minutes between
+  buses), first and last departure, after 8 at night, and how many hours from 1 to 4 in the
+  morning have one (all three means service through the night).
+* **Stable keys**: `sp` and the SEPTA stop number when first seen (`sr` for Regional Rail). A
+  number that disappears passes its key to a new number within 30 meters with a similar name;
+  the old number goes into the stop's history. The keys and history come from the previous good
+  snapshot, so they carry on week to week; ids that vanish are remembered for a year.
+* **Ridership**: each stop takes the count under its own number, then under a number in its
+  history, then of a stop number no longer in the schedules within 30 meters with a similar name;
+  a stop with no count gets none. The build notes give the share of bus and trolley stops with a
+  count (97.8% on 2026-10-04).
+
+The stops layer keeps places in Philadelphia (the Council districts widened by 100 meters) with
+any departure on the typical days; the routes layer keeps routes that stop there.
+
+### Shelters and benches at stops
+
+`publish/amenities.py` builds the `stops` layer of `tiles/amenities.pmtiles` from the
+`osm_philadelphia` snapshot, with the rules in `derive/bus_stops.py` (docs/CONTRACTS.md section 4).
+These are OpenStreetMap's stops, a separate layer from SEPTA's, which M2.3 joins to them. The rules:
 
 * **Stops**: `highway=bus_stop` (not a stop position in the road) and platforms for buses,
   trolleybuses and trolleys; station platforms of trains and subways, platforms underground or
@@ -225,7 +253,8 @@ in `derive/bus_stops.py` (docs/CONTRACTS.md section 4):
 * **What the map shows**: a shelter or roof, a bench but no shelter mapped, neither, or not yet
   surveyed. The build notes give the counts.
 
-The layer is under the Open Database License, credited "© OpenStreetMap contributors".
+The layer is under the Open Database License, credited "© OpenStreetMap contributors". Later
+milestones (M3.5) add more amenities from OpenStreetMap to the same file.
 
 ### Lot dossiers and owner flags
 
