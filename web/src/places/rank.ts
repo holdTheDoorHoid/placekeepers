@@ -7,6 +7,7 @@
 // the first step to get permission (`rt`); this file only shows, hides and explains them.
 
 import { PERMISSION_ROUTE, PERMISSION_ROUTES, permissionCode, type PermissionCode } from '../config/permission.ts';
+import { LENS_SUGGESTIONS } from '../config/suggestions.ts';
 import { explainScore, wholeScore, type ScoreExplanation } from '../map/lens.ts';
 import type { Lens, Registry, Route, Suggestion } from '../registry/types.ts';
 import type { AppState } from '../state/defaults.ts';
@@ -45,8 +46,30 @@ function int(value: unknown): number | null {
   return Number.isFinite(n) ? Math.round(n) : null;
 }
 
-export function parcelLensOf(reg: Registry): Lens | null {
-  return reg.lenses.find((l) => l.applies_to === 'parcel') ?? null;
+/** The lots layer's setting that names the lens coloring the lots (registry/layers.yaml, M3.1). */
+export const PARCEL_LENS_SETTING = 'lens';
+
+/**
+ * The lens that colors the lots: the one the lots layer's `lens` setting names (M3.1: violence
+ * reduction or heat and shade), else the first lens that ranks parcels. The map, its legend, the
+ * cards, the ranked list, the plot, the lot page and downloads all use this one.
+ */
+export function parcelLensOf(reg: Registry, state?: AppState | null): Lens | null {
+  const lenses = reg.lenses.filter((l) => l.applies_to === 'parcel');
+  const lots = reg.layers.find((l) => l.style === 'vacant_parcels');
+  const chosen = lots && state ? state.settings[lots.id]?.[PARCEL_LENS_SETTING] : undefined;
+  return lenses.find((l) => l.id === chosen) ?? lenses[0] ?? null;
+}
+
+/**
+ * A place's suggestions with the ones that answer the lens coloring the lots first (M3.1: under
+ * the heat and shade lens, planting shade trees and greening to cool lead), the rest in their
+ * order. The first suggestion is the one a card shows.
+ */
+export function suggestionsForLens(suggestions: Suggestion[], lens: Lens | null): Suggestion[] {
+  const first = new Set(lens ? (LENS_SUGGESTIONS[lens.id] ?? []) : []);
+  if (first.size === 0) return suggestions;
+  return [...suggestions.filter((s) => first.has(s.id)), ...suggestions.filter((s) => !first.has(s.id))];
 }
 
 /** Suggestions named in the place's `sg` property that exist and are switched on, in that order. */
@@ -80,9 +103,9 @@ export function firstStepFor(
 }
 
 export function describePlace(reg: Registry, state: AppState, place: PlaceInput): RankedPlace {
-  const lens = parcelLensOf(reg);
+  const lens = parcelLensOf(reg, state);
   const why = lens ? explainScore(lens, state.weights[lens.id], place.properties) : null;
-  const suggestions = placeSuggestions(reg, state, place.properties);
+  const suggestions = suggestionsForLens(placeSuggestions(reg, state, place.properties), lens);
   const permission = permissionCode(place.properties);
   return {
     ...place,

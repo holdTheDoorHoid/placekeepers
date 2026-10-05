@@ -29,6 +29,10 @@
     - acs_poverty
     - census_tracts_2020
     - tree_canopy_2018
+    # The heat and shade lens factors and the floodplain note (M3.1)
+    - heat_vulnerability
+    - street_trees
+    - fema_floodplain
   file: tiles/lots.pmtiles
   source_layer: parcels
   geometry: polygon
@@ -52,6 +56,15 @@
         - {value: lots, label: Lots only}
         - {value: buildings, label: Buildings only}
       default: both
+    # Which lens colors the lots (M3.1). Each value is the id of a lens that applies to parcels;
+    # moving a lens's sliders sets it to that lens (docs/CONTRACTS.md section 1).
+    - id: lens
+      label: Color lots by
+      type: choice
+      options:
+        - {value: violence, label: The violence reduction lens}
+        - {value: heat, label: The heat and shade lens}
+      default: violence
   release: v0.1
 - id: hin_2025
   label: High Injury Network
@@ -402,6 +415,91 @@
         - {value: unsurveyed, label: Stops not yet surveyed}
       default: all
   release: v0.2
+# Heat, trees and the floodplain (M3.1). Context for the heat and shade lens, off by default in
+# both views: their fills would compete with the lots' colors, and the trees are many.
+- id: heat_tracts
+  label: Heat vulnerability by neighborhood
+  group: heat
+  description: >-
+    How hard summer heat hits the people of each census tract, from the City's Heat Vulnerability
+    Index (Department of Public Health and Office of Sustainability, data of 2017 to 2019). It
+    puts together heat exposure, how hot the tract gets on summer days as satellites measure it,
+    and heat sensitivity, how many of the people living there are more at risk in the heat
+    (twelve measures of age, health, income, education, language and race, as the City built
+    the index). Tracts are shaded by fifths of the city, the darkest fifth the most at risk.
+    Exposure and sensitivity can be shown on their own in the settings.
+  sources: [heat_vulnerability]
+  file: tiles/environment.pmtiles
+  source_layer: heat_tracts
+  geometry: polygon
+  style: heat_tracts
+  evidence: context
+  default: {field: false, analysis: false}
+  settings:
+    - id: measure
+      label: Shade tracts by
+      type: choice
+      options:
+        - {value: vulnerability, label: "Heat vulnerability: the heat and the people at risk together"}
+        - {value: exposure, label: "Heat exposure: how hot it gets"}
+        - {value: sensitivity, label: "Heat sensitivity: how many people are at risk in the heat"}
+      default: vulnerability
+    - id: priority
+      label: Outline the tracts the City rates very high
+      type: toggle
+      default: true
+  release: v0.3
+- id: city_trees
+  label: Street and park trees
+  group: heat
+  description: >-
+    Every tree in Parks and Recreation's tree inventory (2025): the trees the City keeps on its
+    sidewalks and in its parks, not trees in private yards, with each tree's kind and the size of
+    its trunk. Shown close in, a few blocks across. Small trees, with a trunk under 4 inches
+    across, are often young ones, and TreePhilly asks that young trees get about 20 gallons of
+    water a week from March through December.
+  sources: [street_trees]
+  file: tiles/trees.pmtiles
+  source_layer: trees
+  geometry: point
+  style: city_trees
+  evidence: context
+  default: {field: false, analysis: false}
+  settings:
+    - id: show
+      label: Show
+      type: choice
+      options:
+        - {value: all, label: Every tree}
+        - {value: big, label: "Big shade trees: a trunk at least 12 inches across"}
+        - {value: small, label: "Small trees: a trunk under 4 inches across, often young"}
+      default: all
+  release: v0.3
+- id: floodplain
+  label: Floodplain
+  group: heat
+  description: >-
+    Where FEMA's flood maps expect flooding, as the City publishes them (2023): the 1 percent
+    annual chance floodplain, where a flood has at least a 1 in 100 chance each year, and the 0.2
+    percent annual chance area beside it (often called the 100 year and the 500 year
+    floodplains). Anything built there must follow the City's floodplain rules. Greening that
+    soaks up rain helps there, with plants that can stand wet ground.
+  sources: [fema_floodplain]
+  file: tiles/environment.pmtiles
+  source_layer: floodplain
+  geometry: polygon
+  style: floodplain
+  evidence: context
+  default: {field: false, analysis: false}
+  settings:
+    - id: zones
+      label: Show
+      type: choice
+      options:
+        - {value: both, label: The 1 percent and the 0.2 percent annual chance areas}
+        - {value: high, label: The 1 percent annual chance floodplain only}
+      default: both
+  release: v0.3
 
 # Amenities from OpenStreetMap (M3.5), one layer per kind, in the same tile file as the shelters
 # and benches at stops. OpenStreetMap is missing many of them, so each says so and links the guide

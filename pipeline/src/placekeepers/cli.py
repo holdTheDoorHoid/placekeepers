@@ -4,6 +4,7 @@
     pk fetch [ids...]            download sources into the cache
     pk validate [ids...]         turn new downloads into snapshots, or keep the last good one
     pk derive [--as-of DATE]     run the vacancy model, then the lens factors, on the snapshots
+                                 (the violence lens, then the heat and shade lens)
     pk publish [--out DIR]       write manifest.json and the map layers
     pk health [ids...]           show each source's status
     pk all                       fetch, validate, derive, publish, then show health
@@ -30,6 +31,7 @@ from placekeepers.runner import (
     StepResult,
     UsageError,
     all_statuses,
+    derive_heat,
     derive_lenses,
     derive_vacancy,
     fetch_source,
@@ -128,6 +130,7 @@ def cmd_derive(args: argparse.Namespace) -> int:
     steps = [derive_vacancy(ctx, _as_of(args))]
     if steps[0].outcome == "ok":
         steps.append(derive_lenses(ctx, _as_of(args)))
+        steps.append(derive_heat(ctx, _as_of(args)))
     _print_steps(steps)
     return 0 if all(step.outcome == "ok" for step in steps) else 1
 
@@ -198,6 +201,7 @@ def cmd_all(args: argparse.Namespace) -> int:
         steps.append(derive_vacancy(ctx, _as_of(args)))
         if steps[-1].outcome == "ok":
             steps.append(derive_lenses(ctx, _as_of(args)))
+            steps.append(derive_heat(ctx, _as_of(args)))
         print("Steps:")
         _print_steps(steps)
         _publish(ctx, args)

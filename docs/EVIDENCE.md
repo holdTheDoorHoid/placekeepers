@@ -109,6 +109,51 @@ Prestemon 2012, [doi:10.1177/0013916510383238](https://doi.org/10.1177/001391651
 Placekeepers suggests trees for shade and health, placed so they keep sightlines open, and counts
 canopy only as a secondary factor.
 
+## Trees and heat: Mixed
+
+Added 2026-10-05 for the heat and shade lens (milestone M3.1). Every abstract below was checked
+against Europe PMC on 2026-10-05.
+
+**Trees cool a block by day.** Researchers in a midsized Midwestern city measured the air every 5
+meters from a bicycle on ten routes (Ziter and colleagues, *PNAS* 2019,
+[doi:10.1073/pnas.1817561116](https://doi.org/10.1073/pnas.1817561116)). On summer days the
+temperature within the city varied by 3.5 °C on average. It fell as tree canopy rose, most where
+canopy covered more than 40 percent, and the cooling was largest at the size of a city block (60 to
+90 meters). Paving warmed the air less than canopy cooled it. At night trees helped little, so less
+paving matters for night heat.
+
+**Heat hurts more where there is little green.** A review of eleven studies (Schinasi and
+colleagues, *Environmental Research* 2018,
+[doi:10.1016/j.envres.2017.11.004](https://doi.org/10.1016/j.envres.2017.11.004)) found that in hot
+weather, people living in the hotter parts of a city had a 6 percent higher risk of death or illness
+than people in its cooler parts (95% CI 3% to 9%), and people in its less green parts a 5 percent
+higher risk (0% to 11%).
+
+**The health gains are estimates, not trials.** A health impact assessment for Philadelphia (Kondo
+and colleagues, *Lancet Planetary Health* 2020,
+[doi:10.1016/S2542-5196(20)30058-9](https://doi.org/10.1016/S2542-5196(20)30058-9)) estimated that
+reaching the City's goal of 30 percent tree canopy in every neighborhood could prevent about 403
+premature deaths a year (95% interval 298 to 618), 244 of them in neighborhoods of lower
+socioeconomic status. It counted every death linked to green space, not heat alone. For 93
+European cities (Iungman and colleagues, *Lancet* 2023,
+[doi:10.1016/S0140-6736(22)02585-5](https://doi.org/10.1016/S0140-6736(22)02585-5)), 30 percent tree
+cover was estimated to cool cities by 0.4 °C on average and to prevent about 2,644 of the 6,700
+summer deaths the authors attributed to urban heat in 2015, about two in five.
+
+**Why Mixed.** The studies agree that trees cool streets by day, but how much depends on how much
+canopy there is, at what scale, and the time of day, and the health benefits come from correlations
+and models, never from a trial. So the heat and shade lens's tree factors (few trees nearby, few
+City trees on the block) and its two suggestions (plant shade trees, green the lot to cool the
+block) carry Mixed. Plant tall trees that keep sightlines open (Trees and green space, above).
+
+**Context, not claims.** The lens's other two factors carry Context: the City's Heat Vulnerability
+Index says where summer heat hits people hardest (Hammer and colleagues, *Journal of Urban Health*
+2020, [doi:10.1007/s11524-020-00443-9](https://doi.org/10.1007/s11524-020-00443-9), describes the
+index, built by the Department of Public Health and the Office of Sustainability to find the areas
+most at risk of harm from heat and in need of preparedness and relief), and the number of people nearby says how many people a cooler
+lot would reach. Neither is a claim about what works. The floodplain is never a factor (docs/DESIGN.md
+section 5.3).
+
 ## Murals and public art: Not about violence
 
 Mural Arts Philadelphia's Porch Light program was evaluated by Yale researchers (Tebes and

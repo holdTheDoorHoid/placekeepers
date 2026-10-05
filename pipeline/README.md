@@ -43,8 +43,8 @@ download starts while less than 10 GB of disk is free (`PK_MIN_FREE_GB`).
 
 ## Sources
 
-Forty one sources the pipeline collects, each with an entry in `registry/sources.yaml` (the
-base map's source is the forty second: the site makes the base map, so the pipeline never
+Forty four sources the pipeline collects, each with an entry in `registry/sources.yaml` (the
+base map's source is the forty fifth: the site makes the base map, so the pipeline never
 fetches it). Field lists and the reasons for them are in each adapter's docstring.
 
 | Source | Where | What we keep |
@@ -77,6 +77,8 @@ fetches it). Field lists and the reasons for them are in each adapter's docstrin
 | `memorial_names` | `data/curated/memorials.yaml` (in the repository) | Checks every entry; the snapshot keeps ids, dates, modes and places, never names or memorial page links, and leaves out removed entries |
 | `census_tracts_2020` | City ArcGIS `Census_Tracts_2020` (frozen) | Every field (tract id `geoid`, land and water area), with the shape |
 | `tree_canopy_2018` | City ArcGIS `TreeCanopyChange_2008_2018` (frozen; about 570 MB of pages, once) | Not the 665,748 canopy polygons: square meters of canopy in 2008 and 2018 per H3 resolution 9 cell, each polygon split exactly along the cell edges |
+| `street_trees` | City ArcGIS `ppr_tree_inventory_2025`, or a newer yearly layer when the City publishes one (each run lists the City's services) | Every tree Parks and Recreation keeps on its streets and in its parks: species, trunk diameter in inches, the inventory year and the point, with the layer's name and last edit day. 151,726 trees on 2026-10-05, downloaded in 76 pages in 81 seconds |
+| `fema_floodplain` | City ArcGIS `fema_floodplain_2023`, only FEMA's 1 percent annual chance floodplain and 0.2 percent annual chance area | Zone, subtype (the floodway), whether it is FEMA's special flood hazard area, the map's ids, the shape and the layer's last edit day. 883 areas on 2026-10-05, downloaded in 7 seconds |
 | `septa_gtfs` | SEPTA's GTFS zip (22 MB, two feeds: bus and Metro, Regional Rail) | Not the timetables: one row per stop with its key, history and service on a typical weekday, Saturday and Sunday, one row per route with its lines, and stop ids that disappeared in the last year (see "Transit" below) |
 | `septa_ridership_bus`, `septa_ridership_trolley` | SEPTA's ArcGIS stop summaries, the newest spring or fall count for each mode | Average boardings and alightings per route, direction and stop number, with the count's period and the layer used |
 | `osm_philadelphia` | Geofabrik's Pennsylvania extract of OpenStreetMap (`.osm.pbf`, about 350 MB, weekly; read with DuckDB's `ST_ReadOSM`) | Not the extract: the nodes and ways with a tag the registry lists (`endpoint.tags`) inside the city limits (the 2020 census tracts joined) and 200 meters around them, with all their tags (JSON), shape, a point on each, whether that point is in the city, and the extract's date. 3,338 rows on 2026-10-04. Most of its stops must lie inside the city |
@@ -151,6 +153,23 @@ factors and the facts behind them: the hexagon, the shooting counts, the tract, 
 and the canopy share) with a summary of each factor's spread in `lens_factors.json`, and `pk
 publish` adds the factors to the parcels. It takes under a minute.
 
+### The heat and shade lens
+
+`pk derive` then computes the heat and shade lens factors for the same parcels, in
+`placekeepers/derive/heat.py` (definitions in `docs/CONTRACTS.md` section 4, the method in
+`docs/DESIGN.md` section 5.3): the heat vulnerability of the parcel's tract from the City's Heat
+Vulnerability Index (`heat_vulnerability`), the City's trees within 100 meters of the parcel
+(`street_trees`), and residents per square kilometer of land in its 2020 tract (`acs_poverty` over
+`census_tracts_2020`). The lens also uses the violence lens's `f_canopy`, computed once. The
+floodplain (`fema_floodplain`) is never a factor: a parcel gets `fp` when at least a tenth of it
+lies in FEMA's flood areas, and the lot page says so beside the score. The step also decides each
+vacant lot's heat suggestions (plant shade trees where the canopy is low, green the lot to cool the
+block where heat hits hardest), which the lots layer and the lot dossiers both list. The result
+goes to `$PK_CACHE/derived/heat_factors.parquet` (the factors, `fp`, the suggestions and the facts
+behind them: the tract and its three heat scores, the tree count, the 2020 tract, the residents per
+square kilometer and the share of the parcel in each flood area) with a summary in
+`heat_factors.json`. It takes about 10 seconds for 58,325 parcels.
+
 ## The shared cache
 
 Downloads and snapshots live in `$PK_CACHE` (default `~/.cache/placekeepers`), shared by every
@@ -168,6 +187,8 @@ derived/vacancy.parquet               the vacancy model's parcels (pk derive)
 derived/vacancy.json                  its counts, the City lists' dates, and notes
 derived/lens_factors.parquet          the lens factors per parcel and the facts behind them
 derived/lens_factors.json             each factor's spread, and notes
+derived/heat_factors.parquet          the heat and shade lens factors per parcel and the facts behind them
+derived/heat_factors.json             each factor's spread, the floodplain and suggestion counts, and notes
 research/                             reserved for the vacancy study; the pipeline never writes here
 ```
 
@@ -182,9 +203,10 @@ DuckDB: `SELECT * FROM '~/.cache/placekeepers/snapshots/opa_properties/current.p
 `tiles/context.pmtiles` (layer `h3`), `tiles/care.pmtiles` (layers `landcare` and `gardens`),
 `tiles/boundaries.pmtiles` (layers `council_districts`, `rcos` and `neighborhoods`),
 `tiles/transit.pmtiles` (layers `stops` and `routes`), `tiles/amenities.pmtiles` (layers `stops`,
-`benches`, `picnic_tables`, `water`, `toilets` and `bookcases`), `tiles/places.pmtiles` (layers
-`park_water`, `libraries`, `recreation` and `pools`) and `tiles/conditions.pmtiles` (layers `dumping`,
-`lights` and `graffiti`). It builds in a
+`benches`, `picnic_tables`, `water`, `toilets` and `bookcases`), `tiles/environment.pmtiles` (layers
+`heat_tracts` and `floodplain`), `tiles/trees.pmtiles` (layer `trees`, zoom 14 only),
+`tiles/places.pmtiles` (layers `park_water`, `libraries`, `recreation` and `pools`) and
+`tiles/conditions.pmtiles` (layers `dumping`, `lights` and `graffiti`). It builds in a
 hidden folder and swaps it into place at the end, and it refuses to replace a folder that is not an
 earlier data root. A layer with nothing to show is left out with a note, so it never breaks the rest
 of its tile file. It also writes the lot dossiers, `dossiers/<first four digits>.json` with

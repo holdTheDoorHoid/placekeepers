@@ -57,13 +57,15 @@ describe('defaults per view', () => {
 
   it('takes setting defaults, weights and suggestions from the registry', () => {
     const state = defaultState(reg, 'field');
-    expect(state.settings.vacant_parcels).toEqual({ min_confidence: '2', kinds: 'both' });
+    expect(state.settings.vacant_parcels).toEqual({ min_confidence: '2', kinds: 'both', lens: 'violence' });
     expect(state.settings.shootings_hex).toEqual({ window: 'm12' });
     expect(state.settings.hin_2025).toEqual({});
     expect(state.weights.violence).toEqual({ untreated_vacancy: 3, shootings_nearby: 3, poverty: 2, canopy_gap: 1 });
     expect(state.suggestions).toEqual({
       clean_and_green: true,
       seal_abandoned_building: true,
+      plant_shade_trees: true,
+      cool_green_lot: true,
       memorial_or_ghost_bike: true,
       traffic_calming_petition: true,
       daylighting_check: true,

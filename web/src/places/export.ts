@@ -202,7 +202,7 @@ export async function gatherExport(input: ExportInput): Promise<ExportResult> {
   const { parcels, notes, failed } = await loadParcels(input, places.map((p) => p.id));
   const rows = places.map((place) => exportRow(input, place, parcels.get(place.id) ?? null, notes));
   const e = strings.export;
-  const lens = parcelLensOf(input.registry);
+  const lens = parcelLensOf(input.registry, input.state);
   const dataDate = formatDate(input.manifest?.generated_at);
   const weights = lens
     ? lens.factors.map((f) => `${f.label} ${input.state.weights[lens.id]?.[f.id] ?? f.default_weight}`).join(', ')

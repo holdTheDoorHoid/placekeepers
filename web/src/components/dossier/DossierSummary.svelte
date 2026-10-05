@@ -27,7 +27,14 @@
 <ProvenanceLine provenance={summary.provenance} />
 
 {#if summary.lens && summary.why}
+  <p class="muted small lens-line">{s.lensLine(summary.lens.label)}</p>
   <WhyBreakdown why={summary.why} idPrefix="dossier-{opa}" level={4} />
+{/if}
+{#if summary.flood}
+  <section class="flood" aria-labelledby="dossier-{opa}-flood">
+    <h4 id="dossier-{opa}-flood">{s.floodTitle}</h4>
+    <p class="small">{summary.flood}</p>
+  </section>
 {/if}
 
 <h4>{s.linksTitle}</h4>
@@ -49,6 +56,22 @@
     background: var(--pk-ok-bg);
     color: var(--pk-ok-ink);
     font-size: 0.9rem;
+  }
+  .lens-line {
+    margin: 10px 0 0;
+  }
+  .flood {
+    margin-top: 10px;
+    padding: 6px 10px;
+    border-left: 4px solid #2171b5;
+    border-radius: var(--pk-radius);
+    background: var(--pk-surface);
+  }
+  .flood h4 {
+    margin: 0 0 2px;
+  }
+  .flood p {
+    margin: 0;
   }
   .links {
     margin: 0 0 4px;

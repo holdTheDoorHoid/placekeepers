@@ -16,6 +16,7 @@
   import BlessingNote from './BlessingNote.svelte';
   import TransitStopDetails from '../transit/TransitStopDetails.svelte';
   import StopAmenityDetails from '../transit/StopAmenityDetails.svelte';
+  import TreeDetails from '../heat/TreeDetails.svelte';
   import RouteDetails from '../transit/RouteDetails.svelte';
   import AmenityDetails from '../amenities/AmenityDetails.svelte';
   import ConditionDetails from '../amenities/ConditionDetails.svelte';
@@ -107,6 +108,8 @@
     {/each}
   {:else if style === STYLES.transit_routes}
     <RouteDetails features={target.features} />
+  {:else if style === STYLES.city_trees}
+    <TreeDetails features={target.features} />
   {:else if style === STYLES.amenity}
     {#each target.features.slice(0, 4) as properties, i (i)}
       <AmenityDetails layerId={target.layerId} {properties} guide={layer?.guide} />

@@ -10,9 +10,10 @@
 // Everything here is a plain function of its inputs, so tests can check every state.
 
 import { correctionUrl, propertyPageUrl, atlasUrl, googleMapsUrl, streetViewUrl, TAX_CENTER_URL } from '../config/links.ts';
+import { PERMISSION_ROUTES } from '../config/permission.ts';
 import type { Manifest } from '../data/manifest.ts';
 import { explainScore, type ScoreExplanation } from '../map/lens.ts';
-import { parcelLensOf, placeSuggestions } from '../places/rank.ts';
+import { parcelLensOf, placeSuggestions, suggestionsForLens } from '../places/rank.ts';
 import { placeReasons, reasonContext, type PlaceReasons } from '../places/reasons.ts';
 import type { Lens, Partner, Registry, Route, Suggestion } from '../registry/types.ts';
 import type { AppState } from '../state/defaults.ts';
@@ -220,6 +221,11 @@ export interface DossierView {
     care: string[];
     lens: Lens | null;
     why: ScoreExplanation | null;
+    /**
+     * FEMA's floodplain on the lot (the tile's `fp`, M3.1): a reason for care shown beside the
+     * score and never part of it, or null when the lot is not in it or the map has not said.
+     */
+    flood: string | null;
     links: Link[];
     provenance: Provenance;
   };
@@ -422,7 +428,7 @@ export function buildDossier(input: DossierInput): DossierView {
   if (parcel?.landcare) care.push(parcel.landcare.year ? s.summary.landcareSince(parcel.landcare.year) : s.summary.landcare);
   else if (int(tile?.lc) === 1) care.push(s.summary.landcare);
   if (parcel?.garden) care.push(s.summary.garden);
-  const lens = tile ? parcelLensOf(registry) : null;
+  const lens = tile ? parcelLensOf(registry, state) : null;
   const why = lens && tile ? explainScore(lens, state.weights[lens.id], tile) : null;
   const point = center ?? (property?.lng != null && property.lat != null ? ([property.lng, property.lat] as [number, number]) : null);
   const links: Link[] = [
@@ -444,8 +450,11 @@ export function buildDossier(input: DossierInput): DossierView {
 
   // What you can do ------------------------------------------------------------------------------
   const suggestionIds = parcel ? parcel.suggestions : typeof tile?.sg === 'string' ? tile.sg : '';
-  const suggestions = placeSuggestions(registry, state, { sg: Array.isArray(suggestionIds) ? suggestionIds.join(',') : suggestionIds }).filter(
-    (sg) => sg.applies_to === 'parcel',
+  const suggestions = suggestionsForLens(
+    placeSuggestions(registry, state, { sg: Array.isArray(suggestionIds) ? suggestionIds.join(',') : suggestionIds }).filter(
+      (sg) => sg.applies_to === 'parcel',
+    ),
+    parcelLensOf(registry, state),
   );
   // A homestead exemption in the City's live record rules out conservatorship, as the pipeline
   // does for the snapshot (docs/ETHICS.md): the City's records say someone lives there, or did.
@@ -461,6 +470,13 @@ export function buildDossier(input: DossierInput): DossierView {
       const first = registry.routes.find((r) => r.id === suggestion.routes[0]);
       routes = first ? [first] : [];
     }
+    // After the permission to use the land, the suggestion's own ways to do it (M3.1: the City's
+    // free street trees and TreePhilly's giveaway trees for planting shade trees).
+    const doIt = suggestion.routes
+      .filter((id) => !PERMISSION_ROUTES.has(id) && !routes.some((r) => r.id === id))
+      .map((id) => registry.routes.find((r) => r.id === id))
+      .filter((r): r is Route => !!r);
+    routes = [...routes, ...doIt];
     routes.forEach((r) => used.add(r.id));
     return {
       suggestion,
@@ -719,6 +735,7 @@ export function buildDossier(input: DossierInput): DossierView {
       care,
       lens,
       why,
+      flood: s.summary.flood[int(tile?.fp) ?? 0] ?? null,
       links,
       provenance: parcel ? snapshotProvenance : tile ? { tone: 'snapshot', text: p.map } : provenanceOf(live.property, false, null, liveOn),
     },

@@ -11,6 +11,9 @@
 - id: transit
   label: Buses and trains
   description: SEPTA stops and routes, how often service comes, how many people get on, and which stops have a shelter or a bench.
+- id: heat
+  label: Heat, trees and flooding
+  description: How hard summer heat hits each neighborhood, the trees the City keeps on its streets and in its parks, and where FEMA expects flooding.
 - id: amenities
   label: Benches, water, toilets and more
   description: Places to sit, drink water, use a toilet or borrow a book, as mapped in OpenStreetMap, and drinking fountains in parks.

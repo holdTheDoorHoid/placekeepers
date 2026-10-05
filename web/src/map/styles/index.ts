@@ -6,8 +6,11 @@ import { amenity } from './amenity.ts';
 import { basemap } from './basemap.ts';
 import { boundary } from './boundary.ts';
 import { condition } from './condition.ts';
+import { cityTrees } from './city_trees.ts';
 import { crashes } from './crashes.ts';
+import { floodplain } from './floodplain.ts';
 import { gardens } from './gardens.ts';
+import { heatTracts } from './heat_tracts.ts';
 import { hin } from './hin.ts';
 import type { StyleId } from './ids.ts';
 import { landcare } from './landcare.ts';
@@ -35,6 +38,9 @@ export const STYLES: Record<StyleId, StyleModule> = {
   transit_stops: transitStops,
   transit_routes: transitRoutes,
   stop_amenities: stopAmenities,
+  heat_tracts: heatTracts,
+  city_trees: cityTrees,
+  floodplain,
   amenity,
   public_place: publicPlace,
   condition,

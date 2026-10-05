@@ -61,6 +61,20 @@ to Grounded in Philly's sheriff sale guide.
 - **Neighborhood Gardens Trust** (ngtrust.org, 215-988-1630, ngtrust@pennhort.org) preserves
   community gardens permanently. Intake criteria **to confirm**.
 
+### Trees on and along a lot (heat and shade)
+
+Added 2026-10-05 for the heat and shade lens (milestone M3.1). The lot's own permission routes
+above come first: planting on a lot, or in the sidewalk in front of it, needs its owner. Both tree
+routes were last checked on **2026-10-05** against the programs' own pages.
+
+| Route | What it involves | Cost | Time | Status |
+|---|---|---|---|---|
+| Free street trees along the lot (`street_tree_request`, shared with the shade trees at bus stops, section 2) | Street trees go in the sidewalk in front of a property when its owner asks Parks and Recreation's Street Tree Management Division, online, by email at StreetTree.Info@phila.gov, or by phone at 215 685 4363 or 215 685 4362 (weekdays from 7:30 a.m. to 3 p.m.). Neighbors ask the lot's owner, named on the lot page, or the Land Bank for City or Land Bank land. The City inspects the spot, chooses the tree, cuts the concrete and plants it, then waters and mulches it for the first year and replaces a tree that dies within a year. After that, TreePhilly asks for about 20 gallons of water a week from March through December | Free | The next planting season: mid April to mid June, or mid October to mid November | Verified for the program (phila.gov "Get a street tree" and treephilly.org "Street trees", 2026-10-05); **confirm** whether the City plants in front of a vacant lot the City or the Land Bank owns, and who asks for it |
+| Free trees from a TreePhilly giveaway (`treephilly_yard_trees`) | For Philadelphia residents, to plant in the ground on private property, never in a container, the sidewalk or the public right of way. Sign up for TreePhilly's newsletter; register with the community group hosting a giveaway, which opens about two weeks to a month before it and closes when the trees run out; pick up the tree (2 to 10 feet tall, in a 5 gallon bucket, with a free bag of mulch). Giveaways run in spring (March to May) and fall (September to December), in priority ZIP codes | Free | The next spring or fall giveaway | **Confirm** whether a giveaway tree may go on a private vacant lot whose owner agrees in writing (source: treephilly.org "Yard trees", 2026-10-05) |
+
+TreePhilly's street tree page also names PHS Tree Tenders as another way to get street trees; PHS's
+own pages refuse automated access, so its steps are not described here.
+
 ### Helping families keep their homes
 
 - **Tangled Title Fund** (Philadelphia VIP; tangledtitlefund@gmail.com; 215-523-9553): up to $6,500
@@ -117,7 +131,7 @@ Evidence badges come from [EVIDENCE.md](EVIDENCE.md).
 | Cleanup and mowing only | Less than greening | Same | **Strong** for shootings in the trial | Regular | PHS, Block Captains |
 | Seal an abandoned house (doors and windows) | Owner's or City's cost | Report to 311; L&I clean and seal | **Strong** (violence) | None once sealed | L&I |
 | Community garden | Varies | Garden agreement or license, or owner permission | Builds on greening; no garden specific trial | Volunteer heavy | PHS, NGT, GJLI |
-| Tree planting | Free through TreePhilly | Request (a street tree: the owner of the property beside it asks) | **Mixed** for violence; **Mixed** for comfort at bus stops (EVIDENCE.md, "Bus stop comfort"); strong for heat | Water 2 to 3 years (the City waters a street tree the first year) | TreePhilly |
+| Tree planting | Free through TreePhilly | Request (a street tree: the owner of the property beside it asks) | **Mixed** for violence; **Mixed** for comfort at bus stops (EVIDENCE.md, "Bus stop comfort"); **Mixed** for heat (EVIDENCE.md, "Trees and heat": trees cool a block by day, but the health gains are estimates, not trials) | Water 2 to 3 years (the City waters a street tree the first year) | TreePhilly |
 | Stormwater planter or rain garden | Free for homeowners through Rain Check | Sign up (groups: **confirm**) | **Not about violence** | Occasional | Water Department |
 | Bench (open designs such as Better Block's Wikiblock) | Materials and cutting | Owner permission on a lot; sidewalk permit **to confirm** | **Not about violence** | Refinish yearly | Better Block (designs) |
 | Lighting (porch light campaign) | Near zero | None for your own porch | **Moderate** | Bulbs | Neighbors |
@@ -172,3 +186,7 @@ These go into outreach drafts for the owner to send; agents never send them.
    would families like it done?
 6. Mural Arts, the Association for Public Art, philart.net, and Philadelphia's Magic Gardens: may we
    include their artwork locations?
+7. Parks and Recreation (Street Tree Management Division) and the Land Bank: will the City plant
+   street trees in front of a vacant lot the City or the Land Bank owns, and who should ask?
+8. TreePhilly: may a resident plant a giveaway tree on a private vacant lot whose owner agrees in
+   writing, or a lot the neighbor holds under a garden agreement?

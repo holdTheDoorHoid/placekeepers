@@ -25,6 +25,7 @@
     {/if}
     {#if m.summary.cityCalls}<p>{m.summary.cityCalls}</p>{/if}
     {#each m.summary.care as line (line)}<p>{line}</p>{/each}
+    {#if m.summary.flood}<p><strong>{strings.dossier.summary.floodTitle}.</strong> {m.summary.flood}</p>{/if}
   </section>
 
   <section>

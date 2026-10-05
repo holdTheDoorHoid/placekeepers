@@ -11,7 +11,7 @@ import { AddressBook } from '../places/addresses.svelte.ts';
 import { ListStore } from '../places/lists.svelte.ts';
 import { isSample } from '../places/sample.ts';
 import type { InspectTarget, LayerStatus, MapController, MemorialInView, ParcelInView, StopInView } from '../map/controller.ts';
-import { BY_LENS, lensChanges } from '../map/lens-layers.ts';
+import { lensChanges } from '../map/lens-layers.ts';
 import type { Registry, SettingValue, ViewName } from '../registry/types.ts';
 import { strings } from '../strings.ts';
 import {
@@ -261,7 +261,7 @@ export class AppStore {
     const { turnOn, recolor } = lensChanges(this.registry, this.state, lens);
     if (turnOn.length === 0 && recolor.length === 0) return;
     if (turnOn.length) this.setLayersVisible(turnOn.map((l) => l.id), true);
-    for (const { layer, setting } of recolor) this.setSetting(layer.id, setting, BY_LENS);
+    for (const { layer, setting, value } of recolor) this.setSetting(layer.id, setting, value);
     const layer = turnOn[0] ?? recolor[0]!.layer;
     this.say(strings.lens.shown(layer.label, lens.label));
   }

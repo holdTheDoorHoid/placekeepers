@@ -12,7 +12,7 @@ export interface PrintModel {
   title: string;
   opa: string;
   printed: string;
-  summary: { kind: string; confidence: string | null; reasons: string[]; cityCalls: string | null; care: string[] };
+  summary: { kind: string; confidence: string | null; reasons: string[]; cityCalls: string | null; care: string[]; flood: string | null };
   actions: { label: string; route: string | null; warning: string | null; steps: string[]; cost: string; caution: string | null }[];
   owner: {
     names: string[];
@@ -54,6 +54,7 @@ export function printModel(view: DossierView, now: Date = new Date()): PrintMode
       reasons: reasons.slice(0, PRINT_LIMITS.reasons),
       cityCalls: view.summary.cityCalls,
       care: view.summary.care,
+      flood: view.summary.flood,
     },
     actions: view.actions.suggestions.slice(0, PRINT_LIMITS.suggestions).map((item) => {
       const route = item.routes[0] ?? null;

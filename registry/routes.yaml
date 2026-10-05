@@ -90,6 +90,21 @@
     - {label: Vision Zero Philadelphia, url: "https://visionzerophl.com/"}
   last_checked: 2026-10-04
   status: confirm
+# Milestone M3.1: giveaway trees for the heat and shade lens, from TreePhilly's own page, checked
+# 2026-10-05 (docs/ROUTES.md section 1). Street trees use street_tree_request (M2.3).
+- id: treephilly_yard_trees
+  label: Get free trees from a TreePhilly giveaway
+  who: Philadelphia residents, for trees planted in the ground on private property, such as a lot you own or a private lot whose owner agrees in writing
+  steps:
+    - Sign up for TreePhilly's newsletter to hear when registration opens. Giveaways happen in spring (March to May) and fall (September to December) in priority ZIP codes.
+    - Register with the community group hosting a giveaway near you. Registration opens about two weeks to a month before the giveaway and closes when the trees run out.
+    - Pick up the tree, 2 to 10 feet tall in a 5 gallon bucket, with a free bag of mulch, and plant it in the ground. Giveaway trees cannot go in a container, in the sidewalk or anywhere else in the public right of way.
+  cost: Free
+  timeline: The next spring or fall giveaway
+  links:
+    - {label: "TreePhilly: yard trees", url: "https://treephilly.org/yard-trees/"}
+  last_checked: 2026-10-05
+  status: confirm
 # Milestone M1.3: routes for owner flags and for Land Bank, Redevelopment Authority and private lots.
 - id: land_bank_side_yard
   label: Get it as a side or rear yard (next door owners only)
@@ -204,11 +219,12 @@
   status: confirm
 - id: street_tree_request
   label: Ask for a free street tree
-  who: The owner of the home, business or other property beside the stop
+  # Shared by the shade trees at a stop (M2.3) and on and along a vacant lot (M3.1).
+  who: The owner of the home, business, lot or other property the tree would stand in front of; neighbors can ask the owner to
   steps:
-    - Street trees are planted in the sidewalk in front of a property when its owner asks. Talk with the owners of the buildings beside the stop.
+    - Street trees are planted in the sidewalk in front of a property when its owner asks. Talk with the owners of the buildings beside the spot. For a vacant lot, ask the owner its lot page names, or the Land Bank for a lot the City or the Land Bank owns.
     - The owner asks Parks and Recreation's Street Tree Management Division for a free street tree, online, by email at StreetTree.Info@phila.gov, or by phone at 215-685-4363.
-    - A City arborist visits to decide which tree fits. The City plants it for free in a planting season (mid April to mid June, or mid October to mid November) and waters and mulches it for the first year.
+    - A City arborist visits to decide which tree fits. The City plants it for free in a planting season (mid April to mid June, or mid October to mid November) and waters and mulches it for the first year. After that, TreePhilly asks for about 20 gallons of water a week from March through December.
   cost: Free
   timeline: The next planting season after the arborist's visit
   links:

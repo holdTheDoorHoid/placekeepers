@@ -16,6 +16,7 @@ from placekeepers.adapters.city_places import (
 )
 from placekeepers.adapters.crashes import Crashes20072017, Crashes20162020, Crashes20202024
 from placekeepers.adapters.curated import MemorialNames
+from placekeepers.adapters.environment import FemaFloodplain, StreetTrees
 from placekeepers.adapters.fatal_crashes import FatalCrashes
 from placekeepers.adapters.heat import HeatVulnerability
 from placekeepers.adapters.high_injury_network import HighInjuryNetwork
@@ -79,6 +80,9 @@ ADAPTERS: dict[str, type[Adapter]] = {
     # The violence reduction lens (M1.4)
     "census_tracts_2020": CensusTracts2020,
     "tree_canopy_2018": TreeCanopy2018,
+    # The heat and shade lens (M3.1); heat_vulnerability, below, is shared with M2.3
+    "street_trees": StreetTrees,
+    "fema_floodplain": FemaFloodplain,
     # SEPTA schedules and ridership (M2.1)
     "septa_gtfs": SeptaGtfs,
     "septa_ridership_bus": SeptaRidershipBus,

@@ -15,6 +15,10 @@ export const STYLE_IDS = [
   'transit_stops',
   'transit_routes',
   'stop_amenities',
+  // Heat, trees and the floodplain (M3.1)
+  'heat_tracts',
+  'city_trees',
+  'floodplain',
   // M3.5: amenities from OpenStreetMap, public places from the City, conditions reported to 311
   'amenity',
   'public_place',

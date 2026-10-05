@@ -263,7 +263,7 @@ needed). Every score has a "why" breakdown showing each factor's contribution.
 |---|---|---|---|
 | Violence reduction | Vacant parcels | Untreated vacant lot or open abandoned building (Strong); shootings within about a quarter mile in the last 12 and 36 months (the outcome the trials measured; frames where care helps most); neighborhood poverty rate (the trial effect was concentrated below the poverty line); not already maintained by LandCare (Strong); tree canopy deficit (Mixed, low default weight) | First |
 | Street safety | Street segments and crash sites | On the High Injury Network; people killed or seriously injured walking or cycling in 5 years; any fatal crash in 2 years; school within 400 m; later, busy bus stop nearby | First |
-| Heat and shade | Area cells, stops, lots | Heat vulnerability; canopy; impervious surface; people over 65 and under 5 | Later |
+| Heat and shade | Vacant parcels | Neighborhood heat vulnerability, from the City's index (Context); few trees nearby, 2018 canopy within about a quarter mile (Mixed); few City trees on the block, within 100 meters (Mixed); people this would reach, residents per square kilometer of the tract (Context). FEMA's floodplain is shown beside the score, never in it | v0.3 (M3.1) |
 | Transit comfort | SEPTA bus and trolley stops | People getting on each weekday (Context); no shelter (Weak); no bench (Weak); little shade nearby (Mixed); hot neighborhood in summer (Context); on the High Injury Network (Context); long waits at midday (Weak). A shelter or bench not yet surveyed counts halfway | v0.2 (M2.3) |
 | Placemaking | Lots and area cells | Walkability; people within a 5 minute walk; distance to a park; art nearby or absent; commercial corridor | Later |
 
@@ -278,6 +278,62 @@ any lens (a slider or a preset) turns on the layer that draws its places, colore
 a note says so; a lens whose places are not on the map says so above its sliders, with a button to
 show them. The method is in [TRANSIT_METHOD.md](TRANSIT_METHOD.md) and the evidence in
 [EVIDENCE.md](EVIDENCE.md), "Bus stop comfort".
+
+As built (M3.1, 2026-10-05): the **heat and shade lens** ranks the vacant parcels on the map for
+where planting trees or greening a lot would cool people most. Each factor is ranked from 0 to 100
+among the parcels on the map, as for the violence lens: the heat vulnerability of the parcel's census
+tract from the City's Heat Vulnerability Index (the Department of Public Health and the Office of
+Sustainability: how hot the tract gets on summer days, as satellites measure it, together with how
+many of the people living there are more at risk in the heat, by twelve measures of age, health,
+income, education, language and race); few trees nearby (the violence lens's 2018 canopy within
+about a quarter mile, computed once and listed in both lenses); few City trees on the block (the
+trees of Parks and Recreation's 2025 inventory within 100 meters of the lot, about the block scale
+at which a study found trees cool the air most); and the people this would reach (residents per
+square kilometer of land in the tract, from the Census survey table the pipeline already reads).
+Presets: Balanced (the defaults 3, 3, 2 and 1), People most at risk, and Fewest trees. The lots
+layer's **Color lots by** setting chooses the violence reduction lens (the default) or this one, and
+moving either lens's sliders colors the lots by it, as M2.3 does for the stops. The legend, the
+nearby cards, the ranked list, the plot, the lot page and downloads all follow the chosen lens, and
+under the heat lens a lot's cards lead with its heat suggestions. Measured on 2026-10-05 under the
+default weights, the lots of Fairhill average 75 and those of Upper Kensington 73 (in Fairhill the
+heat vulnerability ranks about 86 of 100 and canopy covers about 6 percent of the land around a
+lot), while those of Chestnut Hill average 12 and West Mount Airy 11 (canopy over 40 percent). A
+lot at 3848 N 5th St in Hunting Park, with 2 City trees within 100 meters and 4 percent canopy,
+scores 90.
+
+**The floodplain is never a score.** Flooding is a different hazard from heat, and a lot in FEMA's
+floodplain is neither a better nor a worse place to cool: it is a reason for care (plants must stand
+wet ground, anything built follows the City's floodplain rules, water collects there) and a chance
+for greening that soaks up rain. Raising scores there would steer greening toward flood zones for
+the wrong reason, and lowering them would hide the lots where greening that holds water helps most.
+So a parcel carries `fp` when at least a tenth of it lies in FEMA's 1 percent or 0.2 percent annual
+chance areas (565 and 598 parcels on 2026-10-05), and its lot page shows a plain flood note beside
+the score, in print too.
+
+**Left out, and why.** Impervious surface and land cover: the City's 2018 land cover, from the
+same survey as the canopy, is a 521 MB raster that needs a raster library the pipeline does not
+have, and the Water Department's impervious surfaces date from 2015 (a 324 MB download); meanwhile
+the heat exposure part of the City's index already measures how hot the ground gets, which paving
+drives. People over 65 and under 5: two of the index's twelve sensitivity measures are already
+about people 65 and older, so counting them again would double their weight, and the census table
+the pipeline keeps holds no ages. The NOAA and CAPA Heat Watch street temperatures of Philadelphia
+have no data file we could find.
+
+**Heat, trees and flooding on the map.** Three layers in their own group, off by default in both
+views, because their fills would compete with the lots' lens colors and the trees are many: heat
+vulnerability by census tract (vulnerability, exposure or sensitivity, shaded by fifths of the
+city's tracts, with the tracts the City rates very high outlined), the City's street and park trees
+from zoom 14 (every tree, big shade trees, or small young ones that need watering, and a tapped
+tree's kind and trunk size), and the floodplain (both areas, or the 1 percent annual chance
+floodplain only).
+
+**Suggestions.** Vacant lots get two greening suggestions, decided in the pipeline with the factors:
+**plant shade trees on and along this lot** where the canopy around the lot is below the middle of
+the map's places (20,222 lots on 2026-10-05), and **green this lot to cool the block** where its
+tract's heat vulnerability is above the middle (21,091). Both lead with the lot's own permission
+route, then the City's free street trees (the route shared with the shade trees at stops) and
+TreePhilly's free giveaway trees, and both carry the displacement caution of ETHICS.md word for
+word, like clean and green.
 
 **Displacement watch** is not a priority lens. It is a caution overlay on area cells (sale price
 growth, share of recent buyers that are companies, renter share, and similar), shown wherever a
@@ -320,7 +376,7 @@ setting. First release suggestions:
 | Lot near a traffic death | Memorial garden, only with the family's blessing | Families for Safe Streets |
 | Crash site where someone walking or cycling died | Memorial or ghost bike; traffic calming petition on a residential street; daylighting check | Bicycle Coalition; OTIS |
 | High Injury Network segment | Vision Zero advocacy and public comment | Bicycle Coalition, Feet First Philly, 5th Square |
-| Low canopy area | Free yard tree; street tree request | TreePhilly |
+| Vacant lot where little shade covers the area, or where heat hits people hardest (M3.1) | Plant shade trees on and along the lot; green the lot to cool the block | The lot's permission route, then the City's street tree request and TreePhilly's giveaway trees |
 
 Funding is shown beside suggestions where it fits: the City's community violence prevention grants
 and Feet First Philly's public space mini grants (see ROUTES.md).
