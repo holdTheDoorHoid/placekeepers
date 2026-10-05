@@ -103,8 +103,8 @@
   description: >-
     Bus and trolley stops where a shelter, a bench or shade would help riders most: busy stops,
     stops where a survey found nothing to sit under or on, stops with little shade in hot
-    neighborhoods, stops on dangerous streets, and stops with long waits. Where no one has surveyed
-    a stop yet, its shelter and bench count halfway.
+    neighborhoods, stops on the High Injury Network, and stops with long waits. Where no one has
+    surveyed a stop yet, its shelter and bench count halfway.
   factors:
     - id: riders
       label: People getting on each weekday
@@ -161,8 +161,9 @@
       default_weight: 2
       explain: >-
         The stop stands on or at one of the streets where most traffic deaths and serious injuries
-        happen in Philadelphia, so many riders cross a dangerous street to reach it or to leave it.
-        Studies elsewhere found pedestrian crashes concentrated at busy bus stops on wide roads.
+        happen in Philadelphia, so many riders cross that street to reach the stop or to leave it.
+        Studies elsewhere found that crashes involving people on foot gather at busy bus stops on
+        wide roads, where a safe crossing matters most.
     - id: long_wait
       label: Long waits at midday
       field: f_wait
