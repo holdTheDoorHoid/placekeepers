@@ -4,6 +4,7 @@
 import type { Layer } from '../../registry/types.ts';
 import { basemap } from './basemap.ts';
 import { boundary } from './boundary.ts';
+import { busStops } from './bus_stops.ts';
 import { crashes } from './crashes.ts';
 import { gardens } from './gardens.ts';
 import { hin } from './hin.ts';
@@ -26,6 +27,7 @@ export const STYLES: Record<StyleId, StyleModule> = {
   crashes,
   memorials,
   basemap,
+  bus_stops: busStops,
 };
 
 export function styleFor(layer: Layer): StyleModule | null {
@@ -33,4 +35,4 @@ export function styleFor(layer: Layer): StyleModule | null {
 }
 
 export { partId } from './types.ts';
-export type { LegendEntry, StyleContext, StyleModule } from './types.ts';
+export type { LegendEntry, LegendLink, StyleContext, StyleModule } from './types.ts';

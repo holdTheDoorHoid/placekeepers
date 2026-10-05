@@ -27,7 +27,7 @@ describe('the real registry', () => {
 
   it('loads the files the web app depends on', () => {
     const reg = loadRegistry();
-    expect(reg.groups.map((g) => g.id)).toEqual(['lots', 'care', 'streets', 'safety_context', 'boundaries', 'basemap']);
+    expect(reg.groups.map((g) => g.id)).toEqual(['lots', 'care', 'streets', 'transit', 'safety_context', 'boundaries', 'basemap']);
     expect(reg.layers.map((l) => l.id)).toEqual(expect.arrayContaining(['vacant_parcels', 'hin_2025', 'shootings_hex']));
     expect(reg.lenses.find((l) => l.id === 'violence')?.factors.length).toBeGreaterThan(0);
   });
@@ -42,6 +42,48 @@ describe('the real registry', () => {
     const setting = reg.layers.find((l) => l.id === 'vacant_parcels')?.settings.find((s) => s.id === 'min_confidence');
     expect(setting?.type).toBe('choice');
     expect(setting?.default).toBe('2');
+  });
+});
+
+describe('OpenStreetMap extracts and layer guides (M2.2)', () => {
+  const source = (files: Record<string, any>, id: string) => files.sources.find((s: { id: string }) => s.id === id);
+
+  it('accepts the base map with no keys and the weekly extract with a url and tags', () => {
+    const reg = loadRegistry();
+    expect(reg.sources.find((s) => s.id === 'basemap_openstreetmap')?.endpoint).toEqual({ kind: 'osm_extract' });
+    const osm = reg.sources.find((s) => s.id === 'osm_philadelphia')!;
+    expect(osm.endpoint.url).toMatch(/pennsylvania-latest\.osm\.pbf$/);
+    expect(osm.endpoint.tags).toContain('highway=bus_stop');
+    expect(reg.layers.find((l) => l.id === 'bus_stops')?.guide).toBe('streetcomplete');
+  });
+
+  it('needs both a url and tags, or neither', () => {
+    const files = raw();
+    delete source(files, 'osm_philadelphia').endpoint.tags;
+    source(files, 'basemap_openstreetmap').endpoint.tags = ['amenity=bench'];
+    const errors = errorsFor(files);
+    expect(errors).toContain('sources.yaml entry "osm_philadelphia".endpoint of kind osm_extract needs both "url" and "tags", or neither');
+    expect(errors).toContain('sources.yaml entry "basemap_openstreetmap".endpoint of kind osm_extract needs both "url" and "tags", or neither');
+  });
+
+  it('rejects a tag with spaces and a repeated tag', () => {
+    const files = raw();
+    source(files, 'osm_philadelphia').endpoint.tags = ['highway=bus_stop', 'amenity = bench', 'highway=bus_stop'];
+    const errors = errorsFor(files);
+    expect(errors.some((e) => e.includes('"amenity = bench"'))).toBe(true);
+    expect(errors.some((e) => e.includes('repeats "highway=bus_stop"'))).toBe(true);
+  });
+
+  it('rejects an extract link that is not an .osm.pbf file', () => {
+    const files = raw();
+    source(files, 'osm_philadelphia').endpoint.url = 'https://download.geofabrik.de/north-america/us/pennsylvania-latest.osm';
+    expect(errorsFor(files)).toEqual(['sources.yaml entry "osm_philadelphia".endpoint.url should be an https link to an .osm.pbf file']);
+  });
+
+  it('accepts a guide only as a page slug', () => {
+    const files = raw();
+    layer(files, 'bus_stops').guide = '../streetcomplete';
+    expect(errorsFor(files)).toContain('layers.yaml entry "bus_stops".guide has an invalid value "../streetcomplete"');
   });
 });
 

@@ -1,6 +1,8 @@
 <script lang="ts">
   // One registry layer: its switch, evidence badge, settings and legend (while shown), and an
-  // "About this layer" section with the plain description, sources, licenses and credits.
+  // "About this layer" section with the plain description, a link to its guide when it has one
+  // (how anyone can help improve its data), sources, licenses and credits.
+  import { config } from '../../config/index.ts';
   import { styleFor } from '../../map/styles/index.ts';
   import type { Layer } from '../../registry/types.ts';
   import type { AppStore } from '../../state/store.svelte.ts';
@@ -59,6 +61,7 @@
   <details>
     <summary>{strings.layers.details}</summary>
     <p>{layer.description}</p>
+    {#if layer.guide}<p><a href="{config.siteBase}{layer.guide}/">{strings.layers.guide}</a></p>{/if}
     <h4>{strings.layers.sources}</h4>
     <ul class="sources">
       {#each sources as source (source.id)}
