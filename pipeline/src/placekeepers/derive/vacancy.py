@@ -21,6 +21,9 @@ In short:
 * Contradictions: Planning's land use map shows a use (a lot drops one level), a new construction
   permit (October 2021 to March 2025 makes a lot low; since April 2025 caps it at medium), any
   permit in two years (a building drops one level).
+* Added after the study (decision D1, docs/VERIFICATION.md): an owner occupied homestead exemption,
+  the City's own record that someone lives there or did, lowers a building one more level (high to
+  medium, medium to low). On a lot it is shown as a reason against without changing the level.
 * Parks, gardens, parking, rail, transportation, utilities, cemeteries, water and streets never
   show as vacant. LandCare lots stay in, marked maintained.
 
@@ -109,6 +112,7 @@ REASONS: tuple[Reason, ...] = (
     Reason(15, "lu_developed", "land_use_shows_use", against=True),
     Reason(16, "recent_permit", "recent_permit", against=True),
     Reason(17, "footprint_conflict", "building_stands", against=True),
+    Reason(18, "homestead", "homestead", against=True),
 )
 
 
@@ -148,6 +152,7 @@ VIEWS: dict[str, tuple[str, dict[str, str]]] = {
             "building_code_description": "VARCHAR",
             "owner_1": "VARCHAR",
             "total_livable_area": "DOUBLE",
+            "homestead_exemption": "DOUBLE",
             "year_built": "VARCHAR",
             "exterior_condition": "VARCHAR",
             "lat": "DOUBLE",
@@ -472,7 +477,8 @@ def build_records(con: duckdb.DuckDBPyConnection, w: Windows, lists: CityLists) 
         SELECT {opa9("parcel_number")} AS opa, location AS address, unit,
                category_code AS cat, building_code_description AS bdesc, owner_1,
                lat AS opa_lat, lng AS opa_lon, exterior_condition AS ext_cond,
-               total_livable_area AS livable_sqft, TRY_CAST(year_built AS INT) AS year_built
+               total_livable_area AS livable_sqft, TRY_CAST(year_built AS INT) AS year_built,
+               homestead_exemption
         FROM src_opa WHERE {valid_opa("parcel_number")}
     """)
     land_where = "true" if lists.use_land else "false"
@@ -716,7 +722,10 @@ def build_signals(con: duckdb.DuckDBPyConnection, w: Windows) -> None:
             AS unsafe_no_permit,
           (idang_since IS NOT NULL AND (activity_last IS NULL OR activity_last <= idang_since))
             AS idang_no_permit,
-          (coalesce(v_vac_bldg, 0) + coalesce(c_vac_bldg, 0)) > 0 AS bldg_li_2y
+          (coalesce(v_vac_bldg, 0) + coalesce(c_vac_bldg, 0)) > 0 AS bldg_li_2y,
+          -- The owner told the City someone lives here (or did): an owner occupied homestead
+          -- exemption on the account (decision D1, docs/VERIFICATION.md).
+          coalesce(homestead_exemption, 0) > 0 AS homestead
         FROM sig
     """)
     # A seal counts only when recent (five years), with no permit since, and the building stands.
@@ -740,10 +749,20 @@ STRONG_BLDG = (
 PHYSICAL_LOT = "(coalesce(no_footprint, false) OR coalesce(demo_no_newcon, false))"
 
 
+def homestead_lowers(confidence: str) -> str:
+    """SQL that lowers a confidence one level (high to medium, medium to low) when the owner has a
+    homestead exemption: the City's own record that someone lives there, or did (decision D1,
+    docs/VERIFICATION.md). The study had no such rule; it applies to buildings only."""
+    return f"""CASE WHEN coalesce(homestead, false)
+                    THEN CASE ({confidence}) WHEN 'high' THEN 'medium' ELSE 'low' END
+                    ELSE ({confidence}) END"""
+
+
 def classify_sql(city_land: str = "city_land", city_bldg: str = "city_bldg") -> str:
     """The rule set (research/vacancy/rules.py): a select list giving `kind` (lot, lot_conflict,
     building or excluded) and `confidence` (high, medium, low). The City columns can be replaced,
-    for example by false to see the map without the City's indicator."""
+    for example by false to see the map without the City's indicator. One rule was added after the
+    study: a homestead exemption lowers a building one level (homestead_lowers)."""
     lot_kind = """(has_footprint = false
                     OR (has_footprint AND coalesce(demo_no_newcon, false))
                     OR (has_footprint IS NULL AND coalesce(opa_vacant_land, false)))"""
@@ -751,6 +770,17 @@ def classify_sql(city_land: str = "city_land", city_bldg: str = "city_bldg") -> 
     bldg_any = f"(coalesce({city_bldg}, false) OR n_bldg_signals >= 1)"
     city_land = f"coalesce({city_land}, false)"
     city_bldg = f"coalesce({city_bldg}, false)"
+    building = f"""
+          CASE WHEN coalesce(recent_permit, false) THEN
+            CASE WHEN ({city_bldg} AND n_bldg_signals >= 1)
+                      OR (n_bldg_signals >= 2 AND {STRONG_BLDG}) THEN 'medium'
+                 ELSE 'low' END
+          ELSE
+            CASE WHEN ({city_bldg} AND n_bldg_signals >= 1)
+                      OR (n_bldg_signals >= 2 AND {STRONG_BLDG}) THEN 'high'
+                 WHEN {city_bldg} OR {STRONG_BLDG} THEN 'medium'
+                 ELSE 'low' END
+          END"""
     return f"""
       CASE
         WHEN excluded_use IS NOT NULL AND ({lot_any} OR {bldg_any}) THEN 'excluded'
@@ -770,17 +800,7 @@ def classify_sql(city_land: str = "city_land", city_bldg: str = "city_bldg") -> 
           WHEN NOT {city_land} AND n_lot_signals >= 2 AND {PHYSICAL_LOT}
                AND NOT coalesce(lu_developed, false) THEN 'medium'
           ELSE 'low' END
-        WHEN has_footprint IS NOT false AND {bldg_any} THEN
-          CASE WHEN coalesce(recent_permit, false) THEN
-            CASE WHEN ({city_bldg} AND n_bldg_signals >= 1)
-                      OR (n_bldg_signals >= 2 AND {STRONG_BLDG}) THEN 'medium'
-                 ELSE 'low' END
-          ELSE
-            CASE WHEN ({city_bldg} AND n_bldg_signals >= 1)
-                      OR (n_bldg_signals >= 2 AND {STRONG_BLDG}) THEN 'high'
-                 WHEN {city_bldg} OR {STRONG_BLDG} THEN 'medium'
-                 ELSE 'low' END
-          END
+        WHEN has_footprint IS NOT false AND {bldg_any} THEN {homestead_lowers(building)}
         WHEN {lot_any} THEN 'low'
       END AS confidence
     """
@@ -853,6 +873,8 @@ class VacancyResult:
     seconds: float
     #: shown parcels drawn as the assessor's point, for want of a shape
     points: int = 0
+    #: the counts under the study's rules alone (without the homestead rule added after it)
+    study_rules: dict[str, Any] = field(default_factory=dict)
     notes: list[str] = field(default_factory=list)
 
     def to_json(self) -> dict[str, Any]:
@@ -991,6 +1013,13 @@ def run(ctx: Context, as_of: date | None = None, out: Path | None = None) -> Vac
             SELECT {classify_sql("false", "false")} FROM signals
         """)
         alone = counts(con, "(SELECT * FROM without_city WHERE kind IS NOT NULL)")
+        # The study's rules exactly, without the homestead rule added after it, so the counts
+        # can still be compared with the study's (tests/test_live.py).
+        con.execute(f"""
+            CREATE TABLE study_rules AS
+            SELECT {classify_sql()} FROM (SELECT * REPLACE (false AS homestead) FROM signals)
+        """)
+        as_study = counts(con, "(SELECT * FROM study_rules WHERE kind IS NOT NULL)")
         out = out or output_path(ctx)
         with atomic_output(out) as tmp:
             shapes = write_output(con, tmp)
@@ -1033,6 +1062,7 @@ def run(ctx: Context, as_of: date | None = None, out: Path | None = None) -> Vac
         as_of=as_of.isoformat(),
         counts=found,
         without_city=alone,
+        study_rules=as_study,
         city_lists={
             "land": {
                 "date": lists.land_date and lists.land_date.isoformat(),

@@ -526,6 +526,13 @@ def test_the_map_shows_the_models_parcels_with_their_reasons(run_ctx, tmp_path) 
         "similar left out"
     ) in notes
     assert not any("has not run" in note for note in notes)
+    # The counts travel as fields too (docs/CONTRACTS.md section 3).
+    assert published.manifest["vacancy"] == {
+        "as_of": "2026-10-04",
+        "lots": {"high": 1, "medium": 2, "low": 5},
+        "buildings": {"high": 1, "medium": 0, "low": 0},
+        "left_out": 1,
+    }
 
 
 def test_without_the_model_the_map_shows_the_city_lists_and_says_so(run_ctx, tmp_path) -> None:

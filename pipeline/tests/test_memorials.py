@@ -39,6 +39,13 @@ from .conftest import REPO_ROOT
         ("26th St. ", "Near Penrose Ave.", "26th St near Penrose Ave"),
         ("70th St.", "Lindbergh Blvd", "70th St and Lindbergh Blvd"),
         ("Erie Ave.", '"I" St.', "Erie Ave and I St"),
+        # Finding F15: no stray spaces inside parentheses.
+        (
+            "Kensington Ave.",
+            "2500 Block ( Sergeant St.)",
+            "2500 block of Kensington Ave near Sergeant St",
+        ),
+        ("Broad St ( Center City )", None, "Broad St (Center City)"),
         (None, None, None),
     ],
 )

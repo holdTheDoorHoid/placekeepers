@@ -28,6 +28,7 @@ export const REASONS = [
   'land_use_shows_use',
   'recent_permit',
   'building_stands',
+  'homestead',
 ] as const;
 
 export type ReasonId = (typeof REASONS)[number];
