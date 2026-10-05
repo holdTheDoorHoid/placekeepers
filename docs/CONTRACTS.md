@@ -441,7 +441,9 @@ Names wait for the removal address (owner decision 2026-10-04, recorded in ROADM
 this contract 2026-10-04 by M1.10): ETHICS.md promises families that one email takes a name down,
 so while `REMOVAL_EMAIL` in `web/src/content/removal-email.ts` is null (or missing, or cannot be
 read), the pipeline publishes no `nm` and no `src` and makes no marker from a curated entry, and the
-build notes say how many names wait.
+build notes say how many names wait. The memorial names snapshot (which goes on the public
+data-snapshots release) never holds names or memorial page links, since a link names the person,
+and leaves out entries listed in `suppressed.yaml`.
 
 `suppressed.yaml` lists what never appears again, by id only: a curated entry's id (its name never
 shows; the Police marker stays, unnamed) or a marker's id (the marker is not drawn). A marker may be

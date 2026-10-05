@@ -215,6 +215,22 @@ def test_the_memorial_names_snapshot_holds_no_names(context_factory, repo_copy, 
     assert table.column("id").to_pylist() == ["m2026_0001", "m2023_0001"]
     text = json.dumps(table.to_pylist(), default=str)
     assert "Alex Example" not in text and "Robin Placeholder" not in text
+    # The memorial page link names the person too (here in its address), and snapshots go on
+    # the public data-snapshots release, so links are never kept.
+    assert "source" not in table.column_names
+    assert "alex-example" not in text and "example.org" not in text
+
+
+def test_the_memorial_names_snapshot_leaves_out_removed_entries(
+    context_factory, repo_copy, tmp_path
+) -> None:
+    write_curated(repo_copy, [INVENTED, REMOVED], ["m2023_0001"])
+    ctx = context_factory(repo_root=repo_copy)
+    adapter = MemorialNames(ctx.registry.sources["memorial_names"], ctx)
+    _, out = run(adapter, tmp_path)
+    table = pq.read_table(out)
+    assert table.column("id").to_pylist() == ["m2026_0001"]
+    assert "2023-05-05" not in json.dumps(table.to_pylist(), default=str)
 
 
 # Publishing the streets layers ----------------------------------------------------------------

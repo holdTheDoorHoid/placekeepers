@@ -72,7 +72,7 @@ for them are in each adapter's docstring.
 | `fatal_crashes` | Carto `fatal_crashes` | One row per person killed: the date, the two units involved (free text), the street and cross street, the point. Case numbers, age, sex, narratives and arrest details are never downloaded |
 | `schools` | City ArcGIS `Schools` | Name, address, grades, type, point |
 | `street_centerlines` | City ArcGIS `Street_Centerline` | Segment id, street name, class, who maintains it, direction, length, end nodes, line |
-| `memorial_names` | `data/curated/memorials.yaml` (in the repository) | Checks every entry; the snapshot keeps ids, dates, modes, places and source links, never names |
+| `memorial_names` | `data/curated/memorials.yaml` (in the repository) | Checks every entry; the snapshot keeps ids, dates, modes and places, never names or memorial page links, and leaves out removed entries |
 | `census_tracts_2020` | City ArcGIS `Census_Tracts_2020` (frozen) | Every field (tract id `geoid`, land and water area), with the shape |
 | `tree_canopy_2018` | City ArcGIS `TreeCanopyChange_2008_2018` (frozen; about 570 MB of pages, once) | Not the 665,748 canopy polygons: square meters of canopy in 2008 and 2018 per H3 resolution 9 cell, each polygon split exactly along the cell edges |
 
