@@ -623,6 +623,13 @@ def test_stops_carry_the_contract_properties(context_factory, tmp_path) -> None:
         "wc": 1,
         "b": 55,
         "bp": "Spring 2026",
+        # The transit comfort lens (M2.3, tests/test_transit_comfort.py): without OpenStreetMap
+        # the shelter and bench count halfway and the stop asks to be surveyed.
+        "f_riders": 67,
+        "f_noshelter": 50,
+        "f_nobench": 50,
+        "f_wait": 0,
+        "sg": "stop_survey",
     }
     assert (
         "b" not in stops["102"] and stops["102"]["wc"] == 2

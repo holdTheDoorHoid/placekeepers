@@ -305,14 +305,28 @@
     Every SEPTA bus and trolley stop in Philadelphia, from SEPTA's current schedules: the routes
     that stop there, how often a bus or trolley comes on a typical weekday, Saturday and Sunday,
     when service starts and ends, and how many people get on there on an average weekday, from
-    SEPTA's own counts. Subway, El and Regional Rail stations can be added in the settings.
-  sources: [septa_gtfs, septa_ridership_bus, septa_ridership_trolley]
+    SEPTA's own counts. Each stop shows what riders find there where OpenStreetMap knows it, its
+    priority under the transit comfort lens, and what neighbors can do about it. Subway, El and
+    Regional Rail stations can be added in the settings.
+  sources:
+    - septa_gtfs
+    - septa_ridership_bus
+    - septa_ridership_trolley
+    # The transit comfort lens (M2.3); land use gives the water left out of the canopy measure
+    - osm_philadelphia
+    - tree_canopy_2018
+    - census_tracts_2020
+    - land_use
+    - heat_vulnerability
+    - high_injury_network
   file: tiles/transit.pmtiles
   source_layer: stops
   geometry: point
   style: transit_stops
   evidence: context
+  # Off until someone taps the Bus stops chip or uses the transit comfort lens (M2.3).
   default: {field: false, analysis: false}
+  guide: streetcomplete
   settings:
     - id: service
       label: Show stops with
@@ -326,9 +340,10 @@
       label: Color stops by
       type: choice
       options:
+        - {value: lens, label: Priority under the transit comfort lens}
         - {value: wait, label: How often a bus or train comes at midday}
         - {value: boardings, label: How many people get on each weekday}
-      default: wait
+      default: lens
     - id: stations
       label: Also show subway, El and Regional Rail stations
       type: toggle
@@ -373,7 +388,8 @@
   geometry: point
   style: stop_amenities
   evidence: not_violence
-  # The transit comfort lens comes in M2.3; until then the stops stay off unless switched on.
+  # SEPTA's stops layer carries the transit comfort lens (M2.3); this one stays off unless
+  # switched on.
   default: {field: false, analysis: false}
   guide: streetcomplete
   settings:

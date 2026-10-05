@@ -10,7 +10,8 @@ import { isOpaAccount } from '../dossier/opa.ts';
 import { AddressBook } from '../places/addresses.svelte.ts';
 import { ListStore } from '../places/lists.svelte.ts';
 import { isSample } from '../places/sample.ts';
-import type { InspectTarget, LayerStatus, MapController, MemorialInView, ParcelInView } from '../map/controller.ts';
+import type { InspectTarget, LayerStatus, MapController, MemorialInView, ParcelInView, StopInView } from '../map/controller.ts';
+import { BY_LENS, lensChanges } from '../map/lens-layers.ts';
 import type { Registry, SettingValue, ViewName } from '../registry/types.ts';
 import { strings } from '../strings.ts';
 import {
@@ -76,9 +77,16 @@ export class AppStore {
   readonly parcelsSampled: boolean = $derived.by(() => isSample(this.state.map.zoom, this.parcelsInView));
   /** Memorial markers drawn in view, for the memorial lists that stand in for the map. */
   memorialsInView = $state.raw<MemorialInView[]>([]);
+  /** SEPTA stops drawn in view, for "What you can do nearby" in the field view. */
+  stopsInView = $state.raw<StopInView[]>([]);
   selectedProperties = $state.raw<Record<string, unknown> | null>(null);
   /** A memorial, crash or street block someone tapped, shown in the details panel. */
   inspected = $state.raw<InspectTarget | null>(null);
+  /**
+   * The field view's details panel shows the inspected feature. False after "Show on map" on a
+   * stop's card, which only marks the stop on the map.
+   */
+  inspectedOpen = $state(true);
   /** The map's view, as west, south, east and north, after it last settled. */
   viewBounds = $state.raw<[number, number, number, number] | null>(null);
   /**
@@ -230,6 +238,7 @@ export class AppStore {
   setWeight(lensId: string, factorId: string, weight: number): void {
     (this.state.weights[lensId] ??= {})[factorId] = clampWeight(weight);
     this.touch();
+    this.showLens(lensId);
   }
 
   applyPreset(lensId: string, presetId: string): void {
@@ -238,6 +247,23 @@ export class AppStore {
     if (!weights) return;
     this.state.weights[lensId] = weights;
     this.touch();
+    this.showLens(lensId);
+  }
+
+  /**
+   * Shows a lens on the map: turns on the layers that draw its places and colors them by the lens,
+   * saying so when anything changed. Moving a slider or choosing a preset does this too, so using
+   * a lens is never invisible (the stops layer is off by default and can color by other measures).
+   */
+  showLens(lensId: string): void {
+    const lens = this.registry.lenses.find((l) => l.id === lensId);
+    if (!lens) return;
+    const { turnOn, recolor } = lensChanges(this.registry, this.state, lens);
+    if (turnOn.length === 0 && recolor.length === 0) return;
+    if (turnOn.length) this.setLayersVisible(turnOn.map((l) => l.id), true);
+    for (const { layer, setting } of recolor) this.setSetting(layer.id, setting, BY_LENS);
+    const layer = turnOn[0] ?? recolor[0]!.layer;
+    this.say(strings.lens.shown(layer.label, lens.label));
   }
 
   resetWeights(lensId: string): void {
@@ -320,9 +346,13 @@ export class AppStore {
     this.select(parcel.opa, null, { center: lngLat, shape: parcel.shape });
   }
 
-  /** Shows a tapped memorial, crash or street block, or clears it. A parcel selection gives way. */
-  inspect(target: InspectTarget | null): void {
+  /**
+   * Shows a tapped memorial, crash, street block or stop, or clears it. A parcel selection gives
+   * way. With `open` false the feature is only marked on the map, without opening its details.
+   */
+  inspect(target: InspectTarget | null, open = true): void {
     this.inspected = target && target.features.length ? target : null;
+    this.inspectedOpen = open;
     if (this.inspected) this.select(null);
   }
 

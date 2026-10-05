@@ -67,9 +67,23 @@ describe('defaults per view', () => {
       traffic_calming_petition: true,
       daylighting_check: true,
       asphalt_art_check: true,
+      stop_survey: true,
+      stop_shelter_request: true,
+      stop_bench_request: true,
+      stop_streetlight_report: true,
+      stop_shade_trees: true,
     });
     expect(state.settings.memorials).toEqual({ show_names: true, all_fatal: false });
     expect(state.weights.street_safety).toEqual({ high_injury_network: 3, walking_cycling_harm: 3, recent_death: 2, school_nearby: 1 });
+    expect(state.weights.transit_comfort).toEqual({
+      riders: 3,
+      no_shelter: 3,
+      no_bench: 2,
+      little_shade: 2,
+      heat: 1,
+      high_injury_network: 2,
+      long_wait: 1,
+    });
     expect(state.filters.owner_type).toHaveLength(9);
     expect(state.selected).toBeNull();
   });
