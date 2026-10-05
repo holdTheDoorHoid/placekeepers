@@ -263,6 +263,9 @@ class Layer(Strict):
     style: Id
     evidence: Evidence
     default: LayerDefault
+    #: the slug of a content page (content/<slug>.md) that shows how anyone can help improve this
+    #: layer's data, linked from "About this layer" (added 2026-10-04 by M2.2)
+    guide: Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9-]*$")] | None = None
     settings: list[Setting] = []
     release: Release
 
@@ -528,6 +531,10 @@ def _cross_check(
         setting_ids = [setting.id for setting in layer.settings]
         if len(set(setting_ids)) != len(setting_ids):
             problems.append(f"{where}: setting ids repeat: {setting_ids}")
+        if layer.guide and repo_root is not None:
+            page = repo_root / "content" / f"{layer.guide}.md"
+            if not page.is_file():
+                problems.append(f"{where}: guide page content/{layer.guide}.md does not exist")
 
     for lens in reg["lenses"].values():
         where = f"registry/lenses.yaml: {lens.id}"

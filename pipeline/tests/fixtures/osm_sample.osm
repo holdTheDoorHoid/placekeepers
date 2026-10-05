@@ -1,0 +1,186 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Hand made for the pipeline tests (tests/test_osm.py, tests/test_bus_stops.py). The test city
+     is the box from longitude -75.170 to -75.150 and latitude 39.950 to 39.966. Distances are in
+     meters, measured in UTM zone 18 north as the pipeline measures them. -->
+<osm version="0.6" generator="Placekeepers tests, by hand">
+  <!-- every answer on the stop: a shelter -->
+  <node id="1" lat="39.9540000" lon="-75.1580000">
+    <tag k="highway" v="bus_stop"/>
+    <tag k="public_transport" v="platform"/>
+    <tag k="bus" v="yes"/>
+    <tag k="shelter" v="yes"/>
+    <tag k="bench" v="no"/>
+    <tag k="bin" v="yes"/>
+    <tag k="lit" v="yes"/>
+    <tag k="tactile_paving" v="no"/>
+    <tag k="wheelchair" v="limited"/>
+    <tag k="departures_board" v="realtime"/>
+    <tag k="name" v="Broad St &amp; Arch St"/>
+    <tag k="ref" v="10264"/>
+    <tag k="gtfs:stop_id" v="10264"/>
+  </node>
+  <!-- no answers; a public transport shelter mapped 6 m east -->
+  <node id="2" lat="39.9540000" lon="-75.1620000">
+    <tag k="highway" v="bus_stop"/>
+  </node>
+  <!-- surveyed: no shelter, no bench -->
+  <node id="3" lat="39.9540000" lon="-75.1640000">
+    <tag k="highway" v="bus_stop"/>
+    <tag k="shelter" v="no"/>
+    <tag k="bench" v="no"/>
+  </node>
+  <!-- a bench only -->
+  <node id="4" lat="39.9540000" lon="-75.1660000">
+    <tag k="highway" v="bus_stop"/>
+    <tag k="bench" v="yes"/>
+  </node>
+  <!-- not surveyed; a bench 25 m away is too far -->
+  <node id="5" lat="39.9570000" lon="-75.1580000">
+    <tag k="highway" v="bus_stop"/>
+  </node>
+  <!-- says no shelter; a shelter mapped 3 m away does not change its answer -->
+  <node id="6" lat="39.9570000" lon="-75.1620000">
+    <tag k="highway" v="bus_stop"/>
+    <tag k="shelter" v="no"/>
+  </node>
+  <!-- a trolley platform under a roof -->
+  <node id="7" lat="39.9570000" lon="-75.1640000">
+    <tag k="railway" v="platform"/>
+    <tag k="public_transport" v="platform"/>
+    <tag k="tram" v="yes"/>
+    <tag k="covered" v="yes"/>
+  </node>
+  <!-- where the bus halts in the road: not kept -->
+  <node id="8" lat="39.9570090" lon="-75.1639883">
+    <tag k="public_transport" v="stop_position"/>
+    <tag k="bus" v="yes"/>
+  </node>
+  <!-- not surveyed; a shelter without a type 2 m north -->
+  <node id="9" lat="39.9600000" lon="-75.1580000">
+    <tag k="highway" v="bus_stop"/>
+  </node>
+  <!-- across the street from stop 9: the shelter is 14 m away -->
+  <node id="10" lat="39.9601442" lon="-75.1580003">
+    <tag k="highway" v="bus_stop"/>
+  </node>
+  <!-- a bench; a picnic shelter 4 m away is not a bus shelter -->
+  <node id="11" lat="39.9600000" lon="-75.1620000">
+    <tag k="highway" v="bus_stop"/>
+    <tag k="bench" v="yes"/>
+  </node>
+  <!-- a shelter answer we do not recognize -->
+  <node id="12" lat="39.9600000" lon="-75.1640000">
+    <tag k="highway" v="bus_stop"/>
+    <tag k="shelter" v="maybe"/>
+  </node>
+  <!-- a stop 100 m outside the city: kept, not on the map -->
+  <node id="13" lat="39.9599983" lon="-75.1711708">
+    <tag k="highway" v="bus_stop"/>
+    <tag k="shelter" v="yes"/>
+  </node>
+  <!-- a stop 1 km outside the city: not kept -->
+  <node id="14" lat="39.9599822" lon="-75.1817082">
+    <tag k="highway" v="bus_stop"/>
+  </node>
+  <!-- a cafe: not one of the tags -->
+  <node id="15" lat="39.9600000" lon="-75.1660000">
+    <tag k="amenity" v="cafe"/>
+    <tag k="name" v="Cafe"/>
+  </node>
+  <!-- a private stop: kept, not on the map -->
+  <node id="16" lat="39.9570000" lon="-75.1660000">
+    <tag k="highway" v="bus_stop"/>
+    <tag k="access" v="private"/>
+  </node>
+  <!-- a shelter 5 m outside the city edge, 8 m from stop 18 -->
+  <node id="17" lat="39.9629999" lon="-75.1700585">
+    <tag k="amenity" v="shelter"/>
+    <tag k="shelter_type" v="public_transport"/>
+  </node>
+  <!-- a stop 3 m inside the city edge -->
+  <node id="18" lat="39.9630001" lon="-75.1699649">
+    <tag k="highway" v="bus_stop"/>
+  </node>
+  <!-- the shelter of stop 2 -->
+  <node id="20" lat="39.9540001" lon="-75.1619298">
+    <tag k="amenity" v="shelter"/>
+    <tag k="shelter_type" v="public_transport"/>
+  </node>
+  <!-- a bench 25 m east of stop 5 -->
+  <node id="21" lat="39.9570004" lon="-75.1577073">
+    <tag k="amenity" v="bench"/>
+  </node>
+  <!-- a shelter 3 m north of stop 6 -->
+  <node id="22" lat="39.9570270" lon="-75.1620001">
+    <tag k="amenity" v="shelter"/>
+    <tag k="shelter_type" v="public_transport"/>
+  </node>
+  <!-- a shelter with no shelter_type, 2 m north of stop 9 -->
+  <node id="23" lat="39.9600180" lon="-75.1580000">
+    <tag k="amenity" v="shelter"/>
+  </node>
+  <!-- a picnic shelter 4 m east of stop 11 -->
+  <node id="24" lat="39.9600001" lon="-75.1619532">
+    <tag k="amenity" v="shelter"/>
+    <tag k="shelter_type" v="picnic_shelter"/>
+  </node>
+  <!-- points of the ways -->
+  <node id="101" lat="39.9540000" lon="-75.1560000"/>
+  <node id="102" lat="39.9540003" lon="-75.1557659"/>
+  <node id="103" lat="39.9540454" lon="-75.1557660"/>
+  <node id="104" lat="39.9540450" lon="-75.1560001"/>
+  <node id="111" lat="39.9570000" lon="-75.1560000"/>
+  <node id="112" lat="39.9570005" lon="-75.1556488"/>
+  <node id="121" lat="39.9600000" lon="-75.1560000"/>
+  <node id="122" lat="39.9600005" lon="-75.1556488"/>
+  <node id="131" lat="39.9600005" lon="-75.1556370"/>
+  <node id="132" lat="39.9600006" lon="-75.1555902"/>
+  <node id="133" lat="39.9600186" lon="-75.1555902"/>
+  <node id="134" lat="39.9600185" lon="-75.1556370"/>
+  <!-- a train platform: a station, not a street stop -->
+  <way id="1">
+    <nd ref="101"/>
+    <nd ref="102"/>
+    <nd ref="103"/>
+    <nd ref="104"/>
+    <nd ref="101"/>
+    <tag k="railway" v="platform"/>
+    <tag k="public_transport" v="platform"/>
+    <tag k="train" v="yes"/>
+  </way>
+  <!-- a trolley platform underground: left out -->
+  <way id="2">
+    <nd ref="111"/>
+    <nd ref="112"/>
+    <tag k="railway" v="platform"/>
+    <tag k="public_transport" v="platform"/>
+    <tag k="tram" v="yes"/>
+    <tag k="tunnel" v="yes"/>
+    <tag k="location" v="underground"/>
+  </way>
+  <!-- a trolley platform along the curb, 30 m long, with no answers -->
+  <way id="3">
+    <nd ref="121"/>
+    <nd ref="122"/>
+    <tag k="railway" v="platform"/>
+    <tag k="public_transport" v="platform"/>
+    <tag k="tram" v="yes"/>
+  </way>
+  <!-- a shelter with a bench, 1 m past the east end of platform 3 -->
+  <way id="4">
+    <nd ref="131"/>
+    <nd ref="132"/>
+    <nd ref="133"/>
+    <nd ref="134"/>
+    <nd ref="131"/>
+    <tag k="amenity" v="shelter"/>
+    <tag k="shelter_type" v="public_transport"/>
+    <tag k="bench" v="yes"/>
+  </way>
+  <!-- relations are not read -->
+  <relation id="1">
+    <member type="node" ref="1" role="platform"/>
+    <tag k="highway" v="bus_stop"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+</osm>

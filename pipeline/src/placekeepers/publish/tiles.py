@@ -79,6 +79,14 @@ TILE_OPTIONS: dict[str, list[str]] = {
         "--extend-zooms-if-still-dropping",
         "--no-tiny-polygon-reduction-at-maximum-zoom",
     ],
+    # Bus and trolley stops (M2.2): every stop at every zoom, so none disappears when zoomed out.
+    "tiles/transit.pmtiles": [
+        "--minimum-zoom=10",
+        "--maximum-zoom=16",
+        "--base-zoom=10",
+        "--no-feature-limit",
+        "--no-tile-size-limit",
+    ],
     # Boundaries are few, large shapes: simplified at low zooms, borders kept shared, and
     # detailed enough at zoom 14 to be stretched further by the map.
     "tiles/boundaries.pmtiles": [

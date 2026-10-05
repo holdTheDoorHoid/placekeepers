@@ -271,6 +271,34 @@
       type: toggle
       default: false
   release: v0.1
+- id: bus_stops
+  label: Bus and trolley stops
+  group: transit
+  description: >-
+    Bus and trolley stops OpenStreetMap knows about, colored by what riders find there: a shelter
+    or a roof, a bench but no shelter, neither, or not yet surveyed. Not yet surveyed means no one
+    has recorded it yet; it does not mean the stop has nothing. OpenStreetMap has only about one
+    stop in ten so far. Neighbors can survey stops with the StreetComplete phone app, and their
+    answers appear here within about a week.
+  sources: [osm_philadelphia]
+  file: tiles/transit.pmtiles
+  source_layer: stops
+  geometry: point
+  style: bus_stops
+  evidence: not_violence
+  # The transit comfort lens comes in M2.3; until then the stops stay off unless switched on.
+  default: {field: false, analysis: false}
+  guide: streetcomplete
+  settings:
+    - id: show
+      label: Show
+      type: choice
+      options:
+        - {value: all, label: Every stop}
+        - {value: surveyed, label: Stops someone has surveyed}
+        - {value: unsurveyed, label: Stops not yet surveyed}
+      default: all
+  release: v0.2
 - id: basemap
   label: Base map
   group: basemap

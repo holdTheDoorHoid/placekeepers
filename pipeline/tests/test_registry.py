@@ -248,3 +248,43 @@ def test_app_options_are_checked_like_settings(repo_copy: Path) -> None:
     edit(repo_copy, "options", lambda options: options[0].pop("colour"))
     [found] = problems(repo_copy)
     assert "a toggle default must be true or false" in found
+
+
+def test_an_openstreetmap_extract_needs_both_a_url_and_tags(repo_copy: Path) -> None:
+    def drop_tags(sources: list[dict[str, Any]]) -> None:
+        by_id(sources, "osm_philadelphia")["endpoint"].pop("tags")
+
+    edit(repo_copy, "sources", drop_tags)
+    [problem] = problems(repo_copy)
+    assert "osm_philadelphia" in problem
+    assert "an extract with a url needs tags" in problem
+
+
+def test_tags_without_a_url_and_odd_tags_fail(repo_copy: Path) -> None:
+    def change(sources: list[dict[str, Any]]) -> None:
+        by_id(sources, "basemap_openstreetmap")["endpoint"]["tags"] = ["amenity=bench"]
+        endpoint = by_id(sources, "osm_philadelphia")["endpoint"]
+        endpoint["tags"] = ["highway=bus_stop", "amenity = bench", "highway=bus_stop"]
+
+    edit(repo_copy, "sources", change)
+    found = problems(repo_copy)
+    assert any("basemap_openstreetmap" in p and "tags need a url" in p for p in found)
+    assert any("osm_philadelphia" in p and "'amenity = bench'" in p for p in found)
+
+
+def test_the_base_map_extract_needs_no_keys() -> None:
+    registry = load_registry(REPO_ROOT / "registry", repo_root=REPO_ROOT)
+    base = registry.sources["basemap_openstreetmap"].endpoint
+    assert (base.url, base.tags) == (None, [])
+    osm = registry.sources["osm_philadelphia"].endpoint
+    assert osm.url.endswith("pennsylvania-latest.osm.pbf")
+    assert "highway=bus_stop" in osm.tags
+
+
+def test_a_layer_guide_must_be_a_content_page(repo_copy: Path) -> None:
+    edit(repo_copy, "layers", lambda layers: by_id(layers, "bus_stops").update(guide="no-such"))
+    assert problems(repo_copy) == [
+        "registry/layers.yaml: bus_stops: guide page content/no-such.md does not exist"
+    ]
+    edit(repo_copy, "layers", lambda layers: by_id(layers, "bus_stops").update(guide="../x"))
+    assert any("'../x' does not match" in p for p in problems(repo_copy))
