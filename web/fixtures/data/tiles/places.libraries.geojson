@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"id":"lib1","nm":"Sample Library","ad":"1 Sample Street","zip":"19133","ph":"215-555-0100","url":"https://libwww.freelibrary.org/locations/sample-library"},"geometry":{"type":"Point","coordinates":[-75.154483,39.986842]}}]}

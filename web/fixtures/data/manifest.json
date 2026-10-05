@@ -272,6 +272,60 @@
       "rows": 384,
       "newest_record": null,
       "message": null
+    },
+    "library_locations": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 54,
+      "newest_record": null,
+      "message": null
+    },
+    "ppr_program_sites": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 168,
+      "newest_record": null,
+      "message": null
+    },
+    "ppr_swimming_pools": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 72,
+      "newest_record": null,
+      "message": null
+    },
+    "ppr_spraygrounds": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 114,
+      "newest_record": null,
+      "message": null
+    },
+    "ppr_hydration_stations": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 147,
+      "newest_record": null,
+      "message": null
+    },
+    "philly311_conditions": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 6496,
+      "newest_record": "2026-10-02",
+      "message": null
     }
   },
   "layers": {
@@ -419,6 +473,94 @@
       "sources": [
         "septa_gtfs"
       ]
+    },
+    "benches": {
+      "file": "tiles/amenities.pmtiles",
+      "source_layer": "benches",
+      "sources": [
+        "osm_philadelphia"
+      ]
+    },
+    "picnic_tables": {
+      "file": "tiles/amenities.pmtiles",
+      "source_layer": "picnic_tables",
+      "sources": [
+        "osm_philadelphia"
+      ]
+    },
+    "drinking_water": {
+      "file": "tiles/amenities.pmtiles",
+      "source_layer": "water",
+      "sources": [
+        "osm_philadelphia"
+      ]
+    },
+    "toilets": {
+      "file": "tiles/amenities.pmtiles",
+      "source_layer": "toilets",
+      "sources": [
+        "osm_philadelphia"
+      ]
+    },
+    "bookcases": {
+      "file": "tiles/amenities.pmtiles",
+      "source_layer": "bookcases",
+      "sources": [
+        "osm_philadelphia"
+      ]
+    },
+    "park_water": {
+      "file": "tiles/places.pmtiles",
+      "source_layer": "park_water",
+      "sources": [
+        "ppr_hydration_stations"
+      ]
+    },
+    "libraries": {
+      "file": "tiles/places.pmtiles",
+      "source_layer": "libraries",
+      "sources": [
+        "library_locations"
+      ]
+    },
+    "recreation_centers": {
+      "file": "tiles/places.pmtiles",
+      "source_layer": "recreation",
+      "sources": [
+        "ppr_program_sites"
+      ]
+    },
+    "pools": {
+      "file": "tiles/places.pmtiles",
+      "source_layer": "pools",
+      "sources": [
+        "ppr_swimming_pools",
+        "ppr_spraygrounds"
+      ]
+    },
+    "dumping": {
+      "file": "tiles/conditions.pmtiles",
+      "source_layer": "dumping",
+      "sources": [
+        "philly311_conditions",
+        "street_centerlines"
+      ]
+    },
+    "dark_lights": {
+      "file": "tiles/conditions.pmtiles",
+      "source_layer": "lights",
+      "sources": [
+        "philly311_conditions",
+        "street_centerlines"
+      ]
+    },
+    "graffiti": {
+      "file": "tiles/conditions.pmtiles",
+      "source_layer": "graffiti",
+      "sources": [
+        "philly311_conditions",
+        "street_centerlines"
+      ]
     }
   },
   "files": {
@@ -485,6 +627,54 @@
     "tiles/trees.trees.geojson": {
       "bytes": 4520,
       "sha256": "8f5ba15713fbdbbf988c833a1c8834d6ec42825574c98f7590cf53037f66e894"
+    },
+    "tiles/amenities.benches.geojson": {
+      "bytes": 406,
+      "sha256": "8b57a008527c61eee345de4de992dd838a747cc5cf2d24f521e5c4771bd43cc4"
+    },
+    "tiles/amenities.picnic_tables.geojson": {
+      "bytes": 164,
+      "sha256": "fcb79d90a664de43cb7074462223302324f818c4ca20fd67d3593841c6d4aebc"
+    },
+    "tiles/amenities.water.geojson": {
+      "bytes": 171,
+      "sha256": "53552ba06d707378b1a39f5e96c45dfe2c339d7aec245751f59afe96d812e23d"
+    },
+    "tiles/amenities.toilets.geojson": {
+      "bytes": 353,
+      "sha256": "4647ea9bbf998f4df88131fff01851736b1616eca3daa0b55d5fa2a22febe57c"
+    },
+    "tiles/amenities.bookcases.geojson": {
+      "bytes": 191,
+      "sha256": "d9ade72c85594fe34d22d86874a13f175d3ee63bb3a9a9cbb0a3a6c0942bde83"
+    },
+    "tiles/places.park_water.geojson": {
+      "bytes": 369,
+      "sha256": "dab6fd7ca70c6f2388553c2a3918b19eca5f64290d12a14637930d55ea33999f"
+    },
+    "tiles/places.libraries.geojson": {
+      "bytes": 296,
+      "sha256": "e248808f1d5cc568f6049852ea6d3e2e5c7c25c8da93220419fcb0d07041cc4a"
+    },
+    "tiles/places.recreation.geojson": {
+      "bytes": 371,
+      "sha256": "eff41086279292822c09765545ad01def2247ec1b2b95d1cffb8f71f71dd9d86"
+    },
+    "tiles/places.pools.geojson": {
+      "bytes": 536,
+      "sha256": "a299164f5e6f494849c8691bbfe9bb007dcba9711534e293090dc356aada59f0"
+    },
+    "tiles/conditions.dumping.geojson": {
+      "bytes": 520,
+      "sha256": "4f155d9e6b3b5806a72babf790b8d0551e17e2621939b6615ee6faebd6c2330f"
+    },
+    "tiles/conditions.lights.geojson": {
+      "bytes": 203,
+      "sha256": "0d2466ba34afeb0349640d1e3074226c5e6e587bc3fe4483704bed682bd069fc"
+    },
+    "tiles/conditions.graffiti.geojson": {
+      "bytes": 202,
+      "sha256": "5f785fcbc81bffd5e4dbacffbcda299119e99f30141e03c30098b35c5976022f"
     },
     "tables/routes/index.json": {
       "bytes": 846,

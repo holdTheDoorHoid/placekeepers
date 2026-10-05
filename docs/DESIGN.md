@@ -195,6 +195,9 @@ As built (M1.10, interface review, 2026-10-04; details in
 | Area cell | H3 hexagon, resolution 9 (about two blocks across) | Yes |
 | Bus stop | SEPTA stop id (expect churn during the New Bus Network rollout) | Later |
 | Artwork | OpenStreetMap or Wikidata id, plus any licensed source | Later |
+| Amenity: bench, picnic table, drinking water, toilet, little free library | OpenStreetMap element id | v0.3 (M3.5) |
+| Public place: library, recreation center, pool or sprayground, park drinking fountain | The City's object id, prefixed by its layer | v0.3 (M3.5) |
+| Conditions reported to 311 on a block: dumping, lights out, graffiti | Street centerline segment (`seg_id`), the same block as the street safety layer | v0.3 (M3.5) |
 
 As built (M2.1, 2026-10-04): a stop's identity is a Placekeepers key, `sp` and its SEPTA stop number
 when first seen (`sr` for Regional Rail), which never changes. When SEPTA renumbers a stop in place
@@ -208,6 +211,19 @@ default. From M2.3 (2026-10-05) the stops carry the transit comfort lens (sectio
 OpenStreetMap knows about their shelter, bench and light, matched to OpenStreetMap's stops the same
 way the route survey sheets are (M2.4); the field view's Bus stops chip and using the lens turn them
 on. The method is in [TRANSIT_METHOD.md](TRANSIT_METHOD.md).
+
+As built (M3.5, 2026-10-05): three new groups. **Benches, water, toilets and more** holds five
+layers from OpenStreetMap, each labeled "as mapped in OpenStreetMap" (benches, picnic tables,
+drinking water, public toilets, little free libraries), whose legends say many are missing and link
+the survey guide, and the City's drinking fountains in parks. **Libraries, recreation centers and
+pools** holds the City's Free Library branches, Parks and Recreation's recreation centers, and its
+pools and spraygrounds (showing only those in service this year unless the setting asks for all).
+**Conditions reported to 311** holds illegal dumping, street and alley lights out, and graffiti from
+the last 90 days, each counted by street block and never shown at an address, filled while a
+request is still open (a setting shows only those). Drinking water, the park fountains and toilets
+are on by default in the field view, because a neighbor on foot needs them; everything else is off
+in both views until someone turns it on. 311 requests describe physical conditions only, and the
+details panel offers Philly311 as the next step, never the police.
 
 ### 5.2 The registry: one source of truth for every toggle
 

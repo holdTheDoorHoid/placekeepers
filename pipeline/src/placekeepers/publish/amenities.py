@@ -1,8 +1,8 @@
 """The amenity layers of tiles/amenities.pmtiles (docs/CONTRACTS.md section 4), added by M2.2.
 
 Amenities that OpenStreetMap knows about, from the weekly extract (`osm_philadelphia`). M2.2 adds
-the first layer; later milestones (M3.5: drinking water, toilets and more) add theirs to the same
-file.
+the first layer, the shelters and benches at stops; M3.5 adds benches, picnic tables, drinking
+water, public toilets and public bookcases (placekeepers.derive.amenities), one layer each.
 
 * `stops`: every bus and trolley stop OpenStreetMap knows inside the city, with what riders find
   there (shelter, bench, waste basket, light, tactile paving, wheelchair access, departures board,
@@ -23,6 +23,7 @@ from pathlib import Path
 import pyarrow.parquet as pq
 
 from placekeepers.context import Context
+from placekeepers.derive import amenities
 from placekeepers.derive.bus_stops import comfort_counts, find_stops, summary_note
 from placekeepers.geo import GeoJSONWriter
 from placekeepers.publish.layers import BuildResult, LayerBuilder
@@ -49,6 +50,32 @@ def build_stops(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) ->
     return BuildResult(writer.count, notes)
 
 
+def amenity_builder(kind: str):
+    """The builder of one amenity layer (M3.5): every element of that kind inside the city."""
+
+    def build(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) -> BuildResult:
+        table = pq.read_table(paths["osm_philadelphia"], columns=STOP_COLUMNS)
+        found, notes = amenities.find_amenities(table, kind)
+        dates = [d for d in table.column("extract_date").to_pylist() if d is not None]
+        with GeoJSONWriter(out) as writer:
+            for item in found:
+                if not item.in_city:
+                    continue
+                point = {"type": "Point", "coordinates": [round(item.lng, 7), round(item.lat, 7)]}
+                writer.write(item.properties, point)
+        day = max(dates).isoformat() if dates else None
+        notes.insert(0, amenities.summary_note(kind, found, day))
+        log.info("%s: %s", kind, notes[0])
+        return BuildResult(writer.count, notes)
+
+    build.__name__ = f"build_{kind}"
+    return build
+
+
 AMENITY_BUILDERS: tuple[LayerBuilder, ...] = (
     LayerBuilder(AMENITIES_FILE, "stops", ("osm_philadelphia",), build_stops),
+    *(
+        LayerBuilder(AMENITIES_FILE, kind, ("osm_philadelphia",), amenity_builder(kind))
+        for kind in amenities.KINDS
+    ),
 )
