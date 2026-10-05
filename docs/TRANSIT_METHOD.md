@@ -1,19 +1,23 @@
 # How we measure service and riders at SEPTA stops
 
-Written 2026-10-04 for milestone M2.1 (SEPTA data). This page explains, in plain words, what the
-map says about each SEPTA stop and how the pipeline works it out. The code is in
+Written 2026-10-04 for milestone M2.1 (SEPTA data), with the transit comfort lens added on
+2026-10-05 by milestone M2.3 (below). This page explains, in plain words, what the map says about
+each SEPTA stop and how the pipeline works it out. The code is in
 `pipeline/src/placekeepers/derive/transit.py` (the rules), `pipeline/src/placekeepers/adapters/septa.py`
-(the downloads) and `pipeline/src/placekeepers/publish/transit.py` (the map layers). The file
+(the downloads), `pipeline/src/placekeepers/derive/transit_comfort.py` (the lens and the
+suggestions) and `pipeline/src/placekeepers/publish/transit.py` (the map layers). The file
 formats are in [CONTRACTS.md](CONTRACTS.md) section 4, `stops` and `routes`.
 
 ## What the owner will see
 
 A new group in the layer list, **Buses and trains**, with two layers, both off until someone turns
-them on (the transit comfort lens of milestone M2.3 gives them a job on the map):
+them on (in the field view the **Bus stops** chip turns the stops on, and so does using the transit
+comfort lens, below):
 
 - **Bus and trolley stops**: a dot for every place in Philadelphia where people board a SEPTA bus
-  or trolley, colored by how often a bus comes at midday on weekdays, or by how many people get on
-  each weekday. Tapping a dot says, in sentences: the routes, how long the wait is in the morning
+  or trolley, colored by the transit comfort lens (below), by how often a bus comes at midday on
+  weekdays, or by how many people get on each weekday. Tapping a dot says, in sentences: the
+  stop's priority under the lens and what riders find there, then the routes, how long the wait is in the morning
   rush and at midday on weekdays, Saturdays and Sundays, how many buses leave the stop in a day,
   when service starts and ends (or that it runs all night), how many leave after 8 at night, and
   how many people get on there on an average weekday by SEPTA's own count. A setting adds the
@@ -125,16 +129,87 @@ mostly stops that opened with the New Bus Network or the fall schedules; they ge
 SEPTA publishes Fall 2026 (Fall 2025 came out in February 2026). SEPTA publishes no counts per
 subway, El or Regional Rail platform, so stations have none.
 
-## For the transit comfort lens (M2.3)
+## The transit comfort lens (M2.3)
 
-- Join stops by their key (`id`) for anything Placekeepers keeps about a stop, and by SEPTA's
-  number (`sid`, then the numbers in `fid`) for anything from outside.
-- OpenStreetMap bus stops often carry SEPTA's number in `ref` or `gtfs:stop_id`. Match those against
-  `sid` first, then `fid`; fall back to the nearest stop within about 30 meters with a similar name.
-  The pipeline keeps everything for this in `snapshots/septa_gtfs/current.parquet` (rows of `kind`
-  "stop", with `key`, `stop_id`, `former_ids`, `lat`, `lng`, `stop_name`).
-- Boardings (`b`) are the natural measure of how many people wait at a stop; they are absent, not
-  zero, where SEPTA has no count.
+Added 2026-10-05. The lens asks where a shelter, a bench or shade would help riders most, and the
+stop's page says what neighbors can do about it. The evidence behind each factor is in
+[EVIDENCE.md](EVIDENCE.md), "Bus stop comfort".
+
+**What the owner will see.** The stops are colored by the lens unless someone chooses waits or
+riders: light for lower priority, dark for higher, and hollow for stations, which the lens does not
+score. Moving one of the lens's sliders or choosing a preset turns the stops on and colors them by
+the lens, and a note says so. Tapping a stop shows its priority and the main reason, what riders
+find there (shelter, bench and light, each yes, no or "not yet surveyed"), how much tree canopy is
+around it and whether it is on the High Injury Network, what neighbors can do (each suggestion with
+its evidence badge, cost and first step, and the route's steps, contacts and the date we last
+checked them), the "why" table, and then its service and riders. In the field view, "What you can
+do nearby" lists the stops with a suggestion beside the lots, nearest first.
+
+**Finding each SEPTA stop in OpenStreetMap.** The shelter, bench and light answers come from
+OpenStreetMap (milestone M2.2), whose stops are not SEPTA's. The pipeline pairs them with
+`match_septa`, the same pairing the route survey sheets use (milestone M2.4), so a stop's sheet and
+its page on the map describe the same OpenStreetMap stop. First by SEPTA's stop number (an
+OpenStreetMap stop's `ref` or `gtfs:stop_id` naming the stop's number today or one it had before),
+then by distance, both only within **15 meters**, closest pairs first, each stop once. The two points
+of one stop matched by number stand a median 5 meters apart, while a stop's nearest other SEPTA stop,
+usually across the street, is 15 meters or more away for three stops in four. A number naming a stop
+farther away is ignored: on Frankford Avenue a run of about 30 OpenStreetMap stops mapped together
+carries the numbers of the stops across the street while each point stands on another SEPTA stop,
+so the point decides. (An early draft trusted a number up to 60 meters away; on Frankford
+Avenue that would have put a run of answers on the wrong side of the street.)
+
+On 2026-10-05: **663 of the 7,927 bus and trolley stops** match one of the 829 stops OpenStreetMap
+has in the city, 182 where the stop numbers agree and 481 by place; 54 OpenStreetMap stops carry the
+number of a SEPTA stop farther away. **279 stops have their shelter or bench surveyed**: 75 with a
+shelter or roof, 7 with a bench but no shelter mapped, 197 with neither. The other 7,648 are not yet
+surveyed (7,264 have no OpenStreetMap stop matched to them, and 384 have one that no one has
+answered for yet). The route
+sheets pair every stop the same way except one: a berth of the 69th Street Transportation Center,
+just across the city line, whose OpenStreetMap stop the sheets give to a berth outside the city.
+
+**The factors.** Each runs from 0 to 100 among the bus and trolley stops on the map, as in every lens:
+the share of stops ranking lower.
+
+| Factor | Measure | Badge | Default weight | Stops with data |
+|---|---|---|---|---|
+| People getting on each weekday | SEPTA's count (`b`); the share of stops with fewer | Context | 3 | 7,755 |
+| No shelter | 100 a survey found none, 0 a shelter or the whole stop under a roof, 50 not yet surveyed | Weak | 3 | all (7,622 halfway) |
+| No bench | 100 a survey found none, 0 a bench, 50 not yet surveyed | Weak | 2 | all (7,660 halfway) |
+| Little shade nearby | tree canopy of 2018 on the land of the stop's hexagon (H3 resolution 9, about two blocks across; water left out); the share of stops with more canopy | Mixed | 2 | 7,926 |
+| Hot neighborhood in summer | the heat exposure score of the stop's census tract, from the City's heat vulnerability data; the share of stops in cooler tracts | Context | 1 | 7,559 |
+| On the High Injury Network | 100 within 30 meters of the network, else 0 | Context | 2 | all (4,041 on it) |
+| Long waits at midday | the weekday wait from 10 to 2 (`hm`); the share of stops with shorter waits | Weak | 1 | 7,712 |
+
+Presets: **Balanced** (the default weights), **Busiest stops first** (riders 5, no shelter 3, no
+bench 2, the rest off) and **Heat and shade** (riders 2, no shelter 2, little shade 4, hot
+neighborhood 4, long waits 1, the rest off).
+
+**Not yet surveyed counts halfway.** In every other lens, a factor with no data is left out of a
+place's average. Here that would let a stop known only for its heat and its street top the ranking,
+and counting an unknown shelter as missing would score the stop as if it had nothing. So a shelter
+or bench no one has recorded yet is 50, halfway between having one and not, and the stop gets the
+suggestion to survey it. The stop's page never names a halfway answer as the main reason, and its
+"why" table marks it "not yet surveyed". On 2026-10-05, 38 of the 100 stops ranked highest under
+the default weights were not yet surveyed, and 62 were surveyed with neither a shelter nor a bench.
+
+**Suggestions,** in the order a stop lists them, with the count of stops on 2026-10-05 (7,902 of
+the 7,927 have at least one):
+
+| Suggestion | When | Stops | First step |
+|---|---|---|---|
+| Survey this stop with StreetComplete | the shelter or the bench is not known yet | 7,663 | install the free app and answer its questions at the stop |
+| Ask the City for a shelter at this stop | a survey found no shelter, and the stop is not under a roof | 230 | there is no public request form: write to OTIS (otis@phila.gov, 215-686-9003) with the stop's number and its riders, and copy the Council office and SEPTA |
+| Ask the City for a bench at this stop | a survey found no bench | 211 | the same: no public form, write to OTIS |
+| Report a dark streetlight at this stop | OpenStreetMap says the stop is not lit | 17 | report an outage to Philly311; a stop with no light at all is a question for OTIS |
+| Plant shade trees by this stop | among the quarter of stops with the least canopy (`f_shade` 75 or more) | 1,998 | the owners of the buildings beside the stop ask for a free street tree |
+
+The contacts, their sources and the dates we checked them are in [ROUTES.md](ROUTES.md). Never the
+police: SEPTA's customer service page also offers a safety and incident report to the transit
+police, and Placekeepers never points there.
+
+**Joining other data to stops.** Join by the stop's key (`id`) for anything Placekeepers keeps about
+a stop, and by SEPTA's number (`sid`, then the numbers in `fid`) for anything from outside.
+Boardings (`b`) are absent, not zero, where SEPTA has no count.
 
 ## Limits
 
@@ -144,3 +219,11 @@ subway, El or Regional Rail platform, so stations have none.
 - Counts lag the schedules by one or two seasons, so they can describe a stop before a nearby stop
   closed and its riders moved here.
 - Stops just outside the city are left out, even when Philadelphians use them.
+- OpenStreetMap knows about 1 stop in 12 so far, so most stops are ranked on riders, shade, heat,
+  the High Injury Network and waits, with their shelter and bench counting halfway until someone
+  surveys them.
+- The canopy is from 2018 and the heat scores from 2017 to 2019, by 2010 census tracts.
+- The High Injury Network factor says the stop is on a street where people are hurt most; it knows
+  nothing about the crosswalks at the stop.
+- Where a shelter fits depends on the sidewalk's width, what is under it and the owner beside it,
+  which the lens cannot see.

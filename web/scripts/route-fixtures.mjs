@@ -2,7 +2,9 @@
 // per route (docs/CONTRACTS.md section 7), made up and fixed by hand, along the sample streets of
 // make-fixtures.mjs. They cover every thing a stop can show (a shelter, a bench only, neither, not
 // yet surveyed, not found in OpenStreetMap), a direction with stops outside the city, and a
-// trolley route. make-fixtures.mjs writes them; run this file alone to write only them:
+// trolley route. A stop that is also one of make-fixtures.mjs's SEPTA stops shows the same
+// OpenStreetMap stop and answers there (`o`, `a`, `sh`, `bn`, `li`), as the pipeline pairs them the
+// same way for both (match_septa). make-fixtures.mjs writes them; run this file alone to write only them:
 //   node scripts/route-fixtures.mjs
 
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -25,7 +27,7 @@ const ROUTES = [
         out: 0,
         stops: [
           ['sp1401', '1401', 'Sample 3 St & Sample 8 Ave', [640, 180], { c: 0, osm: 'n9000006' }],
-          ['sp1003', '1003', 'Sample 3 St & Sample 5 Ave', [480, 180], {}],
+          ['sp1003', '1003', 'Sample 3 St & Sample 5 Ave', [480, 180], { c: 3, osm: 'w9100003', sh: 1, bn: 1, lt: 1 }],
           ['sp1402', '1402', '13th St', [0, 180], {}],
         ],
       },
@@ -53,7 +55,7 @@ const ROUTES = [
         to: 'Cheltenham-Ogontz',
         out: 2,
         stops: [
-          ['sp1002', '1002', 'N Broad St & Sample 2 St', [150, 60], { c: 3, osm: 'n9000002', sh: 1 }],
+          ['sp1002', '1002', 'N Broad St & Sample 2 St', [150, 60], { c: 1, osm: 'n9100002', sh: 0, bn: 0, lt: 0 }],
           ['sp1301', '1301', 'N Broad St & Sample 4 St', [150, 180], {}],
         ],
       },
@@ -64,7 +66,7 @@ const ROUTES = [
         out: 2,
         stops: [
           ['sp1302', '1302', 'N Broad St & Sample 4 St (far side)', [142, 180], { c: 0, osm: 'n9000008' }],
-          ['sp1001', '1001', 'Sample 2 St & N Broad St (far side)', [170, 60], {}],
+          ['sp1001', '1001', 'Sample 2 St & N Broad St (far side)', [170, 60], { c: 2, osm: 'n9100001', sh: 0, bn: 1, lt: 1 }],
           ['sp1303', '1303', 'N Broad St & Sample 1 St', [142, -60], { c: 1, osm: 'n9000009', sh: 0, bn: 0 }],
         ],
       },

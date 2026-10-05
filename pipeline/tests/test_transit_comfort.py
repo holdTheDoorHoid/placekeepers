@@ -17,7 +17,7 @@ from pyproj import Transformer
 from shapely.geometry import LineString, box
 
 from placekeepers.adapters.osm import Element, elements_table
-from placekeepers.derive.bus_stops import Stop, answer
+from placekeepers.derive.bus_stops import SeptaPoint, Stop, answer, match_septa
 from placekeepers.derive.transit_comfort import (
     BY_NUMBER,
     BY_PLACE,
@@ -25,7 +25,6 @@ from placekeepers.derive.transit_comfort import (
     SeptaStop,
     comfort_for_stops,
     match_osm,
-    stop_numbers,
     stop_suggestions,
     yes_no_need,
 )
@@ -48,14 +47,14 @@ def moved(lat: float, lng: float, east: float = 0.0, north: float = 0.0) -> tupl
     return lat2, lng2
 
 
-def osm_stop(osm_id: int, lat: float, lng: float, **tags: str) -> Stop:
+def osm_stop(osm_id: int, lat: float, lng: float, in_city: bool = True, **tags: str) -> Stop:
     tags = {"highway": "bus_stop", **tags}
     keys = ("shelter", "bench", "bin", "lit", "tactile_paving", "wheelchair", "departures_board")
     return Stop(
         id=f"n{osm_id}",
         lat=lat,
         lng=lng,
-        in_city=True,
+        in_city=in_city,
         tags=tags,
         answers={key: answer(tags, key) for key in (*keys, "covered")},
     )
@@ -73,54 +72,52 @@ SEPTA = [
 # Finding SEPTA's stops in OpenStreetMap
 
 
-def test_stop_numbers_come_from_ref_and_gtfs_stop_id() -> None:
-    assert stop_numbers({"ref": "100;200", "gtfs:stop_id": "200, 300"}) == ["100", "200", "300"]
-    assert stop_numbers({"ref": "Route 47"}) == ["47"]
-    assert stop_numbers({"ref": "B1-12"}) == []
-    assert stop_numbers({}) == []
+def found(matches) -> dict[str, tuple[int, str]]:
+    return {SEPTA[i].sid: (m.how, m.stop.id) for i, m in matches.items()}
 
 
-def test_a_number_beats_a_closer_stop_by_place() -> None:
-    # The OpenStreetMap stop stands right on SEPTA's stop 100 but its sign says 200, 20 meters
-    # away across the corner: the number wins (the other side of the street, as on Frankford Av).
-    stops = [osm_stop(1, 39.96, -75.15, ref="200")]
-    matches, summary = match_osm(SEPTA, stops)
-    assert {SEPTA[i].sid: (m.how, m.stop.id) for i, m in matches.items()} == {
-        "200": (BY_NUMBER, "n1")
-    }
-    assert summary.by_number == 1 and summary.by_place == 0
+def test_the_map_pairs_stops_as_the_route_survey_sheets_do() -> None:
+    stops = [
+        osm_stop(1, 39.96, -75.15, ref="200"),
+        osm_stop(2, *moved(39.96, -75.16, north=12), ref="299"),
+        osm_stop(3, *moved(39.96, -75.17, east=4, north=3)),
+        osm_stop(4, *moved(39.96, -75.16, north=45)),
+    ]
+    matches, _ = match_osm(SEPTA, stops)
+    sheets = match_septa(stops, [SeptaPoint(s.sid, s.former, s.lat, s.lng) for s in SEPTA])
+    assert {i: m.stop.id for i, m in matches.items()} == {s: stops[o].id for s, o in sheets.items()}
 
 
-def test_a_former_number_counts_and_a_far_number_does_not() -> None:
-    near = osm_stop(1, *moved(39.96, -75.16, north=12), ref="299")
-    far_unnamed = osm_stop(2, *moved(39.96, -75.17, north=150), ref="400")
-    far_named = osm_stop(
-        3, *moved(39.96, -75.17, north=150), ref="401", name="2nd Street & Erie Avenue"
-    )
-    matches, summary = match_osm(SEPTA, [near, far_unnamed, far_named])
-    found = {SEPTA[i].sid: m.stop.id for i, m in matches.items()}
-    assert found["300"] == "n1"  # 299 is in 300's history
-    assert found.get("400") is None  # 150 meters away with no name: a mapping mistake
-    assert found["401"] == "n3"  # 150 meters, but the names agree
-    assert summary.numbers_too_far == 1
+def test_a_number_counts_only_for_a_stop_within_15_meters() -> None:
+    # The OpenStreetMap stop stands right on SEPTA's stop 100 but names 200, 20 meters away across
+    # the corner, as a run of stops on Frankford Avenue does: the place wins, the number is noted.
+    matches, summary = match_osm(SEPTA, [osm_stop(1, 39.96, -75.15, ref="200")])
+    assert found(matches) == {"100": (BY_PLACE, "n1")}
+    assert summary.by_number == 0 and summary.by_place == 1 and summary.numbers_elsewhere == 1
 
 
-def test_by_place_the_nearest_within_20_meters_unless_two_are_about_as_close() -> None:
-    clear = osm_stop(1, *moved(39.96, -75.15, north=6))  # 6 m from 100, 21 m from 200
-    unclear = osm_stop(2, *moved(39.96, -75.17, east=4, north=3))  # 400 and 401 about as close
-    lost = osm_stop(3, *moved(39.96, -75.16, north=45))  # nothing within 20 m
-    matches, summary = match_osm(SEPTA, [clear, unclear, lost])
-    assert {SEPTA[i].sid: (m.how, m.stop.id) for i, m in matches.items()} == {
-        "100": (BY_PLACE, "n1")
-    }
-    assert summary.ambiguous == 1 and summary.by_place == 1
+def test_a_number_today_or_from_the_stops_history_says_the_numbers_agree() -> None:
+    near = osm_stop(1, *moved(39.96, -75.16, north=12), ref="299")  # 299 is in 300's history
+    matches, summary = match_osm(SEPTA, [near])
+    assert found(matches) == {"300": (BY_NUMBER, "n1")}
+    assert matches[2].meters == pytest.approx(12, abs=0.2)
+    assert summary.by_number == 1 and summary.numbers_elsewhere == 0
 
 
-def test_each_stop_is_used_once_closest_first() -> None:
+def test_by_place_within_15_meters_closest_first_each_stop_once() -> None:
     first = osm_stop(1, *moved(39.96, -75.16, north=3))
     second = osm_stop(2, *moved(39.96, -75.16, north=-12))
-    matches, _ = match_osm(SEPTA, [second, first])
-    assert {SEPTA[i].sid: m.stop.id for i, m in matches.items()} == {"300": "n1"}
+    lost = osm_stop(3, *moved(39.96, -75.15, north=18))  # 18 meters from 100: too far
+    matches, summary = match_osm(SEPTA, [second, first, lost])
+    assert found(matches) == {"300": (BY_PLACE, "n1")}
+    assert summary.osm_stops == 3 and summary.matched == 1
+
+
+def test_a_stop_just_outside_the_city_can_match_but_is_not_counted_as_in_it() -> None:
+    outside = osm_stop(1, *moved(39.96, -75.17, north=-2), in_city=False)
+    matches, summary = match_osm(SEPTA, [outside])
+    assert found(matches) == {"400": (BY_PLACE, "n1")}
+    assert summary.osm_stops == 0
 
 
 # Factors and suggestions
@@ -295,9 +292,9 @@ def test_stops_carry_what_riders_find_the_factors_and_suggestions(comfort_paths,
     assert s108["sg"] == "stop_survey"
     # Stations get none of this.
     assert not any(key.startswith("f_") or key in ("sg", "a") for key in stops["102"])
-    note = next(n for n in notes if "OpenStreetMap stops in the city" in n)
-    assert "2 of the 3 OpenStreetMap stops in the city match one of 3 SEPTA bus and trolley" in note
-    assert "(1 by SEPTA's stop number, 1 by place within 20 meters)" in note
+    note = next(n for n in notes if "match an OpenStreetMap stop" in n)
+    assert "2 of 3 SEPTA bus and trolley stops match an OpenStreetMap stop within 15 meters" in note
+    assert "(1 where the stop numbers agree, 1 by place), of the 3 OpenStreetMap has in" in note
 
 
 def test_without_openstreetmap_every_stop_is_not_yet_surveyed(comfort_paths, tmp_path) -> None:

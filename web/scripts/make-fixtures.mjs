@@ -307,8 +307,9 @@ const memorials = MEMORIAL_SAMPLES.map(([d, m, sg], i) => {
 // were matched to (`o`, by number or by place, `om`) with its answers (`a`, `sh`, `bn`, `li`),
 // the lens factors, canopy (`cp`), the High Injury Network (`hin`) and suggestions (`sg`), as the
 // pipeline writes them (ranks among these six stops): a busy stop with neither shelter nor bench,
-// a stop with a bench only, a sheltered stop with nothing to suggest, a stop OpenStreetMap does
-// not have, one it has but no one has surveyed, and one with a shelter answer but no bench answer.
+// a stop with a bench only, a sheltered stop with nothing to suggest, a stop OpenStreetMap has but
+// no one has surveyed, one it does not have, and one with a shelter answer but no bench answer.
+// Stops on the route survey sheets (route-fixtures.mjs) show the same OpenStreetMap stop there.
 const STOP_SAMPLES = [
   [[170, 60], { id: 'sp1001', sid: '1001', nm: 'Sample 2 St & N Broad St (far side)', md: 1, r: '16,B1 OWL', tw: 75, ts: 65, tu: 58, bh: 6, hp: 17, hm: 22, hs: 22, hu: 30, ft: 24, lt: 1507, ev: 8, nt: 3, wc: 1, b: 132, bp: 'Spring 2026',
     o: 'n9100001', om: 2, a: 2, sh: 0, bn: 1, li: 1, f_riders: 40, f_noshelter: 100, f_nobench: 0, f_shade: 33, f_heat: 33, f_hin: 100, f_wait: 40, cp: 24, hin: 1, sg: 'stop_shelter_request' }],
@@ -318,9 +319,9 @@ const STOP_SAMPLES = [
   [[480, 180], { id: 'sp1003', sid: '1003', nm: 'Sample 3 St & Sample 5 Ave', md: 3, r: 'T1,47', tw: 180, ts: 120, tu: 100, bh: 12, hp: 5, hm: 7, hs: 9, hu: 10, ft: 300, lt: 1450, ev: 20, wc: 1, b: 1240, bp: 'Spring 2026',
     o: 'w9100003', om: 1, a: 3, sh: 1, bn: 1, li: 1, f_riders: 80, f_noshelter: 0, f_nobench: 0, f_shade: 17, f_heat: 0, f_hin: 0, f_wait: 0, cp: 31 }],
   [[640, -60], { id: 'sp1004', sid: '1004', nm: 'Sample 1 St & Sample 8 Ave', md: 1, r: '60', tw: 22, ts: 12, tu: 0, bh: 2, hp: 40, hm: 60, hs: 120, ft: 380, lt: 1180, ev: 0, wc: 1,
-    f_noshelter: 50, f_nobench: 50, f_shade: 67, f_heat: 83, f_hin: 0, f_wait: 60, cp: 6, sg: 'stop_survey' }],
+    o: 'n9100004', om: 2, a: 0, f_noshelter: 50, f_nobench: 50, f_shade: 67, f_heat: 83, f_hin: 0, f_wait: 60, cp: 6, sg: 'stop_survey' }],
   [[560, 60], { id: 'sp1105', sid: '1005', nm: 'Sample 2 St & Sample 6 Ave (midblock, near side)', md: 1, r: '60', tw: 22, ts: 12, tu: 0, bh: 2, hp: 40, hm: 60, hs: 120, ft: 385, lt: 1185, ev: 0, wc: 2, fid: '1105', b: 4, bp: 'Spring 2026', bx: '1105',
-    o: 'n9100005', om: 2, a: 0, f_riders: 20, f_noshelter: 50, f_nobench: 50, f_shade: 50, f_heat: 67, f_hin: 0, f_wait: 60, cp: 12, sg: 'stop_survey' }],
+    f_riders: 20, f_noshelter: 50, f_nobench: 50, f_shade: 50, f_heat: 67, f_hin: 0, f_wait: 60, cp: 12, sg: 'stop_survey' }],
   [[320, 180], { id: 'sp1008', sid: '1008', nm: 'Sample 3 St & Sample 2 St', md: 1, r: '441', tw: 1, ts: 0, tu: 0, bh: 1, ft: 388, lt: 388, ev: 0, wc: 1, b: 0, bp: 'Spring 2026',
     o: 'n9100008', om: 1, a: 0, sh: 0, f_riders: 0, f_noshelter: 100, f_nobench: 50, f_shade: 0, f_heat: 0, f_hin: 0, cp: 40, sg: 'stop_survey,stop_shelter_request' }],
   [[160, -20], { id: 'sp1006', sid: '1006', nm: 'Sample', md: 4, r: 'B1,B2,B3', tw: 283, ts: 153, tu: 113, bh: 27, hp: 2, hm: 5, hs: 7, hu: 7, ft: 307, lt: 1455, ev: 23, wc: 2 }],

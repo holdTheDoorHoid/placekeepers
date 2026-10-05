@@ -429,15 +429,15 @@
     },
     "tiles/transit.stops.geojson": {
       "bytes": 3630,
-      "sha256": "3923eb589816c0a1596c6b33bb1d7511e7bce41af92cba61fd9c72529fdbcf66"
+      "sha256": "18689d0b5b7f208a17ea58474a3f5381bed737c19d4383086169ea9effd6f89b"
     },
     "tiles/amenities.stops.geojson": {
       "bytes": 1235,
       "sha256": "80a02058dbddc5adfc4efdb6504a88622f3515a97af52a87c315d2d2f06ceb71"
     },
     "tables/routes/index.json": {
-      "bytes": 840,
-      "sha256": "26689397df08d2525e75e7abd3683cba9db1bbd3985a77a7e8e842ddc11b735b"
+      "bytes": 846,
+      "sha256": "9244225df95bdee51d45a9fe6ec98bc2fa5f835611b1a937a9d569e914a5d9cc"
     },
     "dossiers/common.json": {
       "bytes": 6273,

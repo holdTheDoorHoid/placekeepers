@@ -96,7 +96,7 @@ describe('what a stop says under the lens', () => {
   });
 
   it('says "not yet surveyed", never "no", and counts those answers halfway', () => {
-    const view = describeComfort(reg, state(), props('sp1105'));
+    const view = describeComfort(reg, state(), props('sp1004'));
     expect(view.inOsm).toBe(true);
     expect(view.summary).toBe(strings.stopAmenities.comfort[0]);
     expect(view.answers.every((a) => !a.known && a.value === strings.stopAmenities.unknown)).toBe(true);
@@ -117,20 +117,21 @@ describe('what a stop says under the lens', () => {
     expect(half.suggestions.map((s) => s.suggestion.id)).toEqual(['stop_survey', 'stop_shelter_request']);
   });
 
-  it('says when OpenStreetMap does not have the stop at all', () => {
-    const view = describeComfort(reg, state(), props('sp1004'));
+  it('says when no OpenStreetMap stop matches at all', () => {
+    const view = describeComfort(reg, state(), props('sp1105'));
     expect(view.inOsm).toBe(false);
     expect(view.summary).toBe(strings.transit.notInOsm);
     expect(view.osmUrl).toBeNull();
     expect(view.matched).toBeNull();
+    expect(view.halfway).toBe(true);
     // No SEPTA count: riders are left out of the average, not counted as zero.
-    expect(view.why?.missing).toEqual(['riders']);
+    expect(describeComfort(reg, state(), props('sp1004')).why?.missing).toEqual(['riders']);
   });
 
   it('follows the sliders and the suggestion switches', () => {
     const s = state();
     s.weights.transit_comfort = { ...s.weights.transit_comfort, no_shelter: 0, no_bench: 0 };
-    expect(describeComfort(reg, s, props('sp1105')).halfway).toBe(false);
+    expect(describeComfort(reg, s, props('sp1004')).halfway).toBe(false);
     s.weights.transit_comfort = Object.fromEntries(lens.factors.map((f) => [f.id, 0]));
     const off = describeComfort(reg, s, props('sp1002'));
     expect(off.score).toBeNull();
@@ -162,7 +163,7 @@ describe('what a stop says under the lens', () => {
     expect(station).not.toContain(strings.why.title);
     expect(station).not.toContain(strings.transit.osmSource);
 
-    const unsurveyed = render(TransitStopDetails, { props: { store, features: [props('sp1105')] } }).body;
+    const unsurveyed = render(TransitStopDetails, { props: { store, features: [props('sp1004')] } }).body;
     expect(unsurveyed).toContain(strings.stopAmenities.unknownNote);
     expect(unsurveyed).toContain(strings.transit.halfway);
     expect(unsurveyed).not.toMatch(/(Shelter|Bench|Lit at night): No</);

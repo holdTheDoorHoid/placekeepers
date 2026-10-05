@@ -5,21 +5,15 @@ finds the stop in OpenStreetMap, carries over what riders find there, computes t
 (registry/lenses.yaml, `transit_comfort`) and decides which suggestions the stop gets. The method
 in plain words is in docs/TRANSIT_METHOD.md; the evidence behind each factor in docs/EVIDENCE.md.
 
-**Finding a SEPTA stop in OpenStreetMap** (M2.2's stops, placekeepers.derive.bus_stops):
-
-1. *By SEPTA's stop number.* An OpenStreetMap stop's `ref` and `gtfs:stop_id` tags often hold the
-   number on the stop's sign. A number names a SEPTA stop (its stop id today, or one in its history)
-   when the two stand within REF_METERS of each other, or within REF_SIMILAR_METERS when both have
-   names that agree. A number farther away is a mapping mistake and is ignored. When two
-   OpenStreetMap stops carry one number, the nearer one wins.
-2. *By place,* for the stops left: the nearest SEPTA stop within PLACE_METERS, closest pairs
-   first, each stop used once. A stop whose two nearest SEPTA stops are about as close (within
-   AMBIGUOUS_GAP meters and AMBIGUOUS_RATIO times) is left unmatched rather than guessed: those are
-   usually the two sides of one corner.
-
-On 2026-10-04 the numbers checked out: of the 230 OpenStreetMap stops whose number names a SEPTA
-stop within 60 meters, matching by place alone would have picked another stop for 33 (mostly the
-other side of the street), so a number always comes first.
+**Finding a SEPTA stop in OpenStreetMap** uses `match_septa` (placekeepers.derive.bus_stops), the
+same pairing the route survey sheets use (M2.4), so a stop's sheet and its details on the map
+always describe the same OpenStreetMap stop: first by SEPTA's stop number (an OpenStreetMap stop's
+`ref` or `gtfs:stop_id` naming the SEPTA stop's number today or one it had before), then by
+distance, both only within SAME_STOP_METERS (15 meters), closest pairs first, each stop once. A
+number naming a stop farther away is ignored: on Frankford Avenue a run of OpenStreetMap stops
+carries the numbers of the stops across the street while each stands on another SEPTA stop. `om`
+records whether the stop numbers agree (BY_NUMBER) or the two only stand at the same place
+(BY_PLACE).
 
 **What riders find** comes from the matched OpenStreetMap stop: `a` (its `c`: 3 a shelter or roof,
 2 a bench but no shelter mapped, 1 neither, 0 not yet surveyed) and the shelter, bench and light
@@ -56,7 +50,6 @@ more).
 from __future__ import annotations
 
 import logging
-import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -66,22 +59,19 @@ import numpy as np
 import pyarrow.parquet as pq
 import shapely
 
-from placekeepers.derive.bus_stops import UNKNOWN, Stop, find_stops
+from placekeepers.derive.bus_stops import (
+    SAME_STOP_METERS,
+    UNKNOWN,
+    SeptaPoint,
+    Stop,
+    find_stops,
+    match_septa,
+    stop_numbers,
+)
 from placekeepers.derive.street_safety import plural, points_in_meters, to_meters
-from placekeepers.derive.transit import name_similarity
 
 log = logging.getLogger(__name__)
 
-#: An OpenStreetMap stop's number names a SEPTA stop within this distance,
-REF_METERS = 60.0
-#: or within this one when both names agree.
-REF_SIMILAR_METERS = 200.0
-NAME_SIMILARITY = 0.75
-#: A stop without a usable number matches the nearest SEPTA stop within this distance,
-PLACE_METERS = 20.0
-#: unless the second nearest is about as close: within this many meters and this ratio.
-AMBIGUOUS_GAP = 5.0
-AMBIGUOUS_RATIO = 1.5
 #: A stop this close to a High Injury Network street is on it (riders cross it).
 HIN_METERS = 30.0
 #: Shade trees are suggested for the quarter of stops with the least canopy nearby.
@@ -134,101 +124,49 @@ class OsmMatch:
 
 @dataclass
 class MatchSummary:
+    #: OpenStreetMap stops inside the city
     osm_stops: int = 0
+    #: SEPTA stops matched where the stop numbers agree, and by place alone
     by_number: int = 0
     by_place: int = 0
-    #: numbers that name a SEPTA stop too far away to be this stop
-    numbers_too_far: int = 0
-    #: stops left unmatched because two SEPTA stops were about as close
-    ambiguous: int = 0
+    #: OpenStreetMap stops in the city whose number names a SEPTA stop they were not matched to
+    #: (farther than SAME_STOP_METERS, as on Frankford Avenue)
+    numbers_elsewhere: int = 0
 
     @property
     def matched(self) -> int:
         return self.by_number + self.by_place
 
 
-def stop_numbers(tags: Mapping[str, str]) -> list[str]:
-    """The SEPTA stop numbers an OpenStreetMap stop names in `ref` and `gtfs:stop_id`."""
-    found: list[str] = []
-    for key in ("ref", "gtfs:stop_id"):
-        for part in re.split(r"[;,\s]+", tags.get(key) or ""):
-            part = part.strip()
-            if part.isdigit() and part not in found:
-                found.append(part)
-    return found
-
-
 def match_osm(
     septa: Sequence[SeptaStop], osm: Sequence[Stop]
 ) -> tuple[dict[int, OsmMatch], MatchSummary]:
-    """Which OpenStreetMap stop is which SEPTA stop (module docstring). Returns the matches by
-    the index of the SEPTA stop, and counts for the build notes."""
-    summary = MatchSummary(osm_stops=len(osm))
+    """Which OpenStreetMap stop is which SEPTA stop: `match_septa`, as for the route survey sheets
+    (module docstring). Returns the matches by the index of the SEPTA stop, and counts for the
+    build notes."""
+    summary = MatchSummary(osm_stops=sum(1 for stop in osm if stop.in_city))
     if not septa or not osm:
         return {}, summary
+    pairs = match_septa(osm, [SeptaPoint(s.sid, s.former, s.lat, s.lng) for s in septa])
     septa_m = points_in_meters([s.lat for s in septa], [s.lng for s in septa])
     osm_m = points_in_meters([s.lat for s in osm], [s.lng for s in osm])
+    matches: dict[int, OsmMatch] = {}
+    for s, o in pairs.items():
+        agree = bool(set(stop_numbers(osm[o])) & {septa[s].sid, *septa[s].former})
+        meters = round(float(shapely.distance(osm_m[o], septa_m[s])), 1)
+        matches[s] = OsmMatch(osm[o], BY_NUMBER if agree else BY_PLACE, meters)
+    summary.by_number = sum(1 for m in matches.values() if m.how == BY_NUMBER)
+    summary.by_place = len(matches) - summary.by_number
+
     by_number: dict[str, int] = {}
     for index, stop in enumerate(septa):
         for number in (stop.sid, *stop.former):
             by_number.setdefault(number, index)
-
-    # 1. By SEPTA's stop number.
-    claims: dict[int, tuple[float, int]] = {}
+    paired = {o: s for s, o in pairs.items()}
     for o, stop in enumerate(osm):
-        best: tuple[float, int] | None = None
-        for number in stop_numbers(stop.tags):
-            s = by_number.get(number)
-            if s is None:
-                continue
-            meters = float(shapely.distance(osm_m[o], septa_m[s]))
-            name = (stop.tags.get("name") or "").strip()
-            alike = bool(name) and name_similarity(name, septa[s].name) >= NAME_SIMILARITY
-            if meters <= REF_METERS or (meters <= REF_SIMILAR_METERS and alike):
-                if best is None or meters < best[0]:
-                    best = (meters, s)
-            else:
-                summary.numbers_too_far += 1
-        if best is not None:
-            meters, s = best
-            if s not in claims or meters < claims[s][0]:
-                claims[s] = (meters, o)
-    matches: dict[int, OsmMatch] = {
-        s: OsmMatch(osm[o], BY_NUMBER, round(meters, 1)) for s, (meters, o) in claims.items()
-    }
-    used_osm = {o for _, o in claims.values()}
-    summary.by_number = len(matches)
-
-    # 2. By place, for the stops left: each OpenStreetMap stop's nearest SEPTA stop not taken by
-    # a number, unless the next one is about as close.
-    tree = shapely.STRtree(septa_m)
-    pairs: list[tuple[float, int, int]] = []
-    for o in range(len(osm)):
-        if o in used_osm:
-            continue
-        near = tree.query(osm_m[o], predicate="dwithin", distance=PLACE_METERS * AMBIGUOUS_RATIO)
-        ranked = sorted(
-            (float(shapely.distance(osm_m[o], septa_m[s])), s)
-            for s in near.tolist()
-            if s not in matches
-        )
-        if not ranked or ranked[0][0] > PLACE_METERS:
-            continue
-        if len(ranked) > 1:
-            first, second = ranked[0][0], ranked[1][0]
-            if second - first < AMBIGUOUS_GAP and second < AMBIGUOUS_RATIO * max(first, 1.0):
-                summary.ambiguous += 1
-                continue
-        pairs.append((ranked[0][0], o, ranked[0][1]))
-    # Closest pairs first; an OpenStreetMap stop whose SEPTA stop went to a closer one stays
-    # unmatched rather than taking its second choice.
-    pairs.sort(key=lambda p: (p[0], osm[p[1]].id, septa[p[2]].sid))
-    for meters, o, s in pairs:
-        if o in used_osm or s in matches:
-            continue
-        matches[s] = OsmMatch(osm[o], BY_PLACE, round(meters, 1))
-        used_osm.add(o)
-        summary.by_place += 1
+        named = {by_number[n] for n in stop_numbers(stop) if n in by_number}
+        if stop.in_city and named and paired.get(o) not in named:
+            summary.numbers_elsewhere += 1
     return matches, summary
 
 
@@ -393,7 +331,9 @@ def comfort_for_stops(
             "geometry",
         ]
         osm_stops, _ = find_stops(pq.read_table(paths["osm_philadelphia"], columns=columns))
-        matches, result.summary = match_osm(stops, [s for s in osm_stops if s.in_city])
+        # Every stop, as for the route survey sheets: a SEPTA stop on the city line can stand on
+        # an OpenStreetMap stop just outside it.
+        matches, result.summary = match_osm(stops, osm_stops)
     else:
         result.notes.append("transit comfort: OpenStreetMap is missing, so no stop is surveyed")
     for index, match in matches.items():
@@ -445,12 +385,11 @@ def _notes(result: ComfortResult, total: int, paths: Mapping[str, Path]) -> list
         statuses = [p.get("a") for p in result.properties]
         surveyed = sum(1 for p in result.properties if p.get("a") not in (None, UNKNOWN))
         notes.append(
-            f"transit comfort: {s.matched:,} of the {s.osm_stops:,} OpenStreetMap stops in the "
-            f"city match one of {total:,} SEPTA bus and trolley stops ({s.by_number:,} by SEPTA's "
-            f"stop number, {s.by_place:,} by place within {PLACE_METERS:g} meters); "
-            f"{plural(s.ambiguous, 'stop was', 'stops were')} left unmatched between two SEPTA "
-            f"stops about as close, and {plural(s.numbers_too_far, 'number names', 'numbers name')}"
-            " a SEPTA stop too far away to be the same stop"
+            f"transit comfort: {s.matched:,} of {total:,} SEPTA bus and trolley stops match an "
+            f"OpenStreetMap stop within {SAME_STOP_METERS:g} meters ({s.by_number:,} where the "
+            f"stop numbers agree, {s.by_place:,} by place), of the {s.osm_stops:,} OpenStreetMap "
+            f"has in the city; {plural(s.numbers_elsewhere, 'stop carries', 'stops carry')} the "
+            "number of a SEPTA stop farther away, which is ignored"
         )
         notes.append(
             f"transit comfort: {surveyed:,} SEPTA stops have their shelter or bench surveyed "

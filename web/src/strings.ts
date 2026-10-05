@@ -659,9 +659,9 @@ export const strings = {
     lensStations: 'The lens scores bus and trolley stops only, so stations are hollow.',
     // The transit comfort lens at a stop (src/transit/comfort.ts).
     findTitle: 'What riders find here',
-    notInOsm: 'OpenStreetMap does not have this stop yet, so no one has recorded whether it has a shelter or a bench.',
-    matchedByNumber: 'Matched to the OpenStreetMap stop with the same stop number.',
-    matchedByPlace: 'Matched to the OpenStreetMap stop at the same place, within 20 meters.',
+    notInOsm: 'We found no matching stop in OpenStreetMap yet, so no one has recorded whether it has a shelter or a bench.',
+    matchedByNumber: 'Matched to the OpenStreetMap stop with the same stop number, at the same place.',
+    matchedByPlace: 'Matched to the OpenStreetMap stop at the same place, within 15 meters.',
     halfway: 'Not yet surveyed answers count halfway (50 of 100) in the score until someone records them.',
     canopy: (percent: number) =>
       `Tree canopy covers about ${formatNumber(percent)} percent of the land around the stop, in an area about two blocks across (the City's 2018 tree canopy survey).`,

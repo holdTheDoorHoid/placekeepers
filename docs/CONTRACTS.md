@@ -549,8 +549,8 @@ and those properties are under the Open Database License, as amenities.pmtiles i
 
 | Property | Type | Meaning |
 |---|---|---|
-| `o` | string | the OpenStreetMap stop matched to this one, as `id` in amenities.pmtiles (`n` or `w` and the element id); absent when none matched |
-| `om` | int | how it matched: 1 by SEPTA's stop number (the OpenStreetMap stop's `ref` or `gtfs:stop_id` names `sid` or a number in `fid`, within 60 meters, or 200 meters when the names agree; the nearer stop wins a shared number), 2 by place (the nearest SEPTA stop within 20 meters, closest pairs first, each stop once; a stop whose two nearest SEPTA stops are about as close, within 5 meters and 1.5 times, is left unmatched) |
+| `o` | string | the OpenStreetMap stop matched to this one, as `id` in amenities.pmtiles (`n` or `w` and the element id); absent when none matched. The match is `match_septa` in `derive/bus_stops.py`, as for the route survey sheets (section 7): by stop number, then by distance, both only within 15 meters, closest pairs first, each stop once |
+| `om` | int | 1 when the stop numbers agree (the OpenStreetMap stop's `ref` or `gtfs:stop_id` names `sid` or a number in `fid`), 2 when the two only stand at the same place |
 | `a` | int | what riders find, the matched stop's `c` in amenities.pmtiles: 3 a shelter or roof, 2 a bench but no shelter mapped, 1 neither, 0 not yet surveyed; absent when no OpenStreetMap stop matched (also not yet surveyed, never "missing") |
 | `sh`, `bn`, `li`, `cv` | int | the matched stop's shelter, bench, lit and covered answers, 1 yes and 0 no; absent when unknown. Lit is `li` here because `lt` is the last departure |
 | `f_riders` | int | lens factor: the share of bus and trolley stops with fewer weekday boardings (`b`); absent without a count |
@@ -612,9 +612,10 @@ the counts of each `c` inside the city.
 
 These are OpenStreetMap's stops, not SEPTA's: SEPTA's own stops are `stops` in `transit.pmtiles`
 (above). M2.3 joins the two by SEPTA's stop number first, an OpenStreetMap stop's `ref` (or `gs`)
-against SEPTA's `sid`, then by distance for the stops that do not match by number (`o` and `om`
-there). The route survey sheets (section 7, M2.4) already join them this way, with `match_septa` in
-`pipeline/src/placekeepers/derive/bus_stops.py`.
+against SEPTA's `sid`, then by distance for the stops that do not match by number. The route survey
+sheets (section 7, M2.4) and SEPTA's stops on the map (`o` and `om` there, M2.3) both join them
+with `match_septa` in `pipeline/src/placekeepers/derive/bus_stops.py`, so a stop's sheet and its
+details on the map always describe the same OpenStreetMap stop.
 
 ## 5. Hand curated memorial files (`data/curated/`)
 

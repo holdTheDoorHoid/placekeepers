@@ -91,6 +91,14 @@ view opens the same thing. The site picks the view by screen size; a switch is a
   best suggestion with cost, and the first legal step.
 - Tapping a card opens the dossier (section 5.6).
 
+As built (M2.3, 2026-10-05): a fourth chip, **Bus stops**, turns on SEPTA's bus and trolley stops,
+colored by the transit comfort lens. While they are on, "What you can do nearby" lists the stops
+that have a suggestion beside the lots, all nearest first, so a neighbor at a bus stop sees what
+they can do there. A stop's card says what the stop is and how far, its priority with the main
+reason and its badge, the first suggestion with its cost, and the first step; tapping it opens the
+stop's details, and "Show on map" marks it without covering the map. On phones the chips row
+scrolls sideways, so the fourth chip costs no room.
+
 **Analysis view (desktop first).** For organizers, researchers, journalists and council staff.
 - Left panel: lens sliders with presets, filters (owner type, vacancy confidence, access route,
   council district, registered community organization, neighborhood, zoning), and every layer.
@@ -196,8 +204,10 @@ counts, which use older numbers, and later neighbors' notes keep following the p
 **Buses and trains** group holds every SEPTA stop and station in Philadelphia, with how often
 service comes on a typical weekday, Saturday and Sunday and SEPTA's own weekday boardings (97.8% of
 bus and trolley stops had a count on 2026-10-04), and the routes as context; both layers are off by
-default until the transit comfort lens (M2.3) gives them a job. The method is in
-[TRANSIT_METHOD.md](TRANSIT_METHOD.md).
+default. From M2.3 (2026-10-05) the stops carry the transit comfort lens (section 5.3) and what
+OpenStreetMap knows about their shelter, bench and light, matched to OpenStreetMap's stops the same
+way the route survey sheets are (M2.4); the field view's Bus stops chip and using the lens turn them
+on. The method is in [TRANSIT_METHOD.md](TRANSIT_METHOD.md).
 
 ### 5.2 The registry: one source of truth for every toggle
 
@@ -238,8 +248,20 @@ needed). Every score has a "why" breakdown showing each factor's contribution.
 | Violence reduction | Vacant parcels | Untreated vacant lot or open abandoned building (Strong); shootings within about a quarter mile in the last 12 and 36 months (the outcome the trials measured; frames where care helps most); neighborhood poverty rate (the trial effect was concentrated below the poverty line); not already maintained by LandCare (Strong); tree canopy deficit (Mixed, low default weight) | First |
 | Street safety | Street segments and crash sites | On the High Injury Network; people killed or seriously injured walking or cycling in 5 years; any fatal crash in 2 years; school within 400 m; later, busy bus stop nearby | First |
 | Heat and shade | Area cells, stops, lots | Heat vulnerability; canopy; impervious surface; people over 65 and under 5 | Later |
-| Transit comfort | Bus stops | Daily boardings; no shelter; no bench; heat at the stop; crossing on the High Injury Network | Later |
+| Transit comfort | SEPTA bus and trolley stops | People getting on each weekday (Context); no shelter (Weak); no bench (Weak); little shade nearby (Mixed); hot neighborhood in summer (Context); on the High Injury Network (Context); long waits at midday (Weak). A shelter or bench not yet surveyed counts halfway | v0.2 (M2.3) |
 | Placemaking | Lots and area cells | Walkability; people within a 5 minute walk; distance to a park; art nearby or absent; commercial corridor | Later |
+
+As built (M2.3, 2026-10-05): the transit comfort lens colors SEPTA's bus and trolley stops (the
+stops layer's coloring setting offers the lens, waits or riders, and defaults to the lens), with
+three presets: Balanced, Busiest stops first, and Heat and shade. Its one departure from the lens
+rules: a shelter or bench no one has surveyed yet counts as 50, halfway, rather than being left out
+(which let stops known only for heat and street rank first) or counted as missing (which scored a
+stop as having nothing). The stop's page never calls a halfway answer the main reason and marks it
+"not yet surveyed" in the "why" table, and every such stop gets the suggestion to survey it. Using
+any lens (a slider or a preset) turns on the layer that draws its places, colored by that lens, and
+a note says so; a lens whose places are not on the map says so above its sliders, with a button to
+show them. The method is in [TRANSIT_METHOD.md](TRANSIT_METHOD.md) and the evidence in
+[EVIDENCE.md](EVIDENCE.md), "Bus stop comfort".
 
 **Displacement watch** is not a priority lens. It is a caution overlay on area cells (sale price
 growth, share of recent buyers that are companies, renter share, and similar), shown wherever a
@@ -643,9 +665,9 @@ docs/            design, roadmap, research
   OpenStreetMap had 829 of SEPTA's 7,927 bus and trolley stops in the city: 97 with a shelter or
   roof, 12 with a bench only, 236 with neither, 484 not yet surveyed. Its stops are OpenStreetMap's,
   named by their OpenStreetMap element; M2.3 joins them to SEPTA's stops by SEPTA's stop number,
-  then by distance. The layer is off by default in both views until the transit comfort lens
-  (M2.3), because a city full of rings for unsurveyed stops would crowd the lots and streets that
-  v0.1 is about. The guide is the **Survey bus stops** page, linked from the layer's "About this
+  then by distance. The layer is off by default in both views, because a city full of rings for
+  unsurveyed stops would crowd the lots and streets that v0.1 is about; from M2.3 SEPTA's own stops
+  carry the same answers for the transit comfort lens. The guide is the **Survey bus stops** page, linked from the layer's "About this
   layer", from its "not yet surveyed" legend entry, from a tapped stop, and from the How to do it
   and Contact pages. StreetComplete only asks about stops already in OpenStreetMap, so the guide
   also shows how to add a missing stop with the app's Things overlay or a note. Answers reach the
