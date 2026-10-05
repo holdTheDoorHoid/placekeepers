@@ -16,6 +16,7 @@ from placekeepers.adapters.opa_properties import OpaProperties
 from placekeepers.adapters.property_records import AssessmentHistory, RealEstateTransfers
 from placekeepers.adapters.pwd_parcels import PwdParcels
 from placekeepers.adapters.schools import Schools
+from placekeepers.adapters.septa import SeptaGtfs, SeptaRidershipBus, SeptaRidershipTrolley
 from placekeepers.adapters.shootings import Shootings
 from placekeepers.adapters.street_centerlines import StreetCenterlines
 from placekeepers.adapters.url import UrlAdapter
@@ -68,6 +69,10 @@ ADAPTERS: dict[str, type[Adapter]] = {
     # The violence reduction lens (M1.4)
     "census_tracts_2020": CensusTracts2020,
     "tree_canopy_2018": TreeCanopy2018,
+    # SEPTA schedules and ridership (M2.1)
+    "septa_gtfs": SeptaGtfs,
+    "septa_ridership_bus": SeptaRidershipBus,
+    "septa_ridership_trolley": SeptaRidershipTrolley,
 }
 
 

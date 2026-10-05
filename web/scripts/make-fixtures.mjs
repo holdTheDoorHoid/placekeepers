@@ -296,6 +296,32 @@ const memorials = MEMORIAL_SAMPLES.map(([d, m, sg], i) => {
   };
 });
 
+// SEPTA stops and routes (docs/CONTRACTS.md, `stops` and `routes` in tiles/transit.pmtiles), made
+// up and fixed by hand (no random draws, so every fixture above stays the same). They cover a
+// frequent stop, a stop with service through the night, a bus and trolley stop, a stop with no
+// SEPTA count, a renumbered stop whose count came from its old id, a stop with no midday service,
+// the two platforms of a subway station at one spot, and a Regional Rail station.
+const STOP_SAMPLES = [
+  [[170, 60], { id: 'sp1001', sid: '1001', nm: 'Sample 2 St & N Broad St (far side)', md: 1, r: '16,B1 OWL', tw: 75, ts: 65, tu: 58, bh: 6, hp: 17, hm: 22, hs: 22, hu: 30, ft: 24, lt: 1507, ev: 8, nt: 19, wc: 1, b: 132, bp: 'Spring 2026' }],
+  [[150, 60], { id: 'sp1002', sid: '1002', nm: 'N Broad St & Sample 2 St', md: 1, r: '4,16', tw: 140, ts: 90, tu: 70, bh: 10, hp: 6, hm: 9, hs: 12, hu: 15, ft: 305, lt: 1460, ev: 16, wc: 1, b: 848, bp: 'Spring 2026' }],
+  [[480, 180], { id: 'sp1003', sid: '1003', nm: 'Sample 3 St & Sample 5 Ave', md: 3, r: 'T1,47', tw: 180, ts: 120, tu: 100, bh: 12, hp: 5, hm: 7, hs: 9, hu: 10, ft: 300, lt: 1450, ev: 20, wc: 1, b: 1240, bp: 'Spring 2026' }],
+  [[640, -60], { id: 'sp1004', sid: '1004', nm: 'Sample 1 St & Sample 8 Ave', md: 1, r: '60', tw: 22, ts: 12, tu: 0, bh: 2, hp: 40, hm: 60, hs: 120, ft: 380, lt: 1180, ev: 0, wc: 1 }],
+  [[560, 60], { id: 'sp1105', sid: '1005', nm: 'Sample 2 St & Sample 6 Ave (midblock, near side)', md: 1, r: '60', tw: 22, ts: 12, tu: 0, bh: 2, hp: 40, hm: 60, hs: 120, ft: 385, lt: 1185, ev: 0, wc: 2, fid: '1105', b: 4, bp: 'Spring 2026', bx: '1105' }],
+  [[320, 180], { id: 'sp1008', sid: '1008', nm: 'Sample 3 St & Sample 2 St', md: 1, r: '441', tw: 1, ts: 0, tu: 0, bh: 1, ft: 388, lt: 388, ev: 0, wc: 1, b: 0, bp: 'Spring 2026' }],
+  [[160, -20], { id: 'sp1006', sid: '1006', nm: 'Sample', md: 4, r: 'B1,B2,B3', tw: 283, ts: 153, tu: 113, bh: 27, hp: 2, hm: 5, hs: 7, hu: 7, ft: 307, lt: 1455, ev: 23, wc: 2 }],
+  [[161, -20], { id: 'sp1007', sid: '1007', nm: 'Sample', md: 4, r: 'B1,B2,B3', tw: 284, ts: 152, tu: 104, bh: 26, hp: 2, hm: 4, hs: 7, hu: 10, ft: 315, lt: 1485, ev: 28, wc: 2 }],
+  [[800, 180], { id: 'sr90009', sid: '90009', nm: 'Sample Regional Rail Station', md: 8, r: 'CHW', tw: 42, ts: 18, tu: 18, bh: 3, hp: 40, hm: 60, hs: 120, hu: 120, ft: 330, lt: 1430, ev: 6, wc: 1 }],
+];
+const transitStops = STOP_SAMPLES.map(([xy, properties]) => ({ type: 'Feature', properties, geometry: { type: 'Point', coordinates: toLngLat(xy) } }));
+const ROUTE_SAMPLES = [
+  [[[150, -60], [150, 180]], { id: '16', r: '16', nm: 'Broad-Erie to Cheltenham-Ogontz', md: 1, tw: 150, hp: 8, hm: 11 }],
+  [[[0, 60], [800, 60]], { id: '60', r: '60', nm: 'Sample route across town', md: 1, tw: 44, hp: 20, hm: 30 }],
+  [[[0, 180], [800, 180]], { id: 'T1', r: 'T1', nm: '13th St to 63rd-Malvern/Overbrook', md: 2, tw: 228, hp: 8, hm: 10 }],
+  [[[160, -60], [160, 180]], { id: 'B1', r: 'B1', nm: 'Broad Street Line Local', md: 4, tw: 280, hp: 7, hm: 7 }],
+  [[[0, -60], [800, 180]], { id: 'CHW', r: 'CHW', nm: 'Chestnut Hill West Line', md: 8, tw: 42, hp: 40, hm: 60 }],
+];
+const transitRoutes = ROUTE_SAMPLES.map(([coords, properties]) => ({ type: 'Feature', properties, geometry: { type: 'LineString', coordinates: coords.map(toLngLat) } }));
+
 const collection = (features) => JSON.stringify({ type: 'FeatureCollection', features }) + '\n';
 // The lot dossier files in data/dossiers/ (a shard and common.json) and the owners table in
 // data/tables/ are written by hand (docs/CONTRACTS.md section 6: every flag type, and parcels the
@@ -330,6 +356,8 @@ writeFileSync(path('data/tiles/boundaries.neighborhoods.geojson'), collection(ne
 writeFileSync(path('data/tiles/streets.segments.geojson'), collection(segments));
 writeFileSync(path('data/tiles/streets.crashes.geojson'), collection(crashes));
 writeFileSync(path('data/tiles/streets.memorials.geojson'), collection(memorials));
+writeFileSync(path('data/tiles/transit.stops.geojson'), collection(transitStops));
+writeFileSync(path('data/tiles/transit.routes.geojson'), collection(transitRoutes));
 
 // Run from the fixtures folder with relative paths, because tippecanoe records its command
 // line in the file's metadata and local folder names do not belong in committed files.
@@ -420,6 +448,9 @@ const manifest = {
       newest_record: null,
       message: 'Not collected yet',
     },
+    septa_gtfs: ok(13827, '2026-09-25'),
+    septa_ridership_bus: ok(18201, '2026-08-20'),
+    septa_ridership_trolley: ok(719, '2026-08-20'),
   },
   layers: {
     vacant_parcels: {
@@ -446,6 +477,12 @@ const manifest = {
     },
     memorials: { file: 'tiles/streets.pmtiles', source_layer: 'memorials', sources: ['fatal_crashes', 'memorial_names'] },
     basemap: { file: 'basemap/philly.pmtiles', source_layer: 'earth', sources: ['basemap_openstreetmap'] },
+    transit_stops: {
+      file: 'tiles/transit.pmtiles',
+      source_layer: 'stops',
+      sources: ['septa_gtfs', 'septa_ridership_bus', 'septa_ridership_trolley'],
+    },
+    transit_routes: { file: 'tiles/transit.pmtiles', source_layer: 'routes', sources: ['septa_gtfs'] },
   },
   files: Object.fromEntries(
     [
@@ -459,6 +496,8 @@ const manifest = {
       'tiles/streets.hin.geojson',
       'tiles/streets.memorials.geojson',
       'tiles/streets.segments.geojson',
+      'tiles/transit.routes.geojson',
+      'tiles/transit.stops.geojson',
       ...handWritten.map(([name]) => name).filter((name) => !shardFiles.some(([shard]) => shard === name)),
     ].map((p) => [p, fileInfo(p)]),
   ),
@@ -472,12 +511,13 @@ const manifest = {
     : null,
   notes: [
     'This is synthetic sample data for testing the map.',
-    'Street and boundary tiles were skipped for this sample, so those layers are published as GeoJSON.',
+    'Street, boundary and transit tiles were skipped for this sample, so those layers are published as GeoJSON.',
   ],
 };
 writeFileSync(new URL('manifest.json', ROOT), JSON.stringify(manifest, null, 2) + '\n');
 console.log(
   `Wrote ${parcels.length} parcels, ${cells.length} cells, ${lines.length} lines, ${landcareLots.length} LandCare lots, ` +
     `${gardenPoints.length} gardens, ${councilDistricts.length + communityOrganizations.length + neighborhoods.length} boundaries, ` +
-    `${segments.length} blocks, ${crashes.length} crashes and ${memorials.length} memorials to ${ROOT.pathname}`,
+    `${segments.length} blocks, ${crashes.length} crashes, ${memorials.length} memorials, ${transitStops.length} stops and ` +
+    `${transitRoutes.length} routes to ${ROOT.pathname}`,
 );
