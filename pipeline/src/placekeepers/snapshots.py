@@ -5,8 +5,10 @@ kept as "rejected" for inspection, and the map keeps using the last good one. On
 snapshots of each source are kept on this machine.
 
 Sidecar fields: source, snapshot_id, file, format, fetched_at, rows, sha256, bytes, newest_record,
-status ("good" or "rejected"), checks, message, columns, notes (data quality remarks), and
-raw_fetch_id.
+status ("good" or "rejected"), checks, message, columns, notes (data quality remarks),
+raw_fetch_id, and recipe (a fingerprint of what the registry asked the adapter to keep, such as
+the OpenStreetMap extract's tag list; null for adapters without one, and in sidecars written
+before 2026-10-05).
 """
 
 from __future__ import annotations
@@ -42,6 +44,8 @@ class SnapshotMeta:
     columns: list[str] = field(default_factory=list)
     notes: list[str] = field(default_factory=list)
     raw_fetch_id: str | None = None
+    #: what the registry asked the adapter to keep when this snapshot was made (Adapter.recipe)
+    recipe: str | None = None
 
     def to_json(self) -> dict[str, Any]:
         return asdict(self)

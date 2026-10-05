@@ -55,7 +55,10 @@ extract), and `tags`, the elements to keep: `key=value` (such as `highway=bus_st
 for any value (such as `shelter`). Keys and values hold letters, digits and `_ : ; . -`, never
 spaces, and a tag is listed once. The pipeline keeps the nodes and ways with any of the tags inside
 the city limits and 200 meters around them (section 2), so a later layer adds its tags here
-without new code; new tags arrive with the next weekly download. An `osm_extract` with neither key
+without new code; new tags arrive with the next weekly download. Each snapshot's sidecar keeps
+`recipe`, a hash of the tag list it was made with (changed 2026-10-05: before then there was none),
+and a snapshot whose hash differs from today's tag list, or that has none, is downloaded again on
+the next run even when it is younger than the six days Geofabrik asks for. An `osm_extract` with neither key
 is the base map, made by the site and never fetched (section 2); one key without the other is an
 error.
 

@@ -105,6 +105,14 @@ class Adapter(ABC):
     def id(self) -> str:
         return self.source.id
 
+    def recipe(self) -> str | None:
+        """A fingerprint of what the registry asks this adapter to keep, stored with each
+        snapshot (`SnapshotMeta.recipe`). When the current snapshot's differs, or it has none, that
+        copy no longer matches the registry, so it is downloaded again on the next run even when
+        `min_refetch` or the cadence would keep it. None (the default) for adapters whose snapshot
+        does not depend on such settings."""
+        return None
+
     @abstractmethod
     def fetch(self, dest: Path) -> dict[str, Any]:
         """Download into `dest` and return facts about the download for fetch.json."""

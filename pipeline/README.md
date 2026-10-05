@@ -38,8 +38,11 @@ cache, `--as-of YYYY-MM-DD` sets the build date for time windows, and `-v` shows
 a source comes after the ones its download needs: transfers, assessments and violations wait for
 the sources that define the vacancy candidate parcels. A source whose registry cadence is `frozen`
 is downloaded once; a `yearly` one at most every 30 days; the OpenStreetMap extract at most every
-six days, as Geofabrik asks (its adapter's `min_refetch`; `--force` overrides all three). No
-download starts while less than 10 GB of disk is free (`PK_MIN_FREE_GB`).
+six days, as Geofabrik asks (its adapter's `min_refetch`; `--force` overrides all three). A
+snapshot made with other registry settings than today's (its sidecar's `recipe`, such as the
+extract's tag list, missing in snapshots made before 2026-10-05) is downloaded again on the next
+run whatever its age, so a tag added to the registry never waits six days. No download starts
+while less than 10 GB of disk is free (`PK_MIN_FREE_GB`).
 
 ## Sources
 
