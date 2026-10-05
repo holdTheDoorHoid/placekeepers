@@ -23,6 +23,9 @@
 - id: conditions
   label: Conditions reported to 311
   description: Illegal dumping, lights out and graffiti that people reported to Philly311 in the last 90 days, counted by block.
+- id: walking
+  label: Walking, cycling and people
+  description: How walkable each area is, how many people and everyday places are within a short walk, and how stressful each street is for people on bikes.
 - id: safety_context
   label: Where care is needed most
   description: Context that shows where improvements are likely to help most.

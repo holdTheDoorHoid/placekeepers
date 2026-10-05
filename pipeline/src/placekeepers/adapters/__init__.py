@@ -32,6 +32,12 @@ from placekeepers.adapters.shootings import Shootings
 from placekeepers.adapters.street_centerlines import StreetCenterlines
 from placekeepers.adapters.url import UrlAdapter
 from placekeepers.adapters.vacant_indicators import VacantIndicatorsBldg, VacantIndicatorsLand
+from placekeepers.adapters.walk import (
+    CensusBlocks2020,
+    DvrpcLts,
+    EpaWalkability,
+    SnapRetailers,
+)
 from placekeepers.context import Context
 from placekeepers.registry import Source
 
@@ -98,6 +104,11 @@ ADAPTERS: dict[str, type[Adapter]] = {
     "ppr_spraygrounds": PprSpraygrounds,
     "ppr_hydration_stations": PprHydrationStations,
     "philly311_conditions": Philly311Conditions,
+    # Walkability and people (M3.3)
+    "epa_walkability": EpaWalkability,
+    "census_blocks_2020": CensusBlocks2020,
+    "dvrpc_lts": DvrpcLts,
+    "snap_retailers": SnapRetailers,
 }
 
 

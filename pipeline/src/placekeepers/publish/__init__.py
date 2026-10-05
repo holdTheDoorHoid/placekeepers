@@ -120,7 +120,8 @@ def vacancy_counts(ctx: Context) -> dict[str, Any] | None:
 
 def lens_notes(ctx: Context) -> list[str]:
     """What the lenses could not score, from the summaries beside derived/lens_factors (the
-    violence lens) and derived/heat_factors (the heat and shade lens, M3.1)."""
+    violence lens), derived/heat_factors (the heat and shade lens, M3.1) and
+    derived/walk_factors (the walking measures, M3.3)."""
     notes: list[str] = []
     model = (ctx.cache.root / "derived" / "vacancy.parquet").is_file()
     for name, missing in (
@@ -131,6 +132,10 @@ def lens_notes(ctx: Context) -> list[str]:
         (
             "heat_factors.json",
             "The heat lens factors have not been computed, so the lots have no heat scores yet",
+        ),
+        (
+            "walk_factors.json",
+            "The walking measures have not been computed, so the lots have no walking factors yet",
         ),
     ):
         path = ctx.cache.root / "derived" / name
