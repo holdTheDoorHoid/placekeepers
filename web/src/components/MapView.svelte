@@ -8,6 +8,7 @@
   import { pagePadding } from '../map/covered.ts';
   import type { AppStore } from '../state/store.svelte.ts';
   import { strings } from '../strings.ts';
+  import { stopAnswerIndex } from '../transit/answers.ts';
 
   let { store }: { store: AppStore } = $props();
   let container: HTMLDivElement;
@@ -100,6 +101,21 @@
   $effect(() => {
     const inspected = store.inspected;
     store.controller?.setInspected(inspected);
+  });
+
+  // What OpenStreetMap says at SEPTA's stops is published apart from them and joined here in the
+  // browser (decision D1, src/transit/answers.ts): downloaded once the stops are shown or one is
+  // opened, then handed to the stops layer, which reads each stop's shelter and bench from it.
+  $effect(() => {
+    const stopsShown = store.registry.layers.some(
+      (l) => l.style === 'transit_stops' && (store.state.layers.includes(l.id) || store.inspected?.layerId === l.id),
+    );
+    if (stopsShown && store.stopTableStatus === 'idle') void store.loadStopTable();
+  });
+
+  $effect(() => {
+    const table = store.stopTable;
+    store.controller?.setStopAnswers(table ? stopAnswerIndex(table) : null);
   });
 
   // A link that opens with a lot page: once the map has drawn and the parcel's place is known, bring

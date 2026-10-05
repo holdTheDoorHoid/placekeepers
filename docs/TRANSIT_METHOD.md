@@ -184,8 +184,25 @@ has answered for yet). The route
 sheets pair every stop the same way except one: a berth of the 69th Street Transportation Center,
 just across the city line, whose OpenStreetMap stop the sheets give to a berth outside the city.
 
+**OpenStreetMap's answers are joined in the visitor's browser, never stored with SEPTA's data**
+(decision D1 of the v0.2 review, [VERIFICATION_V0_2.md](VERIFICATION_V0_2.md)). OpenStreetMap is
+shared under the Open Database License, which asks that a database made by combining it with other
+data be shared under the same license; SEPTA's license lets us redistribute its data but not
+relicense it. So the published files keep the two apart: SEPTA's stops (`tiles/transit.pmtiles`)
+and the route survey sheets (`tables/routes/`) carry SEPTA's and the City's data and only the id of
+the OpenStreetMap stop at the same pole, and what OpenStreetMap says at each stop is published on
+its own, in `tables/stop_amenities.json` (and the shelters and benches tiles), under the Open
+Database License. The map and the survey page download that table and join the two by the id, in
+the browser, with the same rules the pipeline uses, so what anyone sees is exactly what it was
+before: the colors, the "why" table, the stop's card and page, the nearby list and the suggestions.
+The pipeline still works out the whole picture for the counts in the build notes and below; a
+shared set of test cases (`pipeline/tests/fixtures/stop_join_parity.json`) holds the browser to the
+pipeline's answers. If the table cannot be loaded, a stop's page says so instead of showing its
+answers, and every shelter and bench counts halfway on the map.
+
 **The factors.** Each runs from 0 to 100 among the bus and trolley stops on the map, as in every lens:
-the share of stops ranking lower.
+the share of stops ranking lower. The shelter and bench factors are worked out in the browser from
+the joined answers; the others are in the published stops.
 
 | Factor | Measure | Badge | Default weight | Stops with data |
 |---|---|---|---|---|
@@ -226,7 +243,9 @@ police, and Placekeepers never points there.
 
 **Joining other data to stops.** Join by the stop's key (`id`) for anything Placekeepers keeps about
 a stop, and by SEPTA's number (`sid`, then the numbers in `fid`) for anything from outside.
-Boardings (`b`) are absent, not zero, where SEPTA has no count.
+Boardings (`b`) are absent, not zero, where SEPTA has no count. Data under a share alike license,
+such as OpenStreetMap's, is linked by id and joined in the browser, never stored on SEPTA's records
+(decision D1 above).
 
 ## Limits
 

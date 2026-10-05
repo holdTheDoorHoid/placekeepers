@@ -1,8 +1,10 @@
 // What the transit comfort lens says about a SEPTA stop (M2.3): its score and the "why" behind
 // it, what riders find there from OpenStreetMap, and what neighbors can do, each suggestion with
 // its first lawful step and the route's contacts and "last checked" date. Built from the tile
-// properties of docs/CONTRACTS.md section 4 (`stops` in tiles/transit.pmtiles: o, om, a, sh, bn,
-// li, cv, cp, hin, sg and the f_ factors); the method is in docs/TRANSIT_METHOD.md.
+// properties of docs/CONTRACTS.md section 4 (`stops` in tiles/transit.pmtiles: the f_ factors,
+// cp, hin, sg, tc and the OpenStreetMap link `o`) joined with what OpenStreetMap says at the linked
+// stop, which is published apart (tables/stop_amenities.json) and joined here in the browser
+// (decision D1, ./answers.ts); the method is in docs/TRANSIT_METHOD.md.
 //
 // An answer OpenStreetMap does not have yet reads "not yet surveyed", never "no", and the lens
 // counts it halfway (50), so a stop no one has surveyed is never scored as missing a shelter it
@@ -16,6 +18,7 @@ import type { Lens, Partner, Registry, Route, Suggestion } from '../registry/typ
 import type { AppState } from '../state/defaults.ts';
 import { strings } from '../strings.ts';
 import { osmUrl } from './amenities.ts';
+import { IN_LENS, joinStop, type StopTable } from './answers.ts';
 import { describeStop, stopKind, type StopKind } from './describe.ts';
 
 /** The lens that ranks stops: the first registry lens that applies to stops. */
@@ -115,7 +118,33 @@ export function stopSuggestionViews(reg: Registry, state: AppState, properties: 
   }));
 }
 
-export function describeComfort(reg: Registry, state: AppState, properties: Record<string, unknown>): StopComfortView {
+/**
+ * The transit comfort lens leaves this stop out: a subway, El or Regional Rail station, or a
+ * trolley tunnel station underground (a bus or trolley stop the pipeline does not mark with `tc`).
+ */
+export function outsideLens(properties: Record<string, unknown>): boolean {
+  const kind = stopKind(properties.md);
+  return kind === 'metro' || kind === 'rail' || Number(properties[IN_LENS]) !== 1;
+}
+
+/** A trolley stop underground, which the lens leaves out like the stations. */
+export function tunnelStation(properties: Record<string, unknown>): boolean {
+  const kind = stopKind(properties.md);
+  return kind !== 'metro' && kind !== 'rail' && Number(properties[IN_LENS]) !== 1;
+}
+
+/**
+ * What the lens says about a published stop, with what OpenStreetMap says at its linked stop
+ * joined in from `table` (null while it loads, or when it is not available: the stop then counts
+ * as not yet surveyed).
+ */
+export function describeComfort(
+  reg: Registry,
+  state: AppState,
+  tile: Record<string, unknown>,
+  table: StopTable | null,
+): StopComfortView {
+  const properties = joinStop(tile, table);
   const s = strings.stopAmenities;
   const t = strings.transit;
   const lens = stopLensOf(reg);
@@ -183,31 +212,36 @@ export interface StopInput {
   lngLat: [number, number];
 }
 
-/** The stops with a suggestion switched on, nearest to a point first. */
+/**
+ * The stops with a suggestion switched on, nearest to a point first, with what OpenStreetMap says
+ * at each joined in from `table` (./answers.ts). Each keeps its published properties, to open it.
+ */
 export function nearestStops(
   reg: Registry,
   state: AppState,
   stops: StopInput[],
   anchor: [number, number],
+  table: StopTable | null,
   limit = Infinity,
 ): NearbyStop[] {
   const lens = stopLensOf(reg);
   return stops
     .map((stop) => {
-      const suggestions = stopSuggestionViews(reg, state, stop.properties);
+      const joined = joinStop(stop.properties, table);
+      const suggestions = stopSuggestionViews(reg, state, joined);
       if (suggestions.length === 0) return null;
-      const why = lens ? explainScore(lens, state.weights[lens.id], stop.properties) : null;
-      const view = describeStop(stop.properties);
+      const why = lens && !outsideLens(joined) ? explainScore(lens, state.weights[lens.id], joined) : null;
+      const view = describeStop(joined);
       return {
         ...stop,
         id: String(stop.properties.id ?? ''),
         distance: distanceMeters(anchor, stop.lngLat),
-        kind: stopKind(stop.properties.md),
+        kind: stopKind(joined.md),
         title: view.title,
         routes: view.routes,
         why,
         score: wholeScore(why?.score),
-        main: knownMainReason(why, unsurveyedFactors(lens, stop.properties)),
+        main: knownMainReason(why, unsurveyedFactors(lens, joined)),
         suggestions,
       } satisfies NearbyStop;
     })
