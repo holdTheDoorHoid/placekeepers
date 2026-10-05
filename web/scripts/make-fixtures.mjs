@@ -20,6 +20,7 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { cellToBoundary, gridDisk, latLngToCell } from 'h3-js';
+import { routeSheetFixtures } from './route-fixtures.mjs';
 
 const FIXTURES = new URL('../fixtures/', import.meta.url);
 const ROOT = new URL('data/', FIXTURES);
@@ -386,6 +387,10 @@ writeFileSync(path('data/tiles/streets.memorials.geojson'), collection(memorials
 writeFileSync(path('data/tiles/transit.stops.geojson'), collection(transitStops));
 writeFileSync(path('data/tiles/transit.routes.geojson'), collection(transitRoutes));
 writeFileSync(path('data/tiles/amenities.stops.geojson'), collection(amenityStops));
+// The route survey sheets (scripts/route-fixtures.mjs): the index is listed in files, each route's
+// sheet is not (docs/CONTRACTS.md section 7).
+mkdirSync(path('data/tables/routes'), { recursive: true });
+for (const [name, text] of routeSheetFixtures(toLngLat)) writeFileSync(path(`data/${name}`), text);
 
 // Run from the fixtures folder with relative paths, because tippecanoe records its command
 // line in the file's metadata and local folder names do not belong in committed files.
@@ -540,6 +545,7 @@ const manifest = {
       'tiles/transit.routes.geojson',
       'tiles/transit.stops.geojson',
       'tiles/amenities.stops.geojson',
+      'tables/routes/index.json',
       ...handWritten.map(([name]) => name).filter((name) => !shardFiles.some(([shard]) => shard === name)),
     ].map((p) => [p, fileInfo(p)]),
   ),

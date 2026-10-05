@@ -9,6 +9,8 @@ StreetComplete, a few minutes at a time.
 
 [Open the map with the stops that are not yet surveyed](../#l=stop_amenities&s=stop_amenities.show:unsurveyed)
 
+[Print a survey sheet for a whole bus or trolley route](../survey/)
+
 We last checked the app details on this page against StreetComplete's own website, its
 [questions and answers page](https://wiki.openstreetmap.org/wiki/StreetComplete/FAQ) and its
 [list of questions](https://wiki.openstreetmap.org/wiki/StreetComplete/Quests) on October 4, 2026.
@@ -91,6 +93,9 @@ stop:
 Most people survey a stretch near home or along their own ride, and come back another day for the
 next one. The other direction of a route has its own stops across the street.
 
+The [route survey page](../survey/) works out the same estimate for each route and direction, and
+for each part when a group splits a route.
+
 ## Stay safe
 
 - Stay on the sidewalk. Never stand in the street or step into a bus lane to look at a stop.
@@ -99,6 +104,32 @@ next one. The other direction of a route has its own stops across the street.
 - Survey in daylight, with a friend if you can.
 - Do not photograph people. If you add a photo to a note, take it when no one is in the frame.
 - Stay on public sidewalks. Do not go onto private property to look at a stop.
+
+## Survey a route with your neighbors
+
+A neighborhood group can survey a whole bus or trolley route in an afternoon by splitting it up:
+
+1. **Pick a route.** Choose one your neighbors ride, or one with many stops not yet surveyed on
+   [our map](../#l=stop_amenities&s=stop_amenities.show:unsurveyed).
+2. **Print the sheets.** On the [route survey page](../survey/), choose the route, a direction,
+   and how many people or pairs will share it. The page splits the stops into parts that follow
+   each other. Each part gets its own sheet: the stops in order, what OpenStreetMap shows at each
+   one now, boxes for a shelter, a bench, a waste basket, a light and repairs, a column for notes,
+   and our estimate of how long that part takes. About 20 stops make an hour.
+3. **Hand out the parts.** Give each pair one part. The other direction of a route has its own
+   stops across the street, so give it to other pairs or keep it for another day.
+4. **Go together, and stay safe.** Survey in daylight, in pairs, and stay on the sidewalk. Never
+   stand in the street to look at a stop.
+5. **Answer at the stop, or later.** Volunteers with StreetComplete answer its questions at each
+   stop. Volunteers without it fill in the sheet, then enter the answers at home in OpenStreetMap's
+   own editor, as the sheet explains, or hand the sheet to someone in the group who will. If
+   everyone uses StreetComplete, its team mode can divide the questions among up to 12 people.
+6. **Keep the rest for your group.** OpenStreetMap does not record damage, so the "needs repair"
+   boxes and the notes stay with your group, for when you talk with SEPTA or the City about a stop.
+
+Everything your group enters into OpenStreetMap reaches our map within about a week, because
+Placekeepers downloads OpenStreetMap for Philadelphia every Monday. The survey sheets update at the
+same time, so a week later they show which stops still need a visit.
 
 ## Your answers are public
 
