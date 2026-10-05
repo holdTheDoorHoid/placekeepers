@@ -1,80 +1,150 @@
 # Placekeepers
 
-A free map for Philadelphia neighbors and organizers who want to care for their blocks.
+A free, public map that helps Philadelphia neighbors and organizers find vacant lots and
+dangerous streets, and the lawful way to do something about them.
 
-Find vacant lots and abandoned buildings, see who owns them and what they sold for over the years,
-find the streets where people have been killed or badly hurt, and learn the legal way to clean and
-green a lot, plant a tree, ask for traffic calming, or remember a neighbor. Every layer, score and
-suggestion on the map can be switched on or off.
+**Live site:** https://holdthedoorhoid.github.io/placekeepers/
 
-**Status:** being built. The first public release will cover the vacant lot finder with a detailed
-page for every lot, and street safety with memorials. See the [roadmap](docs/ROADMAP.md).
+## Who it is for
 
-## Why
+Placekeepers is built for two kinds of people, often on the same block: a **neighbor** standing on
+the street with a phone, who wants to know what they can do about the empty lot on the corner, and
+an **organizer** at a desk, who wants to compare many places at once and find where care would help
+most. Both share the same map, settings and links, so a link one person copies opens the same thing
+for the other.
 
-Randomized trials in Philadelphia found that cleaning and greening vacant lots, and repairing the
-doors and windows of abandoned houses, reduced gun violence nearby, cheaply, and most of all in the
-poorest neighborhoods. Placekeepers helps people put that research to work, and is honest about what
-the research does and does not show. Read [what the research says](docs/EVIDENCE.md).
+Placekeepers revives [Clean & Green Philly](https://github.com/CodeForPhilly/clean-and-green-philly),
+a Code for Philly project that closed in 2025 when the City's vacancy data stopped being reliable.
+We combine many City records on purpose, so no single broken source can take the map down again.
+Read [Why this works](https://holdthedoorhoid.github.io/placekeepers/why/) for the Philadelphia
+research behind it.
 
-## Built on Clean & Green Philly
+## What you can do with v0.1
 
-Placekeepers revives and extends [Clean & Green Philly](https://github.com/CodeForPhilly/clean-and-green-philly),
-built by Code for Philly volunteers from 2023 to 2025 (MIT license). That project stopped when the
-City's vacancy data went bad in 2024. Placekeepers combines many City records so that no single
-source can take it down, and adds sale history, street safety, memorials, and step by step legal
-routes.
+**On your phone, on the block.** Search an address or tap "Near me" to see "What you can do
+nearby": the closest lots and streets that could use care, each with why it matters, how sure we
+are, and the first lawful step.
 
-## Principles
+**At a desk, across the city.** Blend the violence reduction and street safety lenses with
+sliders, filter the map, sort a ranked list, see a plot of need against how hard a place is to get
+permission for, download the results as CSV or GeoJSON, and save lists that stay in your own
+browser.
 
-- Care, not danger: the map shows where care helps most, never "dangerous neighborhoods".
-- Honest evidence: every score says how strong the research behind it is.
-- Legal route first: every suggestion starts with the lawful way to do it.
-- Everything is a setting.
-- Never go dark: if a data source breaks, the map keeps its last good copy and says so.
-- Placekeeping: improve places for the people who live there now.
+**Every lot's own page.** Who owns it and their mailing address, as the City publishes them;
+every sale on record; flags such as an absentee owner or a possible estate, each written with what
+it means, why to be careful, and a protective next step; and the first lawful step to get
+permission.
 
-## How the site stays up to date
+**Street safety and memorials.** The High Injury Network, years of crash records, and a quiet
+marker for each person the Police record as killed while walking, cycling or riding a scooter.
 
-The map is published at https://holdthedoorhoid.github.io/placekeepers/ by GitHub, for free.
+Every layer, score and suggestion can be switched on or off in Settings.
 
-Every Monday morning GitHub runs the weekly refresh on its own computers:
+## What it does not do yet
 
-1. It downloads every data source again and checks it: enough records, no sudden drop, and records
-   recent enough for that source.
-2. A source that passes replaces last week's copy. A source that fails keeps last week's good copy,
-   and the map says how old it is. These good copies are saved with the project on GitHub (the
-   `data-snapshots` release, encrypted with a repository secret so the raw copies are not
-   published), so nothing depends on any one computer.
-3. It rebuilds the map files, adds the base map of streets and place names (refreshed once a month),
-   and publishes the site.
-4. If a source fails two weeks in a row, it opens an issue labeled `data-source` that says which
-   source, since when, what went wrong, and what the map is doing meanwhile. The issue gets a note
-   each week it stays broken and closes itself once the source works again.
+Names of people killed are not shown. We want the Bicycle Coalition and Families for Safe Streets
+to weigh in first. Removal requests go through a public GitHub issue for now; a private email
+address is planned.
 
-The site's **Data status** page shows where every source stands. A refresh can also be started by
-hand: in the repository's Actions tab, choose "Weekly data refresh" and "Run workflow". Every change
-to the code is checked by the tests in `.github/workflows/ci.yml` before it is merged.
+Transit comfort, heat and shade, public art, history and displacement watch, and organizing tools
+are planned for later releases. See the [roadmap](docs/ROADMAP.md).
 
-## Documents
+## How the data stays fresh
 
-| Document | What it covers |
-|---|---|
-| [Design](docs/DESIGN.md) | What we are building and why; the founding decisions |
-| [Evidence](docs/EVIDENCE.md) | What the research supports, and what it does not |
-| [Safeguards](docs/ETHICS.md) | Owner information, memorials, shootings, displacement, privacy |
-| [Legal routes](docs/ROUTES.md) | Land access, permits, the intervention playbook, funding, partners |
-| [Data sources](docs/DATA_SOURCES.md) | Every source, its status and its license |
-| [Contracts](docs/CONTRACTS.md) | File formats shared by the data pipeline and the map |
-| [Roadmap](docs/ROADMAP.md) | Phases, milestones, and what the owner needs to do |
-| [Research](docs/research/) | The full research reports behind these documents |
+Every Monday, GitHub downloads every source again, checks it, and keeps the last good copy of
+anything that fails, clearly labeled with its age. The
+[Data status page](https://holdthedoorhoid.github.io/placekeepers/status/) shows where every
+source stands right now.
+
+## Using it responsibly
+
+Placekeepers publishes facts that can help a neighbor and, in the wrong hands, could hurt one. We
+warn people rather than hide information, and design the site so the responsible choice is the
+easy one. Read [Use this responsibly](https://holdthedoorhoid.github.io/placekeepers/responsibly/)
+on the site, or the full rules in [docs/ETHICS.md](docs/ETHICS.md).
+
+## Credit
+
+Placekeepers continues the idea behind Clean & Green Philly, built by volunteers at Code for
+Philly from 2023 to 2025, and credits it throughout. It reuses none of that project's code today,
+but does use its final snapshot of parcel tax debt from July 2025 (MIT license), credited on the
+Data status page. If any of its code is reused later, that code will keep the project's MIT
+notice in the file header and be listed in a NOTICE file, as the project's own rules require. No
+NOTICE file is needed until then.
+
+Map data comes from the City of Philadelphia and other public sources. Every source, with its
+publisher and license, is listed on the
+[Data status page](https://holdthedoorhoid.github.io/placekeepers/status/) and in
+[docs/DATA_SOURCES.md](docs/DATA_SOURCES.md).
+
+## How to help
+
+- **Add missing map features**, such as benches or bus shelters, to OpenStreetMap. We read it
+  every week.
+- **Report a correction** through a short, prefilled
+  [GitHub issue](https://github.com/holdTheDoorHoid/placekeepers/issues/new/choose).
+- **Ask a question or raise a concern** on the
+  [Contact page](https://holdthedoorhoid.github.io/placekeepers/contact/).
 
 ## License
 
-Code: GNU General Public License v3.0 (files adapted from Clean & Green Philly keep their MIT notice).
-Published data: Open Database License where OpenStreetMap data is included, otherwise the source's
-own terms. Written guides: Creative Commons Attribution ShareAlike 4.0.
+- Code: the GNU General Public License, version 3 or later.
+- Published data: the Open Database License where OpenStreetMap data is included, otherwise each
+  source's own terms, such as the MIT licensed Clean & Green Philly tax snapshot (see
+  [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md)).
+- Written guides, including this file: Creative Commons Attribution ShareAlike 4.0.
 
-Data comes from the City of Philadelphia and other public sources, credited on the map and in
-[docs/DATA_SOURCES.md](docs/DATA_SOURCES.md). Placekeepers is not affiliated with the City and is not
-legal advice.
+Read the full [LICENSE](LICENSE).
+
+## Screenshots
+
+The field view on a phone, near a block with vacant lots, with "What you can do nearby" open:
+
+![The field view on a phone, showing a block with several vacant lots and the "What you can do nearby" list open underneath the map](docs/images/field-phone.png)
+
+The analysis view on a desktop, with a lot page open:
+
+![The analysis view on a desktop, with lens sliders on the left, the map in the middle, and an open lot page on the right](docs/images/analysis-desktop.png)
+
+## For developers
+
+```
+registry/        shared YAML registry: sources, layers, lenses, suggestions, routes
+pipeline/        Python data pipeline, with tests and fixtures
+web/             the Svelte map and site
+content/         the site's plain language pages, in Markdown
+data/curated/    hand maintained files, such as memorials
+docs/            design, safeguards, roadmap, contracts and research
+.github/         workflows and issue forms
+```
+
+**Run the pipeline** (Python 3.12):
+```
+python3.12 -m venv pipeline/.venv
+pipeline/.venv/bin/pip install -e "pipeline[dev]"
+pipeline/.venv/bin/pk registry check
+```
+`pk all` fetches every source, builds the map, and publishes it; see
+[pipeline/README.md](pipeline/README.md) for every command. It needs
+[tippecanoe](https://github.com/felt/tippecanoe) for map tiles; without it, the pipeline writes
+GeoJSON instead and says so.
+
+**Run the web app** (Node 24):
+```
+cd web
+npm ci
+npm run dev
+```
+
+**Tests:**
+```
+cd pipeline && .venv/bin/pytest
+cd web && npm test && npm run check
+```
+
+File formats shared between the pipeline and the web app are documented in
+[docs/CONTRACTS.md](docs/CONTRACTS.md). Read [docs/DESIGN.md](docs/DESIGN.md) before changing how
+the map decides anything, and [docs/ETHICS.md](docs/ETHICS.md) before changing what it shows about
+an owner, a victim or a shooting.
+
+Placekeepers is not affiliated with the City of Philadelphia and is not legal advice.

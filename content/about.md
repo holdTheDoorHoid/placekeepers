@@ -49,8 +49,10 @@ in June 2024, and a volunteer team without funding could not replace it. Placeke
 source can no longer take the whole map down. Read how on
 [How we find vacant land](https://holdthedoorhoid.github.io/placekeepers/vacant-land/).
 
-Code adapted from Clean & Green Philly keeps its original MIT license notice, credited in our
-source code.
+Placekeepers does not reuse any of Clean & Green Philly's code today. It does use the project's
+final snapshot of tax debt from July 2025 (MIT license), credited on the
+[Data status page](https://holdthedoorhoid.github.io/placekeepers/status/). Any of its code we
+use later will keep its MIT notice, listed in a NOTICE file in our source code.
 
 ## The name
 
