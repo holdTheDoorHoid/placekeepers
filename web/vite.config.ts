@@ -18,6 +18,10 @@ export default defineConfig({
   // Pages. Each content page is its own entry below, following the pattern status/index.html set.
   appType: 'mpa',
   plugins: [registryPlugin(), contentPlugin(), dataRootPlugin(), svelte()],
+  // True only in the end to end tests' build, which may hand the tests a few things to watch
+  // (src/components/MapView.svelte). The published site is built with it false, and the code
+  // behind it is dropped from the bundle.
+  define: { __PK_E2E__: JSON.stringify(e2e) },
   build: {
     outDir: e2e ? 'dist-e2e' : 'dist',
     target: 'es2022',
