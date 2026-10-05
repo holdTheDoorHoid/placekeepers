@@ -12,6 +12,12 @@
 # A source that fails keeps last week's copy, so the map never goes dark. If a job fails, nothing
 # is deployed and the site keeps its previous version.
 #
+# Snapshots are never published in plain form (decision D2, docs/VERIFICATION.md): they go on the
+# release encrypted with the PK_SNAPSHOT_KEY repository secret and are decrypted on the next run.
+# Only two steps see the key, and they run nothing but gh and this repository's standard library
+# helper under the runner's own Python. Without the secret, or when last week's copies do not
+# decrypt, no snapshot is saved that week and the run carries on without last week's copies.
+#
 # Permissions: jobs that install or run packages (pipeline, site) only ever hold a read token.
 # The jobs that can write (save: release assets, issues: issues) run nothing but gh and this
 # repository's standard library helper, so a compromised package can never reach a write token.
@@ -93,10 +99,11 @@ jobs:
           } >> "$GITHUB_ENV"
           mkdir -p "$RUNNER_TEMP/work/assets" build/site build/release build/manifests
 
-      - name: Restore last week's snapshots
+      - name: Download and decrypt last week's snapshots
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
+          PK_SNAPSHOT_KEY: ${{ secrets.PK_SNAPSHOT_KEY }}
         run: |
           if ! gh release view "$RELEASE_TAG" --json assets --jq '.assets[].name' \
               > "$WORK/assets.txt" 2> "$WORK/view-error.txt"; then
@@ -109,16 +116,24 @@ jobs:
               exit 1
             fi
           fi
+          # Encrypted copies, and any plain copy left from before encryption (the first run
+          # with it restores those, and the save job then removes them from the release).
           if grep -q '^snapshot-' "$WORK/assets.txt"; then
-            gh release download "$RELEASE_TAG" --dir "$WORK/assets" --pattern 'snapshot-*.tar'
+            gh release download "$RELEASE_TAG" --dir "$WORK/assets" --pattern 'snapshot-*'
           fi
           if grep -qx 'manifest.json' "$WORK/assets.txt"; then
             gh release download "$RELEASE_TAG" --dir "$WORK" --pattern 'manifest.json'
             cp "$WORK/manifest.json" build/manifests/previous-manifest.json
           fi
+          # The runner's own Python, isolated: no installed package runs while the key is here.
+          /usr/bin/python3 -I .github/scripts/refresh.py decrypt --dir "$WORK/assets" \
+            --status "$WORK/snapshot-status.txt"
+
+      - name: Restore last week's snapshots
+        run: |
           python .github/scripts/refresh.py restore --cache "$PK_CACHE" --from "$WORK/assets"
           # Unpacked now; free the space before the downloads.
-          rm -f "$WORK"/assets/snapshot-*.tar
+          rm -f "$WORK"/assets/snapshot-*
 
       - name: Fetch, check and publish
         env:
@@ -155,6 +170,19 @@ jobs:
           cp build/site/data/manifest.json build/manifests/manifest.json
           python .github/scripts/refresh.py sources --registry registry \
             --out build/manifests/sources.json
+
+      # Before anything leaves the runner: the snapshot tars become .tar.gpg, or are removed
+      # when there is no key (the files handed to the save job are downloadable by others).
+      - name: Encrypt the snapshots
+        env:
+          PK_SNAPSHOT_KEY: ${{ secrets.PK_SNAPSHOT_KEY }}
+        run: |
+          /usr/bin/python3 -I .github/scripts/refresh.py encrypt --dir build/release \
+            --status "$WORK/snapshot-status.txt"
+          if ls build/release/snapshot-*.tar > /dev/null 2>&1; then
+            echo "::error::A plain snapshot is still in the release files."
+            exit 1
+          fi
 
       - name: Base map
         env:
@@ -238,7 +266,7 @@ jobs:
             if grep -qi "not found" "$RUNNER_TEMP/view-error.txt"; then
               gh release create "$RELEASE_TAG" --prerelease --target "$GITHUB_SHA" \
                 --title "Data snapshots" \
-                --notes "The last good copy of every data source, the manifest of the last refresh, and the base map extract. The weekly refresh replaces these files; this is not a software release."
+                --notes "The last good copy of every data source (encrypted with a repository secret), the manifest of the last refresh, and the base map extract. The weekly refresh replaces these files; this is not a software release."
               : > "$RUNNER_TEMP/assets.txt"
             else
               cat "$RUNNER_TEMP/view-error.txt"

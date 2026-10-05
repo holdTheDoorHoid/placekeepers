@@ -44,7 +44,8 @@ Every Monday morning GitHub runs the weekly refresh on its own computers:
    recent enough for that source.
 2. A source that passes replaces last week's copy. A source that fails keeps last week's good copy,
    and the map says how old it is. These good copies are saved with the project on GitHub (the
-   `data-snapshots` release), so nothing depends on any one computer.
+   `data-snapshots` release, encrypted with a repository secret so the raw copies are not
+   published), so nothing depends on any one computer.
 3. It rebuilds the map files, adds the base map of streets and place names (refreshed once a month),
    and publishes the site.
 4. If a source fails two weeks in a row, it opens an issue labeled `data-source` that says which

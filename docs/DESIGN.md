@@ -495,7 +495,12 @@ Built in M0.4 (2026-10-04). Changes from the original plan are marked.
   the sample data (`web/e2e/`, `npm run e2e`).
 - `refresh.yml`: every Monday at 10:00 UTC, and on demand from the Actions tab. Five jobs:
   - `pipeline` restores the last good snapshot of every source from the rolling `data-snapshots`
-    release, runs `pk all` with tippecanoe, and packs the new good snapshots. It reuses the base map
+    release, runs `pk all` with tippecanoe, and packs the new good snapshots. Snapshots are never
+    published in plain form (decision D2, VERIFICATION.md): they are encrypted with the
+    `PK_SNAPSHOT_KEY` repository secret (GnuPG, symmetric AES256) before they leave the runner and
+    decrypted on the next run; only those two steps see the key, and they run nothing but `gh` and
+    the standard library helper. Without the secret, or when last week's copies do not decrypt, no
+    snapshot is saved that week and the run carries on without them. It reuses the base map
     extract (a release asset named after its Protomaps build date) for up to 30 days, then makes a
     new one; if that fails, the saved one is used.
   - `save` puts the new snapshots, the new manifest and any new base map on the release, and removes
