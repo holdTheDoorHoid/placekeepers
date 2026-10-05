@@ -16,6 +16,8 @@ for the other.
 Placekeepers revives [Clean & Green Philly](https://github.com/CodeForPhilly/clean-and-green-philly),
 a Code for Philly project that closed in 2025 when the City's vacancy data stopped being reliable.
 We combine many City records on purpose, so no single broken source can take the map down again.
+Read [Why this works](https://holdthedoorhoid.github.io/placekeepers/why/) for the Philadelphia
+research behind it.
 
 ## What you can do with v0.1
 
