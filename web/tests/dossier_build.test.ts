@@ -218,6 +218,61 @@ describe('live City data', () => {
   });
 });
 
+describe('a parcel that may be someone\'s home (docs/VERIFICATION.md D5 and D6)', () => {
+  /** A shard parcel as the snapshot has it, but called vacant with this confidence. */
+  function at(opa: string, confidence: 'high' | 'medium' | 'low' | null): DossierInput['shard'] {
+    const parcel = structuredClone(shard.parcels.get(opa)!);
+    parcel.vacancy = confidence ? { ...parcel.vacancy!, confidence } : null;
+    return { status: 'found', parcel, generatedAt: shard.generatedAt, notes };
+  }
+  const ids = (view: ReturnType<typeof buildDossier>) => [...view.owner.flags.map((f) => f.id), ...(view.owner.tax.flag ? ['tax_debt_2025'] : [])];
+
+  it('holds back the notes about an owner who may be a person, from the snapshot and live alike', () => {
+    for (const live of [IDLE_PARTS, allLive()]) {
+      const view = buildDossier(input('990000005', { shard: at('990000005', 'low'), live, liveOn: live !== IDLE_PARTS }));
+      expect(ids(view)).toEqual(['years_since_sale', 'open_violations']);
+      expect(view.owner.held).toMatch(/^We are not sure this parcel is vacant, so it may be someone's home\./);
+      // Never "no unpaid taxes" when the tax note is held back.
+      expect(view.owner.tax.text).toMatch(/only on parcels we call very likely or probably vacant/);
+      // The deed fraud notice goes with the flags still shown.
+      expect(view.owner.deedFraud).not.toBeNull();
+      // The owner's name and mailing address are still shown as the City publishes them.
+      expect(view.owner.names).toEqual(['SAMPLE ROSE M EST OF']);
+      expect(view.owner.mailing).toBe('455 EXAMPLE AVE, CHERRY HILL NJ 08002');
+    }
+    const none = buildDossier(input('990000005', { shard: at('990000005', null), liveOn: false }));
+    expect(ids(none)).toEqual(['years_since_sale', 'open_violations']);
+  });
+
+  it('shows them where we call the parcel very likely or probably vacant', () => {
+    const view = buildDossier(input('990000005', { shard: at('990000005', 'medium'), liveOn: false }));
+    expect(ids(view)).toEqual(['absentee', 'possible_estate', 'years_since_sale', 'open_violations', 'tax_debt_2025']);
+    expect(view.owner.held).toBeNull();
+  });
+
+  it('never shows a possible estate with a homestead exemption', () => {
+    const view = buildDossier(input('990000005', { live: allLive(liveProperty({ homestead: true })) }));
+    expect(ids(view)).not.toContain('possible_estate');
+    expect(ids(view)).toContain('absentee');
+  });
+
+  it('shows no deed fraud notice when no flag is left to show', () => {
+    const parcel = structuredClone(shard.parcels.get('990000005')!);
+    parcel.vacancy = { ...parcel.vacancy!, confidence: 'low' };
+    parcel.owner!.flags = parcel.owner!.flags.filter((f) => ['absentee', 'tax_debt_2025'].includes(f.id));
+    const view = buildDossier(input('990000005', { shard: { status: 'found', parcel, generatedAt: shard.generatedAt, notes }, liveOn: false }));
+    expect(ids(view)).toEqual([]);
+    expect(view.owner.deedFraud).toBeNull();
+    expect(view.owner.held).not.toBeNull();
+  });
+
+  it('keeps every flag of an organization on any parcel', () => {
+    const view = buildDossier(input('990000004', { shard: at('990000004', 'low'), liveOn: false }));
+    expect(ids(view)).toEqual(['absentee', 'years_since_sale', 'many_parcels']);
+    expect(view.owner.held).toBeNull();
+  });
+});
+
 describe('a parcel that is not on our list', () => {
   const nonListed = (live: LiveParts, liveOn = true) =>
     buildDossier(input('371163500', { tile: null, shard: { status: 'absent', reason: 'unlisted' }, live, liveOn, center: null }));

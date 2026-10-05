@@ -9,6 +9,7 @@ import pytest
 from placekeepers.derive import owners as ow
 from placekeepers.derive import transfers as tr
 from placekeepers.derive.flags import (
+    ABOUT_THE_OWNER,
     FLAG_IDS,
     FLAG_NOTES,
     MANY_PARCELS_MIN,
@@ -24,9 +25,15 @@ from placekeepers.derive.flags import (
 AS_OF = date(2026, 10, 4)
 
 
-def person(*names: str, agency: str | None = None) -> OwnerFacts:
+def person(*names: str, agency: str | None = None, called_vacant: bool = True) -> OwnerFacts:
+    """An owner's facts on a parcel we call vacant (unless `called_vacant` is False)."""
     names = names or ("MORALES ROSA",)
-    return OwnerFacts(owner_type=ow.owner_type(list(names), agency), has_names=True)
+    return OwnerFacts(
+        owner_type=ow.owner_type(list(names), agency),
+        has_names=True,
+        possible_estate=ow.possible_estate(list(names)),
+        called_vacant=called_vacant,
+    )
 
 
 def deed(day: str, kind: str = "DEED", price: float | None = 40000) -> tr.Transfer:
@@ -192,8 +199,8 @@ def test_open_violations_unsafe_and_imminently_dangerous() -> None:
     )
 
 
-def all_facts(*names: str, agency: str | None = None) -> OwnerFacts:
-    facts = person(*names, agency=agency)
+def all_facts(*names: str, agency: str | None = None, called_vacant: bool = True) -> OwnerFacts:
+    facts = person(*names, agency=agency, called_vacant=called_vacant)
     facts.absentee = ow.Absentee("out_of_state", "CHERRY HILL", "NJ")
     facts.possible_estate = True
     facts.tax = TaxDebt(1200, 2)
@@ -232,6 +239,69 @@ def test_the_deed_fraud_notice_goes_with_a_person_or_a_possible_estate() -> None
     notice = NOTICES["deed_fraud"]
     assert "Fraud Guard" in notice["text"] and "November 2025" in notice["text"]
     assert notice["routes"] == ["fraud_guard"]
+
+
+PARCEL_FACTS = ["sheriff_sales", "years_since_sale", "fast_resales", "open_violations", "unsafe"]
+
+
+@pytest.mark.parametrize(
+    "names",
+    [
+        ("MORALES ROSA",),  # a person
+        ("HACE",),  # a name we could not type
+        ("RIVERSIDE BANK AND TRUST CO", "MCLAREN NIKKI ESTATE OF"),  # a bank and an estate
+    ],
+)
+def test_flags_about_an_owner_who_may_be_a_person_wait_for_a_vacancy_call(names) -> None:
+    # docs/VERIFICATION.md D5 and D6: a parcel we do not call vacant with high or medium
+    # confidence may be someone's home, so the flags about the owner are held back; the facts
+    # about the parcel stay, and so does the deed fraud notice when the owner is a person.
+    home = all_facts(*names, called_vacant=False)
+    assert home.person_like
+    shown = owner_flags(home, AS_OF)
+    assert [flag["id"] for flag in shown] == PARCEL_FACTS
+    assert not set(ABOUT_THE_OWNER) & {flag["id"] for flag in shown}
+    vacant = all_facts(*names)
+    assert set(ABOUT_THE_OWNER) <= {flag["id"] for flag in owner_flags(vacant, AS_OF)}
+
+
+def test_organizations_keep_every_flag_on_any_parcel() -> None:
+    for names in (("KENSINGTON LOTS LLC",), ("GRACE BAPTIST CHURCH",)):
+        facts = all_facts(*names, called_vacant=False)
+        facts.possible_estate = False
+        assert not facts.person_like
+        ids = [flag["id"] for flag in owner_flags(facts, AS_OF)]
+        assert ids == [
+            "absentee",
+            "tax_debt_2025",
+            "sheriff_sales",
+            "years_since_sale",
+            "many_parcels",
+            "fast_resales",
+            "open_violations",
+            "unsafe",
+        ]
+
+
+def test_possible_estate_never_with_a_homestead_exemption() -> None:
+    facts = all_facts()
+    facts.homestead = True
+    ids = [flag["id"] for flag in owner_flags(facts, AS_OF)]
+    assert "possible_estate" not in ids
+    # The other flags about the owner of a parcel we call vacant stay.
+    assert {"absentee", "tax_debt_2025", "many_parcels"} <= set(ids)
+    assert shows_deed_fraud_notice(facts, owner_flags(facts, AS_OF))
+
+
+def test_the_deed_fraud_notice_follows_the_flags_shown() -> None:
+    home = person(called_vacant=False)
+    home.tax = TaxDebt(500, 1)
+    # The tax flag is held back on a parcel that may be a home, so no flag and no notice.
+    assert owner_flags(home, AS_OF) == []
+    assert not shows_deed_fraud_notice(home, owner_flags(home, AS_OF))
+    home.li = LiSummary(open_violations=2)
+    assert [flag["id"] for flag in owner_flags(home, AS_OF)] == ["open_violations"]
+    assert shows_deed_fraud_notice(home, owner_flags(home, AS_OF))
 
 
 @pytest.mark.parametrize("flag_id", FLAG_IDS)

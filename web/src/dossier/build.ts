@@ -28,7 +28,10 @@ import {
   liFacts,
   liFlags,
   mergeLinks,
+  ownerFlagAllowed,
   ownerFlags,
+  personLike,
+  showsDeedFraudNotice,
   sortFlags,
   transferFlags,
   type FlagId,
@@ -230,6 +233,8 @@ export interface DossierView {
     cityOwned: string | null;
     isPrivate: boolean;
     flags: FlagView[];
+    /** Said when the flags about an owner who may be a person are held back on this parcel. */
+    held: string | null;
     ownerChanged: boolean;
     deedFraud: { text: string; links: Link[] } | null;
     help: Link[] | null;
@@ -475,8 +480,18 @@ export function buildDossier(input: DossierInput): DossierView {
     ownerType = OWNER_TYPE_BY_CODE[int(tile?.ot) ?? 0] ?? 'unknown';
     typeReason = null;
   }
-  const names = (property ? property.names : (shardOwner?.names ?? [])).map((name) => plain(name));
+  const rawNames = property ? property.names : (shardOwner?.names ?? []);
+  const names = rawNames.map((name) => plain(name));
   const privateOwner = isPrivate(ownerType, names.length > 0 || (!property && !shardOwner && ownerType !== 'unknown'));
+  // The flags about an owner who may be a person wait for a vacancy call, and possible estate is
+  // never shown with a homestead exemption: the pipeline's rule, so the snapshot and live data
+  // agree (docs/ETHICS.md, docs/VERIFICATION.md D5 and D6).
+  // A parcel in the snapshot is judged by its own vacancy call, the one the pipeline used; one
+  // known only from the map, by its tile.
+  const callConfidence = parcel ? (parcel.vacancy?.confidence ?? null) : confidence;
+  const calledVacant = callConfidence === 'high' || callConfidence === 'medium';
+  const flagRule = { personLike: personLike(ownerType, rawNames), calledVacant, homestead };
+  const ownerHeld = flagRule.personLike && !calledVacant;
   const snapshotProvenance: Provenance = {
     tone: 'snapshot',
     text: snapshotDateText(snapshotDate) ? p.snapshot(snapshotDateText(snapshotDate)!) : p.snapshotNoDate,
@@ -525,11 +540,10 @@ export function buildDossier(input: DossierInput): DossierView {
       flagViews.push({ ...flag, title: title(flag.id), provenance: snapshotProvenance });
     }
   }
-  const sortedFlags = sortFlags(flagViews);
+  const sortedFlags = sortFlags(flagViews.filter((flag) => ownerFlagAllowed(flag.id, flagRule)));
   const taxFlag = sortedFlags.find((x) => x.id === 'tax_debt_2025') ?? null;
   const listedFlags = sortedFlags.filter((x) => x.id !== 'tax_debt_2025');
-  const showDeedFraud =
-    ownerType === 'individual' || sortedFlags.some((x) => x.id === 'possible_estate') || (!ownerChanged && shardOwner?.notice === 'deed_fraud');
+  const showDeedFraud = showsDeedFraudNotice(ownerType, rawNames, sortedFlags.length);
   const deedNote = notes?.notices.deed_fraud ?? null;
   const helpRoutes = !ownerChanged && shardOwner?.help.length ? routeLinks(shardOwner.help) : [];
   const ownerPart = live.property;
@@ -700,6 +714,7 @@ export function buildDossier(input: DossierInput): DossierView {
       cityOwned: ownerChanged ? null : cityOwnedText(shardOwner?.cityOwned ?? null),
       isPrivate: privateOwner,
       flags: listedFlags,
+      held: ownerHeld ? s.owner.heldBack : null,
       ownerChanged,
       deedFraud: showDeedFraud
         ? { text: deedNote?.text ?? s.owner.deedFraud, links: mergeLinks(deedNote?.links ?? [], routeLinks(deedNote?.routes ?? []), deedFraudLinks()) }
@@ -707,7 +722,7 @@ export function buildDossier(input: DossierInput): DossierView {
       help: privateOwner && sortedFlags.length > 0 ? mergeLinks(helpRoutes, helpLinks()) : null,
       tax: {
         flag: taxFlag ? { ...taxFlag, links: mergeLinks(taxFlag.links, flagLinks('tax_debt_2025')) } : null,
-        text: taxFlag ? null : parcel ? s.owner.taxNoDebt : s.owner.taxUnknown,
+        text: taxFlag ? null : ownerHeld ? s.owner.taxHeld : parcel ? s.owner.taxNoDebt : s.owner.taxUnknown,
         link: { label: s.owner.taxCenter, url: TAX_CENTER_URL },
       },
       provenance: ownerProvenance,

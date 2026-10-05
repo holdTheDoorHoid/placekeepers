@@ -328,6 +328,12 @@ As built (M1.6, 2026-10-04):
   or did (decided 2026-10-04 by the orchestrator, docs/VERIFICATION.md D1).
 - Every dossier of a private owner with a flag links to the Tangled Title Fund and Fraud Guard, and
   every dossier of a person (or a possible estate) with a flag shows the deed fraud notice.
+- On a parcel the map does not call very likely or probably vacant, which may be someone's home,
+  the notes about an owner who may be a person (where they get mail, a possible estate, tax debt,
+  other parcels they own) are held back, and the page says why. A possible estate is never shown
+  on a parcel with a homestead exemption. Organizations keep every note, and the facts about the
+  parcel (deeds, sheriff sales, violations) are always shown (decided 2026-10-04 by the
+  orchestrator, docs/VERIFICATION.md D5 and D6).
 
 ### 5.7 Street safety and memorials
 

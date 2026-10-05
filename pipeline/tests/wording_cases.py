@@ -13,7 +13,8 @@ After changing the wording, the owner rules or the deed rules, write the file ag
     python pipeline/tests/wording_cases.py
 
 The web app never builds the tax debt or many parcels sentences (they come only from the weekly
-snapshot), so they are not here.
+snapshot), so they are not here; but it holds them back by the same rule as the pipeline, so
+`owner_flag_rule` says which flags about the owner may show (docs/VERIFICATION.md D5 and D6).
 """
 
 from __future__ import annotations
@@ -26,7 +27,16 @@ from typing import Any
 from placekeepers.derive import owners as ow
 from placekeepers.derive import transfers as tr
 from placekeepers.derive import wording
-from placekeepers.derive.flags import FLAG_NOTES, NOTICES, LiSummary, OwnerFacts, owner_flags
+from placekeepers.derive.flags import (
+    ABOUT_THE_OWNER,
+    FLAG_NOTES,
+    NOTICES,
+    LiSummary,
+    OwnerFacts,
+    owner_flag_allowed,
+    owner_flags,
+    shows_deed_fraud_notice,
+)
 
 FIXTURE = Path(__file__).parent / "fixtures" / "wording_parity.json"
 
@@ -150,7 +160,9 @@ ABSENTEE = [
     ("3134 N 8TH ST", None, None, None),
 ]
 
-#: Whole lot pages' worth of facts: the flags the web app works out from live records.
+#: Whole lot pages' worth of facts: the flags the web app works out from live records. `vacant`
+#: (called vacant with high or medium confidence) is True and `homestead` False unless a case says
+#: otherwise.
 PARCELS: list[dict[str, Any]] = [
     {
         "names": ["SAMPLE ROSE M EST OF"],
@@ -227,6 +239,79 @@ PARCELS: list[dict[str, Any]] = [
         "deeds": [],
         "li": {},
     },
+    # Parcels that may be someone's home (docs/VERIFICATION.md D5 and D6, decided 2026-10-04).
+    {
+        "names": ["SAMPLE ROSE M EST OF"],
+        "location": "1305 N EXAMPLE AVE",
+        "mailing": ["455 EXAMPLE AVE", "CHERRY HILL NJ", "08002"],
+        "opa_sale": ["1987-06-12", 15000],
+        "deeds": [],
+        "li": {"open_violations": 1, "last_open": "2025-04-09", "last_open_title": "NEW USE"},
+        "vacant": False,
+    },
+    {
+        "names": ["SAMPLE ROSE M EST OF"],
+        "location": "1305 N EXAMPLE AVE",
+        "mailing": ["455 EXAMPLE AVE", "CHERRY HILL NJ", "08002"],
+        "opa_sale": ["1987-06-12", 15000],
+        "deeds": [],
+        "li": {},
+        "homestead": True,
+    },
+    {
+        "names": ["EXAMPLE HOLDINGS LLC"],
+        "location": "1301 N EXAMPLE AVE",
+        "mailing": ["PO BOX 5183", "PHILADELPHIA PA", "19141"],
+        "opa_sale": ["2021-09-30", 30000],
+        "deeds": [["2021-09-30", "DEED", 15000.5]],
+        "li": {},
+        "vacant": False,
+    },
+    {
+        "names": ["HACE"],
+        "location": "1310 N EXAMPLE AVE",
+        "mailing": ["22 S BROAD ST", "PHILADELPHIA PA", "19107"],
+        "opa_sale": ["2001-03-01", 20000],
+        "deeds": [],
+        "li": {},
+        "vacant": False,
+    },
+    {
+        "names": ["RIVERSIDE BANK AND TRUST CO", "MCLAREN NIKKI ESTATE OF"],
+        "location": "1312 N EXAMPLE AVE",
+        "mailing": ["9 OAK LN", "BLUE BELL PA", "19422"],
+        "opa_sale": ["2011-05-05", 1],
+        "deeds": [],
+        "li": {"open_violations": 2, "last_open": "2024-02-02"},
+        "vacant": False,
+    },
+    {
+        "names": ["SMITH JOHN"],
+        "location": "1314 N EXAMPLE AVE",
+        "mailing": ["1314 N EXAMPLE AVE", "PHILADELPHIA PA", "19121"],
+        "opa_sale": ["2019-07-07", 85000],
+        "deeds": [["2019-07-07", "DEED", 85000]],
+        "li": {},
+        "vacant": False,
+        "homestead": True,
+    },
+]
+
+#: Owners and parcels for the rule alone: which flags about the owner may show.
+OWNER_FLAG_RULE = [
+    (names, vacant, homestead)
+    for names in (
+        ["SMITH JOHN"],
+        ["SMITH JOHN ESTATE OF"],
+        ["HACE"],
+        [],
+        ["KENSINGTON LOTS LLC"],
+        ["GRACE BAPTIST CHURCH"],
+        ["RIVERSIDE BANK AND TRUST CO", "MCLAREN NIKKI ESTATE OF"],
+        ["CITY OF PHILA"],
+    )
+    for vacant in (True, False)
+    for homestead in (False, True)
 ]
 
 
@@ -240,6 +325,8 @@ def parcel_flags(case: dict[str, Any]) -> dict[str, Any]:
     as_of = day(AS_OF)
     opa_sale = case["opa_sale"] or [None, None]
     li = case["li"]
+    vacant = case.get("vacant", True)
+    homestead = case.get("homestead", False)
     facts = OwnerFacts(
         owner_type=owner_type,
         has_names=bool(names),
@@ -255,12 +342,36 @@ def parcel_flags(case: dict[str, Any]) -> dict[str, Any]:
             unsafe_since=day(li.get("unsafe_since")),
             dangerous_since=day(li.get("imminently_dangerous_since")),
         ),
+        called_vacant=vacant,
+        homestead=homestead,
     )
     flags = owner_flags(facts, as_of)
     return {
         **case,
+        "vacant": vacant,
+        "homestead": homestead,
         "type": owner_type.type,
         "flags": [{"id": f["id"], "text": f["text"]} for f in flags],
+        "notice": shows_deed_fraud_notice(facts, flags),
+    }
+
+
+def owner_rule(names: list[str], vacant: bool, homestead: bool) -> dict[str, Any]:
+    owner_type = ow.type_from_name(names)
+    facts = OwnerFacts(
+        owner_type=owner_type,
+        has_names=bool(names),
+        possible_estate=ow.possible_estate(names),
+        called_vacant=vacant,
+        homestead=homestead,
+    )
+    return {
+        "names": names,
+        "vacant": vacant,
+        "homestead": homestead,
+        "type": owner_type.type,
+        "person": facts.person_like,
+        "shown": [flag_id for flag_id in ABOUT_THE_OWNER if owner_flag_allowed(flag_id, facts)],
     }
 
 
@@ -344,6 +455,7 @@ def build() -> dict[str, Any]:
             for found in [ow.absentee(location, street, city_state, zip_code)]
         ],
         "parcels": [parcel_flags(case) for case in PARCELS],
+        "owner_flag_rule": [owner_rule(*case) for case in OWNER_FLAG_RULE],
     }
 
 

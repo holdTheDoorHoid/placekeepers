@@ -36,7 +36,7 @@ import shapely
 from shapely.geometry import Point, box
 
 from placekeepers.derive import wording
-from placekeepers.derive.flags import FLAG_NOTES, NOTICES, full_flag
+from placekeepers.derive.flags import FLAG_NOTES, HELP_ROUTES, NOTICES, full_flag
 from placekeepers.publish import publish
 from placekeepers.registry import load_registry
 
@@ -186,7 +186,9 @@ OPA_ROWS = [
 ]
 
 
-def opa_table() -> pa.Table:
+def opa_table(homestead: dict[str, int] | None = None) -> pa.Table:
+    """OPA's records of the made up parcels; `homestead` replaces the homestead exemptions."""
+    exemptions = HOMESTEAD if homestead is None else homestead
     rows = [dict(zip(OPA_KEYS, row, strict=True)) for row in OPA_ROWS]
     out: dict[str, list[Any]] = {name: [] for name in OPA_COLUMNS}
     for row in rows:
@@ -207,7 +209,7 @@ def opa_table() -> pa.Table:
         out["lng"].append(lng)
         out["category_code"].append(row["category_code"])
         out["exterior_condition"].append(None)
-        out["homestead_exemption"].append(HOMESTEAD.get(row["parcel_number"], 0))
+        out["homestead_exemption"].append(exemptions.get(row["parcel_number"], 0))
     return pa.table(
         {
             **{
@@ -1062,6 +1064,61 @@ def test_the_dossier_and_the_map_follow_the_vacancy_model(context_factory, tmp_p
         "373000001": 4,
         "374000002": 1,
     }
+
+
+def test_flags_about_an_owner_who_may_be_a_person_wait_for_a_vacancy_call(
+    context_factory, tmp_path
+) -> None:
+    # docs/VERIFICATION.md D5 and D6: on a parcel we do not call vacant with high or medium
+    # confidence, which may be someone's home, the flags about an owner who may be a person are
+    # held back; possible estate never shows with a homestead exemption.
+    ctx = context_factory(now=NOW)
+    install_everything(ctx)
+    install_snapshot(
+        ctx,
+        "opa_properties",
+        opa_table({**HOMESTEAD, "374000001": 100000}),
+        geometry=False,
+        fetched_at="2026-10-04T14:30:00Z",
+    )
+    write_model(
+        ctx,
+        [
+            # opa, kind, k, confidence, vc, lc, rs, n, dy, sy, ny
+            ("371000001", "lot", 1, "low", 1, 0, 1, 1, None, None, None),
+            *[(f"37200000{i}", "lot", 1, "low", 1, 0, 1, 1, None, None, None) for i in range(1, 6)],
+            ("374000001", "building", 2, "high", 3, 0, 2, 2, None, None, None),
+        ],
+    )
+    out = tmp_path / "data"
+    publish(ctx, out)
+
+    home = parcel(out, "371000001")
+    owner = home["owner"]
+    # Absentee and tax debt are held back; the facts about the parcel stay, and so do the
+    # owner's name and mailing address as the City publishes them.
+    assert [flag["id"] for flag in owner["flags"]] == [
+        "sheriff_sales",
+        "years_since_sale",
+        "open_violations",
+    ]
+    assert owner["names"] == ["MORALES ROSA"]
+    assert owner["mailing"] == "41 ORCHARD RD, CHERRY HILL NJ 08002"
+    assert owner["notice"] == "deed_fraud" and owner["help"] == HELP_ROUTES
+    assert home["routes"] == ["ask_the_owner"]
+    # A company keeps every flag on a parcel we are not sure about.
+    company = {flag["id"] for flag in parcel(out, "372000001")["owner"]["flags"]}
+    assert "years_since_sale" in company
+    # A possible estate on a parcel with a homestead exemption: no estate flag and no
+    # conservatorship, even where we call the building very likely vacant.
+    estate = parcel(out, "374000001")
+    assert [flag["id"] for flag in estate["owner"]["flags"]] == [
+        "years_since_sale",
+        "unsafe",
+        "imminently_dangerous",
+    ]
+    assert estate["owner"]["notice"] == "deed_fraud"
+    assert estate["routes"] == ["ask_the_owner"]
 
 
 def test_deeds_carry_the_date_and_price_the_city_page_shows(tmp_path: Path) -> None:

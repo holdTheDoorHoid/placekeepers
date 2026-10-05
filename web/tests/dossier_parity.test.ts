@@ -7,19 +7,23 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
+  ABOUT_THE_OWNER,
   FLAG_IDS,
   absenteeText,
   flagParts,
   liFactFlags,
+  ownerFlagAllowed,
   ownerFlags,
+  personLike,
   resaleText,
   sheriffText,
+  showsDeedFraudNotice,
   sortFlags,
   transferFlags,
   violationsText,
 } from '../src/dossier/flags.ts';
 import { absentee, isPrivate, ownerTypeFromNames, possibleEstate, type AbsenteeScope } from '../src/dossier/owners.ts';
-import type { Transfer } from '../src/dossier/types.ts';
+import type { OwnerType, Transfer } from '../src/dossier/types.ts';
 import { strings } from '../src/strings.ts';
 
 interface Fixture {
@@ -52,9 +56,13 @@ interface Fixture {
     opa_sale: [string, number] | null;
     deeds: [string, string, number | null][];
     li: { open_violations?: number; last_open?: string; last_open_title?: string; unsafe_since?: string; imminently_dangerous_since?: string };
+    vacant: boolean;
+    homestead: boolean;
     type: string;
     flags: { id: string; text: string }[];
+    notice: boolean;
   }[];
+  owner_flag_rule: { names: string[]; vacant: boolean; homestead: boolean; type: string; person: boolean; shown: string[] }[];
 }
 
 const fixture = JSON.parse(readFileSync(new URL('../../pipeline/tests/fixtures/wording_parity.json', import.meta.url), 'utf8')) as Fixture;
@@ -131,7 +139,8 @@ describe('the web app says what the pipeline says', () => {
       toMore: 0,
       properties: 1,
     }));
-    const flags = sortFlags([
+    const rule = { personLike: personLike(type.type, c.names), calledVacant: c.vacant, homestead: c.homestead };
+    const all = sortFlags([
       ...ownerFlags({ address: c.location, names: c.names, mailingStreet: street, mailingCityState: cityState, mailingZip: zip }, privateOwner),
       ...transferFlags(history, c.opa_sale ? { date: c.opa_sale[0], price: c.opa_sale[1] } : null, privateOwner, fixture.as_of),
       ...liFactFlags({
@@ -142,6 +151,16 @@ describe('the web app says what the pipeline says', () => {
         dangerousSince: c.li.imminently_dangerous_since ?? null,
       }),
     ]);
+    const flags = all.filter((flag) => ownerFlagAllowed(flag.id, rule));
     expect(flags.map((flag) => ({ id: flag.id, text: flag.text }))).toEqual(c.flags);
+    expect(showsDeedFraudNotice(type.type, c.names, flags.length)).toBe(c.notice);
+  });
+
+  it.each(fixture.owner_flag_rule)('which flags about the owner show: $names, vacant $vacant, homestead $homestead', (c) => {
+    const type = ownerTypeFromNames(c.names).type as OwnerType;
+    expect(type).toBe(c.type);
+    expect(personLike(type, c.names)).toBe(c.person);
+    const rule = { personLike: c.person, calledVacant: c.vacant, homestead: c.homestead };
+    expect(ABOUT_THE_OWNER.filter((id) => ownerFlagAllowed(id, rule))).toEqual(c.shown);
   });
 });

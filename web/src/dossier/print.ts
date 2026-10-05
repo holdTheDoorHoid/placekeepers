@@ -19,6 +19,8 @@ export interface PrintModel {
     type: string;
     /** Each flag's title and what it means; the possible estate flag in full, as docs/ETHICS.md words it. */
     flags: { title: string; text: string }[];
+    /** Why the notes about an owner who may be a person are held back, when they are. */
+    held: string | null;
     tax: string;
     deedFraud: string | null;
   };
@@ -67,6 +69,7 @@ export function printModel(view: DossierView, now: Date = new Date()): PrintMode
       mailing: view.owner.mailing,
       type: view.owner.typeLabel,
       flags,
+      held: view.owner.held,
       tax,
       deedFraud: view.owner.deedFraud?.text ?? null,
     },

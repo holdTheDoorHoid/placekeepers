@@ -763,6 +763,8 @@
         "last_open": "2025-04-09",
         "last_open_title": "NEW USE"
       },
+      "vacant": true,
+      "homestead": false,
       "type": "individual",
       "flags": [
         {
@@ -781,7 +783,8 @@
           "id": "open_violations",
           "text": "L&I lists 1 open violation, for new use, from April 9, 2025."
         }
-      ]
+      ],
+      "notice": true
     },
     {
       "names": [
@@ -831,6 +834,8 @@
         "last_open_title": "VACANT STRUCTURE AND LAND",
         "unsafe_since": "2023-05-02"
       },
+      "vacant": true,
+      "homestead": false,
       "type": "individual",
       "flags": [
         {
@@ -853,7 +858,8 @@
           "id": "unsafe",
           "text": "L&I lists this building as unsafe, since May 2, 2023."
         }
-      ]
+      ],
+      "notice": true
     },
     {
       "names": [
@@ -884,6 +890,8 @@
       "li": {
         "imminently_dangerous_since": "2025-12-03"
       },
+      "vacant": true,
+      "homestead": false,
       "type": "company",
       "flags": [
         {
@@ -902,7 +910,8 @@
           "id": "imminently_dangerous",
           "text": "L&I lists this building as imminently dangerous, since December 3, 2025."
         }
-      ]
+      ],
+      "notice": false
     },
     {
       "names": [
@@ -931,13 +940,16 @@
         ]
       ],
       "li": {},
+      "vacant": true,
+      "homestead": false,
       "type": "city",
       "flags": [
         {
           "id": "sheriff_sales",
           "text": "Sold at sheriff sale on February 1, 2006, for $900."
         }
-      ]
+      ],
+      "notice": false
     },
     {
       "names": [
@@ -964,6 +976,8 @@
         "open_violations": 11,
         "last_open": "2026-06-15"
       },
+      "vacant": true,
+      "homestead": false,
       "type": "nonprofit",
       "flags": [
         {
@@ -974,7 +988,8 @@
           "id": "open_violations",
           "text": "L&I lists 11 open violations. The most recent is from June 15, 2026."
         }
-      ]
+      ],
+      "notice": false
     },
     {
       "names": [
@@ -1012,6 +1027,8 @@
         "last_open": "2020-05-01",
         "last_open_title": "DUMPING - PRIVATE LOT"
       },
+      "vacant": true,
+      "homestead": false,
       "type": "nonprofit",
       "flags": [
         {
@@ -1030,7 +1047,8 @@
           "id": "open_violations",
           "text": "L&I lists 1 open violation, for dumping, private lot, from May 1, 2020."
         }
-      ]
+      ],
+      "notice": false
     },
     {
       "names": [],
@@ -1043,8 +1061,626 @@
       "opa_sale": null,
       "deeds": [],
       "li": {},
+      "vacant": true,
+      "homestead": false,
       "type": "unknown",
-      "flags": []
+      "flags": [],
+      "notice": false
+    },
+    {
+      "names": [
+        "SAMPLE ROSE M EST OF"
+      ],
+      "location": "1305 N EXAMPLE AVE",
+      "mailing": [
+        "455 EXAMPLE AVE",
+        "CHERRY HILL NJ",
+        "08002"
+      ],
+      "opa_sale": [
+        "1987-06-12",
+        15000
+      ],
+      "deeds": [],
+      "li": {
+        "open_violations": 1,
+        "last_open": "2025-04-09",
+        "last_open_title": "NEW USE"
+      },
+      "vacant": false,
+      "homestead": false,
+      "type": "individual",
+      "flags": [
+        {
+          "id": "years_since_sale",
+          "text": "Last sold in 1987."
+        },
+        {
+          "id": "open_violations",
+          "text": "L&I lists 1 open violation, for new use, from April 9, 2025."
+        }
+      ],
+      "notice": true
+    },
+    {
+      "names": [
+        "SAMPLE ROSE M EST OF"
+      ],
+      "location": "1305 N EXAMPLE AVE",
+      "mailing": [
+        "455 EXAMPLE AVE",
+        "CHERRY HILL NJ",
+        "08002"
+      ],
+      "opa_sale": [
+        "1987-06-12",
+        15000
+      ],
+      "deeds": [],
+      "li": {},
+      "homestead": true,
+      "vacant": true,
+      "type": "individual",
+      "flags": [
+        {
+          "id": "absentee",
+          "text": "The owner gets mail somewhere else: Cherry Hill, NJ (out of state)."
+        },
+        {
+          "id": "years_since_sale",
+          "text": "Last sold in 1987."
+        }
+      ],
+      "notice": true
+    },
+    {
+      "names": [
+        "EXAMPLE HOLDINGS LLC"
+      ],
+      "location": "1301 N EXAMPLE AVE",
+      "mailing": [
+        "PO BOX 5183",
+        "PHILADELPHIA PA",
+        "19141"
+      ],
+      "opa_sale": [
+        "2021-09-30",
+        30000
+      ],
+      "deeds": [
+        [
+          "2021-09-30",
+          "DEED",
+          15000.5
+        ]
+      ],
+      "li": {},
+      "vacant": false,
+      "homestead": false,
+      "type": "company",
+      "flags": [
+        {
+          "id": "absentee",
+          "text": "The owner gets mail somewhere else: a post office box in Philadelphia."
+        },
+        {
+          "id": "years_since_sale",
+          "text": "Last sold in 2021."
+        }
+      ],
+      "notice": false
+    },
+    {
+      "names": [
+        "HACE"
+      ],
+      "location": "1310 N EXAMPLE AVE",
+      "mailing": [
+        "22 S BROAD ST",
+        "PHILADELPHIA PA",
+        "19107"
+      ],
+      "opa_sale": [
+        "2001-03-01",
+        20000
+      ],
+      "deeds": [],
+      "li": {},
+      "vacant": false,
+      "homestead": false,
+      "type": "unknown",
+      "flags": [
+        {
+          "id": "years_since_sale",
+          "text": "Last sold in 2001."
+        }
+      ],
+      "notice": false
+    },
+    {
+      "names": [
+        "RIVERSIDE BANK AND TRUST CO",
+        "MCLAREN NIKKI ESTATE OF"
+      ],
+      "location": "1312 N EXAMPLE AVE",
+      "mailing": [
+        "9 OAK LN",
+        "BLUE BELL PA",
+        "19422"
+      ],
+      "opa_sale": [
+        "2011-05-05",
+        1
+      ],
+      "deeds": [],
+      "li": {
+        "open_violations": 2,
+        "last_open": "2024-02-02"
+      },
+      "vacant": false,
+      "homestead": false,
+      "type": "company",
+      "flags": [
+        {
+          "id": "years_since_sale",
+          "text": "Not sold on the open market since at least 2000."
+        },
+        {
+          "id": "open_violations",
+          "text": "L&I lists 2 open violations. The most recent is from February 2, 2024."
+        }
+      ],
+      "notice": true
+    },
+    {
+      "names": [
+        "SMITH JOHN"
+      ],
+      "location": "1314 N EXAMPLE AVE",
+      "mailing": [
+        "1314 N EXAMPLE AVE",
+        "PHILADELPHIA PA",
+        "19121"
+      ],
+      "opa_sale": [
+        "2019-07-07",
+        85000
+      ],
+      "deeds": [
+        [
+          "2019-07-07",
+          "DEED",
+          85000
+        ]
+      ],
+      "li": {},
+      "vacant": false,
+      "homestead": true,
+      "type": "individual",
+      "flags": [
+        {
+          "id": "years_since_sale",
+          "text": "Last sold in 2019."
+        }
+      ],
+      "notice": true
+    }
+  ],
+  "owner_flag_rule": [
+    {
+      "names": [
+        "SMITH JOHN"
+      ],
+      "vacant": true,
+      "homestead": false,
+      "type": "individual",
+      "person": true,
+      "shown": [
+        "absentee",
+        "possible_estate",
+        "tax_debt_2025",
+        "many_parcels"
+      ]
+    },
+    {
+      "names": [
+        "SMITH JOHN"
+      ],
+      "vacant": true,
+      "homestead": true,
+      "type": "individual",
+      "person": true,
+      "shown": [
+        "absentee",
+        "tax_debt_2025",
+        "many_parcels"
+      ]
+    },
+    {
+      "names": [
+        "SMITH JOHN"
+      ],
+      "vacant": false,
+      "homestead": false,
+      "type": "individual",
+      "person": true,
+      "shown": []
+    },
+    {
+      "names": [
+        "SMITH JOHN"
+      ],
+      "vacant": false,
+      "homestead": true,
+      "type": "individual",
+      "person": true,
+      "shown": []
+    },
+    {
+      "names": [
+        "SMITH JOHN ESTATE OF"
+      ],
+      "vacant": true,
+      "homestead": false,
+      "type": "individual",
+      "person": true,
+      "shown": [
+        "absentee",
+        "possible_estate",
+        "tax_debt_2025",
+        "many_parcels"
+      ]
+    },
+    {
+      "names": [
+        "SMITH JOHN ESTATE OF"
+      ],
+      "vacant": true,
+      "homestead": true,
+      "type": "individual",
+      "person": true,
+      "shown": [
+        "absentee",
+        "tax_debt_2025",
+        "many_parcels"
+      ]
+    },
+    {
+      "names": [
+        "SMITH JOHN ESTATE OF"
+      ],
+      "vacant": false,
+      "homestead": false,
+      "type": "individual",
+      "person": true,
+      "shown": []
+    },
+    {
+      "names": [
+        "SMITH JOHN ESTATE OF"
+      ],
+      "vacant": false,
+      "homestead": true,
+      "type": "individual",
+      "person": true,
+      "shown": []
+    },
+    {
+      "names": [
+        "HACE"
+      ],
+      "vacant": true,
+      "homestead": false,
+      "type": "unknown",
+      "person": true,
+      "shown": [
+        "absentee",
+        "possible_estate",
+        "tax_debt_2025",
+        "many_parcels"
+      ]
+    },
+    {
+      "names": [
+        "HACE"
+      ],
+      "vacant": true,
+      "homestead": true,
+      "type": "unknown",
+      "person": true,
+      "shown": [
+        "absentee",
+        "tax_debt_2025",
+        "many_parcels"
+      ]
+    },
+    {
+      "names": [
+        "HACE"
+      ],
+      "vacant": false,
+      "homestead": false,
+      "type": "unknown",
+      "person": true,
+      "shown": []
+    },
+    {
+      "names": [
+        "HACE"
+      ],
+      "vacant": false,
+      "homestead": true,
+      "type": "unknown",
+      "person": true,
+      "shown": []
+    },
+    {
+      "names": [],
+      "vacant": true,
+      "homestead": false,
+      "type": "unknown",
+      "person": true,
+      "shown": [
+        "absentee",
+        "possible_estate",
+        "tax_debt_2025",
+        "many_parcels"
+      ]
+    },
+    {
+      "names": [],
+      "vacant": true,
+      "homestead": true,
+      "type": "unknown",
+      "person": true,
+      "shown": [
+        "absentee",
+        "tax_debt_2025",
+        "many_parcels"
+      ]
+    },
+    {
+      "names": [],
+      "vacant": false,
+      "homestead": false,
+      "type": "unknown",
+      "person": true,
+      "shown": []
+    },
+    {
+      "names": [],
+      "vacant": false,
+      "homestead": true,
+      "type": "unknown",
+      "person": true,
+      "shown": []
+    },
+    {
+      "names": [
+        "KENSINGTON LOTS LLC"
+      ],
+      "vacant": true,
+      "homestead": false,
+      "type": "company",
+      "person": false,
+      "shown": [
+        "absentee",
+        "possible_estate",
+        "tax_debt_2025",
+        "many_parcels"
+      ]
+    },
+    {
+      "names": [
+        "KENSINGTON LOTS LLC"
+      ],
+      "vacant": true,
+      "homestead": true,
+      "type": "company",
+      "person": false,
+      "shown": [
+        "absentee",
+        "tax_debt_2025",
+        "many_parcels"
+      ]
+    },
+    {
+      "names": [
+        "KENSINGTON LOTS LLC"
+      ],
+      "vacant": false,
+      "homestead": false,
+      "type": "company",
+      "person": false,
+      "shown": [
+        "absentee",
+        "possible_estate",
+        "tax_debt_2025",
+        "many_parcels"
+      ]
+    },
+    {
+      "names": [
+        "KENSINGTON LOTS LLC"
+      ],
+      "vacant": false,
+      "homestead": true,
+      "type": "company",
+      "person": false,
+      "shown": [
+        "absentee",
+        "tax_debt_2025",
+        "many_parcels"
+      ]
+    },
+    {
+      "names": [
+        "GRACE BAPTIST CHURCH"
+      ],
+      "vacant": true,
+      "homestead": false,
+      "type": "nonprofit",
+      "person": false,
+      "shown": [
+        "absentee",
+        "possible_estate",
+        "tax_debt_2025",
+        "many_parcels"
+      ]
+    },
+    {
+      "names": [
+        "GRACE BAPTIST CHURCH"
+      ],
+      "vacant": true,
+      "homestead": true,
+      "type": "nonprofit",
+      "person": false,
+      "shown": [
+        "absentee",
+        "tax_debt_2025",
+        "many_parcels"
+      ]
+    },
+    {
+      "names": [
+        "GRACE BAPTIST CHURCH"
+      ],
+      "vacant": false,
+      "homestead": false,
+      "type": "nonprofit",
+      "person": false,
+      "shown": [
+        "absentee",
+        "possible_estate",
+        "tax_debt_2025",
+        "many_parcels"
+      ]
+    },
+    {
+      "names": [
+        "GRACE BAPTIST CHURCH"
+      ],
+      "vacant": false,
+      "homestead": true,
+      "type": "nonprofit",
+      "person": false,
+      "shown": [
+        "absentee",
+        "tax_debt_2025",
+        "many_parcels"
+      ]
+    },
+    {
+      "names": [
+        "RIVERSIDE BANK AND TRUST CO",
+        "MCLAREN NIKKI ESTATE OF"
+      ],
+      "vacant": true,
+      "homestead": false,
+      "type": "company",
+      "person": true,
+      "shown": [
+        "absentee",
+        "possible_estate",
+        "tax_debt_2025",
+        "many_parcels"
+      ]
+    },
+    {
+      "names": [
+        "RIVERSIDE BANK AND TRUST CO",
+        "MCLAREN NIKKI ESTATE OF"
+      ],
+      "vacant": true,
+      "homestead": true,
+      "type": "company",
+      "person": true,
+      "shown": [
+        "absentee",
+        "tax_debt_2025",
+        "many_parcels"
+      ]
+    },
+    {
+      "names": [
+        "RIVERSIDE BANK AND TRUST CO",
+        "MCLAREN NIKKI ESTATE OF"
+      ],
+      "vacant": false,
+      "homestead": false,
+      "type": "company",
+      "person": true,
+      "shown": []
+    },
+    {
+      "names": [
+        "RIVERSIDE BANK AND TRUST CO",
+        "MCLAREN NIKKI ESTATE OF"
+      ],
+      "vacant": false,
+      "homestead": true,
+      "type": "company",
+      "person": true,
+      "shown": []
+    },
+    {
+      "names": [
+        "CITY OF PHILA"
+      ],
+      "vacant": true,
+      "homestead": false,
+      "type": "city",
+      "person": false,
+      "shown": [
+        "absentee",
+        "possible_estate",
+        "tax_debt_2025",
+        "many_parcels"
+      ]
+    },
+    {
+      "names": [
+        "CITY OF PHILA"
+      ],
+      "vacant": true,
+      "homestead": true,
+      "type": "city",
+      "person": false,
+      "shown": [
+        "absentee",
+        "tax_debt_2025",
+        "many_parcels"
+      ]
+    },
+    {
+      "names": [
+        "CITY OF PHILA"
+      ],
+      "vacant": false,
+      "homestead": false,
+      "type": "city",
+      "person": false,
+      "shown": [
+        "absentee",
+        "possible_estate",
+        "tax_debt_2025",
+        "many_parcels"
+      ]
+    },
+    {
+      "names": [
+        "CITY OF PHILA"
+      ],
+      "vacant": false,
+      "homestead": true,
+      "type": "city",
+      "person": false,
+      "shown": [
+        "absentee",
+        "tax_debt_2025",
+        "many_parcels"
+      ]
     }
   ]
 }

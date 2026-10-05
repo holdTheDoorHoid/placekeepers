@@ -811,6 +811,8 @@ export const strings = {
       type: 'Kind of owner',
       flagsTitle: 'What City records suggest',
       noFlags: 'Nothing in City records calls for a note about this owner.',
+      heldBack:
+        'We are not sure this parcel is vacant, so it may be someone\'s home. Notes about an owner who may be a person (where they get mail, a possible estate, tax debt, other parcels they own) appear only on parcels we call very likely or probably vacant.',
       ownerChanged:
         'City records name a different owner than our weekly snapshot did, so notes that were about the earlier owner are left out.',
       parts: { meaning: 'What it means', careful: 'Be careful', next: 'A careful next step' },
@@ -831,6 +833,8 @@ export const strings = {
       taxNoDebt:
         'The City no longer publishes each property\'s tax balance as open data. The July 2025 snapshot we have does not show unpaid taxes here.',
       taxUnknown: 'The City no longer publishes each property\'s tax balance as open data.',
+      taxHeld:
+        'The City no longer publishes each property\'s tax balance as open data. Our July 2025 snapshot is shown for an owner who may be a person only on parcels we call very likely or probably vacant.',
       taxCenter: 'Check today\'s balance on the City\'s Tax Center',
       deedFraudTitle: 'Protect this property from deed theft',
       deedFraud:

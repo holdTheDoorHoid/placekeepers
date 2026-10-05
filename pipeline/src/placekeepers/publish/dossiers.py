@@ -852,6 +852,8 @@ def build_dossiers(
             history=history,
             tax=records["tax"].get(account),
             li=records["violations"].get(account, LiSummary()),
+            called_vacant=confident(account),
+            homestead=bool(record and record.homestead),
         )
         facts.li.unsafe_since = records["unsafe"].get(account)
         facts.li.dangerous_since = records["dangerous"].get(account)

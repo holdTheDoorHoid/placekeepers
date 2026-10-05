@@ -562,9 +562,9 @@ lines as the City publishes them, joined with commas (or `null`); `type`, one of
 `other_public`, `unknown` (the names of the `ot` codes, section 4); `type_reason`, a sentence saying
 why; `city_owned` (only for parcels on the City's list of public property): `agency` (`PUB` the City,
 `PLB` the Land Bank, `PRA` the Redevelopment Authority, `PHDC`), `status` as the City writes it, and
-`side_yard_eligible`; `flags`; `notice` (`"deed_fraud"`, shown with the flags of an owner who is a
-person or may be an estate); and `help` (the Tangled Title Fund and Fraud Guard route ids, on every
-dossier of a private owner with a flag).
+`side_yard_eligible`; `flags`; `notice` (`"deed_fraud"`, on the dossier of an owner who is a person
+or may be an estate whenever it shows any flag); and `help` (the Tangled Title Fund and Fraud Guard
+route ids, on every dossier of a private owner with a flag).
 
 Flags, in this order, with their `data`:
 
@@ -583,6 +583,15 @@ Flags, in this order, with their `data`:
 Private owners are a person, a company, a nonprofit, or an owner name we could not type. How each
 flag is computed is in `pipeline/src/placekeepers/derive/` (`owners.py`, `transfers.py`,
 `flags.py`); every sentence is in `wording.py`.
+
+**Held back on a parcel that may be someone's home** (added 2026-10-04, docs/VERIFICATION.md D5
+and D6). For an owner who may be a person (`type` `individual` or `unknown`, or a private owner
+whose names carry an estate), the flags about the owner (`absentee`, `possible_estate`,
+`tax_debt_2025`, `many_parcels`) appear only when `vacancy.confidence` is `high` or `medium`.
+`possible_estate` never appears on a parcel with a homestead exemption. The owner's names and
+mailing address, and the flags about the parcel (`sheriff_sales`, `years_since_sale`,
+`fast_resales`, `open_violations`, `unsafe`, `imminently_dangerous`), are unchanged; organizations
+keep every flag. The rule is `owner_flag_allowed` in `derive/flags.py`.
 
 **`transfers`**: every deed, newest first: every document type that names a deed, and certificates
 of stock transfer. Mortgages and other filings are left out. Changed 2026-10-04 by M1.6b, as the
@@ -646,7 +655,11 @@ pipeline's rules (`absentee` and `possible_estate` from the owner, `sheriff_sale
 `imminently_dangerous` from L&I), giving exactly the pipeline's sentences:
 `pipeline/tests/fixtures/wording_parity.json`, written by `pipeline/tests/wording_cases.py`, holds
 cases with the pipeline's answers, and the pipeline's and the web app's tests both check it.
-`tax_debt_2025` and `many_parcels` stay as in the shard. When the
+`tax_debt_2025` and `many_parcels` stay as in the shard. Every flag is then held back by the
+pipeline's rule above (`ownerFlagAllowed` in `web/src/dossier/flags.ts`, checked against the same
+parity cases), with the vacancy call from the shard (or the map, for a parcel without a dossier)
+and the homestead exemption from the live record; the page then says why notes about the owner are
+not shown, and never that there is no tax debt. When the
 City names different owners than the shard, the flags about the earlier owner are left out. A
 parcel with no dossier (its prefix is not in the manifest's `dossiers.prefixes`, or it is not in
 its shard) gets a page built only from these lookups, plus counts within 500 feet of its point
