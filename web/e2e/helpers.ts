@@ -167,3 +167,27 @@ export async function expectSelectedInView(page: Page): Promise<void> {
     )
     .toBe(true);
 }
+
+// The map itself (the test build hands it over as pkMap) -------------------------------------------
+
+/** The vacant parcels the map draws now, and how many of them come from the zoomed out sample. */
+export async function parcelsDrawn(page: Page): Promise<{ total: number; sample: number }> {
+  return page.evaluate(() => {
+    const map = (window as unknown as { pkMap: { queryRenderedFeatures(): { layer: { id: string }; properties: Record<string, unknown> }[] } }).pkMap;
+    const ids = new Map<string, boolean>();
+    for (const f of map.queryRenderedFeatures()) {
+      if (!f.layer.id.startsWith('pk:vacant_parcels:')) continue;
+      ids.set(String(f.properties.id), f.properties.lo === 1);
+    }
+    return { total: ids.size, sample: [...ids.values()].filter(Boolean).length };
+  });
+}
+
+/** Moves the map to a zoom level, keeping its middle, and waits for it to settle. */
+export async function zoomTo(page: Page, zoom: number): Promise<void> {
+  await page.evaluate((z) => {
+    const map = (window as unknown as { pkMap: { jumpTo(options: { zoom: number }): void } }).pkMap;
+    map.jumpTo({ zoom: z });
+  }, zoom);
+  await expectHash(page, 'm', new RegExp(`^${String(zoom).replace('.', '\\.')}/`));
+}

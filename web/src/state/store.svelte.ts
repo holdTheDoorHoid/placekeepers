@@ -9,6 +9,7 @@ import { DossierController } from '../dossier/controller.svelte.ts';
 import { isOpaAccount } from '../dossier/opa.ts';
 import { AddressBook } from '../places/addresses.svelte.ts';
 import { ListStore } from '../places/lists.svelte.ts';
+import { isSample } from '../places/sample.ts';
 import type { InspectTarget, LayerStatus, MapController, MemorialInView, ParcelInView } from '../map/controller.ts';
 import type { Registry, SettingValue, ViewName } from '../registry/types.ts';
 import { strings } from '../strings.ts';
@@ -68,6 +69,11 @@ export class AppStore {
   /** The map has drawn for the first time, with its data. */
   mapReady = $state(false);
   parcelsInView = $state.raw<ParcelInView[]>([]);
+  /**
+   * True when the parcels drawn in view are only a sample (zoomed out below zoom 13, src/places/
+   * sample.ts): counts, lists, the plot and downloads then ask people to zoom in instead.
+   */
+  readonly parcelsSampled: boolean = $derived.by(() => isSample(this.state.map.zoom, this.parcelsInView));
   /** Memorial markers drawn in view, for the memorial lists that stand in for the map. */
   memorialsInView = $state.raw<MemorialInView[]>([]);
   selectedProperties = $state.raw<Record<string, unknown> | null>(null);

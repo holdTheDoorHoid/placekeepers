@@ -362,8 +362,8 @@
       "sha256": "1d746dd64887fc690edb3dbd6c056b1630ce99ec1cec269ad1ea21b9890d3717"
     },
     "tiles/lots.pmtiles": {
-      "bytes": 12144,
-      "sha256": "540a7af16cfa7e10106f4ccb7d9f40b51683276c73a082b4d4c5d8843d2a8baa"
+      "bytes": 12169,
+      "sha256": "44ef081803bc9b78b3b31fda47800e0fe5b16e3e14c6cf26cfb5348569ed9684"
     },
     "tiles/streets.crashes.geojson": {
       "bytes": 23183,

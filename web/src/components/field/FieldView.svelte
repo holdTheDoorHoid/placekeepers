@@ -6,6 +6,7 @@
   import { FILTERS, filterNarrows } from '../../config/filters.ts';
   import { STYLES, styleFor } from '../../map/styles/index.ts';
   import { distanceMeters, nearestPlaces, parcelLensOf } from '../../places/rank.ts';
+  import { LOTS_DETAIL_ZOOM, isSampleFeature } from '../../places/sample.ts';
   import { PHILLY_BOUNDS } from '../../state/defaults.ts';
   import type { AppStore } from '../../state/store.svelte.ts';
   import { strings } from '../../strings.ts';
@@ -20,8 +21,11 @@
 
   let { store }: { store: AppStore } = $props();
 
-  /** Below this zoom the view is too wide to call anything "nearby". */
-  const NEARBY_MIN_ZOOM = 13;
+  /**
+   * Below this zoom the view is too wide to call anything "nearby", and the map draws only a sample
+   * of the parcels (src/places/sample.ts), so the list starts where every parcel is drawn.
+   */
+  const NEARBY_MIN_ZOOM = LOTS_DETAIL_ZOOM;
   /** Cards shown at first, and added by "Show more places", up to MAX_CARDS. */
   const CARDS_STEP = 5;
   const MAX_CARDS = 25;
@@ -53,7 +57,12 @@
     return !!at && !!b && at[0] >= b[0] && at[0] <= b[2] && at[1] >= b[1] && at[1] <= b[3];
   });
   const anchor = $derived<[number, number]>(fromYou && store.userLocation ? store.userLocation : [store.state.map.lng, store.state.map.lat]);
-  const all = $derived(nearby ? nearestPlaces(registry, store.state, store.parcelsInView, anchor, MAX_CARDS) : []);
+  /**
+   * Every parcel drawn, never the zoomed out sample: just after zooming in, the map can still show
+   * the sample for a moment while the detailed tiles load.
+   */
+  const detailed = $derived(store.parcelsInView.filter((p) => !isSampleFeature(p.properties)));
+  const all = $derived(nearby ? nearestPlaces(registry, store.state, detailed, anchor, MAX_CARDS) : []);
   const places = $derived(all.slice(0, cardCount));
   const narrowed = $derived(FILTERS.filter((f) => filterNarrows(f, store.state.filters[f.id])).length);
   const memorialsShown = $derived(
@@ -170,7 +179,9 @@
       <p>{strings.sheet.noLotsLayer}</p>
     {:else if !nearby}
       <p>{strings.sheet.zoomIn}</p>
-    {:else if store.parcelsInView.length === 0}
+    {:else if detailed.length === 0 && store.parcelsSampled}
+      <p role="status">{strings.sheet.finding}</p>
+    {:else if detailed.length === 0}
       <p>{strings.sheet.nothingHere}</p>
     {:else if places.length === 0}
       <p>{strings.sheet.noneWithSuggestion}</p>

@@ -135,6 +135,11 @@ As built (M1.7, 2026-10-04):
   on map", after choosing a place in a card, the list, the plot or a saved list, and when a link
   opens with a lot page. On a phone, where the lot page covers the whole map, "Show on map" closes it
   first.
+- **Zoomed out, nothing counts a sample** (added 2026-10-05, issue #26): below zoom 13 the map
+  draws only a sample of the vacant parcels, to stay light on phones (CONTRACTS.md section 4), so
+  the analysis view's area counts, ranked list, plot and downloads are not shown there: each says
+  plainly to zoom in, and the downloads are turned off with the reason. The field view's nearby list
+  already starts at zoom 13, and never lists a parcel from the sample.
 - A loading note covers the map until it has drawn once with its data. Measured on the production
   build in a headless browser drawing in software (slower than a phone's graphics chip), the map is
   ready about 1 to 2 seconds after the page opens with the sample data, and with the real data and
