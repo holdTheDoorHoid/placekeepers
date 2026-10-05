@@ -16,6 +16,7 @@
   import BlessingNote from './BlessingNote.svelte';
   import TransitStopDetails from '../transit/TransitStopDetails.svelte';
   import StopAmenityDetails from '../transit/StopAmenityDetails.svelte';
+  import RouteDetails from '../transit/RouteDetails.svelte';
 
   let {
     store,
@@ -101,6 +102,8 @@
     {#each target.features.slice(0, 4) as properties, i (i)}
       <StopAmenityDetails {properties} guide={layer?.guide} />
     {/each}
+  {:else if style === STYLES.transit_routes}
+    <RouteDetails features={target.features} />
   {/if}
   {#if onClose}
     <button class="button quiet small" type="button" onclick={onClose}>{strings.place.clearSelection}</button>

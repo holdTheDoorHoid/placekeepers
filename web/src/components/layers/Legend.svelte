@@ -63,7 +63,7 @@
         </ul>
       </li>
     {:else}
-      <li class="note">{entry.text}</li>
+      <li class="note">{entry.text}{#if entry.link}<br /><a href="{siteBase}{entry.link.page}/">{entry.link.label}</a>{/if}</li>
     {/if}
   {/each}
 </ul>

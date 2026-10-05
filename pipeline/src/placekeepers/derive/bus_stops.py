@@ -336,3 +336,91 @@ def summary_note(counts: Mapping[int, int], as_of: date | None) -> str:
         f"{counts[SHELTER]:,} with a shelter or roof, {counts[BENCH]:,} with a bench but no "
         f"shelter mapped, {counts[NEITHER]:,} with neither, {counts[UNKNOWN]:,} not yet surveyed"
     )
+
+
+# ---------------------------------------------------------------------------------------------
+# Matching OpenStreetMap's stops to SEPTA's (M2.4, for the route survey sheets)
+
+#: An OpenStreetMap stop and a SEPTA stop are taken for the same pole within this distance. On
+#: 2026-10-05 the two points of the same stop (matched by stop number) were a median 5 meters
+#: apart, while a stop's nearest other SEPTA stop, usually across the street, was 15 meters or
+#: more away for three stops in four.
+SAME_STOP_METERS = 15.0
+
+
+@dataclass(frozen=True)
+class SeptaPoint:
+    """A SEPTA stop to match: its stop number today, the numbers it had before, its point."""
+
+    stop_id: str
+    former_ids: tuple[str, ...]
+    lat: float
+    lng: float
+
+
+def stop_numbers(stop: Stop) -> list[str]:
+    """The SEPTA stop numbers an OpenStreetMap stop gives (`ref`, then `gtfs:stop_id`)."""
+    numbers = []
+    for key in ("ref", "gtfs:stop_id"):
+        for part in (stop.tags.get(key) or "").replace(",", ";").split(";"):
+            part = part.strip()
+            if part and part not in numbers:
+                numbers.append(part)
+    return numbers
+
+
+def match_septa(osm: Sequence[Stop], septa: Sequence[SeptaPoint]) -> dict[int, int]:
+    """{index in `septa`: index in `osm`}: which OpenStreetMap stop is which SEPTA stop.
+
+    First by number: an OpenStreetMap stop whose `ref` (or `gtfs:stop_id`) is a SEPTA stop's
+    number today or one it had before, when that SEPTA stop stands within SAME_STOP_METERS. A
+    number pointing farther away is ignored: on Frankford Avenue a run of `ref`s names the stop
+    across the street while each point stands on another SEPTA stop. Then by distance: the
+    remaining stops pair up nearest first within SAME_STOP_METERS. Each stop matches once."""
+    if not osm or not septa:
+        return {}
+    from placekeepers.derive.street_safety import points_in_meters
+
+    osm_points = points_in_meters([s.lat for s in osm], [s.lng for s in osm])
+    septa_points = points_in_meters([s.lat for s in septa], [s.lng for s in septa])
+    by_number: dict[str, int] = {}
+    for index, stop in enumerate(septa):
+        by_number.setdefault(stop.stop_id, index)
+    for index, stop in enumerate(septa):
+        for former in stop.former_ids:
+            by_number.setdefault(former, index)
+
+    pairs: list[tuple[float, int, int]] = []
+    for o, stop in enumerate(osm):
+        for number in stop_numbers(stop):
+            s = by_number.get(number)
+            if s is not None:
+                meters = float(osm_points[o].distance(septa_points[s]))
+                if meters <= SAME_STOP_METERS:
+                    pairs.append((meters, s, o))
+    matched = _pair_up(pairs, {}, set())
+
+    tree = shapely.STRtree(septa_points)
+    near: list[tuple[float, int, int]] = []
+    taken = set(matched.values())
+    for o in range(len(osm)):
+        if o in taken:
+            continue
+        for s in tree.query(osm_points[o], predicate="dwithin", distance=SAME_STOP_METERS):
+            if int(s) not in matched:
+                near.append((float(osm_points[o].distance(septa_points[s])), int(s), o))
+    return _pair_up(near, matched, taken)
+
+
+def _pair_up(
+    pairs: list[tuple[float, int, int]], matched: dict[int, int], taken: set[int]
+) -> dict[int, int]:
+    """Closest pairs first, each SEPTA stop and each OpenStreetMap stop at most once."""
+    result = dict(matched)
+    used = set(taken) | set(matched.values())
+    for _, s, o in sorted(pairs):
+        if s in result or o in used:
+            continue
+        result[s] = o
+        used.add(o)
+    return result

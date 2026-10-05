@@ -23,6 +23,7 @@ from placekeepers.context import Context
 from placekeepers.publish.dossiers import DossierResult, build_dossiers
 from placekeepers.publish.layers import builder_for
 from placekeepers.publish.manifest import MANIFEST, build_manifest, git_short_hash
+from placekeepers.publish.route_sheets import RouteSheetsResult, build_route_sheets
 from placekeepers.publish.tiles import (
     TILES_SKIPPED_NOTE,
     TileError,
@@ -54,6 +55,8 @@ class PublishResult:
     seconds: float = 0.0
     #: the lot dossier shards and the owners table (publish/dossiers.py)
     dossiers: DossierResult | None = None
+    #: the route survey sheets (publish/route_sheets.py)
+    route_sheets: RouteSheetsResult | None = None
 
 
 def geojson_name(file: str, source_layer: str) -> str:
@@ -206,6 +209,8 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
         notes.extend(lens_notes(ctx))
         result.dossiers = build_dossiers(ctx, statuses, staging, as_of)
         notes.extend(result.dossiers.notes)
+        result.route_sheets = build_route_sheets(ctx, statuses, staging, as_of)
+        notes.extend(result.route_sheets.notes)
 
         exe = find_tippecanoe()
         if exe is None:

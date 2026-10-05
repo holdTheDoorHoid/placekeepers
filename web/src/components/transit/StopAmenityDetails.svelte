@@ -26,6 +26,7 @@
   </ul>
   {#if stop.anyUnknown}<p class="muted small">{s.unknownNote}</p>{/if}
   {#if guide}<p><a href="{siteBase}{guide}/">{s.survey}</a></p>{/if}
+  <p class="small"><a href="{siteBase}survey/">{s.surveyRoute}</a></p>
   {#if stop.osmUrl}
     <p class="small"><a href={stop.osmUrl} target="_blank" rel="noopener noreferrer">{s.openOsm}</a></p>
   {/if}

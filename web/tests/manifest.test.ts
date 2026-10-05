@@ -224,7 +224,9 @@ describe('finding each layer\'s file', () => {
       .filter((p) => p !== 'manifest.json')
       .sort();
     const shard = /^dossiers\/(\d+)\.json$/;
-    expect(Object.keys(manifest!.files).sort()).toEqual(onDisk.filter((p) => !shard.test(p)));
+    // Route survey sheets are listed in tables/routes/index.json, not in files (CONTRACTS.md section 7).
+    const routeSheet = /^tables\/routes\/(?!index\.json$)[^/]+\.json$/;
+    expect(Object.keys(manifest!.files).sort()).toEqual(onDisk.filter((p) => !shard.test(p) && !routeSheet.test(p)));
     const prefixes = onDisk.map((p) => shard.exec(p)?.[1]).filter((p): p is string => !!p);
     expect([...manifest!.dossiers!.prefixes].sort()).toEqual(prefixes);
   });
