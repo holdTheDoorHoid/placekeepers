@@ -274,6 +274,10 @@ class SeptaGtfs(UrlAdapter):
     ) -> list[dict[str, Any]]:
         previous = self.previous()
         rows: list[dict[str, Any]] = []
+        missing = {stop.feed for stop in previous} - {summary.feed for summary in summaries}
+        for feed in sorted(missing):
+            # Its stops start again from their SEPTA numbers when the feed comes back.
+            self.notes.append(f"The {feed} feed is missing from this download")
         for summary in summaries:
             common = {
                 "feed": summary.feed,

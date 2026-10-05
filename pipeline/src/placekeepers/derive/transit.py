@@ -620,7 +620,6 @@ def summarize_feed(
         route_id: ROUTE_TYPE_MODES.get(_int(row.get("route_type")) or 0, 0)
         for route_id, row in routes.items()
     }
-    trip_route = {trip["trip_id"]: trip["route_id"] for trip in trips}
     day_rows: dict[str, list] = {"kind": [], "trip_id": [], "route_id": [], "direction_id": []}
     for kind, suffix in DAYS:
         running = dates.services.get(kind, frozenset())
@@ -748,7 +747,6 @@ def summarize_feed(
                 geometry=shapes.get(route_id),
             )
         )
-    del trip_route
     con.unregister("day_trips")
     return FeedSummary(feed, version, dates, stops, route_list, notes)
 
