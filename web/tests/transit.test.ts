@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { loadRegistry } from '../plugins/registry.ts';
 import { styleFor } from '../src/map/styles/index.ts';
 import { ROUTE_COLORS } from '../src/map/styles/transit_routes.ts';
-import { TRANSIT_NONE, TRANSIT_RAMP } from '../src/map/styles/transit_stops.ts';
+import { TRANSIT_NONE, TRANSIT_PRIORITY_RAMP, TRANSIT_RAMP } from '../src/map/styles/transit_stops.ts';
 import type { Layer, SettingValue } from '../src/registry/types.ts';
 import { defaultState, type AppState } from '../src/state/defaults.ts';
 import { strings } from '../src/strings.ts';
@@ -41,6 +41,7 @@ function color(state: AppState, properties: Record<string, unknown>): string {
   return `#${hex(value.r)}${hex(value.g)}${hex(value.b)}`;
 }
 
+const FACTOR_FIELDS = reg.lenses.find((l) => l.id === 'transit_comfort')!.factors.map((f) => f.field);
 const BUS = { md: 1, hm: 9, b: 848 };
 const QUIET_BUS = { md: 1, hm: 60 };
 const NO_MIDDAY = { md: 1 };
@@ -48,7 +49,7 @@ const SUBWAY = { md: 4, hm: 5 };
 const RAIL = { md: 8, hm: 60 };
 
 describe('the stops layer', () => {
-  it('is off by default in both views until the transit comfort lens arrives', () => {
+  it('is off by default in both views (the Bus stops chip and the lens turn it on)', () => {
     expect(stops.default).toEqual({ field: false, analysis: false });
     expect(routes.default).toEqual({ field: false, analysis: false });
     expect(stops.group).toBe('transit');
@@ -78,8 +79,32 @@ describe('the stops layer', () => {
     expect(shown(stops, long, 'circle', BUS)).toBe(false);
   });
 
-  it('colors by the midday wait, darkest for the most frequent, hollow without midday service', () => {
+  it('colors by the transit comfort lens by default, darkest for the highest priority', () => {
     const state = defaultState(reg, 'analysis');
+    expect(state.settings.transit_stops?.color).toBe('lens');
+    const all = (value: number) => ({ md: 1, ...Object.fromEntries(FACTOR_FIELDS.map((f) => [f, value])) });
+    expect(color(state, all(100))).toBe(TRANSIT_RAMP[4]);
+    expect(color(state, all(0))).toBe(TRANSIT_RAMP[0]);
+    expect(color(state, all(50))).toBe(TRANSIT_RAMP[2]);
+    // Missing factors are left out: a stop with only an unsurveyed shelter and bench scores 50.
+    expect(color(state, { md: 1, f_noshelter: 50, f_nobench: 50 })).toBe(TRANSIT_RAMP[2]);
+    // Stations and stops without any data have no score: hollow, never a guess.
+    expect(color(withSetting(stops, 'stations', true), { md: 4, hm: 5 })).toBe(TRANSIT_NONE);
+  });
+
+  it('recolors stops when a lens weight moves, and paints them all one quiet color when every weight is off', () => {
+    const state = defaultState(reg, 'analysis');
+    const busyButSheltered = { md: 1, f_riders: 100, f_noshelter: 0, f_nobench: 0, f_shade: 0, f_heat: 0, f_hin: 0, f_wait: 0 };
+    const before = color(state, busyButSheltered);
+    state.weights.transit_comfort = { ...state.weights.transit_comfort, riders: 5, no_shelter: 0, no_bench: 0, little_shade: 0, heat: 0, high_injury_network: 0, long_wait: 0 };
+    expect(color(state, busyButSheltered)).toBe(TRANSIT_RAMP[4]);
+    expect(color(state, busyButSheltered)).not.toBe(before);
+    state.weights.transit_comfort = Object.fromEntries(Object.keys(state.weights.transit_comfort!).map((k) => [k, 0]));
+    expect(color(state, busyButSheltered)).toBe(TRANSIT_PRIORITY_RAMP.allOff);
+  });
+
+  it('colors by the midday wait, darkest for the most frequent, hollow without midday service', () => {
+    const state = withSetting(stops, 'color', 'wait');
     expect(color(state, { md: 1, hm: 5 })).toBe(TRANSIT_RAMP[4]);
     expect(color(state, { md: 1, hm: 15 })).toBe(TRANSIT_RAMP[3]);
     expect(color(state, { md: 1, hm: 25 })).toBe(TRANSIT_RAMP[2]);
@@ -99,7 +124,15 @@ describe('the stops layer', () => {
 
   it('explains each coloring in its legend, darkest first', () => {
     const legend = (state: AppState) => styleFor(stops)!.legend({ layer: stops, registry: reg, state });
-    const wait = legend(defaultState(reg, 'analysis'));
+    const lens = legend(defaultState(reg, 'analysis'));
+    expect(lens).toContainEqual({ kind: 'ramp', title: strings.transit.lensTitle, stops: TRANSIT_RAMP, low: strings.lens.legendLow, high: strings.lens.legendHigh });
+    expect(lens).toContainEqual({ kind: 'note', text: strings.transit.lensUnsurveyed });
+    const lensStations = legend(withSetting(stops, 'stations', true));
+    expect(lensStations).toContainEqual({ kind: 'note', text: strings.transit.lensStations });
+    const off = defaultState(reg, 'analysis');
+    off.weights.transit_comfort = Object.fromEntries(Object.keys(off.weights.transit_comfort!).map((k) => [k, 0]));
+    expect(legend(off)).toContainEqual({ kind: 'note', text: strings.lens.allOffFor('stop') });
+    const wait = legend(withSetting(stops, 'color', 'wait'));
     const bins = wait.find((e) => e.kind === 'bins');
     expect(bins?.kind === 'bins' && bins.bins.map((b) => b.label)).toEqual(strings.transit.waitBins);
     expect(bins?.kind === 'bins' && bins.bins[0]!.color).toBe(TRANSIT_RAMP[4]);

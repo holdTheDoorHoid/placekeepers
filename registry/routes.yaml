@@ -185,6 +185,7 @@
   links:
     - {label: "OTIS street furniture request for information (May 2024), with the City's shelter goal", url: "https://www.phila.gov/media/20240521160603/RFI-OTIS-street-furniture-20240521.pdf"}
     - {label: "Eight new bus shelters sent to the Art Commission (December 2025)", url: "https://www.phila.gov/media/20251205094032/Bus-Shelter-Upgrades-submission.pdf"}
+    # wwww is SEPTA's own spelling of its host: its Customer Service page links the form this way.
     - {label: SEPTA comment form, url: "https://wwww.septa.org/customer-service/comment-form/"}
   last_checked: 2026-10-05
   status: confirm

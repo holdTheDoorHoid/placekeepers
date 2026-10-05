@@ -1,34 +1,128 @@
 <script lang="ts">
   // What the map says about the SEPTA stops someone tapped: in the analysis view's details panel
   // and in the panel over the map in the field view. Subway platforms in both directions often
-  // stand at one spot, so every stop under the finger is listed.
-  import { describeStop } from '../../transit/describe.ts';
+  // stand at one spot, so every stop under the finger is listed. A bus or trolley stop shows its
+  // priority under the transit comfort lens, what riders find there (from OpenStreetMap, with "not
+  // yet surveyed" where no one has recorded it, never "no"), what neighbors can do with the first
+  // lawful step and the route's contacts, the "why" behind the score, then its service and riders.
+  import type { AppStore } from '../../state/store.svelte.ts';
   import { strings } from '../../strings.ts';
+  import { describeComfort } from '../../transit/comfort.ts';
+  import { describeStop, stopKind } from '../../transit/describe.ts';
+  import EvidenceBadge from '../common/EvidenceBadge.svelte';
+  import RouteDetails from '../dossier/RouteDetails.svelte';
+  import WhyBreakdown from '../lens/WhyBreakdown.svelte';
 
-  let { features }: { features: Record<string, unknown>[] } = $props();
+  let { store, features, guide }: { store: AppStore; features: Record<string, unknown>[]; guide?: string } = $props();
   const t = strings.transit;
-  const views = $derived(features.slice(0, 6).map((properties) => describeStop(properties)));
+  const s = strings.stopAmenities;
+  // The site root from the build (not config, so the details also render outside a browser).
+  const siteBase = import.meta.env.BASE_URL;
+  const views = $derived(
+    features.slice(0, 6).map((properties) => {
+      const kind = stopKind(properties.md);
+      const station = kind === 'metro' || kind === 'rail';
+      return {
+        id: String(properties.id ?? ''),
+        stop: describeStop(properties),
+        comfort: station ? null : describeComfort(store.registry, store.state, properties),
+      };
+    }),
+  );
+  const anyComfort = $derived(views.some((v) => v.comfort !== null));
 </script>
 
 {#if features.length > 1}<p class="muted small">{t.stopsHere(features.length)}</p>{/if}
 {#each views as view, i (i)}
-  <section class="stop">
-    <h3>{view.title}</h3>
-    <p class="small">{view.kind}.{#if view.routes}{' '}{view.routes}{/if}</p>
+  {@const comfort = view.comfort}
+  <section class="stop" data-stop={view.id}>
+    <h3>{view.stop.title}</h3>
+    <p class="small">{view.stop.kind}.{#if view.stop.routes}{' '}{view.stop.routes}{/if}</p>
+    {#if comfort?.lens}
+      {#if comfort.score !== null}
+        <p class="score">
+          <strong>{strings.place.priority(comfort.score, comfort.lens.label)}.</strong>
+          {#if comfort.why?.main}{strings.place.mainReason(comfort.why.main.label)} <EvidenceBadge level={comfort.why.main.evidence} />{/if}
+        </p>
+      {:else if comfort.why?.allOff}
+        <p class="muted small">{strings.lens.allOffFor('stop')}</p>
+      {/if}
+    {/if}
+
+    {#if comfort}
+      <h4>{t.findTitle}</h4>
+      <p>{comfort.summary}</p>
+      <ul class="facts">
+        {#each comfort.answers as answer (answer.key)}
+          <li class:unknown={!answer.known}>{answer.label}: {answer.value}</li>
+        {/each}
+      </ul>
+      {#if comfort.anyUnknown}<p class="muted small">{s.unknownNote}</p>{/if}
+      {#if comfort.facts.length}
+        <ul class="facts">
+          {#each comfort.facts as fact (fact)}<li>{fact}</li>{/each}
+        </ul>
+      {/if}
+
+      {#if comfort.suggestions.length}
+        <h4>{t.canDo}</h4>
+        <ul class="suggestions">
+          {#each comfort.suggestions as item (item.suggestion.id)}
+            <li data-suggestion={item.suggestion.id}>
+              <strong>{item.suggestion.label}</strong>
+              <EvidenceBadge level={item.suggestion.evidence} />
+              <p class="small">{item.suggestion.summary}</p>
+              <p class="small">{strings.streets.cost(item.suggestion.cost)}</p>
+              {#if item.firstStep}
+                <p class="small"><strong>{strings.streets.firstStep}:</strong> {item.firstStep.step} <span class="muted">({item.firstStep.route.label})</span></p>
+              {/if}
+              {#if item.routes.length || item.partners.length}
+                <details>
+                  <summary>{t.routeDetails}</summary>
+                  {#each item.routes as route (route.route.id)}<RouteDetails view={route} level={5} />{/each}
+                  {#if item.partners.length}
+                    <p class="small muted">{strings.dossier.actions.partners}</p>
+                    <ul class="partners">
+                      {#each item.partners as partner (partner.id)}
+                        <li class="small"><a href={partner.url} target="_blank" rel="noopener noreferrer">{partner.name}</a>: {partner.one_line}</li>
+                      {/each}
+                    </ul>
+                  {/if}
+                </details>
+              {/if}
+            </li>
+          {/each}
+        </ul>
+      {/if}
+
+      {#if comfort.why && comfort.lens && !comfort.why.allOff}
+        <WhyBreakdown why={comfort.why} idPrefix="stop-{i}" level={4} appliesTo="stop" />
+        {#if comfort.halfway}<p class="muted small">{t.halfway}</p>{/if}
+      {/if}
+    {/if}
+
     <h4>{t.howOften}</h4>
     <ul>
-      {#each view.often as line (line)}<li>{line}</li>{/each}
+      {#each view.stop.often as line (line)}<li>{line}</li>{/each}
     </ul>
     <h4>{t.riders}</h4>
     <ul>
-      {#each view.riders as line (line)}<li>{line}</li>{/each}
+      {#each view.stop.riders as line (line)}<li>{line}</li>{/each}
     </ul>
-    {#if view.details.length}
-      <p class="small muted">{view.details.join(' ')}</p>
+    {#if view.stop.details.length}
+      <p class="small muted">{view.stop.details.join(' ')}</p>
+    {/if}
+    {#if comfort}
+      {#if comfort.matched}<p class="small muted">{comfort.matched}</p>{/if}
+      {#if guide}<p class="small"><a href="{siteBase}{guide}/">{t.surveyGuide}</a></p>{/if}
+      {#if comfort.osmUrl}
+        <p class="small"><a href={comfort.osmUrl} target="_blank" rel="noopener noreferrer">{s.openOsm}</a></p>
+      {/if}
     {/if}
   </section>
 {/each}
 <p class="muted small">{t.source}</p>
+{#if anyComfort}<p class="muted small">{t.osmSource}</p>{/if}
 
 <style>
   .stop {
@@ -48,5 +142,18 @@
   }
   p {
     margin: 2px 0;
+  }
+  .unknown {
+    color: var(--pk-muted);
+  }
+  .suggestions li {
+    margin-bottom: 8px;
+  }
+  details {
+    margin-top: 4px;
+    font-size: 0.875rem;
+  }
+  .partners {
+    padding-left: 18px;
   }
 </style>

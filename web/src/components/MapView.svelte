@@ -23,6 +23,7 @@
     store.viewBounds = controller.bounds();
     store.parcelsInView = controller.parcelsInView();
     store.memorialsInView = controller.memorialsInView();
+    store.stopsInView = controller.stopsInView();
     const selected = store.state.selected;
     if (selected && !store.selectedProperties) {
       const found = controller.findParcel(selected);

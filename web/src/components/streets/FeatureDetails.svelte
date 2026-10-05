@@ -94,9 +94,9 @@
     <ul class="facts">
       {#each segment.facts as fact (fact)}<li>{fact}</li>{/each}
     </ul>
-    {#if segment.why}<WhyBreakdown why={segment.why} idPrefix="feature" />{/if}
+    {#if segment.why}<WhyBreakdown why={segment.why} idPrefix="feature" appliesTo="segment" />{/if}
   {:else if style === STYLES.transit_stops}
-    <TransitStopDetails features={target.features} />
+    <TransitStopDetails {store} features={target.features} guide={layer?.guide} />
   {:else if style === STYLES.stop_amenities}
     {#each target.features.slice(0, 4) as properties, i (i)}
       <StopAmenityDetails {properties} guide={layer?.guide} />

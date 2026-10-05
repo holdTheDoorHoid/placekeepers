@@ -4,13 +4,18 @@
 // subway, the El and Regional Rail are a little larger, with a dark ring. Settings:
 //   service   any service; frequent service (a bus or train every 15 minutes or better at
 //             midday on weekdays); or long waits (less often than every 30 minutes, or none)
-//   color     how often a bus or train comes at midday (`hm`, minutes), or how many people get
-//             on each weekday (`b`, SEPTA's count; stops without a count are hollow and gray)
+//   color     priority under the transit comfort lens (the first registry lens for stops; the
+//             score is computed in the style from the stop's factor fields, so moving a lens
+//             slider recolors the stops at once), how often a bus or train comes at midday
+//             (`hm`, minutes), or how many people get on each weekday (`b`, SEPTA's count).
+//             Stops without a score, a midday service or a count are hollow and gray.
 //   stations  off: bus and trolley stops only (bits 1 and 2 of `md`); on: every stop and station
 // Stops appear from zoom 12, a few neighborhoods across; the tiles carry them from there.
 
 import type { ExpressionSpecification, FilterSpecification, LayerSpecification } from 'maplibre-gl';
+import type { Lens } from '../../registry/types.ts';
 import { strings } from '../../strings.ts';
+import { lensColorExpression, lensScoreExpression, type ColorRamp } from '../lens.ts';
 import { hasMode } from './crashes.ts';
 import { SELECTED } from './palette.ts';
 import {
@@ -31,6 +36,12 @@ export const TRANSIT_NONE = '#ffffff';
 export const TRANSIT_NONE_RING = '#8a9099';
 export const TRANSIT_RING = '#ffffff';
 export const STATION_RING = '#1d2b3a';
+/**
+ * Priority under the transit comfort lens, low to high, on the same scale: a stop with no score
+ * (a station, or no data for any weighted factor) is hollow, and when every weight is off every
+ * stop is one quiet blue gray.
+ */
+export const TRANSIT_PRIORITY_RAMP: ColorRamp = { stops: TRANSIT_RAMP, noData: TRANSIT_NONE, allOff: '#9fb3bd' };
 
 /** Upper ends of the midday wait classes, in minutes (the last class is everything longer). */
 export const WAIT_BINS = [10, 15, 30, 60] as const;
@@ -49,10 +60,23 @@ const boardings: ExpressionSpecification = ['to-number', ['get', 'b'], 0];
 export const SURFACE: ExpressionSpecification = ['any', hasMode(1, modes), hasMode(2, modes)];
 const STATION: ExpressionSpecification = ['!', SURFACE];
 
-export type ColorBy = 'wait' | 'boardings';
+export type ColorBy = 'lens' | 'wait' | 'boardings';
+
+/** The lens that colors stops: the first registry lens that applies to stops. */
+export function stopLens(ctx: Pick<LegendContext, 'registry'>): Lens | null {
+  return ctx.registry.lenses.find((l) => l.applies_to === 'stop') ?? null;
+}
 
 export function colorBy(ctx: LegendContext): ColorBy {
-  return settingValue(ctx, 'color') === 'boardings' ? 'boardings' : 'wait';
+  const value = settingValue(ctx, 'color');
+  if (value === 'boardings' || value === 'wait') return value;
+  return stopLens(ctx) ? 'lens' : 'wait';
+}
+
+/** The lens score of a stop as a style expression, or null when every weight is off. */
+export function stopScore(ctx: LegendContext): ExpressionSpecification | null {
+  const lens = stopLens(ctx);
+  return lens ? lensScoreExpression(lens, ctx.state.weights[lens.id]) : null;
 }
 
 export function withStations(ctx: LegendContext): boolean {
@@ -69,7 +93,11 @@ export function stopFilter(ctx: LegendContext): FilterSpecification {
 }
 
 /** The fill color of a stop under the chosen coloring. */
-export function stopColor(by: ColorBy): ExpressionSpecification {
+export function stopColor(by: ColorBy, ctx: LegendContext): ExpressionSpecification | string {
+  if (by === 'lens') {
+    const lens = stopLens(ctx);
+    return lens ? lensColorExpression(lens, ctx.state.weights[lens.id], TRANSIT_PRIORITY_RAMP) : TRANSIT_PRIORITY_RAMP.allOff;
+  }
   const [c0, c1, c2, c3, c4] = TRANSIT_RAMP;
   if (by === 'boardings') {
     const [b1, b2, b3, b4] = BOARDING_BINS;
@@ -93,8 +121,18 @@ export function stopColor(by: ColorBy): ExpressionSpecification {
   ];
 }
 
-function hollow(by: ColorBy): ExpressionSpecification {
+function hollow(by: ColorBy, ctx: LegendContext): ExpressionSpecification | boolean {
+  if (by === 'lens') {
+    const score = stopScore(ctx);
+    return score ? ['<', score, 0] : false;
+  }
   return by === 'boardings' ? ['!', ['has', 'b']] : ['!', ['has', 'hm']];
+}
+
+/** Which stops draw on top: the higher priority, the busier, or the more frequent. */
+function sortKey(by: ColorBy, ctx: LegendContext): ExpressionSpecification | number {
+  if (by === 'lens') return stopScore(ctx) ?? 0;
+  return by === 'boardings' ? boardings : ['-', 0, ['to-number', ['get', 'hm'], 999]];
 }
 
 /** Stations are a little larger than stops. One zoom curve, with the size for each kind inside. */
@@ -127,12 +165,12 @@ export const transitStops: StyleModule = {
         ...sourceKeys(ctx),
         minzoom: MIN_ZOOM,
         filter,
-        // Busier stops (or more frequent ones) draw on top.
-        layout: { 'circle-sort-key': by === 'boardings' ? boardings : ['-', 0, ['to-number', ['get', 'hm'], 999]] },
+        // Higher priority (or busier, or more frequent) stops draw on top.
+        layout: { 'circle-sort-key': sortKey(by, ctx) },
         paint: {
-          'circle-color': stopColor(by),
+          'circle-color': stopColor(by, ctx),
           'circle-radius': radius,
-          'circle-stroke-color': ['case', STATION, STATION_RING, hollow(by), TRANSIT_NONE_RING, TRANSIT_RING],
+          'circle-stroke-color': ['case', STATION, STATION_RING, hollow(by, ctx), TRANSIT_NONE_RING, TRANSIT_RING],
           'circle-stroke-width': ['interpolate', ['linear'], ['zoom'], 12, 0.5, 14, 1, 17, 1.6],
         },
       },
@@ -155,6 +193,7 @@ export const transitStops: StyleModule = {
   legend(ctx) {
     const t = strings.transit;
     const by = colorBy(ctx);
+    if (by === 'lens') return lensLegend(ctx);
     const labels = by === 'boardings' ? t.boardingBins : t.waitBins;
     // Darkest first: the most frequent service, or the most people.
     const colors = [...TRANSIT_RAMP].reverse();
@@ -170,3 +209,21 @@ export const transitStops: StyleModule = {
     return entries;
   },
 };
+
+/** The legend under the transit comfort lens: the priority scale, and what hollow means. */
+function lensLegend(ctx: LegendContext): LegendEntry[] {
+  const t = strings.transit;
+  const entries: LegendEntry[] = [];
+  if (stopScore(ctx)) {
+    entries.push({ kind: 'ramp', title: t.lensTitle, stops: TRANSIT_RAMP, low: strings.lens.legendLow, high: strings.lens.legendHigh });
+    entries.push({ kind: 'note', text: t.lensUnsurveyed });
+  } else {
+    entries.push({ kind: 'note', text: strings.lens.allOffFor('stop') });
+  }
+  if (withStations(ctx)) {
+    entries.push({ kind: 'circle', label: t.station, fill: TRANSIT_NONE, stroke: STATION_RING, radius: 6 });
+    entries.push({ kind: 'note', text: t.lensStations });
+  }
+  entries.push({ kind: 'note', text: t.zoomNote });
+  return entries;
+}

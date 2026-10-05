@@ -323,7 +323,9 @@
   geometry: point
   style: transit_stops
   evidence: context
+  # Off until someone taps the Bus stops chip or uses the transit comfort lens (M2.3).
   default: {field: false, analysis: false}
+  guide: streetcomplete
   settings:
     - id: service
       label: Show stops with
@@ -385,7 +387,8 @@
   geometry: point
   style: stop_amenities
   evidence: not_violence
-  # The transit comfort lens comes in M2.3; until then the stops stay off unless switched on.
+  # SEPTA's stops layer carries the transit comfort lens (M2.3); this one stays off unless
+  # switched on.
   default: {field: false, analysis: false}
   guide: streetcomplete
   settings:

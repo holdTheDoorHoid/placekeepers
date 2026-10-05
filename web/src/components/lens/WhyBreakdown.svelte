@@ -5,7 +5,18 @@
   import { strings } from '../../strings.ts';
   import EvidenceBadge from '../common/EvidenceBadge.svelte';
 
-  let { why, idPrefix, level = 3 }: { why: ScoreExplanation; idPrefix: string; level?: 3 | 4 } = $props();
+  let {
+    why,
+    idPrefix,
+    level = 3,
+    appliesTo = 'parcel',
+  }: {
+    why: ScoreExplanation;
+    idPrefix: string;
+    level?: 3 | 4;
+    /** What the lens ranks, for the note when every factor is off. */
+    appliesTo?: string;
+  } = $props();
   const max = $derived(Math.max(1, ...why.factors.map((f) => f.contribution)));
   // Shown to a tenth of a point, rounded so the column adds up to the score exactly.
   const shown = $derived(displayedBreakdown(why));
@@ -14,7 +25,7 @@
 <section class="why" aria-labelledby="{idPrefix}-why">
   <svelte:element this={`h${level}`} id="{idPrefix}-why">{strings.why.title}</svelte:element>
   {#if why.allOff}
-    <p class="notice">{strings.lens.allOff}</p>
+    <p class="notice">{strings.lens.allOffFor(appliesTo)}</p>
   {:else}
     <p class="muted small">{strings.why.intro}</p>
     <table>

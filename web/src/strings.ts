@@ -152,6 +152,7 @@ export const strings = {
     lots: 'Lots',
     streets: 'Streets',
     memorials: 'Memorials',
+    stops: 'Bus stops',
     comingSoon: 'coming soon',
   },
 
@@ -162,8 +163,10 @@ export const strings = {
     countLabel: (n: number) => plural(n, 'place', 'places'),
     zoomIn: 'Move or zoom the map to a neighborhood to see places nearby.',
     finding: 'Finding the places nearby.',
-    noLotsLayer: 'Turn on the Lots layer to see places nearby.',
+    noLotsLayer: 'Turn on the Lots or Bus stops layer to see places nearby.',
     nothingHere: 'No vacant lots or buildings match your settings in this part of the map.',
+    nothingHereStops: 'No vacant lots, buildings or bus stops match your settings in this part of the map.',
+    noStopsHere: 'No bus or trolley stops match your settings in this part of the map.',
     showOnMap: 'Show on map',
     openLotPage: 'Open lot page',
     nearestToYou: 'Nearest to you first.',
@@ -276,8 +279,13 @@ export const strings = {
     allOffFor: (appliesTo: string) =>
       appliesTo === 'segment'
         ? 'Every factor is off. Turn one on to color the streets.'
-        : 'Every factor is off. Turn one on to color the lots.',
+        : appliesTo === 'stop'
+          ? 'Every factor is off. Turn one on to color the bus and trolley stops.'
+          : 'Every factor is off. Turn one on to color the lots.',
     explainToggle: 'Why this factor',
+    shown: (layer: string, lens: string) => `Now showing "${layer}", colored by the ${lens.toLowerCase()} lens.`,
+    notShown: (layer: string) => `The map is not showing this lens on "${layer}" right now.`,
+    showOnMap: 'Show it on the map',
     legendLow: 'Lower priority',
     legendHigh: 'Higher priority',
     legendNoData: 'No score',
@@ -643,6 +651,23 @@ export const strings = {
     boardingsNote: "From SEPTA's own counts, which run a season or two behind the schedules.",
     station: 'Subway, El or Regional Rail station',
     zoomNote: 'Zoom in to a few neighborhoods to see the stops.',
+    lensTitle: 'Priority under the transit comfort lens',
+    lensUnsurveyed: 'Where no one has surveyed a stop yet, its shelter and bench count halfway.',
+    lensStations: 'The lens scores bus and trolley stops only, so stations are hollow.',
+    // The transit comfort lens at a stop (src/transit/comfort.ts).
+    findTitle: 'What riders find here',
+    notInOsm: 'OpenStreetMap does not have this stop yet, so no one has recorded whether it has a shelter or a bench.',
+    matchedByNumber: 'Matched to the OpenStreetMap stop with the same stop number.',
+    matchedByPlace: 'Matched to the OpenStreetMap stop at the same place, within 20 meters.',
+    halfway: 'Not yet surveyed answers count halfway (50 of 100) in the score until someone records them.',
+    canopy: (percent: number) =>
+      `Tree canopy covers about ${formatNumber(percent)} percent of the land within about a block of the stop (the City's 2018 tree canopy survey).`,
+    onHin: 'The stop is on the High Injury Network, the streets where most traffic deaths and serious injuries in Philadelphia happen.',
+    noScore: 'The transit comfort lens scores bus and trolley stops only.',
+    canDo: 'What neighbors can do here',
+    routeDetails: 'Steps, contacts and links',
+    surveyGuide: 'How to survey a stop with StreetComplete',
+    osmSource: 'Shelter, bench and light from OpenStreetMap, © OpenStreetMap contributors, updated every week.',
     routeBus: 'Bus route',
     routeTrolley: 'Trolley route',
     routeMetro: 'Subway or El',
