@@ -54,6 +54,7 @@ import type {
   OwnerFlag,
   OwnerListParcel,
   OwnerType,
+  PartialPart,
   ShardParcel,
   Transfer,
   VacancyKind,
@@ -250,6 +251,11 @@ export interface DossierView {
     assessments: AssessmentRow[] | null;
     assessmentsProvenance: Provenance;
     li: { rows: LiRow[] | null; summary: string[] | null; truncated: boolean; liveForTimeline: boolean };
+    /**
+     * Said when records this dossier was not built from cannot be shown live (live data off, or
+     * the City did not answer): they are not in the weekly copy, never "none on record".
+     */
+    notInCopy: { text: string; offerLive: boolean; retry: boolean } | null;
     liProvenance: Provenance;
   };
   nearby: {
@@ -553,8 +559,16 @@ export function buildDossier(input: DossierInput): DossierView {
   const ownerProvenance = provenanceOf(ownerPart, shardOwner !== null, snapshotDate, liveOn, !shardOwner && tile !== null);
 
   // History ---------------------------------------------------------------------------------------
-  const transfers = pick(live.transfers, parcel?.transfers ?? null);
-  const assessments = pick(live.assessments, parcel?.assessments ?? null);
+  // Parts the dossier was not built from show live data or say they are not in the weekly copy.
+  const partial = parcel?.partial ?? [];
+  const livePartOf = (part: PartialPart): Part<unknown> => (part === 'transfers' ? live.transfers : part === 'assessments' ? live.assessments : live.li);
+  const unseen = partial.filter((part) => livePartOf(part).status !== 'ok');
+  const missing = partial.filter((part) => {
+    const status = livePartOf(part).status;
+    return status === 'failed' || (status === 'idle' && !liveOn);
+  });
+  const transfers = unseen.includes('transfers') ? null : pick(live.transfers, parcel?.transfers ?? null);
+  const assessments = unseen.includes('assessments') ? null : pick(live.assessments, parcel?.assessments ?? null);
   const liveLi = live.li.status === 'ok' ? live.li.data : null;
   const shardLi = parcel?.li ?? null;
   const liRows = liveLi ? liveLi.events.map(liRow) : null;
@@ -732,15 +746,22 @@ export function buildDossier(input: DossierInput): DossierView {
     },
     history: {
       transfers: transfers ? transfers.map(transferRow) : null,
-      transfersProvenance: provenanceOf(live.transfers, parcel?.transfers != null, snapshotDate, liveOn),
+      transfersProvenance: provenanceOf(live.transfers, parcel?.transfers != null && !unseen.includes('transfers'), snapshotDate, liveOn),
       assessments: assessments
         ? [...assessments]
             .sort((a, b) => b.year - a.year)
             .map((a) => ({ year: a.year, marketValue: a.marketValue, value: a.marketValue === null ? s.history.noValue : formatMoney(a.marketValue) }))
         : null,
-      assessmentsProvenance: provenanceOf(live.assessments, parcel?.assessments != null, snapshotDate, liveOn),
+      assessmentsProvenance: provenanceOf(live.assessments, parcel?.assessments != null && !unseen.includes('assessments'), snapshotDate, liveOn),
       li: { rows: liRows, summary: liSummary, truncated: liveLi?.truncated ?? false, liveForTimeline: !liveLi },
       liProvenance: provenanceOf(live.li, shardLi !== null, snapshotDate, liveOn),
+      notInCopy: missing.length
+        ? {
+            text: s.history.notInCopy(missing.map((part) => s.history.partialParts[part]!)),
+            offerLive: !liveOn,
+            retry: liveOn && missing.some((part) => livePartOf(part).status === 'failed'),
+          }
+        : null,
     },
     nearby: { groups, layers, provenance: nearbyProvenance },
     sources: { rows: sourceRows, correctionUrl: correctionUrl(opa, address) },

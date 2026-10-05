@@ -146,6 +146,24 @@ describe('the lot page', () => {
     expect(text).not.toContain(strings.dossier.ownerList.loading);
   });
 
+  it('never says "No deeds on record." for a dossier built without deeds', () => {
+    const parcel = parseShardParcel({ ...SHARD.parcels['990000005'], partial: ['transfers', 'assessments', 'li'], transfers: null, assessments: null })!;
+    const markup = render(Dossier, {
+      props: {
+        view: view('990000005', { shard: { status: 'found', parcel, generatedAt: shard.generatedAt, notes } }),
+        manifest,
+        showTitle: true,
+        idPrefix: 'test',
+        actions: { onTurnOnLive: () => {} },
+      },
+    }).body;
+    const text = textOf(markup);
+    expect(text).not.toContain(strings.dossier.history.noTransfers);
+    expect(text).not.toContain(strings.dossier.history.noAssessments);
+    expect(text).toContain('Our weekly copy does not include deed records, assessments and L&I violation records for this parcel');
+    expect(text).toContain(strings.dossier.history.notInCopyOff);
+  });
+
   it('says plainly when there is nothing to show', () => {
     const empty = render(Dossier, {
       props: {

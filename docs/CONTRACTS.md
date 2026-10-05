@@ -473,7 +473,8 @@ The lot dossier (milestone M1.6) reads them.
 vacancy list, owned by the City, the Land Bank, the Redevelopment Authority or PHDC, in PHS
 LandCare, vacant land or a vacant exterior to the assessor, cleaned and sealed or demolished since
 2016, or on the unsafe or imminently dangerous lists), and every parcel the vacancy model shows,
-that OPA or the City's list of public property still knows. Any other parcel is looked up live.
+that OPA or the City's list of public property still knows (outside the candidates, a dossier says
+in `partial` which records it was not built from). Any other parcel is looked up live.
 
 **Files** (changed 2026-10-04 by the orchestrator, so one lot opens fast on a phone): a parcel's
 dossier is in `dossiers/<first four digits of its 9 digit OPA account>.json`, which holds only
@@ -614,6 +615,17 @@ market value]` pairs, newest year first.
 `imminently_dangerous`, `violations` (every violation since 2016), and when present `unsafe_since`,
 `imminently_dangerous_since`, `sealed` (the last completed clean and seal) and `demolished` (the
 last completed demolition). L&I case numbers are never published.
+
+**`partial`** (added 2026-10-04, docs/VERIFICATION.md D9; only when not empty): the parts this
+dossier was not built from, in this order: `transfers`, `assessments`, `li`. Deeds, assessments and
+L&I violations are downloaded only for the candidate parcels, so a parcel the vacancy model shows
+outside them (or any parcel, while one of those sources has no snapshot) has no such records in the
+weekly copy. A part named here is `null` (`transfers`, `assessments`) or has `open_violations`,
+`last_violation` and `violations` `null` (`li`; its unsafe, imminently dangerous, clean and seal and
+demolition entries come from citywide lists and stay), and `years_since_sale` is left out unless
+OPA's own last sale gives it. The lot page then says these records are not in the weekly copy and
+offers live City data, never "No deeds on record." or zero violations. A parcel that is no longer a
+candidate but has records in the snapshot is not partial.
 
 **`routes`**: registry route ids in the order to try them (docs/ROUTES.md; rules in
 `derive/routes.py`). Conservatorship appears only for a private parcel we call vacant with high or

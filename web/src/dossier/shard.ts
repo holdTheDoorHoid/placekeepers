@@ -30,7 +30,7 @@ import type {
   Vacancy,
   VacancyKind,
 } from './types.ts';
-import { OWNER_TYPES } from './types.ts';
+import { OWNER_TYPES, PARTIAL_PARTS, type PartialPart } from './types.ts';
 
 export const SHARD_SCHEMA = 1;
 
@@ -252,6 +252,7 @@ export function parseShardParcel(raw: unknown, where = 'parcel', problems: strin
     transfers: list(raw.transfers, transfer, `${where}.transfers`, problems),
     assessments: list(raw.assessments, assessment, `${where}.assessments`, problems)?.sort((a, b) => b.year - a.year) ?? null,
     li: li(raw.li),
+    partial: PARTIAL_PARTS.filter((part) => texts(raw.partial).includes(part)),
     routes: ids(raw.routes),
     suggestions: ids(raw.suggestions),
     nearby: nearby(raw.nearby),

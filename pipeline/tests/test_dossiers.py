@@ -187,14 +187,17 @@ OPA_ROWS = [
 
 
 def opa_table(
-    homestead: dict[str, int] | None = None, owners: dict[str, str] | None = None
+    homestead: dict[str, int] | None = None,
+    owners: dict[str, str] | None = None,
+    changes: dict[str, dict[str, Any]] | None = None,
 ) -> pa.Table:
-    """OPA's records of the made up parcels; `homestead` replaces the homestead exemptions and
-    `owners` the first owner name of the accounts it names."""
+    """OPA's records of the made up parcels; `homestead` replaces the homestead exemptions,
+    `owners` the first owner name of the accounts it names, and `changes` any other fields."""
     exemptions = HOMESTEAD if homestead is None else homestead
     rows = [dict(zip(OPA_KEYS, row, strict=True)) for row in OPA_ROWS]
     for row in rows:
         row["owner_1"] = (owners or {}).get(row["parcel_number"], row["owner_1"])
+        row.update((changes or {}).get(row["parcel_number"], {}))
     out: dict[str, list[Any]] = {name: [] for name in OPA_COLUMNS}
     for row in rows:
         lng, lat = where(row["parcel_number"])
@@ -1045,7 +1048,7 @@ def test_the_dossier_and_the_map_follow_the_vacancy_model(context_factory, tmp_p
         ],
     )
     out = tmp_path / "data"
-    publish(ctx, out)
+    notes = publish(ctx, out).manifest["notes"]
 
     assert parcel(out, "371000001")["vacancy"] == {
         "kind": "lot",
@@ -1067,8 +1070,18 @@ def test_the_dossier_and_the_map_follow_the_vacancy_model(context_factory, tmp_p
     left_out = parcel(out, "885000001")
     assert left_out["vacancy"] is None and left_out["suggestions"] == []
     assert left_out["routes"] == ["ask_the_owner"]
-    # The vacancy model's own parcels get dossiers too, even outside the candidates.
-    assert parcel(out, "372000006")["vacancy"]["confidence"] == "medium"
+    # The vacancy model's own parcels get dossiers too, even outside the candidates. Their deeds,
+    # assessments and violations were never downloaded, so the dossier says so instead of
+    # claiming there are none (docs/VERIFICATION.md D9).
+    outside = parcel(out, "372000006")
+    assert outside["vacancy"]["confidence"] == "medium"
+    assert outside["partial"] == ["transfers", "assessments", "li"]
+    assert outside["transfers"] is None and outside["assessments"] is None
+    assert outside["li"]["open_violations"] is None and outside["li"]["violations"] is None
+    assert outside["li"]["last_violation"] is None and outside["li"]["unsafe"] is False
+    assert "years_since_sale" in {f["id"] for f in outside["owner"]["flags"]}  # OPA's last sale
+    assert "partial" not in parcel(out, "372000001")
+    assert any("lack records downloaded only for candidate parcels" in note for note in notes)
     # Five parcels called vacant with high or medium confidence; the low one does not count.
     flags = {flag["id"]: flag for flag in parcel(out, "372000001")["owner"]["flags"]}
     assert flags["many_parcels"]["text"] == "This owner holds 5 vacant parcels in the city."
@@ -1163,6 +1176,27 @@ def test_flags_about_an_owner_who_may_be_a_person_wait_for_a_vacancy_call(
     ]
     assert estate["owner"]["notice"] == "deed_fraud"
     assert estate["routes"] == ["ask_the_owner"]
+
+
+def test_no_claim_of_no_sale_from_deeds_never_downloaded(context_factory, tmp_path) -> None:
+    # A parcel outside the candidates has no deeds in the snapshot, so "Not sold on the open
+    # market since at least 2000" would rest on records never downloaded: without OPA's own last
+    # sale, the dossier leaves the flag out.
+    ctx = context_factory(now=NOW)
+    install_everything(ctx)
+    install_snapshot(
+        ctx,
+        "opa_properties",
+        opa_table(changes={"372000006": {"sale_date": None, "sale_price": None}}),
+        geometry=False,
+        fetched_at="2026-10-04T14:30:00Z",
+    )
+    write_model(ctx, [("372000006", "lot", 1, "medium", 2, 0, 4 | 8, 2, None, None, None)])
+    out = tmp_path / "data"
+    publish(ctx, out)
+    outside = parcel(out, "372000006")
+    assert outside["partial"] == ["transfers", "assessments", "li"]
+    assert "years_since_sale" not in {flag["id"] for flag in outside["owner"]["flags"]}
 
 
 def test_deeds_carry_the_date_and_price_the_city_page_shows(tmp_path: Path) -> None:

@@ -336,6 +336,9 @@ As built (M1.6, 2026-10-04):
   on a parcel with a homestead exemption. Organizations keep every note, and the facts about the
   parcel (deeds, sheriff sales, violations) are always shown (decided 2026-10-04 by the
   orchestrator, docs/VERIFICATION.md D5 and D6).
+- A lot page whose dossier was built without deeds, assessments or violation records (a parcel
+  outside the downloaded candidates) says those records are not in the weekly copy and offers live
+  City data; it never says "No deeds on record." or shows zero violations for them (D9).
 
 ### 5.7 Street safety and memorials
 

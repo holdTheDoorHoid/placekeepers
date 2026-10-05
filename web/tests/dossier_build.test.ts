@@ -283,6 +283,51 @@ describe('a parcel that may be someone\'s home (docs/VERIFICATION.md D5 and D6)'
   });
 });
 
+describe('a dossier built without some records (docs/VERIFICATION.md D9)', () => {
+  /** 990000005 as the pipeline writes a parcel outside the candidates: no deeds, assessments or violation records. */
+  function partialShard(): DossierInput['shard'] {
+    const parcel = structuredClone(shard.parcels.get('990000005')!);
+    parcel.partial = ['transfers', 'assessments', 'li'];
+    parcel.transfers = null;
+    parcel.assessments = null;
+    parcel.li = { ...parcel.li!, openViolations: null, lastViolation: null, violations: null };
+    parcel.owner!.flags = parcel.owner!.flags.filter((f) => f.id !== 'open_violations');
+    return { status: 'found', parcel, generatedAt: shard.generatedAt, notes };
+  }
+
+  it('says the records are not in the weekly copy and offers live data, never "none on record"', () => {
+    const view = buildDossier(input('990000005', { shard: partialShard(), liveOn: false }));
+    expect(view.history.transfers).toBeNull();
+    expect(view.history.assessments).toBeNull();
+    expect(view.history.notInCopy).toEqual({
+      text: 'Our weekly copy does not include deed records, assessments and L&I violation records for this parcel, so this page cannot say whether there are any.',
+      offerLive: true,
+      retry: false,
+    });
+    expect(view.history.li.summary!.join(' ')).not.toMatch(/open violation/i);
+    expect(view.history.transfersProvenance.text).toBe('Live City data is off, and our weekly snapshot does not cover this part.');
+  });
+
+  it('shows live records when the City answers, and offers to try again for a part that failed', () => {
+    const view = buildDossier(input('990000005', { shard: partialShard(), live: { ...allLive(), li: failed() } }));
+    expect(view.history.transfers!.map((t) => t.date)).toEqual(['Sep 2, 2026']);
+    expect(view.history.assessments!.map((a) => a.year)).toEqual([2027, 2026]);
+    expect(view.history.notInCopy).toEqual({
+      text: 'Our weekly copy does not include L&I violation records for this parcel, so this page cannot say whether there are any.',
+      offerLive: false,
+      retry: true,
+    });
+    const all = buildDossier(input('990000005', { shard: partialShard(), live: allLive() }));
+    expect(all.history.notInCopy).toBeNull();
+  });
+
+  it('says nothing about missing records while the City is still asked', () => {
+    const view = buildDossier(input('990000005', { shard: partialShard(), live: { ...IDLE_PARTS, transfers: loading, assessments: loading, li: loading } }));
+    expect(view.history.notInCopy).toBeNull();
+    expect(view.history.transfers).toBeNull();
+  });
+});
+
 describe('a parcel that is not on our list', () => {
   const nonListed = (live: LiveParts, liveOn = true) =>
     buildDossier(input('371163500', { tile: null, shard: { status: 'absent', reason: 'unlisted' }, live, liveOn, center: null }));

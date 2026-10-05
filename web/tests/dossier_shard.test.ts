@@ -259,6 +259,12 @@ describe('reading a shard', () => {
     expect(parcel.garden).toBe(true);
   });
 
+  it('reads the parts a dossier was not built from, and nothing else there', () => {
+    expect(parseShardParcel({ partial: ['transfers', 'li', 'tax', 'transfers'] })!.partial).toEqual(['transfers', 'li']);
+    expect(parseShardParcel({})!.partial).toEqual([]);
+    expect(parseShardParcel({ partial: ['assessments'], transfers: null, assessments: null })!).toMatchObject({ transfers: null, assessments: null });
+  });
+
   it('reads a person\'s other parcels from the flag itself, never from the owners table', () => {
     const parcel = parseShardParcel({
       owner: {

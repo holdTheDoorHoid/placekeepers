@@ -185,6 +185,10 @@ export interface LandCare {
   year: number | null;
 }
 
+/** The parts of a dossier whose records the weekly copy holds only for some parcels (docs/CONTRACTS.md section 6). */
+export const PARTIAL_PARTS = ['transfers', 'assessments', 'li'] as const;
+export type PartialPart = (typeof PARTIAL_PARTS)[number];
+
 /** One parcel from a dossier shard. A section the shard leaves out is null. */
 export interface ShardParcel {
   address: string | null;
@@ -193,6 +197,11 @@ export interface ShardParcel {
   transfers: Transfer[] | null;
   assessments: Assessment[] | null;
   li: LiSummary | null;
+  /**
+   * The parts this dossier was not built from: their records were never downloaded for this
+   * parcel, so their absence says nothing (never "No deeds on record.").
+   */
+  partial: PartialPart[];
   routes: string[];
   suggestions: string[];
   nearby: Nearby | null;

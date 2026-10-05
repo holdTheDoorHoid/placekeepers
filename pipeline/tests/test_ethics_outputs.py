@@ -21,7 +21,8 @@ tables/owners.json. The tests below check, in every one of them:
 * conservatorship only for a private parcel called vacant with high or medium confidence, and
   never on a parcel with a homestead exemption;
 * names only from memorials.yaml, and everything in suppressed.yaml gone from every file;
-* the citywide owners table lists organizations only, never a person.
+* the citywide owners table lists organizations only, never a person;
+* a dossier built without some records says so (`partial`) instead of claiming there are none.
 
 Rules that need a person to judge (care framing, quiet design, what the interface shows) are
 listed in docs/VERIFICATION.md.
@@ -315,6 +316,22 @@ def test_the_owners_table_lists_organizations_only(built) -> None:
         found = ow.type_from_name(entry["names"])
         assert found.type not in {"individual", "unknown"}, entry["names"]
         assert not ow.possible_estate(entry["names"]), entry["names"]
+
+
+def test_no_dossier_claims_records_it_was_not_built_from(built) -> None:
+    out, _, _ = built
+    for name, body in published_files(out).items():
+        if not re.fullmatch(r"dossiers/\d{4}\.json", name):
+            continue
+        for record in body["parcels"].values():
+            partial = record.get("partial", [])
+            assert set(partial) <= {"transfers", "assessments", "li"}
+            if "transfers" in partial:
+                assert record["transfers"] is None
+            if "assessments" in partial:
+                assert record["assessments"] is None
+            if "li" in partial:
+                assert record["li"]["open_violations"] is None
 
 
 def test_conservatorship_only_for_private_parcels_called_vacant(built) -> None:

@@ -110,6 +110,15 @@ OPTIONAL = (
     "vacant_indicators_land",
     "vacant_indicators_bldg",
 )
+#: The parts of a dossier whose records are downloaded only for the candidate parcels
+#: (placekeepers.candidates), with the source each comes from. A dossier lists in `partial` the
+#: parts it was not built from, so the lot page never says "No deeds on record." or shows zero
+#: violations for a parcel whose records were never downloaded (docs/VERIFICATION.md D9).
+CANDIDATE_PARTS = (
+    ("transfers", "real_estate_transfers", "deeds"),
+    ("assessments", "assessment_history", "assessments"),
+    ("li", "li_violations", "violations"),
+)
 #: 500 feet in meters, for the nearby counts
 NEARBY_M = 152.4
 #: how close a garden point must be to a parcel's shape to call the parcel gardened
@@ -165,6 +174,8 @@ class DossierResult:
     owner_types: Counter = field(default_factory=Counter)
     flags: Counter = field(default_factory=Counter)
     routes: Counter = field(default_factory=Counter)
+    #: dossiers built without some records (their `partial`), by part, and in all
+    partial: Counter = field(default_factory=Counter)
 
     def manifest_block(self) -> dict[str, Any] | None:
         """The manifest's `dossiers` summary (docs/CONTRACTS.md section 3), or None when no
@@ -853,11 +864,24 @@ def build_dossiers(
 
     known_suggestions = set(ctx.registry.suggestions)
     known_routes = set(ctx.registry.routes)
+    downloaded_for = set(candidates.accounts)
+
+    def partial_parts(account: str) -> list[str]:
+        """The parts whose records were not downloaded for this parcel: its source has no
+        snapshot, or the parcel was not a candidate (and the snapshot holds nothing for it)."""
+        return [
+            part
+            for part, source_id, kind in CANDIDATE_PARTS
+            if source_id not in paths
+            or (account not in downloaded_for and account not in records[kind])
+        ]
+
     shards: dict[str, dict[str, Any]] = defaultdict(dict)
     for account in accounts:
         record = opa.get(account)
         owned = city.get(account)
         owner_type = types[account]
+        partial = partial_parts(account)
         history = records["deeds"].get(account, [])
         facts = OwnerFacts(
             owner_type=owner_type,
@@ -881,6 +905,9 @@ def build_dossiers(
             facts.last_sale = tr.last_sale(history, record.sale_date, record.sale_price, as_of)
         elif history:
             facts.last_sale = tr.last_sale(history, None, None, as_of)
+        if "transfers" in partial and facts.last_sale is not None and not facts.last_sale.known:
+            # "Not sold since" would rest on deeds that were never downloaded.
+            facts.last_sale = None
         facts.resales = tr.fast_resales(history, as_of)
         key = keys.get(account)
         if key in listed:
@@ -931,11 +958,20 @@ def build_dossiers(
             "address": (record.location if record else None) or (owned or {}).get("location"),
             "vacancy": call,
             "owner": owner,
-            "transfers": [t.to_json() for t in history],
-            "assessments": records["assessments"].get(account, []),
+            "transfers": None if "transfers" in partial else [t.to_json() for t in history],
+            "assessments": None
+            if "assessments" in partial
+            else records["assessments"].get(account, []),
             "li": li_summary(
-                facts.li, records["sealed"].get(account), records["demolished"].get(account)
+                facts.li,
+                records["sealed"].get(account),
+                records["demolished"].get(account),
+                violations_known="li" not in partial,
             ),
+        }
+        if partial:
+            dossier["partial"] = partial
+        dossier |= {
             "routes": routes,
             "suggestions": suggestions_for(call["kind"] if call else None, known_suggestions),
         }
@@ -949,6 +985,9 @@ def build_dossiers(
         shards[account[:SHARD_DIGITS]][account] = dossier
 
         result.owner_types[owner_type.type] += 1
+        for part in partial:
+            result.partial[part] += 1
+        result.partial["dossiers"] += bool(partial)
         for flag in flags:
             result.flags[flag["id"]] += 1
         if "notice" in owner:
@@ -966,6 +1005,13 @@ def build_dossiers(
         result.notes.append(
             "lot dossiers were built without " + ", ".join(sorted(candidates.missing))
         )
+    if result.partial["dossiers"]:
+        result.notes.append(
+            f"{result.partial['dossiers']:,} lot dossiers lack records downloaded only for "
+            f"candidate parcels (deeds {result.partial['transfers']:,}, assessments "
+            f"{result.partial['assessments']:,}, violations {result.partial['li']:,}); their "
+            "lot pages say so and offer live City data"
+        )
     log.info(
         "dossiers: %s parcels in %s files (%.1f MB); many vacant parcels: %s organizations in "
         "the owners table, %s other owners listed on their own lot pages",
@@ -978,13 +1024,20 @@ def build_dossiers(
     return result
 
 
-def li_summary(li: LiSummary, sealed: date | None, demolished: date | None) -> dict[str, Any]:
+def li_summary(
+    li: LiSummary, sealed: date | None, demolished: date | None, *, violations_known: bool = True
+) -> dict[str, Any]:
+    """The L&I summary. Without the parcel's violation records (`violations_known` False, the
+    dossier's `partial` names "li"), the violation counts and date are null, never 0; the unsafe,
+    imminently dangerous, clean and seal and demolition lists are citywide and always known."""
     out: dict[str, Any] = {
-        "open_violations": li.open_violations,
-        "last_violation": li.last_violation.isoformat() if li.last_violation else None,
+        "open_violations": li.open_violations if violations_known else None,
+        "last_violation": li.last_violation.isoformat()
+        if violations_known and li.last_violation
+        else None,
         "unsafe": li.unsafe_since is not None,
         "imminently_dangerous": li.dangerous_since is not None,
-        "violations": li.violations,
+        "violations": li.violations if violations_known else None,
     }
     if li.unsafe_since:
         out["unsafe_since"] = li.unsafe_since.isoformat()

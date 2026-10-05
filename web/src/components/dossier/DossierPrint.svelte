@@ -52,6 +52,7 @@
 
   <section>
     <h2>{s.print.recent}</h2>
+    {#if m.history.notInCopy}<p>{m.history.notInCopy}</p>{/if}
     {#if m.history.transfers.length}
       <table>
         <caption>{s.history.transfersCaption}</caption>

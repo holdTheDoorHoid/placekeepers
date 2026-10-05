@@ -948,6 +948,11 @@ export const strings = {
       share: (n: number) => `this property's share of one deed for ${n} properties`,
       more: (n: number) => `and ${plural(n, 'other', 'others')}`,
       noTransfers: 'No deeds on record.',
+      notInCopy: (parts: string[]) =>
+        `Our weekly copy does not include ${parts.length > 1 ? `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}` : parts[0]} for this parcel, so this page cannot say whether there are any.`,
+      partialParts: { transfers: 'deed records', assessments: 'assessments', li: 'L&I violation records' } as Record<string, string>,
+      notInCopyOff: 'Turn on live City data to see them.',
+      notInCopyFailed: 'The City did not answer. Try again to see them.',
       recordsNote: 'City deed records are complete from 2000 on. Older sales may be missing.',
       datesNote:
         'Each date is the date on the deed and each price is rounded to the dollar, as the City\'s property page shows them; the City records a deed days or weeks later. When one deed covered several properties, the price is this property\'s share.',
