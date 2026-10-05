@@ -40,9 +40,9 @@
       label: Show parcels we are at least this sure about
       type: choice
       options:
-        - {value: "1", label: Any signal}
-        - {value: "2", label: Medium or high}
-        - {value: "3", label: High only}
+        - {value: "1", label: Any sign of vacancy}
+        - {value: "2", label: Probably or very likely vacant}
+        - {value: "3", label: Very likely vacant only}
       default: "2"
     - id: kinds
       label: Show

@@ -51,7 +51,7 @@ test.describe('analysis view', () => {
     await firstStep.getByText('Ask the owner', { exact: true }).click();
     await expect(firstStep.getByRole('checkbox', { name: 'Ask the owner' })).toBeChecked();
     await expectHash(page, 'f', /^first_step:5$/);
-    await page.locator('[data-filter="min_confidence"]').getByText('High only').click();
+    await page.locator('[data-filter="min_confidence"]').getByText('Very likely vacant only').click();
     await expectHash(page, 's', /vacant_parcels\.min_confidence:3/);
     await closeLeft(page, info);
 
@@ -68,7 +68,7 @@ test.describe('analysis view', () => {
     await expect(page.locator('[data-map-ready="true"]')).toBeAttached({ timeout: 60_000 });
     await openLeft(page, info);
     await expect(page.locator('[data-filter="first_step"]').getByRole('checkbox', { name: 'Ask the owner' })).toBeChecked();
-    await expect(page.locator('[data-filter="min_confidence"]').getByRole('radio', { name: 'High only' })).toBeChecked();
+    await expect(page.locator('[data-filter="min_confidence"]').getByRole('radio', { name: 'Very likely vacant only' })).toBeChecked();
     await page.getByRole('button', { name: 'Clear filters' }).click();
     await expect.poll(async () => (await hashParams(page)).get('f') ?? '').toBe('');
   });

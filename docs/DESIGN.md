@@ -99,6 +99,49 @@ view opens the same thing. The site picks the view by screen size; a switch is a
 
 **Both:** share link, print, data freshness badge, settings drawer, "how to use this responsibly".
 
+As built (M1.7, 2026-10-04):
+
+- **What you can do nearby** (field view) lists the places with a suggestion that is turned on,
+  nearest first: nearest to the middle of the map, or to the person once they tap "Near me". Each
+  card says what the place is, its address from the lot page, how far away it is, how sure we are,
+  its priority under the lens blend with the main reason and its evidence badge, the suggestion with
+  its cost, and the first legal step. Tapping a card opens the lot page; "Show on map" and "Save to
+  my list" sit beside it. Changed from the first plan, which listed the top places under the lens:
+  standing on the block, the nearest place is the useful one, and the analysis view ranks by lens.
+- **Near me** keeps the location on the phone: it is never saved or sent, and while it is in use
+  the address bar and copied links leave out where the map is, because that would show where the
+  person stands. "Stop using my location" ends it.
+- **Filters** (analysis view) are chips kept in the link: how sure we are and lot or building (the
+  lots layer's own settings, so each has one control), owner type, already in LandCare, and the
+  first step to get permission (5.4). Choosing chips shows only those; choosing none shows
+  everything. Council district, community organization, neighborhood and zoning are still to come.
+- **The drawer** under the map holds the ranked list (address, kind, how sure, score, main reason,
+  first step to get permission and a save button; sorted by score, highest or lowest first; the
+  first 50 rows shown and all of them downloadable), the plot of need against the first step (5.4),
+  and saved lists.
+- **Downloads**: the places in view, or a saved list, as CSV or GeoJSON, with what each lot page says
+  about the owner (names and mailing address as the City publishes them, owner type and every owner
+  flag; the GeoJSON keeps each flag's careful note and next step beside it) and a first line
+  pointing to the terms of use (ETHICS.md, "Bulk export"). A download holds at most 500 places, the
+  highest scores first, and says how many it left out.
+- **Saved lists** stay in this browser, and the page says so beside them: name lists, add and remove
+  places from cards, the ranked list or the lot page, and move a list to another device or person by
+  downloading it and opening the file there (the page reads its own CSV and GeoJSON, or any text of
+  nine digit parcel numbers).
+- **A lot page never hides its parcel**: when a panel or the bottom sheet covers part of the map,
+  the map flies with that part as padding, so the parcel lands where people can see it: after "Show
+  on map", after choosing a place in a card, the list, the plot or a saved list, and when a link
+  opens with a lot page. On a phone, where the lot page covers the whole map, "Show on map" closes it
+  first.
+- A loading note covers the map until it has drawn once with its data. On the production build with
+  the sample data the map is ready about 1 to 2 seconds after the page opens (a headless browser
+  drawing in software); with the real data and the base map, about 2.5 to 4 seconds at street zoom.
+- The map's corner shows one short credits line that stays open: the base map's credit (Protomaps
+  and OpenStreetMap, whose license asks for a visible credit) and "Data: City of Philadelphia and
+  others", linking to the Data status page, which lists every source with its license, as each
+  layer's "About this layer" does. Changed from the folded list of every source on the map, which
+  covered a third of it when open.
+
 ## 5. What the map shows
 
 ### 5.1 Things on the map
@@ -134,6 +177,12 @@ Settings persist in the address bar (shareable) and in browser storage under key
 `placekeepers:v1:` (the github.io origin is shared with the owner's other sites). "Reset to defaults"
 is always available.
 
+The base map is a layer too (`basemap`, in the "Base map" group, added by M1.7): its switch turns
+streets and place names off, leaving a plain background, and its look can be light or gray, so the
+data stands out. Links made before it had a switch still show it. Its file is made by the site, not
+the pipeline (CONTRACTS.md section 2), so the pipeline leaves it alone and the Data status page
+judges it by the base map's own build date.
+
 ### 5.3 Lenses
 
 A lens is a set of factors. Each factor is converted to a 0 to 100 citywide percentile so factors
@@ -163,6 +212,14 @@ Need and feasibility are kept apart. Feasibility (who owns the parcel, which leg
 long that route takes) is a filter and a sort, and the analysis view can plot need against
 feasibility. This answers the organizer's real question: where does care help most, *and* where can
 we actually get permission.
+
+As built (M1.7, 2026-10-04): feasibility is the first step to get permission (the tile property
+`rt`): no clear route yet, Community LandCare, a garden agreement or license from the City or the
+Land Bank, ask PHDC, ask the public agency, or ask the owner. It is a category, never a score, so it
+is a filter and an axis of the plot, always in that fixed order, and never a sort (changed from "a
+filter and a sort", per ETHICS.md, "Things we do not build"). The plot shows each place in view as a
+dot: across, its priority under the lens blend; down, its first step. Choosing a dot opens the lot
+page, and the ranked list holds the same places for keyboards and screen readers.
 
 ### 5.5 Suggestions
 
@@ -408,7 +465,9 @@ Every source has an adapter, a registry entry, a license note, an expected caden
 - Svelte 5 and Vite; MapLibre GL JS with the PMTiles protocol; a self hosted Protomaps basemap
   extract of the Philadelphia area (no API keys, no third party tile service).
 - Lens weights are applied as MapLibre style expressions, so moving a slider recolors the map without
-  reloading data. Ranked lists use a compact columnar table loaded once.
+  reloading data. As built (M1.7), the ranked list, the cards and the plot use the parcels drawn in
+  view, from the tiles, with addresses and owner details from the dossier shards; no separate table
+  is needed yet.
 - Address search uses the City's address service from the browser. Live dossier refresh uses the
   City's Carto SQL API (both allow browser requests without a key). If they fail, the snapshot is used
   and the dossier says so.
@@ -422,7 +481,9 @@ Built in M0.4 (2026-10-04). Changes from the original plan are marked.
 
 - `ci.yml`: on every pull request and every push to `main`: pipeline lint, registry check and tests
   (with tippecanoe), the tests of the workflow helper `.github/scripts/refresh.py`, and the web app's
-  tests, type check and build, all on small fixtures.
+  tests, type check and build, all on small fixtures. Added by M1.7: end to end tests of both views at
+  phone (375 by 812) and desktop sizes, with Playwright in Chromium, against the production build on
+  the sample data (`web/e2e/`, `npm run e2e`).
 - `refresh.yml`: every Monday at 10:00 UTC, and on demand from the Actions tab. Five jobs:
   - `pipeline` restores the last good snapshot of every source from the rolling `data-snapshots`
     release, runs `pk all` with tippecanoe, and packs the new good snapshots. It reuses the base map

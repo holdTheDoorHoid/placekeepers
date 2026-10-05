@@ -215,6 +215,15 @@ with `web/scripts/make-basemap.sh`, and the weekly refresh adds it beside the pi
 assembles the site. It is therefore not listed in the manifest's `files` (clarified 2026-10-04 by
 M0.4).
 
+The base map is also a registry layer (added 2026-10-04 by M1.7): `basemap`, in the `basemap` group,
+with `file: basemap/philly.pmtiles`, so it has a switch and a setting (`look`: `light` or `muted`) like
+every layer. `pk publish` leaves every layer whose file is under `basemap/` alone, and the manifest
+lists the layer in `layers` but not its file in `files`. Its source, `basemap_openstreetmap` (endpoint
+kind `osm_extract` with no keys, the first source of that kind), is never fetched by the pipeline, so
+the manifest gives it the status `missing`; the web app ignores that status, judges the base map by
+`basemap/BUILD` (the Protomaps build date, written by make-basemap.sh), and leaves it out of the
+header's freshness badge.
+
 ## 3. `manifest.json`
 
 ```json
