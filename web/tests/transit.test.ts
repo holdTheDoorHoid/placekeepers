@@ -196,6 +196,7 @@ describe('what a stop says', () => {
     expect(subway.riders).toEqual([strings.transit.noStationCounts]);
     expect(subway.often).toContain('Weekdays from 10 to 2: a train about every 5 minutes.');
     expect(describeStop(stop('sr90009')).title).toBe('Sample Regional Rail Station');
+    expect(describeStop(stop('sr90009')).riders).toEqual([strings.transit.noRailCounts]);
   });
 
   it('says plainly when a stop has no midday or no weekday service', () => {

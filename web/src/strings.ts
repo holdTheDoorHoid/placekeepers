@@ -668,7 +668,8 @@ export const strings = {
         : `About ${plural(n, 'person gets', 'people get')} on here on an average weekday (SEPTA's count, ${period}).`,
     countedAt: (id: string) => `Counted at SEPTA stop ${id}, which this stop replaced.`,
     noBoardings: 'SEPTA has no count for this stop yet. New and renumbered stops get one when SEPTA publishes its next count.',
-    noStationCounts: 'SEPTA does not publish counts for each subway, El or Regional Rail platform.',
+    noStationCounts: 'SEPTA does not publish counts for each subway or El platform.',
+    noRailCounts: "SEPTA counts Regional Rail riders by station once a year; this map does not show those counts yet.",
     stopNumber: (id: string) => `SEPTA stop number ${id}.`,
     formerNumbers: (ids: string) => `Before that it was SEPTA stop ${ids}.`,
     wheelchair: {

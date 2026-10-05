@@ -111,7 +111,7 @@ export function describeStop(properties: Record<string, unknown>): StopView {
     const at = text(properties.bx);
     if (at) riders.push(t.countedAt(at));
   } else {
-    riders.push(station ? t.noStationCounts : t.noBoardings);
+    riders.push(kind === 'rail' ? t.noRailCounts : station ? t.noStationCounts : t.noBoardings);
   }
 
   const details: string[] = [];
