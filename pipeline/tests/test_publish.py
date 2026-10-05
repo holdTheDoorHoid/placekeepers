@@ -123,10 +123,13 @@ def test_the_manifest_matches_the_contract(ctx, tmp_path: Path) -> None:
         "layers",
         "files",
         "dossiers",
+        "vacancy",
         "notes",
     }
-    # No OPA snapshot here, so no lot dossiers (docs/CONTRACTS.md section 3).
+    # No OPA snapshot here, so no lot dossiers (docs/CONTRACTS.md section 3), and the vacancy
+    # model has not run, so no vacancy counts.
     assert manifest["dossiers"] is None
+    assert manifest["vacancy"] is None
     assert manifest["schema"] == 1
     assert re.fullmatch(r"2026-10-04T15-00-00Z-\w+", manifest["build_id"])
     assert manifest["generated_at"] == "2026-10-04T15:00:00Z"
