@@ -25,6 +25,7 @@ from placekeepers.runner import fetch_source, validate_source
 from placekeepers.snapshots import SnapshotStore
 
 from .conftest import FakeArcgis, FakeCarto, hex_wkb, load_fixture
+from .transit_fixtures import septa_zip
 
 NOW = datetime(2026, 10, 4, 15, 0, tzinfo=UTC)
 RECENT = "2026-10-01"
@@ -347,6 +348,8 @@ def file_for(source_id: str) -> tuple[bytes, dict[str, str]]:
         return ACS_ROWS.encode(), modified
     if source_id == "cagp_tax_2025":
         return tax_file(), {}
+    if source_id == "septa_gtfs":
+        return septa_zip(), modified
     raise AssertionError(f"no fixture file for {source_id}")
 
 

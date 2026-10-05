@@ -543,7 +543,15 @@ export const strings = {
   streets: {
     popupLabel: 'About this place on the map',
     detailsTitle: (style: string) =>
-      style === 'memorials' ? 'Memorial' : style === 'crashes' ? 'Crash' : style === 'street_segments' ? 'Street block' : 'Details',
+      style === 'memorials'
+        ? 'Memorial'
+        : style === 'crashes'
+          ? 'Crash'
+          : style === 'street_segments'
+            ? 'Street block'
+            : style === 'transit_stops'
+              ? 'Stop'
+              : 'Details',
     memorialTitle: 'In memory',
     peopleHere: (n: number) => `${plural(n, 'person is', 'people are')} remembered here`,
     killed: {
@@ -595,6 +603,79 @@ export const strings = {
     noKsi: 'No one recorded killed or seriously injured while walking or cycling here in the last five years of PennDOT records',
     killed2: (n: number) => `${plural(n, 'person', 'people')} killed here in the last two years`,
     school: 'A school within 400 meters',
+  },
+
+  // SEPTA stops and routes (M2.1): the legends and what a stop's details panel says. Waits are
+  // the typical time between departures; times are SEPTA's service day, which runs past midnight.
+  transit: {
+    waitTitle: 'How often a bus or train comes at midday on weekdays',
+    waitBins: [
+      'Every 10 minutes or better',
+      'Every 11 to 15 minutes',
+      'Every 16 to 30 minutes',
+      'Every 31 to 60 minutes',
+      'Less than once an hour',
+    ],
+    noMidday: 'No service from 10 to 2 on weekdays',
+    boardingsTitle: 'People who get on here on an average weekday',
+    boardingBins: ['1,000 or more', '200 to 999', '50 to 199', '10 to 49', 'Fewer than 10'],
+    noCount: 'No SEPTA count for this stop',
+    boardingsNote: "From SEPTA's own counts, which run a season or two behind the schedules.",
+    station: 'Subway, El or Regional Rail station',
+    zoomNote: 'Zoom in to a few neighborhoods to see the stops.',
+    routeBus: 'Bus route',
+    routeTrolley: 'Trolley route',
+    routeMetro: 'Subway or El',
+    routeRail: 'Regional Rail',
+    allRoutes: 'Where several routes share a street, their lines lie on top of each other.',
+    frequentRoutes: 'Only routes with a bus or train every 15 minutes or better at midday on weekdays.',
+    detailsTitle: 'Stop',
+    stationName: (name: string) => `${name} station`,
+    stopsHere: (n: number) => `${plural(n, 'stop', 'stops')} at this spot`,
+    kinds: {
+      bus: 'Bus stop',
+      trolley: 'Trolley stop',
+      busTrolley: 'Bus and trolley stop',
+      metro: 'Subway or El station',
+      rail: 'Regional Rail station',
+    },
+    vehicles: { bus: 'bus', trolley: 'trolley', busTrolley: 'bus or trolley', train: 'train' } as Record<string, string>,
+    vehiclesMany: { bus: 'buses', trolley: 'trolleys', busTrolley: 'buses or trolleys', train: 'trains' } as Record<string, string>,
+    routes: (list: string) => `Routes: ${list}.`,
+    route: (name: string) => `Route ${name}.`,
+    howOften: 'How often',
+    every: (vehicle: string, minutes: number) =>
+      minutes <= 1 ? `a ${vehicle} about every minute` : `a ${vehicle} about every ${formatNumber(minutes)} minutes`,
+    only: (one: string, many: string, n: number) => (n === 1 ? `only one ${one}` : `only ${formatNumber(n)} ${many}`),
+    peak: (text: string) => `Weekday mornings from 7 to 9: ${text}.`,
+    midday: (day: string, text: string) => `${day} from 10 to 2: ${text}.`,
+    noService: (day: string) => `${day} from 10 to 2: none.`,
+    days: { wk: 'Weekdays', sa: 'Saturdays', su: 'Sundays' } as Record<string, string>,
+    trips: (wk: number, sa: number, su: number) =>
+      `${plural(wk, 'departure', 'departures')} on a typical weekday, ${formatNumber(sa)} on Saturdays and ${formatNumber(su)} on Sundays.`,
+    busiest: (n: number) => `Busiest hour on weekdays: ${plural(n, 'departure', 'departures')}.`,
+    firstLast: (first: string, last: string) => `On weekdays the first departs at ${first} and the last at ${last}.`,
+    afterMidnight: (time: string) => `${time} after midnight`,
+    allNight: 'Service runs through the night on weekdays.',
+    evening: (n: number) =>
+      n === 0 ? 'No departures after 8 at night on weekdays.' : `After 8 at night on weekdays: ${plural(n, 'departure', 'departures')}.`,
+    noWeekday: 'No weekday service.',
+    riders: 'Riders',
+    boardings: (n: number, period: string) =>
+      n === 0
+        ? `Almost no one gets on here on an average weekday (SEPTA's count, ${period}).`
+        : `About ${plural(n, 'person gets', 'people get')} on here on an average weekday (SEPTA's count, ${period}).`,
+    countedAt: (id: string) => `Counted at SEPTA stop ${id}, which this stop replaced.`,
+    noBoardings: 'SEPTA has no count for this stop yet. New and renumbered stops get one when SEPTA publishes its next count.',
+    noStationCounts: 'SEPTA does not publish counts for each subway or El platform.',
+    noRailCounts: "SEPTA counts Regional Rail riders by station once a year; this map does not show those counts yet.",
+    stopNumber: (id: string) => `SEPTA stop number ${id}.`,
+    formerNumbers: (ids: string) => `Before that it was SEPTA stop ${ids}.`,
+    wheelchair: {
+      1: 'SEPTA lists this stop as reachable in a wheelchair.',
+      2: 'SEPTA lists this stop as not reachable in a wheelchair.',
+    } as Record<number, string>,
+    source: "From SEPTA's schedules for a typical week. Waits are averages: buses bunch and gaps grow.",
   },
 
   basemap: {

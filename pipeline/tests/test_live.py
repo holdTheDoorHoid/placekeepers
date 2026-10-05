@@ -81,6 +81,21 @@ def test_the_partner_garden_layer_answers(live: Context) -> None:
     assert adapter.count() >= 150
 
 
+def test_septas_schedules_and_counts_answer(live: Context) -> None:
+    """SEPTA's GTFS link answers with a zip (headers only), and its folder still lists a stop
+    summary with the fields the ridership adapters read."""
+    from placekeepers.adapters.septa import SeptaRidershipBus
+
+    url = live.registry.sources["septa_gtfs"].endpoint.url
+    head = live.http.http.head(url)
+    assert head.status_code == 200 and int(head.headers["content-length"]) > 10_000_000
+    adapter = SeptaRidershipBus(live.registry.sources["septa_ridership_bus"], live)
+    adapter.layer_name = adapter.choose_layer()
+    layer = live.http.get_json(adapter.layer_url, {"f": "json"})
+    assert set(SeptaRidershipBus.out_fields) <= {field["name"] for field in layer["fields"]}
+    assert adapter.count() >= 15_000
+
+
 # The vacancy model on the real cache, against the study
 
 STUDY_COUNTS = {  # docs/VACANCY_METHOD.md, run on 2026-10-04

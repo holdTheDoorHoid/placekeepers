@@ -41,6 +41,13 @@ M1.1), for example `url: https://services2.arcgis.com/qjOOiLCYeUtwT7x7/arcgis/re
 gardens PHS and the Neighborhood Gardens Trust support. A `csv` file may use another delimiter (the
 Census Bureau's tables use `|`); the source's adapter reads it.
 
+Added 2026-10-04 by M2.1: a `zip` file needs a source specific adapter that knows what is inside
+(`septa_gtfs` holds two GTFS feeds). SEPTA publishes its stop ridership counts as one ArcGIS layer
+per schedule period, so for `septa_ridership_bus` and `septa_ridership_trolley` the `service` names
+the oldest layer to accept: each run lists that folder (`url`) and takes the newest spring or fall
+layer for the mode, and the snapshot says which in its `layer` column
+(`pipeline/src/placekeepers/adapters/septa.py`).
+
 ### `registry/licenses.yaml`
 
 ```yaml
@@ -88,8 +95,9 @@ What a setting does to the map is decided by the layer's style in `web/src/map/s
 the setting ids it puts into effect; a web test fails if a registry setting has no effect. Ids and
 option values appear in shared links, so they never change once published.
 
-`registry/groups.yaml` lists groups in display order: `lots`, `care`, `streets`, `safety_context`,
-`boundaries`, `basemap`, each with a label and a one line description.
+`registry/groups.yaml` lists groups in display order: `lots`, `care`, `streets`, `transit` (added
+2026-10-04 by M2.1), `safety_context`, `boundaries`, `basemap`, each with a label and a one line
+description.
 
 ### `registry/lenses.yaml`
 
@@ -206,6 +214,7 @@ data/
     context.pmtiles       layer "h3"        (area cells, resolution 9)
     care.pmtiles          layers "landcare", "gardens"
     boundaries.pmtiles    layers "council_districts", "rcos", "neighborhoods"
+    transit.pmtiles       layers "stops", "routes"   (SEPTA, added 2026-10-04 by M2.1)
   tables/
     parcels.json          compact columnar table for ranking and lists
     owners.json           organizations holding many vacant parcels, with their parcels (section 6)
@@ -445,6 +454,52 @@ when known). Areas overlap. Contact people's names, emails and phones are never 
 `Bridesburg`).
 
 Every boundary layer has `nm`, so one style (`boundary`) can draw and label all three.
+
+Added 2026-10-04 by M2.1 (SEPTA data; the method in plain words is in
+[TRANSIT_METHOD.md](TRANSIT_METHOD.md)):
+
+**`stops` (transit.pmtiles, points)**: every place in Philadelphia where people board a SEPTA bus,
+trolley, subway, El or Regional Rail train, with any departure on a typical weekday, Saturday or
+Sunday (a trip's last stop and stops where no one may board are not departures). One point per
+SEPTA stop: the two sides of a street, and the two platforms of a subway station, are separate.
+"In Philadelphia" is inside the City Council districts widened by 100 meters. In the tiles, stops
+start at zoom 12.
+
+| Property | Type | Meaning |
+|---|---|---|
+| `id` | string | the Placekeepers stop key: `sp` and the SEPTA stop number when the stop was first seen (`sr` for Regional Rail), with `_2` and so on when that key is taken. It never changes and never moves to another stop. When SEPTA renumbers a stop in place (a new number within 30 meters with a similar name, when the old one disappears or within a year after), the stop keeps its key |
+| `sid` | string | SEPTA's stop number today (GTFS `stop_id`, also its `stop_code`) |
+| `fid` | string | earlier SEPTA numbers of this stop, newest first, comma separated; only when there are any |
+| `nm` | string | the stop name as SEPTA writes it, with its side of the street in words ("Broad St & Erie Av (far side)") and any other dash used as punctuation as a comma |
+| `md` | int | modes, as bits: 1 bus (and trackless trolley), 2 trolley, 4 subway or El, 8 Regional Rail |
+| `r` | string | the routes that stop here on the typical days, SEPTA's short names in SEPTA's order, comma separated ("53,56", "B1,B2,B3") |
+| `tw`, `ts`, `tu` | int | departures on the typical weekday, Saturday and Sunday |
+| `bh` | int | departures in the busiest clock hour on the weekday |
+| `hp` | int | the typical wait between departures from 7 to 9 in the morning on the weekday, in whole minutes (120 divided by the departures); absent when none |
+| `hm`, `hs`, `hu` | int | the same from 10 to 2 on the weekday, Saturday and Sunday (240 divided by the departures); absent when none |
+| `ft`, `lt` | int | the first and last departure on the weekday, in minutes after midnight of SEPTA's service day, which runs past midnight (1530 is 1:30 at night); only with weekday service |
+| `ev` | int | weekday departures from 8 at night on; only with weekday service |
+| `nt` | int | how many of the clock hours from 1 to 4 in the morning have a weekday departure (1 to 3; 3 is service through the night); only when above 0 |
+| `wc` | int | SEPTA's wheelchair boarding: 1 reachable, 2 not; absent when SEPTA does not say |
+| `b` | int | average weekday boardings from SEPTA's newest spring or fall stop count, summed over the routes and directions counted there (0 when SEPTA counted no one); absent when no count matches, never estimated |
+| `bp` | string | the period of that count, such as "Spring 2026"; only with `b` |
+| `bx` | string | the SEPTA number the count was recorded under, when it is not `sid` (a number this stop had before, or a stop it replaced within 30 meters with a similar name); only with `b` |
+
+A count matches a stop by its own number, then by a number in its history, then by a stop number no
+longer in the schedules within 30 meters with a similar name; each count goes to one stop at most.
+
+**`routes` (transit.pmtiles, lines)**: every SEPTA route with a stop in Philadelphia on the typical
+days, as the lines its trips follow, merged, simplified to about 5 meters and cut to a box around
+the city. Routes whose trips have no shapes in the feed are left out.
+
+| Property | Type | Meaning |
+|---|---|---|
+| `id` | string | SEPTA's route id (GTFS `route_id`) |
+| `r` | string | SEPTA's short name, such as "47", "T1", "L1", "CHW" |
+| `nm` | string | SEPTA's long name, dashes used as punctuation turned into commas |
+| `md` | int | the mode, as for `stops` |
+| `tw` | int | trips on the typical weekday |
+| `hp`, `hm` | int | the typical wait from 7 to 9 and from 10 to 2 on the weekday, where the route runs most often (its busiest stop in its busiest direction); absent when none |
 
 ## 5. Hand curated memorial files (`data/curated/`)
 
