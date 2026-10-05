@@ -53,6 +53,13 @@ export interface ParcelInView {
   center: [number, number];
 }
 
+/** A memorial marker drawn in the current view: one person, with where the marker stands. */
+export interface MemorialInView {
+  layerId: string;
+  properties: Record<string, unknown>;
+  lngLat: [number, number];
+}
+
 /** A memorial, crash or street block someone tapped: shown in the details panel. */
 export interface InspectTarget {
   layerId: string;
@@ -199,7 +206,10 @@ export class MapController {
     this.map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), 'top-right');
     this.map.getCanvas().setAttribute('aria-label', strings.app.mapLabel);
 
-    this.map.on('load', () => {
+    // The data layers go on as soon as the starting style is ready, so their files download beside
+    // the base map's; MapLibre's "load" waits for the base map to finish drawing, which on a slow
+    // connection held the lots back by seconds.
+    this.map.once('style.load', () => {
       this.loaded = true;
       const layers = this.map.getStyle().layers;
       // A hosted style (OpenFreeMap) brings its own layers, known only now, drawn as it styles them.
@@ -218,6 +228,11 @@ export class MapController {
         this.events.ready?.();
       }
       this.events.idle();
+    });
+    // The base map's icon set has no picture for a few kinds of place (such as "townhall"). Those
+    // get an empty picture, so the map draws only their name and the browser console stays quiet.
+    this.map.on('styleimagemissing', (e: { id: string }) => {
+      if (!this.map.hasImage(e.id)) this.map.addImage(e.id, { width: 1, height: 1, data: new Uint8Array(4) });
     });
     this.map.on('click', (e) => this.handleClick(e));
     this.map.on('mousemove', (e) => this.handleHover(e));
@@ -299,6 +314,24 @@ export class MapController {
       const id = feature.properties?.id;
       if (id === undefined || id === null || seen.has(String(id))) continue;
       seen.set(String(id), { id: String(id), properties: { ...feature.properties }, center: centerOf(feature.geometry) });
+    }
+    return [...seen.values()];
+  }
+
+  /**
+   * Memorial markers drawn in the current view, one entry per person, so the lists that stand in
+   * for the map can offer each one to keyboards and screen readers.
+   */
+  memorialsInView(): MemorialInView[] {
+    const ids = this.parts((style) => style === STYLES.memorials, 'clickable');
+    if (!this.loaded || ids.length === 0) return [];
+    const seen = new Map<string, MemorialInView>();
+    for (const feature of this.map.queryRenderedFeatures({ layers: ids })) {
+      const layerId = this.layerOf(feature.layer.id);
+      const properties = { ...feature.properties };
+      const key = String(properties.id ?? JSON.stringify(properties));
+      if (!layerId || seen.has(key)) continue;
+      seen.set(key, { layerId, properties, lngLat: centerOf(feature.geometry) });
     }
     return [...seen.values()];
   }

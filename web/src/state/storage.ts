@@ -8,6 +8,9 @@ export const STORAGE_PREFIX = 'placekeepers:v1:';
 /** The saved settings, in the same compact form as the address bar (without map or selection). */
 export const PREFS_KEY = 'prefs';
 
+/** "hidden" once the person has hidden the note about the early preview. */
+export const NOTE_KEY = 'note';
+
 export interface KeyValueStore {
   getItem(key: string): string | null;
   setItem(key: string, value: string): void;

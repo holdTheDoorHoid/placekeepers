@@ -10,8 +10,8 @@ body:
         wrong or out of date.
 
         This form is for facts shown on the map or on the site's pages. It is not for a memorial.
-        To ask for a memorial name to come down, use the removal request on the Contact page
-        instead; that one goes by email, not here.
+        To ask for a memorial to come down, use the form "Ask for a memorial to come down"
+        instead (the Contact page links to it).
   - type: input
     id: place
     attributes:

@@ -89,6 +89,13 @@ describe('defaults per view', () => {
     expect(autoView(1440)).toBe('analysis');
   });
 
+  it('gives a phone turned sideways the field view, but not a short computer window', () => {
+    expect(autoView(812, 375, true)).toBe('field');
+    expect(autoView(932, 430, true)).toBe('field');
+    expect(autoView(1024, 768, true)).toBe('analysis');
+    expect(autoView(1280, 480, false)).toBe('analysis');
+  });
+
   it('switches to the other view defaults only when the layers were untouched', () => {
     expect(layersAfterViewSwitch(reg, defaultLayers(reg, 'field'), 'field', 'analysis')).toEqual(
       defaultLayers(reg, 'analysis'),

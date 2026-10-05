@@ -64,9 +64,10 @@ or a ghost bike always says to ask the family first, and links to Families for S
 
 ### Asking for a name to come down
 
-Anyone can ask for a name to be removed, by email (see
+Anyone can ask for a name, or a memorial marker, to be removed (see
 [Contact](https://holdthedoorhoid.github.io/placekeepers/contact/)). We take it down without
-asking for proof. We also keep a record of the parcel or crash id, never the name itself, so that
+asking for proof. A private email address for these requests is coming soon. Until it exists, the
+map shows no names at all, and a request can be made in a GitHub issue, which anyone can read. We also keep a record of the parcel or crash id, never the name itself, so that
 name never comes back automatically from a future update.
 
 ## Why shootings are shown as counts, not as a list of victims

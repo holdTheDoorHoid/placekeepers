@@ -9,7 +9,7 @@ import { DossierController } from '../dossier/controller.svelte.ts';
 import { isOpaAccount } from '../dossier/opa.ts';
 import { AddressBook } from '../places/addresses.svelte.ts';
 import { ListStore } from '../places/lists.svelte.ts';
-import type { InspectTarget, LayerStatus, MapController, ParcelInView } from '../map/controller.ts';
+import type { InspectTarget, LayerStatus, MapController, MemorialInView, ParcelInView } from '../map/controller.ts';
 import type { Registry, SettingValue, ViewName } from '../registry/types.ts';
 import { strings } from '../strings.ts';
 import {
@@ -68,6 +68,8 @@ export class AppStore {
   /** The map has drawn for the first time, with its data. */
   mapReady = $state(false);
   parcelsInView = $state.raw<ParcelInView[]>([]);
+  /** Memorial markers drawn in view, for the memorial lists that stand in for the map. */
+  memorialsInView = $state.raw<MemorialInView[]>([]);
   selectedProperties = $state.raw<Record<string, unknown> | null>(null);
   /** A memorial, crash or street block someone tapped, shown in the details panel. */
   inspected = $state.raw<InspectTarget | null>(null);

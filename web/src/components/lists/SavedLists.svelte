@@ -2,6 +2,7 @@
   // Saved lists: choose the list in use, make, rename and delete lists, open or remove places,
   // download a list with its owner details, and open a list file. Lists stay in this browser; a
   // downloaded file is how a list moves to another device or to someone else.
+  import { tick } from 'svelte';
   import { MAX_LISTS, MAX_LIST_PLACES, type SavedPlace } from '../../places/lists.svelte.ts';
   import { MAX_IMPORT_BYTES, parseListFile } from '../../places/import.ts';
   import type { AppStore } from '../../state/store.svelte.ts';
@@ -16,6 +17,11 @@
   let naming = $state<'new' | 'rename' | null>(null);
   let name = $state('');
   let importMessage = $state('');
+  // Keyboard focus moves into the name form when it opens, and back to the button that opened it
+  // when it closes; after a list is deleted it lands on "New list", which is always there.
+  let newButton: HTMLButtonElement | undefined = $state();
+  let renameButton: HTMLButtonElement | undefined = $state();
+  let nameInput: HTMLInputElement | undefined = $state();
 
   // Saved places learn their addresses as they become known.
   $effect(() => {
@@ -32,23 +38,40 @@
     return k === 1 ? strings.place.kindLot : k === 2 ? strings.place.kindBuilding : '';
   }
 
-  function startNaming(kind: 'new' | 'rename') {
+  async function startNaming(kind: 'new' | 'rename') {
     naming = kind;
     name = kind === 'rename' && active ? active.name : '';
+    await tick();
+    nameInput?.focus();
+  }
+
+  async function stopNaming() {
+    const opener = naming === 'rename' ? renameButton : newButton;
+    naming = null;
+    await tick();
+    (opener ?? newButton)?.focus();
   }
 
   function submitName(event: SubmitEvent) {
     event.preventDefault();
     if (naming === 'new') {
-      if (!store.lists.create(name || s.defaultName)) store.say(s.tooMany(MAX_LISTS));
-    } else if (naming === 'rename' && active) store.lists.rename(active.id, name);
-    naming = null;
+      const list = store.lists.create(name || s.defaultName);
+      store.say(list ? s.made(list.name) : s.tooMany(MAX_LISTS));
+    } else if (naming === 'rename' && active) {
+      store.lists.rename(active.id, name);
+      store.say(s.renamed(store.lists.active?.name ?? name));
+    }
+    void stopNaming();
   }
 
-  function remove() {
+  async function remove() {
     if (!active) return;
+    const gone = active.name;
     if (!window.confirm(s.confirmDelete(active.name, active.places.length))) return;
     store.lists.delete(active.id);
+    store.say(s.deleted(gone));
+    await tick();
+    newButton?.focus();
   }
 
   function open(place: SavedPlace) {
@@ -113,9 +136,9 @@
   {/if}
 
   <div class="row">
-    <button class="button quiet small" type="button" onclick={() => startNaming('new')}>{s.newList}</button>
+    <button class="button quiet small" type="button" bind:this={newButton} onclick={() => startNaming('new')}>{s.newList}</button>
     {#if active}
-      <button class="button quiet small" type="button" onclick={() => startNaming('rename')}>{s.rename}</button>
+      <button class="button quiet small" type="button" bind:this={renameButton} onclick={() => startNaming('rename')}>{s.rename}</button>
       <button class="button quiet small" type="button" onclick={remove}>{s.delete}</button>
     {/if}
   </div>
@@ -124,9 +147,23 @@
     <form class="name-form" onsubmit={submitName}>
       <label for="{idPrefix}-list-name">{naming === 'new' ? s.newName : s.renameLabel}</label>
       <div class="row">
-        <input id="{idPrefix}-list-name" type="text" bind:value={name} maxlength="80" autocomplete="off" />
+        <input
+          id="{idPrefix}-list-name"
+          type="text"
+          bind:this={nameInput}
+          bind:value={name}
+          maxlength="80"
+          autocomplete="off"
+          onkeydown={(e) => {
+            // Escape leaves the name as it was and stays in the lists, rather than closing them.
+            if (e.key !== 'Escape') return;
+            e.preventDefault();
+            e.stopPropagation();
+            void stopNaming();
+          }}
+        />
         <button class="button small primary" type="submit">{naming === 'new' ? s.create : s.saveName}</button>
-        <button class="button quiet small" type="button" onclick={() => (naming = null)}>{s.cancel}</button>
+        <button class="button quiet small" type="button" onclick={() => void stopNaming()}>{s.cancel}</button>
       </div>
     </form>
   {/if}
@@ -148,12 +185,12 @@
           </li>
         {/each}
       </ul>
-      <h4>{s.download}</h4>
-      <ExportButtons {store} places={exportPlaces} title={active.name} idPrefix="{idPrefix}-list" />
+      <h4 id="{idPrefix}-list-download">{s.download}</h4>
+      <ExportButtons {store} places={exportPlaces} title={active.name} idPrefix="{idPrefix}-list" headingId="{idPrefix}-list-download" />
     {/if}
   {/if}
 
-  <h4>{s.importTitle}</h4>
+  <h3 class="import-title">{s.importTitle}</h3>
   <p class="muted small">{s.importHelp}</p>
   <input
     id="{idPrefix}-list-file"
@@ -240,11 +277,16 @@
   h4 {
     margin-top: 12px;
   }
+  .import-title {
+    margin-top: 16px;
+    font-size: 0.9rem;
+  }
   .file {
     max-width: 100%;
     font-size: 0.875rem;
   }
+  /* An empty status line takes no room but stays in place, so screen readers hear what fills it. */
   p[role='status']:empty {
-    display: none;
+    margin: 0;
   }
 </style>
