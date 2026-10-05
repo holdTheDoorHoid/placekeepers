@@ -4,7 +4,7 @@ Placekeepers does not have a numbered history yet. This file starts with the fir
 release. Numbers below are from the live manifest and the project's docs, as of October 4, 2026,
 and change a little every week as the data refreshes.
 
-## v0.1 (date to be set)
+## v0.1 (2026-10-05)
 
 The first public release: a vacant lot finder with a full page for every lot, and street safety
 with memorials.
@@ -32,7 +32,7 @@ with memorials.
 
 ### Lot pages
 
-- Every parcel with a sign of vacancy gets a full page (about 78,000 as of October 4, 2026): a
+- Every parcel with a sign of vacancy gets a full page (about 82,000 as of October 4, 2026): a
   summary with our confidence and the reasons behind it, suggestions with the first lawful step,
   who owns it, full sale history, and what is nearby.
 - Owner flags such as absentee owner, possible estate, tax debt as of July 2025, and owner holds
