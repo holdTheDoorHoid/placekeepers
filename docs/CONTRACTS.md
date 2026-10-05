@@ -597,13 +597,15 @@ longer in the schedules within 30 meters with a similar name; each count goes to
 Added 2026-10-05 by M2.3 (the transit comfort lens; the method in plain words is in
 [TRANSIT_METHOD.md](TRANSIT_METHOD.md), the code in `pipeline/src/placekeepers/derive/transit_comfort.py`).
 Bus and trolley stops (`md` bit 1 or 2) also carry these; stations of the subway, the El and
-Regional Rail carry none of them. `o`, `a`, `sh`, `bn`, `li` and `cv` come from OpenStreetMap, so
+Regional Rail carry none of them, nor do the 15 trolley tunnel stations underground from 13th
+Street to 37th Street (`TUNNEL_STATIONS` in `derive/transit_comfort.py`, added 2026-10-05 by the
+v0.2 review). `o`, `a`, `sh`, `bn`, `li` and `cv` come from OpenStreetMap, so
 the layer lists `osm_philadelphia` among its sources and is credited "© OpenStreetMap contributors",
 and those properties are under the Open Database License, as amenities.pmtiles is.
 
 | Property | Type | Meaning |
 |---|---|---|
-| `o` | string | the OpenStreetMap stop matched to this one, as `id` in amenities.pmtiles (`n` or `w` and the element id); absent when none matched. The match is `match_septa` in `derive/bus_stops.py`, as for the route survey sheets (section 7): by stop number, then by distance, both only within 15 meters, closest pairs first, each stop once |
+| `o` | string | the OpenStreetMap stop matched to this one, as `id` in amenities.pmtiles (`n` or `w` and the element id); absent when none matched. The match is `match_septa` in `derive/bus_stops.py`, as for the route survey sheets (section 7): by stop number, then by distance, both only within 15 meters, closest pairs first, each stop once; a number counts only when no other SEPTA stop stands more than 3 meters closer, and by distance an OpenStreetMap stop pairs only with its nearest SEPTA stop (changed 2026-10-05 by the v0.2 review) |
 | `om` | int | 1 when the stop numbers agree (the OpenStreetMap stop's `ref` or `gtfs:stop_id` names `sid` or a number in `fid`), 2 when the two only stand at the same place |
 | `a` | int | what riders find, the matched stop's `c` in amenities.pmtiles: 3 a shelter or roof, 2 a bench but no shelter mapped, 1 neither, 0 not yet surveyed; absent when no OpenStreetMap stop matched (also not yet surveyed, never "missing") |
 | `sh`, `bn`, `li`, `cv` | int | the matched stop's shelter, bench, lit and covered answers, 1 yes and 0 no; absent when unknown. Lit is `li` here because `lt` is the last departure |
@@ -1028,13 +1030,16 @@ stop is not a departure in the `stops` layer.
 
 **Which OpenStreetMap stop is which SEPTA stop.** First by number: an OpenStreetMap stop whose `ref`
 or `gtfs:stop_id` names a SEPTA stop (its `sid` or a number it had before), when the two stand within
-15 meters. Then by distance alone, the closest pairs first, within 15 meters. Each stop pairs once.
-A number farther away is not believed: on Frankford Avenue some stops carry the number of the stop
-across the street while standing within a few meters of another SEPTA stop. On 2026-10-05 this
-paired 659 of the 829 OpenStreetMap stops in the city with a SEPTA stop; most of the rest stand 15
-to 30 meters from the nearest one. Where an OpenStreetMap stop carries a SEPTA
-number and stands within 15 meters of that stop, distance alone finds the same stop 178 times in
-182. A stop with no `c` may still be in OpenStreetMap a few steps away, so the sheet says "not found
+15 meters and no other SEPTA stop stands more than 3 meters closer to the OpenStreetMap stop. Then by
+distance alone, the closest pairs first, within 15 meters, each OpenStreetMap stop only with its
+nearest SEPTA stop: when that one is taken it stays unpaired. Each stop pairs once. A number farther
+away is not believed: on Frankford Avenue some stops carry the number of the stop across the street
+while standing within a few meters of another SEPTA stop, and at Huntingdon Street that stop across
+the street is only 12 meters away (the two rules after "and" were added 2026-10-05 by the v0.2
+review, docs/VERIFICATION_V0_2.md). On 2026-10-05 this paired 654 of the 829 OpenStreetMap stops in
+the city with a SEPTA stop; most of the rest stand 15 to 30 meters from the nearest one. Where an
+OpenStreetMap stop's number agrees with the SEPTA stop it is paired with (180 pairs that day), that
+stop is also its nearest SEPTA stop 179 times. A stop with no `c` may still be in OpenStreetMap a few steps away, so the sheet says "not found
 in OpenStreetMap", never "missing".
 
 ### `tables/routes/index.json`
@@ -1062,7 +1067,7 @@ Every route with a file, in SEPTA's order of routes: its id, names and mode, its
 with `n` stops on the sheet, and `s`, the stops of all its directions by `c` (`none` for stops with
 no match). The route files are not in the manifest's `files` (section 3); the index is. On
 2026-10-05: 123 routes (117 bus, 6 trolley), 237 directions with a median of 55 stops, files of
-0.4 to 28 kB (median 11 kB, about 4 kB compressed), 1.4 MB in all; the index is 31 kB (6 kB
+0.4 to 28 kB (median 11 kB, about 2 kB compressed), 1.4 MB in all; the index is 31 kB (6 kB
 compressed).
 
 The page's time estimate is the site's own, not data: walking about 80 meters a minute (3 miles an

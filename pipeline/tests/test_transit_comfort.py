@@ -22,6 +22,7 @@ from placekeepers.derive.transit_comfort import (
     BY_NUMBER,
     BY_PLACE,
     NOT_SURVEYED,
+    TUNNEL_STATIONS,
     SeptaStop,
     comfort_for_stops,
     match_osm,
@@ -295,6 +296,36 @@ def test_stops_carry_what_riders_find_the_factors_and_suggestions(comfort_paths,
     note = next(n for n in notes if "match an OpenStreetMap stop" in n)
     assert "2 of 3 SEPTA bus and trolley stops match an OpenStreetMap stop within 15 meters" in note
     assert "(1 where the stop numbers agree, 1 by place), of the 3 OpenStreetMap has in" in note
+
+
+def test_the_trolley_tunnel_stations_are_left_out_like_stations(
+    comfort_paths, tmp_path, monkeypatch
+) -> None:
+    # Found by the v0.2 review: the platforms underground from 13th Street to 37th Street got the
+    # suggestions to survey them with StreetComplete and to plant shade trees. Here stop 108
+    # stands in for one; it keeps its service and riders, and gets no lens and no suggestion.
+    import placekeepers.publish.transit as transit_layer
+
+    monkeypatch.setattr(transit_layer, "TUNNEL_STATIONS", frozenset({"108"}))
+    ctx, paths = comfort_paths
+    stops, notes = published(ctx, paths, tmp_path)
+    tunnel = stops["108"]
+    assert not any(key.startswith("f_") or key in ("sg", "a", "o", "cp", "hin") for key in tunnel)
+    assert tunnel["b"] == 7 and tunnel["tw"] > 0
+    # The other two stops are ranked between themselves.
+    assert (stops["100"]["f_riders"], stops["101"]["f_riders"]) == (50, 0)
+    assert "transit comfort: 1 trolley tunnel station underground is left out of the lens" in (
+        " ".join(notes)
+    )
+    note = next(n for n in notes if "match an OpenStreetMap stop" in n)
+    assert "2 of 2 SEPTA bus and trolley stops match" in note
+
+
+def test_the_tunnel_station_list_names_real_trolley_stops() -> None:
+    # Every number is a SEPTA stop number (digits only) and there are two platforms at each
+    # station but the 13th Street loop.
+    assert all(number.isdigit() for number in TUNNEL_STATIONS)
+    assert len(TUNNEL_STATIONS) == 15
 
 
 def test_without_openstreetmap_every_stop_is_not_yet_surveyed(comfort_paths, tmp_path) -> None:
