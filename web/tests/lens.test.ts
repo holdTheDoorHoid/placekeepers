@@ -6,6 +6,7 @@ import {
   NO_SCORE,
   displayedBreakdown,
   explainScore,
+  wholeScore,
   lensColorExpression,
   lensScoreExpression,
   type ColorRamp,
@@ -145,6 +146,20 @@ describe('the breakdown as shown in the details panel', () => {
     const outside = explainScore(violence, defaults, { f_vacant: 0, f_shoot: 50, f_canopy: 20 });
     expect(outside.score).toBeCloseTo((3 * 0 + 3 * 50 + 1 * 20) / 7, 10);
     expect(outside.missing).toEqual(['poverty']);
+  });
+
+  it('gives cards and the ranked list the whole number the breakdown\'s total rounds to', () => {
+    expect(wholeScore(57.46)).toBe(58);
+    expect(wholeScore(57.44)).toBe(57);
+    expect(wholeScore(null)).toBeNull();
+    for (const props of parcels) {
+      for (const weights of mixes) {
+        const why = explainScore(violence, weights, props);
+        const shown = displayedBreakdown(why);
+        if (shown.score === null) continue;
+        expect(wholeScore(why.score)).toBe(Math.round(shown.score));
+      }
+    }
   });
 
   it('shows tenths that add up exactly to the shown score, for every sample parcel and weight mix', () => {

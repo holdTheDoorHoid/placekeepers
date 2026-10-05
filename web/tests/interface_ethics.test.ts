@@ -161,6 +161,31 @@ describe('no word for ease of acquisition (interface check 3)', () => {
   });
 });
 
+describe('care words, never danger words (interface check 8)', () => {
+  // ETHICS.md: "where care is needed most", never "dangerous", "high crime" or "hot spot". L&I's own
+  // terms for a building ("unsafe", "imminently dangerous") are about the structure, not a place,
+  // and the shootings layer says it is "not to label places as dangerous".
+  const DANGER = /\b(dangerous|high crime|crime ridden|hot ?spots?|bad (area|neighborhood)|safe(st)? neighborhoods?)\b/i;
+  const LI_TERMS = /imminently dangerous|not to label places as dangerous/gi;
+
+  it('no interface string, layer, lens or group calls a place dangerous', () => {
+    const texts = [
+      ...collectStrings(strings).map(([, text]) => text),
+      ...registry.layers.flatMap((l) => [l.label, l.description, ...l.settings.map((setting) => setting.label)]),
+      ...registry.groups.flatMap((g) => [g.label, g.description]),
+      ...registry.lenses.flatMap((l) => [l.label, l.description, ...l.factors.flatMap((f) => [f.label, f.explain])]),
+    ];
+    expect(texts.filter((text) => DANGER.test(text.replace(LI_TERMS, '')))).toEqual([]);
+  });
+
+  it('ranks no area: the area summary counts lots in view, and shootings are never listed by area', () => {
+    const area = collectStrings({ area: [strings.analysis.areaTitle, strings.analysis.areaLots(2), strings.analysis.areaBuildings(1), strings.analysis.areaHigh(1), strings.analysis.areaLandcare(1)] });
+    for (const [, text] of area) expect(text).not.toMatch(/shoot|crime|violen|rank/i);
+    // The only ranked list ranks lots for care under the lens a person chose.
+    expect(strings.analysis.tableCaption).toBe('Places in view, ranked by the current lens blend');
+  });
+});
+
 describe('the possible estate flag (interface check 5)', () => {
   const words = /"Possible estate" reads: \*"([^"]+)"\*/.exec(ETHICS)![1]!;
 
