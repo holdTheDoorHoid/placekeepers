@@ -98,9 +98,13 @@ Read the full [LICENSE](LICENSE).
 
 ## Screenshots
 
-*Coming soon: `docs/images/field-phone.png` (the field view on a phone, near a block with vacant
-lots, with "What you can do nearby" open) and `docs/images/analysis-desktop.png` (the analysis
-view on a desktop, with a lot page open).*
+The field view on a phone, near a block with vacant lots, with "What you can do nearby" open:
+
+![The field view on a phone, showing a block with several vacant lots and the "What you can do nearby" list open underneath the map](docs/images/field-phone.png)
+
+The analysis view on a desktop, with a lot page open:
+
+![The analysis view on a desktop, with lens sliders on the left, the map in the middle, and an open lot page on the right](docs/images/analysis-desktop.png)
 
 ## For developers
 
