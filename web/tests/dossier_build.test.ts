@@ -3,10 +3,22 @@
 // an owner who changed since the snapshot. Each part must say where it came from.
 
 import { readFileSync } from 'node:fs';
+import { render } from 'svelte/server';
 import { describe, expect, it } from 'vitest';
 import { loadRegistry } from '../plugins/registry.ts';
+import DossierOwner from '../src/components/dossier/DossierOwner.svelte';
 import { parseManifest } from '../src/data/manifest.ts';
-import { IDLE_PARTS, buildDossier, cityTitle, documentLabel, transferRow, type DossierInput, type LiveParts, type Part } from '../src/dossier/build.ts';
+import {
+  IDLE_PARTS,
+  buildDossier,
+  cityTitle,
+  documentLabel,
+  reasonBesideCityList,
+  transferRow,
+  type DossierInput,
+  type LiveParts,
+  type Part,
+} from '../src/dossier/build.ts';
 import { displayedBreakdown } from '../src/map/lens.ts';
 import { strings } from '../src/strings.ts';
 import { plain } from '../src/dossier/plain.ts';
@@ -463,6 +475,26 @@ describe('details', () => {
     expect(view.actions.otherRoutes).toEqual([]);
     expect(view.owner.deedFraud).toBeNull();
     expect(view.owner.help).toBeNull();
+  });
+
+  it('says once who the City list names as the owner (finding F9 of the v0.3 review)', () => {
+    for (const opa of ['990000002', '990000009']) {
+      const view = buildDossier(input(opa, { liveOn: false }));
+      expect(view.owner.cityOwned).toMatch(/^The City's list of public property names the .* as the owner\./);
+      // The owner type's reason said the same sentence; the list's line below now says it alone.
+      expect(view.owner.typeReason).toBeNull();
+      const page = render(DossierOwner, { props: { owner: view.owner } }).body;
+      expect(page.split("The City's list of public property names").length - 1).toBe(1);
+    }
+    // Anything else the reason says stays, such as other City records naming a different owner.
+    const owned = { agency: 'PUB', status: 'Owned - Available', sideYardEligible: false, available: true };
+    const conflict = "The City's list of public property names the City of Philadelphia as the owner. City property records name a different owner, so ask the City which is current.";
+    expect(reasonBesideCityList(conflict, owned)).toBe('City property records name a different owner, so ask the City which is current.');
+    // A reason from the owner's name, or a parcel not on the list, is left as it is.
+    expect(reasonBesideCityList('City records name the Philadelphia Redevelopment Authority as the owner.', { ...owned, agency: 'PRA' })).toBe(
+      'City records name the Philadelphia Redevelopment Authority as the owner.',
+    );
+    expect(reasonBesideCityList(conflict, null)).toBe(conflict);
   });
 
   it('hides a suggestion that is switched off in Settings', () => {

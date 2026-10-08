@@ -412,16 +412,35 @@ function liSummaryLines(li: LiSummary): string[] {
   return lines;
 }
 
+/** "The City's list of public property names ... as the owner.", or null when the list names no agency we know. */
+function cityListOwnerSentence(owned: CityOwned): string | null {
+  const o = strings.dossier.owner;
+  const agency = owned.agency ? (o.agencies[owned.agency.toUpperCase()] ?? null) : null;
+  return agency ? o.cityListNames(agency) : null;
+}
+
 /** What the City's list of public property says about the parcel, in a sentence. */
 export function cityOwnedText(owned: CityOwned | null): string | null {
   if (!owned) return null;
   const o = strings.dossier.owner;
-  const agency = owned.agency ? (o.agencies[owned.agency.toUpperCase()] ?? null) : null;
-  const parts = [agency ? o.cityListNames(agency) : o.cityList];
+  const parts = [cityListOwnerSentence(owned) ?? o.cityList];
   // The status in plain words, with what it means for neighbors (issue #36).
   if (owned.status) parts.push(cityStatusText(owned.status));
   if (owned.sideYardEligible) parts.push(o.sideYard);
   return parts.join(' ');
+}
+
+/**
+ * The owner type's reason, less the sentence the City's list's own line says right after it:
+ * for a parcel on the list, the reason is often "The City's list of public property names ... as
+ * the owner.", the first sentence of that line too (finding F9 of docs/VERIFICATION_V0_3.md).
+ * Anything the reason adds, such as other City records naming a different owner, stays.
+ */
+export function reasonBesideCityList(reason: string | null, owned: CityOwned | null): string | null {
+  if (!reason || !owned) return reason;
+  const sentence = cityListOwnerSentence(owned);
+  if (!sentence || !reason.startsWith(sentence)) return reason;
+  return reason.slice(sentence.length).trim() || null;
 }
 
 export function routeView(route: Route): RouteView {
@@ -799,7 +818,8 @@ export function buildDossier(input: DossierInput): DossierView {
       names,
       mailing: plain(property ? property.mailing : (shardOwner?.mailing ?? null)),
       typeLabel,
-      typeReason,
+      // The City's list's own line, shown below the owner type, names the owner already.
+      typeReason: ownerChanged ? typeReason : reasonBesideCityList(typeReason, shardOwner?.cityOwned ?? null),
       cityOwned: ownerChanged ? null : cityOwnedText(shardOwner?.cityOwned ?? null),
       isPrivate: privateOwner,
       flags: listedFlags,
