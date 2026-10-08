@@ -36,7 +36,10 @@ suggestions_for):
 * `seating_and_shade` where more people live within a 5 minute walk than around half the places
   on the map (`f_neighbors` at least 50);
 * `community_garden` where the lot is farther from a park than half the places on the map
-  (`f_park` at least 50);
+  (`f_park` at least 50) and at least GARDEN_MIN_PEOPLE people live within a 5 minute walk
+  (`people_5min` of the walking measures), so a garden has neighbors to tend it and use it: far
+  from a park alone also finds new developments by the river, the Navy Yard and industrial land
+  where almost no one lives;
 * `art_request` where no work of the two art lists stands within a 5 minute walk (400 meters) and
   many people live around the lot (`f_neighbors` at least 50), so art would be seen;
 * `report_dumping`, `report_dark_light` and `report_graffiti` where a street block the lot faces
@@ -106,6 +109,8 @@ FACING_M = 20.0
 RANK_STEP = 5
 #: A factor at or above this means more than at half the places on the map.
 SUGGEST_FROM = 50
+#: A community garden needs at least this many people within a 5 minute walk (`people_5min`).
+GARDEN_MIN_PEOPLE = 1000
 SEATING_AND_SHADE = "seating_and_shade"
 COMMUNITY_GARDEN = "community_garden"
 ART_REQUEST = "art_request"
@@ -169,18 +174,28 @@ def is_park(row: Mapping[str, Any]) -> bool:
 
 
 def suggestions_for(
-    is_lot: bool, factors: Mapping[str, int], art_m: float | None, open_bits: int
+    is_lot: bool,
+    factors: Mapping[str, int],
+    art_m: float | None,
+    open_bits: int,
+    people: int | None = None,
 ) -> list[str]:
     """The placemaking suggestion ids for one parcel (module docstring), in order. `art_m` is the
     distance to the nearest work of the two art lists (None when neither list has a snapshot);
-    `open_bits`, the kinds of condition with an open request on a block the lot faces."""
+    `open_bits`, the kinds of condition with an open request on a block the lot faces; `people`,
+    the people within a 5 minute walk (None when the walking measures do not know, and then no
+    garden is suggested)."""
     if not is_lot:
         return []
     found: list[str] = []
     neighbors = factors.get("f_neighbors", -1)
     if neighbors >= SUGGEST_FROM:
         found.append(SEATING_AND_SHADE)
-    if factors.get("f_park", -1) >= SUGGEST_FROM:
+    if (
+        factors.get("f_park", -1) >= SUGGEST_FROM
+        and people is not None
+        and people >= GARDEN_MIN_PEOPLE
+    ):
         found.append(COMMUNITY_GARDEN)
     if art_m is not None and art_m > ART_NEAR_M and neighbors >= SUGGEST_FROM:
         found.append(ART_REQUEST)
@@ -416,24 +431,24 @@ def run(ctx: Context, as_of: date | None = None, out: Path | None = None) -> Pla
     f_art = coarse(rank_or_none(art_m))
     f_corr = corridor
 
-    # Suggestions, with the walking measures' f_neighbors.
-    walking = load_walk(walk_output(ctx), ("f_neighbors",))
+    # Suggestions, with the walking measures' f_neighbors and people within a 5 minute walk.
+    walking = load_walk(walk_output(ctx), ("f_neighbors", "people_5min"))
     if not walking:
         notes.append(
-            "The walking measures have not been computed, so no lot gets seating and shade or a "
-            "mural for its neighbors"
+            "The walking measures have not been computed, so no lot gets seating and shade, a "
+            "community garden or a mural for its neighbors"
         )
     suggested = []
     for i, opa in enumerate(parcels.opa):
+        walk = walking.get(opa, {})
         factors = {
             name: value
-            for name, value in (
-                ("f_park", f_park[i]),
-                ("f_neighbors", walking.get(opa, {}).get("f_neighbors")),
-            )
+            for name, value in (("f_park", f_park[i]), ("f_neighbors", walk.get("f_neighbors")))
             if value is not None
         }
-        found = suggestions_for(parcels.is_lot[i], factors, art_m[i], open_311[i] or 0)
+        found = suggestions_for(
+            parcels.is_lot[i], factors, art_m[i], open_311[i] or 0, walk.get("people_5min")
+        )
         suggested.append(",".join(found))
 
     columns = {

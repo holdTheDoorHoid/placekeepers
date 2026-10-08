@@ -394,7 +394,10 @@ lack open space (Dunlap, Mayfair and West Oak Lane lead under it).
 **Suggestions.** Vacant lots get up to six, decided in the pipeline with the factors. **Make a
 place to sit in the shade** where more people live within a 5 minute walk than around half the
 places on the map (18,765 lots on 2026-10-08); **start a community garden** where the lot is
-farther from a park than half the places (20,653); **ask about a mural or other art** where no
+farther from a park than half the places and at least 1,000 people live within a 5 minute walk
+(19,762; the second rule, decided by the orchestrator on 2026-10-08, leaves out 891 lots where
+almost no one lives, such as new developments by the river, the Navy Yard and industrial land near
+the airport, since a garden needs neighbors to tend it and use it); **ask about a mural or other art** where no
 work of the City's list or Wikidata stands within a 5 minute walk and many people live around
 (15,666), linking only to Mural Arts' own request form, never copying its content; and **report
 the illegal dumping, the dark street light or the graffiti to Philly311** where a street block the

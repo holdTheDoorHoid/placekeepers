@@ -622,7 +622,9 @@ up), which keeps the tiles about 5 percent smaller:
 
 From M3.4 `sg` may also hold the placemaking suggestions, after the first ones and the heat
 suggestions, for vacant lots only, in this order: `seating_and_shade` where `f_neighbors` is at
-least 50; `community_garden` where `f_park` is at least 50; `art_request` where no work of the two
+least 50; `community_garden` where `f_park` is at least 50 and at least 1,000 people live within
+a 5 minute walk (`people_5min` in `walk_factors.parquet`, above; changed 2026-10-08, before it was
+`f_park` alone); `art_request` where no work of the two
 art lists stands within 400 meters and `f_neighbors` is at least 50; then `report_dumping`,
 `report_dark_light` and `report_graffiti` where a street block within 20 meters of the lot's shape
 (a block of the `segments` layer, the street safety network) has a request of that kind still open

@@ -84,26 +84,42 @@ def test_ranks_are_rounded_to_fives() -> None:
 
 def test_lots_get_seating_a_garden_and_art_by_their_neighbors_and_parks() -> None:
     many = {"f_neighbors": 50, "f_park": 50}
-    assert suggestions_for(True, many, 401.0, 0) == [
+    assert suggestions_for(True, many, 401.0, 0, 1000) == [
         SEATING_AND_SHADE,
         COMMUNITY_GARDEN,
         ART_REQUEST,
     ]
     # Art only where none of the two lists stands within a 5 minute walk.
-    assert suggestions_for(True, many, 400.0, 0) == [SEATING_AND_SHADE, COMMUNITY_GARDEN]
-    # Few neighbors: no seating and no art, but a garden where parks are far.
-    assert suggestions_for(True, {"f_neighbors": 49, "f_park": 80}, 5000.0, 0) == [COMMUNITY_GARDEN]
+    assert suggestions_for(True, many, 400.0, 0, 1000) == [SEATING_AND_SHADE, COMMUNITY_GARDEN]
+    # Fewer neighbors than at half the places: no seating and no art, but a garden where parks
+    # are far and at least 1,000 people live within a 5 minute walk.
+    few = {"f_neighbors": 49, "f_park": 80}
+    assert suggestions_for(True, few, 5000.0, 0, 1000) == [COMMUNITY_GARDEN]
     # Unknown factors suggest nothing; without the art lists, no art card.
-    assert suggestions_for(True, {}, None, 0) == []
+    assert suggestions_for(True, {}, None, 0, 5000) == []
     assert suggestions_for(True, {"f_neighbors": 90}, None, 0) == [SEATING_AND_SHADE]
     # Buildings get none of them, not even the reports.
-    assert suggestions_for(False, many, 900.0, 7) == []
+    assert suggestions_for(False, many, 900.0, 7, 5000) == []
+
+
+def test_a_garden_needs_a_thousand_people_within_a_five_minute_walk() -> None:
+    far = {"f_neighbors": 49, "f_park": 100}
+    assert placemaking.GARDEN_MIN_PEOPLE == 1000
+    assert suggestions_for(True, far, None, 0, 1000) == [COMMUNITY_GARDEN]
+    # Far from a park, but almost no one lives around: no garden.
+    assert suggestions_for(True, far, None, 0, 999) == []
+    assert suggestions_for(True, far, None, 0, 0) == []
+    # When the walking measures do not know how many people live around, no garden either.
+    assert suggestions_for(True, far, None, 0, None) == []
+    assert suggestions_for(True, far, None, 0) == []
+    # Many people, but a park close by: no garden.
+    assert suggestions_for(True, {"f_park": 45}, None, 0, 9000) == []
 
 
 def test_reports_follow_the_open_requests_in_the_order_of_the_layers() -> None:
     assert suggestions_for(True, {}, None, 1) == [REPORT_DUMPING]
     assert suggestions_for(True, {}, None, 6) == [REPORT_DARK_LIGHT, REPORT_GRAFFITI]
-    assert suggestions_for(True, {"f_park": 99}, None, 7) == [
+    assert suggestions_for(True, {"f_park": 99}, None, 7, 2000) == [
         COMMUNITY_GARDEN,
         REPORT_DUMPING,
         REPORT_DARK_LIGHT,
@@ -222,14 +238,18 @@ def install_placemaking_inputs(ctx, skip: tuple[str, ...] = ()) -> None:
     """Every input of the placemaking lens except `skip`, around the parcels of
     tests/test_lenses.py, and the walking measures' people within a 5 minute walk."""
     derived = ctx.cache.root / "derived"
-    # People within a 5 minute walk, as derive.walk would rank them.
-    people = {"500000001": 80, "500000002": 20, "500000003": 40, "500000004": 60}
-    people |= {"500000005": 0, "500000006": 90, "500000008": 60}
+    # People within a 5 minute walk, as derive.walk would rank them (`f_neighbors`) and count them
+    # (`people_5min`). The last lot has one person too few for a community garden.
+    ranks = {"500000001": 80, "500000002": 20, "500000003": 40, "500000004": 60}
+    ranks |= {"500000005": 0, "500000006": 90, "500000008": 60}
+    people = {"500000001": 4200, "500000002": 600, "500000003": 2100, "500000004": 3000}
+    people |= {"500000005": 0, "500000006": 5100, "500000008": 999}
     walk = {
-        "opa": list(people),
-        "f_walk": pa.array([50] * len(people), pa.int16()),
-        "f_neighbors": pa.array(list(people.values()), pa.int16()),
-        "f_dest": pa.array([50] * len(people), pa.int16()),
+        "opa": list(ranks),
+        "f_walk": pa.array([50] * len(ranks), pa.int16()),
+        "f_neighbors": pa.array(list(ranks.values()), pa.int16()),
+        "f_dest": pa.array([50] * len(ranks), pa.int16()),
+        "people_5min": pa.array([people[opa] for opa in ranks], pa.int32()),
     }
     pq.write_table(pa.table(walk), derived / "walk_factors.parquet")
     # A park just west of the first parcel; a golf course over the far parcel, which is no park.
@@ -327,14 +347,15 @@ def test_a_run_gives_every_parcel_on_the_map_its_placemaking_factors(place_ctx) 
     assert rows["500000002"]["corridor"] == "Sample Avenue"
 
     # Suggestions, lots only: the first has many neighbors and open dumping in front; the second,
-    # a LandCare lot, an alley light out; the far ones many neighbors and no park or art near.
+    # a LandCare lot, an alley light out; the far ones many neighbors and no park or art near, but
+    # the last only 999 people within a 5 minute walk, one too few for a community garden.
     assert rows["500000001"]["sg"] == "seating_and_shade,report_dumping"
     assert rows["500000001"]["open_311"] == 1
     assert rows["500000002"]["sg"] == "report_dark_light"
     assert rows["500000003"]["sg"] == ""  # a building
     assert rows["500000003"]["open_311"] == 0
     assert rows["500000006"]["sg"] == "seating_and_shade,community_garden,art_request"
-    assert rows["500000008"]["sg"] == "seating_and_shade,community_garden,art_request"
+    assert rows["500000008"]["sg"] == "seating_and_shade,art_request"
 
     summary = json.loads(result.path.with_suffix(".json").read_text())
     assert summary["parcels"] == 7
@@ -343,6 +364,7 @@ def test_a_run_gives_every_parcel_on_the_map_its_placemaking_factors(place_ctx) 
     assert summary["inputs"]["art_percent_for_art_inside"] == 1
     assert summary["inputs"]["art_wikidata_art"] == 1
     assert summary["suggestions"]["seating_and_shade"] == 3
+    assert summary["suggestions"]["community_garden"] == 1
     assert summary["suggestions"]["report_graffiti"] == 0
     assert summary["missing_sources"] == []
 
