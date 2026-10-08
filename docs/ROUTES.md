@@ -59,7 +59,10 @@ to Grounded in Philly's sheriff sale guide.
 ### Keeping a garden for good
 
 - **Neighborhood Gardens Trust** (ngtrust.org, 215-988-1630, ngtrust@pennhort.org) preserves
-  community gardens permanently. Intake criteria **to confirm**.
+  community gardens permanently. Its criteria, checked on its preservation page on 2026-10-08: a
+  garden active at least three growing seasons, gardeners able to keep it up, ties to groups such as
+  a community development corporation, a church or a school, and community and City Council support
+  (route `neighborhood_gardens_trust`, section 1b).
 
 ### Trees on and along a lot (heat and shade)
 
@@ -84,6 +87,25 @@ own pages refuse automated access, so its steps are not described here.
   alert whenever a document naming you is recorded.
 - Since 2025-11-10 the City automatically blocks deeds whose seller was already dead when they
   supposedly signed.
+
+### 1b. Protections to pair with greening (displacement watch)
+
+Added 2026-10-08 by M4.1. Where a greening suggestion sits in a displacement watch area
+(DESIGN.md section 5.3), its card links to each of these, in this order, to the page named here.
+Each was checked against that official page on **2026-10-08**; every route is in
+`registry/routes.yaml`.
+
+| Route | What it does | Who | How | Page |
+|---|---|---|---|---|
+| Keep a community garden for good (`neighborhood_gardens_trust`) | The trust acquires the land with the City and holds it so neighbors keep gardening, with liability insurance and help with water and upkeep | Gardens active at least three growing seasons, with community and City Council support | Online garden application (or a printable form); an answer in about two weeks, then a visit and the trust's board; 215 988 1630, ngtrust@pennhort.org | ngtrust.org/preservation |
+| Keep homes and land affordable for good (`community_land_trust`) | A nonprofit owns the land for good; a long ground lease keeps each home affordable when it is sold again | Neighbors, community groups, nonprofits | Grounded Solutions Network's guide to community land trusts; the Community Justice Land Trust of the Women's Community Revitalization Project, which holds homes in Point Breeze, Grays Ferry, Mantua, Germantown, Port Richmond and Haddington | groundedsolutions.org; wcrpphila.org/cjlt |
+| Lower a homeowner's tax bill (`homestead_exemption`) | $100,000 off the home's assessed value for the tax bill, up to $1,399 a year | Anyone who owns and lives in their Philadelphia home, even with a mortgage or tax debt; not homes under a 10 year abatement | Philadelphia Tax Center combined application, the Homestead Hotline 215 686 9200, or mail (P.O. Box 52817, Philadelphia, PA 19115); due December 1, by October 1 for the next bill; no need to apply again unless the deed changes | phila.gov, "Get the Homestead Exemption" |
+| Cap a longtime owner's assessment (`longtime_owner_occupants`, LOOP) | Caps the assessment the tax bill uses at 1.5 times the year before or 1.75 times the lowest of the last five years, while the owner stays eligible | Owners living in the home at least 10 years whose assessment rose 50 percent in a year or 75 percent over five, under the income limit (120 percent of the area median: $103,050 for one person, $147,200 for four), current on taxes or in a payment agreement | Philadelphia Tax Center combined application, 215 686 9200, revenue@phila.gov, or mail (P.O. Box 53190, Philadelphia, PA 19105); a yearly deadline, September 30 in recent years | phila.gov, "Apply for the Longtime Owner Occupants Program (LOOP)" |
+| Help a family keep an inherited home (`tangled_title_help`) | Up to $6,500 toward the legal cost of clearing a tangled title, and up to $3,500 more toward transfer tax, case by case | Households up to 80 percent of the area median income ($68,750 for one person, $98,150 for four), assets of $20,000 or less besides the home, the home their main residence | tangledtitlefund@gmail.com, 215 523 9553 | phillyvip.org/tangled-title-fund |
+
+The City's 2027 assessments were mailed in summer 2026 with outreach to connect homeowners to these
+programs (City news release, 2026-06-30). A home whose assessment rose sharply may qualify for LOOP:
+the watch's assessed value sign compares the same five years.
 
 ## 2. Street and public space permits
 

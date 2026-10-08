@@ -346,10 +346,94 @@ route, then the City's free street trees (the route shared with the shade trees 
 TreePhilly's free giveaway trees, and both carry the displacement caution of ETHICS.md word for
 word, like clean and green.
 
-**Displacement watch** is not a priority lens. It is a caution overlay on area cells (sale price
-growth, share of recent buyers that are companies, renter share, and similar), shown wherever a
-suggestion could raise property values. Its exact factors are set in the history and displacement
-release.
+**Displacement watch** is not a priority lens. It is a caution overlay, shown wherever a suggestion
+could raise property values. It changes no score and no order, and it ranks no neighborhood.
+
+As built (M4.1, 2026-10-08): **what the owner sees.** A layer, "Displacement watch: signs that
+prices are rising", in a new group, **Prices and protections**. It is on by default in the analysis
+view, where organizers plan, and off in the field view, where the cards already carry the caution
+and a phone map has little room. Each watch area is drawn the same way, a pale slate teal fill with
+a dashed edge under the lots, however many signs it has, so nothing reads as a ranking. Tapping an
+area (or, close in, its edge, because from zoom 16 a tap inside asks the City which parcel is
+there) shows "Signs that prices are rising here", the census tract and the neighborhood at its
+center, each sign that holds with what was measured against the whole city, the other signs
+measured, the rule, the ways to protect neighbors, and what the watch cannot tell. Wherever a
+greening suggestion (clean and green, plant shade trees, green the lot to cool the block, shade
+trees at a bus stop) sits in a watch area, its card adds, under the ETHICS.md sentence word for
+word, "This place is in a displacement watch area, with signs that prices are rising here: ..."
+and links to the Neighborhood Gardens Trust, community land trusts, the City's Homestead Exemption,
+its Longtime Owner Occupants Program (LOOP) and help with a tangled title, each to its own official
+page with the day it was last checked. Outside every watch area the card keeps the one line caution
+(decision D12, kept by the orchestrator because it stays protective). The lot page, its print (which
+lists each protection with its address) and downloads (a `displacement_watch` column and a note)
+follow the same rule, and a lot page opened from a link knows its area from its dossier. Shade
+trees at bus stops carry the caution too, which before M4.1 they did not.
+
+**The areas** are the City's 2020 census tracts (408). Tracts, not hexagons: the renter share is
+published only by tract, a tract holds enough home sales for a middle price to mean something
+(most have well over 100 in three years, where a two block hexagon has a handful), and tracts
+follow the City's standard boundary that the parcels follow.
+
+**The five signs**, each measured against the whole city, so the watch follows the city's own
+market rather than a fixed price:
+
+| Sign | What is measured | It holds when | Too few to tell |
+|---|---|---|---|
+| Home sale prices | The middle (median) price of the homes sold in the last three years up to the newest recorded sale, against the three years that ended five years before (on 2026-10-08: September 2023 to September 2026 against September 2018 to September 2021) | The tract's middle price rose at least 25 percentage points more than the city's (the city's rose 28%, from $180,000 to $230,000, so 53% or more) | Fewer than 50 sales in either period |
+| Buyers that are companies | The share of those recent sales whose buyers' names are a company's, by the rule the lot pages use for owners | At least 15 points above the city's share (27%, so 42% or more) | Fewer than 50 recent sales |
+| The City's assessed values | The middle change in the City's market value of the tract's homes, each home against itself, from the tax year five years before the newest to the newest (2022 to 2027), the span the City's LOOP looks at | At least 30 points above the city's middle change (69%, so 99% or more) | Fewer than 50 homes |
+| Renters | The share of occupied homes that are rented (Census Bureau, 2020 to 2024) | 60% or more (the city: 48%) | Fewer than 100 occupied homes |
+| The City's Market Value Analysis | Reinvestment Fund's 2026 analysis for the City, by block group | At least one of the tract's block groups is one where it finds rising pressure: home prices climbing out of reach of what longtime residents earn | Not in the analysis |
+
+A sale counts when it is a deed for more than a token price that is not a sheriff, condemnation or
+adverse possession deed (the lot pages' rule), not a Land Bank deed (a public sale at a set price),
+for one property (a price shared over several is an allocation), of a home (a single family or two
+to four family house as OPA lists it today), built before the year of the sale (an earlier sale was
+of the land or the house before). The price is this property's share, as the lot pages show it.
+For the assessed values a home counts when it stood at least two years before the earlier tax year
+and was valued at $10,000 or more then, so a new house is never counted as a rise.
+
+**The rule**: an area is in the watch when at least two signs hold and at least one of them is
+about prices rising (sale prices, assessed values or the Market Value Analysis). Company buyers and
+renters say who is exposed to rising prices, not that prices are rising, so together they are not
+enough: without this, a few Center City tracts where most homes are rented and many condominiums
+are bought by companies would be watch areas while their prices are flat.
+
+**What it found on 2026-10-08.** 96 of 408 tracts, holding 157,139 of 679,428 occupied homes (23%),
+are watch areas: most in North, West and Southwest Philadelphia and lower Germantown (all six tracts
+of Hartranft, all five of Haddington and of Strawberry Mansion, five of seven in Cobbs Creek, four
+of five in Kingsessing, three of six in Hunting Park), where homes that sold for $50,000 to $90,000
+five years before now sell for $80,000 to $170,000, and companies often buy 40 to 60 percent of
+them. Because vacant lots gather in the same neighborhoods, 26,227 of the 40,776 vacant lots on the
+map (64%) and 389 of the 1,987 bus stops with a shade trees suggestion lie in one, so most greening
+cards on the map now carry the full caution. The sanity check: Fishtown's four tracts show no sign
+(prices rose 7% to 30%, slower than the city's 28% in three of them, and companies bought 14% to 18%
+of the homes), and only one of Point Breeze's six tracts is a watch area (its south side, where
+values rose 138% and companies bought 42%); prices there rose earlier and have since risen far more
+slowly than the city's (from a 1% fall to a 6% rise in the other five tracts). Stable areas such as
+Somerton, Fox Chase, Mayfair and Bustleton have at most one sign. Signs by count: sale prices 76
+tracts, company buyers 66, assessed values 78, renters 110, the Market Value Analysis 41; 93 tracts
+had too few home sales to judge prices.
+
+**What it cannot tell**, said on every tapped area: these are signs in public records, not a
+forecast. They cannot tell who has moved away or why, what rents are (no public record of rents
+covers the city), or who lives in an area, and an area outside the watch can still feel rising
+prices. A middle price moves when the kind of homes sold changes (more renovated houses, more new
+ones) as well as when the same homes cost more; the assessed values, which compare each home with
+itself, are the check on that. Names of buyers are read only to tell a company from a person and
+are never kept (docs/ETHICS.md).
+
+**Left out, and why.** Census block groups: too few sales for a middle price in most of them. Rents:
+no public, citywide record. The Market Value Analysis's own sale prices and investor counts: the
+City's deed records give the same at the tract level, with our own published rule. The 2023 edition
+of the analysis: the 2026 edition, which the City put on its open data hub on 2026-07-16 under the
+same terms, is newer and sorts every block group by displacement pressure; the source reads both, so
+going back is one registry line. Neighborhoods where prices rose earlier and have leveled off are
+not watch areas by design: the watch is about pressure now, and their cards keep the one line
+caution.
+
+The method in code is `pipeline/src/placekeepers/derive/displacement.py`; the files are in
+docs/CONTRACTS.md (sections 3, 4 and 6).
 
 **Population density** never multiplies a violence score. It appears only as "people this would
 reach".
@@ -392,11 +476,12 @@ setting. First release suggestions:
 Funding is shown beside suggestions where it fits: the City's community violence prevention grants
 and Feet First Philly's public space mini grants (see ROUTES.md).
 
-As built (M1.10, 2026-10-04, decision D12 of VERIFICATION.md): until the displacement watch overlay
-exists, every greening suggestion (in this release, clean and green) carries the ETHICS.md caution
-word for word, "Greening can raise nearby prices. Consider pairing it with protections.", with a
-link to the ways to protect neighbors: on the nearby cards, the lot page and its print, in
-settings, and as a note at the top of any download that holds one.
+As built (M1.10, 2026-10-04, decision D12 of VERIFICATION.md): every greening suggestion carries
+the ETHICS.md caution word for word, "Greening can raise nearby prices. Consider pairing it with
+protections.", with a link to the ways to protect neighbors: on the nearby cards, the lot page and
+its print, in settings, and as a note at the top of any download that holds one. From M4.1
+(2026-10-08) the displacement watch decides how much the card says: inside a watch area it adds the
+area's signs and links to each protection; outside one it keeps this one line (section 5.3).
 
 ### 5.6 The lot dossier
 
@@ -771,7 +856,8 @@ docs/            design, roadmap, research
 - **Shootings** are shown as hexagon counts by default; the point layer is a setting, off by
   default.
 - **Names** only from curated public memorial lists; removal by email.
-- **Displacement watch** appears wherever greening could raise values.
+- **Displacement watch** appears wherever greening could raise values: areas with signs that
+  prices are rising, where greening cards add the ways to protect neighbors (section 5.3).
 - **Terms of use** say the site is for community care and lawful use, not speculation.
 
 ## 10. Contributions and takedowns

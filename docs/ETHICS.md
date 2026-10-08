@@ -120,6 +120,26 @@ nearby prices. Consider pairing it with protections."* and links to the Neighbor
 community land trust guidance, the City's Homestead Exemption and Longtime Owner Occupants Program,
 and tangled title help.
 
+How the watch decides where the full card appears (M4.1, 2026-10-08; the method is in DESIGN.md
+section 5.3):
+
+- A displacement watch area is a census tract with at least two signs that prices are rising, at
+  least one of them about prices: home sale prices rising much faster than across the city, the
+  City's assessed values rising much faster than across the city, or the City's Market Value
+  Analysis finding prices climbing out of reach of longtime residents. The other two signs, many
+  homes bought by companies and most homes rented, count only beside one of those.
+- Inside a watch area, every greening card (on the map's nearby list, a bus stop's details, the lot
+  page and its print, and downloads) shows the sentence above word for word, the area's signs, and
+  a link to each protection's own page with the day it was last checked.
+- Outside every watch area, every greening card keeps the one line caution, the same sentence with
+  a link to the ways to protect neighbors (decision D12, kept by the orchestrator on 2026-10-08
+  because it stays protective).
+- The watch is a caution, never a priority: it changes no score and no order. The map draws every
+  watch area the same way, ranks no area, and says "signs that prices are rising here", never that
+  a neighborhood is gentrifying.
+- Buyers' names are read only to tell a company from a person; no name is kept or published in the
+  watch. Only watch areas carry numbers on the map.
+
 ## Privacy
 
 - No analytics, no cookies, no accounts, no tracking pixels.
