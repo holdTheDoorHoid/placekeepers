@@ -137,6 +137,9 @@ ready for the owner.
 
 ## Phase 3: v0.3 Heat and shade, and placemaking
 
+Done and released as v0.3 on 2026-10-08. M3.1 and M3.5 shipped early, in v0.2; M3.2 arrived at the
+end of v0.2's work and is described in v0.3's notes.
+
 - **M3.1 Heat and shade lens** (done, 2026-10-05, early, in v0.2): heat vulnerability, street
   trees, canopy, land cover, flood plain.
 - **M3.2 Public art layer** (done, 2026-10-05): Percent for Art, OpenStreetMap, Wikidata;
@@ -155,11 +158,22 @@ ready for the owner.
   bookcases, libraries, recreation centers, and 311 condition layers (dumping, dark streetlights,
   graffiti).
 
+Two additions that were not on the roadmap, both done on 2026-10-08 and in v0.3:
+
+- **Land Bank listed lots** (issue #36): a setting and filter for the lots the City's land agencies
+  list as available, from the City's own `city_owned_property` layer, with the side yard route
+  first, no prices and no ranking by ease. The same issue recorded the four community and City
+  sources checked that day (DATA_SOURCES.md, "Sources checked 2026-10-08"): Transit Forward
+  Philadelphia's stop audits wait on permission, and PhillyTreeMap is not used.
+- **Laser Vision parking heat map** (issue #37): a heat map of parking problems reported with
+  Philly Bike Action's Laser Vision app, counts only in block sized cells, shown with its
+  permission (confirmed by the owner 2026-10-08) as evidence for physical fixes to the street.
+
 ## Phase 4: v0.4 History and displacement
 
-- **M4.1 Displacement watch** (done, 2026-10-08, early, in v0.3): sale price trends and company buyer share from
-  transfers, the City's Market Value Analysis (the 2026 edition), renter share, assessment changes;
-  the overlay and "pair with protections" cards.
+- **M4.1 Displacement watch** (done, 2026-10-08, early, in v0.3): sale price trends and company
+  buyer share from transfers, the City's Market Value Analysis (the 2026 edition), renter share,
+  assessment changes; the overlay and "pair with protections" cards.
 - **M4.2 Full history in the dossier**: every transfer since 1974, an assessment chart, a timeline of
   permits, violations and demolition.
 - **M4.3 Historic maps**: City orthophotos 1996 to 2023 with a year slider, the 1860 atlas the City
