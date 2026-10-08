@@ -1,6 +1,6 @@
 // The displacement watch (M4.1): census tracts with signs that prices are rising (`watch` in
 // tiles/displacement.pmtiles, docs/CONTRACTS.md section 4). A caution drawn under the lots: a pale
-// fill and a dashed outline, never a ranking, so every area looks the same however many signs it
+// slate gray fill and a dashed outline, never a ranking, so every area looks the same however many signs it
 // has. Tapping an area opens its signs (src/components/displacement/WatchDetails.svelte).
 //
 // The fill answers taps only below zoom 16: from there a tap on the map asks the City which parcel

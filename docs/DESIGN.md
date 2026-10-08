@@ -358,7 +358,7 @@ could raise property values. It changes no score and no order, and it ranks no n
 As built (M4.1, 2026-10-08): **what the owner sees.** A layer, "Displacement watch: signs that
 prices are rising", in a new group, **Prices and protections**. It is on by default in the analysis
 view, where organizers plan, and off in the field view, where the cards already carry the caution
-and a phone map has little room. Each watch area is drawn the same way, a pale slate teal fill with
+and a phone map has little room. Each watch area is drawn the same way, a pale slate gray fill with
 a dashed edge under the lots, however many signs it has, so nothing reads as a ranking. Tapping an
 area (or, close in, its edge, because from zoom 16 a tap inside asks the City which parcel is
 there) shows "Signs that prices are rising here", the census tract and the neighborhood at its

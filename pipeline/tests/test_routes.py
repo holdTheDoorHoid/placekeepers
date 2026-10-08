@@ -185,7 +185,8 @@ def every_route_used() -> set[str]:
 def test_every_route_named_exists_with_a_last_checked_date() -> None:
     for route_id in every_route_used():
         assert route_id in REGISTRY.routes, route_id
-        assert REGISTRY.routes[route_id].last_checked <= date(2026, 10, 4)
+        # Checked on or after the routes were written (2026-10-04), never in the future.
+        assert date(2026, 10, 4) <= REGISTRY.routes[route_id].last_checked <= date.today()
 
 
 @pytest.mark.parametrize(
@@ -202,5 +203,6 @@ def test_every_route_named_exists_with_a_last_checked_date() -> None:
 def test_the_new_routes_follow_routes_md(route_id: str, status: str) -> None:
     route = REGISTRY.routes[route_id]
     assert route.status == status
-    assert route.last_checked == date(2026, 10, 4)
+    # Rechecked since (tangled title help on 2026-10-08, for the displacement watch, M4.1).
+    assert route.last_checked >= date(2026, 10, 4)
     assert route.links, f"{route_id} has no link"

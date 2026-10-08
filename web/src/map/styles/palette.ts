@@ -164,11 +164,11 @@ export const STRESS_COLORS: Record<number, string> = { 1: '#2166ac', 2: '#67a9cf
 export const STRESS_CASING = '#ffffff';
 
 /**
- * The displacement watch (M4.1): areas with signs that prices are rising, as a pale slate teal
- * fill under the lots and a dashed outline, clear of the lots' greens, the shootings' purples, the
- * heat's oranges and the streets' pinks. A caution, so it is quiet: nothing about it reads as an
- * alarm.
+ * The displacement watch (M4.1): areas with signs that prices are rising, as a pale slate gray
+ * fill under the lots and a dark slate dashed outline: a neutral, clear of the lots' greens, the
+ * shootings' purples, the heat's oranges, the streets' pinks and the walking layers' teals and
+ * blues. A caution, so it is quiet: nothing about it reads as an alarm.
  */
-export const WATCH_FILL = '#9fcfd9';
-export const WATCH_FILL_OPACITY = 0.28;
-export const WATCH_LINE = '#1f5f6e';
+export const WATCH_FILL = '#b4bfcc';
+export const WATCH_FILL_OPACITY = 0.32;
+export const WATCH_LINE = '#3a4a5c';
