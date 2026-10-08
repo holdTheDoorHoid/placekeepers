@@ -456,6 +456,7 @@ export const strings = {
       'Owner names and mailing addresses are as the City publishes them. Every owner flag has a careful note and a protective next step: read them on the lot page before you act. Not legal advice.',
     scoreLine: (lens: string, weights: string) => `Scores use the ${lens} lens with these weights: ${weights}.`,
     greeningLine: (caution: string) => `About greening suggestions: ${caution}`,
+    placemakingLine: (caution: string) => `About gardens, seating and art: ${caution}`,
   },
 
   // Saved lists, kept only in this browser (src/places/lists.svelte.ts).
@@ -512,6 +513,10 @@ export const strings = {
   // in a watch area the card adds the area's signs and the ways to protect neighbors.
   displacement: {
     caution: 'Greening can raise nearby prices. Consider pairing it with protections.',
+    // The placemaking lens's version (M3.4), for a place to sit, a garden and art, in the same
+    // places with the same link (src/config/suggestions.ts).
+    placemakingCaution:
+      'New gardens, seating and art can make a block more sought after and raise nearby prices and rents. Pair them with protections for neighbors who rent or who are behind on taxes.',
     protections: 'Ways to protect neighbors',
     inWatch: (signs: string) => `This place is in a displacement watch area, with signs that prices are rising here: ${signs}.`,
     protectionsTitle: 'Protections to pair it with',
@@ -570,6 +575,8 @@ export const strings = {
     legendNote: 'Signs in public records, not a forecast. Greening cards in these areas add ways to protect neighbors.',
     exportColumn: (signs: string) => `Displacement watch area: ${signs}`,
     exportLine: (caution: string, links: string) => `About greening in displacement watch areas: ${caution} Ways to protect neighbors: ${links}`,
+    placemakingExportLine: (caution: string, links: string) =>
+      `About gardens, seating and art in displacement watch areas: ${caution} Ways to protect neighbors: ${links}`,
     printTitle: 'Displacement watch',
   },
 

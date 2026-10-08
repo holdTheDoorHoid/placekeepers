@@ -1,16 +1,17 @@
 <script lang="ts">
   // The caution every greening suggestion carries (docs/ETHICS.md, "Displacement", word for word;
-  // docs/VERIFICATION.md, decision D12). Outside a displacement watch area it is one line with a
-  // link to the ways to protect neighbors on the "Use this responsibly" page. Inside one (M4.1),
-  // the card adds the area's signs and links to each protection: the Neighborhood Gardens Trust,
-  // community land trusts, the City's Homestead Exemption and LOOP, and help with a tangled title,
-  // each to its official page and with the day it was last checked.
-  import { isGreening } from '../../config/suggestions.ts';
+  // docs/VERIFICATION.md, decision D12), or its placemaking version for a place to sit, a garden
+  // or art (M3.4). Outside a displacement watch area it is one line with a link to the ways to
+  // protect neighbors on the "Use this responsibly" page. Inside one (M4.1), the card adds the
+  // area's signs and links to each protection: the Neighborhood Gardens Trust, community land
+  // trusts, the City's Homestead Exemption and LOOP, and help with a tangled title, each to its
+  // official page and with the day it was last checked.
+  import { displacementCaution } from '../../config/suggestions.ts';
   import type { WatchNote } from '../../displacement/watch.ts';
   import { formatDate, strings } from '../../strings.ts';
 
-  // `always` shows the caution whatever the suggestion: the box of a lot listed as available by
-  // the City's land agencies (src/components/dossier/ListingBox.svelte) carries it too.
+  // `always` shows the greening caution whatever the suggestion: the box of a lot listed as
+  // available by the City's land agencies (src/components/dossier/ListingBox.svelte) carries it too.
   let {
     suggestionId = '',
     watch = null,
@@ -19,12 +20,13 @@
   // The site root from the build (not config, so the lot page also renders outside a browser).
   const responsiblyUrl = `${import.meta.env.BASE_URL}responsibly/`;
   const d = strings.displacement;
+  const caution = $derived(always ? d.caution : displacementCaution(suggestionId));
 </script>
 
-{#if always || isGreening(suggestionId)}
+{#if caution}
   {#if watch}
     <div class="displacement watch" data-watch={watch.signs}>
-      <p><strong>{d.caution}</strong></p>
+      <p><strong>{caution}</strong></p>
       <p>{watch.text}</p>
       {#if watch.links.length}
         <p class="title">{d.protectionsTitle}:</p>
@@ -41,7 +43,7 @@
     </div>
   {:else}
     <p class="displacement">
-      {d.caution}
+      {caution}
       <a href={responsiblyUrl}>{d.protections}</a>
     </p>
   {/if}

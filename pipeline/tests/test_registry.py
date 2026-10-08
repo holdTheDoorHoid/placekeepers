@@ -105,7 +105,7 @@ def test_other_cross_references_are_checked(repo_copy: Path) -> None:
 
     def suggestions(entries: list[dict[str, Any]]) -> None:
         by_id(entries, "clean_and_green")["routes"].append("adverse_possession")
-        by_id(entries, "clean_and_green")["partners"].append("mural_arts")
+        by_id(entries, "clean_and_green")["partners"].append("magic_gardens")
 
     edit(repo_copy, "suggestions", suggestions)
 
@@ -117,7 +117,7 @@ def test_other_cross_references_are_checked(repo_copy: Path) -> None:
     assert sorted(problems(repo_copy)) == [
         "registry/layers.yaml: hin_2025: group 'street' is not in registry/groups.yaml",
         "registry/lenses.yaml: violence: preset 'research' weights unknown factor 'heat'",
-        "registry/suggestions.yaml: clean_and_green: partner 'mural_arts' is not in "
+        "registry/suggestions.yaml: clean_and_green: partner 'magic_gardens' is not in "
         "registry/partners.yaml",
         "registry/suggestions.yaml: clean_and_green: route 'adverse_possession' is not in "
         "registry/routes.yaml",

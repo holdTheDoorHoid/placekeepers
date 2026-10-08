@@ -121,6 +121,100 @@
       label: Fewest trees
       weights: {heat_vulnerability: 0, few_trees: 3, few_street_trees: 3, people_nearby: 0}
   release: v0.3
+# The placemaking lens (M3.4): where a vacant lot would most likely become a public place people
+# use every day. f_neighbors, f_dest and f_walk are the walking measures of M3.3
+# (placekeepers.derive.walk), where more ranks higher; the pipeline adds f_park, f_art and f_corr
+# (placekeepers.derive.placemaking). It is about use and welcome, never about crime: no study links
+# art or walkability to less violence (docs/EVIDENCE.md, "Placemaking").
+- id: placemaking
+  label: Placemaking
+  applies_to: parcel
+  description: >-
+    Where a vacant lot would most likely become a public place people use every day, such as a
+    garden, a pocket park, a place to sit in the shade or a spot for art: lots with many neighbors
+    and everyday places within a short walk, far from a park and from public art. It is about use
+    and welcome, not about crime.
+  factors:
+    - id: neighbors
+      label: People within a 5 minute walk
+      field: f_neighbors
+      evidence: context
+      default_weight: 3
+      explain: >-
+        How many people live within a 5 minute walk of the lot, counted as 400 meters in a straight
+        line, from the 2020 census. The rank is the share of places on the map with fewer people
+        around them. More neighbors means more people a garden, a bench or a mural would serve.
+        Population only counts who a project would reach.
+    - id: everyday_places
+      label: Everyday places within a 10 minute walk
+      field: f_dest
+      evidence: mixed
+      default_weight: 2
+      explain: >-
+        How many of seven kinds of everyday places lie within a 10 minute walk, counted as 800
+        meters in a straight line: a library, a recreation center, a pool or sprayground, a
+        drinking fountain in a park, a school, a grocery store or market that takes SNAP, and a
+        bus, trolley or train stop. The rank is the share of places on the map with fewer. People
+        on their way to these places walk past the lot. How much passers by help a new public
+        place depends on the street and the place, so the evidence is mixed.
+    - id: walkability
+      label: Walkability
+      field: f_walk
+      evidence: mixed
+      default_weight: 2
+      explain: >-
+        The EPA's National Walkability Index of the lot's block group: street corners, how close
+        transit is, and how well homes, jobs and shops are mixed (data of about 2017 to 2019). The
+        rank is the share of places on the map in less walkable areas. Where people walk, more of
+        them would use a place on the lot. Studies of walkable places find correlations whose
+        meaning depends on the place, so the evidence is mixed.
+    - id: far_from_park
+      label: Far from a park
+      field: f_park
+      evidence: context
+      default_weight: 2
+      explain: >-
+        The distance in a straight line from the lot to the edge of the nearest park land of Parks
+        and Recreation: parks, playgrounds, recreation centers, squares, greenways and nature
+        areas, but not its work yards, golf courses or planted traffic medians. The rank is the
+        share of places on the map closer to one, so farther ranks higher. A lot far from a park
+        could give neighbors the open space they lack.
+    - id: no_art_nearby
+      label: No public art nearby
+      field: f_art
+      evidence: context
+      default_weight: 1
+      explain: >-
+        The distance in a straight line from the lot to the nearest work of public art on the
+        City's Percent for Art list or in Wikidata, leaving out works inside buildings. The rank is
+        the share of places on the map closer to one, so farther ranks higher. These two lists
+        hold only part of the city's art: Mural Arts' murals and the works only OpenStreetMap
+        maps are not in them, so look at the Public art layer too. Art is welcome for beauty and
+        pride; no study links it to less violence.
+    - id: commercial_corridor
+      label: On or near a commercial corridor
+      field: f_corr
+      evidence: mixed
+      default_weight: 1
+      explain: >-
+        100 when the lot lies on one of the City's commercial corridors, the shopping streets and
+        centers the Planning Commission surveyed from 2011 to 2017, or within 50 meters of one,
+        else 0. Shops bring people past the lot every day. Busy shopping streets can bring
+        problems too, so the evidence is mixed.
+  presets:
+    - id: balanced
+      label: Balanced
+      weights: {neighbors: 3, everyday_places: 2, walkability: 2, far_from_park: 2, no_art_nearby: 1, commercial_corridor: 1}
+    - id: most_neighbors
+      label: Most neighbors
+      weights: {neighbors: 5, everyday_places: 1, walkability: 1, far_from_park: 1, no_art_nearby: 0, commercial_corridor: 0}
+    - id: where_people_walk
+      label: Where people already walk
+      weights: {neighbors: 1, everyday_places: 4, walkability: 4, far_from_park: 0, no_art_nearby: 0, commercial_corridor: 3}
+    - id: far_from_a_park
+      label: Far from a park
+      weights: {neighbors: 2, everyday_places: 0, walkability: 0, far_from_park: 5, no_art_nearby: 0, commercial_corridor: 0}
+  release: v0.3
 - id: street_safety
   label: Street safety
   applies_to: segment

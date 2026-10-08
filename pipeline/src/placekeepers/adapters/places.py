@@ -1,6 +1,6 @@
 """Land, care and boundary layers: building footprints, land use, City owned property, PHS
 LandCare, gardens, Parks and Recreation properties, zoning, council districts, registered community
-organizations and neighborhoods.
+organizations, neighborhoods and commercial corridors.
 
 Footprints and land use are half a million polygons each, so they come from ArcGIS Hub's cached
 bulk GeoJSON (one request) instead of about 275 pages from the feature service; the file's
@@ -99,6 +99,18 @@ class PprProperties(ArcgisAdapter):
     """Parks and Recreation properties: parks, recreation centers and other park land."""
 
     required_columns = ("official_name", "ppr_use", "geometry")
+
+
+class CommercialCorridors(ArcgisAdapter):
+    """The City's commercial corridors (M3.4): the shopping streets, centers and districts the
+    Planning Commission surveyed from 2011 to 2017, as areas. Only the name, the survey year and
+    the kind of corridor are kept with the shape; the store counts, vacancy rates and funding
+    columns are not downloaded. The service refused a page of all 279 detailed shapes as GeoJSON
+    on 2026-10-08 and answered pages of 100 at once."""
+
+    page_size = 100
+    out_fields = ("objectid", "name", "survey_year", "corridor_type")
+    required_columns = ("objectid", "name", "geometry")
 
 
 class ZoningBaseDistricts(ArcgisAdapter):

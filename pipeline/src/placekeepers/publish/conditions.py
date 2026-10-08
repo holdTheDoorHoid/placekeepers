@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import logging
 from collections import defaultdict
+from dataclasses import dataclass
 from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
@@ -37,7 +38,7 @@ from typing import Any
 import pyarrow.parquet as pq
 
 from placekeepers.context import Context
-from placekeepers.derive.street_safety import points_in_meters
+from placekeepers.derive.street_safety import StreetNetwork, points_in_meters
 from placekeepers.geo import GeoJSONWriter
 from placekeepers.publish.layers import BuildResult, LayerBuilder
 from placekeepers.publish.streets import street_network
@@ -69,47 +70,77 @@ def window(newest: date) -> tuple[date, date]:
     return newest - timedelta(days=WINDOW_DAYS - 1), newest
 
 
+def window_of(rows: list[dict[str, Any]]) -> tuple[date, date] | None:
+    """The window of a snapshot's requests (all kinds together), or None when none has a day."""
+    days = [r["requested"] for r in rows if r.get("requested") is not None]
+    return window(max(days)) if days else None
+
+
+@dataclass
+class BlockCounts:
+    """One kind's requests in the window, counted on the nearest block (module docstring)."""
+
+    #: the network's index of each block with a request -> n, o, a and d (see the docstring)
+    per_block: dict[int, dict[str, Any]]
+    #: requests of the kind in the window, and how many had no point or no block within reach
+    wanted: int
+    left_out: int
+
+
+def requests_by_block(
+    rows: list[dict[str, Any]],
+    codes: tuple[str, ...],
+    network: StreetNetwork,
+    span: tuple[date, date],
+) -> BlockCounts:
+    """Count the requests with these service codes made in `span` on the nearest block within
+    BLOCK_METERS. Shared with the placemaking lens's reports to Philly311 (M3.4,
+    placekeepers.derive.placemaking), so a lot's card and the map's conditions agree."""
+    first, last = span
+    wanted = [
+        r
+        for r in rows
+        if r.get("service_code") in codes
+        and r.get("requested") is not None
+        and first <= r["requested"] <= last
+    ]
+    placed = [r for r in wanted if r.get("lat") is not None and r.get("lng") is not None]
+    points = points_in_meters([r["lat"] for r in placed], [r["lng"] for r in placed])
+    blocks = network.nearest_segment(points, BLOCK_METERS)
+    per_block: dict[int, dict[str, Any]] = defaultdict(lambda: {"n": 0, "o": 0, "a": 0, "d": None})
+    off_street = 0
+    for row, block in zip(placed, blocks, strict=True):
+        if block is None:
+            off_street += 1
+            continue
+        entry = per_block[block]
+        entry["n"] += 1
+        entry["o"] += (row.get("status") or "").strip().lower() == "open"
+        entry["a"] += row.get("service_code") == ALLEY_LIGHT
+        if entry["d"] is None or row["requested"] > entry["d"]:
+            entry["d"] = row["requested"]
+    return BlockCounts(dict(per_block), len(wanted), (len(wanted) - len(placed)) + off_street)
+
+
 def condition_builder(kind: str):
     """The builder of one condition layer (see the module docstring)."""
     codes = KINDS[kind]
 
     def build(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) -> BuildResult:
         rows = pq.read_table(paths[SOURCE]).to_pylist()
-        days = [r["requested"] for r in rows if r.get("requested") is not None]
-        if not days:
+        span = window_of(rows)
+        if span is None:
             with GeoJSONWriter(out):
                 pass
             return BuildResult(0, [f"{kind}: the 311 snapshot has no requests"])
-        first, last = window(max(days))
-        wanted = [
-            r
-            for r in rows
-            if r.get("service_code") in codes
-            and r.get("requested") is not None
-            and first <= r["requested"] <= last
-        ]
-        placed = [r for r in wanted if r.get("lat") is not None and r.get("lng") is not None]
+        first, last = span
         if "street_centerlines" not in paths:
             with GeoJSONWriter(out):
                 pass
             return BuildResult(0, [f"{kind}: the street centerlines are missing, so no blocks"])
         network = street_network(paths["street_centerlines"])
-        points = points_in_meters([r["lat"] for r in placed], [r["lng"] for r in placed])
-        blocks = network.nearest_segment(points, BLOCK_METERS)
-        per_block: dict[int, dict[str, Any]] = defaultdict(
-            lambda: {"n": 0, "o": 0, "a": 0, "d": None}
-        )
-        off_street = 0
-        for row, block in zip(placed, blocks, strict=True):
-            if block is None:
-                off_street += 1
-                continue
-            entry = per_block[block]
-            entry["n"] += 1
-            entry["o"] += (row.get("status") or "").strip().lower() == "open"
-            entry["a"] += row.get("service_code") == ALLEY_LIGHT
-            if entry["d"] is None or row["requested"] > entry["d"]:
-                entry["d"] = row["requested"]
+        counts = requests_by_block(rows, codes, network, span)
+        per_block = counts.per_block
         with GeoJSONWriter(out) as writer:
             for block in sorted(per_block, key=lambda b: network.ids[b]):
                 entry = per_block[block]
@@ -134,9 +165,11 @@ def condition_builder(kind: str):
             f"{kind}: {counted:,} requests to 311 about {WORDS[kind]} from {first.isoformat()} "
             f"to {last.isoformat()}, on {writer.count:,} blocks; {still_open:,} still open"
         )
-        left = (len(wanted) - len(placed)) + off_street
-        if left:
-            line += f"; {left:,} without a point or more than 50 meters from a street left out"
+        if counts.left_out:
+            line += (
+                f"; {counts.left_out:,} without a point or more than 50 meters from a street left "
+                "out"
+            )
         log.info("publish: %s", line)
         return BuildResult(writer.count, [line])
 

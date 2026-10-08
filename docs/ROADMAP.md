@@ -139,12 +139,17 @@ ready for the owner.
 
 - **M3.1 Heat and shade lens** (done, 2026-10-05, early, in v0.2): heat vulnerability, street
   trees, canopy, land cover, flood plain.
-- **M3.2 Public art layer**: Percent for Art, OpenStreetMap, Wikidata, plus philart.net, the
-  Association for Public Art and Magic Gardens if they agree; deduplication; links out to Mural Arts.
-- **M3.3 Walkability and people**: EPA walkability index, our own OpenStreetMap measures
-  (intersection density, destinations within 10 minutes), people within a 5 minute walk, DVRPC
-  traffic stress and pedestrian network.
-- **M3.4 Placemaking lens and suggestions**.
+- **M3.2 Public art layer** (done, 2026-10-05): Percent for Art, OpenStreetMap, Wikidata;
+  deduplication; links out to Mural Arts. philart.net, the Association for Public Art and Magic
+  Gardens wait for their permission (owner outreach).
+- **M3.3 Walkability and people** (done, 2026-10-08): EPA walkability index, our own
+  OpenStreetMap measures (intersection density, destinations within 10 minutes), people within a 5
+  minute walk, DVRPC traffic stress and pedestrian network.
+- **M3.4 Placemaking lens and suggestions** (done, 2026-10-08): a lens on the lots from people and
+  everyday places within walking distance, walkability, distance to a park, public art nearby and
+  the City's commercial corridors; suggestions for a place to sit in the shade, a community garden
+  and a mural, and reports to Philly311 where a block a lot faces has an open request. Not on the
+  area cells (DESIGN section 5.3).
 - **M3.5 Amenities and conditions** (done, 2026-10-05, early, in v0.2): benches, water, toilets,
   bookcases, libraries, recreation centers, and 311 condition layers (dumping, dark streetlights,
   graffiti).

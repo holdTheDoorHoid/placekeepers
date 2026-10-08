@@ -131,6 +131,35 @@ function heatFor({ k, f_canopy }, index, col, row) {
   return { heat, extra };
 }
 
+// The placemaking lens (M3.4, docs/CONTRACTS.md section 4), worked out without random draws so
+// every other fixture stays the same: walkability, everyday places and the City's park and art
+// distances rise and fall from west to east, neighbors grow to the east and north, and the middle
+// runs lie on a commercial corridor. `f_park` and `f_art` are multiples of 5, as the pipeline
+// rounds them. The suggestions follow the pipeline's rule
+// (pipeline/src/placekeepers/derive/placemaking.py): on a lot, a place to sit where at least half
+// the places have fewer neighbors, a garden where a park is far, art where none of the two art
+// lists is within a 5 minute walk (the western runs here) and neighbors are many, and a report to
+// Philly311 for a few lots facing a block with an open request.
+const REPORTS = { 7: ['report_dumping'], 22: ['report_dumping', 'report_dark_light'], 38: ['report_graffiti'] };
+function placemakingFor({ k }, index, col, row) {
+  const place = {
+    f_walk: [15, 40, 65, 85, 95][col],
+    f_neighbors: Math.min(100, 20 + col * 15 + row * 10 + (index % 4) * 5),
+    f_dest: Math.min(100, 30 + col * 12 + (index % 3) * 5),
+    f_park: [85, 45, 50, 30, 15][col] - row * 10,
+    f_art: [90, 75, 40, 20, 5][col],
+    f_corr: col === 2 ? 100 : 0,
+  };
+  const extra = [];
+  if (k === 1) {
+    if (place.f_neighbors >= 50) extra.push('seating_and_shade');
+    if (place.f_park >= 50) extra.push('community_garden');
+    if (col <= 1 && place.f_neighbors >= 50) extra.push('art_request');
+    extra.push(...(REPORTS[index] ?? []));
+  }
+  return { place, extra };
+}
+
 // Parcels: ten runs of rowhouse sized lots (5 m wide, 25 m deep) on block faces.
 const parcels = [];
 const RUNS = [3, 6, 4, 7, 5, 4, 6, 5, 3, 7];
@@ -179,6 +208,9 @@ RUNS.forEach((length, run) => {
     const watch = watchFor(x0);
     if (watch) properties.dw = watch;
     if (extra.length) properties.sg = [properties.sg, ...extra].join(',');
+    const placemaking = placemakingFor(properties, n, col, row);
+    Object.assign(properties, placemaking.place);
+    if (placemaking.extra.length) properties.sg = [properties.sg, ...placemaking.extra].join(',');
     parcels.push({ type: 'Feature', properties, geometry: { type: 'Polygon', coordinates: [ring] } });
   }
 });
@@ -680,6 +712,8 @@ const manifest = {
     // Public art (M3.2); OpenStreetMap's artworks come with osm_philadelphia
     percent_for_art: ok(239, '2025-08-19'),
     wikidata_art: ok(72, null),
+    // The placemaking lens's commercial corridors (M3.4)
+    commercial_corridors: ok(279, null),
     ...Object.fromEntries(Object.entries(WALK_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
     // The displacement watch (M4.1)
     ...Object.fromEntries(Object.entries(WATCH_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),

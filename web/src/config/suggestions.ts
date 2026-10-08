@@ -5,6 +5,8 @@
 // signs and the ways to protect neighbors; elsewhere it keeps the one line caution. A new greening
 // suggestion in registry/suggestions.yaml joins this list.
 
+import { strings } from '../strings.ts';
+
 export const GREENING_SUGGESTIONS: ReadonlySet<string> = new Set([
   'clean_and_green',
   // The heat and shade lens (M3.1): planting trees and greening to cool are greening too.
@@ -19,10 +21,33 @@ export function isGreening(suggestionId: string): boolean {
 }
 
 /**
+ * The placemaking lens's suggestions (M3.4) that can make a block more sought after: a place to
+ * sit, a garden and art. They carry a placemaking version of the caution by the greening cards'
+ * rule (decided by the orchestrator on 2026-10-08, since "greening" does not describe a bench or a
+ * mural): the full card with the area's signs and protections inside a displacement watch area,
+ * the one line with the same link elsewhere. Its reports to Philly311 carry none.
+ */
+export const PLACEMAKING_SUGGESTIONS: ReadonlySet<string> = new Set(['seating_and_shade', 'community_garden', 'art_request']);
+
+export function isPlacemaking(suggestionId: string): boolean {
+  return PLACEMAKING_SUGGESTIONS.has(suggestionId);
+}
+
+/** The displacement caution a suggestion carries, or null when it carries none. */
+export function displacementCaution(suggestionId: string): string | null {
+  if (isGreening(suggestionId)) return strings.displacement.caution;
+  if (isPlacemaking(suggestionId)) return strings.displacement.placemakingCaution;
+  return null;
+}
+
+/**
  * Suggestions that answer a lens (M3.1). When that lens colors the lots, a place lists these first,
  * so its card leads with them: under the heat and shade lens, plant shade trees and green the lot
  * to cool the block.
  */
 export const LENS_SUGGESTIONS: Readonly<Record<string, readonly string[]>> = {
   heat: ['plant_shade_trees', 'cool_green_lot'],
+  // Under the placemaking lens (M3.4), a place to sit, a garden and art lead; the reports to
+  // Philly311 keep their place after the lot's first suggestions.
+  placemaking: ['seating_and_shade', 'community_garden', 'art_request'],
 };

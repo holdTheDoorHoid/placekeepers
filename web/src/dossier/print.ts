@@ -2,7 +2,7 @@
 // history and sources, ending with "not legal advice". It keeps the most important lines only,
 // so it fits one page; the full page is online.
 
-import { isGreening } from '../config/suggestions.ts';
+import { displacementCaution } from '../config/suggestions.ts';
 import { formatDate, strings } from '../strings.ts';
 import type { DossierView, TransferRow } from './build.ts';
 
@@ -95,12 +95,13 @@ export function printModel(view: DossierView, now: Date = new Date()): PrintMode
         warning: route?.warning ?? null,
         steps: route ? route.route.steps.slice(0, PRINT_LIMITS.steps) : [],
         cost: item.suggestion.cost,
-        caution: isGreening(item.suggestion.id) ? strings.displacement.caution : null,
+        caution: displacementCaution(item.suggestion.id),
       };
     }),
-    // With a greening suggestion or the box of a listed lot, both of which carry the caution.
+    // With a greening or placemaking suggestion or the box of a listed lot, all of which carry a
+    // caution.
     watch:
-      view.actions.watch && (view.actions.listing || view.actions.suggestions.slice(0, PRINT_LIMITS.suggestions).some((item) => isGreening(item.suggestion.id)))
+      view.actions.watch && (view.actions.listing || view.actions.suggestions.slice(0, PRINT_LIMITS.suggestions).some((item) => displacementCaution(item.suggestion.id) !== null))
         ? { text: view.actions.watch.text, links: view.actions.watch.links.map((link) => `${link.label}: ${link.url}`) }
         : null,
     owner: {

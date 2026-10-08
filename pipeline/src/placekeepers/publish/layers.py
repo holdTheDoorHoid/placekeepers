@@ -45,6 +45,8 @@ from placekeepers.derive.heat import SOURCES as HEAT_SOURCES
 from placekeepers.derive.heat import load_heat, with_heat
 from placekeepers.derive.lenses import SOURCES as LENS_SOURCES
 from placekeepers.derive.lenses import load_factors
+from placekeepers.derive.placemaking import SOURCES as PLACEMAKING_SOURCES
+from placekeepers.derive.placemaking import load_placemaking, with_more
 from placekeepers.derive.vacancy import SOURCES as VACANCY_SOURCES
 from placekeepers.derive.walk import SOURCES as WALK_SOURCES
 from placekeepers.derive.walk import load_walk
@@ -250,6 +252,8 @@ def build_parcels_from_model(
     heat = load_heat(model.with_name("heat_factors.parquet"))
     # The walking measures for the placemaking lens (M3.3), from pk derive.
     walking = load_walk(model.with_name("walk_factors.parquet"))
+    # The placemaking lens's own factors and suggestions (M3.4), from pk derive.
+    placemaking = load_placemaking(model.with_name("placemaking_factors.parquet"))
     # The displacement watch (M4.1): the signs of the watch area a parcel lies in, as `dw`.
     from placekeepers.publish.displacement import parcel_watch
 
@@ -276,6 +280,11 @@ def build_parcels_from_model(
                 first = [s for s in properties["sg"].split(",") if s]
                 properties["sg"] = ",".join(with_heat(first, hot.suggestions, known_suggestions))
             properties.update(walking.get(opa, {}))
+            place = placemaking.get(opa)
+            if place is not None:
+                properties.update(place.properties)
+                first = [s for s in properties["sg"].split(",") if s]
+                properties["sg"] = ",".join(with_more(first, place.suggestions, known_suggestions))
             if opa in watch:
                 properties["dw"] = watch[opa][1]
             writer.write(properties, geometry_json(wkb))
@@ -486,7 +495,13 @@ BUILDERS: tuple[LayerBuilder, ...] = (
             *(
                 s
                 for s in dict.fromkeys(
-                    (*VACANCY_SOURCES, *LENS_SOURCES, *HEAT_SOURCES, *WALK_SOURCES)
+                    (
+                        *VACANCY_SOURCES,
+                        *LENS_SOURCES,
+                        *HEAT_SOURCES,
+                        *WALK_SOURCES,
+                        *PLACEMAKING_SOURCES,
+                    )
                 )
                 if s not in PARCEL_LAYER_SOURCES
             ),

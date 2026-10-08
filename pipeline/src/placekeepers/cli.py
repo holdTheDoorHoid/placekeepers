@@ -5,7 +5,8 @@
     pk validate [ids...]         turn new downloads into snapshots, or keep the last good one
     pk derive [--as-of DATE]     run the vacancy model, then the lens factors, on the snapshots
                                  (the violence lens, then the heat and shade lens, then the
-                                 walking measures), and the displacement watch
+                                 walking measures, then the placemaking lens), and the
+                                 displacement watch
     pk publish [--out DIR]       write manifest.json and the map layers
     pk health [ids...]           show each source's status
     pk all                       fetch, validate, derive, publish, then show health
@@ -35,6 +36,7 @@ from placekeepers.runner import (
     derive_displacement,
     derive_heat,
     derive_lenses,
+    derive_placemaking,
     derive_vacancy,
     derive_walk,
     fetch_source,
@@ -135,6 +137,7 @@ def cmd_derive(args: argparse.Namespace) -> int:
         steps.append(derive_lenses(ctx, _as_of(args)))
         steps.append(derive_heat(ctx, _as_of(args)))
         steps.append(derive_walk(ctx, _as_of(args)))
+        steps.append(derive_placemaking(ctx, _as_of(args)))
     # The displacement watch measures census tracts and needs no vacancy model (M4.1).
     steps.append(derive_displacement(ctx, _as_of(args)))
     _print_steps(steps)
@@ -209,6 +212,7 @@ def cmd_all(args: argparse.Namespace) -> int:
             steps.append(derive_lenses(ctx, _as_of(args)))
             steps.append(derive_heat(ctx, _as_of(args)))
             steps.append(derive_walk(ctx, _as_of(args)))
+            steps.append(derive_placemaking(ctx, _as_of(args)))
         steps.append(derive_displacement(ctx, _as_of(args)))
         print("Steps:")
         _print_steps(steps)

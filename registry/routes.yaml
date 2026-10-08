@@ -41,7 +41,7 @@
   label: Report it to Philly311
   who: Anyone
   steps:
-    - Report the open building, illegal dumping or dark streetlight to Philly311 online, by app, or by calling 311.
+    - Report the open building, illegal dumping, graffiti, or dark street or alley light to Philly311 online, by app, or by calling 311.
     - Keep the service request number and check back.
   cost: Free
   timeline: Days to weeks
@@ -104,6 +104,34 @@
   links:
     - {label: "TreePhilly: yard trees", url: "https://treephilly.org/yard-trees/"}
   last_checked: 2026-10-05
+  status: confirm
+# Milestone M3.4: routes for the placemaking suggestions, checked 2026-10-08 (docs/ROUTES.md
+# sections 2 and 4). Mural Arts' own request page is only linked, never copied.
+- id: mural_arts_wall_request
+  label: Ask Mural Arts for a mural on a wall
+  who: The owner of the wall, with neighbors who support it. Anyone can start by asking the owner
+  steps:
+    - Find a wall that faces the lot and is easy to see from the street, and ask its owner whether they would welcome a mural.
+    - With the owner's agreement, fill in the wall request form on Mural Arts Philadelphia's contact page. It asks about the wall, the neighbors' support and why a mural matters there.
+    - Anything in the street or on the sidewalk, the public right of way, also goes to the City's Art Commission.
+  cost: Free to apply
+  timeline: Months
+  links:
+    - {label: "Mural Arts Philadelphia: contact page, with the form for a mural on your wall", url: "https://muralarts.org/contact/"}
+  last_checked: 2026-10-08
+  status: verified
+- id: public_space_mini_grant
+  label: Apply for a Feet First Philly public space mini grant
+  who: Neighbors and community groups. The program favors communities that have seen less investment in their streets and City services
+  steps:
+    - Read the request for proposals on Feet First Philly's mini grant page. Projects must make the neighborhood safer and easier to walk and roll in; ask Feet First Philly whether a place to sit on a lot qualifies.
+    - Apply while the round is open. Applications open in August and are due in October.
+    - Expect to send a short report halfway through and another at the end.
+  cost: "Grants of $500 to $2,500, partly funded by the Department of Public Health"
+  timeline: Applications open in August and are due in October each year
+  links:
+    - {label: "Feet First Philly: public space enhancement mini grant", url: "https://feetfirstphilly.org/public-space-enhancement-mini-grant-2/"}
+  last_checked: 2026-10-08
   status: confirm
 # Milestone M1.3: routes for owner flags and for Land Bank, Redevelopment Authority and private lots.
 - id: land_bank_side_yard

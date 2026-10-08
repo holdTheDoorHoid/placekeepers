@@ -69,6 +69,12 @@ busier streets can mean more watchful neighbors, or more places that sell alcoho
 own risk factor. How many people live nearby is never used to raise or lower a violence score. We
 only use it to say how many people a project would reach.
 
+The placemaking lens ranks lots for where a garden, a place to sit or a mural would be used most:
+many neighbors and everyday places within a short walk, far from a park, with no public art
+nearby. It makes no claim about crime. Its walking measures and shopping streets carry Mixed,
+because the research cuts both ways as above; the rest is background about who a project would
+reach and what is missing nearby. Its gardens, seats and murals carry Not about violence.
+
 ## What we do not claim
 
 **We do not claim credit for the citywide drop in killings.** Philadelphia recorded 562 homicides

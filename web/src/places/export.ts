@@ -11,7 +11,7 @@
 // files; the page says so, and exports the places with the highest scores first.
 
 import { permissionFromRoutes, permissionText, type PermissionCode } from '../config/permission.ts';
-import { isGreening } from '../config/suggestions.ts';
+import { isGreening, isPlacemaking } from '../config/suggestions.ts';
 import { protectionLinks, signsText, watchSigns } from '../displacement/watch.ts';
 import type { Manifest } from '../data/manifest.ts';
 import { completeFlag, sortFlags } from '../dossier/flags.ts';
@@ -214,9 +214,11 @@ export async function gatherExport(input: ExportInput): Promise<ExportResult> {
     ? lens.factors.map((f) => `${f.label} ${input.state.weights[lens.id]?.[f.id] ?? f.default_weight}`).join(', ')
     : '';
   // Any greening suggestion in the file brings the displacement caution with it (decision D12),
-  // and one in a displacement watch area the ways to protect neighbors as well (M4.1).
+  // any place to sit, garden or art its placemaking version (M3.4), and either one in a
+  // displacement watch area the ways to protect neighbors as well (M4.1).
   const greening = new Set(input.registry.suggestions.filter((s) => isGreening(s.id)).map((s) => s.label));
-  const inWatch = rows.some((row) => greening.has(row.suggestion) && row.displacement_watch !== '');
+  const placemaking = new Set(input.registry.suggestions.filter((s) => isPlacemaking(s.id)).map((s) => s.label));
+  const inWatch = (labels: Set<string>) => rows.some((row) => labels.has(row.suggestion) && row.displacement_watch !== '');
   const protections = protectionLinks(input.registry)
     .map((link) => `${link.label} (${link.url})`)
     .join('; ');
@@ -226,7 +228,9 @@ export async function gatherExport(input: ExportInput): Promise<ExportResult> {
     e.ownerLine,
     ...(lens ? [e.scoreLine(lens.label, weights)] : []),
     ...(rows.some((row) => greening.has(row.suggestion)) ? [e.greeningLine(strings.displacement.caution)] : []),
-    ...(inWatch ? [strings.displacement.exportLine(strings.displacement.caution, protections)] : []),
+    ...(rows.some((row) => placemaking.has(row.suggestion)) ? [e.placemakingLine(strings.displacement.placemakingCaution)] : []),
+    ...(inWatch(greening) ? [strings.displacement.exportLine(strings.displacement.caution, protections)] : []),
+    ...(inWatch(placemaking) ? [strings.displacement.placemakingExportLine(strings.displacement.placemakingCaution, protections)] : []),
   ];
   return {
     rows,
