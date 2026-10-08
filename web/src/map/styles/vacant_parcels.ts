@@ -7,10 +7,11 @@
 // circle with the same color and the same strength for how sure we are. Zoomed out (below zoom 13)
 // the tiles carry a light sample of the parcels as points (issue #26), drawn the same way with a
 // hairline edge, so the lens colors show where lots cluster.
-// Settings: min_confidence (hide parcels below a confidence), kinds (lots, buildings or both) and
+// Settings: min_confidence (hide parcels below a confidence), kinds (lots, buildings or both),
 // lens (M3.1: which lens colors the lots, violence reduction or heat and shade; using a lens's
-// sliders sets it too, src/map/lens-layers.ts). The owner type filter from the analysis view
-// applies here too.
+// sliders sets it too, src/map/lens-layers.ts) and listed (issue #36: only the parcels the City's
+// land agencies list as available, `la`). The owner type filter from the analysis view applies
+// here too.
 
 import type { ExpressionSpecification, FilterSpecification, LayerSpecification } from 'maplibre-gl';
 import { FILTERS } from '../../config/filters.ts';
@@ -31,6 +32,11 @@ export function parcelLens(ctx: LegendContext) {
   return lenses.find((l) => l.id === chosen) ?? lenses[0] ?? null;
 }
 
+/** Only the parcels the City's land agencies list as available (the `listed` setting). */
+function listedOnly(ctx: LegendContext): boolean {
+  return settingValue(ctx, 'listed') === 'available';
+}
+
 export function parcelFilter(ctx: LegendContext): ExpressionSpecification {
   const conditions: ExpressionSpecification[] = [];
   const min = Number(settingValue(ctx, 'min_confidence') ?? 1);
@@ -38,6 +44,7 @@ export function parcelFilter(ctx: LegendContext): ExpressionSpecification {
   const kinds = settingValue(ctx, 'kinds');
   if (kinds === 'lots') conditions.push(['==', kind, 1]);
   else if (kinds === 'buildings') conditions.push(['==', kind, 2]);
+  if (listedOnly(ctx)) conditions.push(['==', ['to-number', ['get', 'la'], 0], 1]);
   for (const filter of FILTERS.filter((f) => f.style === 'vacant_parcels')) {
     const chosen = ctx.state.filters[filter.id];
     if (!chosen || chosen.length >= filter.options.length) continue;
@@ -71,7 +78,7 @@ const selectedRadius: ExpressionSpecification = ['interpolate', ['linear'], ['zo
 
 export const vacantParcels: StyleModule = {
   zIndex: 20,
-  settings: ['min_confidence', 'kinds', 'lens'],
+  settings: ['min_confidence', 'kinds', 'lens', 'listed'],
   clickable: ['fill', 'point'],
 
   layers(ctx: StyleContext): LayerSpecification[] {
@@ -168,6 +175,7 @@ export const vacantParcels: StyleModule = {
       { kind: 'circle', label: l.parcelPoint, fill: swatch, stroke: PARCEL_OUTLINE, radius: 4 },
       { kind: 'swatch', label: l.selected, fill: 'transparent', stroke: SELECTED, strokeWidth: 3 },
     );
+    if (listedOnly(ctx)) entries.push({ kind: 'note', text: l.parcelsListed });
     return entries;
   },
 };

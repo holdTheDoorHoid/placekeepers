@@ -181,8 +181,12 @@ describe('reading a shard', () => {
       expect(parcel.vacancy?.rs).toBe(tile.rs);
       expect(parcel.vacancy?.n).toBe(tile.n);
       for (const key of ['dy', 'sy', 'ny'] as const) expect(parcel.vacancy?.[key] ?? undefined).toBe(tile[key]);
-      // The map's first step to get permission is the dossier's first route, as in the pipeline.
-      expect(PERMISSION_ROUTE[tile.rt as PermissionCode], opa).toBe(parcel.routes[0] ?? null);
+      // The map's first step to get permission is the dossier's first route, as in the pipeline,
+      // passing over the side yard route, which is for the household next door only (issue #36).
+      const first = parcel.routes.find((id) => id !== 'land_bank_side_yard') ?? parcel.routes[0] ?? null;
+      expect(PERMISSION_ROUTE[tile.rt as PermissionCode], opa).toBe(first);
+      // The map marks the lots the City's land agencies list as available, as the dossier does.
+      expect(tile.la === 1, opa).toBe(parcel.owner?.cityOwned?.available === true);
     }
   });
 
@@ -245,14 +249,17 @@ describe('reading a shard', () => {
       owner: {
         names: ['A'],
         type: 'land_bank',
-        city_owned: { agency: 'PLB', status: 'AVAILABLE', side_yard_eligible: true },
+        city_owned: { agency: 'PLB', status: 'Owned - Available', side_yard_eligible: true, available: true },
         flags: [{ id: 'many_parcels', text: 'This owner holds 7 vacant parcels in the city.', data: { count: 7, list: '3f2a9c1b7d04' } }],
       },
       transfers: [{ date: '2020-01-02', type: 'DEED', price: null, from: ['A'], to: ['B'], from_more: 3, properties: 4 }],
       landcare: { program: 'community_landcare', year: 2019 },
       garden: true,
     })!;
-    expect(parcel.owner!.cityOwned).toEqual({ agency: 'PLB', status: 'AVAILABLE', sideYardEligible: true });
+    expect(parcel.owner!.cityOwned).toEqual({ agency: 'PLB', status: 'Owned - Available', sideYardEligible: true, available: true });
+    // Only a true value counts as listed (issue #36).
+    const unlisted = parseShardParcel({ owner: { names: [], type: 'city', city_owned: { agency: 'PUB', status: 'Owned - On Hold', available: 'yes' } } })!;
+    expect(unlisted.owner!.cityOwned).toEqual({ agency: 'PUB', status: 'Owned - On Hold', sideYardEligible: false, available: false });
     expect(parcel.owner!.flags[0]!.list).toBe('3f2a9c1b7d04');
     expect(parcel.transfers![0]).toMatchObject({ price: null, fromMore: 3, toMore: 0, properties: 4 });
     expect(parcel.landcare).toEqual({ program: 'community_landcare', year: 2019 });

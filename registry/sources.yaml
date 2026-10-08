@@ -176,7 +176,7 @@
   homepage: https://www.arcgis.com/home/item.html?id=81cf9be934d94c73b847a0027efa3675
   endpoint: {kind: arcgis, service: LAMAAssets, layer: 0}
   license: city_terms
-  attribution: "City owned property: City of Philadelphia, Department of Planning and Development"
+  attribution: "City owned property and lots listed as available: City of Philadelphia, Department of Planning and Development (Land Management), as the Philadelphia Land Bank's property map shows them"
   cadence: weekly
   health: {min_rows: 5000, max_drop_pct: 25}
   release: v0.1

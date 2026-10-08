@@ -45,6 +45,8 @@
     - schools
     - snap_retailers
     - septa_gtfs
+    # Owner type, and the lots the City's land agencies list as available (issue #36)
+    - city_owned_property
   file: tiles/lots.pmtiles
   source_layer: parcels
   geometry: polygon
@@ -68,6 +70,16 @@
         - {value: lots, label: Lots only}
         - {value: buildings, label: Buildings only}
       default: both
+    # Lots the City's land agencies list as available, the same list the Philadelphia Land Bank's
+    # property map shows (issue #36, the tile property `la`). It names the City's status, never
+    # how easy a lot would be to get (docs/ETHICS.md).
+    - id: listed
+      label: Listed as available by the City's land agencies
+      type: choice
+      options:
+        - {value: any, label: Any parcel}
+        - {value: available, label: Listed as available only}
+      default: any
     # Which lens colors the lots (M3.1). Each value is the id of a lens that applies to parcels;
     # moving a lens's sliders sets it to that lens (docs/CONTRACTS.md section 1).
     - id: lens

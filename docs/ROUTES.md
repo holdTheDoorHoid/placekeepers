@@ -34,6 +34,14 @@ statistics.
 Redevelopment Authority lots (1,670): the original project labeled these "do nothing". Placekeepers
 says "contact PHDC to ask about this parcel" until the route is researched.
 
+Lots listed as available (added 2026-10-08, issue #36): the City's list of public property gives
+each parcel a status, and the Land Bank's "View Properties Map" shows the ones whose status begins
+`Owned - Available`, whichever of the four agencies (the City, the Land Bank, the Redevelopment
+Authority or PHDC) owns them. Where such a lot is marked eligible for a side yard, the lot page
+puts the side or rear yard route first, for the neighbor next door; everyone else starts with the
+route after it. The Land Bank says it may decline to sell or lease any property at its own
+discretion, so the page says a listing is no promise.
+
 ### Private lots
 
 | Route | What it involves | Status |

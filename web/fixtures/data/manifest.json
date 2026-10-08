@@ -12,6 +12,15 @@
       "newest_record": "2026-10-02",
       "message": null
     },
+    "city_owned_property": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 7740,
+      "newest_record": null,
+      "message": null
+    },
     "pwd_parcels": {
       "status": "missing",
       "last_attempt": null,
@@ -390,7 +399,8 @@
         "vacant_indicators_land",
         "vacant_indicators_bldg",
         "opa_properties",
-        "pwd_parcels"
+        "pwd_parcels",
+        "city_owned_property"
       ]
     },
     "hin_2025": {
@@ -682,8 +692,8 @@
       "sha256": "1d746dd64887fc690edb3dbd6c056b1630ce99ec1cec269ad1ea21b9890d3717"
     },
     "tiles/lots.pmtiles": {
-      "bytes": 14605,
-      "sha256": "3fc569bcc30dbe6cb20eacb68a5447b962f9b7f545e8bfb0cc5da5c43da7ad3f"
+      "bytes": 14655,
+      "sha256": "9a862ed5461bb56a7318072fdcd8ce0627260a75363b7ee75fd9f432e85fd3e1"
     },
     "tiles/streets.crashes.geojson": {
       "bytes": 23183,
@@ -812,7 +822,7 @@
       "9900"
     ],
     "files": 1,
-    "bytes": 23438
+    "bytes": 23570
   },
   "notes": [
     "This is synthetic sample data for testing the map.",
