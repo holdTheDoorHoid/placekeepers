@@ -169,6 +169,12 @@ As built (M1.10, interface review, 2026-10-04; details in
   at the end of the field view's sheet (nearest first) and a Memorials tab in the analysis drawer
   (newest first). An entry says what the marker says before it is opened (how the person was
   traveling, the date and the place), never a name; opening it shows the same details as the marker.
+- **Street blocks and crashes without the map** (issue #26). The street blocks drawn on the map are
+  listed too: "Street blocks nearby" in the field view's sheet (nearest first) and a Street blocks
+  tab in the analysis drawer (highest priority first), each with its street safety priority and
+  main reason. With the crash layer on, the crashes drawn follow, each with its year, how badly
+  people were hurt, who was involved and the nearest block. Opening an entry shows the same details
+  as tapping the map.
 - **Phones.** Phones get the field view held either way up; turned sideways, the open sheet runs down
   the left of the map. On the narrowest phones "Copy link" moves into the menu and Settings shows a
   gear (still named "Settings" for screen readers), so the top bar keeps to two rows even with a
