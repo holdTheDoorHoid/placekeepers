@@ -45,6 +45,11 @@
     - schools
     - snap_retailers
     - septa_gtfs
+    # The placemaking lens's own factors and its reports to Philly311 (M3.4)
+    - percent_for_art
+    - wikidata_art
+    - commercial_corridors
+    - philly311_conditions
   file: tiles/lots.pmtiles
   source_layer: parcels
   geometry: polygon
@@ -76,6 +81,7 @@
       options:
         - {value: violence, label: The violence reduction lens}
         - {value: heat, label: The heat and shade lens}
+        - {value: placemaking, label: The placemaking lens}
       default: violence
   release: v0.1
 - id: hin_2025

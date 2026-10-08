@@ -375,3 +375,22 @@ def derive_walk(ctx: Context, as_of: date | None = None) -> StepResult:
     missing = ", ".join(result.missing_sources)
     detail = f"{result.parcels:,} parcels" + (f"; without {missing}" if missing else "")
     return StepResult("walk", "derive", "ok", detail, time.monotonic() - started)
+
+
+def derive_placemaking(ctx: Context, as_of: date | None = None) -> StepResult:
+    """Compute the placemaking lens factors and suggestions for the vacancy model's parcels
+    (M3.4), after the walking measures. A failure is reported, never raised: the map then shows
+    the parcels without placemaking scores."""
+    from placekeepers.derive import placemaking
+
+    started = time.monotonic()
+    try:
+        result = placemaking.run(ctx, as_of)
+    except Exception as exc:  # the map must still publish
+        message = f"The placemaking lens factors could not be computed: {plain_error(exc)}"
+        log.error("derive: %s", message)
+        log.debug("derive: details", exc_info=True)
+        return StepResult("placemaking", "derive", "failed", message, time.monotonic() - started)
+    missing = ", ".join(result.missing_sources)
+    detail = f"{result.parcels:,} parcels" + (f"; without {missing}" if missing else "")
+    return StepResult("placemaking", "derive", "ok", detail, time.monotonic() - started)

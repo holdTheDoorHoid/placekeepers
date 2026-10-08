@@ -52,6 +52,95 @@
   partners: [phs, treephilly, gjli]
   default_on: true
   release: v0.3
+# The placemaking lens (M3.4). Which lots get them is decided in
+# pipeline/src/placekeepers/derive/placemaking.py. A place to sit, a garden and art can raise
+# nearby prices as greening does, so the web app shows the displacement caution of docs/ETHICS.md
+# with them (web/src/config/suggestions.ts). The three reports to Philly311 are for physical
+# conditions on the street only, never about people and never to the police (docs/ETHICS.md).
+- id: seating_and_shade
+  label: Make a place to sit in the shade
+  applies_to: parcel
+  summary: >-
+    More people live within a 5 minute walk of this lot than around at least half the places on
+    this map. A few benches or a picnic table under shade trees can make it a place where
+    neighbors stop, rest and meet. Ask the neighbors what they would use, choose sturdy seats, and
+    plant trees that will grow tall so the lot stays open to view. Plan who will keep it clean.
+  evidence: not_violence
+  cost: "From free trees (TreePhilly) and a bench built from an open design to a few thousand dollars. Feet First Philly's public space mini grants give $500 to $2,500"
+  routes: [land_bank_garden_agreement, ask_the_owner, community_landcare, public_space_mini_grant, treephilly_yard_trees, street_tree_request]
+  partners: [feet_first, treephilly, phs]
+  default_on: true
+  release: v0.3
+- id: community_garden
+  label: Start a community garden
+  applies_to: parcel
+  summary: >-
+    This lot is farther from a park than at least half the places on this map. A community garden
+    gives neighbors green space, food and flowers, and a reason to meet. It needs gardeners who
+    come back every week, water, and permission to use the land. Once a garden is working, the
+    Neighborhood Gardens Trust can help keep it a garden for good.
+  evidence: not_violence
+  cost: "From a few raised beds to a few thousand dollars with soil, a fence and water. The Land Bank's Urban Garden Agreement costs $1"
+  routes: [land_bank_garden_agreement, ask_the_owner, community_landcare]
+  partners: [phs, ngt, gjli]
+  default_on: true
+  release: v0.3
+- id: art_request
+  label: Ask about a mural or other art
+  applies_to: parcel
+  summary: >-
+    Many people live around this lot, and no work on the City's Percent for Art list or in
+    Wikidata stands within a 5 minute walk. Those lists miss many murals, so look at the Public
+    art layer and at Mural Arts' own list of murals first. A blank wall facing the lot could hold
+    a mural: Mural Arts takes requests from the owners of walls on its own site. Art is welcome
+    for beauty and pride; no study links it to less violence.
+  evidence: not_violence
+  cost: Free to ask Mural Arts
+  routes: [mural_arts_wall_request]
+  partners: [mural_arts]
+  default_on: true
+  release: v0.3
+- id: report_dumping
+  label: Report the illegal dumping to Philly311
+  applies_to: parcel
+  summary: >-
+    Someone asked Philly311 about illegal dumping on a street block this lot faces in the last 90
+    days, and the request is still open. If the trash is still there, add your own request, with
+    a photo, so the City clears it away. A report is about the trash, never about who left it.
+  evidence: not_violence
+  cost: Free to report
+  routes: [report_to_311]
+  partners: []
+  default_on: true
+  release: v0.3
+- id: report_dark_light
+  label: Report the dark street light to Philly311
+  applies_to: parcel
+  summary: >-
+    Someone asked Philly311 to fix a street or alley light that is out on a street block this lot
+    faces, in the last 90 days, and the request is still open. If the light is still dark, add
+    your own request, with the pole's number if it has one. A lit street helps neighbors use the
+    street and the lot after dark.
+  evidence: moderate
+  cost: Free to report
+  routes: [report_to_311]
+  partners: []
+  default_on: true
+  release: v0.3
+- id: report_graffiti
+  label: Report the graffiti to Philly311
+  applies_to: parcel
+  summary: >-
+    Someone asked Philly311 to remove graffiti on a street block this lot faces in the last 90
+    days, and the request is still open. If it is still there, add your own request, with a
+    photo, so the City can clean it off. If neighbors would rather have art on that wall, ask its
+    owner about a mural.
+  evidence: not_violence
+  cost: Free to report
+  routes: [report_to_311]
+  partners: []
+  default_on: true
+  release: v0.3
 - id: memorial_or_ghost_bike
   label: A memorial or a ghost bike
   applies_to: crash

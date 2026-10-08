@@ -69,6 +69,8 @@ ADAPTERS: dict[str, type[Adapter]] = {
     "gardens_phs_ngt": places.GardensPhsNgt,
     "gardens_registered": places.GardensRegistered,
     "ppr_properties": places.PprProperties,
+    # The placemaking lens (M3.4)
+    "commercial_corridors": places.CommercialCorridors,
     "zoning_base_districts": places.ZoningBaseDistricts,
     "council_districts": places.CouncilDistricts,
     "community_organizations": places.CommunityOrganizations,

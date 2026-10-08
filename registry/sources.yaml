@@ -595,6 +595,22 @@
   cadence: weekly
   health: {min_rows: 40, max_drop_pct: 25}
   release: v0.3
+# Milestone M3.4: the commercial corridors of the placemaking lens's "on or near a commercial
+# corridor" factor. OpenDataPhilly lists the layer under the City of Philadelphia License, the
+# City's open data terms used for every City source here (docs/DATA_SOURCES.md, "Placemaking").
+- id: commercial_corridors
+  name: Commercial corridors of Philadelphia
+  publisher: City of Philadelphia, Department of Planning and Development
+  homepage: https://opendataphilly.org/datasets/commercial-corridors-of-philadelphia/
+  # 279 corridors, centers and districts the Planning Commission surveyed from 2011 to 2017, as
+  # areas; only the name, survey year and kind are downloaded with the shape
+  # (pipeline/src/placekeepers/adapters/places.py).
+  endpoint: {kind: arcgis, service: Commercial_Corridors, layer: 0}
+  license: city_terms
+  attribution: "Commercial corridors: City of Philadelphia, Department of Planning and Development"
+  cadence: irregular
+  health: {min_rows: 250, max_drop_pct: 10}
+  release: v0.3
 # Milestone M3.3: walkability and people. The EPA's National Walkability Index by block group
 # (only Philadelphia's are downloaded), population by census block from the 2020 census, DVRPC's
 # traffic stress for cycling (Philadelphia's streets only), and food stores that take SNAP, one of
