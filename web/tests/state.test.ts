@@ -66,6 +66,12 @@ describe('defaults per view', () => {
       seal_abandoned_building: true,
       plant_shade_trees: true,
       cool_green_lot: true,
+      seating_and_shade: true,
+      community_garden: true,
+      art_request: true,
+      report_dumping: true,
+      report_dark_light: true,
+      report_graffiti: true,
       memorial_or_ghost_bike: true,
       traffic_calming_petition: true,
       daylighting_check: true,
@@ -78,6 +84,14 @@ describe('defaults per view', () => {
     });
     expect(state.settings.memorials).toEqual({ show_names: true, all_fatal: false });
     expect(state.weights.street_safety).toEqual({ high_injury_network: 3, walking_cycling_harm: 3, recent_death: 2, school_nearby: 1 });
+    expect(state.weights.placemaking).toEqual({
+      neighbors: 3,
+      everyday_places: 2,
+      walkability: 2,
+      far_from_park: 2,
+      no_art_nearby: 1,
+      commercial_corridor: 1,
+    });
     expect(state.weights.transit_comfort).toEqual({
       riders: 3,
       no_shelter: 3,

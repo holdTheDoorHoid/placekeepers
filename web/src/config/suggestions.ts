@@ -11,6 +11,11 @@ export const GREENING_SUGGESTIONS: ReadonlySet<string> = new Set([
   'cool_green_lot',
   // Shade trees at a bus stop (M2.3) are greening as well.
   'stop_shade_trees',
+  // The placemaking lens (M3.4): a place to sit under trees, a garden and art can raise nearby
+  // prices as greening does, so they carry the same caution.
+  'seating_and_shade',
+  'community_garden',
+  'art_request',
 ]);
 
 export function isGreening(suggestionId: string): boolean {
@@ -24,4 +29,7 @@ export function isGreening(suggestionId: string): boolean {
  */
 export const LENS_SUGGESTIONS: Readonly<Record<string, readonly string[]>> = {
   heat: ['plant_shade_trees', 'cool_green_lot'],
+  // Under the placemaking lens (M3.4), a place to sit, a garden and art lead; the reports to
+  // Philly311 keep their place after the lot's first suggestions.
+  placemaking: ['seating_and_shade', 'community_garden', 'art_request'],
 };

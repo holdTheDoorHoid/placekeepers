@@ -345,6 +345,15 @@
       "newest_record": null,
       "message": null
     },
+    "commercial_corridors": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 279,
+      "newest_record": null,
+      "message": null
+    },
     "epa_walkability": {
       "status": "ok",
       "last_attempt": "2026-10-04T10:00:05Z",
@@ -682,8 +691,8 @@
       "sha256": "1d746dd64887fc690edb3dbd6c056b1630ce99ec1cec269ad1ea21b9890d3717"
     },
     "tiles/lots.pmtiles": {
-      "bytes": 14605,
-      "sha256": "3fc569bcc30dbe6cb20eacb68a5447b962f9b7f545e8bfb0cc5da5c43da7ad3f"
+      "bytes": 18068,
+      "sha256": "b79ee6f74e1897f44a7c46ffdc7fea03490a036b2b892c2013e423f39dd57a03"
     },
     "tiles/streets.crashes.geojson": {
       "bytes": 23183,
@@ -812,7 +821,7 @@
       "9900"
     ],
     "files": 1,
-    "bytes": 23438
+    "bytes": 24520
   },
   "notes": [
     "This is synthetic sample data for testing the map.",
