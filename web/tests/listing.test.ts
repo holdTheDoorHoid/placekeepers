@@ -121,8 +121,8 @@ describe('the box for a lot listed as available', () => {
     expect(listing.links).toEqual([{ label: "The Land Bank's map of available properties", url: LAND_BANK_MAP_URL }]);
     expect(listing.credit).toContain('Department of Planning and Development (Land Management)');
     expect(listing.credit).toContain('Philadelphia Land Bank');
-    // The displacement caution waits for the displacement watch (M4.1).
-    expect(listing.displacement).toBeNull();
+    // The one line displacement caution: the lot lies outside every displacement watch area (M4.1).
+    expect(listing.displacement).toEqual({ caution: strings.displacement.caution, watch: null });
     // The side yard route is not repeated among the other routes.
     expect(view.actions.otherRoutes.map((r) => r.route.id)).not.toContain('land_bank_side_yard');
   });

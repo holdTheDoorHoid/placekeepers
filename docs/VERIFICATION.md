@@ -101,7 +101,7 @@ means it was checked for this report only.
 | Never rank neighborhoods by violence | No boundary layer carries counts; the lens ranks parcels for care | Yes in the data; area summaries in M1.7 to check | By hand |
 | Never suggest police; 311 for physical conditions only | Suggestions, routes, site text | None. `content/how.md` names "the police district" as a step of the City's block party permit: a process fact, not enforcement (finding F18) | `test_wording.py`, `test_ethics_outputs.py`; by hand |
 | Nothing about people experiencing homelessness | Site text, registry, data | None | By hand |
-| Displacement caution on greening cards in displacement watch areas | The watch overlay is a later release | Nothing to attach the caution to in v0.1 (D12) | Later |
+| Displacement caution on greening cards in displacement watch areas | The watch overlay is a later release | Nothing to attach the caution to in v0.1 (D12). Built by M4.1 (2026-10-08): the full card in watch areas, the one line caution elsewhere | `web/tests/displacement.test.ts`, `e2e/displacement.spec.ts`, `pipeline/tests/test_displacement.py` |
 | No analytics, cookies, accounts or tracking | The live site's scripts | None (section 6) | By hand |
 | "Fetch live City data" on by default and disclosed | `registry/options.yaml`, About and Privacy pages | Disclosed on both pages | By hand; interface later |
 | Every derived fact shows source, date, confidence; vacancy lists its reasons | Reasons travel as `rs` bits in tiles and dossiers; 20 parcels' reasons checked against City records | Reasons agree with the City's records (section 4.1) | `test_vacancy.py`; interface later |
@@ -445,6 +445,11 @@ misused to the orchestrator. Each decision can be undone if the owner disagrees.
   not a Police case number, and removal needs a stable id. ETHICS.md says so.
 - **D12.** Every greening suggestion carries the ETHICS.md caution, "Greening can raise nearby
   prices. Consider pairing it with protections.", until the displacement watch overlay exists.
+  Note (2026-10-08, M4.1): the watch now exists (DESIGN.md section 5.3). Inside a displacement watch
+  area a greening card shows the full card of ETHICS.md, "Displacement": the sentence, the area's
+  signs and links to the Neighborhood Gardens Trust, community land trusts, the Homestead
+  Exemption, LOOP and tangled title help. Outside every watch area the card keeps this one line
+  caution, as the orchestrator decided, because it stays protective.
 
 ## Interface checks for the second half (after M1.7 merges)
 

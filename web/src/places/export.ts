@@ -12,6 +12,7 @@
 
 import { permissionFromRoutes, permissionText, type PermissionCode } from '../config/permission.ts';
 import { isGreening } from '../config/suggestions.ts';
+import { protectionLinks, signsText, watchSigns } from '../displacement/watch.ts';
 import type { Manifest } from '../data/manifest.ts';
 import { completeFlag, sortFlags } from '../dossier/flags.ts';
 import { loadCommon, loadShard, shardLocation } from '../dossier/shard.ts';
@@ -52,6 +53,8 @@ export interface ExportRow {
   lens_score: number | null;
   main_reason: string;
   suggestion: string;
+  /** The displacement watch area the place lies in, with its signs in words (M4.1); empty outside. */
+  displacement_watch: string;
   first_step_to_get_permission: string;
   first_lawful_step: string;
   owner_names: string;
@@ -164,6 +167,8 @@ export function exportRow(input: Pick<ExportInput, 'registry' | 'state' | 'siteU
   if (described?.firstStep) firstStep = `${described.firstStep.route.label}. ${described.firstStep.step}`;
   else if (described?.noRoute) firstStep = strings.permission.noRoute;
 
+  const watch = watchSigns(tile, parcel?.displacement?.signs);
+
   const flags = sortFlags(owner?.flags ?? []).map((flag) => {
     const whole = completeFlag(flag, notes?.flags[flag.id] ?? null);
     return {
@@ -185,6 +190,7 @@ export function exportRow(input: Pick<ExportInput, 'registry' | 'state' | 'siteU
     lens_score: described?.score ?? null,
     main_reason: described?.why?.main?.label ?? '',
     suggestion: suggestion?.label ?? '',
+    displacement_watch: watch === null ? '' : strings.displacement.exportColumn(signsText(watch)),
     first_step_to_get_permission: permission === null ? '' : permissionText(permission),
     first_lawful_step: firstStep,
     owner_names: owner?.names.join('; ') ?? '',
@@ -207,14 +213,20 @@ export async function gatherExport(input: ExportInput): Promise<ExportResult> {
   const weights = lens
     ? lens.factors.map((f) => `${f.label} ${input.state.weights[lens.id]?.[f.id] ?? f.default_weight}`).join(', ')
     : '';
-  // Any greening suggestion in the file brings the displacement caution with it (decision D12).
+  // Any greening suggestion in the file brings the displacement caution with it (decision D12),
+  // and one in a displacement watch area the ways to protect neighbors as well (M4.1).
   const greening = new Set(input.registry.suggestions.filter((s) => isGreening(s.id)).map((s) => s.label));
+  const inWatch = rows.some((row) => greening.has(row.suggestion) && row.displacement_watch !== '');
+  const protections = protectionLinks(input.registry)
+    .map((link) => `${link.label} (${link.url})`)
+    .join('; ');
   const notesLines = [
     e.termsLine(`${input.siteUrl}terms/`),
     e.madeLine(rows.length, input.title, formatDate(input.now.toISOString()) ?? '', dataDate),
     e.ownerLine,
     ...(lens ? [e.scoreLine(lens.label, weights)] : []),
     ...(rows.some((row) => greening.has(row.suggestion)) ? [e.greeningLine(strings.displacement.caution)] : []),
+    ...(inWatch ? [strings.displacement.exportLine(strings.displacement.caution, protections)] : []),
   ];
   return {
     rows,
@@ -239,6 +251,7 @@ export const CSV_COLUMNS = [
   'lens_score',
   'main_reason',
   'suggestion',
+  'displacement_watch',
   'first_step_to_get_permission',
   'first_lawful_step',
   'owner_names',

@@ -1,8 +1,9 @@
-// Suggestions that green a place, such as clean and green. Until the displacement watch overlay
-// exists (a later release), every greening suggestion carries the caution of docs/ETHICS.md word
-// for word wherever it is listed: on the nearby cards, the lot page, its print, settings and in
-// downloads (docs/VERIFICATION.md, decision D12). A new greening suggestion in
-// registry/suggestions.yaml joins this list.
+// Suggestions that green a place, such as clean and green. Every greening suggestion carries the
+// caution of docs/ETHICS.md word for word wherever it is listed: on the nearby cards, a stop's
+// details, the lot page, its print, settings and in downloads (docs/VERIFICATION.md, decision D12).
+// Inside a displacement watch area (M4.1, src/displacement/watch.ts) the card adds the area's
+// signs and the ways to protect neighbors; elsewhere it keeps the one line caution. A new greening
+// suggestion in registry/suggestions.yaml joins this list.
 
 export const GREENING_SUGGESTIONS: ReadonlySet<string> = new Set([
   'clean_and_green',

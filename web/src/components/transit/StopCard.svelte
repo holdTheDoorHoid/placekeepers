@@ -7,6 +7,8 @@
   import { strings } from '../../strings.ts';
   import type { NearbyStop } from '../../transit/comfort.ts';
   import EvidenceBadge from '../common/EvidenceBadge.svelte';
+  import DisplacementNote from '../places/DisplacementNote.svelte';
+  import { watchNote, watchSigns } from '../../displacement/watch.ts';
 
   let {
     store,
@@ -17,6 +19,8 @@
   }: { store: AppStore; stop: NearbyStop; lensLabel: string; fromYou: boolean; onShow?: () => void } = $props();
 
   const suggestion = $derived(stop.suggestions[0]);
+  // Shade trees are greening: the caution, with the watch area's signs when the stop lies in one.
+  const watch = $derived(watchNote(store.registry, watchSigns(stop.properties)));
   const domId = $derived(`stop-card-${stop.id.replace(/[^A-Za-z0-9_-]/g, '_')}`);
 
   function inspect() {
@@ -51,6 +55,7 @@
       {suggestion.suggestion.label}. <EvidenceBadge level={suggestion.suggestion.evidence} />
       <span class="cost">{strings.place.cost(suggestion.suggestion.cost)}</span>
     </p>
+    <DisplacementNote suggestionId={suggestion.suggestion.id} {watch} />
     {#if suggestion.firstStep}
       <p class="step"><strong>{strings.streets.firstStep}:</strong> {suggestion.firstStep.route.label}. {suggestion.firstStep.step}</p>
     {/if}

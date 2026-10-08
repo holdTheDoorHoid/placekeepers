@@ -1,0 +1,141 @@
+{
+ "_about": "The displacement watch's signs and rule (M4.1), checked by the pipeline (tests/test_displacement.py against placekeepers.derive.displacement) and the web app (web/tests/displacement.test.ts against src/displacement/watch.ts), so the two cannot drift apart. Every combination of the five signs, and whether it makes a watch area.",
+ "signs": {
+  "prices": 1,
+  "companies": 2,
+  "assessments": 4,
+  "renters": 8,
+  "mva": 16
+ },
+ "price_signs": 21,
+ "cases": [
+  {
+   "signs": 0,
+   "watch": false
+  },
+  {
+   "signs": 1,
+   "watch": false
+  },
+  {
+   "signs": 2,
+   "watch": false
+  },
+  {
+   "signs": 3,
+   "watch": true
+  },
+  {
+   "signs": 4,
+   "watch": false
+  },
+  {
+   "signs": 5,
+   "watch": true
+  },
+  {
+   "signs": 6,
+   "watch": true
+  },
+  {
+   "signs": 7,
+   "watch": true
+  },
+  {
+   "signs": 8,
+   "watch": false
+  },
+  {
+   "signs": 9,
+   "watch": true
+  },
+  {
+   "signs": 10,
+   "watch": false
+  },
+  {
+   "signs": 11,
+   "watch": true
+  },
+  {
+   "signs": 12,
+   "watch": true
+  },
+  {
+   "signs": 13,
+   "watch": true
+  },
+  {
+   "signs": 14,
+   "watch": true
+  },
+  {
+   "signs": 15,
+   "watch": true
+  },
+  {
+   "signs": 16,
+   "watch": false
+  },
+  {
+   "signs": 17,
+   "watch": true
+  },
+  {
+   "signs": 18,
+   "watch": true
+  },
+  {
+   "signs": 19,
+   "watch": true
+  },
+  {
+   "signs": 20,
+   "watch": true
+  },
+  {
+   "signs": 21,
+   "watch": true
+  },
+  {
+   "signs": 22,
+   "watch": true
+  },
+  {
+   "signs": 23,
+   "watch": true
+  },
+  {
+   "signs": 24,
+   "watch": true
+  },
+  {
+   "signs": 25,
+   "watch": true
+  },
+  {
+   "signs": 26,
+   "watch": true
+  },
+  {
+   "signs": 27,
+   "watch": true
+  },
+  {
+   "signs": 28,
+   "watch": true
+  },
+  {
+   "signs": 29,
+   "watch": true
+  },
+  {
+   "signs": 30,
+   "watch": true
+  },
+  {
+   "signs": 31,
+   "watch": true
+  }
+ ]
+}

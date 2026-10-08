@@ -36,6 +36,11 @@ change once published, because saved links contain them.
   release: v0.1                       # first release that uses it
 ```
 
+A Carto source's adapter may narrow the download further in code (added 2026-10-08 by M4.1):
+`assessment_values` asks the table for its years first and downloads only the newest tax year
+that holds most parcels and the year five before it, so it needs no yearly edit
+(`pipeline/src/placekeepers/adapters/displacement.py`).
+
 An `arcgis` endpoint names a service in the City's ArcGIS Online organization
 (`https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services`). For a service in another
 organization it adds `url`, the REST services root ending in `/rest/services` (added 2026-10-04 by
@@ -233,11 +238,15 @@ decide (planting shade trees); the four that follow from what OpenStreetMap says
 browser by the same rules (decision D1, section 1 lenses), and a stop lists them all in that order:
 survey, shelter, bench, streetlight, shade trees.
 
-Greening suggestions (`clean_and_green` in this release, listed in
-`web/src/config/suggestions.ts`; added 2026-10-04 by M1.10, decision D12 of VERIFICATION.md) are
-shown with the caution of docs/ETHICS.md, "Greening can raise nearby prices. Consider pairing it
-with protections.", until the displacement watch overlay exists; the web app adds it wherever the
-suggestion is listed and in downloads. No registry key changes.
+Greening suggestions (listed in `web/src/config/suggestions.ts`: `clean_and_green`,
+`plant_shade_trees`, `cool_green_lot` and `stop_shade_trees`; added 2026-10-04 by M1.10, decision
+D12 of VERIFICATION.md) are shown with the caution of docs/ETHICS.md, "Greening can raise nearby
+prices. Consider pairing it with protections."; the web app adds it wherever the suggestion is
+listed and in downloads. From M4.1 (2026-10-08), a place inside a displacement watch area (its `dw`,
+section 4, or its dossier's `displacement`, section 6) gets the full card instead: the sentence,
+the area's signs and a link to each protection route (`neighborhood_gardens_trust`,
+`community_land_trust`, `homestead_exemption`, `longtime_owner_occupants`, `tangled_title_help` in
+`registry/routes.yaml`, the first link of each). No registry key changes.
 
 ### `registry/routes.yaml` and `registry/partners.yaml`
 
@@ -303,6 +312,7 @@ data/
     walk.pmtiles          layers "block_groups", "cells"   (walkability by block group, and people
                           and places within walking distance by area cell; M3.3)
     cycling.pmtiles       layer "stress"    (DVRPC's traffic stress for people on bikes; M3.3)
+    displacement.pmtiles  layer "watch"     (displacement watch areas, census tracts; M4.1)
   tables/
     parcels.json          compact columnar table for ranking and lists
     owners.json           organizations holding many vacant parcels, with their parcels (section 6)
@@ -391,6 +401,35 @@ lots include the ones where a footprint stands), and `left_out` (parks, gardens,
 that never show). Every parcel counted is in the `parcels` layer except units inside a larger parcel
 and the few with no shape and no point (the notes say how many of each). It is `null` when the
 model has not run (the map then shows the City's lists alone).
+
+`displacement` (added 2026-10-08 by M4.1) holds what the map needs to explain the displacement
+watch (section 4, `watch`), or `null` when the watch was not measured:
+
+```json
+"displacement": {
+  "as_of": "2026-10-08",
+  "periods": {"earlier_from": "2018-09-03", "earlier_to": "2021-09-02",
+              "recent_from": "2023-09-03", "recent_to": "2026-09-02"},
+  "assessment_years": [2022, 2027],
+  "survey_years": [2020, 2024],
+  "mva": "Market Value Analysis 2026",
+  "city": {"p0": 180000, "p1": 230000, "pc": 28, "cb": 27, "ac": 69, "rp": 48},
+  "thresholds": {"price_points": 25, "company_points": 15, "assessment_points": 30,
+                 "renter_pct": 60, "min_sales": 50, "min_assessed": 50, "min_occupied": 100,
+                 "min_signs": 2, "recent_years": 3, "gap_years": 5},
+  "areas": {"tracts": 408, "watch": 96}
+}
+```
+
+`periods` are the two windows of home sales (each day from the first to the last counted; the
+recent one ends at the newest recorded sale); `assessment_years` the earlier and the newest tax
+year compared; `survey_years` the Census survey's span; `mva` the edition of the Market Value
+Analysis read (its registry name). `city` holds the whole city's measures with the short names of
+the `watch` layer: the middle home sale price in the earlier and the recent period (`p0`, `p1`,
+dollars) and its change (`pc`, percent), the share of recent buyers that are companies (`cb`), the
+middle change in assessed value (`ac`) and the share of homes rented (`rp`), each a whole number or
+`null`. `thresholds` are the rule's numbers (`pipeline/src/placekeepers/derive/displacement.py`):
+a sign about sale prices holds `price_points` percentage points above the city's change, and so on.
 
 `notes` (added 2026-10-04 by M0.2) is a list of plain sentences about the build, possibly empty:
 data quality remarks, a layer with no usable data yet, or `tiles skipped: tippecanoe not installed`.
@@ -551,6 +590,11 @@ counts intersections already and each factor adds about 3 to 4 percent to `tiles
 `dk` in `cells` below); `places_10min`; `block_group`; and `walk_index`. A factor whose source
 has no snapshot is left out of every parcel.
 
+`dw` (added 2026-10-08 by M4.1): the signs of the displacement watch area the parcel lies in, as
+the bits of `w` in the `watch` layer below; present only inside a watch area. The parcel's area is
+its 2020 census tract as the violence lens finds it (`tract` in `derived/lens_factors.parquet`). A
+greening suggestion on a parcel with `dw` gets the full card (section 1, suggestions).
+
 **`h3` (context.pmtiles)**: `h` (cell id), `s12` and `s36` (shooting victim counts), `f_*` (factor
 percentiles for cell level factors such as `f_poverty`).
 
@@ -664,6 +708,30 @@ source marks as memorials.
 The build notes carry one sentence with each source's count, the works found in two and in three
 sources, the works on the map and the memorial artworks among them, and the works left out (never a
 name).
+
+Added 2026-10-08 by M4.1 (the displacement watch; the method is in docs/DESIGN.md section 5.3, the
+code in `pipeline/src/placekeepers/derive/displacement.py` and `publish/displacement.py`):
+
+**`watch` (displacement.pmtiles, polygons)**: one feature per 2020 census tract (the City's
+`census_tracts_2020`) in the displacement watch, and none for any other tract: the map ranks no
+area, and areas outside the watch carry no numbers. A measure with too few sales, homes or
+households to mean something (the `min_*` thresholds of the manifest's `displacement`) is left out.
+
+| Property | Type | Meaning |
+|---|---|---|
+| `id` | string | the tract's 11 digit census id (`geoid`, such as 42101016000 for tract 160) |
+| `nm` | string | the neighborhood at the tract's center (a point inside it), from `neighborhoods`; absent when none |
+| `w` | int | the signs that hold, as bits: 1 home sale prices, 2 buyers that are companies, 4 assessed values, 8 renters, 16 the Market Value Analysis. Bits never change meaning. Every feature has at least two, one of them 1, 4 or 16 |
+| `n0`, `n1` | int | home sales counted in the earlier and the recent period |
+| `p0`, `p1`, `pc` | int | the middle sale price in each period (dollars) and its change (percent); only with at least `min_sales` sales in each period |
+| `cb` | int | the share of the recent sales whose buyers are a company (percent); only with at least `min_sales` recent sales |
+| `ah`, `ac` | int | homes compared and the middle change in their assessed value (percent); only with at least `min_assessed` homes |
+| `oc`, `rp` | int | occupied homes and the share rented (percent, Census Bureau); only with at least `min_occupied` |
+| `mb`, `mr` | int | the tract's block groups in the Market Value Analysis and how many show rising pressure; absent when the analysis does not cover it |
+
+`web/src/displacement/watch.ts` reads the same bits and rule as the pipeline:
+`pipeline/tests/fixtures/watch_parity.json` holds every combination of signs and whether it is a
+watch area, and both test suites check it.
 
 **`hin` (streets.pmtiles)**: `id`, `name` (street name), `len` (feet).
 
@@ -790,6 +858,7 @@ contributors".
 | `hin` | int | 1 when the stop is on the High Injury Network; absent otherwise |
 | `sg` | string | the suggestions SEPTA's and the City's data decide, comma separated: `stop_shade_trees` (`f_shade` of 75 or more); absent when none |
 | `f_walk`, `f_neighbors`, `f_dest` | int | the walking factors of the lots (added 2026-10-05 by M3.3; `parcels` above), measured from the stop and ranked among the stops `tc` marks, more ranking higher; no lens lists them yet (`factors_at` in `derive/walk.py`) |
+| `dw` | int | the signs of the displacement watch area the stop stands in, as `dw` on the lots (added 2026-10-08 by M4.1); absent outside every watch area |
 
 What the browser adds by the join (never published here): `a` (the linked stop's `c`: 3 a shelter
 or roof, 2 a bench but no shelter mapped, 1 neither, 0 not yet surveyed; absent when no
@@ -1221,6 +1290,11 @@ tile, shows the score breakdown and the flood note from here; when it has the ti
 values win. On 2026-10-05: 58,325 parcels, 6.3 MB more on disk (5 percent) and 0.5 MB more as
 served compressed (3 percent). From M3.3 it holds the walking factors `f_walk`, `f_neighbors` and
 `f_dest` too, which the lots layer gained (2.4 MB more on disk, 0.3 MB compressed).
+
+**`displacement`** (added 2026-10-08 by M4.1; only for a parcel on the map inside a displacement
+watch area): `tract`, the 11 digit census tract, and `signs`, the area's signs, exactly the parcel's
+`dw` in the lots layer (section 4), so a lot page opened from a link, a search or a saved list shows
+the full greening card as one opened from the map does.
 
 **`nearby`**: `s12` and `s36` (shooting victims in the parcel's hexagon in the last 12 and 36
 months, as in the `h3` layer), `landcare_within_500ft` and `gardens_within_500ft`. Keys are left

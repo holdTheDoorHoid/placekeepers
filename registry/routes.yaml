@@ -171,7 +171,7 @@
   timeline: First come, first served
   links:
     - {label: "Philadelphia VIP: Tangled Title Fund", url: "https://phillyvip.org/tangled-title-fund/"}
-  last_checked: 2026-10-04
+  last_checked: 2026-10-08
   status: verified
 - id: fraud_guard
   label: Sign up for the City's free Fraud Guard alerts
@@ -248,4 +248,60 @@
     - {label: "Placekeepers: survey bus stops", url: "https://holdthedoorhoid.github.io/placekeepers/streetcomplete/"}
     - {label: StreetComplete, url: "https://streetcomplete.app/"}
   last_checked: 2026-10-05
+  status: verified
+# Milestone M4.1: protections to pair with greening in a displacement watch area (docs/ETHICS.md,
+# "Displacement"). Each was checked against its own official page on the day given; the cards link
+# the first link of each, with the Tangled Title Fund above.
+- id: neighborhood_gardens_trust
+  label: Keep a community garden for good (Neighborhood Gardens Trust)
+  who: Gardeners whose community garden has grown for at least three seasons
+  steps:
+    - "Check the trust's criteria: a garden active at least three growing seasons, gardeners able to keep it up, ties to groups such as a community development corporation, a church or a school, and support from neighbors and the district's City Council member."
+    - Apply with the trust's online garden application, or its printable form. The trust answers within about two weeks, then visits the garden and takes it to its board.
+    - Once approved, the trust works with the City to acquire the land and holds it so neighbors can keep gardening, with liability insurance and help with water and upkeep. Questions go to 215 988 1630 or ngtrust@pennhort.org.
+  cost: Free to apply
+  timeline: An answer in about two weeks; acquiring the land takes longer
+  links:
+    - {label: "Neighborhood Gardens Trust: garden preservation", url: "https://ngtrust.org/preservation/"}
+  last_checked: 2026-10-08
+  status: verified
+- id: community_land_trust
+  label: Keep homes and land affordable for good (community land trusts)
+  who: Neighbors, community groups and nonprofits
+  steps:
+    - "Learn how a community land trust works: a nonprofit owns the land for good, families buy or rent the homes on it, and a long ground lease keeps each home affordable when it is sold again."
+    - Talk with a land trust already working in Philadelphia, such as the Community Justice Land Trust of the Women's Community Revitalization Project, which holds homes in Point Breeze, Grays Ferry, Mantua, Germantown, Port Richmond and Haddington.
+    - Ask the Garden Justice Legal Initiative how a land trust could hold a garden or lot your group already cares for.
+  cost: Free to ask
+  timeline: Long; a land trust's projects take years
+  links:
+    - {label: "Grounded Solutions Network: community land trusts", url: "https://groundedsolutions.org/strengthening-neighborhoods/community-land-trusts"}
+    - {label: "Women's Community Revitalization Project: Community Justice Land Trust", url: "https://www.wcrpphila.org/cjlt"}
+  last_checked: 2026-10-08
+  status: verified
+- id: homestead_exemption
+  label: Lower a homeowner's tax bill (the City's Homestead Exemption)
+  who: Anyone who owns their Philadelphia home and lives in it as their main home, even with a mortgage or tax debt; not homes under a 10 year tax abatement
+  steps:
+    - Apply on the Philadelphia Tax Center (tax-services.phila.gov), where one combined application covers the City's tax relief programs, or call the Homestead Hotline at 215 686 9200, or mail the form to the Department of Revenue, P.O. Box 52817, Philadelphia, PA 19115.
+    - The exemption takes $100,000 off the home's assessed value for the tax bill, saving up to $1,399 a year.
+    - Apply by December 1 (by October 1 to see it on the next bill). Once accepted, there is no need to apply again unless the deed changes.
+  cost: Free
+  timeline: Due December 1 each year
+  links:
+    - {label: "City of Philadelphia: Get the Homestead Exemption", url: "https://www.phila.gov/services/payments-assistance-taxes/taxes/property-and-real-estate-taxes/get-real-estate-tax-relief/get-the-homestead-exemption/"}
+  last_checked: 2026-10-08
+  status: verified
+- id: longtime_owner_occupants
+  label: Cap a longtime owner's assessment (the City's Longtime Owner Occupants Program, LOOP)
+  who: Homeowners who have lived in their home at least 10 years, whose assessment rose at least 50 percent in one year or 75 percent over five years, with household income under the City's limit (such as $103,050 for one person or $147,200 for four in 2026), current on their taxes or in a payment agreement
+  steps:
+    - Apply on the Philadelphia Tax Center (tax-services.phila.gov) with the City's combined application, or call 215 686 9200, email revenue@phila.gov, or mail the form to the Department of Revenue, P.O. Box 53190, Philadelphia, PA 19105.
+    - LOOP caps the assessment the tax bill uses, at 1.5 times the year before or 1.75 times the lowest value of the last five years, for as long as the owner stays eligible.
+    - Apply by the City's yearly deadline (September 30 in recent years); the City's page gives the current one.
+  cost: Free
+  timeline: A yearly deadline, September 30 in recent years
+  links:
+    - {label: "City of Philadelphia: Apply for LOOP", url: "https://www.phila.gov/services/payments-assistance-taxes/payment-plans-and-assistance-programs/income-based-programs-for-residents/apply-for-the-longtime-owner-occupants-program-loop/"}
+  last_checked: 2026-10-08
   status: verified

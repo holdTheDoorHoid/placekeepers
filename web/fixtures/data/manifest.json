@@ -389,6 +389,42 @@
       "rows": 1460,
       "newest_record": "2026-09-17",
       "message": null
+    },
+    "real_estate_sales": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 272801,
+      "newest_record": "2026-09-02",
+      "message": null
+    },
+    "assessment_values": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 1159065,
+      "newest_record": null,
+      "message": null
+    },
+    "acs_tenure": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 408,
+      "newest_record": null,
+      "message": null
+    },
+    "market_value_analysis": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 1338,
+      "newest_record": null,
+      "message": null
     }
   },
   "layers": {
@@ -668,6 +704,18 @@
       "sources": [
         "dvrpc_lts"
       ]
+    },
+    "displacement_watch": {
+      "file": "tiles/displacement.pmtiles",
+      "source_layer": "watch",
+      "sources": [
+        "real_estate_sales",
+        "assessment_values",
+        "acs_tenure",
+        "market_value_analysis",
+        "opa_properties",
+        "census_tracts_2020"
+      ]
     }
   },
   "files": {
@@ -692,8 +740,8 @@
       "sha256": "1d746dd64887fc690edb3dbd6c056b1630ce99ec1cec269ad1ea21b9890d3717"
     },
     "tiles/lots.pmtiles": {
-      "bytes": 14655,
-      "sha256": "9a862ed5461bb56a7318072fdcd8ce0627260a75363b7ee75fd9f432e85fd3e1"
+      "bytes": 14875,
+      "sha256": "784b946f0f5c83e9b67a76deb0adebab46b9928e9cf5ae97d429b6e679df08d9"
     },
     "tiles/streets.crashes.geojson": {
       "bytes": 23183,
@@ -799,6 +847,10 @@
       "bytes": 846,
       "sha256": "db3f13d6ca3ce820b90a9f7a2e760764ba7ee66164dfa3808271217aee22f24c"
     },
+    "tiles/displacement.watch.geojson": {
+      "bytes": 699,
+      "sha256": "581eeee3fc1b224be1b9e81e31de9900030e9bb5fdb1af6f9611d4b6fb072656"
+    },
     "tables/routes/index.json": {
       "bytes": 1009,
       "sha256": "01d11edc7bc2753a818222918f2fb5ed042bcdca16e6b3035495189721127b7f"
@@ -822,12 +874,55 @@
       "9900"
     ],
     "files": 1,
-    "bytes": 23570
+    "bytes": 23654
+  },
+  "displacement": {
+    "as_of": "2026-10-04",
+    "periods": {
+      "earlier_from": "2018-09-03",
+      "earlier_to": "2021-09-02",
+      "recent_from": "2023-09-03",
+      "recent_to": "2026-09-02"
+    },
+    "assessment_years": [
+      2022,
+      2027
+    ],
+    "survey_years": [
+      2020,
+      2024
+    ],
+    "mva": "Market Value Analysis 2026",
+    "city": {
+      "p0": 180000,
+      "p1": 230000,
+      "pc": 28,
+      "cb": 27,
+      "ac": 69,
+      "rp": 48
+    },
+    "thresholds": {
+      "price_points": 25,
+      "company_points": 15,
+      "assessment_points": 30,
+      "renter_pct": 60,
+      "min_sales": 50,
+      "min_assessed": 50,
+      "min_occupied": 100,
+      "min_signs": 2,
+      "recent_years": 3,
+      "gap_years": 5
+    },
+    "areas": {
+      "tracts": 408,
+      "watch": 2
+    }
   },
   "notes": [
     "This is synthetic sample data for testing the map.",
     "Street, boundary, transit, amenity, heat, tree and floodplain tiles were skipped for this sample, so those layers are published as GeoJSON.",
     "Public art tiles were skipped for this sample too, so its layer is published as GeoJSON.",
-    "Walking tiles were skipped for this sample too, so those layers are published as GeoJSON."
+    "Walking tiles were skipped for this sample too, so those layers are published as GeoJSON.",
+    "Displacement watch tiles were skipped for this sample too, so its layer is published as GeoJSON."
   ]
 }

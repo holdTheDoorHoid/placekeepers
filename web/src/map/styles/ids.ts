@@ -29,5 +29,7 @@ export const STYLE_IDS = [
   'walkability',
   'walking_distance',
   'traffic_stress',
+  // The displacement watch (M4.1)
+  'displacement_watch',
 ] as const;
 export type StyleId = (typeof STYLE_IDS)[number];

@@ -96,9 +96,35 @@ says so, in these words:
 
 > "Greening can raise nearby prices. Consider pairing it with protections."
 
-and points to organizations that help keep a neighborhood affordable while it improves, such as
-the Neighborhood Gardens Trust, community land trusts, the City's Longtime Owner Occupants
-Program, and help for tangled titles.
+The map also has a **displacement watch**: areas with signs that prices are rising there now. An
+area is in the watch when at least two of these signs show up in public records, and at least one
+of them is about prices:
+
+- homes selling for much more than five years before, faster than across the city;
+- the City's assessed values rising much faster than across the city;
+- the City's Market Value Analysis finding home prices climbing out of reach of longtime residents;
+- companies buying many of the homes sold;
+- at least three in five homes rented.
+
+Inside a watch area, a greening card also lists the area's signs and links to the protections to
+pair with it:
+
+- the [Neighborhood Gardens Trust](https://ngtrust.org/preservation/), which keeps community gardens
+  for good;
+- [community land trusts](https://groundedsolutions.org/strengthening-neighborhoods/community-land-trusts),
+  which keep homes and land affordable for good;
+- the City's [Homestead Exemption](https://www.phila.gov/services/payments-assistance-taxes/taxes/property-and-real-estate-taxes/get-real-estate-tax-relief/get-the-homestead-exemption/),
+  which lowers a homeowner's tax bill;
+- the City's [Longtime Owner Occupants Program](https://www.phila.gov/services/payments-assistance-taxes/payment-plans-and-assistance-programs/income-based-programs-for-residents/apply-for-the-longtime-owner-occupants-program-loop/)
+  (LOOP), which caps the assessment of a longtime owner whose value jumped;
+- the [Tangled Title Fund](https://phillyvip.org/tangled-title-fund/), which helps families keep a
+  home still in a relative's name.
+
+The watch is a caution, not a ranking. It never changes which places the map suggests, it draws
+every watch area the same way, and it says "signs that prices are rising here", never that a
+neighborhood is changing for the worse or the better. It shows signs in public records, not a
+forecast: it cannot tell who has moved away or why, or what rents are, and an area outside the
+watch can still feel rising prices. Outside the watch, cards keep the one line caution above.
 
 ## Privacy, in short
 

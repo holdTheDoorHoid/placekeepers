@@ -4,6 +4,7 @@
   // door, the Land Bank's note that it may turn a request down (in our words), a link to the Land
   // Bank's own map, and the credit. No price and no buy button (docs/ETHICS.md).
   import type { ListingView } from '../../dossier/build.ts';
+  import DisplacementNote from '../places/DisplacementNote.svelte';
   import RouteDetails from './RouteDetails.svelte';
 
   let { listing }: { listing: ListingView } = $props();
@@ -13,11 +14,11 @@
   <h4 id="pk-listing-title">{listing.title}</h4>
   <p>{listing.text}</p>
   <!--
-    The displacement caution goes here (docs/ETHICS.md, "Displacement"), where the displacement
-    watch (M4.1) marks this lot's area. M4.1 was not merged when this box was built, so
-    listing.displacement is always null for now: fill it in buildDossier (src/dossier/build.ts).
+    The displacement caution (docs/ETHICS.md, "Displacement"; M4.1): the full card with the area's
+    signs and the ways to protect neighbors inside a displacement watch area, the one line caution
+    elsewhere.
   -->
-  {#if listing.displacement}<p class="displacement">{listing.displacement}</p>{/if}
+  <DisplacementNote always watch={listing.displacement.watch} />
   {#if listing.sideYard}
     <p>{listing.sideYardLead}</p>
     <RouteDetails view={listing.sideYard} level={5} />
@@ -43,12 +44,6 @@
   }
   .listing p {
     margin: 0 0 6px;
-  }
-  .displacement {
-    padding: 4px 8px;
-    border-left: 3px solid var(--pk-note-ink);
-    background: var(--pk-note-bg);
-    color: var(--pk-note-ink);
   }
   .links {
     margin: 4px 0 6px;

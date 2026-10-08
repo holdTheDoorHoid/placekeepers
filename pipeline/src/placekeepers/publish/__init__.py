@@ -152,6 +152,23 @@ def lens_notes(ctx: Context) -> list[str]:
     return notes
 
 
+def displacement_notes(ctx: Context) -> list[str]:
+    """What the displacement watch found and could not measure (M4.1), from its summary beside
+    derived/displacement.parquet."""
+    from placekeepers.derive.displacement import load_summary, output_path
+
+    summary = load_summary(output_path(ctx))
+    return list(summary.get("notes", [])) if summary else []
+
+
+def displacement_block(ctx: Context) -> dict[str, Any] | None:
+    """The `displacement` block of manifest.json (M4.1, docs/CONTRACTS.md section 3)."""
+    # Imported here: placekeepers.publish.displacement is loaded with the map layers.
+    from placekeepers.publish.displacement import manifest_block
+
+    return manifest_block(ctx)
+
+
 def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> PublishResult:
     started = time.monotonic()
     registry = ctx.registry
@@ -219,6 +236,7 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
 
         notes.extend(vacancy_notes(ctx))
         notes.extend(lens_notes(ctx))
+        notes.extend(displacement_notes(ctx))
         result.dossiers = build_dossiers(ctx, statuses, staging, as_of)
         notes.extend(result.dossiers.notes)
         result.route_sheets = build_route_sheets(ctx, statuses, staging, as_of)
@@ -263,6 +281,7 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
             notes=notes,
             dossiers=result.dossiers.manifest_block() if result.dossiers else None,
             vacancy=vacancy_counts(ctx),
+            displacement=displacement_block(ctx),
         )
         atomic_write_json(staging / MANIFEST, result.manifest)
         _swap_into_place(staging, out_dir)

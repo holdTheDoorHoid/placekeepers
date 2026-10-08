@@ -12,6 +12,8 @@
   import { describeComfort, outsideLens, tunnelStation } from '../../transit/comfort.ts';
   import { describeStop } from '../../transit/describe.ts';
   import EvidenceBadge from '../common/EvidenceBadge.svelte';
+  import DisplacementNote from '../places/DisplacementNote.svelte';
+  import { watchNote, watchSigns } from '../../displacement/watch.ts';
   import RouteDetails from '../dossier/RouteDetails.svelte';
   import WhyBreakdown from '../lens/WhyBreakdown.svelte';
 
@@ -28,6 +30,8 @@
       tunnel: tunnelStation(properties),
       // A link to OpenStreetMap whose answers have not arrived (or could not be loaded).
       waiting: typeof properties.o === 'string' && store.stopTableStatus !== 'ok',
+      // The displacement watch area the stop lies in (`dw`, M4.1), for its shade trees.
+      watch: watchNote(store.registry, watchSigns(properties)),
     })),
   );
   const anyComfort = $derived(views.some((v) => v.comfort !== null));
@@ -79,6 +83,7 @@
               <EvidenceBadge level={item.suggestion.evidence} />
               <p class="small">{item.suggestion.summary}</p>
               <p class="small">{strings.streets.cost(item.suggestion.cost)}</p>
+              <DisplacementNote suggestionId={item.suggestion.id} watch={view.watch} />
               {#if item.firstStep}
                 <p class="small"><strong>{strings.streets.firstStep}:</strong> {item.firstStep.step} <span class="muted">({item.firstStep.route.label})</span></p>
               {/if}
