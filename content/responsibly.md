@@ -111,8 +111,11 @@ of them is about prices:
 - companies buying many of the homes sold;
 - at least three in five homes rented.
 
-Inside a watch area, these cards, and the box of a lot the City's land agencies list as
-available, also list the area's signs and link to the protections to pair with them:
+Inside a watch area, the map also lists the area's signs and links to the protections to pair
+with them. It shows them once per page: once at the top of "What you can do" on a lot page and its
+printed page, and once above a list of nearby places. Every one of these cards there, and the box
+of a lot the City's land agencies list as available, keeps its caution and points to that list
+(a card in a list of nearby places also names its own area's signs):
 
 - the [Neighborhood Gardens Trust](https://ngtrust.org/preservation/), which keeps community gardens
   for good;

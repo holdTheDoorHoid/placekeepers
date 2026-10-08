@@ -2,8 +2,9 @@
 // caution of docs/ETHICS.md word for word wherever it is listed: on the nearby cards, a stop's
 // details, the lot page, its print, settings and in downloads (docs/VERIFICATION.md, decision D12).
 // Inside a displacement watch area (M4.1, src/displacement/watch.ts) the card adds the area's
-// signs and the ways to protect neighbors; elsewhere it keeps the one line caution. A new greening
-// suggestion in registry/suggestions.yaml joins this list.
+// signs and the ways to protect neighbors, shown once per lot page or list of places with each
+// card there pointing to it (owner, 2026-10-08); elsewhere it keeps the one line caution. A new
+// greening suggestion in registry/suggestions.yaml joins this list.
 
 import { strings } from '../strings.ts';
 

@@ -17,11 +17,14 @@ export interface PrintModel {
   listing: { title: string; lines: string[] } | null;
   actions: { label: string; route: string | null; warning: string | null; steps: string[]; cost: string; caution: string | null }[];
   /**
-   * In a displacement watch area with a greening suggestion (M4.1): the area's signs and each
-   * protection with its address, printed once after the suggestions, so the sheet carries what
-   * the cards link to.
+   * In a displacement watch area with a greening or placemaking suggestion or the box of a listed
+   * lot (M4.1): the area's signs and each protection with its address, printed once at the top of
+   * "What you can do" (decided by the owner on 2026-10-08), so the sheet carries what the cards
+   * point to.
    */
   watch: { text: string; links: string[] } | null;
+  /** Said after each caution when `watch` is printed: where to find the signs and protections. */
+  watchPointer: string | null;
   owner: {
     names: string[];
     mailing: string | null;
@@ -41,7 +44,7 @@ export interface PrintModel {
   notLegalAdvice: string;
 }
 
-function listingLines(listing: DossierView['actions']['listing']): PrintModel['listing'] {
+function listingLines(listing: DossierView['actions']['listing'], watchPointer: string | null): PrintModel['listing'] {
   if (!listing) return null;
   const sideYard = listing.sideYard ? `${listing.sideYardLead} ${listing.sideYard.route.label}.` : null;
   const links = listing.links.map((link) => `${link.label}: ${link.url}`);
@@ -50,7 +53,8 @@ function listingLines(listing: DossierView['actions']['listing']): PrintModel['l
     lines: [
       listing.text,
       listing.displacement.caution,
-      listing.displacement.watch?.text ?? null,
+      // The area's signs are printed once, above the box (`watch`).
+      listing.displacement.watch ? watchPointer : null,
       sideYard,
       `${listing.decline} ${listing.changes}`,
       ...links,
@@ -70,6 +74,14 @@ export function printModel(view: DossierView, now: Date = new Date()): PrintMode
     // The possible estate flag is never shortened: its protective parts are the point of it.
     text: f.id === 'possible_estate' ? [f.text, f.careful, f.nextStep].filter(Boolean).join(' ') : f.text,
   }));
+  // With a greening or placemaking suggestion or the box of a listed lot, all of which carry a
+  // caution.
+  const printed = view.actions.suggestions.slice(0, PRINT_LIMITS.suggestions);
+  const watch =
+    view.actions.watch && (view.actions.listing || printed.some((item) => displacementCaution(item.suggestion.id) !== null))
+      ? { text: view.actions.watch.text, links: view.actions.watch.links.map((link) => `${link.label}: ${link.url}`) }
+      : null;
+  const watchPointer = watch ? strings.displacement.printSeeAbove : null;
   const taxCenter = strings.dossier.print.taxCenter(view.owner.tax.link.url);
   const tax = view.owner.tax.flag
     ? `${view.owner.tax.flag.title}: ${view.owner.tax.flag.text} ${taxCenter}`
@@ -86,8 +98,8 @@ export function printModel(view: DossierView, now: Date = new Date()): PrintMode
       care: view.summary.care,
       flood: view.summary.flood,
     },
-    listing: listingLines(view.actions.listing),
-    actions: view.actions.suggestions.slice(0, PRINT_LIMITS.suggestions).map((item) => {
+    listing: listingLines(view.actions.listing, watchPointer),
+    actions: printed.map((item) => {
       const route = item.routes[0] ?? null;
       return {
         label: item.suggestion.label,
@@ -98,12 +110,8 @@ export function printModel(view: DossierView, now: Date = new Date()): PrintMode
         caution: displacementCaution(item.suggestion.id),
       };
     }),
-    // With a greening or placemaking suggestion or the box of a listed lot, all of which carry a
-    // caution.
-    watch:
-      view.actions.watch && (view.actions.listing || view.actions.suggestions.slice(0, PRINT_LIMITS.suggestions).some((item) => displacementCaution(item.suggestion.id) !== null))
-        ? { text: view.actions.watch.text, links: view.actions.watch.links.map((link) => `${link.label}: ${link.url}`) }
-        : null,
+    watch,
+    watchPointer,
     owner: {
       names: view.owner.names,
       mailing: view.owner.mailing,

@@ -163,10 +163,11 @@ export interface RouteView {
 export interface ListingView extends ListingText {
   sideYard: RouteView | null;
   /**
-   * The displacement caution (docs/ETHICS.md, "Displacement"; M4.1): the full card with the
-   * area's signs and the ways to protect neighbors where the displacement watch marks the lot's
-   * area (`watch`, from the map's `dw` or the dossier's `displacement` block), and the one line
-   * caution elsewhere (`watch` null). src/components/dossier/ListingBox.svelte shows it.
+   * The displacement caution (docs/ETHICS.md, "Displacement"; M4.1): where the displacement watch
+   * marks the lot's area (`watch`, from the map's `dw` or the dossier's `displacement` block), the
+   * one line caution pointing to the full card with the area's signs and the ways to protect
+   * neighbors, shown once at the top of "What you can do"; the one line caution with its link
+   * elsewhere (`watch` null). src/components/dossier/ListingBox.svelte shows it.
    */
   displacement: { caution: string; watch: WatchNote | null };
 }

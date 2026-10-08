@@ -6,6 +6,7 @@
   import { FIELD_CHIPS } from '../../config/chips.ts';
   import { FILTERS, filterNarrows } from '../../config/filters.ts';
   import { STYLES, styleFor } from '../../map/styles/index.ts';
+  import { listWatch } from '../../displacement/watch.ts';
   import { mergeNearby } from '../../places/nearby.ts';
   import { distanceMeters, nearestPlaces, parcelLensOf } from '../../places/rank.ts';
   import { LOTS_DETAIL_ZOOM, isSampleFeature } from '../../places/sample.ts';
@@ -14,6 +15,7 @@
   import { strings } from '../../strings.ts';
   import { nearestStops, stopLensOf } from '../../transit/comfort.ts';
   import Dialog from '../common/Dialog.svelte';
+  import WatchCard from '../displacement/WatchCard.svelte';
   import DossierPanel from '../dossier/DossierPanel.svelte';
   import LayerList from '../layers/LayerList.svelte';
   import SavedLists from '../lists/SavedLists.svelte';
@@ -83,6 +85,22 @@
   const all = $derived(mergeNearby(lots, stops, MAX_CARDS));
   const items = $derived(all.slice(0, cardCount));
   const places = $derived(items.flatMap((item) => (item.kind === 'place' ? [item.place] : [])));
+  /**
+   * The full displacement card, shown once above the cards when any of them lies in a watch area
+   * (decided by the owner on 2026-10-08, docs/ETHICS.md "Displacement"); those cards keep the one
+   * line caution and their own area's signs, and point to it.
+   */
+  const WATCH_ID = 'pk-places-watch';
+  const watch = $derived(
+    listWatch(
+      registry,
+      items.map((item) =>
+        item.kind === 'place'
+          ? { suggestionId: item.place.suggestions[0]?.id, properties: item.place.properties }
+          : { suggestionId: item.stop.suggestions[0]?.suggestion.id, properties: item.stop.properties },
+      ),
+    ),
+  );
   /** Nothing of the kinds on show is drawn here at all. */
   const empty = $derived((!lotsShown || detailed.length === 0) && (!stopsShown || store.stopsInView.length === 0));
   const narrowed = $derived(FILTERS.filter((f) => filterNarrows(f, store.state.filters[f.id])).length);
@@ -229,13 +247,30 @@
           <button class="button quiet small" type="button" onclick={() => store.clearFilters()}>{strings.filters.clear}</button>
         </p>
       {/if}
+      {#if watch}
+        <WatchCard id={WATCH_ID} heading={strings.displacement.watchTitle} level={3} cautions={watch.cautions} text={watch.text} links={watch.links} />
+      {/if}
       <ul class="cards" aria-label={strings.sheet.title}>
         {#each items as item (item.key)}
           <li>
             {#if item.kind === 'place'}
-              <PlaceCard {store} place={item.place} lensLabel={lens?.label ?? ''} {fromYou} onShow={() => void closeSheetForMap()} />
+              <PlaceCard
+                {store}
+                place={item.place}
+                lensLabel={lens?.label ?? ''}
+                {fromYou}
+                watchJump={watch ? WATCH_ID : null}
+                onShow={() => void closeSheetForMap()}
+              />
             {:else}
-              <StopCard {store} stop={item.stop} lensLabel={stopLens?.label ?? ''} {fromYou} onShow={() => void closeSheetForMap()} />
+              <StopCard
+                {store}
+                stop={item.stop}
+                lensLabel={stopLens?.label ?? ''}
+                {fromYou}
+                watchJump={watch ? WATCH_ID : null}
+                onShow={() => void closeSheetForMap()}
+              />
             {/if}
           </li>
         {/each}

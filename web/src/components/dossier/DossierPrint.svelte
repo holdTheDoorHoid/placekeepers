@@ -30,6 +30,13 @@
 
   <section>
     <h2>{s.sections.actions}</h2>
+    <!-- Inside a displacement watch area: the area's signs and the protections, once, at the top. -->
+    {#if m.watch}
+      <h3>{strings.displacement.watchTitle}</h3>
+      <p class="note">{m.watch.text}</p>
+      <p>{strings.displacement.protectionsTitle}:</p>
+      <ul>{#each m.watch.links as link (link)}<li>{link}</li>{/each}</ul>
+    {/if}
     {#if m.listing}
       <h3>{m.listing.title}</h3>
       {#each m.listing.lines as line (line)}<p>{line}</p>{/each}
@@ -37,18 +44,12 @@
     {#if m.actions.length === 0}<p>{s.actions.none}</p>{/if}
     {#each m.actions as action (action.label)}
       <h3>{action.label}</h3>
-      {#if action.caution}<p class="note">{action.caution}</p>{/if}
+      {#if action.caution}<p class="note">{[action.caution, m.watchPointer].filter(Boolean).join(' ')}</p>{/if}
       {#if action.route}<p>{s.actions.route}: {action.route}</p>{/if}
       {#if action.warning}<p class="warning">{action.warning}</p>{/if}
       {#if action.steps.length}<ol>{#each action.steps as step (step)}<li>{step}</li>{/each}</ol>{/if}
       <p>{s.actions.cost}: {action.cost}</p>
     {/each}
-    {#if m.watch}
-      <h3>{strings.displacement.printTitle}</h3>
-      <p class="note">{m.watch.text}</p>
-      <p>{strings.displacement.protectionsTitle}:</p>
-      <ul>{#each m.watch.links as link (link)}<li>{link}</li>{/each}</ul>
-    {/if}
   </section>
 
   <section>

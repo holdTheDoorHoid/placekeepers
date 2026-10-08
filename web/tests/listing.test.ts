@@ -8,6 +8,7 @@ import { render } from 'svelte/server';
 import { describe, expect, it } from 'vitest';
 import { loadRegistry } from '../plugins/registry.ts';
 import Dossier from '../src/components/dossier/Dossier.svelte';
+import PlaceCard from '../src/components/places/PlaceCard.svelte';
 import { LAND_BANK_MAP_URL } from '../src/config/links.ts';
 import { permissionFromRoutes } from '../src/config/permission.ts';
 import { parseManifest } from '../src/data/manifest.ts';
@@ -17,7 +18,9 @@ import { printModel } from '../src/dossier/print.ts';
 import { parseCommon, parseShard } from '../src/dossier/shard.ts';
 import type { LiveProperty } from '../src/dossier/types.ts';
 import { parcelFilter, vacantParcels } from '../src/map/styles/vacant_parcels.ts';
+import { describePlace, firstStepFor, nearestPlaces } from '../src/places/rank.ts';
 import { defaultState } from '../src/state/defaults.ts';
+import type { AppStore } from '../src/state/store.svelte.ts';
 import { collectStrings, strings } from '../src/strings.ts';
 
 const read = (path: string) => JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8'));
@@ -190,6 +193,55 @@ describe('the box for a lot listed as available', () => {
     for (const text of words) {
       expect(text).not.toMatch(/\$|\bprice\b|\bbuy(ing)?\b|\bcheap|\bbargain|\bdeal\b|acquir|\beas(y|iest)\b/i);
     }
+  });
+});
+
+describe('a nearby card for a listed lot (finding F7 of the v0.3 review)', () => {
+  const state = defaultState(registry, 'field');
+  const store = { registry, state, addresses: { get: () => null }, lists: { active: null, has: () => false }, inspected: null } as unknown as AppStore;
+  const places = tiles.map((properties) => ({ id: String(properties.id), properties, center: [-75.155, 39.985] as [number, number] }));
+  const nearby = nearestPlaces(registry, state, places, [-75.155, 39.985]);
+  const card = (opa: string) => {
+    const place = nearby.find((p) => p.id === opa)!;
+    return { place, text: textOf(render(PlaceCard, { props: { store, place, lensLabel: 'Violence reduction', fromYou: false } }).body) };
+  };
+
+  it('says it is listed and starts with the side yard route where the lot may go to the neighbor', () => {
+    const { place, text } = card('990000009');
+    expect(place.listed).toBe(true);
+    expect(place.sideYard).toBe(true);
+    expect(text).toContain("Listed as available by the City's land agencies");
+    const sideYard = registry.routes.find((r) => r.id === 'land_bank_side_yard')!;
+    expect(place.firstStep?.route.id).toBe('land_bank_side_yard');
+    expect(text).toContain(`First legal step: ${sideYard.label}. ${sideYard.steps[0]}`);
+    // The lot page leads with the same route, in its listing box.
+    expect(buildDossier(input('990000009')).actions.listing!.sideYard!.route.id).toBe('land_bank_side_yard');
+    // The map's first step category stays the one after the side yard route (issue #36).
+    expect(place.permission).toBe(2);
+  });
+
+  it('keeps the usual first step for a listed lot that is not offered as a side yard', () => {
+    const { place, text } = card('990000002');
+    expect(place.listed).toBe(true);
+    expect(place.sideYard).toBe(false);
+    expect(text).toContain("Listed as available by the City's land agencies");
+    expect(place.firstStep?.route.id).not.toBe('land_bank_side_yard');
+  });
+
+  it('says nothing of a listing on a lot that is not listed, even with a stray side yard mark', () => {
+    const tile = tiles.find((t) => t.la === undefined && String(t.sg).startsWith('clean_and_green'))!;
+    const place = describePlace(registry, state, { id: String(tile.id), properties: { ...tile, ly: 1 }, center: [-75.155, 39.985] });
+    expect(place.listed).toBe(false);
+    expect(place.sideYard).toBe(false);
+    expect(place.firstStep?.route.id).not.toBe('land_bank_side_yard');
+  });
+
+  it('gives the side yard route only to a suggestion about using the land', () => {
+    const report = registry.suggestions.find((s) => s.id === 'seal_abandoned_building')!;
+    expect(firstStepFor(registry, report, 2, true).firstStep?.route.id).toBe(report.routes[0]);
+    const green = registry.suggestions.find((s) => s.id === 'clean_and_green')!;
+    expect(firstStepFor(registry, green, 2, true).firstStep?.route.id).toBe('land_bank_side_yard');
+    expect(firstStepFor(registry, green, 2, false).firstStep?.route.id).toBe('land_bank_garden_agreement');
   });
 });
 

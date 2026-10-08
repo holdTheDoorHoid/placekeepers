@@ -445,6 +445,20 @@ lists each protection with its address) and downloads (a `displacement_watch` co
 follow the same rule, and a lot page opened from a link knows its area from its dossier. Shade trees
 at bus stops carry the caution too, which before M4.1 they did not.
 
+**Shown once per page** (decided by the owner on 2026-10-08, decision D5 of
+VERIFICATION_V0_3.md, and written into ETHICS.md). Before, a lot page in a watch area repeated the
+full card on every greening and placemaking suggestion, up to five times, long on a phone. Now a
+lot page shows the full card once, at the top of "What you can do", under the heading
+"Displacement watch", with each caution its cards carry, the area's signs and the ways to protect
+neighbors; the listing box and every greening and placemaking card below keep their one line
+caution, word for word, with a button, "See the signs here and the ways to protect neighbors", that
+moves to it. Its print does the same: the section comes first, and each caution ends with "See
+"Displacement watch" above." The field view's list of nearby places shows the full card once, above
+its cards, when any of them lies in a watch area; since the cards there may lie in different areas,
+each such card keeps its caution and its own area's signs, with a button to the ways to protect
+neighbors. A card shown on its own, such as a tapped bus stop's details, keeps the whole card, and
+downloads list the protections once in their notes. Outside every watch area nothing changes.
+
 **The areas** are the City's 2020 census tracts (408). Tracts, not hexagons: the renter share is
 published only by tract, a tract holds enough home sales for a middle price to mean something
 (most have well over 100 in three years, where a two block hexagon has a handful), and tracts
@@ -559,7 +573,8 @@ the ETHICS.md caution word for word, "Greening can raise nearby prices. Consider
 protections.", with a link to the ways to protect neighbors: on the nearby cards, the lot page and
 its print, in settings, and as a note at the top of any download that holds one. From M4.1
 (2026-10-08) the displacement watch decides how much the card says: inside a watch area it adds the
-area's signs and links to each protection; outside one it keeps this one line (section 5.3).
+area's signs and links to each protection, shown once per page or list with each card pointing to
+it; outside one it keeps this one line (section 5.3).
 
 ### 5.6 The lot dossier
 
@@ -631,8 +646,12 @@ As built (M1.6, 2026-10-04):
   site), a link to the Land Bank's map, and the credit to the City's Department of Planning and
   Development (Land Management). On the map, the vacant lots layer has a setting, also a filter
   in the analysis view, "Listed as available by the City's land agencies". No price and no buy
-  button (ETHICS.md). Where the displacement watch marks the lot's area, the box carries the full
-  displacement card, and elsewhere the one line caution (M4.1, section 5.3).
+  button (ETHICS.md). Where the displacement watch marks the lot's area, the box carries the one
+  line caution pointing to the full displacement card shown once above it, and elsewhere the one
+  line caution with its link (M4.1, section 5.3). A card in the list of nearby places for such a
+  lot says "Listed as available by the City's land agencies" and, where the lot may go to the
+  neighbor next door (the map's `ly`), gives the side yard route as its first step, as the lot page
+  does (after the v0.3 review, finding F7).
 
 **Owner information as built (M1.3, 2026-10-04).** What the owner will see, and the choices behind it:
 

@@ -1,7 +1,9 @@
 <script lang="ts">
-  // A card in "What you can do nearby": what the place is and how far away, why it matters (with
-  // its evidence badge), the suggestion with its cost, and the first lawful step. Tapping the card
-  // opens the lot page.
+  // A card in "What you can do nearby": what the place is and how far away, whether the City's
+  // land agencies list it as available (issue #36), why it matters (with its evidence badge), the
+  // suggestion with its cost, and the first lawful step (the side yard route first for a listed lot
+  // that may go to the neighbor next door, as on its lot page). Tapping the card opens the lot
+  // page.
   import type { NearbyPlace } from '../../places/rank.ts';
   import type { AppStore } from '../../state/store.svelte.ts';
   import { strings } from '../../strings.ts';
@@ -11,13 +13,16 @@
   import { watchNote, watchSigns } from '../../displacement/watch.ts';
   import { kindLabel } from './labels.ts';
 
+  // `watchJump`: in a list that shows the full displacement card once above its cards, that card's
+  // id; this card then keeps the one line caution and its area's signs, and points to it.
   let {
     store,
     place,
     lensLabel,
     fromYou,
+    watchJump = null,
     onShow,
-  }: { store: AppStore; place: NearbyPlace; lensLabel: string; fromYou: boolean; onShow?: () => void } = $props();
+  }: { store: AppStore; place: NearbyPlace; lensLabel: string; fromYou: boolean; watchJump?: string | null; onShow?: () => void } = $props();
 
   const suggestion = $derived(place.suggestions[0]);
   // The displacement watch area the lot lies in, from its tile (`dw`, M4.1).
@@ -41,7 +46,7 @@
     </button>
   </h3>
   <p class="meta">
-    {strings.sheet.distance(place.distance, fromYou)}. {strings.place.confidence[place.confidence] ?? ''}{#if place.landcare}. {strings.place.landcare}{/if}.
+    {strings.sheet.distance(place.distance, fromYou)}. {strings.place.confidence[place.confidence] ?? ''}{#if place.landcare}. {strings.place.landcare}{/if}{#if place.listed}. <span class="listed">{strings.place.listed}</span>{/if}.
   </p>
   {#if place.score !== null && place.why?.main}
     <p>
@@ -55,7 +60,7 @@
       {suggestion.label}. <EvidenceBadge level={suggestion.evidence} />
       <span class="cost">{strings.place.cost(suggestion.cost)}</span>
     </p>
-    <DisplacementNote suggestionId={suggestion.id} {watch} />
+    <DisplacementNote suggestionId={suggestion.id} {watch} jumpTo={watchJump} withSigns />
     <p class="step">
       <strong>{strings.place.firstStep}:</strong>
       {#if place.firstStep}{place.firstStep.route.label}. {place.firstStep.step}{:else if place.noRoute}{strings.permission.noRoute}{:else}{strings.permission.seeLotPage}{/if}

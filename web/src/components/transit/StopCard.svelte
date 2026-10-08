@@ -10,13 +10,16 @@
   import DisplacementNote from '../places/DisplacementNote.svelte';
   import { watchNote, watchSigns } from '../../displacement/watch.ts';
 
+  // `watchJump`: in a list that shows the full displacement card once above its cards, that card's
+  // id; this card then keeps the one line caution and its area's signs, and points to it.
   let {
     store,
     stop,
     lensLabel,
     fromYou,
+    watchJump = null,
     onShow,
-  }: { store: AppStore; stop: NearbyStop; lensLabel: string; fromYou: boolean; onShow?: () => void } = $props();
+  }: { store: AppStore; stop: NearbyStop; lensLabel: string; fromYou: boolean; watchJump?: string | null; onShow?: () => void } = $props();
 
   const suggestion = $derived(stop.suggestions[0]);
   // Shade trees are greening: the caution, with the watch area's signs when the stop lies in one.
@@ -55,7 +58,7 @@
       {suggestion.suggestion.label}. <EvidenceBadge level={suggestion.suggestion.evidence} />
       <span class="cost">{strings.place.cost(suggestion.suggestion.cost)}</span>
     </p>
-    <DisplacementNote suggestionId={suggestion.suggestion.id} {watch} />
+    <DisplacementNote suggestionId={suggestion.suggestion.id} {watch} jumpTo={watchJump} withSigns />
     {#if suggestion.firstStep}
       <p class="step"><strong>{strings.streets.firstStep}:</strong> {suggestion.firstStep.route.label}. {suggestion.firstStep.step}</p>
     {/if}
