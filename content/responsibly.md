@@ -104,7 +104,7 @@ of them is about prices:
 - the City's assessed values rising much faster than across the city;
 - the City's Market Value Analysis finding home prices climbing out of reach of longtime residents;
 - companies buying many of the homes sold;
-- most homes rented.
+- at least three in five homes rented.
 
 Inside a watch area, a greening card also lists the area's signs and links to the protections to
 pair with it:

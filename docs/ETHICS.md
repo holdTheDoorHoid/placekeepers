@@ -127,7 +127,8 @@ section 5.3):
   least one of them about prices: home sale prices rising much faster than across the city, the
   City's assessed values rising much faster than across the city, or the City's Market Value
   Analysis finding prices climbing out of reach of longtime residents. The other two signs, many
-  homes bought by companies and most homes rented, count only beside one of those.
+  homes bought by companies and at least three in five homes rented, count only beside one of
+  those.
 - Inside a watch area, every greening card (on the map's nearby list, a bus stop's details, the lot
   page and its print, and downloads) shows the sentence above word for word, the area's signs, and
   a link to each protection's own page with the day it was last checked.

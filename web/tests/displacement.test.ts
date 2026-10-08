@@ -13,6 +13,8 @@ import Dossier from '../src/components/dossier/Dossier.svelte';
 import DossierPrint from '../src/components/dossier/DossierPrint.svelte';
 import PlaceCard from '../src/components/places/PlaceCard.svelte';
 import StopCard from '../src/components/transit/StopCard.svelte';
+import TransitStopDetails from '../src/components/transit/TransitStopDetails.svelte';
+import { parseStopTable } from '../src/transit/answers.ts';
 import { GREENING_SUGGESTIONS } from '../src/config/suggestions.ts';
 import { parseManifest } from '../src/data/manifest.ts';
 import {
@@ -100,7 +102,7 @@ describe("the signs and the rule are the pipeline's", () => {
     expect(signsText(SIGNS.prices | SIGNS.companies | SIGNS.assessments)).toBe(
       "home prices rising faster than across the city; the City's assessed values rising faster than across the city; and companies buying many of the homes sold",
     );
-    expect(signsText(SIGNS.renters | SIGNS.mva)).toBe("the City's Market Value Analysis finds rising pressure; and most homes rented");
+    expect(signsText(SIGNS.renters | SIGNS.mva)).toBe("the City's Market Value Analysis finds rising pressure; and at least three in five homes rented");
   });
 
   it('names a census tract as people write it', () => {
@@ -173,6 +175,20 @@ describe('greening cards in and out of watch areas', () => {
     const outside = textOf(render(StopCard, { props: { store, stop: stop({ id: 'sp9' }), lensLabel: 'Transit comfort', fromYou: false } }).body);
     expect(outside).toContain(CAUTION);
     expect(outside).not.toContain('displacement watch area');
+  });
+
+  it("does the same in a tapped stop's details", () => {
+    const stops = read('../fixtures/data/tiles/transit.stops.geojson').features as { properties: Record<string, unknown> }[];
+    const shaded = stops.find((f) => f.properties.id === 'sp1002')!.properties;
+    const store = new AppStore(registry, { state: defaultState(registry, 'analysis'), viewPinned: true }, { listStorage: null });
+    store.stopTable = parseStopTable(read('../fixtures/data/tables/stop_amenities.json'))!;
+    store.stopTableStatus = 'ok';
+    const details = (properties: Record<string, unknown>) => textOf(render(TransitStopDetails, { props: { store, features: [properties] } }).body);
+    const outside = details(shaded);
+    expect(outside).toContain(CAUTION);
+    expect(outside).not.toContain('displacement watch area');
+    const inside = details({ ...shaded, dw: SIGNS.prices | SIGNS.renters });
+    expect(inside).toContain('displacement watch area, with signs that prices are rising here: home prices rising faster than across the city; and at least three in five homes rented');
   });
 
   it('covers every greening suggestion', () => {

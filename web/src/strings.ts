@@ -525,7 +525,7 @@ export const strings = {
       assessments: "the City's assessed values rising faster than across the city",
       mva: "the City's Market Value Analysis finds rising pressure",
       companies: 'companies buying many of the homes sold',
-      renters: 'most homes rented',
+      renters: 'at least three in five homes rented',
     },
     // A tapped watch area (src/components/displacement/WatchDetails.svelte).
     heading: 'Signs that prices are rising here',
