@@ -96,6 +96,11 @@ says so, in these words:
 
 > "Greening can raise nearby prices. Consider pairing it with protections."
 
+Cards that suggest a place to sit, a community garden or art say it in their own words:
+
+> "New gardens, seating and art can make a block more sought after and raise nearby prices and
+> rents. Pair them with protections for neighbors who rent or who are behind on taxes."
+
 The map also has a **displacement watch**: areas with signs that prices are rising there now. An
 area is in the watch when at least two of these signs show up in public records, and at least one
 of them is about prices:
@@ -106,8 +111,8 @@ of them is about prices:
 - companies buying many of the homes sold;
 - at least three in five homes rented.
 
-Inside a watch area, a greening card also lists the area's signs and links to the protections to
-pair with it:
+Inside a watch area, these cards, and the box of a lot the City's land agencies list as
+available, also list the area's signs and link to the protections to pair with them:
 
 - the [Neighborhood Gardens Trust](https://ngtrust.org/preservation/), which keeps community gardens
   for good;

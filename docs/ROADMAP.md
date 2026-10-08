@@ -142,9 +142,10 @@ ready for the owner.
 - **M3.2 Public art layer** (done, 2026-10-05): Percent for Art, OpenStreetMap, Wikidata;
   deduplication; links out to Mural Arts. philart.net, the Association for Public Art and Magic
   Gardens wait for their permission (owner outreach).
-- **M3.3 Walkability and people** (done, 2026-10-08): EPA walkability index, our own
-  OpenStreetMap measures (intersection density, destinations within 10 minutes), people within a 5
-  minute walk, DVRPC traffic stress and pedestrian network.
+- **M3.3 Walkability and people** (done, 2026-10-08): EPA walkability index; people within a 5
+  minute walk (2020 census blocks); everyday places within a 10 minute walk and street corners,
+  from the City's, the USDA's and SEPTA's lists and the City's street centerlines (OpenStreetMap is
+  left out, DESIGN section 5.9); DVRPC traffic stress. DVRPC's sidewalk data wait for clear terms.
 - **M3.4 Placemaking lens and suggestions** (done, 2026-10-08): a lens on the lots from people and
   everyday places within walking distance, walkability, distance to a park, public art nearby and
   the City's commercial corridors; suggestions for a place to sit in the shade, a community garden
@@ -156,7 +157,7 @@ ready for the owner.
 
 ## Phase 4: v0.4 History and displacement
 
-- **M4.1 Displacement watch** (done, 2026-10-08): sale price trends and company buyer share from
+- **M4.1 Displacement watch** (done, 2026-10-08, early, in v0.3): sale price trends and company buyer share from
   transfers, the City's Market Value Analysis (the 2026 edition), renter share, assessment changes;
   the overlay and "pair with protections" cards.
 - **M4.2 Full history in the dossier**: every transfer since 1974, an assessment chart, a timeline of
@@ -206,6 +207,12 @@ None of these block Phase 0.
 8. Ask PHS about reuse terms for its map of gardens it and the Neighborhood Gardens Trust support
    (the `PHS_NGT_Supported_Current_view` layer states no license). The map shows these gardens with
    credit in the meantime, and removes them if PHS asks.
+9. Optional: ask DVRPC (data@dvrpc.org) how the terms of its sidewalk gap products carry over from
+   the Overture Maps roads they are built on (DESIGN.md section 5.9). Until then the walking layers
+   leave them out.
+10. Send, edit or skip the permission request to Transit Forward Philadelphia for its bus stop
+   audits (DATA_SOURCES.md, "Sources checked 2026-10-08"). Nothing from the audits is used until
+   there is a trimmed copy and a license.
 
 ## Waves
 

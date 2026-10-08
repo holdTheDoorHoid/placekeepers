@@ -701,7 +701,7 @@
   attribution: "Real estate transfers: City of Philadelphia, Department of Records"
   cadence: weekly
   health: {min_rows: 150000, max_drop_pct: 15, newest_field: display_date, max_age_days: 120}
-  release: v0.4
+  release: v0.3
 - id: assessment_values
   name: Assessed market values, citywide, two tax years
   publisher: City of Philadelphia, Office of Property Assessment
@@ -713,7 +713,7 @@
   attribution: "Assessed values: City of Philadelphia, Office of Property Assessment"
   cadence: yearly
   health: {min_rows: 900000, max_drop_pct: 10}
-  release: v0.4
+  release: v0.3
 - id: acs_tenure
   name: Renters and owners by census tract (ACS 2020 to 2024)
   publisher: U.S. Census Bureau, American Community Survey
@@ -725,7 +725,7 @@
   attribution: "Renters and owners: U.S. Census Bureau, American Community Survey 2020 to 2024 five year estimates"
   cadence: yearly
   health: {min_rows: 380, max_drop_pct: 5}
-  release: v0.4
+  release: v0.3
 - id: market_value_analysis
   name: Market Value Analysis 2026
   publisher: Reinvestment Fund, for the City of Philadelphia Department of Planning and Development
@@ -739,4 +739,4 @@
   attribution: "Market Value Analysis 2026: Reinvestment Fund for the City of Philadelphia"
   cadence: irregular
   health: {min_rows: 1200, max_drop_pct: 5}
-  release: v0.4
+  release: v0.3

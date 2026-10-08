@@ -71,9 +71,10 @@ only use it to say how many people a project would reach.
 
 The placemaking lens ranks lots for where a garden, a place to sit or a mural would be used most:
 many neighbors and everyday places within a short walk, far from a park, with no public art
-nearby. It makes no claim about crime. Its walking measures and shopping streets carry Mixed,
-because the research cuts both ways as above; the rest is background about who a project would
-reach and what is missing nearby. Its gardens, seats and murals carry Not about violence.
+nearby. It makes no claim about crime. Everyday places nearby, walkability and shopping streets
+carry Mixed, because the research cuts both ways as above; neighbors nearby, the distance to a park
+and art nearby are background about who a project would reach and what is missing nearby. Its
+gardens, seats and murals carry Not about violence.
 
 ## What we do not claim
 
