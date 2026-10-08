@@ -125,6 +125,34 @@ describe('the displacement caution on every greening suggestion (decision D12)',
     expect(result.notes.join(' ')).toContain(CAUTION);
     expect(toCsv(result).split('\r\n')[0]).toMatch(/terms of use/);
   });
+
+  it('reads word for word on the "Use this responsibly" page, with the placemaking version', () => {
+    // Every caution's "Ways to protect neighbors" link opens that page (v0.3 review), so the page
+    // quotes both sentences the cards show.
+    const page = readFileSync(new URL('../../content/responsibly.md', import.meta.url), 'utf8')
+      .replace(/^> ?/gm, '')
+      .replace(/\s+/g, ' ');
+    expect(page).toContain(`"${CAUTION}"`);
+    expect(page).toContain(`"${strings.displacement.placemakingCaution}"`);
+  });
+});
+
+describe('no enforcement words (docs/ETHICS.md, "Policing"; v0.3 review)', () => {
+  // The parking reports layer (issue #37) is the closest the map comes to enforcement: its counts
+  // are evidence for physical fixes to the street, never for tickets or towing.
+  const ENFORCEMENT = /\b(tickets?|ticketing|parking authority|PPA|enforc\w*|tow(ed|ing)|report(ing)? (the )?drivers?)\b/i;
+
+  it('no interface string, layer, lens, group, suggestion or route speaks of enforcement', () => {
+    const texts = [
+      ...collectStrings(strings).map(([, text]) => text),
+      ...registry.layers.flatMap((l) => [l.label, l.description, ...l.settings.flatMap((setting) => [setting.label, ...('options' in setting ? setting.options.map((o) => o.label) : [])])]),
+      ...registry.groups.flatMap((g) => [g.label, g.description]),
+      ...registry.lenses.flatMap((l) => [l.label, l.description, ...l.factors.flatMap((f) => [f.label, f.explain])]),
+      ...registry.suggestions.flatMap((s) => [s.label, s.summary]),
+      ...registry.routes.flatMap((r) => [r.label, ...r.steps]),
+    ];
+    expect(texts.filter((text) => ENFORCEMENT.test(text))).toEqual([]);
+  });
 });
 
 describe('conservatorship (interface check 2)', () => {

@@ -197,9 +197,9 @@
       evidence: mixed
       default_weight: 1
       explain: >-
-        100 when the lot lies on one of the City's commercial corridors, the shopping streets and
-        centers the Planning Commission surveyed from 2011 to 2017, or within 50 meters of one,
-        else 0. Shops bring people past the lot every day. Busy shopping streets can bring
+        Full marks, 100, when the lot lies on one of the City's commercial corridors, the shopping
+        streets and centers the Planning Commission surveyed from 2011 to 2017, or within 50
+        meters of one, and 0 otherwise. Shops bring people past the lot every day. Busy shopping streets can bring
         problems too, so the evidence is mixed.
   presets:
     - id: balanced

@@ -355,9 +355,9 @@ word, like clean and green.
 As built (M3.4, 2026-10-08): the **placemaking lens** ranks the vacant parcels on the map for where
 a lot would most likely become a public place people use every day: a garden, a pocket park, a
 place to sit in the shade, a spot for art. It is about use and welcome, never about crime
-(EVIDENCE.md, "Placemaking"). Each of its six factors is ranked from 0 to 100 among the parcels on
-the map; for the first three more ranks higher (section 5.9), for the parks and the art farther
-ranks higher:
+(EVIDENCE.md, "Placemaking"). Five of its six factors are ranked from 0 to 100 among the parcels
+on the map; for the first three more ranks higher (section 5.9), for the parks and the art farther
+ranks higher. The corridor factor is 100 or 0:
 
 - **People within a 5 minute walk** (Context, default weight 3), **everyday places within a 10
   minute walk** (Mixed, 2) and **walkability**, the EPA's index (Mixed, 2): the walking measures of
@@ -461,8 +461,8 @@ market rather than a fixed price:
 A sale counts when it is a deed for more than a token price that is not a sheriff, condemnation or
 adverse possession deed (the lot pages' rule), not a Land Bank deed (a public sale at a set price),
 for one property (a price shared over several is an allocation), of a home (a single family or two
-to four family house as OPA lists it today), built before the year of the sale (an earlier sale was
-of the land or the house before). The price is this property's share, as the lot pages show it.
+to four family house as OPA lists it today), built in or before the year of the sale (an earlier
+sale was of the land or the house before). The price is this property's share, as the lot pages show it.
 For the assessed values a home counts when it stood at least two years before the earlier tax year
 and was valued at $10,000 or more then, so a new house is never counted as a rise.
 
@@ -628,8 +628,8 @@ As built (M1.6, 2026-10-04):
   site), a link to the Land Bank's map, and the credit to the City's Department of Planning and
   Development (Land Management). On the map, the vacant lots layer has a setting, also a filter
   in the analysis view, "Listed as available by the City's land agencies". No price and no buy
-  button (ETHICS.md). Where the displacement watch marks the lot's area, the box is to carry the
-  displacement caution; it has a marked place for it until that release is merged.
+  button (ETHICS.md). Where the displacement watch marks the lot's area, the box carries the full
+  displacement card, and elsewhere the one line caution (M4.1, section 5.3).
 
 **Owner information as built (M1.3, 2026-10-04).** What the owner will see, and the choices behind it:
 
@@ -767,7 +767,7 @@ The layer carries the "Not about violence" badge (EVIDENCE.md, "Murals and publi
 
 As built (M3.3, 2026-10-05). **What the owner sees:** a new group, **Walking, cycling and
 people**, with three layers, off by default in both views (their fills would compete with the
-lots' lens colors, and the placemaking lens, M3.4, will bring their measures to the lots):
+lots' lens colors, and the placemaking lens, section 5.3, brings their measures to the lots):
 
 - **How walkable each area is (EPA)**: the U.S. EPA's National Walkability Index for each of the
   city's 1,336 census block groups, a few blocks each, trimmed to the land so the rivers stay
@@ -834,7 +834,8 @@ many people walk to and past is where a placemaking project serves most people; 
 the gaps instead needs a field of its own. Street corners (`f_corners`) stay off the lots: the
 EPA's index counts intersections already, and each factor adds about 3 to 4 percent to the lots
 tiles (the three together about 10 percent, 8.0 to 8.8 MB, on 2026-10-05). The hexagons carry all
-four, ranked among the cells, for a placemaking lens on cells. CONTRACTS.md section 4 has the
+four, ranked among the cells, for any later lens on cells (M3.4 left the cells out, section
+5.3). CONTRACTS.md section 4 has the
 details, and `derived/walk_factors.parquet` holds the counts behind each parcel's ranks. The
 placemaking lens (M3.4, section 5.3) is built on them. SEPTA's bus and trolley stops on
 the street carry the same three factors, measured from each stop and ranked among the stops, for

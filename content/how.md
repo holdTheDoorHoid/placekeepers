@@ -88,8 +88,10 @@ lot. **Not yet confirmed:** how a group signs up is not yet clear to us; contact
 
 The **Neighborhood Gardens Trust** ([ngtrust.org](https://ngtrust.org/), 215 988 1630,
 ngtrust@pennhort.org) works to permanently protect community gardens from ever being sold out from
-under the people who built them. **Not yet confirmed:** exactly which gardens qualify; ask them
-directly.
+under the people who built them. It looks for gardens active at least three growing seasons, with
+gardeners able to keep them up, ties to groups such as a church, a school or a community
+development corporation, and support from neighbors and the district's City Council member
+(checked on its preservation page on October 8, 2026).
 
 ### Trees on and along a lot
 
@@ -164,7 +166,8 @@ A few things people often ask about do not have a clear City process yet:
 
 **Daylighting a corner** (keeping the area right next to a crosswalk clear of parked cars) is not
 a new rule to ask for. Pennsylvania law already bans parking within 20 feet of a crosswalk at an
-intersection, so this is about enforcing a rule that already exists.
+intersection, so what to ask for is a physical change that keeps the corner clear, such as posts,
+planters or a curb extension.
 
 ## Low cost projects, and what each one needs
 

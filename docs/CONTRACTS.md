@@ -143,12 +143,13 @@ app (moving one of its sliders or choosing a preset) turns on the layers that dr
 sets such a setting to `lens`.
 
 When more than one lens ranks a layer's places, the setting's option values are those lenses' ids
-instead (added 2026-10-05 by M3.1): the lots layer's `lens` setting ("Color lots by", `violence` or
-`heat`, default `violence`) names the lens that colors the lots, and using a lens sets it to that
+instead (added 2026-10-05 by M3.1): the lots layer's `lens` setting ("Color lots by", `violence`,
+`heat` or `placemaking` (added 2026-10-08 by M3.4), default `violence`) names the lens that colors the lots, and using a lens sets it to that
 lens's id. Its options must name every lens that applies to `parcel` and nothing else (a web test
 checks it).
 
-`registry/groups.yaml` lists groups in display order: `lots`, `care`, `streets`, `transit` (added
+`registry/groups.yaml` lists groups in display order: `lots`, `care`, `displacement` (added
+2026-10-08 by M4.1 for the displacement watch, "Prices and protections"), `streets`, `transit` (added
 2026-10-04 by M2.1 for SEPTA's layers; M2.2 adds the shelters and benches at stops to it), `heat`
 (added 2026-10-05 by M3.1 for heat vulnerability, the City's trees and the floodplain), `amenities`,
 `public_places` and `conditions` (added 2026-10-05 by M3.5), `placemaking` (added 2026-10-05 by
@@ -1082,7 +1083,7 @@ land use map's water, measured from its middle exactly as the parcels are (deriv
 | `d` | int | how many of the seven kinds of everyday places lie within a 10 minute walk (800 meters), 0 to 7 |
 | `dk` | int | which kinds, as bits: 1 a library, 2 a recreation center, 4 a pool or sprayground, 8 a drinking fountain in a park, 16 a school, 32 a grocery store or market that takes SNAP, 64 a SEPTA stop |
 | `k` | int | street corners within a 5 minute walk: points where three or more segments of the City's street centerlines that people can walk on meet (classes 2 to 5 and 15, not expressways, ramps or driveways) |
-| `f_walk`, `f_neighbors`, `f_dest`, `f_corners` | int | the factors of the parcels, ranked among the cells instead, for a placemaking lens on cells (M3.4) |
+| `f_walk`, `f_neighbors`, `f_dest`, `f_corners` | int | the factors of the parcels, ranked among the cells instead, for any later lens on cells (M3.4 left the cells out) |
 
 Each measure is absent when its source has no snapshot. On 2026-10-05: 3,335 cells; people
 within a 5 minute walk from 0 to 13,680 (median 1,921).
