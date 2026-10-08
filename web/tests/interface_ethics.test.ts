@@ -145,7 +145,7 @@ describe('no enforcement words (docs/ETHICS.md, "Policing"; v0.3 review)', () =>
   it('no interface string, layer, lens, group, suggestion or route speaks of enforcement', () => {
     const texts = [
       ...collectStrings(strings).map(([, text]) => text),
-      ...registry.layers.flatMap((l) => [l.label, l.description, ...l.settings.flatMap((setting) => [setting.label, ...(setting.options ?? []).map((o) => o.label)])]),
+      ...registry.layers.flatMap((l) => [l.label, l.description, ...l.settings.flatMap((setting) => [setting.label, ...('options' in setting ? setting.options.map((o) => o.label) : [])])]),
       ...registry.groups.flatMap((g) => [g.label, g.description]),
       ...registry.lenses.flatMap((l) => [l.label, l.description, ...l.factors.flatMap((f) => [f.label, f.explain])]),
       ...registry.suggestions.flatMap((s) => [s.label, s.summary]),
