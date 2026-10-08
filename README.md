@@ -19,7 +19,7 @@ We combine many City records on purpose, so no single broken source can take the
 Read [Why this works](https://holdthedoorhoid.github.io/placekeepers/why/) for the Philadelphia
 research behind it.
 
-## What you can do with v0.2
+## What you can do with v0.3
 
 **On your phone, on the block.** Search an address or tap "Near me" to see "What you can do
 nearby": the closest lots and streets that could use care, each with why it matters, how sure we
@@ -44,12 +44,28 @@ Switch it on with the "Bus stops" chip, or "Buses and trains" in Settings. The "
 guide and the printable "Survey a route" kit show how to help map what OpenStreetMap does not
 know yet.
 
-**An early look at heat and shade, and at what is nearby.** A lens for where planting trees or
-greening a lot would cool people most, with its own suggestions. Also benches, water, toilets,
-libraries, recreation centers and pools, and 311 reports of dumping, dark streetlights and
-graffiti, all without a lens or suggestions of their own yet.
+**Heat and shade.** A lens for where planting trees or greening a lot would cool people most, with
+its own suggestions, plus the City's trees, neighborhood heat vulnerability and the floodplain.
 
-Every layer, score and suggestion can be switched on or off in Settings.
+**Placemaking.** A lens for where a vacant lot would most likely become a place people use every
+day: many neighbors and everyday places within a short walk, far from a park, no public art nearby.
+Its suggestions are a place to sit in the shade, a community garden, a mural, and reports of
+dumping, a dark street light or graffiti to Philly311. It is about use and welcome, never about
+crime. Walkability, people and places within walking distance, and traffic stress for people on
+bikes are layers of their own, and so is public art from the City, OpenStreetMap and Wikidata.
+
+**Displacement watch.** Census tracts where public records show signs that prices are rising. It
+changes no score. Inside one, greening and placemaking suggestions add ways to protect the
+neighbors who live there now.
+
+**Lots listed as available, and parking problems.** Show only the lots the City's land agencies
+list as available, with the side yard program first where the lot is eligible and no prices. A
+heat map of parking problems reported with Philly Bike Action's Laser Vision app, shown with its
+permission, as evidence for fixing the street itself.
+
+Also benches, water, toilets, libraries, recreation centers and pools, and 311 reports of dumping,
+dark streetlights and graffiti, without a lens of their own. Every layer, score and suggestion can
+be switched on or off in Settings.
 
 ## What it does not do yet
 
@@ -57,9 +73,10 @@ Names of people killed are not shown. We want the Bicycle Coalition and Families
 to weigh in first. Removal requests go through a public GitHub issue for now; a private email
 address is planned.
 
-Amenities and 311 conditions have no lens or suggestions of their own yet. Public art,
-walkability, history and displacement watch, and organizing tools are planned for later
-releases. See the [roadmap](docs/ROADMAP.md).
+A fuller lot history, historic maps, Land Bank statistics and organizing tools are planned for
+later releases. Transit Forward Philadelphia's stop audits wait on permission, and
+philart.net, the Association for Public Art and Philadelphia's Magic Gardens wait on theirs. See the
+[roadmap](docs/ROADMAP.md).
 
 ## How the data stays fresh
 
@@ -85,9 +102,11 @@ notice in the file header and be listed in a NOTICE file, as the project's own r
 NOTICE file is needed until then.
 
 Map data comes from the City of Philadelphia and other public sources. Transit schedules and
-ridership come from SEPTA, under its open data license agreement. Shelters and benches at stops
-come from OpenStreetMap and its contributors, under the Open Database License, the same source
-behind the base map. Every source, with its publisher and license, is listed on the
+ridership come from SEPTA, under its open data license agreement. Shelters, benches and much of the
+public art come from OpenStreetMap and its contributors, under the Open Database License, the same
+source behind the base map. Walkability comes from the EPA, traffic stress from the Delaware Valley
+Regional Planning Commission, and parking problems from Philly Bike Action's Laser Vision app, with
+its permission. Every source, with its publisher and license, is listed on the
 [Data status page](https://holdthedoorhoid.github.io/placekeepers/status/) and in
 [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md).
 
@@ -123,6 +142,11 @@ The analysis view on a desktop, with a lot page open:
 The transit comfort lens on a phone, with a stop's details open near Broad Street:
 
 ![The field view on a phone with the transit comfort lens on, showing colored bus stops near Broad Street and a stop's details open with its score and suggestion](docs/images/transit-phone.png)
+
+A lot page under the placemaking lens on a phone, with the six factors behind its score and how much
+evidence each one has:
+
+![A lot page on a phone showing the placemaking lens's score of 56 for a vacant lot, with a table of six factors, the weight of each, and a badge saying whether each is context or mixed evidence](docs/images/placemaking-phone.png)
 
 ## For developers
 

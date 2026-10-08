@@ -3,6 +3,185 @@
 Numbers below are from the live manifest and the project's docs, each said "as of" its own date,
 and change a little every week as the data refreshes.
 
+## v0.3 (2026-10-08)
+
+Phase 3 of the roadmap, heat and shade and placemaking, is finished. A new placemaking lens ranks
+vacant lots for where a garden, a place to sit or a mural would be used most. It is built on new
+measures of walking, people and traffic stress for people on bikes, and sits beside the public art
+and the heat and shade work from earlier. Also here, ahead of schedule from Phase 4, is a
+displacement watch that pairs greening and placemaking suggestions with ways to protect neighbors
+where prices are rising. Two additions that were not on the roadmap came along: lots the City's
+land agencies list as available, and a heat map of parking problems reported with Philly Bike
+Action's Laser Vision app.
+
+### Placemaking
+
+- A placemaking lens for vacant lots and buildings: where a lot would most likely become a public
+  place people use every day, such as a garden, a pocket park, a place to sit in the shade or a
+  spot for art. Six factors, each with a "why" breakdown: people within a 5 minute walk,
+  everyday places within a 10 minute walk, walkability, far from a park, no public art nearby, and
+  on or near a commercial corridor. Presets: "Balanced", "Most neighbors", "Where people already
+  walk" and "Far from a park". Choose it under "Color lots by".
+- It is about use and welcome, never about crime. No study we found links art or walkability to
+  less violence, so the lens and its suggestions make no such claim, and the seating, garden and
+  mural suggestions carry a "Not about violence" badge.
+- Six suggestions for lots, each with the first lawful step. As of October 8, 2026: make a place
+  to sit in the shade (18,765 lots), ask about a mural or other art (15,666), and, where a block
+  the lot faces has a request still open, report illegal dumping (650 lots), a dark street light
+  (1,082) or graffiti (69) to Philly311. Reports are about physical conditions only, never for the
+  police. The sixth, start a community garden, goes to lots far from a park and only where at
+  least 1,000 people live within a 5 minute walk, so it is not suggested where almost no one
+  lives.
+- The mural suggestion links to Mural Arts Philadelphia's own wall request page and copies
+  nothing from its site. A new route points to Feet First Philly's public space mini grants,
+  $500 to $2,500.
+- Every placemaking card carries a displacement caution; see "Displacement watch" below.
+- Honest about its limits: because it values people and everyday places within a walk, the lens
+  ranks the dense rowhouse neighborhoods around Center City highest, and some of those are among
+  the city's costliest. That is one reason for the caution on every card, and for the "Far from a
+  park" preset, which turns to places that lack open space. The public art factor knows only part
+  of the city's art, since Mural Arts' murals are in no list the map may use, so it has the lowest
+  default weight.
+
+### Walking, cycling and people
+
+- A new "Walking, cycling and people" group of three layers, off by default.
+- **How walkable each area is (EPA):** the U.S. EPA's National Walkability Index for each of the
+  city's 1,336 census block groups, compared within Philadelphia or with the whole country.
+- **People and places within walking distance:** 3,335 hexagons about two blocks across, shaded by
+  the people within a 5 minute walk, the kinds of everyday places within a 10 minute walk, or the
+  street corners within a 5 minute walk. Seven kinds of everyday places count: a Free Library
+  branch, a recreation center, a pool or sprayground, a drinking fountain in a park, a school, a
+  grocery store that takes SNAP, and a SEPTA stop with service.
+- **Traffic stress for people on bikes (DVRPC):** every street segment the Delaware Valley
+  Regional Planning Commission rates, 39,258 as of October 8, 2026, from level 1, calm enough for
+  most people of all ages (15,800), through level 2 (15,779) and level 3 (6,041), to level 4, only
+  for the most fearless riders (1,638). Calm streets are blue and stressful ones orange and
+  brown, never an alarm red.
+- Every distance is a straight line from the middle of a lot, at about 80 meters a minute, so a 5
+  minute walk is 400 meters. That reaches a little farther than a walk along streets and crosses
+  rails and rivers people on foot cannot; each legend says so.
+- Left out on purpose: DVRPC's sidewalk gap scores, whose terms are unclear; Walk Score, whose
+  terms forbid storing its scores; and routes along real streets.
+
+### Public art, and heat and shade, finished
+
+- A public art layer: 651 works as of October 8, 2026, from the City's Percent for Art list (224
+  records), OpenStreetMap (410) and Wikidata (69). A work listed in more than one source shows once
+  (50 do), with a link to each. It is off by default, with a switch for each kind: murals,
+  sculptures and statues, mosaics, and other kinds.
+- An early look at this layer came in the last hours of v0.2's work, without notes of its own. It
+  is described here in full.
+- A work that any source marks as a memorial shows only as "Memorial artwork" (45 of them), with
+  no title, artist or inscription, in the files and on the map. Names of people killed still come
+  only from the hand curated memorials list.
+- Mural Arts Philadelphia keeps the largest list of murals, and its terms do not allow copying it,
+  so the layer links to its list instead of copying it. If a work is missing, adding it to
+  OpenStreetMap puts it on the map within about a week.
+- Waiting on permission from their owners: philart.net, the Association for Public Art's map,
+  Philadelphia's Magic Gardens' mosaic map, and Parks and Recreation's list of art in its parks.
+- The heat and shade lens, the trees, heat and floodplain layers, and the amenities and 311
+  layers from v0.2 carry over and now do more work: the City's libraries, recreation centers,
+  pools and park drinking fountains count as everyday places in the placemaking lens, and open 311
+  requests trigger its reports.
+
+### Displacement watch
+
+- A new layer, "Displacement watch: signs that prices are rising," in a new "Prices and
+  protections" group. It is on by default in the analysis view and off in the field view, where
+  the cards already carry the caution.
+- It looks at the city's 408 census tracts for five signs in public records: home sale prices
+  rising faster than across the city, companies buying many of the homes sold, the City's assessed
+  values rising faster than across the city, at least three in five homes rented, and the City's
+  Market Value Analysis (the 2026 edition) finding prices climbing out of reach of longtime
+  residents. A tract is in the watch when at least two signs hold and at least one is about prices.
+- As of October 8, 2026, 96 of 408 tracts, holding 157,139 of the city's 679,428 occupied homes,
+  are in the watch. Because vacant lots gather in the same neighborhoods, about two in three of the
+  vacant lots on the map lie in one (26,227 of 40,776 when measured on October 8, 2026).
+- It is a caution, never a ranking. It changes no score and no order, every area is drawn the same
+  way, and it says "signs that prices are rising here," never that a neighborhood is changing.
+- Inside a watch area, every greening suggestion, every placemaking suggestion, the shade trees
+  suggested at bus stops and the box of a listed lot add the area's signs and links to the
+  Neighborhood Gardens Trust, community land trusts, the City's Homestead Exemption and Longtime
+  Owner Occupants Program, and help with a tangled title, each with the day its page was last
+  checked. Outside every area the card keeps a one line caution. Lot pages, their print layout and
+  the downloads follow the same rule, and a lot page shows the full card once instead of repeating
+  it on every suggestion.
+- Tapping an area says what it cannot tell: signs in public records are not a forecast, and they
+  cannot show who has moved away or why, or what rents are. Buyers' names are read only to tell a
+  company from a person and are never kept.
+
+### Lots listed as available
+
+- A new setting on the vacant lots layer, also a filter in the analysis view: "Listed as available
+  by the City's land agencies." It uses the same City list as the Philadelphia Land Bank's "View
+  Properties Map." As of October 8, 2026, the list holds 1,640 parcels.
+- On a lot page, the City's status for the lot in plain words ("held for affordable housing,"
+  "someone has applied"), and for a listed lot a box with the date of the list, the side yard
+  program first where the lot is eligible, the Land Bank's note that it can turn down any sale or
+  lease, and a link to its map.
+- No prices, no sort or score by how easy a lot would be to get, and no buy buttons, only links
+  to the Land Bank's own map and programs for neighbors (docs/ETHICS.md).
+- The list carries no dates of its own, so the site dates it by the day we fetched it.
+
+### Parking problems reported (Laser Vision)
+
+- A new layer in the streets group, off by default: where people using Philly Bike Action's Laser
+  Vision app reported vehicles blocking sidewalks, crosswalks, corners, curb ramps and bike lanes
+  over the last 12 months, shown with Philly Bike Action's permission. Zoomed out it is a heat
+  map; close in it becomes areas about a block across. A setting picks one kind of problem or all.
+- Counts only, never a single report. An area shows only with at least 5 reports. As of October
+  8, 2026: 26,060 reports from October 8, 2025 to October 7, 2026, 23,254 of them (89 percent)
+  in the 1,112 areas that are shown.
+- It says plainly that the counts come from people using one app, not every problem. Tapping an
+  area gives its counts by kind and frames them as evidence for physical fixes to the street:
+  curb extensions, bollards, daylighted corners, protected bike lanes and loading zones, with the
+  City's transportation office as the place to ask.
+- No vehicle, plate, photo, time of day or reporter is stored or shown. It is not a lens factor.
+- The data pipeline asks Philly Bike Action's public map data for the counts at most once a week,
+  a few requests spaced seconds apart, with the project's User-Agent. Your browser never contacts
+  Philly Bike Action; the counts come in the project's own map files, with a credit and a link to
+  its map.
+
+### Map, lists and lot pages
+
+- Street blocks and crashes can be reached without the map: "Street blocks nearby" in the field
+  view's sheet, a Street blocks tab in the analysis drawer, and the crashes in view listed beside
+  them, each opening the same details as tapping the map. This closes the first item of issue
+  #26 for keyboard and screen reader users.
+- A lot page opened from a link or a search shows the same score breakdown and flood note as one
+  tapped on the map (issue #31).
+- The base map draws no labels of artworks, memorials, monuments or graves, so a name it holds for
+  a memorial cannot show where the map itself shows none.
+- On a phone, the keyboard can scroll a details panel that has nothing to tab to.
+
+### New data, and what was checked
+
+- New sources: the EPA's walkability index, 2020 census blocks for population, DVRPC's traffic
+  stress network, the USDA's list of stores that take SNAP (kinds and points only, never names),
+  the City's commercial corridors, citywide home sales without names or addresses, the City's
+  assessed values, Census Bureau renter counts, the City's Market Value Analysis, and Philly Bike
+  Action's Laser Vision counts. Wikidata and the City's Percent for Art list, for public art,
+  arrived at the end of v0.2.
+- Checked on October 8, 2026 and not used: Transit Forward Philadelphia's stop audits wait on
+  permission, and we wait for a trimmed copy and a license. PhillyTreeMap is not used: it has been
+  dormant since about 2013, its map shows no trees, it has no data license, and its trees began as
+  City inventories we already hold. The Land Bank's map is used with credit, through the City's own
+  layer. The full findings are in docs/DATA_SOURCES.md, "Sources checked 2026-10-08."
+
+### Safeguards and privacy
+
+- A test checks that the Laser Vision layer never asks a Philly Bike Action server for anything.
+- Names of buyers are never kept in the displacement watch; only a company or person type is.
+- No police suggestions, ever. Reports to Philly311 are for physical conditions only.
+
+### Site pages
+
+- How to do it adds the Land Bank's map of available properties, a graffiti report to Philly311,
+  and Feet First Philly's mini grants. Use this responsibly describes the displacement watch and
+  its five signs. Why this works adds the placemaking lens and what the research does and does not
+  support.
+
 ## v0.2 (2026-10-05)
 
 A first look at transit comfort: the SEPTA bus and trolley stops and routes from v0.1 now carry a
@@ -50,6 +229,11 @@ amenities around the city.
 - 311 reports of illegal dumping, street and alley lights out, and graffiti, grouped by block
   over the last 90 days.
 - No lens or suggestions of their own yet; that is further Phase 3 work.
+
+### Public art, an early look
+
+- A public art layer also reached the map in the last hours of this release, off by default, with
+  no lens or notes of its own yet. Version 0.3 describes it.
 
 ### Map and views
 
