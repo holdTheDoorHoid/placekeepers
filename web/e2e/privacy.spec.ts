@@ -6,7 +6,7 @@
 // the test sees exactly what a visitor's browser would send.
 
 import { expect, test, type BrowserContext, type Page } from '@playwright/test';
-import { LOT, SAMPLE_CENTER, isPhone } from './helpers.ts';
+import { LAND_BANK_LOT, LOT, SAMPLE_CENTER, isPhone } from './helpers.ts';
 
 /** The only other servers the code names on purpose: the City's Carto SQL API and its address service. */
 const CITY_ORIGINS = ['https://phl.carto.com', 'https://api.phila.gov'];
@@ -158,6 +158,27 @@ test.describe('privacy', () => {
     expect(kept.keys.some((key) => key.includes('survey'))).toBe(true);
     expect(kept.cookie).toBe('');
     expect(seen.urls.filter((url) => url.includes('Shelter') || url.includes('survey:'))).toEqual([]);
+  });
+
+  test('the layers of v0.3, the placemaking lens and a listed lot ask no other server', async ({ page, context }) => {
+    // Added by the v0.3 review (docs/VERIFICATION_V0_3.md): walkability, people and places within
+    // walking distance, traffic stress, the displacement watch and the parking reports all come
+    // in the site's own files, and a lot listed by the City's land agencies only links out. Live
+    // City data is off, so any request to another server would be a leak.
+    await page.addInitScript(() => localStorage.setItem('placekeepers:v1:options', JSON.stringify({ live_city_data: false })));
+    const seen = watchOrigins(context);
+    const layers = 'vacant_parcels,walkability,walking_distance,traffic_stress,displacement_watch,parking_reports';
+    await open(page, `v=a&m=16/${LAND_BANK_LOT.lat}/${LAND_BANK_LOT.lng}&l=${layers}&s=vacant_parcels.lens:placemaking&p=${LAND_BANK_LOT.id}`);
+    const lotPage = page.locator('article.dossier').first();
+    await expect(lotPage).toContainText("Listed as available by the City's land agencies");
+    await expect(lotPage).toContainText('Priority under the placemaking lens');
+    // Each new layer's file was asked for, from this site.
+    await expect
+      .poll(() => ['walk', 'cycling', 'displacement', 'parking'].filter((file) => !seen.urls.some((url) => url.includes(`/data/tiles/${file}.`))), { timeout: 30_000 })
+      .toEqual([]);
+
+    const local = new URL(page.url()).origin;
+    expect([...seen.origins].filter((origin) => origin !== local)).toEqual([]);
   });
 
   test('survey ticks are kept under the site\'s own prefix, like every other setting', async ({ page }) => {

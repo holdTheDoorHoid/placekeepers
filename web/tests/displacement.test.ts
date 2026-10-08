@@ -102,7 +102,7 @@ describe("the signs and the rule are the pipeline's", () => {
     expect(signsText(SIGNS.prices | SIGNS.companies | SIGNS.assessments)).toBe(
       "home prices rising faster than across the city; the City's assessed values rising faster than across the city; and companies buying many of the homes sold",
     );
-    expect(signsText(SIGNS.renters | SIGNS.mva)).toBe("the City's Market Value Analysis finds rising pressure; and at least three in five homes rented");
+    expect(signsText(SIGNS.renters | SIGNS.mva)).toBe("the City's Market Value Analysis finding home prices climbing out of reach of longtime residents; and at least three in five homes rented");
   });
 
   it('names a census tract as people write it', () => {

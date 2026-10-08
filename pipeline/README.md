@@ -25,7 +25,7 @@ install it ahead (CI does), run
 | `pk registry check` | Checks every file in `registry/`: unknown keys, missing descriptions, licenses and attributions, and every cross reference |
 | `pk fetch [ids...]` | Downloads sources into the shared cache |
 | `pk validate [ids...]` | Turns new downloads into snapshots, or rejects them and keeps the last good one |
-| `pk derive [--as-of DATE]` | Runs the vacancy model on the current snapshots (see below) |
+| `pk derive [--as-of DATE]` | Runs the vacancy model on the current snapshots, then the lens factors, the walking measures, the placemaking lens and the displacement watch (see below) |
 | `pk publish [--out DIR]` | Writes `manifest.json` and the map layers (default `build/data`) |
 | `pk health [ids...]` | Shows each source's status (`--json` for machines, `--strict` to fail when any source is not ok) |
 | `pk all` | Fetch and validate each source in turn, run the vacancy model, publish, then show health |
@@ -98,6 +98,7 @@ the City's public places and 311 conditions (`adapters/city_places.py`, `adapter
 | `assessment_values` | Carto `assessments`, citywide, the newest tax year with values for most parcels and the year five before it, found when the download starts (M4.1) | Parcel, year, market value |
 | `acs_tenure` | Census Bureau bulk table B25003, 2020 to 2024 (M4.1) | Occupied, owner occupied and renter occupied homes per tract, with margins of error, and the renter share |
 | `market_value_analysis` | City ArcGIS `mva_2026`, Reinvestment Fund's Market Value Analysis for the City (M4.1; the adapter reads the 2023 edition's fields too) | Block group, market type, displacement pressure as published and in one word, households, shape |
+| `pba_laser` | Philly Bike Action's Laser Vision map data (`bikeaction.org/tools/laser/map_data/`), once a week, one request per kind of report for the trailing 12 months, with Philly Bike Action's permission (issue #37) | Each report's H3 cell at resolution 10 and its kind, never its point, with the window's first and last day. 26,060 reports on 2026-10-08, in 33 seconds |
 
 **Candidate parcels.** Transfers, assessments and violations are too large to download for the
 whole city every week, so they come down for every parcel with any sign of vacancy (see
@@ -252,6 +253,8 @@ derived/heat_factors.parquet          the heat and shade lens factors per parcel
 derived/heat_factors.json             each factor's spread, the floodplain and suggestion counts, and notes
 derived/walk_factors.parquet          the walking factors per parcel and the counts behind them
 derived/walk_factors.json             each factor's spread, the places of each kind, and notes
+derived/placemaking_factors.parquet   the placemaking lens factors and suggestions per parcel and the facts behind them
+derived/placemaking_factors.json      each factor's spread, its inputs, the suggestion counts, and notes
 derived/displacement.parquet          the displacement watch's measures and signs per census tract
 derived/displacement.json             its periods, the city's measures, thresholds, counts and notes
 research/                             reserved for the vacancy study; the pipeline never writes here
@@ -272,8 +275,9 @@ DuckDB: `SELECT * FROM '~/.cache/placekeepers/snapshots/opa_properties/current.p
 `heat_tracts` and `floodplain`), `tiles/trees.pmtiles` (layer `trees`, zoom 14 only),
 `tiles/places.pmtiles` (layers `park_water`, `libraries`, `recreation` and `pools`),
 `tiles/conditions.pmtiles` (layers `dumping`, `lights` and `graffiti`), `tiles/art.pmtiles` (layer
-`art`), `tiles/walk.pmtiles` (layers `block_groups` and `cells`) and `tiles/cycling.pmtiles` (layer
-`stress`). It builds in a
+`art`), `tiles/walk.pmtiles` (layers `block_groups` and `cells`), `tiles/cycling.pmtiles` (layer
+`stress`), `tiles/displacement.pmtiles` (layer `watch`) and `tiles/parking.pmtiles` (layer
+`parking`). It builds in a
 hidden folder and swaps it into place at the end, and it refuses to replace a folder that is not an
 earlier data root. A layer with nothing to show is left out with a note, so it never breaks the rest
 of its tile file. It also writes the lot dossiers, `dossiers/<first four digits>.json` with

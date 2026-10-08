@@ -98,8 +98,9 @@ own pages refuse automated access, so its steps are not described here.
 
 ### 1b. Protections to pair with greening (displacement watch)
 
-Added 2026-10-08 by M4.1. Where a greening suggestion sits in a displacement watch area
-(DESIGN.md section 5.3), its card links to each of these, in this order, to the page named here.
+Added 2026-10-08 by M4.1. Where a greening or placemaking suggestion, or the box of a lot the
+City's land agencies list as available, sits in a displacement watch area (DESIGN.md section 5.3),
+its card links to each of these, in this order, to the page named here.
 Each was checked against that official page on **2026-10-08**; every route is in
 `registry/routes.yaml`.
 
@@ -147,19 +148,20 @@ SEPTA's customer service page also offers a safety and incident report that goes
 police; Placekeepers never points there. The OTIS staff contact named in the Art Commission papers
 is not published here; the routes use the office's general address.
 
-**Placemaking (added 2026-10-08 by M3.4).** A vacant lot can offer four more suggestions, each with
+**Placemaking (added 2026-10-08 by M3.4).** A vacant lot can offer six more suggestions, each with
 a route in `registry/routes.yaml`: a place to sit in the shade (the lot's permission route, then
 Feet First Philly's public space mini grant, `public_space_mini_grant`, and the free trees of
 TreePhilly and the City), a community garden (the lot's permission route, with PHS, the
 Neighborhood Gardens Trust and the Garden Justice Legal Initiative), a mural (`mural_arts_wall_request`:
 the wall's owner fills in the "Want a mural on your wall?" form on Mural Arts' contact page,
-checked 2026-10-08; nothing of Mural Arts' is copied), and reports to Philly311 about illegal
+checked 2026-10-08; nothing of Mural Arts' is copied), and three reports to Philly311 about illegal
 dumping, a dark street or alley light or graffiti on a block the lot faces (`report_to_311`,
 whose first step now names graffiti and alley lights too). None points to the police.
 
 **Daylighting.** Pennsylvania law (Title 75, section 3353) already bans parking within 20 feet of a
 crosswalk at an intersection and within 30 feet of a stop sign or signal. Daylighting a corner
-enforces an existing rule.
+asks for a physical change, such as posts, planters or a curb extension, that keeps a corner clear
+under a rule that already exists.
 
 ## 3. Playbook: low cost interventions
 
