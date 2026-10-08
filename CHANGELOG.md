@@ -96,8 +96,8 @@ Action's Laser Vision app.
   Market Value Analysis (the 2026 edition) finding prices climbing out of reach of longtime
   residents. A tract is in the watch when at least two signs hold and at least one is about prices.
 - As of October 8, 2026, 96 of 408 tracts, holding 157,139 of the city's 679,428 occupied homes,
-  are in the watch. Because vacant lots gather in the same neighborhoods, 26,227 of the 40,776
-  vacant lots on the map lie in one.
+  are in the watch. Because vacant lots gather in the same neighborhoods, about two in three of the
+  vacant lots on the map lie in one (26,227 of 40,776 when measured on October 8, 2026).
 - It is a caution, never a ranking. It changes no score and no order, every area is drawn the same
   way, and it says "signs that prices are rising here," never that a neighborhood is changing.
 - Inside a watch area, every greening suggestion, every placemaking suggestion, the shade trees
