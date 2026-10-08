@@ -7,6 +7,10 @@ Routes, by owner, the lawful route first:
   yard route too, but only when the City owned property layer marks the lot eligible.
 * Redevelopment Authority and PHDC lots: "contact PHDC about this parcel", until the route is
   researched (ROUTES.md).
+* A lot the City's land agencies list as available (issue #36) that the City marks eligible for a
+  side yard, whichever of the four agencies owns it: the side or rear yard route first, since the
+  Land Bank offers these lots on its own map and the side yard program is the one meant for the
+  neighbor next door. It is not a step for anyone else, so the map's first step (`rt`) skips it.
 * The housing authority and other public bodies: ask the owner (the body named in City records).
 * Private lots (a person, a company, a nonprofit, or a name we could not type): ask the owner;
   where the lot is already a garden, garden adverse possession (2024 law, still to confirm with
@@ -27,6 +31,9 @@ from placekeepers.derive.owners import OwnerType
 
 PRIVATE = frozenset({"individual", "company", "nonprofit"})
 
+#: The side or rear yard route: for the owner of the house next door only.
+SIDE_YARD = "land_bank_side_yard"
+
 
 def routes_for(
     owner_type: OwnerType,
@@ -37,19 +44,26 @@ def routes_for(
     in_landcare: bool = False,
     gardened: bool = False,
     homestead: bool = False,
+    listed_available: bool = False,
 ) -> list[str]:
     """Route ids for one parcel, in the order a person should try them. `vacant` is the vacancy
     call at high or medium confidence; `homestead`, an owner occupied homestead exemption in OPA's
-    records."""
+    records; `listed_available`, the City's land agencies list the parcel as available
+    (derive.city_list)."""
     routes: list[str] = []
     if in_landcare:
         routes.append("community_landcare")
     kind = owner_type.type
+    side_yard_first = listed_available and side_yard_eligible
     if kind in {"land_bank", "city"}:
+        if side_yard_first:
+            routes.append(SIDE_YARD)
         routes.append("land_bank_garden_agreement")
-        if side_yard_eligible:
-            routes.append("land_bank_side_yard")
+        if side_yard_eligible and not side_yard_first:
+            routes.append(SIDE_YARD)
     elif kind == "redevelopment_authority" or owner_type.body in {"PHDC", "phdc"}:
+        if side_yard_first:
+            routes.append(SIDE_YARD)
         routes.append("contact_phdc")
     elif kind in {"housing_authority", "other_public"}:
         routes.append("ask_the_owner")
@@ -78,13 +92,14 @@ PUBLIC_OWNERS = frozenset({"housing_authority", "other_public"})
 
 def first_route_code(routes: list[str], owner_type: str) -> int:
     """The `rt` code for a parcel from the routes its dossier lists (routes_for, in order) and its
-    owner type."""
+    owner type: the first route other than the side yard, which is for one household only (issue
+    #36), or the side yard when it is the only route left."""
     if not routes:
         return ROUTE_NONE
-    first = routes[0]
+    first = next((route for route in routes if route != SIDE_YARD), routes[0])
     if first == "community_landcare":
         return ROUTE_LANDCARE
-    if first in {"land_bank_garden_agreement", "land_bank_side_yard"}:
+    if first in {"land_bank_garden_agreement", SIDE_YARD}:
         return ROUTE_LAND_BANK
     if first == "contact_phdc":
         return ROUTE_PHDC

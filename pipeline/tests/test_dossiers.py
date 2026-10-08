@@ -10,7 +10,7 @@ The made up parcels, all near Fairhill (every name and record is invented):
     371000001  MORALES ROSA, a vacant lot on the City's land list; mail in Cherry Hill, NJ; taxes
                owed in July 2025; a sheriff sale; an open violation; last sold in 1987
     372000001 to 372000005  KENSINGTON LOTS LLC, five vacant lots: an owner with many
-    373000001  the Land Bank, on the land list, eligible as a side yard
+    373000001  the Land Bank, on the land list, listed as available and eligible as a side yard
     373000002  the Redevelopment Authority, not on a vacancy list
     374000001  BOWMAN LEROY and BOWMAN EVELYN ESTATE OF, a vacant building, unsafe
     374000002  WALLACE GLORIA, cleaned and sealed in 2019, not on a vacancy list
@@ -704,17 +704,27 @@ def test_land_bank_and_redevelopment_authority_lots(built) -> None:
         "agency": "PLB",
         "status": "Owned - Available",
         "side_yard_eligible": True,
+        "available": True,
     }
+    # Listed as available and eligible for a side yard: the side yard leads the Land Bank's
+    # routes, after the care PHS already gives the lot (issue #36).
     assert land_bank["routes"] == [
         "community_landcare",
-        "land_bank_garden_agreement",
         "land_bank_side_yard",
+        "land_bank_garden_agreement",
     ]
     assert land_bank["landcare"] == {"program": "land_bank"}
     assert [flag["id"] for flag in land_bank["owner"]["flags"]] == ["tax_debt_2025"]
     assert "help" not in land_bank["owner"] and "notice" not in land_bank["owner"]
     pra = parcel(out, "373000002")
     assert pra["owner"]["type"] == "redevelopment_authority"
+    # On hold, so not available: no "available" key, and no side yard route although the City
+    # marks it eligible.
+    assert pra["owner"]["city_owned"] == {
+        "agency": "PRA",
+        "status": "Owned - On Hold",
+        "side_yard_eligible": True,
+    }
     assert pra["routes"] == ["contact_phdc"]
     assert pra["vacancy"] is None and pra["suggestions"] == []
 
@@ -786,6 +796,15 @@ def test_the_lots_layer_carries_the_owner_type(built) -> None:
     assert ot["374000001"] == 1
 
 
+def test_the_lots_layer_marks_lots_listed_as_available(built) -> None:
+    # `la` (issue #36): 1 on a lot the City's land agencies list as available, absent elsewhere.
+    _, out = built
+    layer = json.loads((out / "tiles" / "lots.parcels.geojson").read_text(encoding="utf-8"))
+    la = {f["properties"]["id"]: f["properties"].get("la") for f in layer["features"]}
+    assert la["373000001"] == 1
+    assert {account for account, value in la.items() if value is not None} == {"373000001"}
+
+
 # The map's first step (`rt`) and the dossier's first route always agree.
 FIRST_STEP = {
     "community_landcare": 1,
@@ -796,8 +815,11 @@ FIRST_STEP = {
 
 
 def expected_rt(dossier: dict[str, Any]) -> int:
-    """The rt code docs/CONTRACTS.md gives for the dossier's first route and owner type."""
-    routes = dossier["routes"]
+    """The rt code docs/CONTRACTS.md gives for the dossier's first route and owner type, passing
+    over the side yard route, which is for the household next door only (issue #36)."""
+    routes = [route for route in dossier["routes"] if route != "land_bank_side_yard"] or dossier[
+        "routes"
+    ]
     if not routes:
         return 0
     if routes[0] in FIRST_STEP:
