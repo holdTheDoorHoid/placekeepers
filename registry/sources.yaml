@@ -729,11 +729,12 @@
 - id: market_value_analysis
   name: Market Value Analysis 2026
   publisher: Reinvestment Fund, for the City of Philadelphia Department of Planning and Development
-  homepage: https://opendataphilly.org/datasets/market-value-assessment/
+  homepage: https://data-phl.opendata.arcgis.com/datasets/b1fb9242941a4bb898f82ef98e8f3b5a_0/about
   # One polygon per census block group with its market type and Reinvestment Fund's reading of
   # displacement pressure (prices against what longtime residents earn). The City publishes the
   # 2023 edition (mva_2023, on OpenDataPhilly) and the 2026 edition (mva_2026, on its open data
-  # hub, released 2026-07-16) under the same terms; the adapter reads both.
+  # hub, released 2026-07-16) under the same terms; the adapter reads both. The homepage is the
+  # 2026 edition's page on the City's open data hub (checked 2026-10-08).
   endpoint: {kind: arcgis, service: mva_2026, layer: 0}
   license: city_terms
   attribution: "Market Value Analysis 2026: Reinvestment Fund for the City of Philadelphia"
