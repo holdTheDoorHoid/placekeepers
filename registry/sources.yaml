@@ -595,6 +595,62 @@
   cadence: weekly
   health: {min_rows: 40, max_drop_pct: 25}
   release: v0.3
+# Milestone M3.3: walkability and people. The EPA's National Walkability Index by block group
+# (only Philadelphia's are downloaded), population by census block from the 2020 census, DVRPC's
+# traffic stress for cycling (Philadelphia's streets only), and food stores that take SNAP, one of
+# the kinds of everyday places counted within a 10 minute walk (placekeepers/adapters/walk.py).
+- id: epa_walkability
+  name: National Walkability Index (EPA Smart Location Database)
+  publisher: U.S. Environmental Protection Agency, Office of Community Revitalization
+  homepage: https://www.epa.gov/smartgrowth/smart-location-mapping
+  # The EPA's own feature service of the Smart Location Database (version 3, 2021, on 2019 block
+  # groups), which holds the National Walkability Index and its four parts. Only Philadelphia's
+  # 1,336 block groups are downloaded, not the 405 MB national file.
+  endpoint: {kind: arcgis, service: Smart_Location_Database_, layer: 0, url: "https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services"}
+  license: public_domain
+  attribution: "Walkability: U.S. EPA National Walkability Index (Smart Location Database, 2021)"
+  cadence: irregular
+  health: {min_rows: 1300, max_drop_pct: 2}
+  release: v0.3
+- id: census_blocks_2020
+  name: People by census block (2020 census)
+  publisher: U.S. Census Bureau, 2020 Census redistricting data (P.L. 94-171)
+  homepage: https://www.census.gov/programs-surveys/decennial-census/about/rdo/summary-files.html
+  # Pennsylvania's redistricting file (57 MB, no key needed). Only the geographic header is read,
+  # and only Philadelphia's blocks are kept: each block's population, housing units, land area and
+  # a point inside it. The 2020 count never changes, so it is downloaded once.
+  endpoint: {kind: url, url: "https://www2.census.gov/programs-surveys/decennial/2020/data/01-Redistricting_File--PL_94-171/Pennsylvania/pa2020.pl.zip", format: zip}
+  license: public_domain
+  attribution: "Population: U.S. Census Bureau, 2020 Census (redistricting data, P.L. 94-171)"
+  cadence: frozen
+  health: {min_rows: 17000, max_drop_pct: 0}
+  release: v0.3
+- id: dvrpc_lts
+  name: Traffic stress for cycling (DVRPC Level of Traffic Stress)
+  publisher: Delaware Valley Regional Planning Commission (DVRPC)
+  homepage: https://catalog.dvrpc.org/dataset/dvrpc-level-of-traffic-stress-lts-network
+  # DVRPC marks this dataset "Unrestricted: can be shared internally and externally without data
+  # sharing agreement" under its data license (credit DVRPC; provided as is). Only Philadelphia's
+  # street segments are downloaded (county_code 42101), each direction of a street as its own row.
+  endpoint: {kind: arcgis, service: transportation/lts_network, layer: 0, url: "https://arcgis.dvrpc.org/portal/rest/services"}
+  license: dvrpc_data_license
+  attribution: "Traffic stress for cycling: Delaware Valley Regional Planning Commission (DVRPC)"
+  cadence: irregular
+  health: {min_rows: 50000, max_drop_pct: 10}
+  release: v0.3
+- id: snap_retailers
+  name: Food stores that take SNAP (USDA)
+  publisher: U.S. Department of Agriculture, SNAP retailer data
+  homepage: https://www.fns.usda.gov/snap/retailer/data
+  # Every store authorized to take SNAP benefits, as the USDA lists it for its retailer locator
+  # (updated every two weeks). Only Philadelphia's stores are downloaded, and only their kind and
+  # point are kept (placekeepers/adapters/walk.py).
+  endpoint: {kind: arcgis, service: snap_retailer_location_data, layer: 0, url: "https://services1.arcgis.com/RLQu0rK7h4kbsBq5/arcgis/rest/services"}
+  license: public_domain
+  attribution: "Food stores: U.S. Department of Agriculture, SNAP retailer locations"
+  cadence: weekly
+  health: {min_rows: 1000, max_drop_pct: 25, newest_field: source_date, max_age_days: 120}
+  release: v0.3
 # Milestone M4.1: the displacement watch. Home sales and assessed values for the whole city (the
 # candidate parcels' records above are mostly vacant lots and sheriff sales), renters by census
 # tract, and the City's Market Value Analysis (pipeline/src/placekeepers/adapters/displacement.py).

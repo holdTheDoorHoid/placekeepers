@@ -17,12 +17,15 @@
   import AddressSearch from '../search/AddressSearch.svelte';
   import FeatureDetails from '../streets/FeatureDetails.svelte';
   import MemorialList from '../streets/MemorialList.svelte';
+  import BlockList from '../streets/BlockList.svelte';
+  import CrashList from '../streets/CrashList.svelte';
+  import { blockEntries, crashEntries } from '../../streets/blocks.ts';
   import Filters from './Filters.svelte';
   import NeedPlot from './NeedPlot.svelte';
 
   let { store }: { store: AppStore } = $props();
 
-  type Panel = 'table' | 'plot' | 'lists' | 'memorials';
+  type Panel = 'table' | 'plot' | 'lists' | 'memorials' | 'blocks';
   type Side = 'left' | 'right';
   let leftOpen = $state(false);
   let rightOpen = $state(false);
@@ -44,6 +47,7 @@
     { id: 'plot', label: strings.analysis.tabPlot },
     { id: 'lists', label: strings.analysis.tabLists },
     { id: 'memorials', label: strings.analysis.tabMemorials },
+    { id: 'blocks', label: strings.analysis.tabBlocks },
   ];
   const listCount = $derived(store.lists.active?.places.length ?? 0);
   /** Most memorials listed at once, newest first. */
@@ -57,6 +61,17 @@
       ? [...store.memorialsInView].sort((a, b) => String(b.properties.d ?? '').localeCompare(String(a.properties.d ?? '')))
       : [],
   );
+
+  /** Most street blocks and crashes listed at once. */
+  const MAX_STREET = 100;
+  const layerOf = (style: unknown) => store.registry.layers.find((l) => styleFor(l) === style);
+  const blocksLayer = $derived(layerOf(STYLES.street_segments));
+  const blocksShown = $derived(!!blocksLayer && store.state.layers.includes(blocksLayer.id));
+  const crashesShown = $derived(store.registry.layers.some((l) => styleFor(l) === STYLES.crashes && store.state.layers.includes(l.id)));
+  /** The street blocks drawn on the map, highest priority first, and the crashes, newest first. */
+  const blocks = $derived(blocksShown || crashesShown ? blockEntries(store.registry, store.state, store.segmentsInView) : []);
+  const crashes = $derived(crashesShown ? crashEntries(store.crashesInView, blocks) : []);
+  const streetLens = $derived(store.registry.lenses.find((l) => l.applies_to === 'segment')?.label ?? '');
 
   function overMap(side: Side): boolean {
     return window.matchMedia(OVER_MAP[side]).matches;
@@ -183,6 +198,7 @@
         {#if item.id === 'table'}<span class="count">{sampled ? strings.analysis.sampleTab : strings.sheet.countLabel(ranked.length)}</span>{/if}
         {#if item.id === 'lists' && store.lists.active}<span class="count">{strings.lists.count(listCount)}</span>{/if}
         {#if item.id === 'memorials' && memorialsShown}<span class="count">{strings.streets.memorialCount(memorials.length)}</span>{/if}
+        {#if item.id === 'blocks' && blocksShown}<span class="count">{strings.streets.blockCount(blocks.length)}</span>{/if}
       </button>
     {/each}
   </div>
@@ -222,6 +238,30 @@
         <p class="muted small">{strings.streets.memorialsIntro}</p>
         <MemorialList {store} memorials={memorials.slice(0, MAX_MEMORIALS)} />
         {#if memorials.length > MAX_MEMORIALS}<p class="muted small">{strings.streets.memorialsMore(memorials.length - MAX_MEMORIALS)}</p>{/if}
+      {/if}
+    {/if}
+  </div>
+  <div id="pk-drawer-blocks" class="drawer-body" hidden={panel !== 'blocks'}>
+    {#if panel === 'blocks'}
+      <h3 class="sr-only">{strings.streets.blocksInView}</h3>
+      {#if !blocksShown}
+        <p class="muted">{strings.streets.blocksLayerOff(blocksLayer?.label ?? '')}</p>
+      {:else if blocks.length === 0}
+        <p class="muted">{strings.streets.blocksNone}</p>
+      {:else}
+        <p class="muted small">{strings.streets.blocksIntro}</p>
+        <BlockList {store} blocks={blocks.slice(0, MAX_STREET)} lensLabel={streetLens} />
+        {#if blocks.length > MAX_STREET}<p class="muted small">{strings.streets.blocksMore(blocks.length - MAX_STREET)}</p>{/if}
+      {/if}
+      {#if crashesShown}
+        <h3 class="crashes-title">{strings.streets.crashesInView} <span class="count">{strings.streets.crashCount(crashes.length)}</span></h3>
+        {#if crashes.length === 0}
+          <p class="muted">{strings.streets.crashesNone}</p>
+        {:else}
+          <p class="muted small">{strings.streets.crashesIntro}</p>
+          <CrashList {store} crashes={crashes.slice(0, MAX_STREET)} />
+          {#if crashes.length > MAX_STREET}<p class="muted small">{strings.streets.crashesMore(crashes.length - MAX_STREET)}</p>{/if}
+        {/if}
       {/if}
     {/if}
   </div>
@@ -303,6 +343,10 @@
   .count {
     font-weight: 400;
     color: var(--pk-muted);
+  }
+  .crashes-title {
+    margin-top: 14px;
+    font-size: 1rem;
   }
   .drawer-body {
     position: relative;

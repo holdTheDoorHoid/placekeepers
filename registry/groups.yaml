@@ -29,6 +29,9 @@
 - id: placemaking
   label: Art and placemaking
   description: Murals, sculptures, mosaics and other public art, from the City, OpenStreetMap and Wikidata.
+- id: walking
+  label: Walking, cycling and people
+  description: How walkable each area is, how many people and everyday places are within a short walk, and how stressful each street is for people on bikes.
 - id: safety_context
   label: Where care is needed most
   description: Context that shows where improvements are likely to help most.

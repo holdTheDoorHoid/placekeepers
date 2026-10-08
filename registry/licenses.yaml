@@ -27,3 +27,7 @@
   label: SEPTA open data license agreement (free to use, reproduce and redistribute; no commercial use of SEPTA's trademarks)
   url: https://wwww.septa.org/license-agreement/
   share_alike: false
+- id: dvrpc_data_license
+  label: DVRPC data license (free to use and share without an agreement; credit DVRPC; provided as is)
+  url: https://catalog.dvrpc.org/dvrpc_data_license.html
+  share_alike: false

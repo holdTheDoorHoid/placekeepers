@@ -34,7 +34,10 @@
       <h2 id="{id}-title">{title}</h2>
       <button class="icon-button" type="button" aria-label={strings.app.close} onclick={() => (open = false)}>&times;</button>
     </header>
-    <div class="body">
+    <!-- The body can take focus, so the arrow keys scroll it even when nothing inside does, such
+         as a street block's details on a phone (WCAG 2.1.1). It comes right after Close. -->
+    <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+    <div class="body" tabindex="0" role="region" aria-labelledby="{id}-title">
       {#if open}{@render children()}{/if}
     </div>
   </div>
@@ -78,5 +81,8 @@
     flex: 1;
     overflow-y: auto;
     padding: 12px 16px 24px;
+  }
+  .body:focus-visible {
+    outline-offset: -3px;
   }
 </style>

@@ -46,6 +46,8 @@ from placekeepers.derive.heat import load_heat, with_heat
 from placekeepers.derive.lenses import SOURCES as LENS_SOURCES
 from placekeepers.derive.lenses import load_factors
 from placekeepers.derive.vacancy import SOURCES as VACANCY_SOURCES
+from placekeepers.derive.walk import SOURCES as WALK_SOURCES
+from placekeepers.derive.walk import load_walk
 from placekeepers.geo import GeoJSONWriter, geometry_json
 
 log = logging.getLogger(__name__)
@@ -240,6 +242,8 @@ def build_parcels_from_model(
     # The violence lens factors (M1.4) and the heat and shade lens factors (M3.1), from pk derive.
     factors = load_factors(model.with_name("lens_factors.parquet"))
     heat = load_heat(model.with_name("heat_factors.parquet"))
+    # The walking measures for the placemaking lens (M3.3), from pk derive.
+    walking = load_walk(model.with_name("walk_factors.parquet"))
     # The displacement watch (M4.1): the signs of the watch area a parcel lies in, as `dw`.
     from placekeepers.publish.displacement import parcel_watch
 
@@ -263,6 +267,7 @@ def build_parcels_from_model(
                 properties.update(hot.properties)
                 first = [s for s in properties["sg"].split(",") if s]
                 properties["sg"] = ",".join(with_heat(first, hot.suggestions, known_suggestions))
+            properties.update(walking.get(opa, {}))
             if opa in watch:
                 properties["dw"] = watch[opa][1]
             writer.write(properties, geometry_json(wkb))
@@ -464,7 +469,9 @@ BUILDERS: tuple[LayerBuilder, ...] = (
         extras=(
             *(
                 s
-                for s in dict.fromkeys((*VACANCY_SOURCES, *LENS_SOURCES, *HEAT_SOURCES))
+                for s in dict.fromkeys(
+                    (*VACANCY_SOURCES, *LENS_SOURCES, *HEAT_SOURCES, *WALK_SOURCES)
+                )
                 if s not in PARCEL_LAYER_SOURCES
             ),
             "city_owned_property",
@@ -507,6 +514,7 @@ from placekeepers.publish.conditions import CONDITION_BUILDERS  # noqa: E402
 from placekeepers.publish.environment import ENVIRONMENT_BUILDERS  # noqa: E402
 from placekeepers.publish.streets import STREET_BUILDERS  # noqa: E402
 from placekeepers.publish.transit import TRANSIT_BUILDERS  # noqa: E402
+from placekeepers.publish.walk import WALK_BUILDERS  # noqa: E402
 
 BUILDERS = (
     *BUILDERS,
@@ -517,6 +525,8 @@ BUILDERS = (
     # Public places from the City and conditions reported to 311 (M3.5).
     *PLACE_BUILDERS,
     *CONDITION_BUILDERS,
+    # Walking, cycling and people (M3.3).
+    *WALK_BUILDERS,
 )
 
 # Public art (M3.2), from the City, OpenStreetMap and Wikidata.

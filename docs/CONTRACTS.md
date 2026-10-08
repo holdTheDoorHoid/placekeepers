@@ -45,8 +45,12 @@ An `arcgis` endpoint names a service in the City's ArcGIS Online organization
 (`https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services`). For a service in another
 organization it adds `url`, the REST services root ending in `/rest/services` (added 2026-10-04 by
 M1.1), for example `url: https://services2.arcgis.com/qjOOiLCYeUtwT7x7/arcgis/rest/services` for the
-gardens PHS and the Neighborhood Gardens Trust support. A `csv` file may use another delimiter (the
-Census Bureau's tables use `|`); the source's adapter reads it.
+gardens PHS and the Neighborhood Gardens Trust support. A service kept in a folder of its server is
+named with its folder, as ArcGIS lists it (added 2026-10-05 by M3.3): DVRPC's traffic stress
+network is `service: transportation/lts_network` under `url:
+https://arcgis.dvrpc.org/portal/rest/services`. Each part holds no `/ ? # &` and does not start with
+a space. A `csv` file may use another delimiter (the Census Bureau's tables use `|`); the source's
+adapter reads it.
 
 Added 2026-10-04 by M2.1: a `zip` file needs a source specific adapter that knows what is inside
 (`septa_gtfs` holds two GTFS feeds). SEPTA publishes its stop ridership counts as one ArcGIS layer
@@ -142,7 +146,9 @@ checks it).
 2026-10-04 by M2.1 for SEPTA's layers; M2.2 adds the shelters and benches at stops to it), `heat`
 (added 2026-10-05 by M3.1 for heat vulnerability, the City's trees and the floodplain), `amenities`,
 `public_places` and `conditions` (added 2026-10-05 by M3.5), `placemaking` (added 2026-10-05 by
-M3.2 for public art), `safety_context`, `boundaries`, `basemap`, each with a label and a one line
+M3.2 for public art), `walking` (added 2026-10-05 by M3.3 for walkability, people and places within
+walking distance, and traffic stress for people on bikes), `safety_context`, `boundaries`,
+`basemap`, each with a label and a one line
 description.
 
 ### `registry/lenses.yaml`
@@ -303,6 +309,9 @@ data/
     environment.pmtiles   layers "heat_tracts", "floodplain"   (heat vulnerability and FEMA's floodplain; M3.1)
     trees.pmtiles         layer "trees"     (the City's street and park trees, zoom 14 only; M3.1)
     art.pmtiles           layer "art"       (public art from the City, OpenStreetMap and Wikidata; M3.2)
+    walk.pmtiles          layers "block_groups", "cells"   (walkability by block group, and people
+                          and places within walking distance by area cell; M3.3)
+    cycling.pmtiles       layer "stress"    (DVRPC's traffic stress for people on bikes; M3.3)
     displacement.pmtiles  layer "watch"     (displacement watch areas, census tracts; M4.1)
   tables/
     parcels.json          compact columnar table for ranking and lists
@@ -543,6 +552,28 @@ only: `plant_shade_trees` where `f_canopy` is at least 50 (or, for a parcel with
 `f_strees`), and `cool_green_lot` where `f_heatvul` is at least 50. The lot's dossier lists the
 same suggestions in the same order (`suggestions`, section 6). The rule is `suggestions_for` in
 `derive/heat.py`.
+
+The walking factors for the placemaking lens (added 2026-10-05 by M3.3, computed by `pk derive`
+after the heat lens in `placekeepers.derive.walk`; the method in plain words is in DESIGN section
+5.9). No lens lists them yet: M3.4 builds the placemaking lens on them. Each is an integer from 0
+to 100 ranked among the parcels in this layer as the share of parcels with a strictly lower value,
+so **more ranks higher** (more people, more places, more walkable), unlike the need factors above.
+A lens that wants the opposite (where everyday places are missing) needs a field of its own. Every
+distance is a straight line from the parcel's point on its shape, measured in UTM zone 18 north:
+
+| Property | Meaning |
+|---|---|
+| `f_walk` | the EPA's National Walkability Index (1 to 20) of the census block group the parcel's point lies in (`epa_walkability`); the share of parcels in block groups with a lower index. Absent outside every block group (2 parcels on 2026-10-05) |
+| `f_neighbors` | people who live within a 5 minute walk: the 2020 census population of the blocks whose internal point lies within 400 meters (`census_blocks_2020`); the share of parcels with fewer |
+| `f_dest` | everyday places within a 10 minute walk: how many of seven kinds lie within 800 meters (a Free Library location, a recreation center, a pool or sprayground not listed as out of service, a drinking fountain in a park, a school, a grocery store or market that takes SNAP, and a SEPTA stop with service; `PLACE_KINDS` in `derive/walk.py`), then, among parcels with as many kinds, how many places, counting at most five of a kind; the share of parcels with a lower value (`kinds * 100 + places`) |
+
+The same step writes `$PK_CACHE/derived/walk_factors.parquet`, one row per parcel on the map,
+for M3.4 and anyone checking a score: `opa`; the four factors (also `f_corners`, street corners
+within a 5 minute walk, ranked the same way, which the lots do not carry because the EPA's index
+counts intersections already and each factor adds about 3 to 4 percent to `tiles/lots.pmtiles`);
+`people_5min`; `corners_5min`; `kinds_10min` (0 to 7); `kind_bits` (the kinds present, bits as
+`dk` in `cells` below); `places_10min`; `block_group`; and `walk_index`. A factor whose source
+has no snapshot is left out of every parcel.
 
 `dw` (added 2026-10-08 by M4.1): the signs of the displacement watch area the parcel lies in, as
 the bits of `w` in the `watch` layer below; present only inside a watch area. The parcel's area is
@@ -811,6 +842,7 @@ contributors".
 | `cp` | int | percent of the land of the stop's H3 cell under tree canopy in 2018; absent without canopy data |
 | `hin` | int | 1 when the stop is on the High Injury Network; absent otherwise |
 | `sg` | string | the suggestions SEPTA's and the City's data decide, comma separated: `stop_shade_trees` (`f_shade` of 75 or more); absent when none |
+| `f_walk`, `f_neighbors`, `f_dest` | int | the walking factors of the lots (added 2026-10-05 by M3.3; `parcels` above), measured from the stop and ranked among the stops `tc` marks, more ranking higher; no lens lists them yet (`factors_at` in `derive/walk.py`) |
 | `dw` | int | the signs of the displacement watch area the stop stands in, as `dw` on the lots (added 2026-10-08 by M4.1); absent outside every watch area |
 
 What the browser adds by the join (never published here): `a` (the linked stop's `c`: 3 a shelter
@@ -954,6 +986,60 @@ condition occurs: some blocks ask more often than others, so no count or a low o
 of a clean block. Suggestions built on them must stay with physical conditions and the City's
 own services (Philly311, the route `report_to_311` in `registry/routes.yaml`), never the police
 (docs/ETHICS.md).
+
+Added 2026-10-05 by M3.3 (walking, cycling and people; `pipeline/src/placekeepers/publish/walk.py`,
+the method in DESIGN section 5.9). `walk.pmtiles` holds public domain data from the EPA and the
+Census Bureau measured with the City's data; `cycling.pmtiles` holds DVRPC's ratings, credited to
+DVRPC under its data license.
+
+**`block_groups` (walk.pmtiles, polygons)**: the EPA's National Walkability Index for each of
+Philadelphia's census block groups (`epa_walkability`, the 2019 block groups of the Smart Location
+Database, version 3), trimmed to the city's land (the census tracts joined, less the land use map's
+water), so the rivers stay clear; a block group lying wholly on water is left out.
+
+| Property | Type | Meaning |
+|---|---|---|
+| `id` | string | the block group's 12 digit census id (`GEOID10`) |
+| `w` | number | the walkability index, 1 to 20, to one decimal |
+| `nw` | int | the EPA's own class of the index: 1 least walkable (up to 5.75), 2 below average (up to 10.5), 3 above average (up to 15.25), 4 most walkable |
+| `rc`, `rt`, `rj`, `rh` | int | the four parts of the index as the EPA ranks them among every block group in the country, 1 to 20: intersection density (`D3B_Ranked`, a third of the index), how close the nearest transit stop is (`D4A_Ranked`, a third), the mix of kinds of jobs (`D2B_Ranked`, a sixth) and the mix of jobs and households (`D2A_Ranked`, a sixth) |
+| `qw`, `qc`, `qt`, `qm` | int | the fifth of Philadelphia's block groups each falls in, 1 to 5 (5 the most walkable, the most corners, the closest transit, the most mixed): by the index, by the intersection density (`D3B`), by the distance to transit (`D4A`, nearer is higher; no stop within three quarters of a mile is lowest) and by the average of the two mix measures |
+
+Each is absent when the EPA gives no value. The map compares within the city by `q*`, or with the
+whole country by `nw` for the index and the national ranks in fifths for a part (ranks 1 to 4 are
+the bottom fifth, 17 to 20 the top).
+
+**`cells` (walk.pmtiles, polygons)**: one H3 resolution 9 hexagon (about two blocks across, the
+area cells of DESIGN section 5.1) for every cell whose middle lies inside the city and not on the
+land use map's water, measured from its middle exactly as the parcels are (derive/walk.py):
+
+| Property | Type | Meaning |
+|---|---|---|
+| `h` | string | the H3 cell id |
+| `p` | int | people who live within a 5 minute walk (400 meters) of the middle, from the 2020 census blocks |
+| `d` | int | how many of the seven kinds of everyday places lie within a 10 minute walk (800 meters), 0 to 7 |
+| `dk` | int | which kinds, as bits: 1 a library, 2 a recreation center, 4 a pool or sprayground, 8 a drinking fountain in a park, 16 a school, 32 a grocery store or market that takes SNAP, 64 a SEPTA stop |
+| `k` | int | street corners within a 5 minute walk: points where three or more segments of the City's street centerlines that people can walk on meet (classes 2 to 5 and 15, not expressways, ramps or driveways) |
+| `f_walk`, `f_neighbors`, `f_dest`, `f_corners` | int | the factors of the parcels, ranked among the cells instead, for a placemaking lens on cells (M3.4) |
+
+Each measure is absent when its source has no snapshot. On 2026-10-05: 3,335 cells; people
+within a 5 minute walk from 0 to 13,680 (median 1,921).
+
+**`stress` (cycling.pmtiles, lines)**: DVRPC's Level of Traffic Stress for each street segment of
+its network in Philadelphia (`dvrpc_lts`), one line per link: DVRPC keeps each direction of a
+street as its own row with the same link number, and where the two directions differ (82 links on
+2026-10-05) the line shows the more stressful one. In the tiles, below zoom 12 only links at level 3
+or 4, or with a bike lane, a buffered or protected lane or a trail (`bf` 3 or more), are kept;
+every link from zoom 12 (`publish/tiles.py`).
+
+| Property | Type | Meaning |
+|---|---|---|
+| `id` | int | DVRPC's link number (`no`) |
+| `l` | int | the level of traffic stress, 1 to 4: 1 comfortable for most people of all ages, 2 for most adults, 3 only for confident riders, 4 only for the strong and fearless |
+| `l2` | int | the other direction's level, only when it is calmer |
+| `bf` | int | the best bike facility of the link: 1 a signed bike route, 2 shared lane markings (sharrows), 3 a bike lane, 4 a buffered bike lane, 5 a protected bike lane, 6 a trail or path off the road (`BIKE_FACILITIES` in `adapters/walk.py`); absent when none |
+| `sp` | int | the traffic speed DVRPC used, in miles an hour (a posted limit or its model's estimate); absent when 0 |
+| `ln` | int | the lanes in all, both directions together; absent when unknown |
 
 ## 5. Hand curated memorial files (`data/curated/`)
 
@@ -1179,7 +1265,8 @@ keys and values, copied from that layer as publish writes it, so a factor the la
 too. A lot page opened from a link, a search or a saved list, before the map has the parcel's
 tile, shows the score breakdown and the flood note from here; when it has the tile, the tile's
 values win. On 2026-10-05: 58,325 parcels, 6.3 MB more on disk (5 percent) and 0.5 MB more as
-served compressed (3 percent).
+served compressed (3 percent). From M3.3 it holds the walking factors `f_walk`, `f_neighbors` and
+`f_dest` too, which the lots layer gained (2.4 MB more on disk, 0.3 MB compressed).
 
 **`displacement`** (added 2026-10-08 by M4.1; only for a parcel on the map inside a displacement
 watch area): `tract`, the 11 digit census tract, and `signs`, the area's signs, exactly the parcel's

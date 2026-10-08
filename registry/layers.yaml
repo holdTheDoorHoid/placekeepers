@@ -33,6 +33,18 @@
     - heat_vulnerability
     - street_trees
     - fema_floodplain
+    # The walking measures for the placemaking lens (M3.3)
+    - epa_walkability
+    - census_blocks_2020
+    - street_centerlines
+    - library_locations
+    - ppr_program_sites
+    - ppr_swimming_pools
+    - ppr_spraygrounds
+    - ppr_hydration_stations
+    - schools
+    - snap_retailers
+    - septa_gtfs
   file: tiles/lots.pmtiles
   source_layer: parcels
   geometry: polygon
@@ -332,6 +344,17 @@
     - land_use
     - heat_vulnerability
     - high_injury_network
+    # The walking factors for the placemaking lens (M3.3)
+    - epa_walkability
+    - census_blocks_2020
+    - street_centerlines
+    - library_locations
+    - ppr_program_sites
+    - ppr_swimming_pools
+    - ppr_spraygrounds
+    - ppr_hydration_stations
+    - schools
+    - snap_retailers
   file: tiles/transit.pmtiles
   source_layer: stops
   geometry: point
@@ -771,6 +794,111 @@
       type: toggle
       default: true
   release: v0.3
+# Walking, cycling and people (M3.3). Off by default in both views: their fills would compete with
+# the lots' lens colors, and the placemaking lens (M3.4) will use their measures on the lots.
+- id: walkability
+  label: How walkable each area is (EPA)
+  group: walking
+  description: >-
+    The U.S. Environmental Protection Agency's National Walkability Index for each census block
+    group, an area of a few blocks, from its Smart Location Database (2021, from data of about 2017
+    to 2019). It scores from 1 to 20 how well an area supports walking, from four measures: how
+    many street corners there are, how close the nearest transit stop is, and two measures of how
+    well homes, jobs and shops are mixed. Areas are shaded by fifths of Philadelphia's block groups,
+    or by the EPA's own classes, which compare the whole country. Each measure can be shown on its
+    own in the settings. The block groups are trimmed to the city's land, so rivers stay clear.
+  sources: [epa_walkability, census_tracts_2020, land_use]
+  file: tiles/walk.pmtiles
+  source_layer: block_groups
+  geometry: polygon
+  style: walkability
+  evidence: context
+  default: {field: false, analysis: false}
+  settings:
+    - id: measure
+      label: Shade areas by
+      type: choice
+      options:
+        - {value: index, label: "The walkability index: all four measures together"}
+        - {value: corners, label: "Street corners: how connected the streets are"}
+        - {value: transit, label: "Transit: how close the nearest stop is"}
+        - {value: mix, label: "A mix of homes, jobs and shops"}
+      default: index
+    - id: compare
+      label: Compare with
+      type: choice
+      options:
+        - {value: city, label: "Philadelphia: fifths of the city's block groups"}
+        - {value: nation, label: "The whole country: the EPA's own classes"}
+      default: city
+  release: v0.3
+- id: walking_distance
+  label: People and places within walking distance
+  group: walking
+  description: >-
+    For each hexagon about two blocks across: how many people live within a 5 minute walk of its
+    middle, from the 2020 census; how many of seven kinds of everyday places are within a 10 minute
+    walk (a library, a recreation center, a pool or sprayground, a drinking fountain in a park, a
+    school, a grocery store or market that takes SNAP, and a bus, trolley or train stop); or how
+    many street corners are within a 5 minute walk. A 5 minute walk is counted as 400 meters and a
+    10 minute walk as 800 meters in a straight line, which reaches a little farther than a walk
+    along the streets and crosses rail lines, expressways and rivers that people on foot cannot.
+  sources:
+    - census_blocks_2020
+    - street_centerlines
+    - library_locations
+    - ppr_program_sites
+    - ppr_swimming_pools
+    - ppr_spraygrounds
+    - ppr_hydration_stations
+    - schools
+    - snap_retailers
+    - septa_gtfs
+    - census_tracts_2020
+    - land_use
+  file: tiles/walk.pmtiles
+  source_layer: cells
+  geometry: polygon
+  style: walking_distance
+  evidence: context
+  default: {field: false, analysis: false}
+  settings:
+    - id: measure
+      label: Shade hexagons by
+      type: choice
+      options:
+        - {value: people, label: People who live within a 5 minute walk}
+        - {value: places, label: Kinds of everyday places within a 10 minute walk}
+        - {value: corners, label: Street corners within a 5 minute walk}
+      default: people
+  release: v0.3
+- id: traffic_stress
+  label: Traffic stress for people on bikes (DVRPC)
+  group: walking
+  description: >-
+    How stressful each street is to ride a bike on, as the Delaware Valley Regional Planning
+    Commission rates it from the number of lanes, how fast traffic goes and the kind of bike lane,
+    if any: level 1 suits most people of all ages, level 2 most adults, level 3 only confident
+    riders, and level 4 only the most fearless. Where the two directions of a street differ, the
+    more stressful one is shown. The ratings come from DVRPC's models and posted speed limits, not
+    from riding every street.
+  sources: [dvrpc_lts]
+  file: tiles/cycling.pmtiles
+  source_layer: stress
+  geometry: line
+  style: traffic_stress
+  evidence: context
+  default: {field: false, analysis: false}
+  settings:
+    - id: show
+      label: Show
+      type: choice
+      options:
+        - {value: all, label: Every street DVRPC rates}
+        - {value: stressful, label: "Only stressful streets: levels 3 and 4"}
+        - {value: calm, label: "Only calm streets: levels 1 and 2"}
+      default: all
+  release: v0.3
 # The displacement watch (M4.1): a caution, never a priority lens. Census tracts with at least two
 # signs that prices are rising, one of them about prices (pipeline/src/placekeepers/derive/
 # displacement.py). Off in the field view, where the cards carry the caution; on in the analysis
@@ -783,9 +911,9 @@
     of them about prices: homes selling for much more than five years before, faster than across
     the city; companies buying many of the homes sold; the City's assessed values rising much
     faster than the city's; at least three in five homes rented; or the City's Market Value
-    Analysis finding prices climbing out of reach of longtime residents. Greening and other improvements can raise prices
-    further, so where a greening suggestion sits in one of these areas, its card adds ways to
-    protect neighbors. This shows signs in public records, not a forecast, and it says nothing
+    Analysis finding prices climbing out of reach of longtime residents. Greening and other
+    improvements can raise prices further, so where a greening suggestion sits in one of these
+    areas, its card adds ways to protect neighbors. This shows signs in public records, not a forecast, and it says nothing
     about who lives here. Tap an area to see its signs.
   sources: [real_estate_sales, assessment_values, acs_tenure, market_value_analysis, opa_properties, census_tracts_2020]
   file: tiles/displacement.pmtiles

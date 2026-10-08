@@ -18,6 +18,7 @@ import { Protocol } from 'pmtiles';
 import { resolveLayerData, type LayerData, type Manifest } from '../data/manifest.ts';
 import { basemapCredit, isProtomaps } from './basemap.ts';
 import { NO_PADDING, type Padding } from './covered.ts';
+import { linePaths, pointOnPaths, type CrashInView, type LineInView } from '../streets/blocks.ts';
 import { registerArchive, styleArchives } from './pmtiles-source.ts';
 import type { Layer, Registry, ViewName } from '../registry/types.ts';
 import type { AppState, MapPosition } from '../state/defaults.ts';
@@ -353,6 +354,31 @@ export class MapController {
    */
   stopsInView(): StopInView[] {
     return this.pointsInView(STYLES.transit_stops);
+  }
+
+  /**
+   * Street blocks drawn in the current view, one entry per block with its line (a block that tile
+   * edges cut comes back in pieces, joined here), for the list that stands in for the map.
+   */
+  segmentsInView(): LineInView[] {
+    const ids = this.parts((s) => s === STYLES.street_segments, 'clickable');
+    if (!this.loaded || ids.length === 0) return [];
+    const seen = new Map<string, Omit<LineInView, 'lngLat'>>();
+    for (const feature of this.map.queryRenderedFeatures({ layers: ids })) {
+      const layerId = this.layerOf(feature.layer.id);
+      const properties = { ...feature.properties };
+      const key = String(properties.id ?? JSON.stringify(properties));
+      const paths = linePaths(feature.geometry);
+      const known = seen.get(key);
+      if (known) known.paths.push(...paths);
+      else if (layerId && paths.length) seen.set(key, { layerId, properties, paths });
+    }
+    return [...seen.values()].map((block) => ({ ...block, lngLat: pointOnPaths(block.paths) }));
+  }
+
+  /** Crashes drawn in the current view, under the crash layer's settings. */
+  crashesInView(): CrashInView[] {
+    return this.pointsInView(STYLES.crashes);
   }
 
   private pointsInView(style: StyleModule): PointInView[] {

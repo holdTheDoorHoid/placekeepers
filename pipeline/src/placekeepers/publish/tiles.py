@@ -178,6 +178,31 @@ TILE_OPTIONS: dict[str, list[str]] = {
         "--no-feature-limit",
         "--no-tile-size-limit",
     ],
+    # Walkability by block group and the walking distance hexagons (M3.3): a few thousand
+    # polygons, every one at every zoom, borders kept shared, stretched by the map past zoom 14.
+    "tiles/walk.pmtiles": [
+        "--minimum-zoom=8",
+        "--maximum-zoom=14",
+        "--no-feature-limit",
+        "--no-tile-size-limit",
+        "--detect-shared-borders",
+    ],
+    # Traffic stress for cycling (M3.3): about 39,000 short street lines from zoom 10 (the whole
+    # city) to 14, stretched by the map further in. Zoomed out, the tiles carry what matters
+    # citywide: stressful streets (levels 3 and 4) and streets with a bike lane, a buffered or
+    # protected lane or a trail; every street from zoom 12. That keeps the citywide tiles at about
+    # a quarter of their size (the largest 259 kB before compression instead of 851, 2026-10-05).
+    "tiles/cycling.pmtiles": [
+        "--minimum-zoom=10",
+        "--maximum-zoom=14",
+        "--no-feature-limit",
+        "--no-tile-size-limit",
+        "--feature-filter",
+        json.dumps(
+            {"stress": ["any", [">=", "l", 3], [">=", "bf", 3], [">=", "$zoom", 12]]},
+            separators=(",", ":"),
+        ),
+    ],
     # Boundaries are few, large shapes: simplified at low zooms, borders kept shared, and
     # detailed enough at zoom 14 to be stretched further by the map.
     "tiles/boundaries.pmtiles": [

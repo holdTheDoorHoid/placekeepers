@@ -169,6 +169,12 @@ As built (M1.10, interface review, 2026-10-04; details in
   at the end of the field view's sheet (nearest first) and a Memorials tab in the analysis drawer
   (newest first). An entry says what the marker says before it is opened (how the person was
   traveling, the date and the place), never a name; opening it shows the same details as the marker.
+- **Street blocks and crashes without the map** (issue #26). The street blocks drawn on the map are
+  listed too: "Street blocks nearby" in the field view's sheet (nearest first) and a Street blocks
+  tab in the analysis drawer (highest priority first), each with its street safety priority and
+  main reason. With the crash layer on, the crashes drawn follow, each with its year, how badly
+  people were hurt, who was involved and the nearest block. Opening an entry shows the same details
+  as tapping the map.
 - **Phones.** Phones get the field view held either way up; turned sideways, the open sheet runs down
   the left of the map. On the narrowest phones "Copy link" moves into the menu and Settings shows a
   gear (still named "Settings" for screen readers), so the top bar keeps to two rows even with a
@@ -276,7 +282,7 @@ needed). Every score has a "why" breakdown showing each factor's contribution.
 | Street safety | Street segments and crash sites | On the High Injury Network; people killed or seriously injured walking or cycling in 5 years; any fatal crash in 2 years; school within 400 m; later, busy bus stop nearby | First |
 | Heat and shade | Vacant parcels | Neighborhood heat vulnerability, from the City's index (Context); few trees nearby, 2018 canopy within about a quarter mile (Mixed); few City trees on the block, within 100 meters (Mixed); people this would reach, residents per square kilometer of the tract (Context). FEMA's floodplain is shown beside the score, never in it | v0.3 (M3.1) |
 | Transit comfort | SEPTA bus and trolley stops | People getting on each weekday (Context); no shelter (Weak); no bench (Weak); little shade nearby (Mixed); hot neighborhood in summer (Context); on the High Injury Network (Context); long waits at midday (Weak). A shelter or bench not yet surveyed counts halfway | v0.2 (M2.3) |
-| Placemaking | Lots and area cells | Walkability; people within a 5 minute walk; distance to a park; art nearby or absent; commercial corridor | Later |
+| Placemaking | Lots and area cells | Walkability; people within a 5 minute walk; distance to a park; art nearby or absent; commercial corridor. M3.3 computes the walking factors (section 5.9) | Later |
 
 As built (M2.3, 2026-10-05): the transit comfort lens colors SEPTA's bus and trolley stops (the
 stops layer's coloring setting offers the lens, waits or riders, and defaults to the lens), with
@@ -657,6 +663,102 @@ at their sources. A hand curated list of memorial artworks whose names may be sh
 owner restore those names; it is not built.
 
 The layer carries the "Not about violence" badge (EVIDENCE.md, "Murals and public art").
+
+### 5.9 Walking, cycling and people
+
+As built (M3.3, 2026-10-05). **What the owner sees:** a new group, **Walking, cycling and
+people**, with three layers, off by default in both views (their fills would compete with the
+lots' lens colors, and the placemaking lens, M3.4, will bring their measures to the lots):
+
+- **How walkable each area is (EPA)**: the U.S. EPA's National Walkability Index for each of the
+  city's 1,336 census block groups, a few blocks each, trimmed to the land so the rivers stay
+  clear. The index scores from 1 to 20 how well an area supports walking: street corners and
+  transit count for a third each, and two measures of how well homes, jobs and shops are mixed for
+  a sixth each (the EPA's data of about 2017 to 2019, published in 2021). Two settings: shade by
+  the index or one of its parts, and compare within Philadelphia (by fifths of the city's block
+  groups, the default) or with the whole country (the EPA's own four classes). Compared with the
+  country, nearly all of Philadelphia is above average (760 block groups) or among the most walkable
+  (551), with 25 below average and none least walkable, so the comparison within the city shows its
+  differences better; the legend says so.
+- **People and places within walking distance**: hexagons about two blocks across (the area cells
+  of section 5.1; 3,335 whose middle lies in the city and not on water), shaded by what lies within
+  a short walk of each one's middle: the people who live within a 5 minute walk (the default), the
+  kinds of everyday places within a 10 minute walk, or the street corners within a 5 minute walk,
+  each in five fixed classes so a shade means the same number everywhere.
+- **Traffic stress for people on bikes (DVRPC)**: every street the Delaware Valley Regional
+  Planning Commission rates, colored by its level of traffic stress, from level 1, calm enough for
+  most people of all ages, to level 4, only for the most fearless riders (two blues for calm
+  streets, an orange and a deep brown for stressful ones, never an alarm red). A setting shows
+  every street, only the stressful ones or only the calm ones. Tapping a street tells its level,
+  what it means, a calmer other direction, the kind of bike lane, the speed of traffic and the
+  lanes. Zoomed out the map shows only stressful streets and streets with a bike lane or a trail,
+  to stay light; the legend says so. On 2026-10-05: 39,258 streets, 15,800 at level 1, 15,779 at
+  level 2, 6,041 at level 3 and 1,638 at level 4.
+
+**How the measures are made, in plain words.** Every distance is a straight line, as the crow
+flies, from a parcel's point (or a hexagon's middle). At about 80 meters a minute, a 5 minute walk
+is counted as 400 meters and a 10 minute walk as 800. A straight line reaches a little farther than
+a walk along a grid of streets (where the walk is about a quarter longer), and it crosses rail
+lines, expressways and rivers that people on foot cannot; the legend says so. Walking along the
+streets was left out on purpose: the City's centerlines miss most paths through parks, and a route
+for every parcel would cost far more than these counts, which take about 5 seconds for the 58,325
+parcels on the map.
+
+- **People within a 5 minute walk** add up the 2020 census population of every block whose
+  internal point (a point inside the block) lies within 400 meters. Philadelphia's blocks are
+  small, half of them under a hectare (about 100 by 100 meters), so counting each block at one point
+  moves few people across the line. The census counts come from the Census Bureau's bulk
+  redistricting file, which needs no key.
+- **Everyday places within a 10 minute walk** count which of seven kinds lie within 800 meters: a
+  Free Library location, a recreation center (Parks and Recreation's recreation, older adult and
+  environmental education centers), a pool or sprayground not listed as out of service, a drinking
+  fountain in a park, a school (public, charter or private), a grocery store or market that takes
+  SNAP (the USDA's list: supermarkets, super stores, grocery stores, specialty food stores and
+  farmers markets, not convenience stores), and a SEPTA bus, trolley, subway or train stop with
+  service. Kinds come first; among places with as many kinds, more places rank higher, counting at
+  most five of a kind, so a street with many bus stops does not outweigh a library. Places just
+  across the city line are not counted, because most of these lists cover Philadelphia only. The
+  drinking fountains are the City's; OpenStreetMap's 30 drinking water points are left out, so its
+  share alike license stays off the lots and these layers (19 of them have one of the City's
+  fountains within 800 meters anyway).
+- **Street corners within a 5 minute walk** count the points within 400 meters where three or more
+  segments of the City's street centerlines that people can walk along meet (arterials,
+  collectors, local streets and walking connectors; not expressways, ramps or driveways). More
+  corners mean shorter blocks and more ways to get somewhere on foot. Where a divided road is
+  drawn as two lines, its crossings count twice.
+- **Walkability** is the EPA's index of the block group the parcel lies in.
+
+**Factor fields for the placemaking lens (M3.4).** Each parcel on the map carries `f_walk`,
+`f_neighbors` and `f_dest`, each ranked from 0 to 100 among the parcels on the map like every lens
+factor, but with more ranking higher (more people, more places, more walkable), because a place
+many people walk to and past is where a placemaking project serves most people; a lens that wants
+the gaps instead needs a field of its own. Street corners (`f_corners`) stay off the lots: the
+EPA's index counts intersections already, and each factor adds about 3 to 4 percent to the lots
+tiles (the three together about 10 percent, 8.0 to 8.8 MB, on 2026-10-05). The hexagons carry all
+four, ranked among the cells, for a placemaking lens on cells. CONTRACTS.md section 4 has the
+details, and `derived/walk_factors.parquet` holds the counts behind each parcel's ranks. No lens
+uses these fields yet; M3.4 builds the placemaking lens on them. SEPTA's bus and trolley stops on
+the street carry the same three factors, measured from each stop and ranked among the stops, for
+any lens that wants the people and places a stop serves.
+
+**Checked on 2026-10-05**, from a point at each place: by Rittenhouse Square about 11,700 people
+live within a 5 minute walk, with 102 street corners and 5 of the 7 kinds of places (no
+recreation center and no park drinking fountain within 800 meters), walkability 16.7; near East
+Passyunk Avenue and Tasker Street about 6,300 people, 100 corners and all 7 kinds, walkability
+18.0; near Kensington and Allegheny about 7,400 people, 94 corners and all 7 kinds, 16.2; in Somerton
+in the far Northeast (near Bustleton Avenue and Byberry Road) about 1,800 people, 27 corners and 6 kinds
+(no library), 15.7; in Chestnut Hill about 1,500 people, 24 corners and 6 kinds; on Ridge Avenue in
+Roxborough about 2,200 people, 26 corners and only 3 kinds. Among the parcels on the map, half have
+at least 3,769 people within a 5 minute walk (a quarter fewer than 2,913, a quarter more than
+4,783), 64 street corners and 6 of the 7 kinds.
+
+**Left out, and why.** DVRPC's sidewalk gap products (its sidewalk coverage ratio and sidewalk
+priority score) are built on Overture Maps roads, which are under OpenStreetMap's Open Database
+License, while DVRPC offers them under its own license without saying how that carries over, so
+their terms are unclear (asking DVRPC is an owner action). DVRPC's sidewalk lines themselves have
+clear terms but are an inventory from 2018 aerial photos that was never checked on the ground;
+turning them into gaps by block is work for a later milestone. Walk Score's terms forbid storing
+its scores. Details are in DATA_SOURCES.md, "Walkability and people".
 
 ## 6. Finding vacant land without depending on one source
 

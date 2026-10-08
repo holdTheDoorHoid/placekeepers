@@ -27,6 +27,7 @@ from placekeepers.snapshots import SnapshotStore
 
 from .conftest import FakeArcgis, FakeCarto, hex_wkb, load_fixture
 from .transit_fixtures import septa_zip
+from .walk_fixtures import redistricting_zip
 
 NOW = datetime(2026, 10, 4, 15, 0, tzinfo=UTC)
 RECENT = "2026-10-01"
@@ -366,6 +367,8 @@ def file_for(source_id: str) -> tuple[bytes, dict[str, str]]:
         return tax_file(), {}
     if source_id == "septa_gtfs":
         return septa_zip(), modified
+    if source_id == "census_blocks_2020":
+        return redistricting_zip(), modified
     raise AssertionError(f"no fixture file for {source_id}")
 
 
