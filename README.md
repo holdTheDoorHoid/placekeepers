@@ -143,6 +143,11 @@ The transit comfort lens on a phone, with a stop's details open near Broad Stree
 
 ![The field view on a phone with the transit comfort lens on, showing colored bus stops near Broad Street and a stop's details open with its score and suggestion](docs/images/transit-phone.png)
 
+A lot page under the placemaking lens on a phone, with the six factors behind its score and how much
+evidence each one has:
+
+![A lot page on a phone showing the placemaking lens's score of 56 for a vacant lot, with a table of six factors, the weight of each, and a badge saying whether each is context or mixed evidence](docs/images/placemaking-phone.png)
+
 ## For developers
 
 ```

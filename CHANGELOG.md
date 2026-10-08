@@ -70,18 +70,18 @@ Action's Laser Vision app.
   sculptures and statues, mosaics, and other kinds.
 - The public art layer reached the map in the last hours of v0.2's work, so v0.2's notes did not
   describe it. It is described here for the first time.
-- Murals and plaques that remember a person show only as "Memorial artwork" (45), with no title or
-  name, in the files and on the map. Names of people killed still come only from the hand curated
-  memorials list.
+- A work that any source marks as a memorial shows only as "Memorial artwork" (45 of them), with
+  no title, artist or inscription, in the files and on the map. Names of people killed still come
+  only from the hand curated memorials list.
 - Mural Arts Philadelphia keeps the largest list of murals, and its terms do not allow copying it,
   so the layer links to its list instead of copying it. If a work is missing, adding it to
   OpenStreetMap puts it on the map within about a week.
 - Waiting on permission from their owners: philart.net, the Association for Public Art's map,
   Philadelphia's Magic Gardens' mosaic map, and Parks and Recreation's list of art in its parks.
 - The heat and shade lens, the trees, heat and floodplain layers, and the amenities and 311
-  layers from v0.2 carry over and now do more work: the City's libraries, recreation
-  centers, pools and park drinking fountains count as everyday places in the placemaking lens, and
-  open 311 requests trigger its reports.
+  layers from v0.2 carry over and now do more work: the City's libraries, recreation centers,
+  pools and park drinking fountains count as everyday places in the placemaking lens, and open 311
+  requests trigger its reports.
 
 ### Displacement watch
 
@@ -155,10 +155,11 @@ Action's Laser Vision app.
 ### New data, and what was checked
 
 - New sources: the EPA's walkability index, 2020 census blocks for population, DVRPC's traffic
-  stress network, the USDA's list of stores that take SNAP (kinds and points only, never names), the
-  City's commercial corridors, citywide home sales without names or addresses, the City's assessed
-  values, Census Bureau renter counts, the City's Market Value Analysis, Wikidata and the City's
-  Percent for Art list, and Philly Bike Action's Laser Vision counts.
+  stress network, the USDA's list of stores that take SNAP (kinds and points only, never names),
+  the City's commercial corridors, citywide home sales without names or addresses, the City's
+  assessed values, Census Bureau renter counts, the City's Market Value Analysis, and Philly Bike
+  Action's Laser Vision counts. Wikidata and the City's Percent for Art list, for public art,
+  arrived at the end of v0.2.
 - Checked on October 8, 2026 and not used: Transit Forward Philadelphia's stop audits wait on
   permission, and we wait for a trimmed copy and a license. PhillyTreeMap is not used: it has been
   dormant since about 2013, its map shows no trees, it has no data license, and its trees began as
@@ -167,8 +168,7 @@ Action's Laser Vision app.
 
 ### Safeguards and privacy
 
-- The privacy test now covers the Laser Vision layer: the site asks no server of Philly Bike Action
-  for anything.
+- A test checks that the Laser Vision layer never asks a Philly Bike Action server for anything.
 - Names of buyers are never kept in the displacement watch; only a company or person type is.
 - No police suggestions, ever. Reports to Philly311 are for physical conditions only.
 
