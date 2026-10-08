@@ -713,6 +713,26 @@ def listed_available_accounts(paths: dict[str, Path], accounts: set[str]) -> set
     }
 
 
+def side_yard_accounts(paths: dict[str, Path], accounts: set[str]) -> set[str]:
+    """The accounts listed as available that may go to the owner of the house next door as a side
+    yard (the lots layer's `ly`), by the rule the dossiers use: `owner.city_owned.available` and
+    `side_yard_eligible` both true (derive.city_list.by_account)."""
+    if "city_owned_property" not in paths:
+        return set()
+    columns = ["opabrt", "agency", "status_1", "sideyardeligible", "location"]
+    table = read_columns(paths["city_owned_property"], columns)
+    rows = zip(
+        (opa_account(value) for value in table.column("opabrt").to_pylist()),
+        *(table.column(name).to_pylist() for name in columns[1:]),
+        strict=True,
+    )
+    return {
+        account
+        for account, found in city_list.by_account(rows).items()
+        if account in accounts and found.available and found.side_yard
+    }
+
+
 def owner_type_codes(paths: dict[str, Path], accounts: set[str]) -> dict[str, int]:
     """The `ot` code (docs/CONTRACTS.md section 4) for each account, from OPA's owner names and
     the City owned property layer; accounts with neither are left out (0, unknown)."""

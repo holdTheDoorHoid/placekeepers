@@ -68,8 +68,9 @@ ESTATE_TEXT = quoted('"Possible estate" reads:')
 CONTRACT_PROPERTIES = {
     "parcels": {"id", "k", "vc", "ot", "lc", "rt", "rs", "n", "dy", "sy", "ny", "sg"}
     | {"f_vacant", "f_shoot", "f_poverty", "f_canopy"}
-    # Listed as available by the City's land agencies (issue #36)
-    | {"la"},
+    # Listed as available by the City's land agencies (issue #36), and may go to the neighbor
+    # next door as a side yard
+    | {"la", "ly"},
     "h3": {"h", "s12", "s36"},
     "hin": {"id", "name", "len"},
     "crashes": {"id", "y", "ya", "sev", "m"},
