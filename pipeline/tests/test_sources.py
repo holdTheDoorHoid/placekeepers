@@ -353,6 +353,9 @@ def file_for(source_id: str) -> tuple[bytes, dict[str, str]]:
         return septa_zip(), modified
     if source_id == "census_blocks_2020":
         return redistricting_zip(), modified
+    if source_id == "pba_laser":
+        # Philly Bike Action's map: the same pin for every day and every kind asked for.
+        return json.dumps({"pins": [[39.9526, -75.1652, 1]], "unique_users_count": 1}).encode(), {}
     raise AssertionError(f"no fixture file for {source_id}")
 
 

@@ -109,11 +109,12 @@ class ArcgisEndpoint(Strict):
 
 
 class UrlEndpoint(Strict):
-    """A single file at a fixed https link."""
+    """A single file at a fixed https link. A `json` reply (added 2026-10-08 by issue #37) needs a
+    source specific adapter, which may ask for it with query parameters (`pba_laser`)."""
 
     kind: Literal["url"]
     url: Url
-    format: Literal["csv", "geojson", "parquet", "zip"]
+    format: Literal["csv", "geojson", "parquet", "zip", "json"]
 
 
 #: An OpenStreetMap tag to keep: a key and a value ("highway=bus_stop"), or a key alone for any

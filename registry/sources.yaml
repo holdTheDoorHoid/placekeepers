@@ -350,6 +350,22 @@
   cadence: irregular
   health: {min_rows: 0, max_drop_pct: 100}
   release: v0.1
+# Issue #37: where people using Philly Bike Action's Laser Vision app reported vehicles blocking
+# sidewalks, crosswalks, corners, curb ramps and bike lanes. Used with Philly Bike Action's
+# permission (confirmed by the owner 2026-10-08) for a heat map of counts only: one request per kind
+# of report for the trailing 12 months, a few seconds apart, once a week; only each report's point
+# (already shifted about 15 meters by Philly Bike Action) and its kind are kept, and the map shows
+# counts per block sized cell, never a single report (adapters/pba_laser.py, publish/laser.py).
+- id: pba_laser
+  name: Parking problems reported with Laser Vision
+  publisher: Philly Bike Action
+  homepage: https://bikeaction.org/tools/laser/map/
+  endpoint: {kind: url, url: "https://bikeaction.org/tools/laser/map_data/", format: json}
+  license: pba_permission
+  attribution: "Parking problems reported with Laser Vision: Philly Bike Action"
+  cadence: weekly
+  health: {min_rows: 10000, max_drop_pct: 20, newest_field: newest_report, max_age_days: 14}
+  release: v0.3
 - id: census_tracts_2020
   name: Census tracts 2020
   publisher: City of Philadelphia, Planning Commission, from the U.S. Census Bureau
