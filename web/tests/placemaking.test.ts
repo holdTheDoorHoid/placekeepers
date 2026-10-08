@@ -157,7 +157,7 @@ describe('the placemaking lens', () => {
 });
 
 describe('the placemaking suggestions', () => {
-  it('carry the placemaking caution for a place to sit, a garden and art, never the greening one', () => {
+  it('carry the placemaking caution by the greening rule: the full card in a watch area, one line elsewhere', () => {
     expect(strings.displacement.placemakingCaution).toBe(PLACEMAKING_CAUTION);
     for (const id of PLACEMAKING) {
       expect(isPlacemaking(id)).toBe(true);
@@ -176,12 +176,27 @@ describe('the placemaking suggestions', () => {
       lists: { active: null, has: () => false },
       inspected: null,
     } as unknown as AppStore;
-    const place = { ...describePlace(reg, state, placeOf('990000021')), distance: 20 };
-    const card = textOf(render(PlaceCard, { props: { store, place, lensLabel: 'Placemaking', fromYou: false } }).body);
-    expect(card).toContain('What you could do: Make a place to sit in the shade.');
-    expect(card).toContain(PLACEMAKING_CAUTION);
-    expect(card).not.toContain(CAUTION);
-    expect(card).toContain('Ways to protect neighbors');
+    const cardOf = (id: string) => {
+      const place = { ...describePlace(reg, state, placeOf(id)), distance: 20 };
+      return textOf(render(PlaceCard, { props: { store, place, lensLabel: 'Placemaking', fromYou: false } }).body);
+    };
+    // Outside every displacement watch area: the one line, with the link to the ways to protect
+    // neighbors.
+    const outside = cardOf('990000007');
+    expect(placeOf('990000007').properties.dw).toBeUndefined();
+    expect(outside).toContain('What you could do: Make a place to sit in the shade.');
+    expect(outside).toContain(`${PLACEMAKING_CAUTION} Ways to protect neighbors`);
+    expect(outside).not.toContain(CAUTION);
+    expect(outside).not.toContain('displacement watch area');
+    // Inside one (M4.1): the full card, as the greening cards have it, with the placemaking words.
+    const inside = cardOf('990000021');
+    expect(placeOf('990000021').properties.dw).toBeTruthy();
+    expect(inside).toContain('What you could do: Make a place to sit in the shade.');
+    expect(inside).toContain(PLACEMAKING_CAUTION);
+    expect(inside).toContain('This place is in a displacement watch area, with signs that prices are rising here:');
+    expect(inside).toContain(strings.displacement.protectionsTitle);
+    expect(inside).toContain('Neighborhood Gardens Trust');
+    expect(inside).not.toContain(CAUTION);
   });
 
   it('put each caution beside its own suggestions on the printed lot page and in downloads', async () => {
@@ -191,6 +206,12 @@ describe('the placemaking suggestions', () => {
     expect(actions.find((a) => a.label === 'Ask about a mural or other art')?.caution).toBe(PLACEMAKING_CAUTION);
     expect(actions.find((a) => a.label === 'Clean and green this lot')?.caution).toBe(CAUTION);
     expect(actions.map((a) => a.label)).toEqual(['Make a place to sit in the shade', 'Ask about a mural or other art', 'Clean and green this lot']);
+    expect(printModel(view).watch).toBeNull();
+    // In a watch area, a printed lot page leading with a placemaking card lists the protections.
+    const watched = printModel(lotPage('990000021'));
+    expect(watched.actions[0]!.caution).toBe(PLACEMAKING_CAUTION);
+    expect(watched.watch?.text).toMatch(/displacement watch area/);
+    expect(watched.watch?.links.length).toBeGreaterThan(0);
     const state = defaultState(reg, 'analysis');
     state.settings.vacant_parcels!.lens = 'placemaking';
     const result = await gatherExport({
@@ -206,6 +227,9 @@ describe('the placemaking suggestions', () => {
     });
     expect(result.rows[0]!.suggestion).toBe('Make a place to sit in the shade');
     expect(result.notes).toContain(strings.export.placemakingLine(PLACEMAKING_CAUTION));
+    // The lot lies in a watch area, so the download names the ways to protect neighbors too.
+    expect(result.rows[0]!.displacement_watch).not.toBe('');
+    expect(result.notes.some((line) => line.startsWith('About gardens, seating and art in displacement watch areas:'))).toBe(true);
     expect(result.notes.join(' ')).not.toContain(CAUTION);
   });
 

@@ -103,6 +103,16 @@ class FakeCarto:
         # Date floors such as violationdate >= '2016-01-01' (ISO dates compare as text).
         for column, floor in re.findall(r"(\w+) >= '(\d{4}-\d{2}-\d{2})'", query):
             rows = [row for row in rows if column not in row or str(row[column] or "") >= floor]
+        # Rows counted by one column, such as the tax years of the assessments table
+        # (placekeepers.adapters.displacement.AssessmentValues), answered as JSON.
+        grouped = re.match(r"SELECT (\w+)::int AS \w+, count\(\*\) AS n FROM \w+ GROUP BY 1", query)
+        if grouped:
+            counts: dict[int, int] = {}
+            for row in rows:
+                key = int(row[grouped.group(1)])
+                counts[key] = counts.get(key, 0) + 1
+            found = [{grouped.group(1): k, "n": v} for k, v in sorted(counts.items())]
+            return httpx.Response(200, json={"rows": found})
         if query.startswith("SELECT count(*)"):
             extra = self.count_offset if join else 0
             return httpx.Response(200, json={"rows": [{"n": len(rows) + extra}]})

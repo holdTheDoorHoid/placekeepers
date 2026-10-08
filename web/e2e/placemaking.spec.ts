@@ -41,6 +41,8 @@ test.describe('placemaking', () => {
       'New gardens, seating and art can make a block more sought after and raise nearby prices and rents. Pair them with protections for neighbors who rent or who are behind on taxes.',
     );
     await expect(card).not.toContainText('Greening can raise nearby prices.');
+    // The sample lot lies in a displacement watch area, so its card is the full one (M4.1).
+    await expect(card).toContainText('This place is in a displacement watch area');
     await card.locator('button').first().click();
     const lotPage = page.locator('article.dossier').first();
     await expect(lotPage).toContainText('Priority under the placemaking lens, the lens the map colors the lots by.');

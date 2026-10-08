@@ -156,8 +156,9 @@ ready for the owner.
 
 ## Phase 4: v0.4 History and displacement
 
-- **M4.1 Displacement watch**: sale price trends and company buyer share from transfers, Market Value
-  Analysis 2023, renter share, assessment changes; the overlay and "pair with protections" cards.
+- **M4.1 Displacement watch** (done, 2026-10-08): sale price trends and company buyer share from
+  transfers, the City's Market Value Analysis (the 2026 edition), renter share, assessment changes;
+  the overlay and "pair with protections" cards.
 - **M4.2 Full history in the dossier**: every transfer since 1974, an assessment chart, a timeline of
   permits, violations and demolition.
 - **M4.3 Historic maps**: City orthophotos 1996 to 2023 with a year slider, the 1860 atlas the City

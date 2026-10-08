@@ -69,6 +69,7 @@ def build_manifest(
     notes: list[str],
     dossiers: dict[str, Any] | None = None,
     vacancy: dict[str, Any] | None = None,
+    displacement: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     return {
         "schema": SCHEMA,
@@ -86,5 +87,6 @@ def build_manifest(
         "files": file_index(data_root),
         "dossiers": dossiers,
         "vacancy": vacancy,
+        "displacement": displacement,
         "notes": notes,
     }

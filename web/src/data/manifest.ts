@@ -5,6 +5,7 @@
 // ignored (newer pipelines may add some), wrongly typed values become "unknown" with a
 // problem noted, and only a missing or unreadable file, or a schema it cannot read, stops it.
 
+import { parseWatchSummary, type WatchSummary } from '../displacement/watch.ts';
 import type { Layer, Registry, Source } from '../registry/types.ts';
 import { formatDate, formatNumber, strings } from '../strings.ts';
 
@@ -62,6 +63,11 @@ export interface Manifest {
   notes: string[];
   /** The lot dossier shards, or null when none were written (missing in manifests older than them). */
   dossiers?: ManifestDossiers | null;
+  /**
+   * The displacement watch's periods, the city's own measures and the thresholds (M4.1,
+   * docs/CONTRACTS.md section 3), or null when the watch was not measured.
+   */
+  displacement?: WatchSummary | null;
 }
 
 export interface ParseResult {
@@ -189,6 +195,7 @@ export function parseManifest(json: unknown): ParseResult {
       files,
       notes,
       dossiers: parseDossiers(json.dossiers, problems),
+      displacement: parseWatchSummary(json.displacement),
     },
     problems,
     error: null,

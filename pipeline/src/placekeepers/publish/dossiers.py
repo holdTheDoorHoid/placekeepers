@@ -905,6 +905,11 @@ def build_dossiers(
     # a saved list shows the same score breakdown and flood note as one opened from the map
     # (issue #31).
     lot_lens = read_lot_lens(lots_layer_geojson(ctx, out_root))
+    # The displacement watch area a lot on the map lies in, as its `dw` in the lots layer (M4.1).
+    # Imported here: placekeepers.publish.displacement is loaded with the map layers.
+    from placekeepers.publish.displacement import parcel_watch
+
+    watch = parcel_watch(ctx.cache.root / "derived")
 
     def partial_parts(account: str) -> list[str]:
         """The parts whose records were not downloaded for this parcel: its source has no
@@ -1035,6 +1040,9 @@ def build_dossiers(
         )
         if account in lot_lens:
             dossier["lens"] = lot_lens[account]
+        if account in watch:
+            tract, signs = watch[account]
+            dossier["displacement"] = {"tract": tract, "signs": signs}
         shards[account[:SHARD_DIGITS]][account] = dossier
 
         result.owner_types[owner_type.type] += 1

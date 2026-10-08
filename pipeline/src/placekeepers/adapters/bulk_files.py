@@ -1,5 +1,5 @@
-"""Bulk files read their own way: the Census Bureau's poverty table and Clean & Green Philly's last
-snapshot of tax debt.
+"""Bulk files read their own way: the Census Bureau's poverty and tenure tables and Clean & Green
+Philly's last snapshot of tax debt.
 """
 
 from __future__ import annotations
@@ -52,6 +52,53 @@ class AcsPoverty(UrlAdapter):
                            {_estimate("B17001_M002")} AS below_poverty_moe,
                            round(100.0 * {_estimate("B17001_E002")}
                                  / nullif({_estimate("B17001_E001")}, 0), 1) AS poverty_pct,
+                           {end - 4} AS survey_start_year,
+                           {end} AS survey_end_year
+                    FROM read_csv({quote_literal(str(path))}, delim = '|', header = true,
+                                  all_varchar = true)
+                    WHERE GEO_ID LIKE '{self.tract_prefix}%'
+                    ORDER BY geoid
+                ) TO {quote_literal(str(out))} (FORMAT parquet, COMPRESSION zstd)"""
+            )
+        finally:
+            con.close()
+
+
+class AcsTenure(AcsPoverty):
+    """Who owns and who rents, by census tract, from the American Community Survey five year
+    estimates (table B25003, "Tenure"): occupied homes, those lived in by their owners and those
+    rented. From the same table based summary file as the poverty table, one file for the whole
+    country, no key needed (added 2026-10-05 for the displacement watch, M4.1).
+
+    `renter_pct` is the share of occupied homes that are rented. Only Philadelphia's tracts are
+    kept."""
+
+    required_columns = (
+        "geoid",
+        "tract",
+        "occupied",
+        "owner_occupied",
+        "renter_occupied",
+        "renter_pct",
+    )
+
+    def normalize(self, raw: RawFetch, out: Path) -> None:
+        path = self.data_file(raw)
+        end = self.survey_end_year()
+        con = self.ctx.duckdb()
+        try:
+            con.execute(
+                f"""COPY (
+                    SELECT substr(GEO_ID, 10) AS geoid,
+                           right(GEO_ID, 6) AS tract,
+                           {_estimate("B25003_E001")} AS occupied,
+                           {_estimate("B25003_M001")} AS occupied_moe,
+                           {_estimate("B25003_E002")} AS owner_occupied,
+                           {_estimate("B25003_M002")} AS owner_occupied_moe,
+                           {_estimate("B25003_E003")} AS renter_occupied,
+                           {_estimate("B25003_M003")} AS renter_occupied_moe,
+                           round(100.0 * {_estimate("B25003_E003")}
+                                 / nullif({_estimate("B25003_E001")}, 0), 1) AS renter_pct,
                            {end - 4} AS survey_start_year,
                            {end} AS survey_end_year
                     FROM read_csv({quote_literal(str(path))}, delim = '|', header = true,

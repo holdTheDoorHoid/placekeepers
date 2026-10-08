@@ -21,6 +21,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { cellToBoundary, gridDisk, latLngToCell } from 'h3-js';
 import { AMENITY_LAYERS, AMENITY_SOURCES, amenityFixtures } from './amenity-fixtures.mjs';
+import { WATCH_BLOCK, WATCH_LAYER, WATCH_SOURCES, watchFixtures, watchFor } from './displacement-fixtures.mjs';
 import { routeOsmStops, routeSheetFixtures } from './route-fixtures.mjs';
 import { WALK_LAYERS, WALK_SOURCES, walkFixtures } from './walk-fixtures.mjs';
 
@@ -203,6 +204,9 @@ RUNS.forEach((length, run) => {
     if (random() > 0.2) properties.f_canopy = between(0, 100);
     const { heat, extra } = heatFor(properties, n, col, row);
     Object.assign(properties, heat);
+    // The displacement watch area the lot lies in (M4.1, scripts/displacement-fixtures.mjs).
+    const watch = watchFor(x0);
+    if (watch) properties.dw = watch;
     if (extra.length) properties.sg = [properties.sg, ...extra].join(',');
     const placemaking = placemakingFor(properties, n, col, row);
     Object.assign(properties, placemaking.place);
@@ -582,6 +586,9 @@ writeFileSync(path('data/tiles/art.art.geojson'), collection(artWorks));
 // Walkability by block group, people and places within walking distance, and traffic stress for
 // people on bikes (M3.3, scripts/walk-fixtures.mjs).
 for (const [name, text] of walkFixtures(toLngLat)) writeFileSync(path(`data/${name}`), text);
+// The displacement watch (M4.1, scripts/displacement-fixtures.mjs).
+const [watchFile, watchText] = watchFixtures(box);
+writeFileSync(path(`data/${watchFile}`), watchText);
 // The route survey sheets (scripts/route-fixtures.mjs): the index is listed in files, each route's
 // sheet is not (docs/CONTRACTS.md section 7).
 mkdirSync(path('data/tables/routes'), { recursive: true });
@@ -708,6 +715,8 @@ const manifest = {
     // The placemaking lens's commercial corridors (M3.4)
     commercial_corridors: ok(279, null),
     ...Object.fromEntries(Object.entries(WALK_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
+    // The displacement watch (M4.1)
+    ...Object.fromEntries(Object.entries(WATCH_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
   },
   layers: {
     vacant_parcels: {
@@ -757,6 +766,7 @@ const manifest = {
     ...AMENITY_LAYERS,
     public_art: { file: 'tiles/art.pmtiles', source_layer: 'art', sources: ['percent_for_art', 'osm_philadelphia', 'wikidata_art'] },
     ...WALK_LAYERS,
+    ...WATCH_LAYER,
   },
   files: Object.fromEntries(
     [
@@ -779,6 +789,7 @@ const manifest = {
       ...amenityFixtures(toLngLat).map(([name]) => name),
       'tiles/art.art.geojson',
       ...walkFixtures(toLngLat).map(([name]) => name),
+      watchFile,
       'tables/routes/index.json',
       'tables/stop_amenities.json',
       ...handWritten.map(([name]) => name).filter((name) => !shardFiles.some(([shard]) => shard === name)),
@@ -792,11 +803,13 @@ const manifest = {
         bytes: shardFiles.reduce((sum, [, bytes]) => sum + bytes.length, 0),
       }
     : null,
+  displacement: WATCH_BLOCK,
   notes: [
     'This is synthetic sample data for testing the map.',
     'Street, boundary, transit, amenity, heat, tree and floodplain tiles were skipped for this sample, so those layers are published as GeoJSON.',
     'Public art tiles were skipped for this sample too, so its layer is published as GeoJSON.',
     'Walking tiles were skipped for this sample too, so those layers are published as GeoJSON.',
+    'Displacement watch tiles were skipped for this sample too, so its layer is published as GeoJSON.',
   ],
 };
 writeFileSync(new URL('manifest.json', ROOT), JSON.stringify(manifest, null, 2) + '\n');

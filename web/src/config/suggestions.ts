@@ -1,8 +1,9 @@
-// Suggestions that green a place, such as clean and green. Until the displacement watch overlay
-// exists (a later release), every greening suggestion carries the caution of docs/ETHICS.md word
-// for word wherever it is listed: on the nearby cards, the lot page, its print, settings and in
-// downloads (docs/VERIFICATION.md, decision D12). A new greening suggestion in
-// registry/suggestions.yaml joins this list.
+// Suggestions that green a place, such as clean and green. Every greening suggestion carries the
+// caution of docs/ETHICS.md word for word wherever it is listed: on the nearby cards, a stop's
+// details, the lot page, its print, settings and in downloads (docs/VERIFICATION.md, decision D12).
+// Inside a displacement watch area (M4.1, src/displacement/watch.ts) the card adds the area's
+// signs and the ways to protect neighbors; elsewhere it keeps the one line caution. A new greening
+// suggestion in registry/suggestions.yaml joins this list.
 
 import { strings } from '../strings.ts';
 
@@ -21,9 +22,10 @@ export function isGreening(suggestionId: string): boolean {
 
 /**
  * The placemaking lens's suggestions (M3.4) that can make a block more sought after: a place to
- * sit, a garden and art. They carry a placemaking version of the caution, in the same places and
- * with the same link (decided by the orchestrator on 2026-10-08): "greening" does not describe a
- * bench or a mural. Its reports to Philly311 carry none.
+ * sit, a garden and art. They carry a placemaking version of the caution by the greening cards'
+ * rule (decided by the orchestrator on 2026-10-08, since "greening" does not describe a bench or a
+ * mural): the full card with the area's signs and protections inside a displacement watch area,
+ * the one line with the same link elsewhere. Its reports to Philly311 carry none.
  */
 export const PLACEMAKING_SUGGESTIONS: ReadonlySet<string> = new Set(['seating_and_shade', 'community_garden', 'art_request']);
 

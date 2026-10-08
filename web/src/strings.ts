@@ -57,6 +57,13 @@ function plural(n: number, one: string, many: string): string {
   return `${formatNumber(n)} ${n === 1 ? one : many}`;
 }
 
+/** A change in percent in words: "up 61%", "down 3%", "unchanged". */
+function changeWords(n: number): string {
+  if (n > 0) return `up ${formatNumber(n)}%`;
+  if (n < 0) return `down ${formatNumber(-n)}%`;
+  return 'unchanged';
+}
+
 export const strings = {
   app: {
     name: 'Placekeepers',
@@ -501,8 +508,9 @@ export const strings = {
     importLeftOut: (n: number, limit: number) => `${plural(n, 'place was', 'places were')} left out: a list holds up to ${formatNumber(limit)}.`,
   },
 
-  // The caution beside every greening suggestion until the displacement watch overlay exists
-  // (docs/ETHICS.md, "Displacement", word for word; docs/VERIFICATION.md, decision D12).
+  // The caution beside every greening suggestion (docs/ETHICS.md, "Displacement", word for word;
+  // docs/VERIFICATION.md, decision D12), and the displacement watch (M4.1, src/displacement/):
+  // in a watch area the card adds the area's signs and the ways to protect neighbors.
   displacement: {
     caution: 'Greening can raise nearby prices. Consider pairing it with protections.',
     // The placemaking lens's version (M3.4), for a place to sit, a garden and art, in the same
@@ -510,6 +518,66 @@ export const strings = {
     placemakingCaution:
       'New gardens, seating and art can make a block more sought after and raise nearby prices and rents. Pair them with protections for neighbors who rent or who are behind on taxes.',
     protections: 'Ways to protect neighbors',
+    inWatch: (signs: string) => `This place is in a displacement watch area, with signs that prices are rising here: ${signs}.`,
+    protectionsTitle: 'Protections to pair it with',
+    protectionLabels: {
+      neighborhood_gardens_trust: 'Neighborhood Gardens Trust',
+      community_land_trust: 'Community land trusts',
+      homestead_exemption: "The City's Homestead Exemption",
+      longtime_owner_occupants: "The City's Longtime Owner Occupants Program (LOOP)",
+      tangled_title_help: 'Help with a tangled title',
+    } as Record<string, string>,
+    checked: (date: string) => `checked ${date}`,
+    signShort: {
+      prices: 'home prices rising faster than across the city',
+      assessments: "the City's assessed values rising faster than across the city",
+      mva: "the City's Market Value Analysis finds rising pressure",
+      companies: 'companies buying many of the homes sold',
+      renters: 'at least three in five homes rented',
+    },
+    // A tapped watch area (src/components/displacement/WatchDetails.svelte).
+    heading: 'Signs that prices are rising here',
+    areaTitle: (tract: string) => `Census tract ${tract}`,
+    around: (place: string) => `Around ${place}`,
+    signsHere: 'Signs here',
+    alsoMeasured: 'Also measured, not a sign here',
+    signTitle: {
+      prices: 'Home sale prices',
+      assessments: "The City's assessed values",
+      mva: "The City's Market Value Analysis",
+      companies: 'Buyers that are companies',
+      renters: 'Renters',
+    },
+    span: (a0: string, a1: string, b0: string, b1: string) => `sales of ${a0} to ${a1} and of ${b0} to ${b1}`,
+    pricesText: (p0: string, p1: string, change: number, city: number | null, span: string) =>
+      `The middle price of the homes sold went from ${p0} to ${p1}, ${changeWords(change)}${city === null ? '' : `, against ${changeWords(city)} across the city`}${span ? ` (${span})` : ''}.`,
+    companiesText: (share: number, sales: number, city: number | null) =>
+      `Companies bought ${share}% of the ${formatNumber(sales)} homes sold in the last three years${city === null ? '' : `, against ${city}% across the city`}.`,
+    assessmentsText: (change: number, homes: number, city: number | null, years: readonly [number, number] | null) =>
+      `The City's market value of the middle home went ${changeWords(change)}${years ? ` from ${years[0]} to ${years[1]}` : ''} (${plural(homes, 'home', 'homes')})${city === null ? '' : `, against ${changeWords(city)} across the city`}.`,
+    rentersText: (share: number, city: number | null, years: readonly [number, number] | null) =>
+      `${share}% of the homes people live in here are rented${city === null ? '' : `, against ${city}% across the city`}${years ? ` (Census Bureau survey, ${years[0]} to ${years[1]})` : ''}.`,
+    mvaText: (rising: number, groups: number, edition: string | null) =>
+      rising > 0
+        ? `In ${rising} of the ${plural(groups, 'block group', 'block groups')} here, Reinvestment Fund's ${edition ?? 'Market Value Analysis'} for the City finds rising pressure: home prices climbing out of reach of what longtime residents earn.`
+        : `In none of the ${plural(groups, 'block group', 'block groups')} here does the ${edition ?? 'Market Value Analysis'} find rising pressure.`,
+    mvaNone: 'The Market Value Analysis does not cover this area.',
+    tooFewSales: (earlier: number, recent: number, needed: number) =>
+      `Too few home sales to tell (${formatNumber(earlier)} and ${formatNumber(recent)}; at least ${formatNumber(needed)} in each period are needed).`,
+    tooFewHomes: 'Too few homes with values in both years to tell.',
+    tooFewHouseholds: 'Too few households in the Census survey to tell.',
+    rule: 'An area is in the watch when at least two of these signs hold, and at least one of them is about prices: sale prices, assessed values or the Market Value Analysis.',
+    meaning: 'Greening and other improvements here can raise prices further. Pair them with protections for the neighbors who live here now.',
+    cannotTell:
+      'These are signs in public records, not a forecast. They cannot tell who has moved away or why, what rents are, or who lives here, and an area outside the watch can still feel rising prices.',
+    legendArea: 'An area with signs that prices are rising',
+    legendTap: 'Tap inside an area, or its edge close in, to see its signs.',
+    legendNote: 'Signs in public records, not a forecast. Greening cards in these areas add ways to protect neighbors.',
+    exportColumn: (signs: string) => `Displacement watch area: ${signs}`,
+    exportLine: (caution: string, links: string) => `About greening in displacement watch areas: ${caution} Ways to protect neighbors: ${links}`,
+    placemakingExportLine: (caution: string, links: string) =>
+      `About gardens, seating and art in displacement watch areas: ${caution} Ways to protect neighbors: ${links}`,
+    printTitle: 'Displacement watch',
   },
 
   evidence: {

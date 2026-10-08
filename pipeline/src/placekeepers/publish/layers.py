@@ -40,6 +40,7 @@ from shapely.geometry.polygon import orient
 
 from placekeepers.context import Context
 from placekeepers.dates import months_before
+from placekeepers.derive.displacement import SOURCES as DISPLACEMENT_SOURCES
 from placekeepers.derive.heat import SOURCES as HEAT_SOURCES
 from placekeepers.derive.heat import load_heat, with_heat
 from placekeepers.derive.lenses import SOURCES as LENS_SOURCES
@@ -52,6 +53,9 @@ from placekeepers.derive.walk import load_walk
 from placekeepers.geo import GeoJSONWriter, geometry_json
 
 log = logging.getLogger(__name__)
+
+#: The displacement watch's sources (M4.1), credited wherever its signs are carried (`dw`).
+WATCH_SOURCES = tuple(s for s in DISPLACEMENT_SOURCES if s != "census_tracts_2020")
 
 H3_RESOLUTION = 9
 
@@ -250,6 +254,10 @@ def build_parcels_from_model(
     walking = load_walk(model.with_name("walk_factors.parquet"))
     # The placemaking lens's own factors and suggestions (M3.4), from pk derive.
     placemaking = load_placemaking(model.with_name("placemaking_factors.parquet"))
+    # The displacement watch (M4.1): the signs of the watch area a parcel lies in, as `dw`.
+    from placekeepers.publish.displacement import parcel_watch
+
+    watch = parcel_watch(model.parent)
     rows = zip(*(table.column(name).to_pylist() for name in columns), strict=True)
     with GeoJSONWriter(out) as writer:
         for opa, kind, k, vc, lc, rs, n, dy, sy, ny, wkb in rows:
@@ -277,6 +285,8 @@ def build_parcels_from_model(
                 properties.update(place.properties)
                 first = [s for s in properties["sg"].split(",") if s]
                 properties["sg"] = ",".join(with_more(first, place.suggestions, known_suggestions))
+            if opa in watch:
+                properties["dw"] = watch[opa][1]
             writer.write(properties, geometry_json(wkb))
     return BuildResult(writer.count, [])
 
@@ -496,6 +506,8 @@ BUILDERS: tuple[LayerBuilder, ...] = (
                 if s not in PARCEL_LAYER_SOURCES
             ),
             "city_owned_property",
+            # The displacement watch's sources (M4.1), for `dw`.
+            *WATCH_SOURCES,
         ),
     ),
     LayerBuilder("tiles/streets.pmtiles", "hin", ("high_injury_network",), build_hin),
@@ -552,3 +564,8 @@ BUILDERS = (
 from placekeepers.publish.art import ART_BUILDERS  # noqa: E402
 
 BUILDERS = (*BUILDERS, *ART_BUILDERS)
+
+# The displacement watch (M4.1): areas with signs that prices are rising.
+from placekeepers.publish.displacement import DISPLACEMENT_BUILDERS  # noqa: E402
+
+BUILDERS = (*BUILDERS, *DISPLACEMENT_BUILDERS)

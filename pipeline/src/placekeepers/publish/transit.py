@@ -46,7 +46,7 @@ from placekeepers.derive.transit_comfort import TUNNEL_STATIONS, SeptaStop, comf
 from placekeepers.derive.walk import SOURCES as WALK_SOURCES
 from placekeepers.derive.walk import factors_at
 from placekeepers.geo import GeoJSONWriter, geometry_json
-from placekeepers.publish.layers import BuildResult, LayerBuilder, plain_name
+from placekeepers.publish.layers import WATCH_SOURCES, BuildResult, LayerBuilder, plain_name
 
 log = logging.getLogger(__name__)
 
@@ -277,6 +277,20 @@ def build_transit_stops(
     )
     for index, props in enumerate(walking):
         extra.setdefault(surface[street[index]], {}).update(props)
+    # The displacement watch (M4.1): the signs of the watch area a bus or trolley stop lies in, so
+    # its shade trees card adds the ways to protect neighbors.
+    from placekeepers.publish.displacement import point_watch
+
+    indexes = sorted(extra)
+    signs = point_watch(
+        ctx,
+        paths.get("census_tracts_2020"),
+        [rows[i]["lng"] for i in indexes],
+        [rows[i]["lat"] for i in indexes],
+    )
+    for index, bits in zip(indexes, signs, strict=True):
+        if bits:
+            extra[index] = {**extra[index], "dw": bits}
     if len(street) < len(surface):
         left_out = len(surface) - len(street)
         stations = plural(left_out, "trolley tunnel station", "trolley tunnel stations")
@@ -378,11 +392,21 @@ TRANSIT_BUILDERS: tuple[LayerBuilder, ...] = (
         "stops",
         (GTFS,),
         build_transit_stops,
-        # Ridership, the city's shape, what the transit comfort lens reads (M2.3) and what the
-        # walking factors read (M3.3).
+        # Ridership, the city's shape, what the transit comfort lens reads (M2.3), what the
+        # walking factors read (M3.3), and the tracts and the displacement watch's sources,
+        # for `dw` (M4.1).
         extras=tuple(
             s
-            for s in dict.fromkeys((*RIDERSHIP, *CITY_SOURCES, *COMFORT_SOURCES, *WALK_SOURCES))
+            for s in dict.fromkeys(
+                (
+                    *RIDERSHIP,
+                    *CITY_SOURCES,
+                    *COMFORT_SOURCES,
+                    *WALK_SOURCES,
+                    "census_tracts_2020",
+                    *WATCH_SOURCES,
+                )
+            )
             if s != GTFS
         ),
         # OpenStreetMap's stops, only to link each SEPTA stop to its OpenStreetMap stop by id
