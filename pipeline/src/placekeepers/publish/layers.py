@@ -225,10 +225,16 @@ def build_parcels_from_model(
     columns = ["opa", "kind", "k", "vc", "lc", "rs", "n", "dy", "sy", "ny", "geometry"]
     table = pq.read_table(model, columns=columns)
     # Owner type (M1.3): from the City owned property layer and OPA's owner names.
-    from placekeepers.publish.dossiers import owner_type_codes, route_codes
+    from placekeepers.publish.dossiers import (
+        listed_available_accounts,
+        owner_type_codes,
+        route_codes,
+    )
 
     accounts = set(table.column("opa").to_pylist())
     owner_types = owner_type_codes(paths or {}, accounts)
+    # Listed as available by the City's land agencies (issue #36): `la` 1, absent otherwise.
+    listed = listed_available_accounts(paths or {}, accounts)
     # The first route, as the dossier lists it (rt, a category).
     calls = {
         a: {"rs": r or 0}
@@ -253,6 +259,8 @@ def build_parcels_from_model(
             rt = routes.get(opa, 0)
             properties = {"id": opa, "k": k, "vc": vc, "ot": ot, "rt": rt, "lc": lc, "rs": rs}
             properties["n"] = n
+            if opa in listed:
+                properties["la"] = 1
             properties["sg"] = suggestion_ids(k, known_suggestions)
             for key, year in (("dy", dy), ("sy", sy), ("ny", ny)):
                 if year is not None:
@@ -302,9 +310,14 @@ def build_parcels_from_city_lists(
                 descriptions.setdefault(account, description)
     landcare = landcare_accounts(paths.get("phs_landcare"))
     # Owner type (M1.3): from the City owned property layer and OPA's owner names.
-    from placekeepers.publish.dossiers import owner_type_codes, route_codes
+    from placekeepers.publish.dossiers import (
+        listed_available_accounts,
+        owner_type_codes,
+        route_codes,
+    )
 
     owner_types = owner_type_codes(paths, set(kinds))
+    listed = listed_available_accounts(paths, set(kinds))
     routes = route_codes(paths, set(kinds), set(ctx.registry.routes))
     notes = []
     if no_account:
@@ -329,6 +342,8 @@ def build_parcels_from_city_lists(
             ot = owner_types.get(account, 0)
             rt = routes.get(account, 0)
             properties = {"id": account, "k": kind, "vc": 2, "ot": ot, "rt": rt, "lc": lc}
+            if account in listed:
+                properties["la"] = 1
             properties["sg"] = suggestion_ids(kind, set(ctx.registry.suggestions))
             writer.write(properties, geometry_json(shapes[account]))
     return BuildResult(writer.count, notes)
@@ -464,7 +479,8 @@ BUILDERS: tuple[LayerBuilder, ...] = (
         PARCEL_LAYER_SOURCES,
         build_parcels,
         # Every input of the vacancy model and the lens factors, so the tile file credits each
-        # one, and the City owned property layer for the owner type.
+        # one, and the City owned property layer for the owner type and the lots its land
+        # agencies list as available (`la`, issue #36).
         extras=(
             *(
                 s

@@ -301,6 +301,8 @@ export const strings = {
     notInLandcare: 'Not in LandCare',
     confidence: 'How sure we are',
     kind: 'Lot or building',
+    /** The lots layer's `listed` setting as chips (issue #36): the City's status, never ease. */
+    listed: "Listed by the City's land agencies",
     clear: 'Clear filters',
     showAll: 'Show all',
     noneSelected: (group: string) => `Nothing is chosen under "${group}", so no lots are shown.`,
@@ -531,6 +533,7 @@ export const strings = {
     sureMedium: 'Probably vacant',
     sureLow: 'Not very sure',
     parcelPoint: 'Dots: zoomed out, a sample of the vacant parcels; up close, a parcel with no mapped shape',
+    parcelsListed: "Showing only parcels the City's land agencies list as available. A parcel the map does not call vacant is not drawn; the Land Bank's own map shows every one.",
     selected: 'Selected place',
     landcare: 'Lot kept up by PHS LandCare: already cared for',
     garden: 'Community garden or farm',
@@ -1428,6 +1431,30 @@ export const strings = {
       notLegalAdvice: 'Placekeepers is not legal advice. Check with the organizations named here before you act.',
     },
 
+    /**
+     * A lot the City's land agencies list as available, the same list the Philadelphia Land
+     * Bank's property map shows (issue #36). Never a price, never a buy button: the only links
+     * are the Land Bank's own map and its programs for neighbors (docs/ETHICS.md). The Land
+     * Bank's own words are never copied (its website terms); its note that it may decline is
+     * said here in our words.
+     */
+    listing: {
+      title: "Listed as available by the City's land agencies",
+      text: (date: string) => `On ${date}, the City's list of public land showed this property as available.`,
+      textNoDate: "The City's list of public land shows this property as available.",
+      variants: {
+        'OWNED - AVAILABLE (GARDEN AGREEMENT)': 'It is offered for a garden agreement.',
+        'OWNED - AVAILABLE (NO CONSTRUCTION PERMITTED)': 'Nothing may be built on it.',
+        'OWNED - AVAILABLE (NOT FOR SY)': 'It is not offered as a side yard.',
+      } as Record<string, string>,
+      sideYardLead: 'If you own the house next door, start with the side yard program:',
+      decline:
+        'Being listed does not mean the Land Bank will say yes. It decides each request on its own and can turn down any sale or lease, even of a property it lists as available.',
+      changes: 'The list changes often. Check the Land Bank\'s map before you act.',
+      map: 'The Land Bank\'s map of available properties',
+      credit: "List: City of Philadelphia, Department of Planning and Development (Land Management), as the Philadelphia Land Bank's map shows it.",
+    },
+
     ownerType: {
       noName: 'City records give no owner name.',
       unclear: 'We could not tell what kind of owner this is from the name.',
@@ -1507,6 +1534,30 @@ export const strings = {
       cityList: 'The parcel is on the City\'s list of public property.',
       cityListNames: (agency: string) => `The City's list of public property names ${agency} as the owner.`,
       cityListStatus: (status: string) => `Its status there: ${status}.`,
+      /**
+       * The statuses on the City's list in plain words (issue #36), keyed by the status as the
+       * City writes it, in capitals with single spaces: what it is called, then what it means for
+       * neighbors. A status not listed here is shown as the City writes it.
+       */
+      cityStatuses: {
+        'OWNED - AVAILABLE': ['listed as available', 'The Land Bank shows it on its map of properties people can apply for.'],
+        'OWNED - AVAILABLE (GARDEN AGREEMENT)': ['listed as available for a garden agreement', 'It is offered for gardening under an agreement with the Land Bank.'],
+        'OWNED - AVAILABLE (NO CONSTRUCTION PERMITTED)': ['listed as available, with no building allowed', 'It is offered, but nothing may be built on it.'],
+        'OWNED - AVAILABLE (NOT FOR SY)': ['listed as available, but not as a side yard', 'It is offered, but not to the neighbor next door as a side yard.'],
+        'OWNED - ON HOLD FOR AHD': ['held for affordable housing', 'It is set aside for affordable homes, so it is not offered to neighbors now.'],
+        'OWNED - NOT AVAILABLE': ['not available', 'The City\'s land agencies are not offering it now.'],
+        'OWNED - PROCESSING APPLICANT, NOT AVAILABLE': ['someone has applied', 'An application for it is being reviewed, so it is not offered to anyone else now.'],
+        'OWNED - MANAGED AND NOT AVAILABLE': ['managed and not available', 'An agency looks after it and is not offering it.'],
+        'OWNED - ON HOLD': ['on hold', 'It is not offered for now.'],
+        'OWNED - SALE PENDING': ['sale pending', 'A sale is under way, so it is not offered to anyone else.'],
+        'UNKNOWN - RESEARCH PENDING': ['not known yet', 'The City\'s land agencies are still looking into it.'],
+        'OWNED - RFP RELEASED': ['offered for development', 'The City\'s land agencies have asked for proposals to develop it.'],
+        'OWNED - ON HOLD FOR HOME SD': ['held for a housing program', 'It is held for a program the list calls HOME SD, so it is not offered to neighbors now.'],
+        'OWNED - HELD FOR CITY COUNCIL MEMBER': ['held for the district Council member', 'It is held for the district\'s City Council member, so it is not offered now. The member\'s office can say why.'],
+        'OWNED - TO BE FEATURED SOON': ['to be offered soon', 'The City\'s land agencies plan to offer it soon.'],
+        'OWNED - NOT AVAILABLE (GSI PROJECT)': ['set aside for green stormwater work', 'It is held for plantings the Water Department builds to soak up rain.'],
+        'OWNED - COMPETITIVE BID POSTED': ['offered by competitive bid', 'The City\'s land agencies have asked for bids on it.'],
+      } as Record<string, readonly [string, string]>,
       sideYard: 'The City marks it eligible for the side yard program, for the owner of the house next door.',
       agencies: {
         PUB: 'the City of Philadelphia',

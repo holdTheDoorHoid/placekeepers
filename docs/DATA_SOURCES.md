@@ -22,7 +22,7 @@ Both allow browser requests without a key.
 | OPA assessment history | Carto `assessments` (7.48 million rows) | Value by year for every parcel | Nightly | Live; never used by the original |
 | Real estate transfers | Carto `rtt_summary` (5.16 million rows, 1974-01-02 to 2026-08-11) | Every recorded deed, sheriff deed and mortgage, with date, grantors, grantees and consideration, joined by `opa_account_num` | About 8 week lag | Live; this is the "what it sold for, going back in time" source |
 | Water Department parcels | Carto `pwd_parcels` (547,410) | Parcel shapes | Not stated | Live |
-| City owned property | City ArcGIS `LAMAAssets` (7,740: Land Bank 2,528, Redevelopment Authority 1,670, PHDC 95, other agencies) | Public owner agency, side yard eligibility | Not stated | Live. The OpenDataPhilly page of the same name is a frozen 2015 archive; use the live service |
+| City owned property | City ArcGIS `LAMAAssets` (7,740: Land Bank 2,528, Redevelopment Authority 1,670, PHDC 95, other agencies) | Public owner agency, side yard eligibility, each parcel's status, and the lots listed as available (the same list as the Philadelphia Land Bank's property map; see "Sources checked 2026-10-08") | Edited often; records carry no date | Live. The OpenDataPhilly page of the same name is a frozen 2015 archive; use the live service |
 | Tax balances | Carto `real_estate_tax_delinquencies` | Formerly per parcel tax debt and sheriff sale risk | n/a | **Restricted** since the original shut down (permission denied). Public data is aggregated by ZIP, district and tract only. Dossiers link to the City's Tax Center (tax-services.phila.gov) for the live balance |
 | Tax debt snapshot, July 2025 | Clean & Green Philly final output, `data/backup_data/all_properties_2025_07_09.parquet` (97.7 MB, Git LFS, via media.githubusercontent.com) | A dated "tax debt as of July 2025" flag | Frozen | Downloadable; label every use with its date |
 | Sheriff sales | No dataset. `rtt_summary` document types "DEED SHERIFF" (69,682) and "SHERIFF'S DEED" (19,370) give history | Past sheriff sales | n/a | History only; phillysheriff.com is browse only and is not scraped |
@@ -333,6 +333,79 @@ Analysis, renter share, City orthophotos 1996 to 2023, the 1860 Hexamer and Loch
 the City with the GeoHistory Network's permission), PhilaGeoHistory layers such as the 1942 land use
 map (**permission required** from the Athenaeum of Philadelphia), and HOLC redlining from Mapping
 Inequality (license text to confirm).
+
+## Sources checked 2026-10-08
+
+The owner asked to bring four community and City sources onto the map. A check of each one's
+data, terms and what it holds about people found (issue #36):
+
+| Source | Verdict |
+|---|---|
+| Philadelphia Land Bank's "View Properties Map" | Used with credit, through `city_owned_property` (issue #36) |
+| Transit Forward Philadelphia's stop audits | Ask permission first |
+| PhillyTreeMap | Not used |
+| Philly Bike Action's Laser Vision map | Used with Philly Bike Action's permission (confirmed by the owner 2026-10-08), as a heat map only; built separately in issue #37 |
+
+**The Land Bank's "View Properties Map"** ([phillylandbank.org/view-properties-map](https://phillylandbank.org/view-properties-map/)).
+The page embeds a City ArcGIS Instant App (app `cb23daec00b543f8a5ea00c11f69f50d`, web map
+`58c5fc01ae3e42b28dff14780fde43f7`) whose main layer is the City's `LAMAAssets` layer
+(`https://services.arcgis.com/fLeGjb7u4uXqeF9q/arcgis/rest/services/LAMAAssets/FeatureServer/0`),
+shown with the filter `status_1 LIKE 'Owned - Available%'`. We already fetch that layer every week
+as `city_owned_property`, with every field: `pin`, `mapreg_1`, `agency`, `opabrt` (the OPA
+account), `location`, `status_1`, `councildistrict`, `sideyardeligible`, `zoning` and `objectid`.
+The layer is edited often (last on 2026-10-08) and its records carry no date of their own, so the
+site dates the list by the day the pipeline fetched it.
+
+- Counts on 2026-10-08: 7,740 records. 1,687 listed as available: 1,654 `Owned - Available`, 20
+  "(no construction permitted)", 13 "(not for SY)" (not as a side yard) and none "(Garden
+  Agreement)", on 1,640 distinct parcels; 1,301 of the records are marked eligible for a side
+  yard. By agency: the City (PUB) 1,076, the Land Bank (PLB) 441, the Redevelopment Authority
+  (PRA) 161 and PHDC 9. The other statuses: On Hold for AHD (held for affordable housing) 1,934,
+  Not Available 1,755, Processing Applicant 754, Managed and Not Available 543, On Hold 473, Sale
+  Pending 302, Unknown, research pending 89, RFP Released 79, On Hold for HOME SD 40, Held for
+  City Council Member 32, Not Available (GSI Project) 24, To Be Featured Soon 24, and Competitive
+  Bid Posted 4. 1,542 of the 1,640 available parcels were already among the parcels our vacancy
+  table holds (1,349 at high confidence).
+- Terms: the layer carries the City's standard "as is" notice (`city_terms`). PHDC's website terms
+  ([PDF](https://phillylandbank.org/wp-content/uploads/2025/03/PHDC-Website-Terms-of-Use.pdf))
+  cover the Land Bank site's own text and images, so the site links to the Land Bank's pages and
+  never copies their text or images. phillylandbank.org's robots.txt asks crawlers to wait 10
+  seconds between requests; the pipeline never fetches that site at all, only the City's layer.
+- The Land Bank says it may decline to sell or lease a property at its own discretion. The lot
+  page says so in our words.
+- Credit: "City of Philadelphia, Department of Planning and Development (Land Management)", as the
+  Philadelphia Land Bank's map shows it.
+- What the site shows (issue #36): a setting on the vacant lots layer, "Listed as available by the
+  City's land agencies" (also a filter in the analysis view), and on the lot page each status in
+  plain words, with what it means for neighbors, and for a listed lot a box with the date of the
+  list, the side yard route first where the lot is eligible, the Land Bank's note that it may say
+  no, and a link to its map. No price and no buy button (docs/ETHICS.md). The pipeline's rule is in
+  `pipeline/src/placekeepers/derive/city_list.py`.
+
+**Transit Forward Philadelphia's stop audits** (the results map hosted by the Public Works
+Office at [publicworksoffice.com/septa-stop-survey](https://www.publicworksoffice.com/septa-stop-survey/);
+the survey itself at [transitforwardphilly.org/audits](https://www.transitforwardphilly.org/audits)).
+Ask permission first. There is no license. About 498 audits of 426 stops, May to October 2026,
+would add answers about shelters, seating, sidewalks, curb cuts and tactile paving for about 385
+stops no other source covers. The raw answers include volunteers' contact details; we use none of
+it and wait for a trimmed copy and a license. An outreach message to the owners is drafted and
+not sent.
+
+**PhillyTreeMap** ([phillytreemap.org](https://www.phillytreemap.org/)). Not used. It is an
+OpenTreeMap 1 site, dormant since about 2013: on 2026-10-08 its map showed 0 trees and its data
+calls answered 404. It has no data license, and its trees began as City and PHS inventories,
+which the site already holds, newer and better, as `street_trees`.
+
+**Philly Bike Action's Laser Vision map** ([bikeaction.org/tools/laser/map](https://bikeaction.org/tools/laser/map/)).
+Used with Philly Bike Action's permission (confirmed by the owner 2026-10-08), as a heat map only;
+it is built separately in issue #37. People report vehicles blocking sidewalks, crosswalks, curb
+ramps and bike lanes, and the reports are filed with the Philadelphia Parking Authority, which
+Philly Bike Action's FAQ says uses them to send enforcement officers. That is why only a heat map,
+never single reports: ETHICS.md ("Policing") rules out anything that points enforcement at people.
+The code is under the Apache 2.0 license but the data has no license, so the permission is what
+allows the use. The check recommended these safeguards, for issue #37 to settle: counts only,
+over a year or more, in cells a block or two across, shown only where at least 5 reports come from
+at least 3 reporters, and framed as evidence for physical fixes to the street.
 
 ## Not sources
 

@@ -51,6 +51,7 @@ from shapely import STRtree
 from placekeepers.candidates import candidate_accounts
 from placekeepers.config import iso_z
 from placekeepers.context import Context
+from placekeepers.derive import city_list
 from placekeepers.derive import owners as ow
 from placekeepers.derive import transfers as tr
 from placekeepers.derive.flags import (
@@ -371,17 +372,25 @@ def read_opa(con: Any, path: Path) -> dict[str, Opa]:
 
 
 def read_city_owned(con: Any, path: Path) -> dict[str, dict[str, Any]]:
+    """Each parcel on the City's list of public property: its agency, its status (an available
+    one when any of its records has one), whether it may go to the neighbor as a side yard, whether
+    the land agencies list it as available, and its address (derive.city_list)."""
     account = account_sql("opabrt")
     rows = _rows(
         con,
-        f"""SELECT {account} AS a, min(agency), min(status_1),
-                   bool_or(upper(trim(sideyardeligible)) = 'YES'), min(location)
+        f"""SELECT {account} AS a, agency, status_1, sideyardeligible, location
             FROM {_source(path, ["opabrt", "agency", "status_1", "sideyardeligible", "location"])}
-            WHERE {account} IS NOT NULL GROUP BY 1""",
+            WHERE {account} IS NOT NULL""",
     )
     return {
-        a: {"agency": agency, "status": status, "side_yard": bool(side), "location": location}
-        for a, agency, status, side, location in rows
+        a: {
+            "agency": found.agency,
+            "status": found.status,
+            "side_yard": found.side_yard,
+            "available": found.available,
+            "location": found.location,
+        }
+        for a, found in city_list.by_account(rows).items()
     }
 
 
@@ -689,6 +698,21 @@ def owner_facts(paths: dict[str, Path], accounts: set[str]) -> dict[str, tuple[o
     }
 
 
+def listed_available_accounts(paths: dict[str, Path], accounts: set[str]) -> set[str]:
+    """The accounts the City's land agencies list as available (the lots layer's `la`, issue #36),
+    by the rule the dossiers use (derive.city_list)."""
+    if "city_owned_property" not in paths:
+        return set()
+    table = read_columns(paths["city_owned_property"], ["opabrt", "status_1"])
+    return {
+        account
+        for opabrt, status in zip(
+            table.column("opabrt").to_pylist(), table.column("status_1").to_pylist(), strict=True
+        )
+        if (account := opa_account(opabrt)) in accounts and city_list.listed_available(status)
+    }
+
+
 def owner_type_codes(paths: dict[str, Path], accounts: set[str]) -> dict[str, int]:
     """The `ot` code (docs/CONTRACTS.md section 4) for each account, from OPA's owner names and
     the City owned property layer; accounts with neither are left out (0, unknown)."""
@@ -702,7 +726,8 @@ def route_codes(
     calls: dict[str, dict[str, Any]] | None = None,
 ) -> dict[str, int]:
     """The `rt` code (docs/CONTRACTS.md section 4) for each account: the first route its dossier
-    lists, from the same owner type, owner names and LandCare record (routes.first_route_code).
+    lists, from the same owner type, owner names and LandCare record (routes.first_route_code,
+    which passes over the side yard route, so the City list's status need not be read here).
     `calls` are the parcels' vacancy blocks (at least `rs`), as vacancy_calls gives them."""
     facts = owner_facts(paths, accounts)
     landcare = set(read_landcare(paths["phs_landcare"])[0]) if "phs_landcare" in paths else set()
@@ -949,6 +974,8 @@ def build_dossiers(
                 "status": owned["status"],
                 "side_yard_eligible": owned["side_yard"],
             }
+            if owned["available"]:
+                owner["city_owned"]["available"] = True
         owner["flags"] = flags
         if shows_deed_fraud_notice(facts):
             owner["notice"] = "deed_fraud"
@@ -966,6 +993,7 @@ def build_dossiers(
                 in_landcare=in_landcare(account, landcare, call),
                 gardened=account in gardened,
                 homestead=bool(record and record.homestead),
+                listed_available=bool(owned and owned["available"]),
             )
             if route in known_routes
         ]

@@ -24,6 +24,13 @@ export const SHERIFF_SALE_GUIDE_URL = 'https://groundedinphilly.org/sheriff-sale
 /** The Garden Justice Legal Initiative, for free legal help. */
 export const GJLI_URL = 'https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/';
 
+/**
+ * The Philadelphia Land Bank's "View Properties Map", the same list as the City's public property
+ * layer filtered to the lots listed as available (issue #36; checked 2026-10-08). Linked, never
+ * copied, and never fetched by the pipeline.
+ */
+export const LAND_BANK_MAP_URL = 'https://phillylandbank.org/view-properties-map/';
+
 /** The project's repository, where corrections are reported. */
 export const REPO_URL = 'https://github.com/holdTheDoorHoid/placekeepers';
 

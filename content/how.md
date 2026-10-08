@@ -21,6 +21,12 @@ About 26% of Philadelphia's roughly 40,000 vacant lots are publicly owned. The
 [Philadelphia Land Bank](https://phillylandbank.org/) (land@phdc.phila.gov, 215 448 3034) handles
 most of them.
 
+The Land Bank's [map of available properties](https://phillylandbank.org/view-properties-map/)
+shows the lots the City's land agencies list as available. On our map, the vacant lots layer can
+show only those lots (the setting "Listed as available by the City's land agencies"), and each lot
+page on the City's list says its status in plain words. A listed lot is no promise: the Land Bank
+decides each request on its own and can say no to any sale or lease.
+
 - **Side or rear yard.** Only the next door neighbor can apply. The price is small, but the lot
   must stay a side yard forever, and the City can take it back if the rules are not kept. The
   Land Bank aims to answer in 120 days, then its board and City Council have to approve it. Only
