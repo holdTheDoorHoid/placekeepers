@@ -18,6 +18,7 @@ from shapely.geometry import LineString, MultiLineString, Point, box, mapping
 
 from placekeepers.adapters import ADAPTERS, ArcgisAdapter, CartoAccountsAdapter, UrlAdapter
 from placekeepers.adapters.carto import CartoAdapter, Column
+from placekeepers.adapters.displacement import AssessmentValues
 from placekeepers.adapters.lens_context import TreeCanopy2018
 from placekeepers.candidates import Candidates
 from placekeepers.registry import Source
@@ -38,7 +39,7 @@ def relaxed(source: Source) -> Source:
     return source.model_copy(update={"health": source.health.model_copy(update={"min_rows": 1})})
 
 
-def ids_of(kind: type, *, exclude: type | None = None) -> list[str]:
+def ids_of(kind: type, *, exclude: type | tuple[type, ...] | None = None) -> list[str]:
     return [
         source_id
         for source_id, cls in ADAPTERS.items()
@@ -78,7 +79,10 @@ def carto_rows(adapter: type[CartoAdapter], count: int = 5) -> list[dict]:
     ]
 
 
-@pytest.mark.parametrize("source_id", ids_of(CartoAdapter, exclude=CartoAccountsAdapter))
+# The assessed values choose their tax years first; tests/test_displacement_sources.py covers them.
+@pytest.mark.parametrize(
+    "source_id", ids_of(CartoAdapter, exclude=(CartoAccountsAdapter, AssessmentValues))
+)
 def test_carto_sources_from_fixtures(source_id: str, context_factory) -> None:
     adapter = ADAPTERS[source_id]
     ctx = context_factory(now=NOW)
@@ -306,6 +310,16 @@ ACS_ROWS = (
 )
 
 
+TENURE_ROWS = (
+    "GEO_ID|B25003_E001|B25003_M001|B25003_E002|B25003_M002|B25003_E003|B25003_M003\n"
+    "0100000US|127482865|231044|83140209|300106|44342656|141018\n"
+    "1400000US42101000101|1000|90|400|60|600|70\n"
+    "1400000US42101000102|0|11|0|11|0|11\n"
+    "1400000US42101000200|800|80|-666666666|-222222222|300|50\n"
+    "1400000US42045400100|3000|200|2000|150|1000|100\n"
+)
+
+
 def tax_file() -> bytes:
     table = pa.table(
         {
@@ -346,6 +360,8 @@ def file_for(source_id: str) -> tuple[bytes, dict[str, str]]:
         ), {}
     if source_id == "acs_poverty":
         return ACS_ROWS.encode(), modified
+    if source_id == "acs_tenure":
+        return TENURE_ROWS.encode(), modified
     if source_id == "cagp_tax_2025":
         return tax_file(), {}
     if source_id == "septa_gtfs":

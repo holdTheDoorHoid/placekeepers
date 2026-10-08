@@ -6,7 +6,7 @@ from placekeepers.adapters import li, places
 from placekeepers.adapters.arcgis import ArcgisAdapter
 from placekeepers.adapters.art import PercentForArt, WikidataArt
 from placekeepers.adapters.base import Adapter, AdapterMismatch, FetchError, Validation
-from placekeepers.adapters.bulk_files import AcsPoverty, CagpTax2025
+from placekeepers.adapters.bulk_files import AcsPoverty, AcsTenure, CagpTax2025
 from placekeepers.adapters.carto import CartoAccountsAdapter, CartoAdapter, Column
 from placekeepers.adapters.city_places import (
     LibraryLocations,
@@ -17,6 +17,11 @@ from placekeepers.adapters.city_places import (
 )
 from placekeepers.adapters.crashes import Crashes20072017, Crashes20162020, Crashes20202024
 from placekeepers.adapters.curated import MemorialNames
+from placekeepers.adapters.displacement import (
+    AssessmentValues,
+    MarketValueAnalysis,
+    RealEstateSales,
+)
 from placekeepers.adapters.environment import FemaFloodplain, StreetTrees
 from placekeepers.adapters.fatal_crashes import FatalCrashes
 from placekeepers.adapters.heat import HeatVulnerability
@@ -102,6 +107,12 @@ ADAPTERS: dict[str, type[Adapter]] = {
     # Public art (M3.2); OpenStreetMap's artworks come with osm_philadelphia
     "percent_for_art": PercentForArt,
     "wikidata_art": WikidataArt,
+    # The displacement watch (M4.1): home sales and assessed values for the whole city, renters
+    # by tract, and the City's Market Value Analysis
+    "real_estate_sales": RealEstateSales,
+    "assessment_values": AssessmentValues,
+    "acs_tenure": AcsTenure,
+    "market_value_analysis": MarketValueAnalysis,
 }
 
 
