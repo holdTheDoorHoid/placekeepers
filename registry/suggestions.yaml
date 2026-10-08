@@ -54,8 +54,8 @@
   release: v0.3
 # The placemaking lens (M3.4). Which lots get them is decided in
 # pipeline/src/placekeepers/derive/placemaking.py. A place to sit, a garden and art can raise
-# nearby prices as greening does, so the web app shows the displacement caution of docs/ETHICS.md
-# with them (web/src/config/suggestions.ts). The three reports to Philly311 are for physical
+# nearby prices as greening does, so the web app shows a placemaking version of the displacement
+# caution with them (web/src/config/suggestions.ts). The three reports to Philly311 are for physical
 # conditions on the street only, never about people and never to the police (docs/ETHICS.md).
 - id: seating_and_shade
   label: Make a place to sit in the shade

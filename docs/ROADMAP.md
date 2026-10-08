@@ -142,9 +142,9 @@ ready for the owner.
 - **M3.2 Public art layer** (done, 2026-10-05): Percent for Art, OpenStreetMap, Wikidata;
   deduplication; links out to Mural Arts. philart.net, the Association for Public Art and Magic
   Gardens wait for their permission (owner outreach).
-- **M3.3 Walkability and people**: EPA walkability index, our own OpenStreetMap measures
-  (intersection density, destinations within 10 minutes), people within a 5 minute walk, DVRPC
-  traffic stress and pedestrian network.
+- **M3.3 Walkability and people** (done, 2026-10-08): EPA walkability index, our own
+  OpenStreetMap measures (intersection density, destinations within 10 minutes), people within a 5
+  minute walk, DVRPC traffic stress and pedestrian network.
 - **M3.4 Placemaking lens and suggestions** (done, 2026-10-08): a lens on the lots from people and
   everyday places within walking distance, walkability, distance to a park, public art nearby and
   the City's commercial corridors; suggestions for a place to sit in the shade, a community garden

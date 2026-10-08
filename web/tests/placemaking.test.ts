@@ -8,7 +8,9 @@ import { render } from 'svelte/server';
 import { describe, expect, it } from 'vitest';
 import { loadRegistry } from '../plugins/registry.ts';
 import PlaceCard from '../src/components/places/PlaceCard.svelte';
-import { LENS_SUGGESTIONS, isGreening } from '../src/config/suggestions.ts';
+import { LENS_SUGGESTIONS, displacementCaution, isGreening, isPlacemaking } from '../src/config/suggestions.ts';
+import { printModel } from '../src/dossier/print.ts';
+import { gatherExport } from '../src/places/export.ts';
 import { IDLE_PARTS, buildDossier } from '../src/dossier/build.ts';
 import { displayedBreakdown } from '../src/map/lens.ts';
 import { lensChanges, lensShown } from '../src/map/lens-layers.ts';
@@ -21,6 +23,8 @@ import { strings } from '../src/strings.ts';
 const reg = loadRegistry();
 const read = (path: string) => JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8'));
 const CAUTION = 'Greening can raise nearby prices. Consider pairing it with protections.';
+const PLACEMAKING_CAUTION =
+  'New gardens, seating and art can make a block more sought after and raise nearby prices and rents. Pair them with protections for neighbors who rent or who are behind on taxes.';
 const lens = reg.lenses.find((l) => l.id === 'placemaking')!;
 const fixtureLots = read('../fixtures/sources/parcels.geojson').features as { properties: Record<string, unknown> }[];
 const PLACEMAKING = ['seating_and_shade', 'community_garden', 'art_request'];
@@ -153,9 +157,16 @@ describe('the placemaking lens', () => {
 });
 
 describe('the placemaking suggestions', () => {
-  it('carry the displacement caution for a place to sit, a garden and art, not for a report', () => {
-    for (const id of PLACEMAKING) expect(isGreening(id)).toBe(true);
-    for (const id of REPORTS) expect(isGreening(id)).toBe(false);
+  it('carry the placemaking caution for a place to sit, a garden and art, never the greening one', () => {
+    expect(strings.displacement.placemakingCaution).toBe(PLACEMAKING_CAUTION);
+    for (const id of PLACEMAKING) {
+      expect(isPlacemaking(id)).toBe(true);
+      expect(isGreening(id)).toBe(false);
+      expect(displacementCaution(id)).toBe(PLACEMAKING_CAUTION);
+    }
+    for (const id of REPORTS) expect(displacementCaution(id)).toBeNull();
+    // The greening suggestions keep theirs.
+    for (const id of ['clean_and_green', 'plant_shade_trees', 'cool_green_lot']) expect(displacementCaution(id)).toBe(CAUTION);
     const state = defaultState(reg, 'field');
     state.settings.vacant_parcels!.lens = 'placemaking';
     const store = {
@@ -168,7 +179,34 @@ describe('the placemaking suggestions', () => {
     const place = { ...describePlace(reg, state, placeOf('990000021')), distance: 20 };
     const card = textOf(render(PlaceCard, { props: { store, place, lensLabel: 'Placemaking', fromYou: false } }).body);
     expect(card).toContain('What you could do: Make a place to sit in the shade.');
-    expect(card).toContain(CAUTION);
+    expect(card).toContain(PLACEMAKING_CAUTION);
+    expect(card).not.toContain(CAUTION);
+    expect(card).toContain('Ways to protect neighbors');
+  });
+
+  it('put each caution beside its own suggestions on the printed lot page and in downloads', async () => {
+    const view = lotPage('990000007');
+    const actions = printModel(view).actions;
+    expect(actions.find((a) => a.label === 'Make a place to sit in the shade')?.caution).toBe(PLACEMAKING_CAUTION);
+    expect(actions.find((a) => a.label === 'Ask about a mural or other art')?.caution).toBe(PLACEMAKING_CAUTION);
+    expect(actions.find((a) => a.label === 'Clean and green this lot')?.caution).toBe(CAUTION);
+    expect(actions.map((a) => a.label)).toEqual(['Make a place to sit in the shade', 'Ask about a mural or other art', 'Clean and green this lot']);
+    const state = defaultState(reg, 'analysis');
+    state.settings.vacant_parcels!.lens = 'placemaking';
+    const result = await gatherExport({
+      places: [placeOf('990000021')],
+      registry: reg,
+      state,
+      manifest: null,
+      dataBase: '/data/',
+      siteUrl: 'https://example.org/placekeepers/',
+      title: 'Test',
+      now: new Date('2026-10-08T12:00:00Z'),
+      fetchImpl: async () => new Response('{}', { status: 404 }),
+    });
+    expect(result.rows[0]!.suggestion).toBe('Make a place to sit in the shade');
+    expect(result.notes).toContain(strings.export.placemakingLine(PLACEMAKING_CAUTION));
+    expect(result.notes.join(' ')).not.toContain(CAUTION);
   });
 
   it('need the land owner for a place to sit or a garden, and a wall owner for a mural', () => {

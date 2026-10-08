@@ -240,10 +240,12 @@ Greening suggestions (`clean_and_green` in this release, listed in
 shown with the caution of docs/ETHICS.md, "Greening can raise nearby prices. Consider pairing it
 with protections.", until the displacement watch overlay exists; the web app adds it wherever the
 suggestion is listed and in downloads. No registry key changes. From M3.4 (2026-10-08) the placemaking
-lens's `seating_and_shade`, `community_garden` and `art_request` are in that list too: a place to
-sit, a garden and art can raise nearby prices as greening does. Its three reports to Philly311
-(`report_dumping`, `report_dark_light`, `report_graffiti`) are not, and use only the route
-`report_to_311`.
+lens's `seating_and_shade`, `community_garden` and `art_request` carry a placemaking version of the
+caution in the same places, with the same link ("New gardens, seating and art can make a block more
+sought after and raise nearby prices and rents. Pair them with protections for neighbors who rent
+or who are behind on taxes."; `PLACEMAKING_SUGGESTIONS` in the same file). Its three reports to
+Philly311 (`report_dumping`, `report_dark_light`, `report_graffiti`) carry none, and use only the
+route `report_to_311`.
 
 ### `registry/routes.yaml` and `registry/partners.yaml`
 

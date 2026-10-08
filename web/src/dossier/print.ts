@@ -2,7 +2,7 @@
 // history and sources, ending with "not legal advice". It keeps the most important lines only,
 // so it fits one page; the full page is online.
 
-import { isGreening } from '../config/suggestions.ts';
+import { displacementCaution } from '../config/suggestions.ts';
 import { formatDate, strings } from '../strings.ts';
 import type { DossierView, TransferRow } from './build.ts';
 
@@ -81,7 +81,7 @@ export function printModel(view: DossierView, now: Date = new Date()): PrintMode
         warning: route?.warning ?? null,
         steps: route ? route.route.steps.slice(0, PRINT_LIMITS.steps) : [],
         cost: item.suggestion.cost,
-        caution: isGreening(item.suggestion.id) ? strings.displacement.caution : null,
+        caution: displacementCaution(item.suggestion.id),
       };
     }),
     owner: {

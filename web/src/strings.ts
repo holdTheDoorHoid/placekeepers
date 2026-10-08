@@ -449,6 +449,7 @@ export const strings = {
       'Owner names and mailing addresses are as the City publishes them. Every owner flag has a careful note and a protective next step: read them on the lot page before you act. Not legal advice.',
     scoreLine: (lens: string, weights: string) => `Scores use the ${lens} lens with these weights: ${weights}.`,
     greeningLine: (caution: string) => `About greening suggestions: ${caution}`,
+    placemakingLine: (caution: string) => `About gardens, seating and art: ${caution}`,
   },
 
   // Saved lists, kept only in this browser (src/places/lists.svelte.ts).
@@ -504,6 +505,10 @@ export const strings = {
   // (docs/ETHICS.md, "Displacement", word for word; docs/VERIFICATION.md, decision D12).
   displacement: {
     caution: 'Greening can raise nearby prices. Consider pairing it with protections.',
+    // The placemaking lens's version (M3.4), for a place to sit, a garden and art, in the same
+    // places with the same link (src/config/suggestions.ts).
+    placemakingCaution:
+      'New gardens, seating and art can make a block more sought after and raise nearby prices and rents. Pair them with protections for neighbors who rent or who are behind on taxes.',
     protections: 'Ways to protect neighbors',
   },
 

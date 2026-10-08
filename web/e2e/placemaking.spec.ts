@@ -1,5 +1,5 @@
 // The placemaking lens (M3.4): using it colors the lots by it, a lot's card leads with a place to
-// sit, a garden or art and carries the displacement caution, its lot page names the lens and every
+// sit, a garden or art and carries the placemaking caution, its lot page names the lens and every
 // factor behind the score, and a lot facing a block with an open request offers a report to
 // Philly311, never the police.
 
@@ -37,7 +37,10 @@ test.describe('placemaking', () => {
     await expect(card).toBeVisible();
     await expect(card).toContainText('for placemaking');
     await expect(card).toContainText('What you could do: Make a place to sit in the shade.');
-    await expect(card).toContainText('Greening can raise nearby prices. Consider pairing it with protections.');
+    await expect(card).toContainText(
+      'New gardens, seating and art can make a block more sought after and raise nearby prices and rents. Pair them with protections for neighbors who rent or who are behind on taxes.',
+    );
+    await expect(card).not.toContainText('Greening can raise nearby prices.');
     await card.locator('button').first().click();
     const lotPage = page.locator('article.dossier').first();
     await expect(lotPage).toContainText('Priority under the placemaking lens, the lens the map colors the lots by.');

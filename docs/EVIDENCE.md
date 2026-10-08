@@ -192,8 +192,9 @@ more people nearby to less violence (above), so the lens is about use and welcom
 
 Its suggestions to make a place to sit in the shade, start a community garden and ask about a
 mural carry **Not about violence**: they are worth doing for rest, food, beauty and meeting
-neighbors, and we make no violence claim for them. Like greening, they can raise nearby prices, so
-they carry the displacement caution (Risks we design for, below). Its reports to Philly311 carry
+neighbors, and we make no violence claim for them. Like greening, they can raise nearby prices and
+rents, so they carry a placemaking version of the displacement caution (Risks we design for,
+below). Its reports to Philly311 carry
 the badge of what they ask for: a dark street light **Moderate**, as for street lighting above
 (the same badge as the dark streetlight report at a bus stop), and dumping and graffiti **Not
 about violence**.

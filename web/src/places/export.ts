@@ -11,7 +11,7 @@
 // files; the page says so, and exports the places with the highest scores first.
 
 import { permissionFromRoutes, permissionText, type PermissionCode } from '../config/permission.ts';
-import { isGreening } from '../config/suggestions.ts';
+import { isGreening, isPlacemaking } from '../config/suggestions.ts';
 import type { Manifest } from '../data/manifest.ts';
 import { completeFlag, sortFlags } from '../dossier/flags.ts';
 import { loadCommon, loadShard, shardLocation } from '../dossier/shard.ts';
@@ -207,14 +207,17 @@ export async function gatherExport(input: ExportInput): Promise<ExportResult> {
   const weights = lens
     ? lens.factors.map((f) => `${f.label} ${input.state.weights[lens.id]?.[f.id] ?? f.default_weight}`).join(', ')
     : '';
-  // Any greening suggestion in the file brings the displacement caution with it (decision D12).
+  // Any greening suggestion in the file brings the displacement caution with it (decision D12),
+  // and any place to sit, garden or art its placemaking version (M3.4).
   const greening = new Set(input.registry.suggestions.filter((s) => isGreening(s.id)).map((s) => s.label));
+  const placemaking = new Set(input.registry.suggestions.filter((s) => isPlacemaking(s.id)).map((s) => s.label));
   const notesLines = [
     e.termsLine(`${input.siteUrl}terms/`),
     e.madeLine(rows.length, input.title, formatDate(input.now.toISOString()) ?? '', dataDate),
     e.ownerLine,
     ...(lens ? [e.scoreLine(lens.label, weights)] : []),
     ...(rows.some((row) => greening.has(row.suggestion)) ? [e.greeningLine(strings.displacement.caution)] : []),
+    ...(rows.some((row) => placemaking.has(row.suggestion)) ? [e.placemakingLine(strings.displacement.placemakingCaution)] : []),
   ];
   return {
     rows,

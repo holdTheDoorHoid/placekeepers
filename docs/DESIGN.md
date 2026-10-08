@@ -399,8 +399,13 @@ work of the City's list or Wikidata stands within a 5 minute walk and many peopl
 (15,666), linking only to Mural Arts' own request form, never copying its content; and **report
 the illegal dumping, the dark street light or the graffiti to Philly311** where a street block the
 lot faces (within 20 meters of it) has a request about it still open in the conditions layer's 90
-days (650, 1,082 and 69 lots). Under this lens the first three lead a lot's card. They carry the
-displacement caution of ETHICS.md word for word, like the greening suggestions. The reports never
+days (650, 1,082 and 69 lots). Under this lens the first three lead a lot's card. They carry a
+placemaking version of the displacement caution, wherever the greening caution would appear and
+with the same link to the ways to protect neighbors (decided by the orchestrator on 2026-10-08,
+because "greening" does not describe a bench or a mural): "New gardens, seating and art can make a
+block more sought after and raise nearby prices and rents. Pair them with protections for
+neighbors who rent or who are behind on taxes." The greening suggestions keep the ETHICS.md
+wording. The reports never
 lead, are about physical conditions only, and point to Philly311, never the police. A 311 count is
 never a factor: it says that people asked, not how often a condition occurs.
 
