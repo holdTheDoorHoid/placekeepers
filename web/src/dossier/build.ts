@@ -163,11 +163,12 @@ export interface RouteView {
 export interface ListingView extends ListingText {
   sideYard: RouteView | null;
   /**
-   * The displacement caution, where the displacement watch (M4.1) marks the lot's area
-   * (docs/ETHICS.md, "Displacement"). Always null until M4.1 is merged: set it from the
-   * dossier's displacement block then, and src/components/dossier/ListingBox.svelte shows it.
+   * The displacement caution (docs/ETHICS.md, "Displacement"; M4.1): the full card with the
+   * area's signs and the ways to protect neighbors where the displacement watch marks the lot's
+   * area (`watch`, from the map's `dw` or the dossier's `displacement` block), and the one line
+   * caution elsewhere (`watch` null). src/components/dossier/ListingBox.svelte shows it.
    */
-  displacement: string | null;
+  displacement: { caution: string; watch: WatchNote | null };
 }
 
 export interface SuggestionView {
@@ -538,12 +539,18 @@ export function buildDossier(input: DossierInput): DossierView {
   // repeated among the other routes.
   const owned = shardOwner?.cityOwned ?? null;
   const available = owned ? owned.available : !parcel && int(tile?.la) === 1;
+  // The displacement watch area the lot lies in (M4.1), for the listing box and the greening cards.
+  const watch = watchNote(registry, watchSigns(tile, parcel?.displacement?.signs));
   let listing: ListingView | null = null;
   if (available && !ownerChanged) {
     const sideYardRoute = owned?.sideYardEligible ? (parcelRoutes.find((r) => r.id === 'land_bank_side_yard') ?? null) : null;
     if (sideYardRoute) used.add(sideYardRoute.id);
     const words = listingText(owned?.status ?? null, cityListDate(manifest), sideYardRoute !== null);
-    listing = { ...words, sideYard: sideYardRoute ? routeView(sideYardRoute) : null, displacement: null };
+    listing = {
+      ...words,
+      sideYard: sideYardRoute ? routeView(sideYardRoute) : null,
+      displacement: { caution: strings.displacement.caution, watch },
+    };
   }
   const otherRoutes = parcelRoutes.filter((r) => !used.has(r.id)).map(routeView);
 
@@ -787,7 +794,7 @@ export function buildDossier(input: DossierInput): DossierView {
       links,
       provenance: parcel ? snapshotProvenance : tile ? { tone: 'snapshot', text: p.map } : provenanceOf(live.property, false, null, liveOn),
     },
-    actions: { listed, listing, suggestions: suggestionViews, otherRoutes, watch: watchNote(registry, watchSigns(tile, parcel?.displacement?.signs)) },
+    actions: { listed, listing, suggestions: suggestionViews, otherRoutes, watch },
     owner: {
       names,
       mailing: plain(property ? property.mailing : (shardOwner?.mailing ?? null)),

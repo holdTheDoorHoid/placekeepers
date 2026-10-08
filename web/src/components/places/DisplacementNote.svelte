@@ -9,13 +9,19 @@
   import type { WatchNote } from '../../displacement/watch.ts';
   import { formatDate, strings } from '../../strings.ts';
 
-  let { suggestionId, watch = null }: { suggestionId: string; watch?: WatchNote | null } = $props();
+  // `always` shows the caution whatever the suggestion: the box of a lot listed as available by
+  // the City's land agencies (src/components/dossier/ListingBox.svelte) carries it too.
+  let {
+    suggestionId = '',
+    watch = null,
+    always = false,
+  }: { suggestionId?: string; watch?: WatchNote | null; always?: boolean } = $props();
   // The site root from the build (not config, so the lot page also renders outside a browser).
   const responsiblyUrl = `${import.meta.env.BASE_URL}responsibly/`;
   const d = strings.displacement;
 </script>
 
-{#if isGreening(suggestionId)}
+{#if always || isGreening(suggestionId)}
   {#if watch}
     <div class="displacement watch" data-watch={watch.signs}>
       <p><strong>{d.caution}</strong></p>

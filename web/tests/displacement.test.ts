@@ -215,6 +215,29 @@ describe('the lot page, its print and downloads follow the same rule', () => {
     expect(page).not.toContain('displacement watch area');
   });
 
+  it("adds the caution to the box of a lot the City's land agencies list as available", () => {
+    const tile = PARCELS.find((f) => f.properties.id === '990000009')!.properties;
+    expect(tile.la).toBe(1);
+    // Outside every watch area: the one line caution in the box.
+    const outside = lotView('990000009', tile);
+    expect(outside.actions.listing!.displacement).toEqual({ caution: CAUTION, watch: null });
+    const box = (view: ReturnType<typeof lotView>) => {
+      const page = render(Dossier, { props: { view, manifest, showTitle: true, idPrefix: 'test' } }).body;
+      return textOf(page.slice(page.indexOf('class="listing'), page.indexOf('</aside>')));
+    };
+    expect(box(outside)).toContain(CAUTION);
+    expect(box(outside)).not.toContain('displacement watch area');
+    // Inside one (the map's `dw`, or the dossier's displacement block): the full card.
+    const inside = lotView('990000009', { ...tile, dw: SIGNS.assessments | SIGNS.renters });
+    expect(inside.actions.listing!.displacement.watch?.signs).toBe(SIGNS.assessments | SIGNS.renters);
+    expect(box(inside)).toContain(CAUTION);
+    expect(box(inside)).toContain("This place is in a displacement watch area, with signs that prices are rising here: the City's assessed values rising");
+    expect(box(inside)).toContain("The City's Homestead Exemption");
+    const printed = printModel(inside);
+    expect(printed.listing!.lines).toContain(CAUTION);
+    expect(printed.watch?.links.length).toBe(5);
+  });
+
   it('prints the area and each protection with its address', () => {
     const view = lotView('990000013');
     const model = printModel(view);

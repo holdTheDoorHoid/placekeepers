@@ -370,7 +370,9 @@ word, "This place is in a displacement watch area, with signs that prices are ri
 and links to the Neighborhood Gardens Trust, community land trusts, the City's Homestead Exemption,
 its Longtime Owner Occupants Program (LOOP) and help with a tangled title, each to its own official
 page with the day it was last checked. Outside every watch area the card keeps the one line caution
-(decision D12, kept by the orchestrator because it stays protective). The lot page, its print (which
+(decision D12, kept by the orchestrator because it stays protective). The box of a lot the City's
+land agencies list as available (issue #36) carries the same caution by the same rule. The lot
+page, its print (which
 lists each protection with its address) and downloads (a `displacement_watch` column and a note)
 follow the same rule, and a lot page opened from a link knows its area from its dossier. Shade
 trees at bus stops carry the caution too, which before M4.1 they did not.
