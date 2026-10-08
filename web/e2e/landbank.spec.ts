@@ -59,8 +59,19 @@ test.describe('lots listed as available by the City\'s land agencies', () => {
       'href',
       'https://phillylandbank.org/view-properties-map/',
     );
-    // The status in plain words, under Who owns it.
+    // The status in plain words, under Who owns it, said once.
     await expect(details).toContainText('Its status there: listed as available.');
+    await expect(details.getByText("The City's list of public property names the Philadelphia Land Bank as the owner.")).toHaveCount(1);
     await expectAccessible(page, 'a lot page listed as available');
+  });
+
+  test('a nearby card for a listed lot says so and starts with the side yard, as its lot page does', async ({ page }) => {
+    await openMap(page, `v=f&m=17.5/${LAND_BANK_LOT.lat}/${LAND_BANK_LOT.lng}`);
+    await page.getByRole('button', { name: /What you can do nearby/ }).click();
+    const card = page.locator(`article.card[data-place="${LAND_BANK_LOT.id}"]`);
+    await expect(card).toBeVisible();
+    await expect(card).toContainText("Listed as available by the City's land agencies");
+    await expect(card).toContainText('First legal step: Get it as a side or rear yard (next door owners only).');
+    await expectAccessible(page, 'a nearby card for a listed lot');
   });
 });

@@ -233,12 +233,15 @@ def build_parcels_from_model(
         listed_available_accounts,
         owner_type_codes,
         route_codes,
+        side_yard_accounts,
     )
 
     accounts = set(table.column("opa").to_pylist())
     owner_types = owner_type_codes(paths or {}, accounts)
-    # Listed as available by the City's land agencies (issue #36): `la` 1, absent otherwise.
+    # Listed as available by the City's land agencies (issue #36): `la` 1, absent otherwise; and
+    # `ly` 1 where such a lot may go to the neighbor next door as a side yard.
     listed = listed_available_accounts(paths or {}, accounts)
+    side_yard = side_yard_accounts(paths or {}, accounts)
     # The first route, as the dossier lists it (rt, a category).
     calls = {
         a: {"rs": r or 0}
@@ -269,6 +272,8 @@ def build_parcels_from_model(
             properties["n"] = n
             if opa in listed:
                 properties["la"] = 1
+            if opa in side_yard:
+                properties["ly"] = 1
             properties["sg"] = suggestion_ids(k, known_suggestions)
             for key, year in (("dy", dy), ("sy", sy), ("ny", ny)):
                 if year is not None:
@@ -324,10 +329,12 @@ def build_parcels_from_city_lists(
         listed_available_accounts,
         owner_type_codes,
         route_codes,
+        side_yard_accounts,
     )
 
     owner_types = owner_type_codes(paths, set(kinds))
     listed = listed_available_accounts(paths, set(kinds))
+    side_yard = side_yard_accounts(paths, set(kinds))
     routes = route_codes(paths, set(kinds), set(ctx.registry.routes))
     notes = []
     if no_account:
@@ -354,6 +361,8 @@ def build_parcels_from_city_lists(
             properties = {"id": account, "k": kind, "vc": 2, "ot": ot, "rt": rt, "lc": lc}
             if account in listed:
                 properties["la"] = 1
+            if account in side_yard:
+                properties["ly"] = 1
             properties["sg"] = suggestion_ids(kind, set(ctx.registry.suggestions))
             writer.write(properties, geometry_json(shapes[account]))
     return BuildResult(writer.count, notes)

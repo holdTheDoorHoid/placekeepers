@@ -9,7 +9,7 @@ easy, obvious one. Builders must follow this page; changes need the owner's agre
 | Risk | Example | Main safeguard |
 |---|---|---|
 | Deed theft | Someone hunts for neglected homes whose owner of record has died | Protective framing of owner flags, Fraud Guard and Tangled Title links on every flagged dossier |
-| Speculation | An investor uses the map as a shopping list of cheap, neglected lots | No acquisition price estimates, no "easiest to take" sort, no investor language, terms of use |
+| Speculation | An investor uses the map as a shopping list of cheap, neglected lots | No acquisition price estimates, no "easiest to take" sort, no investor language, terms of use. Lots listed as available show no price and no buy button (below). Displacement watch areas do show the middle sale price in dollars (owner, 2026-10-08): these are the City's public records, residents understand dollars better than percentages, and investors have better sources |
 | Conservatorship for profit | A petitioner uses Act 135 to take a family's house for a fee | Abuse warning on every conservatorship mention; legal aid first |
 | Stigma | A shooting layer read as "dangerous neighborhood" | Hexagon counts by default, care framing, no rankings of neighborhoods |
 | Over policing | Map used to direct enforcement at people | No police suggestions, ever; 311 suggestions cover physical conditions only |
@@ -73,6 +73,12 @@ Flags in the first release:
 acquisition. "Buy" buttons, except links to Land Bank programs meant for neighbors. Any outreach tool
 that sends letters to owners automatically.
 
+- Lots the City's land agencies list as available (issue #36; owner, 2026-10-08): no price and no
+  buy button; the side yard route first where the lot may go to the owner of the house next door;
+  no link but the Land Bank's own map and its programs for neighbors; and the Land Bank's note, in
+  our words, that it may turn down any sale or lease, even of a property it lists. The filter is
+  named for the City's status, never for how easy a lot would be to get.
+
 **Bulk export.** The owner chose not to restrict exports. CSV and GeoJSON exports include the flags,
 with a first line pointing to the terms of use.
 
@@ -113,6 +119,13 @@ Placekeepers never suggests calling the police or increasing enforcement. Its 31
 physical conditions (illegal dumping, broken lights, open vacant buildings). It does not map or
 suggest anything about people experiencing homelessness.
 
+- Parking problems reported with Philly Bike Action's Laser Vision app (issue #37; owner,
+  2026-10-08): counts only, per cell about a block across, shown only where a cell has at least 5
+  reports in 12 months (and a kind of problem only from 5 reports of its own). They are framed as
+  evidence for physical fixes to the street, such as curb extensions, bollards, daylighted corners,
+  protected bike lanes and loading zones, and the map never says a word about tickets, the Parking
+  Authority or drivers.
+
 ## Displacement
 
 Wherever a greening suggestion sits in a displacement watch area, the card adds: *"Greening can raise
@@ -123,15 +136,27 @@ and tangled title help.
 How the watch decides where the full card appears (M4.1, 2026-10-08; the method is in DESIGN.md
 section 5.3):
 
-- A displacement watch area is a census tract with at least two signs that prices are rising, at
-  least one of them about prices: home sale prices rising much faster than across the city, the
-  City's assessed values rising much faster than across the city, or the City's Market Value
-  Analysis finding prices climbing out of reach of longtime residents. The other two signs, many
-  homes bought by companies and at least three in five homes rented, count only beside one of
-  those.
-- Inside a watch area, every greening card (on the map's nearby list, a bus stop's details, the lot
-  page and its print, and downloads) shows the sentence above word for word, the area's signs, and
-  a link to each protection's own page with the day it was last checked.
+- A displacement watch area is a census tract with at least two signs, at least one of them from
+  prices themselves: sale prices, assessed values or the Market Value Analysis. The five signs are
+  home sale prices rising much faster than across the city, the City's assessed values rising much
+  faster than across the city, the City's Market Value Analysis finding prices climbing out of
+  reach of longtime residents, many homes bought by companies, and at least three in five homes
+  rented.
+- Inside a watch area, the full card appears once per page or view (owner, 2026-10-08): the
+  sentence above word for word, the area's signs, and a link to each protection's own page with the
+  day it was last checked. A lot page and its print show it once, at the top of "What you can do",
+  and the map's list of nearby places once, above its cards. There, every greening card, every
+  placemaking card and the box of a lot listed as available carries the one line caution, word for
+  word, pointing to that full card; in the list of nearby places, each card also names its own
+  area's signs. A card shown on its own, such as a bus stop's details, carries the full card
+  itself. Downloads mark each place in a watch area and list the protections once, in their notes.
+- Cards for a place to sit in the shade, a community garden or art carry their own caution by the
+  greening cards' rule (orchestrator, 2026-10-08, written here with the owner's agreement),
+  because "greening" does not describe a bench or a mural: *"New gardens, seating and art can make
+  a block more sought after and raise nearby prices and rents. Pair them with protections for
+  neighbors who rent or who are behind on taxes."* Inside a watch area, they and the box of a lot
+  the City's land agencies list as available point to the full card as the greening cards do;
+  outside every watch area they keep the one line with the same link.
 - Outside every watch area, every greening card keeps the one line caution, the same sentence with
   a link to the ways to protect neighbors (decision D12, kept by the orchestrator on 2026-10-08
   because it stays protective).

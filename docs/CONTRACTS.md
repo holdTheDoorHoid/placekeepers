@@ -470,6 +470,7 @@ Short property names keep tiles small. Integers are preferred to strings.
 | `lc` | int | 1 if maintained by PHS LandCare |
 | `rt` | int | the first lawful step to get permission, as a category (codes below) |
 | `la` | int | 1 when the City's land agencies list the parcel as available (below); absent otherwise. Added 2026-10-08, issue #36 |
+| `ly` | int | 1 when such a listed parcel may go to the owner of the house next door as a side yard (below); absent otherwise. Added 2026-10-08 |
 | `rs` | int | the reasons, as bits (below); added 2026-10-04 by M1.2 |
 | `n` | int | how many independent records agree that it is vacant, for its kind (lot or building) |
 | `dy`, `sy`, `ny` | int | year of the demolition (bit 4), the City's clean and seal (bit 7), or the new construction permit (bits 12 and 13); present only with those bits |
@@ -536,6 +537,13 @@ the same. It names the City's status, never how easy a lot would be to get. It i
 in the layer (101 of the 1,639 listed parcels with an account on 2026-10-04: 86 not in the model's
 table and 15 it leaves out), and its lot page still says so. Built from the 2026-10-04 snapshots,
 1,538 parcels in the layer carry it, adding about 22 kB (0.2 percent) to `tiles/lots.pmtiles`.
+
+`ly` (added 2026-10-08, after the v0.3 review): 1 on a parcel with `la` that the City also marks
+eligible for a side yard, exactly when its dossier's `owner.city_owned` has `available` and
+`side_yard_eligible` both true (`side_yard_accounts` in `placekeepers.publish.dossiers`, by the
+rule of `placekeepers.derive.city_list`). The nearby cards use it to make the side yard route
+the first step of such a lot, as its lot page does; it never changes `rt`. Built from the
+2026-10-04 snapshots, 1,222 of the 1,538 listed parcels in the layer carry it.
 
 `rt`, the first lawful step to get permission for the parcel (added 2026-10-04): the first route
 the parcel's dossier lists (`placekeepers.derive.routes.routes_for`, from the same owner type, owner
@@ -622,7 +630,9 @@ up), which keeps the tiles about 5 percent smaller:
 
 From M3.4 `sg` may also hold the placemaking suggestions, after the first ones and the heat
 suggestions, for vacant lots only, in this order: `seating_and_shade` where `f_neighbors` is at
-least 50; `community_garden` where `f_park` is at least 50; `art_request` where no work of the two
+least 50; `community_garden` where `f_park` is at least 50 and at least 1,000 people live within
+a 5 minute walk (`people_5min` in `walk_factors.parquet`, above; changed 2026-10-08, before it was
+`f_park` alone); `art_request` where no work of the two
 art lists stands within 400 meters and `f_neighbors` is at least 50; then `report_dumping`,
 `report_dark_light` and `report_graffiti` where a street block within 20 meters of the lot's shape
 (a block of the `segments` layer, the street safety network) has a request of that kind still open

@@ -803,6 +803,49 @@ def test_the_lots_layer_marks_lots_listed_as_available(built) -> None:
     la = {f["properties"]["id"]: f["properties"].get("la") for f in layer["features"]}
     assert la["373000001"] == 1
     assert {account for account, value in la.items() if value is not None} == {"373000001"}
+    # `ly`: 1 where such a lot may go to the neighbor next door as a side yard, as its dossier says.
+    ly = {f["properties"]["id"]: f["properties"].get("ly") for f in layer["features"]}
+    assert ly["373000001"] == 1
+    assert {account for account, value in ly.items() if value is not None} == {"373000001"}
+    owned = parcel(out, "373000001")["owner"]["city_owned"]
+    assert owned["available"] is True and owned["side_yard_eligible"] is True
+
+
+def test_only_listed_lots_marked_eligible_get_the_side_yard_mark(context_factory) -> None:
+    from placekeepers.derive.lenses import current_snapshot
+    from placekeepers.publish.dossiers import side_yard_accounts
+
+    ctx = context_factory(now=NOW)
+    rows = {
+        # account: (status, side yard eligible)
+        "100000001": ("Owned - Available", "Yes"),
+        "100000002": ("Owned - Available (not for SY)", "Yes"),
+        "100000003": ("Owned - Available", "No"),
+        "100000004": ("Owned - On Hold", "Yes"),
+        "100000005": ("Owned - Available (Garden Agreement)", "YES"),
+    }
+    install_snapshot(
+        ctx,
+        "city_owned_property",
+        pa.table(
+            {
+                "opabrt": [f"{a} " for a in rows],
+                "agency": ["PLB"] * len(rows),
+                "status_1": [v[0] for v in rows.values()],
+                "sideyardeligible": [v[1] for v in rows.values()],
+                "location": [None] * len(rows),
+                "geometry": [wkb(box(LNG0, LAT0, LNG0 + 0.0001, LAT0 + 0.0001))] * len(rows),
+            }
+        ),
+        geometry=True,
+        fetched_at=FETCHED,
+    )
+    paths = {"city_owned_property": current_snapshot(ctx, "city_owned_property")}
+    found = side_yard_accounts(paths, set(rows) | {"100000009"})
+    assert found == {"100000001", "100000005"}
+    # Only accounts on the map count, and without the list there is no mark.
+    assert side_yard_accounts(paths, {"100000003", "100000005"}) == {"100000005"}
+    assert side_yard_accounts({}, set(rows)) == set()
 
 
 # The map's first step (`rt`) and the dossier's first route always agree.

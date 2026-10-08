@@ -30,8 +30,8 @@ Action's Laser Vision app.
   the lot faces has a request still open, report illegal dumping (650 lots), a dark street light
   (1,082) or graffiti (69) to Philly311. Reports are about physical conditions only, never for the
   police. The sixth, start a community garden, goes to lots far from a park and only where at
-  least 1,000 people live within a 5 minute walk, so it is not suggested where almost no one
-  lives.
+  least 1,000 people live within a 5 minute walk (19,762 lots), so it is not suggested where almost
+  no one lives.
 - The mural suggestion links to Mural Arts Philadelphia's own wall request page and copies
   nothing from its site. A new route points to Feet First Philly's public space mini grants,
   $500 to $2,500.
@@ -100,13 +100,15 @@ Action's Laser Vision app.
   vacant lots on the map lie in one (26,227 of 40,776 when measured on October 8, 2026).
 - It is a caution, never a ranking. It changes no score and no order, every area is drawn the same
   way, and it says "signs that prices are rising here," never that a neighborhood is changing.
-- Inside a watch area, every greening suggestion, every placemaking suggestion, the shade trees
-  suggested at bus stops and the box of a listed lot add the area's signs and links to the
-  Neighborhood Gardens Trust, community land trusts, the City's Homestead Exemption and Longtime
-  Owner Occupants Program, and help with a tangled title, each with the day its page was last
-  checked. Outside every area the card keeps a one line caution. Lot pages, their print layout and
-  the downloads follow the same rule, and a lot page shows the full card once instead of repeating
-  it on every suggestion.
+- Inside a watch area, the map shows the area's signs and links to the Neighborhood Gardens Trust,
+  community land trusts, the City's Homestead Exemption and Longtime Owner Occupants Program, and
+  help with a tangled title, each with the day its page was last checked. It shows this full card
+  once per page: at the top of "What you can do" on a lot page and its print layout, and once above
+  the list of nearby places. Every greening suggestion, every placemaking suggestion, the shade
+  trees suggested at bus stops and the box of a listed lot keep a one line caution that points to
+  it; a card in the list of nearby places also names its own area's signs, and a bus stop's own
+  details keep the whole card. Downloads mark each place in a watch area and list the protections
+  once. Outside every area the card keeps a one line caution.
 - Tapping an area says what it cannot tell: signs in public records are not a forecast, and they
   cannot show who has moved away or why, or what rents are. Buyers' names are read only to tell a
   company from a person and are never kept.
@@ -120,6 +122,8 @@ Action's Laser Vision app.
   "someone has applied"), and for a listed lot a box with the date of the list, the side yard
   program first where the lot is eligible, the Land Bank's note that it can turn down any sale or
   lease, and a link to its map.
+- A card in "What you can do nearby" says "Listed as available by the City's land agencies" and,
+  where the lot is eligible, starts with the side yard program, as the lot page does.
 - No prices, no sort or score by how easy a lot would be to get, and no buy buttons, only links
   to the Land Bank's own map and programs for neighbors (docs/ETHICS.md).
 - The list carries no dates of its own, so the site dates it by the day we fetched it.

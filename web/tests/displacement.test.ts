@@ -8,6 +8,7 @@ import { readFileSync } from 'node:fs';
 import { render } from 'svelte/server';
 import { describe, expect, it } from 'vitest';
 import { loadRegistry } from '../plugins/registry.ts';
+import WatchCard from '../src/components/displacement/WatchCard.svelte';
 import WatchDetails from '../src/components/displacement/WatchDetails.svelte';
 import Dossier from '../src/components/dossier/Dossier.svelte';
 import DossierPrint from '../src/components/dossier/DossierPrint.svelte';
@@ -15,7 +16,7 @@ import PlaceCard from '../src/components/places/PlaceCard.svelte';
 import StopCard from '../src/components/transit/StopCard.svelte';
 import TransitStopDetails from '../src/components/transit/TransitStopDetails.svelte';
 import { parseStopTable } from '../src/transit/answers.ts';
-import { GREENING_SUGGESTIONS } from '../src/config/suggestions.ts';
+import { GREENING_SUGGESTIONS, displacementCaution } from '../src/config/suggestions.ts';
 import { parseManifest } from '../src/data/manifest.ts';
 import {
   PROTECTION_ROUTES,
@@ -23,6 +24,7 @@ import {
   PRICE_SIGNS,
   describeArea,
   isWatch,
+  listWatch,
   protectionLinks,
   signsText,
   tractNumber,
@@ -191,6 +193,40 @@ describe('greening cards in and out of watch areas', () => {
     expect(inside).toContain('displacement watch area, with signs that prices are rising here: home prices rising faster than across the city; and at least three in five homes rented');
   });
 
+  it('shows the full card once above a list of nearby places, and each card there points to it', () => {
+    const inside = nearby.filter((p) => p.suggestions[0] && displacementCaution(p.suggestions[0].id) && watchSigns(p.properties) !== null);
+    const outside = nearby.filter((p) => p.suggestions[0] && displacementCaution(p.suggestions[0].id) && watchSigns(p.properties) === null);
+    expect(inside.length).toBeGreaterThan(1);
+    expect(outside.length).toBeGreaterThan(0);
+    const cards = (places: typeof nearby) => places.map((p) => ({ suggestionId: p.suggestions[0]?.id, properties: p.properties }));
+    // A list with places in watch areas: the card above it, with each caution once.
+    const list = listWatch(registry, cards([...inside, ...outside]))!;
+    expect(list.text).toBe(strings.displacement.listIntro);
+    expect(list.links.map((l) => l.id)).toEqual([...PROTECTION_ROUTES]);
+    expect(new Set(list.cautions).size).toBe(list.cautions.length);
+    expect(list.cautions).toContain(CAUTION);
+    // A list with no place in a watch area, or only a building to seal there, needs none.
+    expect(listWatch(registry, cards(outside))).toBeNull();
+    const sealing = nearby.filter((p) => p.suggestions[0]?.id === 'seal_abandoned_building' && p.properties.dw !== undefined);
+    expect(sealing.length).toBeGreaterThan(0);
+    expect(listWatch(registry, cards(sealing))).toBeNull();
+    // Each card in a watch area keeps its caution and its own area's signs, and points to the card
+    // above instead of repeating the protections.
+    const jumping = (place: (typeof nearby)[number]) =>
+      textOf(render(PlaceCard, { props: { store: fakeStore, place, lensLabel: 'Violence reduction', fromYou: false, watchJump: 'pk-places-watch' } }).body);
+    const text = jumping(inside[0]!);
+    expect(text).toContain(CAUTION);
+    expect(text).toContain(watchNote(registry, watchSigns(inside[0]!.properties))!.text);
+    expect(text).toContain(strings.displacement.jumpToProtections);
+    expect(text).not.toContain('Homestead');
+    // Outside every watch area a card is unchanged.
+    expect(jumping(outside[0]!)).toContain(`${CAUTION} Ways to protect neighbors`);
+    // The card above, as the list shows it.
+    const above = render(WatchCard, { props: { id: 'pk-places-watch', heading: strings.displacement.watchTitle, level: 3, cautions: list.cautions, text: list.text, links: list.links } }).body;
+    expect(above).toContain('id="pk-places-watch"');
+    expect(textOf(above)).toContain("The City's Homestead Exemption");
+  });
+
   it('covers every greening suggestion', () => {
     for (const id of GREENING_SUGGESTIONS) expect(registry.suggestions.some((s) => s.id === id), id).toBe(true);
   });
@@ -205,6 +241,58 @@ describe('the lot page, its print and downloads follow the same rule', () => {
       expect(page).toContain('displacement watch area');
       expect(page).toContain("The City's Homestead Exemption");
     }
+  });
+
+  it('shows the full card exactly once on a lot page in a watch area, and each card points to it', () => {
+    // 990000013 on the map lists four suggestions with a caution: clean and green, green the lot to
+    // cool the block, a place to sit in the shade and a community garden (its page opened from the
+    // map before its dossier has arrived).
+    const tile = PARCELS.find((f) => f.properties.id === '990000013')!.properties;
+    const view = buildDossier({
+      opa: '990000013',
+      registry,
+      state: defaultState(registry, 'analysis'),
+      manifest,
+      shard: { status: 'loading' },
+      tile: { ...tile },
+      live: IDLE_PARTS,
+      liveOn: false,
+      center: [-75.1557, 39.9851],
+      now: new Date('2026-10-04T18:30:00Z'),
+    });
+    const cautioned = view.actions.suggestions.filter((item) => displacementCaution(item.suggestion.id) !== null);
+    expect(cautioned.length).toBe(4);
+    const markup = render(Dossier, { props: { view, manifest, showTitle: true, idPrefix: 'test' } }).body;
+    const page = textOf(markup);
+    const count = (text: string) => page.split(text).length - 1;
+    expect(count('This place is in a displacement watch area')).toBe(1);
+    expect(count(strings.displacement.protectionsTitle)).toBe(1);
+    for (const link of protectionLinks(registry)) expect(markup.split(`href="${link.url}"`).length - 1, link.id).toBe(1);
+    expect(count("The City's Longtime Owner Occupants Program (LOOP)")).toBe(1);
+    expect(markup.match(/data-watch-card/g)?.length).toBe(1);
+    expect(markup).toContain('id="test-watch"');
+    // Near the top of "What you can do": before the first suggestion, with both cautions.
+    const actions = page.slice(page.indexOf('What you can do'));
+    expect(actions.indexOf('Displacement watch')).toBeLessThan(actions.indexOf(cautioned[0]!.suggestion.label));
+    expect(actions.indexOf(CAUTION)).toBeLessThan(actions.indexOf(cautioned[0]!.suggestion.label));
+    expect(actions.indexOf(strings.displacement.placemakingCaution)).toBeLessThan(actions.indexOf(cautioned[0]!.suggestion.label));
+    // Every greening and placemaking card keeps its one line caution, word for word, and a button
+    // to the full card.
+    expect(markup.match(/data-watch-jump/g)?.length).toBe(4);
+    expect(count(strings.displacement.jumpToWatch)).toBe(4);
+    for (const item of cautioned) {
+      const card = page.slice(page.indexOf(item.suggestion.label));
+      expect(card.indexOf(displacementCaution(item.suggestion.id)!)).toBeLessThan(card.indexOf(strings.displacement.jumpToWatch));
+    }
+    // The report to Philly311 and other cards carry nothing.
+    expect(count(CAUTION)).toBe(1 + view.actions.suggestions.filter((item) => displacementCaution(item.suggestion.id) === CAUTION).length);
+  });
+
+  it('keeps the full card on a card shown alone, such as a bus stop, and changes nothing outside the watch', () => {
+    const outside = render(Dossier, { props: { view: lotView('990000005'), manifest, showTitle: true, idPrefix: 'test' } }).body;
+    expect(outside).not.toContain('data-watch-card');
+    expect(outside).not.toContain('data-watch-jump');
+    expect(textOf(outside)).toContain(`${CAUTION} Ways to protect neighbors`);
   });
 
   it('keeps the one line on a lot page outside every watch area', () => {
@@ -227,26 +315,40 @@ describe('the lot page, its print and downloads follow the same rule', () => {
     };
     expect(box(outside)).toContain(CAUTION);
     expect(box(outside)).not.toContain('displacement watch area');
-    // Inside one (the map's `dw`, or the dossier's displacement block): the full card.
+    // Inside one (the map's `dw`, or the dossier's displacement block): the one line caution
+    // pointing to the full card, shown once above the box at the top of "What you can do".
     const inside = lotView('990000009', { ...tile, dw: SIGNS.assessments | SIGNS.renters });
     expect(inside.actions.listing!.displacement.watch?.signs).toBe(SIGNS.assessments | SIGNS.renters);
     expect(box(inside)).toContain(CAUTION);
-    expect(box(inside)).toContain("This place is in a displacement watch area, with signs that prices are rising here: the City's assessed values rising");
-    expect(box(inside)).toContain("The City's Homestead Exemption");
+    expect(box(inside)).toContain(strings.displacement.jumpToWatch);
+    const page = textOf(render(Dossier, { props: { view: inside, manifest, showTitle: true, idPrefix: 'test' } }).body);
+    const full = "This place is in a displacement watch area, with signs that prices are rising here: the City's assessed values rising";
+    expect(page.split(full).length - 1).toBe(1);
+    expect(page.indexOf(full)).toBeLessThan(page.indexOf(strings.dossier.listing.title));
+    expect(page.split("The City's Homestead Exemption").length - 1).toBe(1);
     const printed = printModel(inside);
     expect(printed.listing!.lines).toContain(CAUTION);
+    expect(printed.listing!.lines).toContain(strings.displacement.printSeeAbove);
+    expect(printed.listing!.lines.join(' ')).not.toContain('This place is in a displacement watch area');
     expect(printed.watch?.links.length).toBe(5);
   });
 
-  it('prints the area and each protection with its address', () => {
+  it('prints the area and each protection with its address, once, at the top of what you can do', () => {
     const view = lotView('990000013');
     const model = printModel(view);
     expect(model.actions.find((a) => a.label === 'Clean and green this lot')?.caution).toBe(CAUTION);
     expect(model.watch?.links.some((l) => l.includes('https://www.phila.gov/'))).toBe(true);
+    expect(model.watchPointer).toBe(strings.displacement.printSeeAbove);
     const sheet = textOf(render(DossierPrint, { props: { view, now: new Date('2026-10-04T18:30:00Z') } }).body);
     expect(sheet).toContain('Displacement watch');
-    expect(sheet).toContain('https://ngtrust.org/preservation/');
-    expect(printModel(lotView('990000005')).watch).toBeNull();
+    expect(sheet.split('https://ngtrust.org/preservation/').length - 1).toBe(1);
+    expect(sheet.split('This place is in a displacement watch area').length - 1).toBe(1);
+    const actions = sheet.slice(sheet.indexOf('What you can do'));
+    expect(actions.indexOf('Displacement watch')).toBeLessThan(actions.indexOf('Clean and green this lot'));
+    expect(actions).toContain(`${CAUTION} ${strings.displacement.printSeeAbove}`);
+    const outside = printModel(lotView('990000005'));
+    expect(outside.watch).toBeNull();
+    expect(outside.watchPointer).toBeNull();
   });
 
   it('marks places in watch areas in downloads and adds the protections to the notes', async () => {

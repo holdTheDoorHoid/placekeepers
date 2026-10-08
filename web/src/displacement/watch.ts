@@ -3,11 +3,13 @@
 // caution, never a priority: it changes no score and no order.
 //
 // Where a greening suggestion sits in a watch area, its card adds the ETHICS.md text with the
-// area's signs and links to ways of protecting neighbors; elsewhere the card keeps the one line
-// caution (decision D12 of docs/VERIFICATION.md, kept by the orchestrator as protective). A place
-// knows its watch area from `dw` on its tile (lots and SEPTA's stops) or `displacement.signs` in
-// its lot dossier, the same bits as the area's `w`.
+// area's signs and links to ways of protecting neighbors, shown once per lot page or list of
+// places with each card there pointing to it (owner, 2026-10-08); elsewhere the card keeps the
+// one line caution (decision D12 of docs/VERIFICATION.md, kept by the orchestrator as
+// protective). A place knows its watch area from `dw` on its tile (lots and SEPTA's stops) or
+// `displacement.signs` in its lot dossier, the same bits as the area's `w`.
 
+import { displacementCaution } from '../config/suggestions.ts';
 import type { Manifest } from '../data/manifest.ts';
 import type { Registry, Route } from '../registry/types.ts';
 import { formatNumber, strings } from '../strings.ts';
@@ -89,6 +91,45 @@ export interface WatchNote {
 export function watchNote(registry: Registry, bits: number | null): WatchNote | null {
   if (bits === null) return null;
   return { signs: bits, text: strings.displacement.inWatch(signsText(bits)), links: protectionLinks(registry) };
+}
+
+// Once per page or list (decided by the owner on 2026-10-08, decision D5 of
+// docs/VERIFICATION_V0_3.md): a lot page, its print and the list of nearby places show the full
+// card once, and every card there with a caution keeps the one line pointing to it.
+
+/**
+ * The caution sentences the full card shown once carries: one of each kind, in the order the
+ * cards come. The box of a lot listed as available carries the greening caution.
+ */
+export function cautionsFor(suggestionIds: readonly (string | undefined)[], listing = false): string[] {
+  const out: string[] = [];
+  const add = (caution: string | null) => {
+    if (caution && !out.includes(caution)) out.push(caution);
+  };
+  if (listing) add(strings.displacement.caution);
+  for (const id of suggestionIds) if (id) add(displacementCaution(id));
+  return out;
+}
+
+/** What the full card above a list of nearby places says, or null when no card there needs it. */
+export interface ListWatch {
+  cautions: string[];
+  text: string;
+  links: ProtectionLink[];
+}
+
+/**
+ * The full card shown once above a list of places, when at least one of its cards lies in a watch
+ * area and carries a caution. Each card is its first suggestion's id and its tile.
+ */
+export function listWatch(registry: Registry, cards: readonly { suggestionId: string | undefined; properties: Record<string, unknown> }[]): ListWatch | null {
+  const watched = cards.filter((card) => card.suggestionId && displacementCaution(card.suggestionId) && watchSigns(card.properties) !== null);
+  if (watched.length === 0) return null;
+  return {
+    cautions: cautionsFor(watched.map((card) => card.suggestionId)),
+    text: strings.displacement.listIntro,
+    links: protectionLinks(registry),
+  };
 }
 
 // The manifest's `displacement` block -------------------------------------------------------

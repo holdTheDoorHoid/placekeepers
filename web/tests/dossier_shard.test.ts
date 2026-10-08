@@ -187,6 +187,8 @@ describe('reading a shard', () => {
       expect(PERMISSION_ROUTE[tile.rt as PermissionCode], opa).toBe(first);
       // The map marks the lots the City's land agencies list as available, as the dossier does.
       expect(tile.la === 1, opa).toBe(parcel.owner?.cityOwned?.available === true);
+      // And those of them that may go to the neighbor next door as a side yard.
+      expect(tile.ly === 1, opa).toBe(parcel.owner?.cityOwned?.available === true && parcel.owner?.cityOwned?.sideYardEligible === true);
     }
   });
 

@@ -151,8 +151,9 @@ is not published here; the routes use the office's general address.
 **Placemaking (added 2026-10-08 by M3.4).** A vacant lot can offer six more suggestions, each with
 a route in `registry/routes.yaml`: a place to sit in the shade (the lot's permission route, then
 Feet First Philly's public space mini grant, `public_space_mini_grant`, and the free trees of
-TreePhilly and the City), a community garden (the lot's permission route, with PHS, the
-Neighborhood Gardens Trust and the Garden Justice Legal Initiative), a mural (`mural_arts_wall_request`:
+TreePhilly and the City), a community garden where the lot is far from a park and at least 1,000
+people live within a 5 minute walk (the lot's permission route, with PHS, the Neighborhood Gardens
+Trust and the Garden Justice Legal Initiative), a mural (`mural_arts_wall_request`:
 the wall's owner fills in the "Want a mural on your wall?" form on Mural Arts' contact page,
 checked 2026-10-08; nothing of Mural Arts' is copied), and three reports to Philly311 about illegal
 dumping, a dark street or alley light or graffiti on a block the lot faces (`report_to_311`,

@@ -204,6 +204,8 @@ export const strings = {
     confidenceTitle: 'How sure we are',
     ownerTitle: 'Owner type',
     landcare: 'Already maintained by PHS LandCare',
+    // A lot the City's land agencies list as available (issue #36), on its nearby card.
+    listed: "Listed as available by the City's land agencies",
     suggestionsTitle: 'Suggestions',
     clearSelection: 'Clear selection',
     selectedTitle: 'Selected place',
@@ -520,6 +522,12 @@ export const strings = {
     protections: 'Ways to protect neighbors',
     inWatch: (signs: string) => `This place is in a displacement watch area, with signs that prices are rising here: ${signs}.`,
     protectionsTitle: 'Protections to pair it with',
+    // A lot page, or a list of nearby places, shows the full card once (decided by the owner on
+    // 2026-10-08), and each card there with a caution points to it.
+    jumpToWatch: 'See the signs here and the ways to protect neighbors',
+    jumpToProtections: 'See the ways to protect neighbors',
+    listIntro: 'Some of these places are in displacement watch areas, with signs in public records that prices are rising there. Each of their cards names the signs of its area.',
+    printSeeAbove: 'See "Displacement watch" above.',
     protectionLabels: {
       neighborhood_gardens_trust: 'Neighborhood Gardens Trust',
       community_land_trust: 'Community land trusts',
@@ -577,7 +585,8 @@ export const strings = {
     exportLine: (caution: string, links: string) => `About greening in displacement watch areas: ${caution} Ways to protect neighbors: ${links}`,
     placemakingExportLine: (caution: string, links: string) =>
       `About gardens, seating and art in displacement watch areas: ${caution} Ways to protect neighbors: ${links}`,
-    printTitle: 'Displacement watch',
+    // The heading of the full card shown once on a lot page, its print and a list of places.
+    watchTitle: 'Displacement watch',
   },
 
   evidence: {

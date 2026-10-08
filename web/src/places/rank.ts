@@ -27,14 +27,20 @@ export interface RankedPlace extends PlaceInput {
   landcare: boolean;
   /** The first step to get permission (parcels.rt), or null when the tiles do not carry it. */
   permission: PermissionCode | null;
+  /** Listed as available by the City's land agencies (parcels.la, issue #36). */
+  listed: boolean;
+  /** Listed, and the City marks it eligible for a side yard (parcels.ly). */
+  sideYard: boolean;
   why: ScoreExplanation | null;
   /** Rounded score from 0 to 100, or null. */
   score: number | null;
   suggestions: Suggestion[];
   /**
    * The first lawful step for the first suggestion: for a suggestion about using the land (such as
-   * clean and green), the route to permission that fits the owner (`rt`); for one that needs no
-   * permission (such as reporting an open building to 311), the suggestion's own first route.
+   * clean and green), the route to permission that fits the owner (`rt`), or the side yard route
+   * for a listed lot the City marks eligible for one, as its lot page leads with it; for one that
+   * needs no permission (such as reporting an open building to 311), the suggestion's own first
+   * route.
    */
   firstStep: { route: Route; step: string } | null;
   /** The suggestion needs permission and City records name no owner to ask (`rt` 0). */
@@ -85,14 +91,25 @@ export function needsPermission(suggestion: Suggestion): boolean {
   return suggestion.routes.some((id) => PERMISSION_ROUTES.has(id));
 }
 
-/** The first lawful step for a suggestion at a place with this first step to get permission. */
+/** The route a listed lot leads with when it may go to the neighbor next door (issue #36). */
+export const SIDE_YARD_ROUTE = 'land_bank_side_yard';
+
+/**
+ * The first lawful step for a suggestion at a place with this first step to get permission. On a
+ * lot listed as available that the City marks eligible for a side yard (`sideYard`), a suggestion
+ * about using the land starts with the side yard route, as the lot page's listing box does; `rt`
+ * itself passes over that route, which is for the household next door only.
+ */
 export function firstStepFor(
   reg: Registry,
   suggestion: Suggestion | undefined,
   permission: PermissionCode | null,
+  sideYard = false,
 ): { firstStep: { route: Route; step: string } | null; noRoute: boolean } {
   if (!suggestion) return { firstStep: null, noRoute: false };
   let routeId: string | null | undefined;
+  const sideYardRoute = sideYard && needsPermission(suggestion) ? reg.routes.find((r) => r.id === SIDE_YARD_ROUTE) : undefined;
+  if (sideYardRoute?.steps[0]) return { firstStep: { route: sideYardRoute, step: sideYardRoute.steps[0] }, noRoute: false };
   if (needsPermission(suggestion)) {
     if (permission === null) return { firstStep: null, noRoute: false };
     routeId = PERMISSION_ROUTE[permission];
@@ -107,6 +124,8 @@ export function describePlace(reg: Registry, state: AppState, place: PlaceInput)
   const why = lens ? explainScore(lens, state.weights[lens.id], place.properties) : null;
   const suggestions = suggestionsForLens(placeSuggestions(reg, state, place.properties), lens);
   const permission = permissionCode(place.properties);
+  const listed = int(place.properties.la) === 1;
+  const sideYard = listed && int(place.properties.ly) === 1;
   return {
     ...place,
     kind: int(place.properties.k) ?? 0,
@@ -114,10 +133,12 @@ export function describePlace(reg: Registry, state: AppState, place: PlaceInput)
     ownerType: int(place.properties.ot),
     landcare: int(place.properties.lc) === 1,
     permission,
+    listed,
+    sideYard,
     why,
     score: wholeScore(why?.score),
     suggestions,
-    ...firstStepFor(reg, suggestions[0], permission),
+    ...firstStepFor(reg, suggestions[0], permission, sideYard),
   };
 }
 

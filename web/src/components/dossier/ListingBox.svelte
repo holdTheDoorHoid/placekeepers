@@ -7,18 +7,19 @@
   import DisplacementNote from '../places/DisplacementNote.svelte';
   import RouteDetails from './RouteDetails.svelte';
 
-  let { listing }: { listing: ListingView } = $props();
+  // `jumpTo`: the full displacement card shown once at the top of "What you can do", if any.
+  let { listing, jumpTo = null }: { listing: ListingView; jumpTo?: string | null } = $props();
 </script>
 
 <aside class="listing" aria-labelledby="pk-listing-title">
   <h4 id="pk-listing-title">{listing.title}</h4>
   <p>{listing.text}</p>
   <!--
-    The displacement caution (docs/ETHICS.md, "Displacement"; M4.1): the full card with the area's
-    signs and the ways to protect neighbors inside a displacement watch area, the one line caution
-    elsewhere.
+    The displacement caution (docs/ETHICS.md, "Displacement"; M4.1): inside a displacement watch
+    area, the one line caution pointing to the full card shown once above it on the lot page; the
+    one line caution with its link elsewhere.
   -->
-  <DisplacementNote always watch={listing.displacement.watch} />
+  <DisplacementNote always watch={listing.displacement.watch} {jumpTo} />
   {#if listing.sideYard}
     <p>{listing.sideYardLead}</p>
     <RouteDetails view={listing.sideYard} level={5} />

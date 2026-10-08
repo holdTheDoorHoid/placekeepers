@@ -107,8 +107,9 @@ const OWNER_OVERRIDES = { 31: 6, 47: 8 };
 
 // Parcels the City's land agencies list as available (`la`, issue #36), as the hand written lot
 // pages in data/dossiers/9900.json say: a City lot PHS LandCare keeps up, and a Land Bank lot
-// eligible for a side yard.
+// eligible for a side yard (`ly`).
 const LISTED = new Set([2, 9]);
+const SIDE_YARD = new Set([9]);
 
 // The heat and shade lens (M3.1, docs/CONTRACTS.md section 4), worked out without random draws so
 // every other fixture stays the same: heat vulnerability rises to the east, City trees thin out
@@ -200,6 +201,7 @@ RUNS.forEach((length, run) => {
     if (OWNER_OVERRIDES[n] !== undefined) properties.ot = OWNER_OVERRIDES[n];
     properties.rt = firstStepFor(properties, n);
     if (LISTED.has(n)) properties.la = 1;
+    if (SIDE_YARD.has(n)) properties.ly = 1;
     Object.assign(properties, reasonsFor(properties, n));
     // Some parcels have no tree canopy rank yet, as happens while data arrives.
     if (random() > 0.2) properties.f_canopy = between(0, 100);

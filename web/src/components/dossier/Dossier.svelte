@@ -105,7 +105,7 @@
     </section>
     <section aria-labelledby="{idPrefix}-actions-title">
       <h3 id="{idPrefix}-actions-title" tabindex="-1">{s.sections.actions}</h3>
-      <DossierActions actions={view.actions} />
+      <DossierActions actions={view.actions} {idPrefix} />
     </section>
     <section aria-labelledby="{idPrefix}-owner-title">
       <h3 id="{idPrefix}-owner-title" tabindex="-1">{s.sections.owner}</h3>

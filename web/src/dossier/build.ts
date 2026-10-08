@@ -163,10 +163,11 @@ export interface RouteView {
 export interface ListingView extends ListingText {
   sideYard: RouteView | null;
   /**
-   * The displacement caution (docs/ETHICS.md, "Displacement"; M4.1): the full card with the
-   * area's signs and the ways to protect neighbors where the displacement watch marks the lot's
-   * area (`watch`, from the map's `dw` or the dossier's `displacement` block), and the one line
-   * caution elsewhere (`watch` null). src/components/dossier/ListingBox.svelte shows it.
+   * The displacement caution (docs/ETHICS.md, "Displacement"; M4.1): where the displacement watch
+   * marks the lot's area (`watch`, from the map's `dw` or the dossier's `displacement` block), the
+   * one line caution pointing to the full card with the area's signs and the ways to protect
+   * neighbors, shown once at the top of "What you can do"; the one line caution with its link
+   * elsewhere (`watch` null). src/components/dossier/ListingBox.svelte shows it.
    */
   displacement: { caution: string; watch: WatchNote | null };
 }
@@ -412,16 +413,35 @@ function liSummaryLines(li: LiSummary): string[] {
   return lines;
 }
 
+/** "The City's list of public property names ... as the owner.", or null when the list names no agency we know. */
+function cityListOwnerSentence(owned: CityOwned): string | null {
+  const o = strings.dossier.owner;
+  const agency = owned.agency ? (o.agencies[owned.agency.toUpperCase()] ?? null) : null;
+  return agency ? o.cityListNames(agency) : null;
+}
+
 /** What the City's list of public property says about the parcel, in a sentence. */
 export function cityOwnedText(owned: CityOwned | null): string | null {
   if (!owned) return null;
   const o = strings.dossier.owner;
-  const agency = owned.agency ? (o.agencies[owned.agency.toUpperCase()] ?? null) : null;
-  const parts = [agency ? o.cityListNames(agency) : o.cityList];
+  const parts = [cityListOwnerSentence(owned) ?? o.cityList];
   // The status in plain words, with what it means for neighbors (issue #36).
   if (owned.status) parts.push(cityStatusText(owned.status));
   if (owned.sideYardEligible) parts.push(o.sideYard);
   return parts.join(' ');
+}
+
+/**
+ * The owner type's reason, less the sentence the City's list's own line says right after it:
+ * for a parcel on the list, the reason is often "The City's list of public property names ... as
+ * the owner.", the first sentence of that line too (finding F9 of docs/VERIFICATION_V0_3.md).
+ * Anything the reason adds, such as other City records naming a different owner, stays.
+ */
+export function reasonBesideCityList(reason: string | null, owned: CityOwned | null): string | null {
+  if (!reason || !owned) return reason;
+  const sentence = cityListOwnerSentence(owned);
+  if (!sentence || !reason.startsWith(sentence)) return reason;
+  return reason.slice(sentence.length).trim() || null;
 }
 
 export function routeView(route: Route): RouteView {
@@ -799,7 +819,8 @@ export function buildDossier(input: DossierInput): DossierView {
       names,
       mailing: plain(property ? property.mailing : (shardOwner?.mailing ?? null)),
       typeLabel,
-      typeReason,
+      // The City's list's own line, shown below the owner type, names the owner already.
+      typeReason: ownerChanged ? typeReason : reasonBesideCityList(typeReason, shardOwner?.cityOwned ?? null),
       cityOwned: ownerChanged ? null : cityOwnedText(shardOwner?.cityOwned ?? null),
       isPrivate: privateOwner,
       flags: listedFlags,

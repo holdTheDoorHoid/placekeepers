@@ -323,3 +323,18 @@ Recommendation: (a) for v0.3, (b) later.
 * Walking: the census blocks' internal points and Parks and Recreation's properties, projected to
   UTM zone 18 north, with shapely.
 * Docs: read against the code and registry by a second agent and checked here before each fix.
+
+## Decisions taken (owner and orchestrator, 2026-10-08)
+
+| # | Decided by | Decision | Where it now lives |
+|---|---|---|---|
+| D1 | Owner | Write the v0.3 safeguards into ETHICS.md, as recommended: the placemaking caution and the full card on placemaking cards and the listing box inside watch areas (under "Displacement"); for lots listed as available, no price, no buy button, the side yard route first, only the Land Bank's own map and its note that it may say no (under "Things we do not build"); for the parking reports, counts only, cells about a block across, at least 5 reports in 12 months, evidence for physical fixes and never a word about tickets, the Parking Authority or drivers (under "Policing"). The watch's first bullet now reads "at least two signs, at least one of them from prices themselves: sale prices, assessed values or the Market Value Analysis" | docs/ETHICS.md |
+| D2 | Orchestrator | Option (b): suggest a community garden only where at least 1,000 people live within a 5 minute walk, besides being far from a park. On the 2026-10-05 data, 19,762 lots get it, 891 fewer than the 20,653 before | `suggestions_for` in pipeline/src/placekeepers/derive/placemaking.py; DESIGN.md section 5.3, CONTRACTS.md section 4, ROUTES.md, the suggestion's summary |
+| D3 | Owner | Option (a): keep the dollar prices on watch areas. They are the City's public records, residents understand dollars better than percentages, and investors have better sources | ETHICS.md, the Speculation row |
+| D4 | Orchestrator | Option (a) for v0.3: accept the 5 report threshold. Asking Philly Bike Action for a count of reporters per cell or per week is an owner action, filed by the orchestrator | ETHICS.md, "Policing" |
+| D5 | Owner | Option (b), applied to every page and view: inside a watch area the full card is shown once per page or view (at the top of a lot page's "What you can do" and of its print, and above the list of nearby places), and every greening, placemaking and listed lot card there keeps the one line caution pointing to it; a card in the list of nearby places also names its own area's signs, and a card shown on its own keeps the whole card | ETHICS.md "Displacement"; DESIGN.md section 5.3; the "Use this responsibly" page |
+
+Findings F7 (a nearby card for a listed lot now says so and starts with the side yard route where
+the lot may go to the neighbor next door, using the lots tiles' new `ly`), F8 (the Market Value
+Analysis source now links to the 2026 edition's page on the City's open data hub) and F9 ("Who owns
+it" no longer repeats the City list's sentence) were fixed on `agent/polish3` with these decisions.

@@ -40,16 +40,26 @@ async function tapArea(page: Page, place: { lng: number; lat: number }): Promise
 }
 
 test.describe('displacement watch', () => {
-  test('a greening card in a watch area adds its signs and the ways to protect neighbors', async ({ page }) => {
+  test('a greening card in a watch area names its signs and points to the protections, shown once above the list', async ({ page }) => {
     await openMap(page, `v=f&m=17.5/${WATCH_LOT.lat}/${WATCH_LOT.lng}`);
     await page.getByRole('button', { name: /What you can do nearby/ }).click();
     const card = page.locator(`article.card[data-place="${WATCH_LOT.id}"]`);
     await expect(card).toBeVisible();
     await expect(card).toContainText(CAUTION);
     await expect(card).toContainText('This place is in a displacement watch area');
-    const loop = card.getByRole('link', { name: "The City's Longtime Owner Occupants Program (LOOP)" });
+    // The ways to protect neighbors are listed once, above the cards (decided by the owner on
+    // 2026-10-08), and each card in a watch area points to them.
+    const sheet = page.locator('#pk-places');
+    const full = sheet.locator('[data-watch-card]');
+    await expect(full).toHaveCount(1);
+    await expect(full.getByRole('heading', { name: 'Displacement watch' })).toBeVisible();
+    const loop = full.getByRole('link', { name: "The City's Longtime Owner Occupants Program (LOOP)" });
     await expect(loop).toHaveAttribute('href', /^https:\/\/www\.phila\.gov\//);
-    await expect(card.getByRole('link', { name: 'Neighborhood Gardens Trust' })).toHaveAttribute('href', 'https://ngtrust.org/preservation/');
+    await expect(full.getByRole('link', { name: 'Neighborhood Gardens Trust' })).toHaveAttribute('href', 'https://ngtrust.org/preservation/');
+    await expect(sheet.getByRole('link', { name: "The City's Longtime Owner Occupants Program (LOOP)" })).toHaveCount(1);
+    await expect(card.getByRole('link', { name: "The City's Longtime Owner Occupants Program (LOOP)" })).toHaveCount(0);
+    await card.getByRole('button', { name: 'See the ways to protect neighbors' }).click();
+    await expect(full).toBeFocused();
     await expectAccessible(page, 'a greening card in a displacement watch area');
   });
 
@@ -60,6 +70,25 @@ test.describe('displacement watch', () => {
     await expect(card).toBeVisible();
     await expect(card).toContainText(CAUTION);
     await expect(card).not.toContainText('displacement watch area');
+    await expect(card.getByRole('link', { name: 'Ways to protect neighbors' })).toBeVisible();
+  });
+
+  test('a lot page in a watch area shows the full card exactly once, and each card points to it', async ({ page }) => {
+    await openMap(page, `v=a&m=17.5/${WATCH_LOT.lat}/${WATCH_LOT.lng}&p=${WATCH_LOT.id}`);
+    const lotPage = page.locator('#pk-right article.dossier');
+    await expect(lotPage).toContainText('What you can do');
+    const full = lotPage.locator('[data-watch-card]');
+    await expect(full).toHaveCount(1);
+    await expect(full).toContainText('This place is in a displacement watch area');
+    await expect(full).toContainText(CAUTION);
+    await expect(lotPage.getByText('This place is in a displacement watch area')).toHaveCount(1);
+    await expect(lotPage.getByRole('link', { name: "The City's Homestead Exemption" })).toHaveCount(1);
+    // Each greening and placemaking card keeps its one line caution and a button to the full card.
+    const jumps = lotPage.getByRole('button', { name: 'See the signs here and the ways to protect neighbors' });
+    expect(await jumps.count()).toBeGreaterThan(1);
+    await jumps.last().click();
+    await expect(full).toBeFocused();
+    await expectAccessible(page, 'a lot page in a displacement watch area');
   });
 
   test('the layer is on for organizers, and a tapped area lists its signs', async ({ page }, info) => {
