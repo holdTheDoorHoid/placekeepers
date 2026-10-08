@@ -7,6 +7,8 @@ import { describe, expect, it } from 'vitest';
 import { loadRegistry } from '../plugins/registry.ts';
 import { parseManifest } from '../src/data/manifest.ts';
 import { IDLE_PARTS, buildDossier, cityTitle, documentLabel, transferRow, type DossierInput, type LiveParts, type Part } from '../src/dossier/build.ts';
+import { displayedBreakdown } from '../src/map/lens.ts';
+import { strings } from '../src/strings.ts';
 import { plain } from '../src/dossier/plain.ts';
 import { parseCommon, parseShard } from '../src/dossier/shard.ts';
 import type { Assessment, LiveLi, LiveProperty, Transfer } from '../src/dossier/types.ts';
@@ -326,6 +328,50 @@ describe('a dossier built without some records (docs/VERIFICATION.md D9)', () =>
     const view = buildDossier(input('990000005', { shard: partialShard(), live: { ...IDLE_PARTS, transfers: loading, assessments: loading, li: loading } }));
     expect(view.history.notInCopy).toBeNull();
     expect(view.history.transfers).toBeNull();
+  });
+});
+
+describe('the score breakdown and flood note, however the lot page was opened (issue #31)', () => {
+  const sum = (values: number[]) => Math.round(values.reduce((a, b) => a + b, 0) * 10) / 10;
+
+  it('shows the breakdown from the lot\'s own record when no map tile is loaded, the same as from the map', () => {
+    const fromLink = buildDossier(input('990000005', { tile: null, liveOn: false }));
+    const fromMap = buildDossier(input('990000005', { liveOn: false }));
+    expect(fromLink.summary.lens?.id).toBe(fromMap.summary.lens?.id);
+    expect(fromLink.summary.why).not.toBeNull();
+    expect(fromLink.summary.why!.score).toBe(fromMap.summary.why!.score);
+    const shown = displayedBreakdown(fromLink.summary.why!);
+    expect(sum(shown.contributions)).toBe(shown.score);
+  });
+
+  it('lets the map tile\'s values win where both have one', () => {
+    const tile = { ...tiles.find((t) => t.id === '990000005')!, f_vacant: 0 };
+    const view = buildDossier(input('990000005', { tile, liveOn: false }));
+    expect(view.summary.lens!.id).toBe('violence');
+    expect(view.summary.why!.factors.find((f) => f.id === 'untreated_vacancy')!.value).toBe(0);
+  });
+
+  it('shows the flood note from the lot\'s own record', () => {
+    const parcel = structuredClone(shard.parcels.get('990000005')!);
+    parcel.lens = { ...parcel.lens!, fp: 1 };
+    const view = buildDossier(input('990000005', { tile: null, shard: { status: 'found', parcel, generatedAt: shard.generatedAt, notes }, liveOn: false }));
+    expect(view.summary.flood).toBe(strings.dossier.summary.flood[1]);
+  });
+
+  it('shows no breakdown for a parcel neither the map nor its record scores', () => {
+    const parcel = structuredClone(shard.parcels.get('990000005')!);
+    parcel.lens = null;
+    const view = buildDossier(input('990000005', { tile: null, shard: { status: 'found', parcel, generatedAt: shard.generatedAt, notes }, liveOn: false }));
+    expect(view.summary.why).toBeNull();
+    expect(view.summary.flood).toBeNull();
+  });
+
+  it('has sample lot records that carry exactly their sample tiles\' lens values', () => {
+    for (const [opa, parcel] of shard.parcels) {
+      const tile = tiles.find((t) => t.id === opa);
+      const expected = tile ? Object.fromEntries(Object.entries(tile).filter(([k]) => k.startsWith('f_') || k === 'fp')) : null;
+      expect(parcel.lens, opa).toEqual(expected && Object.keys(expected).length ? expected : null);
+    }
   });
 });
 

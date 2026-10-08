@@ -428,8 +428,12 @@ export function buildDossier(input: DossierInput): DossierView {
   if (parcel?.landcare) care.push(parcel.landcare.year ? s.summary.landcareSince(parcel.landcare.year) : s.summary.landcare);
   else if (int(tile?.lc) === 1) care.push(s.summary.landcare);
   if (parcel?.garden) care.push(s.summary.garden);
-  const lens = tile ? parcelLensOf(registry, state) : null;
-  const why = lens && tile ? explainScore(lens, state.weights[lens.id], tile) : null;
+  // The lens values: the map tile's when the lot was opened from the map, else the dossier's copy
+  // of the same values (a link, a search or a saved list), the tile's winning where both have
+  // one, so the breakdown and the flood note show however the page was opened (issue #31).
+  const lensValues: Record<string, unknown> | null = tile || parcel?.lens ? { ...(parcel?.lens ?? {}), ...(tile ?? {}) } : null;
+  const lens = lensValues ? parcelLensOf(registry, state) : null;
+  const why = lens && lensValues ? explainScore(lens, state.weights[lens.id], lensValues) : null;
   const point = center ?? (property?.lng != null && property.lat != null ? ([property.lng, property.lat] as [number, number]) : null);
   const links: Link[] = [
     { label: s.summary.propertyPage, url: propertyPageUrl(opa) },
@@ -735,7 +739,7 @@ export function buildDossier(input: DossierInput): DossierView {
       care,
       lens,
       why,
-      flood: s.summary.flood[int(tile?.fp) ?? 0] ?? null,
+      flood: s.summary.flood[int(lensValues?.fp) ?? 0] ?? null,
       links,
       provenance: parcel ? snapshotProvenance : tile ? { tone: 'snapshot', text: p.map } : provenanceOf(live.property, false, null, liveOn),
     },

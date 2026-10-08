@@ -1104,6 +1104,14 @@ City's own record that someone lives there, or did (added 2026-10-04, docs/VERIF
 when a garden that PHS, the Neighborhood Gardens Trust or Parks and Recreation knows lies on the
 parcel, or the Planning Commission maps community agriculture there.
 
+**`lens`** (added 2026-10-05, issue #31; only for a parcel on the map): every lens factor (`f_*`)
+and the floodplain mark (`fp`) its feature in the `parcels` layer carries (section 4), with the same
+keys and values, copied from that layer as publish writes it, so a factor the layer gains is carried
+too. A lot page opened from a link, a search or a saved list, before the map has the parcel's
+tile, shows the score breakdown and the flood note from here; when it has the tile, the tile's
+values win. On 2026-10-05: 58,325 parcels, 6.3 MB more on disk (5 percent) and 0.5 MB more as
+served compressed (3 percent).
+
 **`nearby`**: `s12` and `s36` (shooting victims in the parcel's hexagon in the last 12 and 36
 months, as in the `h3` layer), `landcare_within_500ft` and `gardens_within_500ft`. Keys are left
 out when the parcel has no point.

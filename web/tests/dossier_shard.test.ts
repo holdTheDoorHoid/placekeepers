@@ -259,6 +259,13 @@ describe('reading a shard', () => {
     expect(parcel.garden).toBe(true);
   });
 
+  it('reads the lens values a lot\'s map tile carries, and nothing else there', () => {
+    const parcel = parseShardParcel({ lens: { f_vacant: 100, f_shoot: 57.4, f_walk: 12, fp: 2, f_bad: 140, f_neg: -1, fx: 3, fp2: 1, sg: 'x', 'f_Upper': 4 } })!;
+    expect(parcel.lens).toEqual({ f_vacant: 100, f_shoot: 57, f_walk: 12, fp: 2 });
+    expect(parseShardParcel({ lens: { fp: 3, f_bad: 'high' } })!.lens).toBeNull();
+    expect(parseShardParcel({})!.lens).toBeNull();
+  });
+
   it('reads the parts a dossier was not built from, and nothing else there', () => {
     expect(parseShardParcel({ partial: ['transfers', 'li', 'tax', 'transfers'] })!.partial).toEqual(['transfers', 'li']);
     expect(parseShardParcel({})!.partial).toEqual([]);

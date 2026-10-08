@@ -121,6 +121,9 @@ CANDIDATE_PARTS = (
     ("assessments", "assessment_history", "assessments"),
     ("li", "li_violations", "violations"),
 )
+#: The map style of the lots layer, whose features carry each parcel's lens factors (`f_*`) and
+#: floodplain mark (`fp`), docs/CONTRACTS.md section 4.
+LOTS_STYLE = "vacant_parcels"
 #: 500 feet in meters, for the nearby counts
 NEARBY_M = 152.4
 #: how close a garden point must be to a parcel's shape to call the parcel gardened
@@ -869,6 +872,10 @@ def build_dossiers(
     heat = load_heat(heat_output(ctx))
     known_routes = set(ctx.registry.routes)
     downloaded_for = set(candidates.accounts)
+    # The lens values each parcel's map tile carries, so a lot page opened from a link, a search or
+    # a saved list shows the same score breakdown and flood note as one opened from the map
+    # (issue #31).
+    lot_lens = read_lot_lens(lots_layer_geojson(ctx, out_root))
 
     def partial_parts(account: str) -> list[str]:
         """The parts whose records were not downloaded for this parcel: its source has no
@@ -990,6 +997,8 @@ def build_dossiers(
         dossier["nearby"] = nearby_counts(
             points.get(account), shootings, landcare_grid, garden_grid
         )
+        if account in lot_lens:
+            dossier["lens"] = lot_lens[account]
         shards[account[:SHARD_DIGITS]][account] = dossier
 
         result.owner_types[owner_type.type] += 1
@@ -1030,6 +1039,39 @@ def build_dossiers(
         result.people_listed,
     )
     return result
+
+
+def lots_layer_geojson(ctx: Context, out_root: Path) -> Path | None:
+    """Where publish has just written the lots layer as GeoJSON (it builds the map layers before
+    the dossiers), or None when the registry has no lots layer."""
+    for layer in ctx.registry.layers.values():
+        if layer.style == LOTS_STYLE:
+            file = Path(layer.file)
+            return out_root / file.with_name(f"{file.stem}.{layer.source_layer}.geojson")
+    return None
+
+
+def read_lot_lens(path: Path | None) -> dict[str, dict[str, int]]:
+    """Each parcel's lens factors (`f_*`) and floodplain mark (`fp`) exactly as its map tile
+    carries them, by OPA account, read from the lots layer's GeoJSON (one feature per line). Every
+    lens factor the layer gains is carried along without a change here."""
+    found: dict[str, dict[str, int]] = {}
+    if path is None or not path.is_file():
+        return found
+    with path.open(encoding="utf-8") as handle:
+        for line in handle:
+            line = line.strip().rstrip(",")
+            if not line.startswith('{"type":"Feature"'):
+                continue
+            properties = json.loads(line).get("properties") or {}
+            values = {
+                key: int(value)
+                for key, value in properties.items()
+                if (key.startswith("f_") or key == "fp") and isinstance(value, int | float)
+            }
+            if values and isinstance(properties.get("id"), str):
+                found[properties["id"]] = values
+    return found
 
 
 def li_summary(
