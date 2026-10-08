@@ -461,8 +461,8 @@ market rather than a fixed price:
 A sale counts when it is a deed for more than a token price that is not a sheriff, condemnation or
 adverse possession deed (the lot pages' rule), not a Land Bank deed (a public sale at a set price),
 for one property (a price shared over several is an allocation), of a home (a single family or two
-to four family house as OPA lists it today), built before the year of the sale (an earlier sale was
-of the land or the house before). The price is this property's share, as the lot pages show it.
+to four family house as OPA lists it today), built in or before the year of the sale (an earlier
+sale was of the land or the house before). The price is this property's share, as the lot pages show it.
 For the assessed values a home counts when it stood at least two years before the earlier tax year
 and was valued at $10,000 or more then, so a new house is never counted as a rise.
 

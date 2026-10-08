@@ -14,10 +14,10 @@ parcels follow. Five signs are measured for each tract:
    condemnation or adverse possession deed (the lot pages' rule, placekeepers.derive.transfers),
    not a Land Bank deed (a public sale at a set price), for one property (a price shared over
    several is an allocation), of a home: a single family or small multi family house as OPA lists
-   it today, built before the year of the sale (an earlier sale was of the land or the house
-   before). The price is the adjusted total, this property's share, as the lot pages show it. The
-   sign holds when the tract's middle price rose at least `PRICE_POINTS` percentage points more
-   than the city's, with at least `MIN_SALES` sales in each period.
+   it today, built in or before the year of the sale (an earlier sale was of the land or the
+   house before). The price is the adjusted total, this property's share, as the lot pages show
+   it. The sign holds when the tract's middle price rose at least `PRICE_POINTS` percentage points
+   more than the city's, with at least `MIN_SALES` sales in each period.
 2. **Company buyers** (the same sales in the last three years): the share whose buyers' names
    are a company's (placekeepers.derive.owners). The sign holds at least `COMPANY_POINTS` points
    above the city's share, with at least `MIN_SALES` sales.
