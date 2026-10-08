@@ -13,6 +13,8 @@ export interface PrintModel {
   opa: string;
   printed: string;
   summary: { kind: string; confidence: string | null; reasons: string[]; cityCalls: string | null; care: string[]; flood: string | null };
+  /** Listed as available by the City's land agencies (issue #36): its lines, in order, or null. */
+  listing: { title: string; lines: string[] } | null;
   actions: { label: string; route: string | null; warning: string | null; steps: string[]; cost: string; caution: string | null }[];
   /**
    * In a displacement watch area with a greening suggestion (M4.1): the area's signs and each
@@ -24,6 +26,8 @@ export interface PrintModel {
     names: string[];
     mailing: string | null;
     type: string;
+    /** What the City's list of public property says, in a sentence. */
+    cityOwned: string | null;
     /** Each flag's title and what it means; the possible estate flag in full, as docs/ETHICS.md words it. */
     flags: { title: string; text: string }[];
     /** Why the notes about an owner who may be a person are held back, when they are. */
@@ -35,6 +39,18 @@ export interface PrintModel {
   sources: string[];
   moreSources: string | null;
   notLegalAdvice: string;
+}
+
+function listingLines(listing: DossierView['actions']['listing']): PrintModel['listing'] {
+  if (!listing) return null;
+  const sideYard = listing.sideYard ? `${listing.sideYardLead} ${listing.sideYard.route.label}.` : null;
+  const links = listing.links.map((link) => `${link.label}: ${link.url}`);
+  return {
+    title: listing.title,
+    lines: [listing.text, listing.displacement, sideYard, `${listing.decline} ${listing.changes}`, ...links, listing.credit].filter(
+      (line): line is string => !!line,
+    ),
+  };
 }
 
 export function printModel(view: DossierView, now: Date = new Date()): PrintModel {
@@ -62,6 +78,7 @@ export function printModel(view: DossierView, now: Date = new Date()): PrintMode
       care: view.summary.care,
       flood: view.summary.flood,
     },
+    listing: listingLines(view.actions.listing),
     actions: view.actions.suggestions.slice(0, PRINT_LIMITS.suggestions).map((item) => {
       const route = item.routes[0] ?? null;
       return {
@@ -81,6 +98,7 @@ export function printModel(view: DossierView, now: Date = new Date()): PrintMode
       names: view.owner.names,
       mailing: view.owner.mailing,
       type: view.owner.typeLabel,
+      cityOwned: view.owner.cityOwned,
       flags,
       held: view.owner.held,
       tax,

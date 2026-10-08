@@ -549,6 +549,18 @@ As built (M1.6, 2026-10-04):
 - The browser builds exactly the pipeline's flag sentences: a shared set of cases with the
   pipeline's answers (`pipeline/tests/fixtures/wording_parity.json`) is checked by both test
   suites, so the two cannot drift apart.
+- **Lots listed as available** (issue #36, 2026-10-08). The City's list of public property is the
+  list the Philadelphia Land Bank's "View Properties Map" shows. Every lot page on that list gives
+  the lot's status in plain words and what it means for neighbors ("held for affordable housing",
+  "someone has applied"). A lot its land agencies list as available gets a box at the top of
+  "What you can do": the date of the list (the day the pipeline fetched it, since its records
+  carry no date), the side yard route first where the lot may go to the neighbor next door, the
+  Land Bank's note that it may turn down any sale or lease (in our words, never copied from its
+  site), a link to the Land Bank's map, and the credit to the City's Department of Planning and
+  Development (Land Management). On the map, the vacant lots layer has a setting, also a filter
+  in the analysis view, "Listed as available by the City's land agencies". No price and no buy
+  button (ETHICS.md). Where the displacement watch marks the lot's area, the box is to carry the
+  displacement caution; it has a marked place for it until that release is merged.
 
 **Owner information as built (M1.3, 2026-10-04).** What the owner will see, and the choices behind it:
 

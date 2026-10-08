@@ -30,6 +30,10 @@
 
   <section>
     <h2>{s.sections.actions}</h2>
+    {#if m.listing}
+      <h3>{m.listing.title}</h3>
+      {#each m.listing.lines as line (line)}<p>{line}</p>{/each}
+    {/if}
     {#if m.actions.length === 0}<p>{s.actions.none}</p>{/if}
     {#each m.actions as action (action.label)}
       <h3>{action.label}</h3>
@@ -52,6 +56,7 @@
     <p>{m.owner.names.join('; ') || s.owner.noNames}</p>
     {#if m.owner.mailing}<p>{s.owner.mailing}: {m.owner.mailing}</p>{/if}
     <p>{s.owner.type}: {m.owner.type}</p>
+    {#if m.owner.cityOwned}<p>{m.owner.cityOwned}</p>{/if}
     {#each m.owner.flags as flag (flag.title + flag.text)}<p><strong>{flag.title}:</strong> {flag.text}</p>{/each}
     {#if m.owner.held}<p>{m.owner.held}</p>{/if}
     <p>{m.owner.tax}</p>

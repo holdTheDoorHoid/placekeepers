@@ -40,6 +40,44 @@ def test_the_side_yard_route_only_where_the_city_marks_the_lot_eligible() -> Non
     assert routes(["REDEVELOPMENT AUTHORITY"], "PRA", side_yard_eligible=True) == ["contact_phdc"]
 
 
+def test_a_lot_listed_as_available_leads_with_the_side_yard_where_eligible() -> None:
+    # Issue #36: the Land Bank offers these lots on its own map, whichever agency owns them.
+    listed = {"listed_available": True, "side_yard_eligible": True}
+    assert routes(["PHILADELPHIA LAND BANK"], "PLB", **listed) == [
+        "land_bank_side_yard",
+        "land_bank_garden_agreement",
+    ]
+    assert routes(["CITY OF PHILA"], "PUB", **listed) == [
+        "land_bank_side_yard",
+        "land_bank_garden_agreement",
+    ]
+    assert routes(["REDEVELOPMENT AUTHORITY"], "PRA", **listed) == [
+        "land_bank_side_yard",
+        "contact_phdc",
+    ]
+    assert routes(["PHILADELPHIA LAND BANK"], "PLB", in_landcare=True, **listed) == [
+        "community_landcare",
+        "land_bank_side_yard",
+        "land_bank_garden_agreement",
+    ]
+    # Listed, but not eligible for a side yard: no side yard route.
+    assert routes(["PHILADELPHIA LAND BANK"], "PLB", listed_available=True) == [
+        "land_bank_garden_agreement"
+    ]
+    assert routes(["REDEVELOPMENT AUTHORITY"], "PRA", listed_available=True) == ["contact_phdc"]
+    # A private owner's lot is never on the City's list.
+    assert routes(["MORALES ROSA"], vacant=True, **listed) == ["ask_the_owner", "conservatorship"]
+
+
+def test_the_side_yard_never_becomes_the_maps_first_step() -> None:
+    # It is for the household next door only, so `rt` names the route after it.
+    found = ow.owner_type(["REDEVELOPMENT AUTHORITY"], "PRA")
+    listed = routes_for(found, has_names=True, listed_available=True, side_yard_eligible=True)
+    assert listed[0] == "land_bank_side_yard"
+    assert first_route_code(listed, found.type) == 3
+    assert first_route_code(["land_bank_side_yard", "land_bank_garden_agreement"], "city") == 2
+
+
 def test_redevelopment_authority_and_phdc_lots_say_contact_phdc() -> None:
     assert routes(["REDEVELOPMENT AUTHORITY", "OF PHILADELPHIA"], "PRA") == ["contact_phdc"]
     assert routes(["REDEVELOPMENT AUTHORITY", "OF PHILADELPHIA"]) == ["contact_phdc"]
@@ -164,11 +202,12 @@ def every_route_used() -> set[str]:
     for notes in (*FLAG_NOTES.values(), *NOTICES.values()):
         found |= set(notes.get("routes", []))
     contexts = [
-        dict(vacant=v, gardened=g, in_landcare=lc, side_yard_eligible=sy)
+        dict(vacant=v, gardened=g, in_landcare=lc, side_yard_eligible=sy, listed_available=la)
         for v in (0, 1)
         for g in (0, 1)
         for lc in (0, 1)
         for sy in (0, 1)
+        for la in (0, 1)
     ]
     owners = [
         (["MORALES ROSA"], None),

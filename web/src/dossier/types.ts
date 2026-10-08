@@ -95,6 +95,8 @@ export interface CityOwned {
   agency: string | null;
   status: string | null;
   sideYardEligible: boolean;
+  /** The City's land agencies list it as available (issue #36). */
+  available: boolean;
 }
 
 export interface Owner {

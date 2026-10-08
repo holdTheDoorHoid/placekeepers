@@ -1,9 +1,9 @@
 // Filters shown in the analysis view, as chips. They narrow what a layer shows (and so the ranked
 // list, the plot and the places nearby) by a tile property from docs/CONTRACTS.md section 4. The
 // registry does not define filters, so they live here; each one names the style it applies to and
-// the property it reads. Two more chip groups in the same panel set the lots layer's own registry
-// settings (how sure we are, and lots or buildings), so each idea has one control and one place in
-// the link.
+// the property it reads. Three more chip groups in the same panel set the lots layer's own registry
+// settings (how sure we are, lots or buildings, and listed as available by the City's land
+// agencies), so each idea has one control and one place in the link.
 //
 // Filter ids and option values appear in shared links (`f=`), so they never change once published.
 
@@ -70,6 +70,8 @@ export interface SettingChips {
 export const SETTING_CHIPS: SettingChips[] = [
   { layer: 'vacant_parcels', setting: 'min_confidence', label: strings.filters.confidence },
   { layer: 'vacant_parcels', setting: 'kinds', label: strings.filters.kind },
+  // Issue #36: the City's status, never how easy a lot would be to get (docs/ETHICS.md).
+  { layer: 'vacant_parcels', setting: 'listed', label: strings.filters.listed },
 ];
 
 /** True when a filter narrows anything (some but not every option chosen). */

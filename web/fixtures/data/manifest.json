@@ -12,6 +12,15 @@
       "newest_record": "2026-10-02",
       "message": null
     },
+    "city_owned_property": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 7740,
+      "newest_record": null,
+      "message": null
+    },
     "pwd_parcels": {
       "status": "missing",
       "last_attempt": null,
@@ -426,7 +435,8 @@
         "vacant_indicators_land",
         "vacant_indicators_bldg",
         "opa_properties",
-        "pwd_parcels"
+        "pwd_parcels",
+        "city_owned_property"
       ]
     },
     "hin_2025": {
@@ -730,8 +740,8 @@
       "sha256": "1d746dd64887fc690edb3dbd6c056b1630ce99ec1cec269ad1ea21b9890d3717"
     },
     "tiles/lots.pmtiles": {
-      "bytes": 14829,
-      "sha256": "d3970fc2fd114a00521f9cc9cc4cb78d350bdddb2976cbac2b1bd052f3d2a3c6"
+      "bytes": 14875,
+      "sha256": "784b946f0f5c83e9b67a76deb0adebab46b9928e9cf5ae97d429b6e679df08d9"
     },
     "tiles/streets.crashes.geojson": {
       "bytes": 23183,
@@ -864,7 +874,7 @@
       "9900"
     ],
     "files": 1,
-    "bytes": 23522
+    "bytes": 23654
   },
   "displacement": {
     "as_of": "2026-10-04",

@@ -1,6 +1,7 @@
 <script lang="ts">
-  // Filters for the analysis view, as chips (src/config/filters.ts). Two groups pick one option of
-  // a lots layer setting (how sure we are, lots or buildings); the rest narrow by a tile property,
+  // Filters for the analysis view, as chips (src/config/filters.ts). Three groups pick one option
+  // of a lots layer setting (how sure we are, lots or buildings, and listed as available by the
+  // City's land agencies); the rest narrow by a tile property,
   // where choosing chips shows only those and choosing none shows everything. Everything here
   // lives in the state, so a copied link carries it.
   import { FILTERS, SETTING_CHIPS, filterNarrows, type FilterDef } from '../../config/filters.ts';

@@ -452,6 +452,7 @@ Short property names keep tiles small. Integers are preferred to strings.
 | `ot` | int | owner type: 1 individual, 2 company, 3 City, 4 Land Bank, 5 Redevelopment Authority, 6 housing authority, 7 nonprofit, 8 other public, 0 unknown |
 | `lc` | int | 1 if maintained by PHS LandCare |
 | `rt` | int | the first lawful step to get permission, as a category (codes below) |
+| `la` | int | 1 when the City's land agencies list the parcel as available (below); absent otherwise. Added 2026-10-08, issue #36 |
 | `rs` | int | the reasons, as bits (below); added 2026-10-04 by M1.2 |
 | `n` | int | how many independent records agree that it is vacant, for its kind (lot or building) |
 | `dy`, `sy`, `ny` | int | year of the demolition (bit 4), the City's clean and seal (bit 7), or the new construction permit (bits 12 and 13); present only with those bits |
@@ -507,9 +508,23 @@ wrote it): the parcel's suggestion ids as its dossier lists them (`derive.routes
 `clean_and_green` for a vacant lot (a LandCare lot too, whose first step is then Community LandCare)
 and `seal_abandoned_building` for a vacant building, limited to the suggestions the registry has.
 
+`la` (added 2026-10-08, issue #36): 1 on a parcel the City's list of public property
+(`city_owned_property`, the same list the Philadelphia Land Bank's "View Properties Map" shows)
+gives a status beginning `Owned - Available` on any of its records: plain, "(Garden Agreement)",
+"(no construction permitted)" or "(not for SY)". The rule is `listed_available` in
+`placekeepers.derive.city_list`, and the dossier's `owner.city_owned.available` (section 6) says
+the same. It names the City's status, never how easy a lot would be to get. It is kept below zoom
+13, so the lots layer's `listed` setting ("Listed as available by the City's land agencies",
+`any` or `available`) works at every zoom; a listed parcel the vacancy model does not show is not
+in the layer (101 of the 1,639 listed parcels with an account on 2026-10-04: 86 not in the model's
+table and 15 it leaves out), and its lot page still says so. Built from the 2026-10-04 snapshots,
+1,538 parcels in the layer carry it, adding about 22 kB (0.2 percent) to `tiles/lots.pmtiles`.
+
 `rt`, the first lawful step to get permission for the parcel (added 2026-10-04): the first route
 the parcel's dossier lists (`placekeepers.derive.routes.routes_for`, from the same owner type, owner
-names and LandCare record), so a lot's map value and its dossier always agree. Codes never change
+names and LandCare record), so a lot's map value and its dossier always agree. The side yard route
+is passed over (changed 2026-10-08, issue #36): it leads the routes of a listed lot the City marks
+eligible, but it is for the household next door only, so `rt` names the route after it. Codes never change
 meaning. It names a kind of step, for filtering and for plotting need against it; it is never a
 score or an order of how easy a parcel is to get (ETHICS.md, "Things we do not build").
 
@@ -1179,8 +1194,14 @@ lines as the City publishes them, joined with commas (or `null`); `type`, one of
 `company`, `city`, `land_bank`, `redevelopment_authority`, `housing_authority`, `nonprofit`,
 `other_public`, `unknown` (the names of the `ot` codes, section 4); `type_reason`, a sentence saying
 why; `city_owned` (only for parcels on the City's list of public property): `agency` (`PUB` the City,
-`PLB` the Land Bank, `PRA` the Redevelopment Authority, `PHDC`), `status` as the City writes it, and
-`side_yard_eligible`; `flags`; `notice` (`"deed_fraud"`, on every dossier whose owner may be a
+`PLB` the Land Bank, `PRA` the Redevelopment Authority, `PHDC`), `status` as the City writes it,
+`side_yard_eligible`, and `available: true` when the City's land agencies list the parcel as
+available (absent otherwise; added 2026-10-08, issue #36, the same rule as the lots layer's `la`).
+A parcel with several records takes an available status when any record has one, else the first
+status in alphabetical order; `side_yard_eligible` is true when a record with that status is
+marked eligible and the status does not say "not for SY" (`placekeepers.derive.city_list`). The
+list's records carry no date: the lot page dates it by the manifest's `last_success` for
+`city_owned_property`; `flags`; `notice` (`"deed_fraud"`, on every dossier whose owner may be a
 person: typed `individual` or `unknown`, or a private owner whose names carry an estate, with or
 without flags; changed 2026-10-04 by the orchestrator); and `help` (the Tangled Title Fund and Fraud
 Guard route ids, on every dossier of a private owner with a flag).
@@ -1246,7 +1267,9 @@ offers live City data, never "No deeds on record." or zero violations. A parcel 
 candidate but has records in the snapshot is not partial.
 
 **`routes`**: registry route ids in the order to try them (docs/ROUTES.md; rules in
-`derive/routes.py`). Conservatorship appears only for a private parcel we call vacant with high or
+`derive/routes.py`). A lot listed as available (`city_owned.available`) that may go to the neighbor
+as a side yard (`side_yard_eligible`) lists `land_bank_side_yard` first, after Community LandCare
+where PHS cares for it, whichever of the four agencies owns it (added 2026-10-08, issue #36). Conservatorship appears only for a private parcel we call vacant with high or
 medium confidence: a parcel we are not sure about may be someone's home. It never appears for a
 parcel with a homestead exemption (OPA's `homestead_exemption` above 0), at any confidence: the
 City's own record that someone lives there, or did (added 2026-10-04, docs/VERIFICATION.md D1).

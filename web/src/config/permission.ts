@@ -49,13 +49,16 @@ export function permissionText(code: PermissionCode | null): string {
 
 /**
  * The code for a parcel known only from its dossier (such as a place in an imported list): the
- * category of the dossier's first route, the same rule the pipeline uses to make `rt`.
+ * category of the dossier's first route, the same rule the pipeline uses to make `rt`. The side
+ * yard route is passed over: it is for the household next door only (issue #36).
  */
 export function permissionFromRoutes(routes: readonly string[], publicOwner: boolean): PermissionCode {
-  switch (routes[0]) {
+  const first = routes.find((id) => id !== 'land_bank_side_yard') ?? routes[0];
+  switch (first) {
     case 'community_landcare':
       return 1;
     case 'land_bank_garden_agreement':
+    case 'land_bank_side_yard':
       return 2;
     case 'contact_phdc':
       return 3;

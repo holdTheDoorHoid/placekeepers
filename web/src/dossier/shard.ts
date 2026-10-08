@@ -119,7 +119,12 @@ function flag(v: unknown): OwnerFlag | null {
 
 function cityOwned(v: unknown): CityOwned | null {
   if (!isObj(v)) return null;
-  return { agency: text(v.agency), status: text(v.status), sideYardEligible: v.side_yard_eligible === true };
+  return {
+    agency: text(v.agency),
+    status: text(v.status),
+    sideYardEligible: v.side_yard_eligible === true,
+    available: v.available === true,
+  };
 }
 
 function owner(v: unknown): Owner | null {

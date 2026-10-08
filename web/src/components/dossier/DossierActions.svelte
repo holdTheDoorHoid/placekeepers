@@ -2,12 +2,14 @@
   // What you can do: each suggestion with its evidence badge and cost, the lawful route that fits
   // this parcel first, and who can help. No buy buttons, price estimates or letters
   // (docs/ETHICS.md); the only links that lead toward acquiring land are the Land Bank's own
-  // programs, through the routes in the registry.
+  // programs, through the routes in the registry, and its map of the lots the City's land
+  // agencies list as available (issue #36).
   import type { DossierView } from '../../dossier/build.ts';
   import { strings } from '../../strings.ts';
   import EvidenceBadge from '../common/EvidenceBadge.svelte';
   import DisplacementNote from '../places/DisplacementNote.svelte';
   import BlessingNote from '../streets/BlessingNote.svelte';
+  import ListingBox from './ListingBox.svelte';
   import RouteDetails from './RouteDetails.svelte';
 
   let { actions }: { actions: DossierView['actions'] } = $props();
@@ -16,6 +18,7 @@
 </script>
 
 <p class="small">{a.intro}</p>
+{#if actions.listing}<ListingBox listing={actions.listing} />{/if}
 {#if actions.suggestions.length === 0}
   <p class="muted">{actions.listed ? a.none : a.notListed}</p>
   {#if !actions.listed}<p><a href={howUrl}>{a.howTo}</a></p>{/if}

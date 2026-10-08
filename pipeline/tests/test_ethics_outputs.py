@@ -65,7 +65,9 @@ ESTATE_TEXT = quoted('"Possible estate" reads:')
 #: Each layer's properties (docs/CONTRACTS.md section 4).
 CONTRACT_PROPERTIES = {
     "parcels": {"id", "k", "vc", "ot", "lc", "rt", "rs", "n", "dy", "sy", "ny", "sg"}
-    | {"f_vacant", "f_shoot", "f_poverty", "f_canopy"},
+    | {"f_vacant", "f_shoot", "f_poverty", "f_canopy"}
+    # Listed as available by the City's land agencies (issue #36)
+    | {"la"},
     "h3": {"h", "s12", "s36"},
     "hin": {"id", "name", "len"},
     "crashes": {"id", "y", "ya", "sev", "m"},
