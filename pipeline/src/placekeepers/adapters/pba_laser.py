@@ -37,7 +37,8 @@ three days on every row: `window_start` and `window_end` (the first and last day
 `newest_report` (the newest day with reports, equal to `window_end`; the source's health rules
 read it).
 
-Verified against the live service on 2026-10-08 (see docs/DATA_SOURCES.md, "Parking problems").
+Verified against the live service on 2026-10-08: 26,060 reports in the 12 months to 2026-10-07,
+in 33 seconds (docs/DATA_SOURCES.md, "Sources checked 2026-10-08").
 """
 
 from __future__ import annotations
@@ -47,7 +48,7 @@ import logging
 from collections import Counter
 from datetime import date, timedelta
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 import h3
 import pyarrow as pa
@@ -122,6 +123,11 @@ def window(newest: date) -> tuple[date, date]:
 
 class PbaLaser(UrlAdapter):
     required_columns = ("h", "kind", "window_start", "window_end", "newest_report")
+    # Once a week at most, even when the pipeline runs more often (by hand, or on a laptop).
+    min_refetch: ClassVar[timedelta | None] = timedelta(days=6)
+    min_refetch_reason: ClassVar[str] = (
+        "Philly Bike Action's map is asked for its reports once a week at most"
+    )
 
     def recipe(self) -> str:
         # A download made for another cell size or window is fetched again on the next run.

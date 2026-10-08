@@ -68,7 +68,7 @@ export const parkingReports: StyleModule = {
         filter: ['all', isPoint, shown] as FilterSpecification,
         paint: {
           'heatmap-weight': ['interpolate', ['linear'], value, low, 0.12, mid, 0.6, high, 1],
-          'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 9, 0.7, 12, 1.2, 14, 1.6],
+          'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 9, 1.2, 12, 2, 14, 2.6],
           'heatmap-radius': ['interpolate', ['exponential', 2], ['zoom'], 9, 5, 12, 16, 14, 48],
           'heatmap-color': [
             'interpolate',
@@ -87,7 +87,7 @@ export const parkingReports: StyleModule = {
             1,
             c5,
           ],
-          'heatmap-opacity': ['interpolate', ['linear'], ['zoom'], 12.5, 0.8, HEAT_UNTIL, 0],
+          'heatmap-opacity': ['interpolate', ['linear'], ['zoom'], 12.5, 0.85, HEAT_UNTIL, 0],
         },
       },
       {
@@ -129,7 +129,7 @@ export const parkingReports: StyleModule = {
     const entries: LegendEntry[] = [
       {
         kind: 'ramp',
-        title: t.heatTitle(t.kinds[choice]!, parkingWindowText(ctx.manifest)),
+        title: t.heatTitle(parkingWindowText(ctx.manifest)),
         stops: [...PARKING_RAMP],
         low: t.fewer,
         high: t.more,

@@ -78,6 +78,7 @@ Both allow browser requests without a key.
 | PennDOT crash data portal | data-pennshare.opendata.arcgis.com (statewide tables 2006 to 2025) | Backup source | Yearly | Not yet checked in detail |
 | NHTSA FARS | static.nhtsa.gov bulk CSV (about 34 MB a year; coordinates since 2000; public domain) | Backup for fatal crashes | Yearly | Live |
 | TrafficVictimsPHL | bicyclecoalition.org/trafficvictimsphl | Names, curated by hand into `data/curated/memorials.yaml`, each with its source link | Irregular | Narrative pages only, no dataset; ask the Bicycle Coalition first |
+| Parking problems reported with Laser Vision (Philly Bike Action) | `https://bikeaction.org/tools/laser/map_data/` (26,060 reports in the 12 months to 2026-10-07) | A heat map of counts per block sized cell, by kind: vehicles on sidewalks, in bike lanes, on crosswalks and corners, blocking curb ramps. Never a single report | Weekly, the trailing 12 months | Used (#37) with Philly Bike Action's permission: source `pba_laser`. See "Sources checked 2026-10-08" |
 | Ghost bikes | Bicycle Coalition map; OpenStreetMap `memorial=ghost_bike` (7) | Existing memorials | Irregular | Live. Requests and repairs go through the Bicycle Coalition's form (forms.gle/HBtY1hG4xcdVJKNb8), checked 2026-10-04 |
 | Schools | City ArcGIS `Schools`, the OpenDataPhilly "Schools" (490: District, charter, archdiocesan and private) | Street safety factor: a school within 400 meters of a block | Not stated; edited 2026-08-26 | Used (M1.5): source `schools` |
 | Street centerlines | City ArcGIS `Street_Centerline`, the OpenDataPhilly "Street Centerlines" (41,252 segments with `seg_id`, `stname`, `class`, `responsibl`) | The blocks the street safety lens scores; classes 1 to 5 and the ramps (9, 10) are kept, 40,453 segments | Updated by the Streets Department; edited 2026-09-21 | Used (M1.5): source `street_centerlines` |
@@ -318,7 +319,7 @@ data, terms and what it holds about people found (issue #36):
 | Philadelphia Land Bank's "View Properties Map" | Used with credit, through `city_owned_property` (issue #36) |
 | Transit Forward Philadelphia's stop audits | Ask permission first |
 | PhillyTreeMap | Not used |
-| Philly Bike Action's Laser Vision map | Used with Philly Bike Action's permission (confirmed by the owner 2026-10-08), as a heat map only; built separately in issue #37 |
+| Philly Bike Action's Laser Vision map | Used (#37) with Philly Bike Action's permission (confirmed by the owner 2026-10-08), as a heat map of counts only: 26,060 reports in the 12 months to 2026-10-07, 23,254 of them shown in 1,112 areas about a block across |
 
 **The Land Bank's "View Properties Map"** ([phillylandbank.org/view-properties-map](https://phillylandbank.org/view-properties-map/)).
 The page embeds a City ArcGIS Instant App (app `cb23daec00b543f8a5ea00c11f69f50d`, web map
@@ -371,8 +372,8 @@ calls answered 404. It has no data license, and its trees began as City and PHS 
 which the site already holds, newer and better, as `street_trees`.
 
 **Philly Bike Action's Laser Vision map** ([bikeaction.org/tools/laser/map](https://bikeaction.org/tools/laser/map/)).
-Used with Philly Bike Action's permission (confirmed by the owner 2026-10-08), as a heat map only;
-it is built separately in issue #37. People report vehicles blocking sidewalks, crosswalks, curb
+Used (#37) with Philly Bike Action's permission (confirmed by the owner 2026-10-08), as a heat map
+of counts only. People report vehicles blocking sidewalks, crosswalks, curb
 ramps and bike lanes, and the reports are filed with the Philadelphia Parking Authority, which
 Philly Bike Action's FAQ says uses them to send enforcement officers. That is why only a heat map,
 never single reports: ETHICS.md ("Policing") rules out anything that points enforcement at people.
@@ -380,6 +381,46 @@ The code is under the Apache 2.0 license but the data has no license, so the per
 allows the use. The check recommended these safeguards, for issue #37 to settle: counts only,
 over a year or more, in cells a block or two across, shown only where at least 5 reports come from
 at least 3 reporters, and framed as evidence for physical fixes to the street.
+
+How issue #37 settled them (source `pba_laser`, `pipeline/src/placekeepers/adapters/pba_laser.py`
+and `publish/laser.py`; tile properties in CONTRACTS.md section 4):
+
+- **What is asked.** The public endpoint `https://bikeaction.org/tools/laser/map_data/` answers
+  JSON with no key, `{"pins": [[lat, lng, 1], ...], "unique_users_count": N}`, one pin per report,
+  each already shifted about 15 meters by Philly Bike Action. Its filters, read in Philly Bike
+  Action's code (`lazer/views.py`, `map_data`): `violation` (the start of the kind: `Bike Lane`,
+  `Sidewalk`, `Crosswalk`, `Corner Clearance`, `Handicap Ramp`), `date` (one day), and
+  `date_gte` and `date_lte`, which compare the moment of a report with midnight at the start of
+  the given day in Philadelphia, so `date_lte` names the day after the last day wanted. The server
+  keeps each answer for 30 seconds; the request for every report ever made takes about 15
+  seconds and is never sent on a schedule. robots.txt answered 404 (no rules).
+- **How often and how politely.** Once a week, and never sooner even when the pipeline runs more
+  often (the adapter's `min_refetch` of six days): one small `date=` request for yesterday (and the day
+  before, up to a week back, if a day had none) finds the newest day with reports, then one request
+  per kind for the 12 months up to that day, 5 seconds apart, with the Placekeepers User-Agent.
+  A refusal is never retried. On 2026-10-08 the whole download took 33 seconds.
+- **What is kept.** Each pin's point and kind, only until the snapshot is made; the snapshot keeps
+  each report as its H3 cell at resolution 10 and its kind, never as a point. The reply holds no
+  vehicle, plate, photo, time of day or reporter, and nothing of the kind is stored.
+- **What is shown.** Counts per H3 cell at resolution 10 (about 115 meters across, about a
+  Philadelphia block), per kind and in total, only where a cell has at least 5 reports in the 12
+  months, and a kind's count within it only where it has 5 of its own. The endpoint does not say
+  who made each report, so the "at least 3 reporters" safeguard cannot be checked; the threshold
+  of 5 reports, the 12 month window and the block sized cells are what is applied. Health checks:
+  at least 10,000 reports, no more than 20 percent fewer than last week, and a newest day with
+  reports at most 14 days old.
+- **Counts on 2026-10-08** (window 2025-10-08 to 2026-10-07): 26,062 pins (sidewalk 8,325, bike
+  lane 8,072, crosswalk 4,933, corner clearance 3,493, curb ramp 1,239), made by 632, 438, 529,
+  409 and 141 people for each kind (one person may report several kinds); two pins lay outside
+  the city and were left out, so 26,060 reports are counted. 2,609 cells hold a report; 1,112 have at least 5 and are shown, holding
+  23,254 reports (89 percent); 1,497 cells with fewer, holding 2,806 reports, are left out. The
+  busiest cell has 455 reports; half the shown cells have 12 or fewer.
+- **Wording.** The map calls it "Parking problems reported (Laser Vision)", says it shows where
+  people using one app reported vehicles blocking the way, not every problem, gives the window,
+  frames the counts as evidence for curb extensions, bollards, daylighted corners, protected bike
+  lanes and loading zones, and credits Philly Bike Action with a link to its map. It never
+  mentions tickets, the Parking Authority, reporting drivers or enforcement (ETHICS.md,
+  "Policing"). The browser never asks bikeaction.org for anything: the counts come in our tiles.
 
 ## Not sources
 

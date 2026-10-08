@@ -5,7 +5,7 @@ publishes counts only, never a single report."""
 from __future__ import annotations
 
 import json
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
 import h3
@@ -140,6 +140,24 @@ def test_the_download_asks_for_one_kind_at_a_time_politely(context_factory) -> N
 
     # The download kept only the points while it existed, and is gone once the snapshot is made.
     assert not any((ctx.cache.root / "raw" / "pba_laser").glob("*/*.json"))
+
+
+def test_it_is_asked_once_a_week_at_most(context_factory) -> None:
+    server = FakeLaser(days={"2026-10-07": 85, "2026-10-14": 80}, kinds={"Sidewalk": pins(2)})
+    sleeps: list[float] = []
+    ctx = laser_context(context_factory, server, sleeps)
+    source = low_bar(ctx)
+    assert fetch_source(ctx, source).outcome == "downloaded"
+    assert validate_source(ctx, source).outcome == "ok"
+    asked = len(server.requests)
+    again = fetch_source(ctx, source)
+    assert again.outcome == "skipped" and "once a week at most" in again.detail
+    assert len(server.requests) == asked
+    # A week later it is asked again.
+    later = laser_context(context_factory, server, sleeps)
+    later.settings.fixed_now = NOW + timedelta(days=7)
+    assert fetch_source(later, low_bar(later)).outcome == "downloaded"
+    assert len(server.requests) > asked
 
 
 def test_the_download_keeps_only_points(context_factory, tmp_path: Path) -> None:

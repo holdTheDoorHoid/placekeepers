@@ -21,7 +21,7 @@ change once published, because saved links contain them.
     kind: carto                       # carto | arcgis | url | osm_extract | curated | sparql
     table: shootings                  # carto: table (and optional where)
     # arcgis: service: <name>, layer: 0 (and optional url, see below)
-    # url: url: <https link>, format: csv | geojson | parquet | zip
+    # url: url: <https link>, format: csv | geojson | parquet | zip | json
     # osm_extract: url: <https link to an .osm.pbf file>, tags: [key=value or key, ...]
     # curated: path: data/curated/<file>.yaml
     # sparql: url: <https link to a SPARQL query service>
@@ -66,6 +66,12 @@ and a snapshot whose hash differs from today's tag list, or that has none, is do
 the next run even when it is younger than the six days Geofabrik asks for. An `osm_extract` with neither key
 is the base map, made by the site and never fetched (section 2); one key without the other is an
 error.
+
+A `url` endpoint with `format: json` (added 2026-10-08 by issue #37) names a JSON service at a
+fixed link that the source's adapter asks with query parameters of its own, as a Carto adapter
+holds its columns: `pba_laser` asks Philly Bike Action's Laser Vision map
+(`https://bikeaction.org/tools/laser/map_data/`) for one day, then for 12 months of each kind of
+report, a few seconds apart (`pipeline/src/placekeepers/adapters/pba_laser.py`).
 
 A `sparql` endpoint (added 2026-10-05 by M3.2) names a SPARQL query service, `url` (an https
 link), such as Wikidata's, `https://query.wikidata.org/sparql`. The query itself lives in the
@@ -303,6 +309,8 @@ data/
     walk.pmtiles          layers "block_groups", "cells"   (walkability by block group, and people
                           and places within walking distance by area cell; M3.3)
     cycling.pmtiles       layer "stress"    (DVRPC's traffic stress for people on bikes; M3.3)
+    parking.pmtiles       layer "parking"   (parking problems reported with Laser Vision, counts per
+                          block sized cell; issue #37)
   tables/
     parcels.json          compact columnar table for ranking and lists
     owners.json           organizations holding many vacant parcels, with their parcels (section 6)
@@ -986,6 +994,37 @@ every link from zoom 12 (`publish/tiles.py`).
 | `bf` | int | the best bike facility of the link: 1 a signed bike route, 2 shared lane markings (sharrows), 3 a bike lane, 4 a buffered bike lane, 5 a protected bike lane, 6 a trail or path off the road (`BIKE_FACILITIES` in `adapters/walk.py`); absent when none |
 | `sp` | int | the traffic speed DVRPC used, in miles an hour (a posted limit or its model's estimate); absent when 0 |
 | `ln` | int | the lanes in all, both directions together; absent when unknown |
+
+Added 2026-10-08 by issue #37 (parking problems reported with Philly Bike Action's Laser Vision
+app, used with Philly Bike Action's permission; `pipeline/src/placekeepers/publish/laser.py`):
+
+**`parking` (parking.pmtiles)**: where people using Laser Vision reported vehicles blocking the
+way, counted per H3 cell at resolution 10 (about 115 meters across, about a Philadelphia block)
+over the 12 months up to the source's `newest_record` in the manifest (`pba_laser`); the window
+starts the day after the same date 12 months earlier. **Counts only, never a single report**: a
+cell is published only with at least 5 reports in the window, and a kind's count within it only
+with at least 5 of its own. Each published cell is written twice in the layer, with the same
+counts: as a **point** at the cell's center (the map draws a heat map from these, weighted by the
+count) and as its **hexagon**, which alone carries `id`. In the tiles the points are kept below
+zoom 14 and the hexagons from zoom 13 (`publish/tiles.py`); the GeoJSON keeps both at every zoom,
+told apart by geometry type.
+
+| Property | Type | Meaning |
+|---|---|---|
+| `id` | string | the H3 cell id; on the hexagons only |
+| `n` | int | every report in the cell in the window, 5 or more |
+| `sw` | int | vehicles on a sidewalk (Laser Vision's "Sidewalk") |
+| `bl` | int | vehicles in a bike lane ("Bike Lane") |
+| `cw` | int | vehicles on a crosswalk ("Crosswalk") |
+| `co` | int | vehicles on a corner ("Corner Clearance") |
+| `rp` | int | vehicles blocking a curb ramp ("Handicap Ramp") |
+
+Each kind is absent when the cell has fewer than 5 reports of it (the map says "fewer than 5"),
+so the kinds shown may add up to less than `n`. Nothing else from Laser Vision is published or
+even stored: no vehicle, plate, photo, time of day or reporter, and never a point (the snapshot
+keeps each report as its cell). On 2026-10-08: 1,112 cells (23,254 of the 26,060 reports in the 12
+months to 2026-10-07); 1,497 cells with fewer than 5 reports, holding 2,806, left out. The tile
+file is 152 kB, its largest tile 28 kB (zoom 13).
 
 ## 5. Hand curated memorial files (`data/curated/`)
 

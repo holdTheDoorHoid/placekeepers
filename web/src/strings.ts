@@ -687,7 +687,7 @@ export const strings = {
     } as Record<string, string>,
     window: (start: string, end: string) => `From ${start} to ${end}`,
     windowUnknown: 'Over 12 months',
-    heatTitle: (kind: string, window: string) => `${kind}: reports zoomed out. ${window}.`,
+    heatTitle: (window: string) => `Zoomed out: where reports cluster. ${window}.`,
     fewer: 'Fewer reports',
     more: 'More reports',
     binsTitle: 'Close in: reports in each area about a block across',
