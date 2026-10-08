@@ -704,6 +704,23 @@ As built (M1.5, 2026-10-04):
   Police records. The analysis view shows its sliders beside the violence lens; the field view's
   Streets chip still shows the High Injury Network, and the blocks layer is under "More layers".
 
+As built (issue #37, 2026-10-08): **Parking problems reported (Laser Vision)**, a layer in the
+streets group, off by default in both views and not part of any lens. It shows where people using
+Philly Bike Action's Laser Vision app reported vehicles blocking sidewalks, crosswalks, corners,
+curb ramps and bike lanes over the 12 months to the newest day with reports, used with Philly Bike
+Action's permission (confirmed by the owner 2026-10-08). Zoomed out it is a heat map in quiet blues;
+from zoom 13 it turns into the hexagons themselves, each about a block across (H3 resolution 10),
+shaded in five fixed classes. A setting picks the kind: every kind, on a sidewalk, in a bike lane,
+on a crosswalk, on a corner, or blocking a curb ramp. Tapping a hexagon gives its reports by kind
+and the window, says the counts come from people using one app and are not every problem, frames
+them as evidence for physical fixes (curb extensions, bollards, daylighted corners, protected bike
+lanes, loading zones), gives the City's transportation office as the place to ask (route
+`otis_contact`), and credits Philly Bike Action with a link to its map. Counts only, never a
+single report: an area shows only with at least 5 reports, and a kind within it only with 5 of its
+own. No word anywhere about tickets, the Parking Authority, reporting drivers or enforcement
+(ETHICS.md, "Policing"). On 2026-10-08: 1,112 areas holding 23,254 of 26,060 reports. Details in
+DATA_SOURCES.md ("Sources checked 2026-10-08") and CONTRACTS.md section 4.
+
 ### 5.8 Public art
 
 As built (M3.2, 2026-10-05): a **Public art** layer in a new **Art and placemaking** group, one dot

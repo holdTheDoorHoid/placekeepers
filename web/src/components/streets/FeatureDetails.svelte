@@ -23,6 +23,7 @@
   import ConditionDetails from '../amenities/ConditionDetails.svelte';
   import PlaceDetails from '../amenities/PlaceDetails.svelte';
   import StressDetails from '../walk/StressDetails.svelte';
+  import ParkingDetails from './ParkingDetails.svelte';
   import WatchDetails from '../displacement/WatchDetails.svelte';
   import { watchSummaryOf } from '../../displacement/watch.ts';
 
@@ -137,6 +138,13 @@
     />
   {:else if style === STYLES.traffic_stress}
     <StressDetails features={target.features} />
+  {:else if style === STYLES.parking_reports}
+    <ParkingDetails
+      properties={first}
+      manifest={store.manifest}
+      route={store.registry.routes.find((r) => r.id === 'otis_contact')}
+      homepage={store.registry.sources.find((source) => source.id === 'pba_laser')?.homepage}
+    />
   {/if}
   {#if onClose}
     <button class="button quiet small" type="button" onclick={onClose}>{strings.place.clearSelection}</button>

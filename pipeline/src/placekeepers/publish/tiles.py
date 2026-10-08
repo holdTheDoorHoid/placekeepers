@@ -203,6 +203,30 @@ TILE_OPTIONS: dict[str, list[str]] = {
             separators=(",", ":"),
         ),
     ],
+    # Parking problems reported with Laser Vision (issue #37): about a thousand block sized cells,
+    # each written twice (publish/laser.py). Zoomed out the tiles carry the cells' centers, every
+    # one at every zoom, for the map's heat map; from zoom 13 they carry the hexagons, which the
+    # map shows and opens close in, stretched past zoom 14. A wider buffer than usual keeps the
+    # heat map smooth across tile edges.
+    "tiles/parking.pmtiles": [
+        "--minimum-zoom=8",
+        "--maximum-zoom=14",
+        "--base-zoom=8",
+        "--no-feature-limit",
+        "--no-tile-size-limit",
+        "--buffer=16",
+        "--feature-filter",
+        json.dumps(
+            {
+                "parking": [
+                    "any",
+                    ["all", ["<", "$zoom", 14], ["==", "$type", "Point"]],
+                    ["all", [">=", "$zoom", 13], ["==", "$type", "Polygon"]],
+                ]
+            },
+            separators=(",", ":"),
+        ),
+    ],
     # The displacement watch areas (M4.1): about a hundred census tracts, like the boundaries:
     # every area kept at every zoom (never dropped to thin a tile), borders shared, and detailed
     # enough at zoom 14 to be stretched further by the map.

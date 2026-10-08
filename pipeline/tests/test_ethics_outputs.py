@@ -36,6 +36,7 @@ import re
 from pathlib import Path
 from typing import Any
 
+import h3
 import pyarrow as pa
 import pytest
 import yaml
@@ -48,6 +49,7 @@ from placekeepers.publish import publish
 from . import streets_fixtures as fx
 from .conftest import REPO_ROOT, install_snapshot
 from .test_dossiers import HOMESTEAD, NOW, dates, install_everything
+from .test_laser import install_laser
 
 LATER = "2026-10-04T14:30:00Z"
 ETHICS = (REPO_ROOT / "docs" / "ETHICS.md").read_text(encoding="utf-8")
@@ -79,6 +81,8 @@ CONTRACT_PROPERTIES = {
     "council_districts": {"d", "nm"},
     "rcos": {"id", "nm", "t", "w"},
     "neighborhoods": {"id", "nm"},
+    # Parking problems reported with Laser Vision, counts per cell only (issue #37)
+    "parking": {"id", "n", "sw", "bl", "cw", "co", "rp"},
 }
 
 #: Keys that would mean a published file says something about a person it must not.
@@ -119,6 +123,13 @@ REMOVED = {
     "lat": fx.lnglat(240, 60)[1],
     "lng": fx.lnglat(240, 60)[0],
     "source": "https://example.org/memorials/robin-placeholder",
+}
+#: Laser Vision reports in three cells near the street fixtures: one shown, one with a kind left
+#: out, one left out entirely (issue #37).
+LASER_CELLS = {
+    h3.latlng_to_cell(*reversed(fx.lnglat(60, 99)), 10): {"sidewalk": 7, "bike_lane": 6},
+    h3.latlng_to_cell(*reversed(fx.lnglat(400, 60)), 10): {"crosswalk": 5, "ramp": 1},
+    h3.latlng_to_cell(*reversed(fx.lnglat(800, 300)), 10): {"corner": 2},
 }
 #: L&I numbers in the realistic forms the City uses, which must never be published.
 CASE_NUMBERS = ("CF-2025-012345", "VI-2025-054321", "CF-2024-000777", "VI-2024-000888")
@@ -222,6 +233,7 @@ def built(context_factory, repo_copy, tmp_path) -> tuple[Path, Path, str]:
     install_everything(ctx)
     install_case_numbers(ctx)
     install_streets(ctx)
+    install_laser(ctx, LASER_CELLS)
     first = tmp_path / "first"
     publish(ctx, first)
     memorials = published_files(first)["tiles/streets.memorials.geojson"]["features"]
@@ -239,6 +251,7 @@ def test_the_build_has_every_kind_of_file(built) -> None:
     assert any(re.fullmatch(r"dossiers/\d{4}\.json", name) for name in names)
     layers = {name.split(".")[-2] for name in names if name.endswith(".geojson")}
     assert {"parcels", "h3", "hin", "crashes", "memorials", "segments", "landcare"} <= layers
+    assert "parking" in layers
 
 
 def test_each_layer_carries_only_its_contract_properties(built) -> None:

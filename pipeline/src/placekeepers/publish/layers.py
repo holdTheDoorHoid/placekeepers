@@ -565,6 +565,11 @@ from placekeepers.publish.art import ART_BUILDERS  # noqa: E402
 
 BUILDERS = (*BUILDERS, *ART_BUILDERS)
 
+# Parking problems reported with Laser Vision, counted per block sized cell (issue #37).
+from placekeepers.publish.laser import PARKING_BUILDERS  # noqa: E402
+
+BUILDERS = (*BUILDERS, *PARKING_BUILDERS)
+
 # The displacement watch (M4.1): areas with signs that prices are rising.
 from placekeepers.publish.displacement import DISPLACEMENT_BUILDERS  # noqa: E402
 

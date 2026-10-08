@@ -16,6 +16,7 @@ import { hin } from './hin.ts';
 import type { StyleId } from './ids.ts';
 import { landcare } from './landcare.ts';
 import { memorials } from './memorials.ts';
+import { parkingReports } from './parking_reports.ts';
 import { publicArt } from './public_art.ts';
 import { publicPlace } from './public_place.ts';
 import { shootingsHex } from './shootings_hex.ts';
@@ -53,6 +54,7 @@ export const STYLES: Record<StyleId, StyleModule> = {
   walkability,
   walking_distance: walkingDistance,
   traffic_stress: trafficStress,
+  parking_reports: parkingReports,
   displacement_watch: displacementWatch,
 };
 

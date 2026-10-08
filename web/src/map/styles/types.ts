@@ -5,6 +5,7 @@ import type { FilterSpecification, LayerSpecification } from 'maplibre-gl';
 import type { Layer, Registry } from '../../registry/types.ts';
 import type { AppState } from '../../state/defaults.ts';
 import type { StopAnswerIndex } from '../../transit/answers.ts';
+import type { Manifest } from '../../data/manifest.ts';
 
 export interface StyleContext {
   layer: Layer;
@@ -23,6 +24,11 @@ export interface StyleContext {
    * then counts its shelter and bench halfway.
    */
   stopAnswers?: StopAnswerIndex | null;
+  /**
+   * The build's manifest, when a legend needs a source's dates (the parking reports' window,
+   * issue #37). Missing or null until it loads.
+   */
+  manifest?: Manifest | null;
 }
 
 export type LegendContext = Omit<StyleContext, 'sourceId' | 'sourceLayer'>;

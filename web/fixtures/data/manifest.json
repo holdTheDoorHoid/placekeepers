@@ -399,6 +399,15 @@
       "newest_record": "2026-09-17",
       "message": null
     },
+    "pba_laser": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 26060,
+      "newest_record": "2026-10-03",
+      "message": null
+    },
     "real_estate_sales": {
       "status": "ok",
       "last_attempt": "2026-10-04T10:00:05Z",
@@ -714,6 +723,13 @@
         "dvrpc_lts"
       ]
     },
+    "parking_reports": {
+      "file": "tiles/parking.pmtiles",
+      "source_layer": "parking",
+      "sources": [
+        "pba_laser"
+      ]
+    },
     "displacement_watch": {
       "file": "tiles/displacement.pmtiles",
       "source_layer": "watch",
@@ -856,6 +872,10 @@
       "bytes": 846,
       "sha256": "db3f13d6ca3ce820b90a9f7a2e760764ba7ee66164dfa3808271217aee22f24c"
     },
+    "tiles/parking.parking.geojson": {
+      "bytes": 2970,
+      "sha256": "03a7f20a36dc66d63c4e5449e4f4d802e731c8560e39293608681d6ea2079eb6"
+    },
     "tiles/displacement.watch.geojson": {
       "bytes": 699,
       "sha256": "581eeee3fc1b224be1b9e81e31de9900030e9bb5fdb1af6f9611d4b6fb072656"
@@ -932,6 +952,7 @@
     "Street, boundary, transit, amenity, heat, tree and floodplain tiles were skipped for this sample, so those layers are published as GeoJSON.",
     "Public art tiles were skipped for this sample too, so its layer is published as GeoJSON.",
     "Walking tiles were skipped for this sample too, so those layers are published as GeoJSON.",
+    "Parking report tiles were skipped for this sample too, so that layer is published as GeoJSON.",
     "Displacement watch tiles were skipped for this sample too, so its layer is published as GeoJSON."
   ]
 }

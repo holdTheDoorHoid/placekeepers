@@ -24,6 +24,7 @@ import { AMENITY_LAYERS, AMENITY_SOURCES, amenityFixtures } from './amenity-fixt
 import { WATCH_BLOCK, WATCH_LAYER, WATCH_SOURCES, watchFixtures, watchFor } from './displacement-fixtures.mjs';
 import { routeOsmStops, routeSheetFixtures } from './route-fixtures.mjs';
 import { WALK_LAYERS, WALK_SOURCES, walkFixtures } from './walk-fixtures.mjs';
+import { PARKING_LAYERS, PARKING_SOURCES, parkingFixtures } from './parking-fixtures.mjs';
 
 const FIXTURES = new URL('../fixtures/', import.meta.url);
 const ROOT = new URL('data/', FIXTURES);
@@ -586,6 +587,9 @@ writeFileSync(path('data/tiles/art.art.geojson'), collection(artWorks));
 // Walkability by block group, people and places within walking distance, and traffic stress for
 // people on bikes (M3.3, scripts/walk-fixtures.mjs).
 for (const [name, text] of walkFixtures(toLngLat)) writeFileSync(path(`data/${name}`), text);
+// Parking problems reported with Laser Vision, counted per block sized cell (issue #37,
+// scripts/parking-fixtures.mjs).
+for (const [name, text] of parkingFixtures(toLngLat)) writeFileSync(path(`data/${name}`), text);
 // The displacement watch (M4.1, scripts/displacement-fixtures.mjs).
 const [watchFile, watchText] = watchFixtures(box);
 writeFileSync(path(`data/${watchFile}`), watchText);
@@ -715,6 +719,7 @@ const manifest = {
     // The placemaking lens's commercial corridors (M3.4)
     commercial_corridors: ok(279, null),
     ...Object.fromEntries(Object.entries(WALK_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
+    ...Object.fromEntries(Object.entries(PARKING_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
     // The displacement watch (M4.1)
     ...Object.fromEntries(Object.entries(WATCH_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
   },
@@ -766,6 +771,7 @@ const manifest = {
     ...AMENITY_LAYERS,
     public_art: { file: 'tiles/art.pmtiles', source_layer: 'art', sources: ['percent_for_art', 'osm_philadelphia', 'wikidata_art'] },
     ...WALK_LAYERS,
+    ...PARKING_LAYERS,
     ...WATCH_LAYER,
   },
   files: Object.fromEntries(
@@ -789,6 +795,7 @@ const manifest = {
       ...amenityFixtures(toLngLat).map(([name]) => name),
       'tiles/art.art.geojson',
       ...walkFixtures(toLngLat).map(([name]) => name),
+      ...parkingFixtures(toLngLat).map(([name]) => name),
       watchFile,
       'tables/routes/index.json',
       'tables/stop_amenities.json',
@@ -809,6 +816,7 @@ const manifest = {
     'Street, boundary, transit, amenity, heat, tree and floodplain tiles were skipped for this sample, so those layers are published as GeoJSON.',
     'Public art tiles were skipped for this sample too, so its layer is published as GeoJSON.',
     'Walking tiles were skipped for this sample too, so those layers are published as GeoJSON.',
+    'Parking report tiles were skipped for this sample too, so that layer is published as GeoJSON.',
     'Displacement watch tiles were skipped for this sample too, so its layer is published as GeoJSON.',
   ],
 };

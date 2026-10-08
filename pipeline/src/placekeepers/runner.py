@@ -101,10 +101,8 @@ def refetch_due(ctx: Context, source: Source) -> str | None:
         if age < wait:
             return f"Changes yearly; the copy from {since} is recent enough"
     if floor is not None and age < floor:
-        return (
-            f"The copy from {since} is less than {floor.days} days old, and the publisher asks "
-            "not to be downloaded again so soon"
-        )
+        reason = adapter.min_refetch_reason if adapter else ""
+        return f"The copy from {since} is less than {floor.days} days old, and {reason}"
     return None
 
 

@@ -314,6 +314,36 @@
       type: toggle
       default: false
   release: v0.1
+- id: parking_reports
+  label: Parking problems reported (Laser Vision)
+  group: streets
+  description: >-
+    Where people using Philly Bike Action's Laser Vision app reported vehicles blocking sidewalks,
+    crosswalks, corners, curb ramps and bike lanes over the 12 months to the date in the legend,
+    counted per area about a block across. It shows where people using one app reported problems,
+    not every problem. An area with fewer than 5 reports is left out, so no single report ever
+    shows. Many reports in one place are evidence for physical fixes: curb extensions, bollards,
+    daylighted corners, protected bike lanes and loading zones.
+  sources: [pba_laser]
+  file: tiles/parking.pmtiles
+  source_layer: parking
+  geometry: polygon
+  style: parking_reports
+  evidence: context
+  default: {field: false, analysis: false}
+  settings:
+    - id: kind
+      label: Show reports of vehicles
+      type: choice
+      options:
+        - {value: all, label: Blocking the way in any of these ways}
+        - {value: sidewalk, label: On a sidewalk}
+        - {value: bike_lane, label: In a bike lane}
+        - {value: crosswalk, label: On a crosswalk}
+        - {value: corner, label: On a corner}
+        - {value: ramp, label: Blocking a curb ramp}
+      default: all
+  release: v0.3
 - id: basemap
   label: Base map
   group: basemap

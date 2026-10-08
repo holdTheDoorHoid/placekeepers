@@ -89,6 +89,8 @@ class Adapter(ABC):
     #: a good copy younger than this is not downloaded again unless forced, whatever the
     #: cadence (for publishers who ask not to be downloaded too often, such as Geofabrik)
     min_refetch: ClassVar[timedelta | None] = None
+    #: why a copy younger than `min_refetch` is kept, in the runner's words
+    min_refetch_reason: ClassVar[str] = "the publisher asks not to be downloaded again so soon"
 
     def __init__(self, source: Source, ctx: Context):
         if source.endpoint.kind != self.kind:

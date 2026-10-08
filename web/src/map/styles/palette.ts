@@ -164,6 +164,14 @@ export const STRESS_COLORS: Record<number, string> = { 1: '#2166ac', 2: '#67a9cf
 export const STRESS_CASING = '#ffffff';
 
 /**
+ * Parking problems reported with Laser Vision (issue #37), few to many: ColorBrewer PuBu, a cool
+ * blue clear of the street group's amber High Injury Network, pink street blocks and brown
+ * crashes. The heat map fades in from clear; the hexagons close in use the same five steps.
+ */
+export const PARKING_RAMP = ['#d0d1e6', '#a6bddb', '#74a9cf', '#2b8cbe', '#045a8d'] as const;
+export const PARKING_OPACITY = 0.7;
+
+/**
  * The displacement watch (M4.1): areas with signs that prices are rising, as a pale slate gray
  * fill under the lots and a dark slate dashed outline: a neutral, clear of the lots' greens, the
  * shootings' purples, the heat's oranges, the streets' pinks and the walking layers' teals and
