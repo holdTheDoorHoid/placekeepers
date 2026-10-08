@@ -158,6 +158,12 @@ describe('no word for ease of acquisition (interface check 3)', () => {
       ...PERMISSION_CODES.flatMap((code) => [permissionLabel(code), permissionText(code)]),
       ...collectStrings({ analysis: strings.analysis, plot: strings.plot, filters: strings.filters, permission: strings.permission, export: strings.export }).map(([, text]) => text),
       ...registry.lenses.flatMap((l) => [l.label, ...l.presets.map((p) => p.label), ...l.factors.map((f) => f.label)]),
+      // The lots listed as available by the City's land agencies (issue #36): a status, never ease.
+      ...registry.layers
+        .flatMap((l) => l.settings)
+        .filter((setting) => setting.id === 'listed')
+        .flatMap((setting) => [setting.label, ...(setting.type === 'choice' ? setting.options.map((o) => o.label) : [])]),
+      ...collectStrings({ listing: strings.dossier.listing, statuses: strings.dossier.owner.cityStatuses }).map(([, text]) => text),
     ];
     expect(texts.filter((text) => EASE.test(text))).toEqual([]);
   });

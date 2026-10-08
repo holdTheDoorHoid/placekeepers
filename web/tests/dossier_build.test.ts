@@ -455,10 +455,12 @@ describe('details', () => {
   it('shows the City list of public property and the side yard program for a Land Bank lot', () => {
     const view = buildDossier(input('990000009', { liveOn: false }));
     expect(view.owner.cityOwned).toBe(
-      "The City's list of public property names the Philadelphia Land Bank as the owner. Its status there: Available. The City marks it eligible for the side yard program, for the owner of the house next door.",
+      "The City's list of public property names the Philadelphia Land Bank as the owner. Its status there: listed as available. The Land Bank shows it on its map of properties people can apply for. The City marks it eligible for the side yard program, for the owner of the house next door.",
     );
     expect(view.actions.suggestions[0]!.routes.map((r) => r.route.id)).toEqual(['land_bank_garden_agreement']);
-    expect(view.actions.otherRoutes.map((r) => r.route.id)).toEqual(['land_bank_side_yard']);
+    // Listed as available, so the side yard route leads, in the listing box (issue #36).
+    expect(view.actions.listing!.sideYard!.route.id).toBe('land_bank_side_yard');
+    expect(view.actions.otherRoutes).toEqual([]);
     expect(view.owner.deedFraud).toBeNull();
     expect(view.owner.help).toBeNull();
   });

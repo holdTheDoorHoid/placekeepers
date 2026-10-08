@@ -237,8 +237,9 @@
         "type_reason": "The City's list of public property names the City of Philadelphia as the owner.",
         "city_owned": {
           "agency": "PUB",
-          "status": "AVAILABLE",
-          "side_yard_eligible": false
+          "status": "Owned - Available (no construction permitted)",
+          "side_yard_eligible": false,
+          "available": true
         },
         "flags": [
           {
@@ -666,8 +667,9 @@
         "type_reason": "The City's list of public property names the Philadelphia Land Bank as the owner.",
         "city_owned": {
           "agency": "PLB",
-          "status": "AVAILABLE",
-          "side_yard_eligible": true
+          "status": "Owned - Available",
+          "side_yard_eligible": true,
+          "available": true
         },
         "flags": [
           {
@@ -770,8 +772,8 @@
         "violations": 0
       },
       "routes": [
-        "land_bank_garden_agreement",
-        "land_bank_side_yard"
+        "land_bank_side_yard",
+        "land_bank_garden_agreement"
       ],
       "suggestions": [
         "clean_and_green"
@@ -848,7 +850,7 @@
         "type_reason": "City records name the Philadelphia Redevelopment Authority as the owner.",
         "city_owned": {
           "agency": "PRA",
-          "status": "NOT AVAILABLE",
+          "status": "Owned - Processing Applicant, Not Available",
           "side_yard_eligible": false
         },
         "flags": []

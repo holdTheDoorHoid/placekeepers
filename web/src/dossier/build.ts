@@ -19,6 +19,7 @@ import type { Lens, Partner, Registry, Route, Suggestion } from '../registry/typ
 import type { AppState } from '../state/defaults.ts';
 import { formatDate, formatMoney, formatTime, sentenceCase, strings } from '../strings.ts';
 import { today } from './dates.ts';
+import { CITY_LIST_SOURCE, cityListDate, cityStatusText, listingText, type ListingText } from './listing.ts';
 import {
   FLAG_IDS,
   FLAG_PART,
@@ -154,6 +155,20 @@ export interface RouteView {
   warning: string | null;
 }
 
+/**
+ * A lot the City's land agencies list as available (issue #36): the box at the top of "What you
+ * can do", with the side yard route first where the lot may go to the neighbor next door.
+ */
+export interface ListingView extends ListingText {
+  sideYard: RouteView | null;
+  /**
+   * The displacement caution, where the displacement watch (M4.1) marks the lot's area
+   * (docs/ETHICS.md, "Displacement"). Always null until M4.1 is merged: set it from the
+   * dossier's displacement block then, and src/components/dossier/ListingBox.svelte shows it.
+   */
+  displacement: string | null;
+}
+
 export interface SuggestionView {
   suggestion: Suggestion;
   /** The lawful route first: the routes that fit this parcel. */
@@ -231,6 +246,8 @@ export interface DossierView {
   };
   actions: {
     listed: boolean;
+    /** Listed as available by the City's land agencies (issue #36), or null. */
+    listing: ListingView | null;
     suggestions: SuggestionView[];
     otherRoutes: RouteView[];
   };
@@ -394,7 +411,8 @@ export function cityOwnedText(owned: CityOwned | null): string | null {
   const o = strings.dossier.owner;
   const agency = owned.agency ? (o.agencies[owned.agency.toUpperCase()] ?? null) : null;
   const parts = [agency ? o.cityListNames(agency) : o.cityList];
-  if (owned.status) parts.push(o.cityListStatus(plain(sentenceCase(owned.status))));
+  // The status in plain words, with what it means for neighbors (issue #36).
+  if (owned.status) parts.push(cityStatusText(owned.status));
   if (owned.sideYardEligible) parts.push(o.sideYard);
   return parts.join(' ');
 }
@@ -488,7 +506,6 @@ export function buildDossier(input: DossierInput): DossierView {
       partners: suggestion.partners.map((id) => registry.partners.find((pt) => pt.id === id)).filter((pt): pt is Partner => !!pt),
     };
   });
-  const otherRoutes = parcelRoutes.filter((r) => !used.has(r.id)).map(routeView);
 
   // Who owns it -----------------------------------------------------------------------------------
   const shardOwner = parcel?.owner ?? null;
@@ -509,6 +526,21 @@ export function buildDossier(input: DossierInput): DossierView {
     ownerType = OWNER_TYPE_BY_CODE[int(tile?.ot) ?? 0] ?? 'unknown';
     typeReason = null;
   }
+  // Listed as available by the City's land agencies (issue #36): from the dossier, or from the
+  // map's `la` while the dossier is not at hand, and not when the City now names another owner.
+  // The side yard route leads it where the lot may go to the neighbor next door, and is then not
+  // repeated among the other routes.
+  const owned = shardOwner?.cityOwned ?? null;
+  const available = owned ? owned.available : !parcel && int(tile?.la) === 1;
+  let listing: ListingView | null = null;
+  if (available && !ownerChanged) {
+    const sideYardRoute = owned?.sideYardEligible ? (parcelRoutes.find((r) => r.id === 'land_bank_side_yard') ?? null) : null;
+    if (sideYardRoute) used.add(sideYardRoute.id);
+    const words = listingText(owned?.status ?? null, cityListDate(manifest), sideYardRoute !== null);
+    listing = { ...words, sideYard: sideYardRoute ? routeView(sideYardRoute) : null, displacement: null };
+  }
+  const otherRoutes = parcelRoutes.filter((r) => !used.has(r.id)).map(routeView);
+
   const rawNames = property ? property.names : (shardOwner?.names ?? []);
   const names = rawNames.map((name) => plain(name));
   const privateOwner = isPrivate(ownerType, names.length > 0 || (!property && !shardOwner && ownerType !== 'unknown'));
@@ -672,6 +704,12 @@ export function buildDossier(input: DossierInput): DossierView {
     addSource('li_unsafe', liWhen);
     addSource('li_imminently_dangerous', liWhen);
   }
+  // The City's list of public property, dated by the day it was fetched (its records carry no
+  // date of their own; issue #36).
+  if ((shardOwner?.cityOwned && !ownerChanged) || listing) {
+    const listDate = cityListDate(manifest);
+    addSource(CITY_LIST_SOURCE, listDate ? src.snapshot(listDate) : parcel ? snapshotWhen : p.map);
+  }
   if (taxFlag) addSource('cagp_tax_2025', src.taxSnapshot);
   if (shardNearby) {
     if (shardNearby.s12 !== null || shardNearby.s36 !== null) addSource('shootings', snapshotWhen);
@@ -743,7 +781,7 @@ export function buildDossier(input: DossierInput): DossierView {
       links,
       provenance: parcel ? snapshotProvenance : tile ? { tone: 'snapshot', text: p.map } : provenanceOf(live.property, false, null, liveOn),
     },
-    actions: { listed, suggestions: suggestionViews, otherRoutes },
+    actions: { listed, listing, suggestions: suggestionViews, otherRoutes },
     owner: {
       names,
       mailing: plain(property ? property.mailing : (shardOwner?.mailing ?? null)),

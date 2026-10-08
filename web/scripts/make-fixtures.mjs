@@ -103,6 +103,11 @@ function firstStepFor({ ot, lc }, index) {
 // public body), so every first step appears in the sample.
 const OWNER_OVERRIDES = { 31: 6, 47: 8 };
 
+// Parcels the City's land agencies list as available (`la`, issue #36), as the hand written lot
+// pages in data/dossiers/9900.json say: a City lot PHS LandCare keeps up, and a Land Bank lot
+// eligible for a side yard.
+const LISTED = new Set([2, 9]);
+
 // The heat and shade lens (M3.1, docs/CONTRACTS.md section 4), worked out without random draws so
 // every other fixture stays the same: heat vulnerability rises to the east, City trees thin out
 // to the north, people are spread evenly, and the eastern run of the first row lies in the 1
@@ -163,6 +168,7 @@ RUNS.forEach((length, run) => {
     };
     if (OWNER_OVERRIDES[n] !== undefined) properties.ot = OWNER_OVERRIDES[n];
     properties.rt = firstStepFor(properties, n);
+    if (LISTED.has(n)) properties.la = 1;
     Object.assign(properties, reasonsFor(properties, n));
     // Some parcels have no tree canopy rank yet, as happens while data arrives.
     if (random() > 0.2) properties.f_canopy = between(0, 100);
@@ -598,6 +604,8 @@ const manifest = {
   generated_at: '2026-10-04T10:03:12Z',
   sources: {
     opa_properties: ok(583412, '2026-10-02'),
+    // The owner type, and the lots listed as available (issue #36): the records carry no dates.
+    city_owned_property: ok(7740, null),
     pwd_parcels: {
       status: 'missing',
       last_attempt: null,
@@ -671,7 +679,7 @@ const manifest = {
     vacant_parcels: {
       file: 'tiles/lots.pmtiles',
       source_layer: 'parcels',
-      sources: ['vacant_indicators_land', 'vacant_indicators_bldg', 'opa_properties', 'pwd_parcels'],
+      sources: ['vacant_indicators_land', 'vacant_indicators_bldg', 'opa_properties', 'pwd_parcels', 'city_owned_property'],
     },
     hin_2025: { file: 'tiles/streets.pmtiles', source_layer: 'hin', sources: ['high_injury_network'] },
     shootings_hex: { file: 'tiles/context.pmtiles', source_layer: 'h3', sources: ['shootings'] },
