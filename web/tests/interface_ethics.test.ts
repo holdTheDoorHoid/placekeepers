@@ -79,6 +79,8 @@ const CAUTION = 'Greening can raise nearby prices. Consider pairing it with prot
 describe('the displacement caution on every greening suggestion (decision D12)', () => {
   it('is the ETHICS.md sentence, word for word', () => {
     expect(ETHICS).toContain(`*"${CAUTION}"*`);
+    // The placemaking version too, written into ETHICS.md with the owner's agreement (v0.3 review, D1).
+    expect(ETHICS).toContain(`*"${strings.displacement.placemakingCaution}"*`);
     expect(strings.displacement.caution).toBe(CAUTION);
   });
 
