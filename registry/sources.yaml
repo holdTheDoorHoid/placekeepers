@@ -611,6 +611,22 @@
   cadence: weekly
   health: {min_rows: 40, max_drop_pct: 25}
   release: v0.3
+# Milestone M3.4: the commercial corridors of the placemaking lens's "on or near a commercial
+# corridor" factor. OpenDataPhilly lists the layer under the City of Philadelphia License, the
+# City's open data terms used for every City source here (docs/DATA_SOURCES.md, "Placemaking").
+- id: commercial_corridors
+  name: Commercial corridors of Philadelphia
+  publisher: City of Philadelphia, Department of Planning and Development
+  homepage: https://opendataphilly.org/datasets/commercial-corridors-of-philadelphia/
+  # 279 corridors, centers and districts the Planning Commission surveyed from 2011 to 2017, as
+  # areas; only the name, survey year and kind are downloaded with the shape
+  # (pipeline/src/placekeepers/adapters/places.py).
+  endpoint: {kind: arcgis, service: Commercial_Corridors, layer: 0}
+  license: city_terms
+  attribution: "Commercial corridors: City of Philadelphia, Department of Planning and Development"
+  cadence: irregular
+  health: {min_rows: 250, max_drop_pct: 10}
+  release: v0.3
 # Milestone M3.3: walkability and people. The EPA's National Walkability Index by block group
 # (only Philadelphia's are downloaded), population by census block from the 2020 census, DVRPC's
 # traffic stress for cycling (Philadelphia's streets only), and food stores that take SNAP, one of
@@ -667,3 +683,60 @@
   cadence: weekly
   health: {min_rows: 1000, max_drop_pct: 25, newest_field: source_date, max_age_days: 120}
   release: v0.3
+# Milestone M4.1: the displacement watch. Home sales and assessed values for the whole city (the
+# candidate parcels' records above are mostly vacant lots and sheriff sales), renters by census
+# tract, and the City's Market Value Analysis (pipeline/src/placekeepers/adapters/displacement.py).
+- id: real_estate_sales
+  name: Real estate sales, citywide
+  publisher: City of Philadelphia, Department of Records
+  homepage: https://opendataphilly.org/datasets/real-estate-transfers/
+  # Every deed with a price over $100 from the last nine years, for the whole city. The buyers'
+  # names are read only to tell a company from a person and are never kept: the snapshot holds
+  # each deed's buyer type, not names. The sellers' names are never downloaded.
+  endpoint:
+    kind: carto
+    table: rtt_summary
+    where: "document_type ILIKE '%DEED%' AND total_consideration > 100 AND display_date >= now() - interval '9 years'"
+  license: city_terms
+  attribution: "Real estate transfers: City of Philadelphia, Department of Records"
+  cadence: weekly
+  health: {min_rows: 150000, max_drop_pct: 15, newest_field: display_date, max_age_days: 120}
+  release: v0.4
+- id: assessment_values
+  name: Assessed market values, citywide, two tax years
+  publisher: City of Philadelphia, Office of Property Assessment
+  homepage: https://opendataphilly.org/datasets/philadelphia-properties-and-assessment-history/
+  # The market value of every parcel in the newest tax year and in the year five before it, found
+  # when the download starts (about 1.2 million rows). The City sets values once a year.
+  endpoint: {kind: carto, table: assessments}
+  license: city_terms
+  attribution: "Assessed values: City of Philadelphia, Office of Property Assessment"
+  cadence: yearly
+  health: {min_rows: 900000, max_drop_pct: 10}
+  release: v0.4
+- id: acs_tenure
+  name: Renters and owners by census tract (ACS 2020 to 2024)
+  publisher: U.S. Census Bureau, American Community Survey
+  homepage: https://www.census.gov/programs-surveys/acs/data/summary-file.html
+  # Table B25003 (tenure) from the same table based summary file as the poverty table: one file
+  # for the whole country (27 MB), no key needed.
+  endpoint: {kind: url, url: "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b25003.dat", format: csv}
+  license: public_domain
+  attribution: "Renters and owners: U.S. Census Bureau, American Community Survey 2020 to 2024 five year estimates"
+  cadence: yearly
+  health: {min_rows: 380, max_drop_pct: 5}
+  release: v0.4
+- id: market_value_analysis
+  name: Market Value Analysis 2026
+  publisher: Reinvestment Fund, for the City of Philadelphia Department of Planning and Development
+  homepage: https://opendataphilly.org/datasets/market-value-assessment/
+  # One polygon per census block group with its market type and Reinvestment Fund's reading of
+  # displacement pressure (prices against what longtime residents earn). The City publishes the
+  # 2023 edition (mva_2023, on OpenDataPhilly) and the 2026 edition (mva_2026, on its open data
+  # hub, released 2026-07-16) under the same terms; the adapter reads both.
+  endpoint: {kind: arcgis, service: mva_2026, layer: 0}
+  license: city_terms
+  attribution: "Market Value Analysis 2026: Reinvestment Fund for the City of Philadelphia"
+  cadence: irregular
+  health: {min_rows: 1200, max_drop_pct: 5}
+  release: v0.4

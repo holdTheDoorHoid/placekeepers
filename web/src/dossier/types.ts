@@ -215,6 +215,11 @@ export interface ShardParcel {
    * note as one opened from the map (issue #31). Null for a parcel not on the map.
    */
   lens: Record<string, number> | null;
+  /**
+   * The displacement watch area the lot lies in (M4.1): its census tract and the area's signs,
+   * the same bits as the lot's `dw` on the map. Null outside every watch area.
+   */
+  displacement: { tract: string; signs: number } | null;
 }
 
 export interface Shard {

@@ -282,7 +282,7 @@ needed). Every score has a "why" breakdown showing each factor's contribution.
 | Street safety | Street segments and crash sites | On the High Injury Network; people killed or seriously injured walking or cycling in 5 years; any fatal crash in 2 years; school within 400 m; later, busy bus stop nearby | First |
 | Heat and shade | Vacant parcels | Neighborhood heat vulnerability, from the City's index (Context); few trees nearby, 2018 canopy within about a quarter mile (Mixed); few City trees on the block, within 100 meters (Mixed); people this would reach, residents per square kilometer of the tract (Context). FEMA's floodplain is shown beside the score, never in it | v0.3 (M3.1) |
 | Transit comfort | SEPTA bus and trolley stops | People getting on each weekday (Context); no shelter (Weak); no bench (Weak); little shade nearby (Mixed); hot neighborhood in summer (Context); on the High Injury Network (Context); long waits at midday (Weak). A shelter or bench not yet surveyed counts halfway | v0.2 (M2.3) |
-| Placemaking | Lots and area cells | Walkability; people within a 5 minute walk; distance to a park; art nearby or absent; commercial corridor. M3.3 computes the walking factors (section 5.9) | Later |
+| Placemaking | Vacant parcels | People within a 5 minute walk (Context); everyday places within a 10 minute walk (Mixed); walkability (Mixed); far from a park (Context); no public art nearby, from the City's list and Wikidata (Context); on or near a commercial corridor (Mixed). The walking factors come from M3.3 (section 5.9) | v0.3 (M3.4) |
 
 As built (M2.3, 2026-10-05): the transit comfort lens colors SEPTA's bus and trolley stops (the
 stops layer's coloring setting offers the lens, waits or riders, and defaults to the lens), with
@@ -352,10 +352,161 @@ route, then the City's free street trees (the route shared with the shade trees 
 TreePhilly's free giveaway trees, and both carry the displacement caution of ETHICS.md word for
 word, like clean and green.
 
-**Displacement watch** is not a priority lens. It is a caution overlay on area cells (sale price
-growth, share of recent buyers that are companies, renter share, and similar), shown wherever a
-suggestion could raise property values. Its exact factors are set in the history and displacement
-release.
+As built (M3.4, 2026-10-08): the **placemaking lens** ranks the vacant parcels on the map for where
+a lot would most likely become a public place people use every day: a garden, a pocket park, a
+place to sit in the shade, a spot for art. It is about use and welcome, never about crime
+(EVIDENCE.md, "Placemaking"). Each of its six factors is ranked from 0 to 100 among the parcels on
+the map; for the first three more ranks higher (section 5.9), for the parks and the art farther
+ranks higher:
+
+- **People within a 5 minute walk** (Context, default weight 3), **everyday places within a 10
+  minute walk** (Mixed, 2) and **walkability**, the EPA's index (Mixed, 2): the walking measures of
+  M3.3.
+- **Far from a park** (Context, 2): the straight line distance from the parcel's point to the edge
+  of the nearest park land of Parks and Recreation (parks, playgrounds, recreation centers,
+  squares, greenways, nature areas and gardens: 479 of its 507 properties, leaving out its work
+  yards, golf courses and planted traffic medians). Half the parcels on the map lie within 235
+  meters of one, and 67 lie inside one.
+- **No public art nearby** (Context, 1): the distance to the nearest of the 174 outdoor works on
+  the City's Percent for Art list and the 69 in Wikidata (half the parcels lie within about a
+  kilometer of one). OpenStreetMap's 410 artworks are not used: nothing worked out from them may be
+  stored with the City's data in the lots (decision D1 of VERIFICATION_V0_2.md). Mural Arts'
+  murals are in none of these lists, so the factor only knows part of the city's art, says so,
+  and has the lowest default weight.
+- **On or near a commercial corridor** (Mixed, 1): 100 when the parcel lies on one of the City's
+  279 commercial corridors (shopping streets and centers the Planning Commission surveyed from
+  2011 to 2017) or within 50 meters of one, else 0 (14,287 parcels, 9,652 of them lots).
+
+The two distances are ranked, then rounded to the nearest 5: a straight line says nothing finer,
+and it keeps the lots file smaller (the last paragraph of this note). Presets: Balanced (the
+defaults 3, 2, 2, 2, 1, 1), Most neighbors, Where people already walk, and Far from a park. The
+lots layer's **Color lots by** setting offers the lens beside the other two, and moving its sliders
+or using a preset colors the lots by it.
+
+**What it finds.** Measured on 2026-10-08 under the Balanced weights, the lots of Spruce Hill,
+Bella Vista and Passyunk Square average 72 to 73, those of Fairhill 56 and Strawberry Mansion 44,
+and those of Chestnut Hill 25 and Upper Roxborough 20. Because the lens values people and everyday
+places within a walk, it ranks the dense rowhouse neighborhoods around Center City highest, and
+they include some of the city's costliest. That is one reason every placemaking card carries the
+displacement caution, and the reason for the Far from a park preset, which turns to places that
+lack open space (Dunlap, Mayfair and West Oak Lane lead under it).
+
+**Suggestions.** Vacant lots get up to six, decided in the pipeline with the factors. **Make a
+place to sit in the shade** where more people live within a 5 minute walk than around half the
+places on the map (18,765 lots on 2026-10-08); **start a community garden** where the lot is
+farther from a park than half the places (20,653); **ask about a mural or other art** where no
+work of the City's list or Wikidata stands within a 5 minute walk and many people live around
+(15,666), linking only to Mural Arts' own request form, never copying its content; and **report
+the illegal dumping, the dark street light or the graffiti to Philly311** where a street block the
+lot faces (within 20 meters of it) has a request about it still open in the conditions layer's 90
+days (650, 1,082 and 69 lots). Under this lens the first three lead a lot's card. They carry a
+placemaking version of the displacement caution by the greening cards' rule (M4.1, below): inside
+a displacement watch area the full card with the area's signs and the ways to protect neighbors,
+elsewhere one line with the same link (decided by the orchestrator on 2026-10-08, because
+"greening" does not describe a bench or a mural): "New gardens, seating and art can make a block
+more sought after and raise nearby prices and rents. Pair them with protections for neighbors who
+rent or who are behind on taxes." The greening suggestions keep the ETHICS.md wording. The reports
+never lead, are about physical conditions only, and point to Philly311, never the police. A 311 count is
+never a factor: it says that people asked, not how often a condition occurs.
+
+**Left out, and why.** The area cells (the walking distance hexagons of section 5.9) are not
+colored by this lens. Each lens colors one kind of place, so the cells would need a second lens
+with its own sliders, and they carry only the walking measures, not the park, art or corridor
+factors. OpenStreetMap's artworks are left out for the license reason above.
+
+On 2026-10-08 the three new factors and the longer lists of suggestions made tiles/lots.pmtiles 8
+percent larger (8.8 to 9.6 MB): the two distances about 5 percent once rounded (10 before), the
+corridor 1 percent and the suggestions 2 percent.
+
+**Displacement watch** is not a priority lens. It is a caution overlay, shown wherever a suggestion
+could raise property values. It changes no score and no order, and it ranks no neighborhood.
+
+As built (M4.1, 2026-10-08): **what the owner sees.** A layer, "Displacement watch: signs that
+prices are rising", in a new group, **Prices and protections**. It is on by default in the analysis
+view, where organizers plan, and off in the field view, where the cards already carry the caution
+and a phone map has little room. Each watch area is drawn the same way, a pale slate gray fill with
+a dashed edge under the lots, however many signs it has, so nothing reads as a ranking. Tapping an
+area (or, close in, its edge, because from zoom 16 a tap inside asks the City which parcel is there)
+shows "Signs that prices are rising here", the census tract and the neighborhood at its center, each
+sign that holds with what was measured against the whole city, the other signs measured, the rule,
+the ways to protect neighbors, and what the watch cannot tell. Wherever a greening suggestion (clean
+and green, plant shade trees, green the lot to cool the block, shade trees at a bus stop) sits in a
+watch area, its card adds, under the ETHICS.md sentence word for word, "This place is in a
+displacement watch area, with signs that prices are rising here: ..." and links to the Neighborhood
+Gardens Trust, community land trusts, the City's Homestead Exemption, its Longtime Owner Occupants
+Program (LOOP) and help with a tangled title, each to its own official page with the day it was last
+checked. Outside every watch area the card keeps the one line caution (decision D12, kept by the
+orchestrator because it stays protective). The box of a lot the City's land agencies list as
+available (issue #36) carries the same caution by the same rule. The lot page, its print (which
+lists each protection with its address) and downloads (a `displacement_watch` column and a note)
+follow the same rule, and a lot page opened from a link knows its area from its dossier. Shade trees
+at bus stops carry the caution too, which before M4.1 they did not.
+
+**The areas** are the City's 2020 census tracts (408). Tracts, not hexagons: the renter share is
+published only by tract, a tract holds enough home sales for a middle price to mean something
+(most have well over 100 in three years, where a two block hexagon has a handful), and tracts
+follow the City's standard boundary that the parcels follow.
+
+**The five signs**, each measured against the whole city, so the watch follows the city's own
+market rather than a fixed price:
+
+| Sign | What is measured | It holds when | Too few to tell |
+|---|---|---|---|
+| Home sale prices | The middle (median) price of the homes sold in the last three years up to the newest recorded sale, against the three years that ended five years before (on 2026-10-08: September 2023 to September 2026 against September 2018 to September 2021) | The tract's middle price rose at least 25 percentage points more than the city's (the city's rose 28%, from $180,000 to $230,000, so 53% or more) | Fewer than 50 sales in either period |
+| Buyers that are companies | The share of those recent sales whose buyers' names are a company's, by the rule the lot pages use for owners | At least 15 points above the city's share (27%, so 42% or more) | Fewer than 50 recent sales |
+| The City's assessed values | The middle change in the City's market value of the tract's homes, each home against itself, from the tax year five years before the newest to the newest (2022 to 2027), the span the City's LOOP looks at | At least 30 points above the city's middle change (69%, so 99% or more) | Fewer than 50 homes |
+| Renters | The share of occupied homes that are rented (Census Bureau, 2020 to 2024) | 60% or more (the city: 48%) | Fewer than 100 occupied homes |
+| The City's Market Value Analysis | Reinvestment Fund's 2026 analysis for the City, by block group | At least one of the tract's block groups is one where it finds rising pressure: home prices climbing out of reach of what longtime residents earn | Not in the analysis |
+
+A sale counts when it is a deed for more than a token price that is not a sheriff, condemnation or
+adverse possession deed (the lot pages' rule), not a Land Bank deed (a public sale at a set price),
+for one property (a price shared over several is an allocation), of a home (a single family or two
+to four family house as OPA lists it today), built before the year of the sale (an earlier sale was
+of the land or the house before). The price is this property's share, as the lot pages show it.
+For the assessed values a home counts when it stood at least two years before the earlier tax year
+and was valued at $10,000 or more then, so a new house is never counted as a rise.
+
+**The rule**: an area is in the watch when at least two signs hold and at least one of them is
+about prices rising (sale prices, assessed values or the Market Value Analysis). Company buyers and
+renters say who is exposed to rising prices, not that prices are rising, so together they are not
+enough: without this, a few Center City tracts where most homes are rented and many condominiums
+are bought by companies would be watch areas while their prices are flat.
+
+**What it found on 2026-10-08.** 96 of 408 tracts, holding 157,139 of 679,428 occupied homes (23%),
+are watch areas: most in North, West and Southwest Philadelphia and lower Germantown (all six tracts
+of Hartranft, all five of Haddington and of Strawberry Mansion, five of seven in Cobbs Creek, four
+of five in Kingsessing, three of six in Hunting Park), where homes that sold for $50,000 to $90,000
+five years before now sell for $80,000 to $170,000, and companies often buy 40 to 60 percent of
+them. Because vacant lots gather in the same neighborhoods, 26,227 of the 40,776 vacant lots on the
+map (64%) and 389 of the 1,987 bus stops with a shade trees suggestion lie in one, so most greening
+cards on the map now carry the full caution. The sanity check: Fishtown's four tracts show no sign
+(prices rose 7% to 30%, slower than the city's 28% in three of them, and companies bought 14% to 18%
+of the homes), and only one of Point Breeze's six tracts is a watch area (its south side, where
+values rose 138% and companies bought 42%); prices there rose earlier and have since risen far more
+slowly than the city's (from a 1% fall to a 6% rise in the other five tracts). Stable areas such as
+Somerton, Fox Chase, Mayfair and Bustleton have at most one sign. Signs by count: sale prices 76
+tracts, company buyers 66, assessed values 78, renters 110, the Market Value Analysis 41; 93 tracts
+had too few home sales to judge prices.
+
+**What it cannot tell**, said on every tapped area: these are signs in public records, not a
+forecast. They cannot tell who has moved away or why, what rents are (no public record of rents
+covers the city), or who lives in an area, and an area outside the watch can still feel rising
+prices. A middle price moves when the kind of homes sold changes (more renovated houses, more new
+ones) as well as when the same homes cost more; the assessed values, which compare each home with
+itself, are the check on that. Names of buyers are read only to tell a company from a person and
+are never kept (docs/ETHICS.md).
+
+**Left out, and why.** Census block groups: too few sales for a middle price in most of them. Rents:
+no public, citywide record. The Market Value Analysis's own sale prices and investor counts: the
+City's deed records give the same at the tract level, with our own published rule. The 2023 edition
+of the analysis: the 2026 edition, which the City put on its open data hub on 2026-07-16 under the
+same terms, is newer and sorts every block group by displacement pressure; the source reads both, so
+going back is one registry line. Neighborhoods where prices rose earlier and have leveled off are
+not watch areas by design: the watch is about pressure now, and their cards keep the one line
+caution.
+
+The method in code is `pipeline/src/placekeepers/derive/displacement.py`; the files are in
+docs/CONTRACTS.md (sections 3, 4 and 6).
 
 **Population density** never multiplies a violence score. It appears only as "people this would
 reach".
@@ -394,15 +545,18 @@ setting. First release suggestions:
 | Crash site where someone walking or cycling died | Memorial or ghost bike; traffic calming petition on a residential street; daylighting check | Bicycle Coalition; OTIS |
 | High Injury Network segment | Vision Zero advocacy and public comment | Bicycle Coalition, Feet First Philly, 5th Square |
 | Vacant lot where little shade covers the area, or where heat hits people hardest (M3.1) | Plant shade trees on and along the lot; green the lot to cool the block | The lot's permission route, then the City's street tree request and TreePhilly's giveaway trees |
+| Vacant lot with many neighbors, far from a park, or with no public art nearby (M3.4) | A place to sit in the shade; a community garden; ask about a mural or other art | The lot's permission route (for a mural, the wall's owner and Mural Arts' request form) |
+| Vacant lot facing a block with an open 311 request about dumping, a dark light or graffiti (M3.4) | Report it to Philly311 | Philly311 |
 
 Funding is shown beside suggestions where it fits: the City's community violence prevention grants
 and Feet First Philly's public space mini grants (see ROUTES.md).
 
-As built (M1.10, 2026-10-04, decision D12 of VERIFICATION.md): until the displacement watch overlay
-exists, every greening suggestion (in this release, clean and green) carries the ETHICS.md caution
-word for word, "Greening can raise nearby prices. Consider pairing it with protections.", with a
-link to the ways to protect neighbors: on the nearby cards, the lot page and its print, in
-settings, and as a note at the top of any download that holds one.
+As built (M1.10, 2026-10-04, decision D12 of VERIFICATION.md): every greening suggestion carries
+the ETHICS.md caution word for word, "Greening can raise nearby prices. Consider pairing it with
+protections.", with a link to the ways to protect neighbors: on the nearby cards, the lot page and
+its print, in settings, and as a note at the top of any download that holds one. From M4.1
+(2026-10-08) the displacement watch decides how much the card says: inside a watch area it adds the
+area's signs and links to each protection; outside one it keeps this one line (section 5.3).
 
 ### 5.6 The lot dossier
 
@@ -573,7 +727,8 @@ As built (M3.2, 2026-10-05): a **Public art** layer in a new **Art and placemaki
 for each work, colored by its kind (murals and wall paintings, sculptures and statues, mosaics, and
 other kinds such as installations, fountains and monuments), with a switch for each kind and one for
 works inside buildings. It is off by default in both views: several hundred dots would crowd the
-lots and streets the first releases are about, and the placemaking lens (M3.4) will use it.
+lots and streets the first releases are about. The placemaking lens (M3.4, section 5.3) measures how
+far each lot is from the City's and Wikidata's works.
 Tapping a work shows its kind, title, artist, year, material and where it is, as its sources give
 them, and links to each source: the City's record, OpenStreetMap, Wikidata, a Wikipedia article,
 and any page OpenStreetMap or Wikidata names (often the Association for Public Art's page on the
@@ -680,8 +835,8 @@ the gaps instead needs a field of its own. Street corners (`f_corners`) stay off
 EPA's index counts intersections already, and each factor adds about 3 to 4 percent to the lots
 tiles (the three together about 10 percent, 8.0 to 8.8 MB, on 2026-10-05). The hexagons carry all
 four, ranked among the cells, for a placemaking lens on cells. CONTRACTS.md section 4 has the
-details, and `derived/walk_factors.parquet` holds the counts behind each parcel's ranks. No lens
-uses these fields yet; M3.4 builds the placemaking lens on them. SEPTA's bus and trolley stops on
+details, and `derived/walk_factors.parquet` holds the counts behind each parcel's ranks. The
+placemaking lens (M3.4, section 5.3) is built on them. SEPTA's bus and trolley stops on
 the street carry the same three factors, measured from each stop and ranked among the stops, for
 any lens that wants the people and places a stop serves.
 
@@ -902,7 +1057,8 @@ docs/            design, roadmap, research
 - **Shootings** are shown as hexagon counts by default; the point layer is a setting, off by
   default.
 - **Names** only from curated public memorial lists; removal by email.
-- **Displacement watch** appears wherever greening could raise values.
+- **Displacement watch** appears wherever greening could raise values: areas with signs that
+  prices are rising, where greening cards add the ways to protect neighbors (section 5.3).
 - **Terms of use** say the site is for community care and lawful use, not speculation.
 
 ## 10. Contributions and takedowns

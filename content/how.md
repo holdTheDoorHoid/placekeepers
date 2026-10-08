@@ -139,7 +139,7 @@ Like any greening, trees can raise nearby prices; see the ways to protect neighb
 | Ask for a free street tree | Parks and Recreation (TreePhilly) | The owner of the property it would stand in front of asks | Free: the City plants it and waters it the first year | The next planting season |
 | Ask for a bike rack | Streets Department | Apply | Not stated | Not stated |
 | Paint a wall mural | Mural Arts, through the "Want a mural on your wall?" form on [its contact page](https://muralarts.org/contact/) | The wall owner's permission | Free to apply | Months |
-| Report a dark streetlight, dumping, or an open vacant building | Philly311 | Nothing | Free | Days to weeks |
+| Report a dark streetlight, dumping, graffiti, or an open vacant building | Philly311 | Nothing | Free | Days to weeks |
 
 A few things people often ask about do not have a clear City process yet:
 
@@ -193,7 +193,8 @@ week. Mural Arts Philadelphia keeps the largest list of the city's murals on
 - The City's Division of Safe Neighborhoods runs community violence prevention grants: about $24
   million went to 147 groups in June 2025, and a new $25 million round was announced on June 17,
   2026.
-- Feet First Philly offers public space mini grants of $500 to $2,000.
+- Feet First Philly offers public space mini grants of $500 to $2,500, for projects that make a
+  neighborhood easier to walk and roll in. Applications open in August and are due in October.
 - The Block Party Bonanza (a free kit and a gift card) was a 2026 only program and ended on
   October 3, 2026, so it is no longer available.
 

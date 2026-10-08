@@ -354,6 +354,15 @@
       "newest_record": null,
       "message": null
     },
+    "commercial_corridors": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 279,
+      "newest_record": null,
+      "message": null
+    },
     "epa_walkability": {
       "status": "ok",
       "last_attempt": "2026-10-04T10:00:05Z",
@@ -397,6 +406,42 @@
       "stale_since": null,
       "rows": 26060,
       "newest_record": "2026-10-03",
+      "message": null
+    },
+    "real_estate_sales": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 272801,
+      "newest_record": "2026-09-02",
+      "message": null
+    },
+    "assessment_values": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 1159065,
+      "newest_record": null,
+      "message": null
+    },
+    "acs_tenure": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 408,
+      "newest_record": null,
+      "message": null
+    },
+    "market_value_analysis": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 1338,
+      "newest_record": null,
       "message": null
     }
   },
@@ -684,6 +729,18 @@
       "sources": [
         "pba_laser"
       ]
+    },
+    "displacement_watch": {
+      "file": "tiles/displacement.pmtiles",
+      "source_layer": "watch",
+      "sources": [
+        "real_estate_sales",
+        "assessment_values",
+        "acs_tenure",
+        "market_value_analysis",
+        "opa_properties",
+        "census_tracts_2020"
+      ]
     }
   },
   "files": {
@@ -708,8 +765,8 @@
       "sha256": "1d746dd64887fc690edb3dbd6c056b1630ce99ec1cec269ad1ea21b9890d3717"
     },
     "tiles/lots.pmtiles": {
-      "bytes": 14655,
-      "sha256": "9a862ed5461bb56a7318072fdcd8ce0627260a75363b7ee75fd9f432e85fd3e1"
+      "bytes": 18288,
+      "sha256": "279aa841231f27b3a80dc0010ef203c8fea2fa0f197ab38584600770e109cbc9"
     },
     "tiles/streets.crashes.geojson": {
       "bytes": 23183,
@@ -819,6 +876,10 @@
       "bytes": 2970,
       "sha256": "03a7f20a36dc66d63c4e5449e4f4d802e731c8560e39293608681d6ea2079eb6"
     },
+    "tiles/displacement.watch.geojson": {
+      "bytes": 699,
+      "sha256": "581eeee3fc1b224be1b9e81e31de9900030e9bb5fdb1af6f9611d4b6fb072656"
+    },
     "tables/routes/index.json": {
       "bytes": 1009,
       "sha256": "01d11edc7bc2753a818222918f2fb5ed042bcdca16e6b3035495189721127b7f"
@@ -842,13 +903,56 @@
       "9900"
     ],
     "files": 1,
-    "bytes": 23570
+    "bytes": 24736
+  },
+  "displacement": {
+    "as_of": "2026-10-04",
+    "periods": {
+      "earlier_from": "2018-09-03",
+      "earlier_to": "2021-09-02",
+      "recent_from": "2023-09-03",
+      "recent_to": "2026-09-02"
+    },
+    "assessment_years": [
+      2022,
+      2027
+    ],
+    "survey_years": [
+      2020,
+      2024
+    ],
+    "mva": "Market Value Analysis 2026",
+    "city": {
+      "p0": 180000,
+      "p1": 230000,
+      "pc": 28,
+      "cb": 27,
+      "ac": 69,
+      "rp": 48
+    },
+    "thresholds": {
+      "price_points": 25,
+      "company_points": 15,
+      "assessment_points": 30,
+      "renter_pct": 60,
+      "min_sales": 50,
+      "min_assessed": 50,
+      "min_occupied": 100,
+      "min_signs": 2,
+      "recent_years": 3,
+      "gap_years": 5
+    },
+    "areas": {
+      "tracts": 408,
+      "watch": 2
+    }
   },
   "notes": [
     "This is synthetic sample data for testing the map.",
     "Street, boundary, transit, amenity, heat, tree and floodplain tiles were skipped for this sample, so those layers are published as GeoJSON.",
     "Public art tiles were skipped for this sample too, so its layer is published as GeoJSON.",
     "Walking tiles were skipped for this sample too, so those layers are published as GeoJSON.",
-    "Parking report tiles were skipped for this sample too, so that layer is published as GeoJSON."
+    "Parking report tiles were skipped for this sample too, so that layer is published as GeoJSON.",
+    "Displacement watch tiles were skipped for this sample too, so its layer is published as GeoJSON."
   ]
 }

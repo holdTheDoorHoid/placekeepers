@@ -36,6 +36,11 @@ change once published, because saved links contain them.
   release: v0.1                       # first release that uses it
 ```
 
+A Carto source's adapter may narrow the download further in code (added 2026-10-08 by M4.1):
+`assessment_values` asks the table for its years first and downloads only the newest tax year
+that holds most parcels and the year five before it, so it needs no yearly edit
+(`pipeline/src/placekeepers/adapters/displacement.py`).
+
 An `arcgis` endpoint names a service in the City's ArcGIS Online organization
 (`https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services`). For a service in another
 organization it adds `url`, the REST services root ending in `/rest/services` (added 2026-10-04 by
@@ -188,7 +193,9 @@ colors SEPTA's bus and trolley stops (`stops` in transit.pmtiles; added 2026-10-
 lenses apply to `parcel` from M3.1 (violence reduction and heat and shade): the lots layer's `lens`
 setting chooses which one colors the lots (section 1, layers), the first by default. A factor field
 may appear in more than one lens: the heat and shade lens lists the violence lens's `f_canopy`,
-computed once.
+computed once. From M3.4 (2026-10-08) a third lens applies to `parcel`, placemaking, and the setting
+offers it too; it lists the walking factors of M3.3 (`f_walk`, `f_neighbors`, `f_dest`), which rank
+more as higher, beside its own `f_park`, `f_art` and `f_corr` (section 4).
 
 One exception to leaving missing data out (added 2026-10-05 by M2.3, the transit comfort lens): a
 stop's shelter or bench that no one has surveyed yet is not missing but 50, halfway between having
@@ -239,11 +246,21 @@ decide (planting shade trees); the four that follow from what OpenStreetMap says
 browser by the same rules (decision D1, section 1 lenses), and a stop lists them all in that order:
 survey, shelter, bench, streetlight, shade trees.
 
-Greening suggestions (`clean_and_green` in this release, listed in
-`web/src/config/suggestions.ts`; added 2026-10-04 by M1.10, decision D12 of VERIFICATION.md) are
-shown with the caution of docs/ETHICS.md, "Greening can raise nearby prices. Consider pairing it
-with protections.", until the displacement watch overlay exists; the web app adds it wherever the
-suggestion is listed and in downloads. No registry key changes.
+Greening suggestions (listed in `web/src/config/suggestions.ts`: `clean_and_green`,
+`plant_shade_trees`, `cool_green_lot` and `stop_shade_trees`; added 2026-10-04 by M1.10, decision
+D12 of VERIFICATION.md) are shown with the caution of docs/ETHICS.md, "Greening can raise nearby
+prices. Consider pairing it with protections."; the web app adds it wherever the suggestion is
+listed and in downloads. From M4.1 (2026-10-08), a place inside a displacement watch area (its `dw`,
+section 4, or its dossier's `displacement`, section 6) gets the full card instead: the sentence,
+the area's signs and a link to each protection route (`neighborhood_gardens_trust`,
+`community_land_trust`, `homestead_exemption`, `longtime_owner_occupants`, `tangled_title_help` in
+`registry/routes.yaml`, the first link of each). No registry key changes.
+From M3.4 (2026-10-08) the placemaking lens's `seating_and_shade`, `community_garden` and
+`art_request` follow the same rule with their own one line caution ("New gardens, seating and art
+can make a block more sought after and raise nearby prices and rents. Pair them with protections
+for neighbors who rent or who are behind on taxes."; `PLACEMAKING_SUGGESTIONS` in the same file),
+and the same full card inside a watch area. Its three reports to Philly311 (`report_dumping`,
+`report_dark_light`, `report_graffiti`) carry no caution, and use only the route `report_to_311`.
 
 ### `registry/routes.yaml` and `registry/partners.yaml`
 
@@ -311,6 +328,7 @@ data/
     cycling.pmtiles       layer "stress"    (DVRPC's traffic stress for people on bikes; M3.3)
     parking.pmtiles       layer "parking"   (parking problems reported with Laser Vision, counts per
                           block sized cell; issue #37)
+    displacement.pmtiles  layer "watch"     (displacement watch areas, census tracts; M4.1)
   tables/
     parcels.json          compact columnar table for ranking and lists
     owners.json           organizations holding many vacant parcels, with their parcels (section 6)
@@ -399,6 +417,35 @@ lots include the ones where a footprint stands), and `left_out` (parks, gardens,
 that never show). Every parcel counted is in the `parcels` layer except units inside a larger parcel
 and the few with no shape and no point (the notes say how many of each). It is `null` when the
 model has not run (the map then shows the City's lists alone).
+
+`displacement` (added 2026-10-08 by M4.1) holds what the map needs to explain the displacement
+watch (section 4, `watch`), or `null` when the watch was not measured:
+
+```json
+"displacement": {
+  "as_of": "2026-10-08",
+  "periods": {"earlier_from": "2018-09-03", "earlier_to": "2021-09-02",
+              "recent_from": "2023-09-03", "recent_to": "2026-09-02"},
+  "assessment_years": [2022, 2027],
+  "survey_years": [2020, 2024],
+  "mva": "Market Value Analysis 2026",
+  "city": {"p0": 180000, "p1": 230000, "pc": 28, "cb": 27, "ac": 69, "rp": 48},
+  "thresholds": {"price_points": 25, "company_points": 15, "assessment_points": 30,
+                 "renter_pct": 60, "min_sales": 50, "min_assessed": 50, "min_occupied": 100,
+                 "min_signs": 2, "recent_years": 3, "gap_years": 5},
+  "areas": {"tracts": 408, "watch": 96}
+}
+```
+
+`periods` are the two windows of home sales (each day from the first to the last counted; the
+recent one ends at the newest recorded sale); `assessment_years` the earlier and the newest tax
+year compared; `survey_years` the Census survey's span; `mva` the edition of the Market Value
+Analysis read (its registry name). `city` holds the whole city's measures with the short names of
+the `watch` layer: the middle home sale price in the earlier and the recent period (`p0`, `p1`,
+dollars) and its change (`pc`, percent), the share of recent buyers that are companies (`cb`), the
+middle change in assessed value (`ac`) and the share of homes rented (`rp`), each a whole number or
+`null`. `thresholds` are the rule's numbers (`pipeline/src/placekeepers/derive/displacement.py`):
+a sign about sale prices holds `price_points` percentage points above the city's change, and so on.
 
 `notes` (added 2026-10-04 by M0.2) is a list of plain sentences about the build, possibly empty:
 data quality remarks, a layer with no usable data yet, or `tiles skipped: tippecanoe not installed`.
@@ -539,7 +586,7 @@ same suggestions in the same order (`suggestions`, section 6). The rule is `sugg
 
 The walking factors for the placemaking lens (added 2026-10-05 by M3.3, computed by `pk derive`
 after the heat lens in `placekeepers.derive.walk`; the method in plain words is in DESIGN section
-5.9). No lens lists them yet: M3.4 builds the placemaking lens on them. Each is an integer from 0
+5.9). The placemaking lens (M3.4, below) lists them. Each is an integer from 0
 to 100 ranked among the parcels in this layer as the share of parcels with a strictly lower value,
 so **more ranks higher** (more people, more places, more walkable), unlike the need factors above.
 A lens that wants the opposite (where everyday places are missing) needs a field of its own. Every
@@ -558,6 +605,41 @@ counts intersections already and each factor adds about 3 to 4 percent to `tiles
 `people_5min`; `corners_5min`; `kinds_10min` (0 to 7); `kind_bits` (the kinds present, bits as
 `dk` in `cells` below); `places_10min`; `block_group`; and `walk_index`. A factor whose source
 has no snapshot is left out of every parcel.
+
+The placemaking lens's own factors (added 2026-10-08 by M3.4, computed by `pk derive` after the
+walking measures in `placekeepers.derive.placemaking`; the method in plain words is in DESIGN
+section 5.3). Each is measured in a straight line from the parcel's point on its shape, in UTM zone
+18 north. `f_park` and `f_art` are ranked among the parcels in this layer as the share of parcels
+with a strictly smaller distance, so farther ranks higher, then rounded to the nearest 5 (halves
+up), which keeps the tiles about 5 percent smaller:
+
+| Property | Meaning |
+|---|---|
+| `f_park` | far from a park: the distance to the edge of the nearest park land of Parks and Recreation (`ppr_properties`, 0 inside one), leaving out its work yards (class `OPERATIONAL_INTERNAL` or use `OPERATIONS`), golf courses (use `GOLF`) and traffic islands or medians with no park use (class `TRAFFIC_ISLAND_MEDIAN` with use `OTHER` or none) |
+| `f_art` | no public art nearby: the distance to the nearest work on the City's Percent for Art list (`percent_for_art`, the works the `art` layer shows, less those the City says are inside a building) or in Wikidata (`wikidata_art`, the works inside the city that are not gone), read as `placekeepers.derive.art` reads them. Never from OpenStreetMap (decision D1 of docs/VERIFICATION_V0_2.md). With one of the two lists missing, it is measured from the other and the build notes say so |
+| `f_corr` | on or near a commercial corridor: 100 when the parcel's point lies on one of the City's commercial corridors (`commercial_corridors`) or within 50 meters of one, else 0 |
+
+From M3.4 `sg` may also hold the placemaking suggestions, after the first ones and the heat
+suggestions, for vacant lots only, in this order: `seating_and_shade` where `f_neighbors` is at
+least 50; `community_garden` where `f_park` is at least 50; `art_request` where no work of the two
+art lists stands within 400 meters and `f_neighbors` is at least 50; then `report_dumping`,
+`report_dark_light` and `report_graffiti` where a street block within 20 meters of the lot's shape
+(a block of the `segments` layer, the street safety network) has a request of that kind still open
+in the 90 day window, counted exactly as the `dumping`, `lights` and `graffiti` layers count them
+(`requests_by_block` in `publish/conditions.py`). The 311 counts are never a factor. The lot's
+dossier lists the same suggestions in the same order. The rule is `suggestions_for` in
+`derive/placemaking.py`.
+
+The same step writes `$PK_CACHE/derived/placemaking_factors.parquet`, one row per parcel on the
+map, for anyone checking a score: `opa`; the three factors; `sg` (the placemaking suggestions
+alone); `park_m` and `art_m` (the distances in whole meters); `corridor` (the name of the nearest
+corridor within 50 meters); `open_311` (the kinds with an open request on a block the lot faces,
+as bits: 1 dumping, 2 a street or alley light, 4 graffiti); and `blocks_faced`. A factor whose
+sources have no snapshot is left out of every parcel.
+`dw` (added 2026-10-08 by M4.1): the signs of the displacement watch area the parcel lies in, as
+the bits of `w` in the `watch` layer below; present only inside a watch area. The parcel's area is
+its 2020 census tract as the violence lens finds it (`tract` in `derived/lens_factors.parquet`). A
+greening suggestion on a parcel with `dw` gets the full card (section 1, suggestions).
 
 **`h3` (context.pmtiles)**: `h` (cell id), `s12` and `s36` (shooting victim counts), `f_*` (factor
 percentiles for cell level factors such as `f_poverty`).
@@ -672,6 +754,30 @@ source marks as memorials.
 The build notes carry one sentence with each source's count, the works found in two and in three
 sources, the works on the map and the memorial artworks among them, and the works left out (never a
 name).
+
+Added 2026-10-08 by M4.1 (the displacement watch; the method is in docs/DESIGN.md section 5.3, the
+code in `pipeline/src/placekeepers/derive/displacement.py` and `publish/displacement.py`):
+
+**`watch` (displacement.pmtiles, polygons)**: one feature per 2020 census tract (the City's
+`census_tracts_2020`) in the displacement watch, and none for any other tract: the map ranks no
+area, and areas outside the watch carry no numbers. A measure with too few sales, homes or
+households to mean something (the `min_*` thresholds of the manifest's `displacement`) is left out.
+
+| Property | Type | Meaning |
+|---|---|---|
+| `id` | string | the tract's 11 digit census id (`geoid`, such as 42101016000 for tract 160) |
+| `nm` | string | the neighborhood at the tract's center (a point inside it), from `neighborhoods`; absent when none |
+| `w` | int | the signs that hold, as bits: 1 home sale prices, 2 buyers that are companies, 4 assessed values, 8 renters, 16 the Market Value Analysis. Bits never change meaning. Every feature has at least two, one of them 1, 4 or 16 |
+| `n0`, `n1` | int | home sales counted in the earlier and the recent period |
+| `p0`, `p1`, `pc` | int | the middle sale price in each period (dollars) and its change (percent); only with at least `min_sales` sales in each period |
+| `cb` | int | the share of the recent sales whose buyers are a company (percent); only with at least `min_sales` recent sales |
+| `ah`, `ac` | int | homes compared and the middle change in their assessed value (percent); only with at least `min_assessed` homes |
+| `oc`, `rp` | int | occupied homes and the share rented (percent, Census Bureau); only with at least `min_occupied` |
+| `mb`, `mr` | int | the tract's block groups in the Market Value Analysis and how many show rising pressure; absent when the analysis does not cover it |
+
+`web/src/displacement/watch.ts` reads the same bits and rule as the pipeline:
+`pipeline/tests/fixtures/watch_parity.json` holds every combination of signs and whether it is a
+watch area, and both test suites check it.
 
 **`hin` (streets.pmtiles)**: `id`, `name` (street name), `len` (feet).
 
@@ -798,6 +904,7 @@ contributors".
 | `hin` | int | 1 when the stop is on the High Injury Network; absent otherwise |
 | `sg` | string | the suggestions SEPTA's and the City's data decide, comma separated: `stop_shade_trees` (`f_shade` of 75 or more); absent when none |
 | `f_walk`, `f_neighbors`, `f_dest` | int | the walking factors of the lots (added 2026-10-05 by M3.3; `parcels` above), measured from the stop and ranked among the stops `tc` marks, more ranking higher; no lens lists them yet (`factors_at` in `derive/walk.py`) |
+| `dw` | int | the signs of the displacement watch area the stop stands in, as `dw` on the lots (added 2026-10-08 by M4.1); absent outside every watch area |
 
 What the browser adds by the join (never published here): `a` (the linked stop's `c`: 3 a shelter
 or roof, 2 a bench but no shelter mapped, 1 neither, 0 not yet surveyed; absent when no
@@ -934,12 +1041,13 @@ On 2026-10-05 (window 2026-07-05 to 2026-10-02): 3,919 dumping requests on 2,675
 open), 919 light requests on 700 blocks (432 still open) and 297 graffiti requests on 232 blocks (31
 still open).
 
-For M3.4 (placemaking suggestions): join these to street blocks by `id`, and to a lot through the
-blocks it faces. A count says that people asked the City for help there, not how often the
-condition occurs: some blocks ask more often than others, so no count or a low one is not a sign
-of a clean block. Suggestions built on them must stay with physical conditions and the City's
-own services (Philly311, the route `report_to_311` in `registry/routes.yaml`), never the police
-(docs/ETHICS.md).
+For M3.4 (placemaking suggestions, built 2026-10-08): a lot is joined to the blocks it faces (the
+blocks within 20 meters of its shape), and an open request on one of them suggests reporting it to
+Philly311 (`parcels` above). A count says that people asked the City for help there, not how often
+the condition occurs: some blocks ask more often than others, so no count or a low one is not a
+sign of a clean block, and no count is ever a factor. Suggestions built on them stay with physical
+conditions and the City's own services (Philly311, the route `report_to_311` in
+`registry/routes.yaml`), never the police (docs/ETHICS.md).
 
 Added 2026-10-05 by M3.3 (walking, cycling and people; `pipeline/src/placekeepers/publish/walk.py`,
 the method in DESIGN section 5.9). `walk.pmtiles` holds public domain data from the EPA and the
@@ -1260,6 +1368,11 @@ tile, shows the score breakdown and the flood note from here; when it has the ti
 values win. On 2026-10-05: 58,325 parcels, 6.3 MB more on disk (5 percent) and 0.5 MB more as
 served compressed (3 percent). From M3.3 it holds the walking factors `f_walk`, `f_neighbors` and
 `f_dest` too, which the lots layer gained (2.4 MB more on disk, 0.3 MB compressed).
+
+**`displacement`** (added 2026-10-08 by M4.1; only for a parcel on the map inside a displacement
+watch area): `tract`, the 11 digit census tract, and `signs`, the area's signs, exactly the parcel's
+`dw` in the lots layer (section 4), so a lot page opened from a link, a search or a saved list shows
+the full greening card as one opened from the map does.
 
 **`nearby`**: `s12` and `s36` (shooting victims in the parcel's hexagon in the last 12 and 36
 months, as in the `h3` layer), `landcare_within_500ft` and `gardens_within_500ft`. Keys are left

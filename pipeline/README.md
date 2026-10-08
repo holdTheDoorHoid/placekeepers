@@ -93,6 +93,11 @@ the City's public places and 311 conditions (`adapters/city_places.py`, `adapter
 | `census_blocks_2020` | The Census Bureau's 2020 redistricting file for Pennsylvania (`pa2020.pl.zip`, 57 MB, no key; frozen) | Only its geographic header is read: Philadelphia's 17,554 blocks with their population, housing units, land and water area, and a point inside each |
 | `dvrpc_lts` | DVRPC's ArcGIS service `transportation/lts_network`, Philadelphia's rows only | Each street link's level of traffic stress for cycling (1 to 4), bike facility, lanes and speed, with the line, one row per direction; 60,867 rows in 31 pages |
 | `snap_retailers` | The USDA's ArcGIS layer of stores that take SNAP, Philadelphia's only | Each store's kind and point, never its name or address; 1,460 stores |
+| `commercial_corridors` | City ArcGIS `Commercial_Corridors` (OpenDataPhilly "Commercial Corridors of Philadelphia"), in pages of 100 | Each corridor's name, survey year and kind, with its shape; not its store counts, vacancy rates or funding. 279 corridors on 2026-10-08, in 4.2 seconds |
+| `real_estate_sales` | Carto `rtt_summary`, every deed with a price over $100 from the last nine years, citywide (M4.1) | Document id and type, the date on the deed, the OPA account, the total and adjusted price, the property count and the buyers' type (company, person, public body, nonprofit or unknown). Buyers' names are read only to make that type and are never kept; sellers' names and addresses are never downloaded |
+| `assessment_values` | Carto `assessments`, citywide, the newest tax year with values for most parcels and the year five before it, found when the download starts (M4.1) | Parcel, year, market value |
+| `acs_tenure` | Census Bureau bulk table B25003, 2020 to 2024 (M4.1) | Occupied, owner occupied and renter occupied homes per tract, with margins of error, and the renter share |
+| `market_value_analysis` | City ArcGIS `mva_2026`, Reinvestment Fund's Market Value Analysis for the City (M4.1; the adapter reads the 2023 edition's fields too) | Block group, market type, displacement pressure as published and in one word, households, shape |
 
 **Candidate parcels.** Transfers, assessments and violations are too large to download for the
 whole city every week, so they come down for every parcel with any sign of vacancy (see
@@ -195,6 +200,37 @@ Distances are straight lines, never routes along the streets. The result goes to
 first three for the placemaking lens (M3.4). It takes about 5 seconds and 450 MB for 58,325
 parcels. Publish measures the walking distance hexagons the same way.
 
+### The placemaking lens
+
+`pk derive` then computes the placemaking lens's own factors and suggestions for the same parcels,
+in `placekeepers/derive/placemaking.py` (definitions in `docs/CONTRACTS.md` section 4, the method
+in `docs/DESIGN.md` section 5.3): the straight line distance to the nearest park land of Parks and
+Recreation (`f_park`) and to the nearest outdoor work on the City's Percent for Art list or in
+Wikidata (`f_art`; never OpenStreetMap's), each ranked so farther ranks higher and rounded to the
+nearest 5, and whether the parcel is on or within 50 meters of a City commercial corridor
+(`f_corr`). It then decides the lots' placemaking suggestions, with the walking measures'
+`f_neighbors` and the open 311 requests on the street blocks each lot faces, counted as the
+conditions layers count them. The result goes to `$PK_CACHE/derived/placemaking_factors.parquet`
+with a summary in `placemaking_factors.json`. It takes about 13 seconds and 450 MB for 58,325
+parcels.
+
+## The displacement watch
+
+`pk derive` (and `pk all`) then measures the displacement watch for every 2020 census tract, in
+`placekeepers/derive/displacement.py` (M4.1; the method in plain words is in `docs/DESIGN.md`
+section 5.3, the files in `docs/CONTRACTS.md` sections 3, 4 and 6). It needs no vacancy model, so
+it runs even when the model fails. Five signs per tract, each against the whole city: home sale
+prices (the middle price of home sales in the last three years against the three years ending five
+years before, from `real_estate_sales` joined to OPA's category, year built and point), buyers that
+are companies (the same sales), assessed values (each home's change between the two tax years of
+`assessment_values`), renters (`acs_tenure`) and the Market Value Analysis's rising pressure
+(`market_value_analysis`). A tract with two signs, one about prices, is a watch area. The result
+goes to `$PK_CACHE/derived/displacement.parquet` (one row per tract with every measure, its signs
+and whether it is in the watch) with a summary in `displacement.json` (the periods, the city's own
+measures, the thresholds, the counts and notes). `pk publish` draws the watch areas
+(`tiles/displacement.pmtiles`), adds `dw` to the lots and bus stops inside them and `displacement`
+to their lot dossiers, and puts the summary in the manifest. It takes about 15 seconds.
+
 ## The shared cache
 
 Downloads and snapshots live in `$PK_CACHE` (default `~/.cache/placekeepers`), shared by every
@@ -216,6 +252,8 @@ derived/heat_factors.parquet          the heat and shade lens factors per parcel
 derived/heat_factors.json             each factor's spread, the floodplain and suggestion counts, and notes
 derived/walk_factors.parquet          the walking factors per parcel and the counts behind them
 derived/walk_factors.json             each factor's spread, the places of each kind, and notes
+derived/displacement.parquet          the displacement watch's measures and signs per census tract
+derived/displacement.json             its periods, the city's measures, thresholds, counts and notes
 research/                             reserved for the vacancy study; the pipeline never writes here
 ```
 

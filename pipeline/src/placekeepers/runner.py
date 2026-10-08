@@ -373,3 +373,43 @@ def derive_walk(ctx: Context, as_of: date | None = None) -> StepResult:
     missing = ", ".join(result.missing_sources)
     detail = f"{result.parcels:,} parcels" + (f"; without {missing}" if missing else "")
     return StepResult("walk", "derive", "ok", detail, time.monotonic() - started)
+
+
+def derive_placemaking(ctx: Context, as_of: date | None = None) -> StepResult:
+    """Compute the placemaking lens factors and suggestions for the vacancy model's parcels
+    (M3.4), after the walking measures. A failure is reported, never raised: the map then shows
+    the parcels without placemaking scores."""
+    from placekeepers.derive import placemaking
+
+    started = time.monotonic()
+    try:
+        result = placemaking.run(ctx, as_of)
+    except Exception as exc:  # the map must still publish
+        message = f"The placemaking lens factors could not be computed: {plain_error(exc)}"
+        log.error("derive: %s", message)
+        log.debug("derive: details", exc_info=True)
+        return StepResult("placemaking", "derive", "failed", message, time.monotonic() - started)
+    missing = ", ".join(result.missing_sources)
+    detail = f"{result.parcels:,} parcels" + (f"; without {missing}" if missing else "")
+    return StepResult("placemaking", "derive", "ok", detail, time.monotonic() - started)
+
+
+def derive_displacement(ctx: Context, as_of: date | None = None) -> StepResult:
+    """Measure the displacement watch's signs for every census tract (M4.1). It needs no vacancy
+    model. A failure is reported, never raised: every greening card then keeps the one line
+    caution, as before the watch existed."""
+    from placekeepers.derive import displacement
+
+    started = time.monotonic()
+    try:
+        result = displacement.run(ctx, as_of)
+    except Exception as exc:  # the map must still publish
+        message = f"The displacement watch could not be measured: {plain_error(exc)}"
+        log.error("derive: %s", message)
+        log.debug("derive: details", exc_info=True)
+        return StepResult("displacement", "derive", "failed", message, time.monotonic() - started)
+    missing = ", ".join(result.missing_sources)
+    detail = f"{result.counts['watch']} of {result.counts['tracts']} tracts in the watch" + (
+        f"; without {missing}" if missing else ""
+    )
+    return StepResult("displacement", "derive", "ok", detail, time.monotonic() - started)

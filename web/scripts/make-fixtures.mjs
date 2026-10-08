@@ -21,6 +21,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { cellToBoundary, gridDisk, latLngToCell } from 'h3-js';
 import { AMENITY_LAYERS, AMENITY_SOURCES, amenityFixtures } from './amenity-fixtures.mjs';
+import { WATCH_BLOCK, WATCH_LAYER, WATCH_SOURCES, watchFixtures, watchFor } from './displacement-fixtures.mjs';
 import { routeOsmStops, routeSheetFixtures } from './route-fixtures.mjs';
 import { WALK_LAYERS, WALK_SOURCES, walkFixtures } from './walk-fixtures.mjs';
 import { PARKING_LAYERS, PARKING_SOURCES, parkingFixtures } from './parking-fixtures.mjs';
@@ -131,6 +132,35 @@ function heatFor({ k, f_canopy }, index, col, row) {
   return { heat, extra };
 }
 
+// The placemaking lens (M3.4, docs/CONTRACTS.md section 4), worked out without random draws so
+// every other fixture stays the same: walkability, everyday places and the City's park and art
+// distances rise and fall from west to east, neighbors grow to the east and north, and the middle
+// runs lie on a commercial corridor. `f_park` and `f_art` are multiples of 5, as the pipeline
+// rounds them. The suggestions follow the pipeline's rule
+// (pipeline/src/placekeepers/derive/placemaking.py): on a lot, a place to sit where at least half
+// the places have fewer neighbors, a garden where a park is far, art where none of the two art
+// lists is within a 5 minute walk (the western runs here) and neighbors are many, and a report to
+// Philly311 for a few lots facing a block with an open request.
+const REPORTS = { 7: ['report_dumping'], 22: ['report_dumping', 'report_dark_light'], 38: ['report_graffiti'] };
+function placemakingFor({ k }, index, col, row) {
+  const place = {
+    f_walk: [15, 40, 65, 85, 95][col],
+    f_neighbors: Math.min(100, 20 + col * 15 + row * 10 + (index % 4) * 5),
+    f_dest: Math.min(100, 30 + col * 12 + (index % 3) * 5),
+    f_park: [85, 45, 50, 30, 15][col] - row * 10,
+    f_art: [90, 75, 40, 20, 5][col],
+    f_corr: col === 2 ? 100 : 0,
+  };
+  const extra = [];
+  if (k === 1) {
+    if (place.f_neighbors >= 50) extra.push('seating_and_shade');
+    if (place.f_park >= 50) extra.push('community_garden');
+    if (col <= 1 && place.f_neighbors >= 50) extra.push('art_request');
+    extra.push(...(REPORTS[index] ?? []));
+  }
+  return { place, extra };
+}
+
 // Parcels: ten runs of rowhouse sized lots (5 m wide, 25 m deep) on block faces.
 const parcels = [];
 const RUNS = [3, 6, 4, 7, 5, 4, 6, 5, 3, 7];
@@ -175,7 +205,13 @@ RUNS.forEach((length, run) => {
     if (random() > 0.2) properties.f_canopy = between(0, 100);
     const { heat, extra } = heatFor(properties, n, col, row);
     Object.assign(properties, heat);
+    // The displacement watch area the lot lies in (M4.1, scripts/displacement-fixtures.mjs).
+    const watch = watchFor(x0);
+    if (watch) properties.dw = watch;
     if (extra.length) properties.sg = [properties.sg, ...extra].join(',');
+    const placemaking = placemakingFor(properties, n, col, row);
+    Object.assign(properties, placemaking.place);
+    if (placemaking.extra.length) properties.sg = [properties.sg, ...placemaking.extra].join(',');
     parcels.push({ type: 'Feature', properties, geometry: { type: 'Polygon', coordinates: [ring] } });
   }
 });
@@ -554,6 +590,9 @@ for (const [name, text] of walkFixtures(toLngLat)) writeFileSync(path(`data/${na
 // Parking problems reported with Laser Vision, counted per block sized cell (issue #37,
 // scripts/parking-fixtures.mjs).
 for (const [name, text] of parkingFixtures(toLngLat)) writeFileSync(path(`data/${name}`), text);
+// The displacement watch (M4.1, scripts/displacement-fixtures.mjs).
+const [watchFile, watchText] = watchFixtures(box);
+writeFileSync(path(`data/${watchFile}`), watchText);
 // The route survey sheets (scripts/route-fixtures.mjs): the index is listed in files, each route's
 // sheet is not (docs/CONTRACTS.md section 7).
 mkdirSync(path('data/tables/routes'), { recursive: true });
@@ -677,8 +716,12 @@ const manifest = {
     // Public art (M3.2); OpenStreetMap's artworks come with osm_philadelphia
     percent_for_art: ok(239, '2025-08-19'),
     wikidata_art: ok(72, null),
+    // The placemaking lens's commercial corridors (M3.4)
+    commercial_corridors: ok(279, null),
     ...Object.fromEntries(Object.entries(WALK_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
     ...Object.fromEntries(Object.entries(PARKING_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
+    // The displacement watch (M4.1)
+    ...Object.fromEntries(Object.entries(WATCH_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
   },
   layers: {
     vacant_parcels: {
@@ -729,6 +772,7 @@ const manifest = {
     public_art: { file: 'tiles/art.pmtiles', source_layer: 'art', sources: ['percent_for_art', 'osm_philadelphia', 'wikidata_art'] },
     ...WALK_LAYERS,
     ...PARKING_LAYERS,
+    ...WATCH_LAYER,
   },
   files: Object.fromEntries(
     [
@@ -752,6 +796,7 @@ const manifest = {
       'tiles/art.art.geojson',
       ...walkFixtures(toLngLat).map(([name]) => name),
       ...parkingFixtures(toLngLat).map(([name]) => name),
+      watchFile,
       'tables/routes/index.json',
       'tables/stop_amenities.json',
       ...handWritten.map(([name]) => name).filter((name) => !shardFiles.some(([shard]) => shard === name)),
@@ -765,12 +810,14 @@ const manifest = {
         bytes: shardFiles.reduce((sum, [, bytes]) => sum + bytes.length, 0),
       }
     : null,
+  displacement: WATCH_BLOCK,
   notes: [
     'This is synthetic sample data for testing the map.',
     'Street, boundary, transit, amenity, heat, tree and floodplain tiles were skipped for this sample, so those layers are published as GeoJSON.',
     'Public art tiles were skipped for this sample too, so its layer is published as GeoJSON.',
     'Walking tiles were skipped for this sample too, so those layers are published as GeoJSON.',
     'Parking report tiles were skipped for this sample too, so that layer is published as GeoJSON.',
+    'Displacement watch tiles were skipped for this sample too, so its layer is published as GeoJSON.',
   ],
 };
 writeFileSync(new URL('manifest.json', ROOT), JSON.stringify(manifest, null, 2) + '\n');

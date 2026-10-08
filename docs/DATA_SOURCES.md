@@ -91,10 +91,11 @@ Both allow browser requests without a key.
 | Registered Community Organizations (City ArcGIS `Zoning_RCO`, 240) | Filters, who to talk to | City terms | Live |
 | Philadelphia neighborhoods (OpenDataPhilly GitHub, 159, by Abaca Labs) | Filters, names | CC BY 4.0 | Live |
 | Census tracts 2020 (City ArcGIS `Census_Tracts_2020`, 408, adjusted to the City's standard boundary) | Each parcel's tract, for the poverty rate | City terms (from the Census Bureau, public domain) | Used (M1.4): source `census_tracts_2020` |
-| ACS 5 year 2020 to 2024, table B17001 from the Census Bureau's table based summary file (`www2.census.gov`, 119 MB, no key) | Poverty rate (violence lens), renter share | CC0 | Live. The Census API now refuses requests without a key (checked 2026-10-04); a free key is an owner action if the API is wanted |
+| ACS 5 year 2020 to 2024, table B17001 from the Census Bureau's table based summary file (`www2.census.gov`, 119 MB, no key) | Poverty rate (violence lens) | CC0 | Live. The Census API now refuses requests without a key (checked 2026-10-04); a free key is an owner action if the API is wanted |
+| ACS 5 year 2020 to 2024, table B25003 (tenure) from the same summary file (27 MB, no key) | Renter share (displacement watch) | CC0 | Used (M4.1): source `acs_tenure`, 408 tracts |
 | Tree canopy change 2008 to 2018 (City ArcGIS `TreeCanopyChange_2008_2018`, 665,748 polygons marked gain, loss or no change; University of Vermont Spatial Analysis Laboratory for Parks and Recreation) | Canopy deficit (violence lens) | City terms | Used (M1.4): source `tree_canopy_2018`, kept as canopy per H3 cell. The newest canopy the City publishes. The City's `hex_tree_canopy` (2,833 hexagons, PhillyStat 360) has no description, and its hexagon areas are in square feet while its canopy totals are in an unstated unit, so it is not used |
 | Tree Equity Score (American Forests) | Canopy gap per block group | Not stated | Stale since 2021 |
-| Market Value Analysis 2023 (City ArcGIS `mva_2023`, Reinvestment Fund) | Displacement watch | City terms | Live |
+| Market Value Analysis (Reinvestment Fund for the City): 2023 (City ArcGIS `mva_2023`, on OpenDataPhilly as "Market Value Assessment (MVA)") and 2026 (City ArcGIS `mva_2026`, on the City's open data hub since 2026-07-16, not yet listed on OpenDataPhilly) | Displacement watch | City terms (both items carry the City's standard license text; OpenDataPhilly lists the 2023 one under the "City of Philadelphia License") | Used (M4.1): source `market_value_analysis`, the 2026 edition (1,338 block groups); the adapter reads the 2023 one too |
 
 ### Basemap
 
@@ -239,7 +240,8 @@ mural to a private person, but the rule stands ready for them.
 | TPL ParkServe 10 minute walk areas | | Terms unreachable (403) | Ask before use |
 | Amenities from OpenStreetMap | benches about 2,822; drinking water 46; toilets 116; public bookcases 192; community fridges 0 (Overpass, a box around the city) | ODbL | Used (M3.5): layers `benches`, `picnic_tables`, `drinking_water`, `toilets` and `bookcases` in `tiles/amenities.pmtiles`, from the weekly extract (`osm_philadelphia`). Inside the city limits on 2026-10-05: 2,069 benches, 306 picnic tables, 30 drinking water points, 73 public toilets (one more closed to the public is left out) and 150 public bookcases. Fridges need a community list |
 | 311 requests (Carto, since 2014-12-08) | Illegal dumping, street and alley light outages, graffiti, dangerous sidewalk, street trees | City terms | Use for conditions only, never for people. Used (M3.5): source `philly311_conditions`, below |
-| Street poles, commercial corridors, schools | | City terms | Use |
+| Street poles, schools | | City terms | Use |
+| Commercial corridors (City ArcGIS `Commercial_Corridors`) | 279 | City terms | **Used (M3.4)**: source `commercial_corridors`, see Placemaking lens below |
 | Free Library branches | 54 | City terms | Used (M3.5): the City publishes them as `library_locations` (below). The Free Library's own website refuses automated requests (403) and is never read |
 
 ### Public places and conditions reported to 311 (M3.5)
@@ -301,13 +303,57 @@ land use map's water.
   areas (its terms page refuses automated requests) are not sources.
 * **Routing along the streets.** Distances are straight lines (docs/DESIGN.md section 5.9).
 
+### Placemaking lens (M3.4)
+
+Used from M3.4 (2026-10-08) by the placemaking lens on the lots (docs/DESIGN.md section 5.3). One new
+source; the others are already kept for other layers.
+
+| Source id | Endpoint | What we keep | Size and time | Terms | Health |
+|---|---|---|---|---|---|
+| `commercial_corridors` | City ArcGIS `Commercial_Corridors`, the OpenDataPhilly dataset "Commercial Corridors of Philadelphia" (catalog.data.gov lists the City of Philadelphia as publisher; the layer was last edited 2025-05-07). The service refused one page of all 279 detailed shapes as GeoJSON, so it is read in pages of 100 | The name, the survey year and the kind of corridor, with the shape. The store counts, vacancy rates and funding columns are not downloaded | 279 corridors, centers and districts the Planning Commission surveyed from 2011 to 2017; 3 pages in 4.2 seconds; a 128 kB snapshot | OpenDataPhilly lists it under the City of Philadelphia License, the City's open data terms (`city_terms`) used for every City source here; credited "Commercial corridors: City of Philadelphia, Department of Planning and Development" | At least 250 rows, no more than 10 percent fewer |
+
+**How the other sources are used.**
+
+* `ppr_properties` (Parks and Recreation properties, already read by the vacancy model to leave
+  parks off the map): the edge of the nearest park land, for "far from a park". 479 of its 507
+  properties count as parks; its work yards and offices, golf courses and traffic medians with no
+  park use (28) do not.
+* `percent_for_art` and `wikidata_art` (the Public art layer, above): the nearest work, for "no
+  public art nearby": 174 of the City's 224 works on view (50 are inside buildings) and Wikidata's
+  69. **OpenStreetMap's artworks are never used for the lens**: they are under the Open Database
+  License, and nothing worked out from them may be stored with the City's data in the lots
+  (decision D1 of docs/VERIFICATION_V0_2.md). Mural Arts' murals are in none of these lists, which
+  the lens says wherever it shows this factor.
+* `philly311_conditions` and `street_centerlines` (Conditions reported to 311, above): an open
+  request about dumping, a light or graffiti on a block a lot faces suggests reporting it to
+  Philly311 (566 blocks had one on 2026-10-08). Never a score factor.
+
 ### History and displacement
 
-Real estate transfers (price trends, share of company buyers), assessment history, Market Value
-Analysis, renter share, City orthophotos 1996 to 2023, the 1860 Hexamer and Locher atlas (hosted by
-the City with the GeoHistory Network's permission), PhilaGeoHistory layers such as the 1942 land use
-map (**permission required** from the Athenaeum of Philadelphia), and HOLC redlining from Mapping
-Inequality (license text to confirm).
+The displacement watch (M4.1, 2026-10-08; the method is in DESIGN.md section 5.3):
+
+| Source id | Endpoint | What we keep | Measured on 2026-10-05 | Health |
+|---|---|---|---|---|
+| `real_estate_sales` | Carto `rtt_summary`, every deed (`document_type` naming a deed) with a total consideration over $100 and a display date in the last nine years, for the whole city | Document id and type, the display date (a day in Philadelphia), the OPA account, the total and adjusted total consideration, the property count, and the **buyers' type** (company, person, nonprofit, a public body or unknown, by the owner rule of the lot pages). The buyers' names are read only to make that type and are never kept; the sellers' names and the address are never downloaded | 272,801 deeds from 2017-10-05 to 2026-09-02 in 3 chunks, 17 seconds; a 3.5 MB snapshot. Buyers: 177,935 people, 92,657 companies | At least 150,000 rows, no more than 15 percent fewer; the newest deed no older than 120 days (the City's records run about eight weeks behind) |
+| `assessment_values` | Carto `assessments`, the newest tax year with values for most parcels (at least 400,000) and the year five before it, found when the download starts | Parcel, year, market value | 1,159,065 rows for 2022 and 2027 in 12 chunks, 19 seconds; a 3.2 MB snapshot. Refetched at most every 30 days (`cadence: yearly`): the City sets values once a year | At least 900,000 rows, no more than 10 percent fewer |
+| `acs_tenure` | Census Bureau table based summary file, table B25003, 2020 to 2024 | Occupied homes, owner occupied and renter occupied with margins of error, and the renter share, for Philadelphia's 408 tracts | 27 MB file, 2 seconds | At least 380 rows, no more than 5 percent fewer |
+| `market_value_analysis` | City ArcGIS `mva_2026`, layer 0 | Block group, market type (A+ to I), Reinvestment Fund's reading of displacement pressure as published and in one word (rising, steady, falling, strong), households, and the shape | 1,338 block groups, 2 seconds: 51 rising pressure, 779 steady, 9 falling, 499 strong markets | At least 1,200 rows, no more than 5 percent fewer |
+
+The candidate parcels' own transfers and assessments (`real_estate_transfers`, `assessment_history`)
+are mostly vacant lots and sheriff sales, so they cannot show what homes sell for; the watch uses the
+citywide sources above. The Market Value Analysis's terms: both editions are public items of the
+City's ArcGIS organization (`maps.phl.data`, tagged authoritative) whose license text is the City's
+standard one, the same as every City layer the map uses, and OpenDataPhilly lists the 2023 edition
+under the "City of Philadelphia License" (checked 2026-10-05). Reinvestment Fund calls its method
+proprietary; the map uses only the City's published results, credited to Reinvestment Fund for the
+City. Its displacement risk ratio compares home prices with the incomes of longtime residents (from
+2010, carried forward with inflation), against the city's own ratio, after HUD's rule that a home
+should cost about three times a family's income (Reinvestment Fund's 2023 presentation to the City).
+
+Still to come for the history release: City orthophotos 1996 to 2023, the 1860 Hexamer and Locher
+atlas (hosted by the City with the GeoHistory Network's permission), PhilaGeoHistory layers such as
+the 1942 land use map (**permission required** from the Athenaeum of Philadelphia), and HOLC
+redlining from Mapping Inequality (license text to confirm).
 
 ## Sources checked 2026-10-08
 

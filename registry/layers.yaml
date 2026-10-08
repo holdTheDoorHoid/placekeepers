@@ -45,6 +45,11 @@
     - schools
     - snap_retailers
     - septa_gtfs
+    # The placemaking lens's own factors and its reports to Philly311 (M3.4)
+    - percent_for_art
+    - wikidata_art
+    - commercial_corridors
+    - philly311_conditions
     # Owner type, and the lots the City's land agencies list as available (issue #36)
     - city_owned_property
   file: tiles/lots.pmtiles
@@ -88,6 +93,7 @@
       options:
         - {value: violence, label: The violence reduction lens}
         - {value: heat, label: The heat and shade lens}
+        - {value: placemaking, label: The placemaking lens}
       default: violence
   release: v0.1
 - id: hin_2025
@@ -941,3 +947,32 @@
         - {value: calm, label: "Only calm streets: levels 1 and 2"}
       default: all
   release: v0.3
+# The displacement watch (M4.1): a caution, never a priority lens. Census tracts with at least two
+# signs that prices are rising, one of them about prices (pipeline/src/placekeepers/derive/
+# displacement.py). Off in the field view, where the cards carry the caution; on in the analysis
+# view, drawn light enough that the lots' colors stay readable.
+- id: displacement_watch
+  label: "Displacement watch: signs that prices are rising"
+  group: displacement
+  description: >-
+    Areas (census tracts) with at least two signs that home prices are rising here, at least one
+    of them about prices: homes selling for much more than five years before, faster than across
+    the city; companies buying many of the homes sold; the City's assessed values rising much
+    faster than the city's; at least three in five homes rented; or the City's Market Value
+    Analysis finding prices climbing out of reach of longtime residents. Greening and other
+    improvements can raise prices further, so where a greening suggestion sits in one of these
+    areas, its card adds ways to protect neighbors. This shows signs in public records, not a forecast, and it says nothing
+    about who lives here. Tap an area to see its signs.
+  sources: [real_estate_sales, assessment_values, acs_tenure, market_value_analysis, opa_properties, census_tracts_2020]
+  file: tiles/displacement.pmtiles
+  source_layer: watch
+  geometry: polygon
+  style: displacement_watch
+  evidence: context
+  default: {field: false, analysis: true}
+  settings:
+    - id: shade
+      label: Shade the areas (off shows their outlines only)
+      type: toggle
+      default: true
+  release: v0.4

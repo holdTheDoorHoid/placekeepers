@@ -227,6 +227,16 @@ TILE_OPTIONS: dict[str, list[str]] = {
             separators=(",", ":"),
         ),
     ],
+    # The displacement watch areas (M4.1): about a hundred census tracts, like the boundaries:
+    # every area kept at every zoom (never dropped to thin a tile), borders shared, and detailed
+    # enough at zoom 14 to be stretched further by the map.
+    "tiles/displacement.pmtiles": [
+        "--minimum-zoom=8",
+        "--maximum-zoom=14",
+        "--no-feature-limit",
+        "--no-tile-size-limit",
+        "--detect-shared-borders",
+    ],
     # Boundaries are few, large shapes: simplified at low zooms, borders kept shared, and
     # detailed enough at zoom 14 to be stretched further by the map.
     "tiles/boundaries.pmtiles": [

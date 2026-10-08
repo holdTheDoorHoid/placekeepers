@@ -2,7 +2,7 @@
 // history and sources, ending with "not legal advice". It keeps the most important lines only,
 // so it fits one page; the full page is online.
 
-import { isGreening } from '../config/suggestions.ts';
+import { displacementCaution } from '../config/suggestions.ts';
 import { formatDate, strings } from '../strings.ts';
 import type { DossierView, TransferRow } from './build.ts';
 
@@ -16,6 +16,12 @@ export interface PrintModel {
   /** Listed as available by the City's land agencies (issue #36): its lines, in order, or null. */
   listing: { title: string; lines: string[] } | null;
   actions: { label: string; route: string | null; warning: string | null; steps: string[]; cost: string; caution: string | null }[];
+  /**
+   * In a displacement watch area with a greening suggestion (M4.1): the area's signs and each
+   * protection with its address, printed once after the suggestions, so the sheet carries what
+   * the cards link to.
+   */
+  watch: { text: string; links: string[] } | null;
   owner: {
     names: string[];
     mailing: string | null;
@@ -41,7 +47,15 @@ function listingLines(listing: DossierView['actions']['listing']): PrintModel['l
   const links = listing.links.map((link) => `${link.label}: ${link.url}`);
   return {
     title: listing.title,
-    lines: [listing.text, listing.displacement, sideYard, `${listing.decline} ${listing.changes}`, ...links, listing.credit].filter(
+    lines: [
+      listing.text,
+      listing.displacement.caution,
+      listing.displacement.watch?.text ?? null,
+      sideYard,
+      `${listing.decline} ${listing.changes}`,
+      ...links,
+      listing.credit,
+    ].filter(
       (line): line is string => !!line,
     ),
   };
@@ -81,9 +95,15 @@ export function printModel(view: DossierView, now: Date = new Date()): PrintMode
         warning: route?.warning ?? null,
         steps: route ? route.route.steps.slice(0, PRINT_LIMITS.steps) : [],
         cost: item.suggestion.cost,
-        caution: isGreening(item.suggestion.id) ? strings.displacement.caution : null,
+        caution: displacementCaution(item.suggestion.id),
       };
     }),
+    // With a greening or placemaking suggestion or the box of a listed lot, all of which carry a
+    // caution.
+    watch:
+      view.actions.watch && (view.actions.listing || view.actions.suggestions.slice(0, PRINT_LIMITS.suggestions).some((item) => displacementCaution(item.suggestion.id) !== null))
+        ? { text: view.actions.watch.text, links: view.actions.watch.links.map((link) => `${link.label}: ${link.url}`) }
+        : null,
     owner: {
       names: view.owner.names,
       mailing: view.owner.mailing,

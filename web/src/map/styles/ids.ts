@@ -31,5 +31,7 @@ export const STYLE_IDS = [
   'traffic_stress',
   // Parking problems reported with Laser Vision (issue #37)
   'parking_reports',
+  // The displacement watch (M4.1)
+  'displacement_watch',
 ] as const;
 export type StyleId = (typeof STYLE_IDS)[number];

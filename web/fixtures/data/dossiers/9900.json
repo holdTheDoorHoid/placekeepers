@@ -217,7 +217,13 @@
         "f_poverty": 92,
         "f_heatvul": 17,
         "f_strees": 31,
-        "f_people": 42
+        "f_people": 42,
+        "f_walk": 15,
+        "f_neighbors": 25,
+        "f_dest": 35,
+        "f_park": 85,
+        "f_art": 90,
+        "f_corr": 0
       }
     },
     "990000002": {
@@ -354,7 +360,13 @@
         "f_canopy": 60,
         "f_heatvul": 19,
         "f_strees": 37,
-        "f_people": 54
+        "f_people": 54,
+        "f_walk": 15,
+        "f_neighbors": 30,
+        "f_dest": 40,
+        "f_park": 85,
+        "f_art": 90,
+        "f_corr": 0
       }
     },
     "990000004": {
@@ -499,7 +511,13 @@
         "f_canopy": 70,
         "f_heatvul": 37,
         "f_strees": 25,
-        "f_people": 78
+        "f_people": 78,
+        "f_walk": 40,
+        "f_neighbors": 35,
+        "f_dest": 47,
+        "f_park": 45,
+        "f_art": 75,
+        "f_corr": 0
       }
     },
     "990000005": {
@@ -647,7 +665,13 @@
         "f_canopy": 1,
         "f_heatvul": 39,
         "f_strees": 31,
-        "f_people": 90
+        "f_people": 90,
+        "f_walk": 40,
+        "f_neighbors": 40,
+        "f_dest": 52,
+        "f_park": 45,
+        "f_art": 75,
+        "f_corr": 0
       }
     },
     "990000009": {
@@ -791,7 +815,13 @@
         "f_canopy": 88,
         "f_heatvul": 35,
         "f_strees": 31,
-        "f_people": 66
+        "f_people": 66,
+        "f_walk": 40,
+        "f_neighbors": 40,
+        "f_dest": 42,
+        "f_park": 45,
+        "f_art": 75,
+        "f_corr": 0
       }
     },
     "990000013": {
@@ -830,7 +860,17 @@
         "f_canopy": 39,
         "f_heatvul": 57,
         "f_strees": 31,
-        "f_people": 42
+        "f_people": 42,
+        "f_walk": 65,
+        "f_neighbors": 55,
+        "f_dest": 59,
+        "f_park": 50,
+        "f_art": 40,
+        "f_corr": 100
+      },
+      "displacement": {
+        "tract": "42101900200",
+        "signs": 7
       }
     },
     "990000029": {
@@ -949,7 +989,13 @@
         "f_poverty": 59,
         "f_heatvul": 19,
         "f_strees": 66,
-        "f_people": 90
+        "f_people": 90,
+        "f_walk": 15,
+        "f_neighbors": 35,
+        "f_dest": 40,
+        "f_park": 75,
+        "f_art": 90,
+        "f_corr": 0
       }
     },
     "990000033": {
@@ -1068,7 +1114,13 @@
         "f_canopy": 32,
         "f_heatvul": 35,
         "f_strees": 66,
-        "f_people": 66
+        "f_people": 66,
+        "f_walk": 40,
+        "f_neighbors": 50,
+        "f_dest": 42,
+        "f_park": 35,
+        "f_art": 75,
+        "f_corr": 0
       }
     },
     "990000098": {

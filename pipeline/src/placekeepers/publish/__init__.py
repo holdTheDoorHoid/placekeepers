@@ -124,8 +124,9 @@ def vacancy_counts(ctx: Context) -> dict[str, Any] | None:
 
 def lens_notes(ctx: Context) -> list[str]:
     """What the lenses could not score, from the summaries beside derived/lens_factors (the
-    violence lens), derived/heat_factors (the heat and shade lens, M3.1) and
-    derived/walk_factors (the walking measures, M3.3)."""
+    violence lens), derived/heat_factors (the heat and shade lens, M3.1),
+    derived/walk_factors (the walking measures, M3.3) and derived/placemaking_factors (the
+    placemaking lens, M3.4)."""
     notes: list[str] = []
     model = (ctx.cache.root / "derived" / "vacancy.parquet").is_file()
     for name, missing in (
@@ -141,6 +142,11 @@ def lens_notes(ctx: Context) -> list[str]:
             "walk_factors.json",
             "The walking measures have not been computed, so the lots have no walking factors yet",
         ),
+        (
+            "placemaking_factors.json",
+            "The placemaking lens factors have not been computed, so the lots have no placemaking "
+            "scores yet",
+        ),
     ):
         path = ctx.cache.root / "derived" / name
         if not path.is_file():
@@ -150,6 +156,23 @@ def lens_notes(ctx: Context) -> list[str]:
         summary = json.loads(path.read_text(encoding="utf-8"))
         notes.extend(summary.get("notes", []))
     return notes
+
+
+def displacement_notes(ctx: Context) -> list[str]:
+    """What the displacement watch found and could not measure (M4.1), from its summary beside
+    derived/displacement.parquet."""
+    from placekeepers.derive.displacement import load_summary, output_path
+
+    summary = load_summary(output_path(ctx))
+    return list(summary.get("notes", [])) if summary else []
+
+
+def displacement_block(ctx: Context) -> dict[str, Any] | None:
+    """The `displacement` block of manifest.json (M4.1, docs/CONTRACTS.md section 3)."""
+    # Imported here: placekeepers.publish.displacement is loaded with the map layers.
+    from placekeepers.publish.displacement import manifest_block
+
+    return manifest_block(ctx)
 
 
 def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> PublishResult:
@@ -219,6 +242,7 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
 
         notes.extend(vacancy_notes(ctx))
         notes.extend(lens_notes(ctx))
+        notes.extend(displacement_notes(ctx))
         result.dossiers = build_dossiers(ctx, statuses, staging, as_of)
         notes.extend(result.dossiers.notes)
         result.route_sheets = build_route_sheets(ctx, statuses, staging, as_of)
@@ -263,6 +287,7 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
             notes=notes,
             dossiers=result.dossiers.manifest_block() if result.dossiers else None,
             vacancy=vacancy_counts(ctx),
+            displacement=displacement_block(ctx),
         )
         atomic_write_json(staging / MANIFEST, result.manifest)
         _swap_into_place(staging, out_dir)
