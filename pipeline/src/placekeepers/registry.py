@@ -99,10 +99,11 @@ class CartoEndpoint(Strict):
 
 class ArcgisEndpoint(Strict):
     """A layer of an ArcGIS feature service: the City's ArcGIS Online services unless `url` names
-    another REST services root (for example a partner organization's)."""
+    another REST services root (for example a partner organization's). A service kept in a folder
+    is named with its folder, as ArcGIS lists it (`transportation/lts_network`, added by M3.3)."""
 
     kind: Literal["arcgis"]
-    service: Annotated[str, StringConstraints(pattern=r"^[^/?#&\s][^/?#&]*$")]
+    service: Annotated[str, StringConstraints(pattern=r"^[^/?#&\s][^/?#&]*(/[^/?#&\s][^/?#&]*)*$")]
     layer: Annotated[int, Field(strict=True, ge=0)]
     url: Annotated[str, StringConstraints(pattern=r"^https://\S+/rest/services$")] | None = None
 

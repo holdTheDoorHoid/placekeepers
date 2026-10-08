@@ -46,9 +46,10 @@ while less than 10 GB of disk is free (`PK_MIN_FREE_GB`).
 
 ## Sources
 
-Forty six sources the pipeline collects, each with an entry in `registry/sources.yaml` (the
-base map's source is the forty seventh: the site makes the base map, so the pipeline never
-fetches it). Field lists and the reasons for them are in each adapter's docstring.
+Every source the pipeline collects has an entry in `registry/sources.yaml` (the base map's source
+is listed too, but the site makes the base map, so the pipeline never fetches it). Field lists and
+the reasons for them are in each adapter's docstring. The table names the main ones; M3.5 added
+the City's public places and 311 conditions (`adapters/city_places.py`, `adapters/philly311.py`).
 
 | Source | Where | What we keep |
 |---|---|---|
@@ -88,6 +89,10 @@ fetches it). Field lists and the reasons for them are in each adapter's docstrin
 | `heat_vulnerability` | City ArcGIS `heat_vulnerability_ct` (by the Department of Public Health and the Office of Sustainability) | Every 2010 census tract with its heat exposure, heat sensitivity and heat vulnerability scores (data of 2017 to 2019), with the shape; 384 tracts |
 | `percent_for_art` | City ArcGIS `Percent_for_Art_Public` (the OpenDataPhilly "Percent for Art Locations", the same list as Carto `percent_for_art_public`) | Every work with its number, status, title, artist, year, medium, where it is in words, the City's document about it, the parcel it stands on and the layer's last edit day; not its Street View links. 239 works on 2026-10-05, in 2.3 seconds |
 | `wikidata_art` | Wikidata's query service, one small query a week (endpoint kind `sparql`) | Artworks of a fixed list of art classes with a coordinate in a box around the city: label, classes, point, year made, creators, what it commemorates and whether that is a person, English Wikipedia article, linked pages, whether it is gone, and whether it lies inside the city. 72 items on 2026-10-05, 69 inside the city, in under 5 seconds |
+| `epa_walkability` | The EPA's ArcGIS Online feature service of the Smart Location Database (version 3, 2021), Philadelphia's block groups only | Each block group's National Walkability Index (1 to 20), its four ranked parts and their raw values, with the shape; 1,336 block groups in one page |
+| `census_blocks_2020` | The Census Bureau's 2020 redistricting file for Pennsylvania (`pa2020.pl.zip`, 57 MB, no key; frozen) | Only its geographic header is read: Philadelphia's 17,554 blocks with their population, housing units, land and water area, and a point inside each |
+| `dvrpc_lts` | DVRPC's ArcGIS service `transportation/lts_network`, Philadelphia's rows only | Each street link's level of traffic stress for cycling (1 to 4), bike facility, lanes and speed, with the line, one row per direction; 60,867 rows in 31 pages |
+| `snap_retailers` | The USDA's ArcGIS layer of stores that take SNAP, Philadelphia's only | Each store's kind and point, never its name or address; 1,460 stores |
 
 **Candidate parcels.** Transfers, assessments and violations are too large to download for the
 whole city every week, so they come down for every parcel with any sign of vacancy (see
@@ -175,6 +180,21 @@ behind them: the tract and its three heat scores, the tree count, the 2020 tract
 square kilometer and the share of the parcel in each flood area) with a summary in
 `heat_factors.json`. It takes about 10 seconds for 58,325 parcels.
 
+### The walking measures
+
+`pk derive` then measures what lies within a short walk of the same parcels, in
+`placekeepers/derive/walk.py` (definitions in `docs/CONTRACTS.md` section 4, the method in
+`docs/DESIGN.md` section 5.9): the people within a 5 minute walk (the 2020 census blocks whose
+point lies within 400 meters), the kinds of everyday places within a 10 minute walk (seven kinds
+within 800 meters: libraries, recreation centers, pools and spraygrounds, park drinking fountains,
+schools, grocery stores and markets that take SNAP, and SEPTA stops), the street corners within a
+5 minute walk (from the City's centerlines) and the EPA's walkability index of the block group.
+Distances are straight lines, never routes along the streets. The result goes to
+`$PK_CACHE/derived/walk_factors.parquet` (the factors `f_walk`, `f_neighbors`, `f_dest` and
+`f_corners`, and the counts behind them) with a summary in `walk_factors.json`; the lots carry the
+first three for the placemaking lens (M3.4). It takes about 5 seconds and 450 MB for 58,325
+parcels. Publish measures the walking distance hexagons the same way.
+
 ## The shared cache
 
 Downloads and snapshots live in `$PK_CACHE` (default `~/.cache/placekeepers`), shared by every
@@ -194,6 +214,8 @@ derived/lens_factors.parquet          the lens factors per parcel and the facts 
 derived/lens_factors.json             each factor's spread, and notes
 derived/heat_factors.parquet          the heat and shade lens factors per parcel and the facts behind them
 derived/heat_factors.json             each factor's spread, the floodplain and suggestion counts, and notes
+derived/walk_factors.parquet          the walking factors per parcel and the counts behind them
+derived/walk_factors.json             each factor's spread, the places of each kind, and notes
 research/                             reserved for the vacancy study; the pipeline never writes here
 ```
 
@@ -211,8 +233,9 @@ DuckDB: `SELECT * FROM '~/.cache/placekeepers/snapshots/opa_properties/current.p
 `benches`, `picnic_tables`, `water`, `toilets` and `bookcases`), `tiles/environment.pmtiles` (layers
 `heat_tracts` and `floodplain`), `tiles/trees.pmtiles` (layer `trees`, zoom 14 only),
 `tiles/places.pmtiles` (layers `park_water`, `libraries`, `recreation` and `pools`),
-`tiles/conditions.pmtiles` (layers `dumping`, `lights` and `graffiti`) and `tiles/art.pmtiles` (layer
-`art`). It builds in a
+`tiles/conditions.pmtiles` (layers `dumping`, `lights` and `graffiti`), `tiles/art.pmtiles` (layer
+`art`), `tiles/walk.pmtiles` (layers `block_groups` and `cells`) and `tiles/cycling.pmtiles` (layer
+`stress`). It builds in a
 hidden folder and swaps it into place at the end, and it refuses to replace a folder that is not an
 earlier data root. A layer with nothing to show is left out with a note, so it never breaks the rest
 of its tile file. It also writes the lot dossiers, `dossiers/<first four digits>.json` with

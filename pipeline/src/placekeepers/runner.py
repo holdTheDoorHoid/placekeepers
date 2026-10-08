@@ -356,3 +356,22 @@ def derive_heat(ctx: Context, as_of: date | None = None) -> StepResult:
     missing = ", ".join(result.missing_sources)
     detail = f"{result.parcels:,} parcels" + (f"; without {missing}" if missing else "")
     return StepResult("heat", "derive", "ok", detail, time.monotonic() - started)
+
+
+def derive_walk(ctx: Context, as_of: date | None = None) -> StepResult:
+    """Measure what lies within a short walk of the vacancy model's parcels (M3.3): people,
+    everyday places, street corners and walkability. A failure is reported, never raised: the
+    map then shows the parcels without these factors."""
+    from placekeepers.derive import walk
+
+    started = time.monotonic()
+    try:
+        result = walk.run(ctx, as_of)
+    except Exception as exc:  # the map must still publish
+        message = f"The walking measures could not be computed: {plain_error(exc)}"
+        log.error("derive: %s", message)
+        log.debug("derive: details", exc_info=True)
+        return StepResult("walk", "derive", "failed", message, time.monotonic() - started)
+    missing = ", ".join(result.missing_sources)
+    detail = f"{result.parcels:,} parcels" + (f"; without {missing}" if missing else "")
+    return StepResult("walk", "derive", "ok", detail, time.monotonic() - started)

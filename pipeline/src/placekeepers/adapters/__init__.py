@@ -33,6 +33,12 @@ from placekeepers.adapters.shootings import Shootings
 from placekeepers.adapters.street_centerlines import StreetCenterlines
 from placekeepers.adapters.url import UrlAdapter
 from placekeepers.adapters.vacant_indicators import VacantIndicatorsBldg, VacantIndicatorsLand
+from placekeepers.adapters.walk import (
+    CensusBlocks2020,
+    DvrpcLts,
+    EpaWalkability,
+    SnapRetailers,
+)
 from placekeepers.context import Context
 from placekeepers.registry import Source
 
@@ -102,6 +108,11 @@ ADAPTERS: dict[str, type[Adapter]] = {
     # Public art (M3.2); OpenStreetMap's artworks come with osm_philadelphia
     "percent_for_art": PercentForArt,
     "wikidata_art": WikidataArt,
+    # Walkability and people (M3.3)
+    "epa_walkability": EpaWalkability,
+    "census_blocks_2020": CensusBlocks2020,
+    "dvrpc_lts": DvrpcLts,
+    "snap_retailers": SnapRetailers,
 }
 
 

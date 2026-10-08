@@ -20,10 +20,13 @@ import { publicPlace } from './public_place.ts';
 import { shootingsHex } from './shootings_hex.ts';
 import { stopAmenities } from './stop_amenities.ts';
 import { streetSegments } from './street_segments.ts';
+import { trafficStress } from './traffic_stress.ts';
 import { transitRoutes } from './transit_routes.ts';
 import { transitStops } from './transit_stops.ts';
 import type { StyleModule } from './types.ts';
 import { vacantParcels } from './vacant_parcels.ts';
+import { walkability } from './walkability.ts';
+import { walkingDistance } from './walking_distance.ts';
 
 export const STYLES: Record<StyleId, StyleModule> = {
   vacant_parcels: vacantParcels,
@@ -46,6 +49,9 @@ export const STYLES: Record<StyleId, StyleModule> = {
   public_place: publicPlace,
   condition,
   public_art: publicArt,
+  walkability,
+  walking_distance: walkingDistance,
+  traffic_stress: trafficStress,
 };
 
 export function styleFor(layer: Layer): StyleModule | null {
