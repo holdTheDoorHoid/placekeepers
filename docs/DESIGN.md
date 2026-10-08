@@ -360,22 +360,21 @@ prices are rising", in a new group, **Prices and protections**. It is on by defa
 view, where organizers plan, and off in the field view, where the cards already carry the caution
 and a phone map has little room. Each watch area is drawn the same way, a pale slate gray fill with
 a dashed edge under the lots, however many signs it has, so nothing reads as a ranking. Tapping an
-area (or, close in, its edge, because from zoom 16 a tap inside asks the City which parcel is
-there) shows "Signs that prices are rising here", the census tract and the neighborhood at its
-center, each sign that holds with what was measured against the whole city, the other signs
-measured, the rule, the ways to protect neighbors, and what the watch cannot tell. Wherever a
-greening suggestion (clean and green, plant shade trees, green the lot to cool the block, shade
-trees at a bus stop) sits in a watch area, its card adds, under the ETHICS.md sentence word for
-word, "This place is in a displacement watch area, with signs that prices are rising here: ..."
-and links to the Neighborhood Gardens Trust, community land trusts, the City's Homestead Exemption,
-its Longtime Owner Occupants Program (LOOP) and help with a tangled title, each to its own official
-page with the day it was last checked. Outside every watch area the card keeps the one line caution
-(decision D12, kept by the orchestrator because it stays protective). The box of a lot the City's
-land agencies list as available (issue #36) carries the same caution by the same rule. The lot
-page, its print (which
+area (or, close in, its edge, because from zoom 16 a tap inside asks the City which parcel is there)
+shows "Signs that prices are rising here", the census tract and the neighborhood at its center, each
+sign that holds with what was measured against the whole city, the other signs measured, the rule,
+the ways to protect neighbors, and what the watch cannot tell. Wherever a greening suggestion (clean
+and green, plant shade trees, green the lot to cool the block, shade trees at a bus stop) sits in a
+watch area, its card adds, under the ETHICS.md sentence word for word, "This place is in a
+displacement watch area, with signs that prices are rising here: ..." and links to the Neighborhood
+Gardens Trust, community land trusts, the City's Homestead Exemption, its Longtime Owner Occupants
+Program (LOOP) and help with a tangled title, each to its own official page with the day it was last
+checked. Outside every watch area the card keeps the one line caution (decision D12, kept by the
+orchestrator because it stays protective). The box of a lot the City's land agencies list as
+available (issue #36) carries the same caution by the same rule. The lot page, its print (which
 lists each protection with its address) and downloads (a `displacement_watch` column and a note)
-follow the same rule, and a lot page opened from a link knows its area from its dossier. Shade
-trees at bus stops carry the caution too, which before M4.1 they did not.
+follow the same rule, and a lot page opened from a link knows its area from its dossier. Shade trees
+at bus stops carry the caution too, which before M4.1 they did not.
 
 **The areas** are the City's 2020 census tracts (408). Tracts, not hexagons: the renter share is
 published only by tract, a tract holds enough home sales for a middle price to mean something
