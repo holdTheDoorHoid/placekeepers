@@ -25,8 +25,8 @@ Three of its factors are the walking measures of M3.3 (placekeepers.derive.walk:
   City's commercial corridors (`commercial_corridors`) or within CORRIDOR_NEAR_M of one, else 0.
 
 `f_park` and `f_art` are rounded to the nearest 5 (RANK_STEP). A straight line distance says
-nothing finer, and 21 values instead of 101 keep tiles/lots.pmtiles about 4 percent smaller (on
-2026-10-08 the two exact ranks added 10 percent to the file, the rounded ones 6 percent).
+nothing finer, and 21 values instead of 101 keep tiles/lots.pmtiles smaller: on 2026-10-08 the two
+exact ranks added 10 percent to the file, the rounded ones about 5 percent.
 
 A factor whose sources have no snapshot is left out of every parcel, as for every lens.
 

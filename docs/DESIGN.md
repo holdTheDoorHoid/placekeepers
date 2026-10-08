@@ -282,7 +282,7 @@ needed). Every score has a "why" breakdown showing each factor's contribution.
 | Street safety | Street segments and crash sites | On the High Injury Network; people killed or seriously injured walking or cycling in 5 years; any fatal crash in 2 years; school within 400 m; later, busy bus stop nearby | First |
 | Heat and shade | Vacant parcels | Neighborhood heat vulnerability, from the City's index (Context); few trees nearby, 2018 canopy within about a quarter mile (Mixed); few City trees on the block, within 100 meters (Mixed); people this would reach, residents per square kilometer of the tract (Context). FEMA's floodplain is shown beside the score, never in it | v0.3 (M3.1) |
 | Transit comfort | SEPTA bus and trolley stops | People getting on each weekday (Context); no shelter (Weak); no bench (Weak); little shade nearby (Mixed); hot neighborhood in summer (Context); on the High Injury Network (Context); long waits at midday (Weak). A shelter or bench not yet surveyed counts halfway | v0.2 (M2.3) |
-| Placemaking | Lots and area cells | Walkability; people within a 5 minute walk; distance to a park; art nearby or absent; commercial corridor. M3.3 computes the walking factors (section 5.9) | Later |
+| Placemaking | Vacant parcels | People within a 5 minute walk (Context); everyday places within a 10 minute walk (Mixed); walkability (Mixed); far from a park (Context); no public art nearby, from the City's list and Wikidata (Context); on or near a commercial corridor (Mixed). The walking factors come from M3.3 (section 5.9) | v0.3 (M3.4) |
 
 As built (M2.3, 2026-10-05): the transit comfort lens colors SEPTA's bus and trolley stops (the
 stops layer's coloring setting offers the lens, waits or riders, and defaults to the lens), with
@@ -352,6 +352,67 @@ route, then the City's free street trees (the route shared with the shade trees 
 TreePhilly's free giveaway trees, and both carry the displacement caution of ETHICS.md word for
 word, like clean and green.
 
+As built (M3.4, 2026-10-08): the **placemaking lens** ranks the vacant parcels on the map for where
+a lot would most likely become a public place people use every day: a garden, a pocket park, a
+place to sit in the shade, a spot for art. It is about use and welcome, never about crime
+(EVIDENCE.md, "Placemaking"). Each of its six factors is ranked from 0 to 100 among the parcels on
+the map; for the first three more ranks higher (section 5.9), for the parks and the art farther
+ranks higher:
+
+- **People within a 5 minute walk** (Context, default weight 3), **everyday places within a 10
+  minute walk** (Mixed, 2) and **walkability**, the EPA's index (Mixed, 2): the walking measures of
+  M3.3.
+- **Far from a park** (Context, 2): the straight line distance from the parcel's point to the edge
+  of the nearest park land of Parks and Recreation (parks, playgrounds, recreation centers,
+  squares, greenways, nature areas and gardens: 479 of its 507 properties, leaving out its work
+  yards, golf courses and planted traffic medians). Half the parcels on the map lie within 235
+  meters of one, and 67 lie inside one.
+- **No public art nearby** (Context, 1): the distance to the nearest of the 174 outdoor works on
+  the City's Percent for Art list and the 69 in Wikidata (half the parcels lie within about a
+  kilometer of one). OpenStreetMap's 410 artworks are not used: nothing worked out from them may be
+  stored with the City's data in the lots (decision D1 of VERIFICATION_V0_2.md). Mural Arts'
+  murals are in none of these lists, so the factor only knows part of the city's art, says so,
+  and has the lowest default weight.
+- **On or near a commercial corridor** (Mixed, 1): 100 when the parcel lies on one of the City's
+  279 commercial corridors (shopping streets and centers the Planning Commission surveyed from
+  2011 to 2017) or within 50 meters of one, else 0 (14,287 parcels, 9,652 of them lots).
+
+The two distances are ranked, then rounded to the nearest 5: a straight line says nothing finer,
+and it keeps the lots file smaller (the last paragraph of this note). Presets: Balanced (the
+defaults 3, 2, 2, 2, 1, 1), Most neighbors, Where people already walk, and Far from a park. The
+lots layer's **Color lots by** setting offers the lens beside the other two, and moving its sliders
+or using a preset colors the lots by it.
+
+**What it finds.** Measured on 2026-10-08 under the Balanced weights, the lots of Spruce Hill,
+Bella Vista and Passyunk Square average 72 to 73, those of Fairhill 56 and Strawberry Mansion 44,
+and those of Chestnut Hill 25 and Upper Roxborough 20. Because the lens values people and everyday
+places within a walk, it ranks the dense rowhouse neighborhoods around Center City highest, and
+they include some of the city's costliest. That is one reason every placemaking card carries the
+displacement caution, and the reason for the Far from a park preset, which turns to places that
+lack open space (Dunlap, Mayfair and West Oak Lane lead under it).
+
+**Suggestions.** Vacant lots get up to six, decided in the pipeline with the factors. **Make a
+place to sit in the shade** where more people live within a 5 minute walk than around half the
+places on the map (18,765 lots on 2026-10-08); **start a community garden** where the lot is
+farther from a park than half the places (20,653); **ask about a mural or other art** where no
+work of the City's list or Wikidata stands within a 5 minute walk and many people live around
+(15,666), linking only to Mural Arts' own request form, never copying its content; and **report
+the illegal dumping, the dark street light or the graffiti to Philly311** where a street block the
+lot faces (within 20 meters of it) has a request about it still open in the conditions layer's 90
+days (650, 1,082 and 69 lots). Under this lens the first three lead a lot's card. They carry the
+displacement caution of ETHICS.md word for word, like the greening suggestions. The reports never
+lead, are about physical conditions only, and point to Philly311, never the police. A 311 count is
+never a factor: it says that people asked, not how often a condition occurs.
+
+**Left out, and why.** The area cells (the walking distance hexagons of section 5.9) are not
+colored by this lens. Each lens colors one kind of place, so the cells would need a second lens
+with its own sliders, and they carry only the walking measures, not the park, art or corridor
+factors. OpenStreetMap's artworks are left out for the license reason above.
+
+On 2026-10-08 the three new factors and the longer lists of suggestions made tiles/lots.pmtiles 8
+percent larger (8.8 to 9.6 MB): the two distances about 5 percent once rounded (10 before), the
+corridor 1 percent and the suggestions 2 percent.
+
 **Displacement watch** is not a priority lens. It is a caution overlay on area cells (sale price
 growth, share of recent buyers that are companies, renter share, and similar), shown wherever a
 suggestion could raise property values. Its exact factors are set in the history and displacement
@@ -394,6 +455,8 @@ setting. First release suggestions:
 | Crash site where someone walking or cycling died | Memorial or ghost bike; traffic calming petition on a residential street; daylighting check | Bicycle Coalition; OTIS |
 | High Injury Network segment | Vision Zero advocacy and public comment | Bicycle Coalition, Feet First Philly, 5th Square |
 | Vacant lot where little shade covers the area, or where heat hits people hardest (M3.1) | Plant shade trees on and along the lot; green the lot to cool the block | The lot's permission route, then the City's street tree request and TreePhilly's giveaway trees |
+| Vacant lot with many neighbors, far from a park, or with no public art nearby (M3.4) | A place to sit in the shade; a community garden; ask about a mural or other art | The lot's permission route (for a mural, the wall's owner and Mural Arts' request form) |
+| Vacant lot facing a block with an open 311 request about dumping, a dark light or graffiti (M3.4) | Report it to Philly311 | Philly311 |
 
 Funding is shown beside suggestions where it fits: the City's community violence prevention grants
 and Feet First Philly's public space mini grants (see ROUTES.md).
@@ -544,7 +607,8 @@ As built (M3.2, 2026-10-05): a **Public art** layer in a new **Art and placemaki
 for each work, colored by its kind (murals and wall paintings, sculptures and statues, mosaics, and
 other kinds such as installations, fountains and monuments), with a switch for each kind and one for
 works inside buildings. It is off by default in both views: several hundred dots would crowd the
-lots and streets the first releases are about, and the placemaking lens (M3.4) will use it.
+lots and streets the first releases are about. The placemaking lens (M3.4, section 5.3) measures how
+far each lot is from the City's and Wikidata's works.
 Tapping a work shows its kind, title, artist, year, material and where it is, as its sources give
 them, and links to each source: the City's record, OpenStreetMap, Wikidata, a Wikipedia article,
 and any page OpenStreetMap or Wikidata names (often the Association for Public Art's page on the
@@ -651,8 +715,8 @@ the gaps instead needs a field of its own. Street corners (`f_corners`) stay off
 EPA's index counts intersections already, and each factor adds about 3 to 4 percent to the lots
 tiles (the three together about 10 percent, 8.0 to 8.8 MB, on 2026-10-05). The hexagons carry all
 four, ranked among the cells, for a placemaking lens on cells. CONTRACTS.md section 4 has the
-details, and `derived/walk_factors.parquet` holds the counts behind each parcel's ranks. No lens
-uses these fields yet; M3.4 builds the placemaking lens on them. SEPTA's bus and trolley stops on
+details, and `derived/walk_factors.parquet` holds the counts behind each parcel's ranks. The
+placemaking lens (M3.4, section 5.3) is built on them. SEPTA's bus and trolley stops on
 the street carry the same three factors, measured from each stop and ranked among the stops, for
 any lens that wants the people and places a stop serves.
 

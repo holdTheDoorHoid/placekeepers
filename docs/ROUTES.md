@@ -99,7 +99,7 @@ own pages refuse automated access, so its steps are not described here.
 | Street tree | Parks and Recreation's Street Tree Management Division (TreePhilly), StreetTree.Info@phila.gov, 215-685-4363 | The owner of the property in front of which the tree goes asks, online, by email or by phone; a City arborist visits and picks the tree | Free: the City plants it and waters and mulches it the first year | Planting seasons mid April to mid June and mid October to mid November | Verified 2026-10-05 (phila.gov "Get a street tree", treephilly.org) |
 | Bike rack | Streets | Application | Not stated | Not stated | Verified |
 | Wall mural | Mural Arts, through the "Want a mural on your wall?" form on its contact page (muralarts.org/contact; its old "apply for a mural" address now leads there); the Art Commission for anything in the public right of way | Wall owner's permission | Free to apply | Months | Verified 2026-10-05: the form asks about the wall, the community's support and why the mural matters, and lists no deadline (older guides gave March 15 and November 15) |
-| Report a dark streetlight, dumping, open vacant building | Philly311 | None | Free | Days to weeks | Verified |
+| Report a dark streetlight, dumping, graffiti, open vacant building | Philly311 | None | Free | Days to weeks | Verified |
 | New streetlight | None found. The City's LED conversion does not add lights; a Philadelphia Energy Authority "lighting equity study" may | n/a | n/a | n/a | Gap |
 | Bench on a sidewalk | No permit path found. At bus stops, benches belong to OTIS's street furniture program (shelters, benches, kiosks and transit head houses, paid for by advertising; OTIS request for information, May 2024), with no public request form: write to otis@phila.gov or call 215-686-9003 | n/a | Free to ask | Not stated | **Confirm with OTIS** (last checked 2026-10-05) |
 | Asphalt art or crosswalk art | No City process found. In July 2025 the US Department of Transportation began urging removal of crosswalk art ("SAFE ROADS"); Florida ordered removals; no Pennsylvania or Philadelphia position found | n/a | n/a | n/a | **Confirm with OTIS**; the site says "check with the City first" |
@@ -116,6 +116,16 @@ Where no public request path exists, the route says so and names the office that
 SEPTA's customer service page also offers a safety and incident report that goes to the transit
 police; Placekeepers never points there. The OTIS staff contact named in the Art Commission papers
 is not published here; the routes use the office's general address.
+
+**Placemaking (added 2026-10-08 by M3.4).** A vacant lot can offer four more suggestions, each with
+a route in `registry/routes.yaml`: a place to sit in the shade (the lot's permission route, then
+Feet First Philly's public space mini grant, `public_space_mini_grant`, and the free trees of
+TreePhilly and the City), a community garden (the lot's permission route, with PHS, the
+Neighborhood Gardens Trust and the Garden Justice Legal Initiative), a mural (`mural_arts_wall_request`:
+the wall's owner fills in the "Want a mural on your wall?" form on Mural Arts' contact page,
+checked 2026-10-08; nothing of Mural Arts' is copied), and reports to Philly311 about illegal
+dumping, a dark street or alley light or graffiti on a block the lot faces (`report_to_311`,
+whose first step now names graffiti and alley lights too). None points to the police.
 
 **Daylighting.** Pennsylvania law (Title 75, section 3353) already bans parking within 20 feet of a
 crosswalk at an intersection and within 30 feet of a stop sign or signal. Daylighting a corner
@@ -150,7 +160,7 @@ Evidence badges come from [EVIDENCE.md](EVIDENCE.md).
 | Source | What | Status |
 |---|---|---|
 | City Division of Safe Neighborhoods (formerly the Office of Violence Prevention) community grants | About $24 million to 147 groups in June 2025; a $25 million round announced 2026-06-17 | Verified |
-| Feet First Philly public space mini grants | $500 to $2,000 | Verified |
+| Feet First Philly public space mini grants | $500 to $2,500, partly funded by the Department of Public Health, for projects that make a neighborhood easier to walk and roll in; applications open in August and are due in October (the 2026 to 2027 round, checked 2026-10-08) | Verified; whether a place to sit on a lot qualifies is **to confirm** |
 | Block Party Bonanza | Free kit and a gift card; 2026 only, ended 2026-10-03 | Verified, expired |
 
 ## 5. Partners

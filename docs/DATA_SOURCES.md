@@ -238,7 +238,8 @@ mural to a private person, but the rule stands ready for them.
 | TPL ParkServe 10 minute walk areas | | Terms unreachable (403) | Ask before use |
 | Amenities from OpenStreetMap | benches about 2,822; drinking water 46; toilets 116; public bookcases 192; community fridges 0 (Overpass, a box around the city) | ODbL | Used (M3.5): layers `benches`, `picnic_tables`, `drinking_water`, `toilets` and `bookcases` in `tiles/amenities.pmtiles`, from the weekly extract (`osm_philadelphia`). Inside the city limits on 2026-10-05: 2,069 benches, 306 picnic tables, 30 drinking water points, 73 public toilets (one more closed to the public is left out) and 150 public bookcases. Fridges need a community list |
 | 311 requests (Carto, since 2014-12-08) | Illegal dumping, street and alley light outages, graffiti, dangerous sidewalk, street trees | City terms | Use for conditions only, never for people. Used (M3.5): source `philly311_conditions`, below |
-| Street poles, commercial corridors, schools | | City terms | Use |
+| Street poles, schools | | City terms | Use |
+| Commercial corridors (City ArcGIS `Commercial_Corridors`) | 279 | City terms | **Used (M3.4)**: source `commercial_corridors`, see Placemaking lens below |
 | Free Library branches | 54 | City terms | Used (M3.5): the City publishes them as `library_locations` (below). The Free Library's own website refuses automated requests (403) and is never read |
 
 ### Public places and conditions reported to 311 (M3.5)
@@ -299,6 +300,31 @@ land use map's water.
 * **Walk Score** (its terms forbid storing scores) and **Trust for Public Land's ParkServe** walk
   areas (its terms page refuses automated requests) are not sources.
 * **Routing along the streets.** Distances are straight lines (docs/DESIGN.md section 5.9).
+
+### Placemaking lens (M3.4)
+
+Used from M3.4 (2026-10-08) by the placemaking lens on the lots (docs/DESIGN.md section 5.3). One new
+source; the others are already kept for other layers.
+
+| Source id | Endpoint | What we keep | Size and time | Terms | Health |
+|---|---|---|---|---|---|
+| `commercial_corridors` | City ArcGIS `Commercial_Corridors`, the OpenDataPhilly dataset "Commercial Corridors of Philadelphia" (catalog.data.gov lists the City of Philadelphia as publisher; the layer was last edited 2025-05-07). The service refused one page of all 279 detailed shapes as GeoJSON, so it is read in pages of 100 | The name, the survey year and the kind of corridor, with the shape. The store counts, vacancy rates and funding columns are not downloaded | 279 corridors, centers and districts the Planning Commission surveyed from 2011 to 2017; 3 pages in 4.2 seconds; a 128 kB snapshot | OpenDataPhilly lists it under the City of Philadelphia License, the City's open data terms (`city_terms`) used for every City source here; credited "Commercial corridors: City of Philadelphia, Department of Planning and Development" | At least 250 rows, no more than 10 percent fewer |
+
+**How the other sources are used.**
+
+* `ppr_properties` (Parks and Recreation properties, already read by the vacancy model to leave
+  parks off the map): the edge of the nearest park land, for "far from a park". 479 of its 507
+  properties count as parks; its work yards and offices, golf courses and traffic medians with no
+  park use (28) do not.
+* `percent_for_art` and `wikidata_art` (the Public art layer, above): the nearest work, for "no
+  public art nearby": 174 of the City's 224 works on view (50 are inside buildings) and Wikidata's
+  69. **OpenStreetMap's artworks are never used for the lens**: they are under the Open Database
+  License, and nothing worked out from them may be stored with the City's data in the lots
+  (decision D1 of docs/VERIFICATION_V0_2.md). Mural Arts' murals are in none of these lists, which
+  the lens says wherever it shows this factor.
+* `philly311_conditions` and `street_centerlines` (Conditions reported to 311, above): an open
+  request about dumping, a light or graffiti on a block a lot faces suggests reporting it to
+  Philly311 (566 blocks had one on 2026-10-08). Never a score factor.
 
 ### History and displacement
 

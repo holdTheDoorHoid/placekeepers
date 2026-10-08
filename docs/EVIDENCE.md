@@ -169,6 +169,35 @@ because the shops that make a street walkable can also include alcohol outlets, 
 consistent risk factor. Population density has no causal evidence at all; Placekeepers uses it only
 to count how many people an improvement would reach.
 
+## Placemaking: Context and Mixed, never about violence
+
+Added 2026-10-08 for the placemaking lens (milestone M3.4). The lens asks where a vacant lot would
+most likely become a place people use every day: a garden, a pocket park, a place to sit, a spot
+for art. It makes no claim about crime or violence. No study we found links art, walkability or
+more people nearby to less violence (above), so the lens is about use and welcome only.
+
+- **People within a 5 minute walk: Context.** It counts who a project would reach, as population
+  does everywhere on the map.
+- **Everyday places within a 10 minute walk, and walkability: Mixed.** Libraries, schools, stores
+  and stops bring people on foot past a lot, which a public place needs. But the research on
+  walkable, busy streets is correlational, and what they bring depends on the street (above).
+- **Far from a park: Context.** The distance to the nearest park says where neighbors have little
+  open space close by. It is not a claim about what a new place would change.
+- **No public art nearby: Context.** It says where the art lists we may use show no work close
+  by. Murals are linked to pride and connection, never to less violence (Murals and public art,
+  above), and the lists miss most murals.
+- **On or near a commercial corridor: Mixed.** Shopping streets bring people past every day, but
+  the same streets can hold alcohol outlets, a consistent risk factor (above), so how much they
+  help a new public place depends on the street.
+
+Its suggestions to make a place to sit in the shade, start a community garden and ask about a
+mural carry **Not about violence**: they are worth doing for rest, food, beauty and meeting
+neighbors, and we make no violence claim for them. Like greening, they can raise nearby prices, so
+they carry the displacement caution (Risks we design for, below). Its reports to Philly311 carry
+the badge of what they ask for: a dark street light **Moderate**, as for street lighting above
+(the same badge as the dark streetlight report at a bus stop), and dumping and graffiti **Not
+about violence**.
+
 ## Transit: Promising, but context specific
 
 In Medellin, Colombia, neighborhoods connected by the Metrocable aerial transit line, with new public
