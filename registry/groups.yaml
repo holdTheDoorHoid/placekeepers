@@ -5,6 +5,9 @@
 - id: care
   label: Care already happening
   description: Lots already maintained, gardens, parks and other places people already tend.
+- id: displacement
+  label: Prices and protections
+  description: Where prices are rising, so that greening and other improvements can be paired with protections for the neighbors who live there now.
 - id: streets
   label: Streets and memorials
   description: The High Injury Network, crashes, and people killed on our streets.
