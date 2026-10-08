@@ -829,6 +829,10 @@
         "f_heatvul": 57,
         "f_strees": 31,
         "f_people": 42
+      },
+      "displacement": {
+        "tract": "42101900200",
+        "signs": 7
       }
     },
     "990000029": {

@@ -8,6 +8,7 @@
   import EvidenceBadge from '../common/EvidenceBadge.svelte';
   import ListToggle from '../lists/ListToggle.svelte';
   import DisplacementNote from './DisplacementNote.svelte';
+  import { watchNote, watchSigns } from '../../displacement/watch.ts';
   import { kindLabel } from './labels.ts';
 
   let {
@@ -19,6 +20,8 @@
   }: { store: AppStore; place: NearbyPlace; lensLabel: string; fromYou: boolean; onShow?: () => void } = $props();
 
   const suggestion = $derived(place.suggestions[0]);
+  // The displacement watch area the lot lies in, from its tile (`dw`, M4.1).
+  const watch = $derived(watchNote(store.registry, watchSigns(place.properties)));
   const address = $derived(store.addresses.get(place.id));
   const name = $derived(address ?? strings.place.parcel(place.id));
 </script>
@@ -52,7 +55,7 @@
       {suggestion.label}. <EvidenceBadge level={suggestion.evidence} />
       <span class="cost">{strings.place.cost(suggestion.cost)}</span>
     </p>
-    <DisplacementNote suggestionId={suggestion.id} />
+    <DisplacementNote suggestionId={suggestion.id} {watch} />
     <p class="step">
       <strong>{strings.place.firstStep}:</strong>
       {#if place.firstStep}{place.firstStep.route.label}. {place.firstStep.step}{:else if place.noRoute}{strings.permission.noRoute}{:else}{strings.permission.seeLotPage}{/if}

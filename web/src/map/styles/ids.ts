@@ -25,5 +25,7 @@ export const STYLE_IDS = [
   'condition',
   // Public art (M3.2)
   'public_art',
+  // The displacement watch (M4.1)
+  'displacement_watch',
 ] as const;
 export type StyleId = (typeof STYLE_IDS)[number];

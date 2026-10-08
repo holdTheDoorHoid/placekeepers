@@ -25,7 +25,7 @@
   <article class="suggestion">
     <h4>{item.suggestion.label} <EvidenceBadge level={item.suggestion.evidence} /></h4>
     <BlessingNote suggestionId={item.suggestion.id} />
-    <DisplacementNote suggestionId={item.suggestion.id} />
+    <DisplacementNote suggestionId={item.suggestion.id} watch={actions.watch} />
     {#each item.routes as route (route.route.id)}
       <RouteDetails view={route} level={5} />
     {/each}

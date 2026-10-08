@@ -136,3 +136,13 @@ export const CONDITION_COLORS: Record<string, string> = {
  */
 export const ART_COLORS = { mural: '#cc79a7', sculpture: '#0072b2', mosaic: '#f0e442', other: '#6b7c8c' } as const;
 export const ART_RINGS = { mural: '#7d3c66', sculpture: '#003d61', mosaic: '#6b6400', other: '#2f3a45' } as const;
+
+/**
+ * The displacement watch (M4.1): areas with signs that prices are rising, as a pale slate teal
+ * fill under the lots and a dashed outline, clear of the lots' greens, the shootings' purples, the
+ * heat's oranges and the streets' pinks. A caution, so it is quiet: nothing about it reads as an
+ * alarm.
+ */
+export const WATCH_FILL = '#9fcfd9';
+export const WATCH_FILL_OPACITY = 0.28;
+export const WATCH_LINE = '#1f5f6e';

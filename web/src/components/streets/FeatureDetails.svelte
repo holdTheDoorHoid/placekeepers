@@ -22,6 +22,8 @@
   import AmenityDetails from '../amenities/AmenityDetails.svelte';
   import ConditionDetails from '../amenities/ConditionDetails.svelte';
   import PlaceDetails from '../amenities/PlaceDetails.svelte';
+  import WatchDetails from '../displacement/WatchDetails.svelte';
+  import { watchSummaryOf } from '../../displacement/watch.ts';
 
   let {
     store,
@@ -123,6 +125,8 @@
     {#each target.features.slice(0, 4) as properties, i (i)}
       <ConditionDetails layerId={target.layerId} {properties} route={store.registry.routes.find((r) => r.id === 'report_to_311')} />
     {/each}
+  {:else if style === STYLES.displacement_watch}
+    <WatchDetails features={target.features} summary={watchSummaryOf(store.manifest)} registry={store.registry} />
   {:else if style === STYLES.public_art}
     <ArtDetails
       features={target.features}

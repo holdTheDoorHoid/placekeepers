@@ -39,6 +39,12 @@
       {#if action.steps.length}<ol>{#each action.steps as step (step)}<li>{step}</li>{/each}</ol>{/if}
       <p>{s.actions.cost}: {action.cost}</p>
     {/each}
+    {#if m.watch}
+      <h3>{strings.displacement.printTitle}</h3>
+      <p class="note">{m.watch.text}</p>
+      <p>{strings.displacement.protectionsTitle}:</p>
+      <ul>{#each m.watch.links as link (link)}<li>{link}</li>{/each}</ul>
+    {/if}
   </section>
 
   <section>

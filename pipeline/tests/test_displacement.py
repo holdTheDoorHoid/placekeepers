@@ -401,3 +401,29 @@ def test_without_the_watch_nothing_is_marked(context_factory, tmp_path: Path) ->
     ctx = context_factory()
     assert parcel_watch(ctx.cache.root / "derived") == {}
     assert manifest_block(ctx) is None
+
+
+def test_the_web_app_reads_the_same_signs_and_rule() -> None:
+    """web/tests/displacement.test.ts checks src/displacement/watch.ts against the same file."""
+    parity = json.loads(
+        (Path(__file__).parent / "fixtures" / "watch_parity.json").read_text(encoding="utf-8")
+    )
+    assert parity["signs"] == SIGNS
+    assert parity["price_signs"] == dw.PRICE_SIGNS
+    assert len(parity["cases"]) == 32
+    for case in parity["cases"]:
+        assert is_watch(case["signs"]) is case["watch"], case
+
+
+def test_stops_take_the_signs_of_the_area_they_stand_in(context_factory) -> None:
+    from placekeepers.publish.displacement import point_watch
+
+    ctx = context_factory()
+    install_city(ctx)
+    dw.run(ctx, AS_OF)
+    from placekeepers.derive.lenses import current_snapshot
+
+    tracts = current_snapshot(ctx, "census_tracts_2020")
+    found = point_watch(ctx, tracts, [-75.195, -75.185, -75.175, -75.0], [39.955] * 4)
+    assert found == [P | C | A, None, R | M, None]
+    assert point_watch(ctx, None, [-75.195], [39.955]) == [None]

@@ -14,6 +14,12 @@ export interface PrintModel {
   printed: string;
   summary: { kind: string; confidence: string | null; reasons: string[]; cityCalls: string | null; care: string[]; flood: string | null };
   actions: { label: string; route: string | null; warning: string | null; steps: string[]; cost: string; caution: string | null }[];
+  /**
+   * In a displacement watch area with a greening suggestion (M4.1): the area's signs and each
+   * protection with its address, printed once after the suggestions, so the sheet carries what
+   * the cards link to.
+   */
+  watch: { text: string; links: string[] } | null;
   owner: {
     names: string[];
     mailing: string | null;
@@ -67,6 +73,10 @@ export function printModel(view: DossierView, now: Date = new Date()): PrintMode
         caution: isGreening(item.suggestion.id) ? strings.displacement.caution : null,
       };
     }),
+    watch:
+      view.actions.watch && view.actions.suggestions.slice(0, PRINT_LIMITS.suggestions).some((item) => isGreening(item.suggestion.id))
+        ? { text: view.actions.watch.text, links: view.actions.watch.links.map((link) => `${link.label}: ${link.url}`) }
+        : null,
     owner: {
       names: view.owner.names,
       mailing: view.owner.mailing,

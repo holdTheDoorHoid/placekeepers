@@ -224,6 +224,15 @@ function landcare(v: unknown): LandCare | null {
   return { program: text(v.program), year: year !== null && year >= 1950 && year <= 2200 ? year : null };
 }
 
+/** The displacement watch area a lot lies in (M4.1): an 11 digit census tract and its signs. */
+function displacement(v: unknown): { tract: string; signs: number } | null {
+  if (!isObj(v)) return null;
+  const signs = int(v.signs);
+  const tract = text(v.tract);
+  if (signs === null || signs <= 0 || signs > 31 || !tract || !/^\d{11}$/.test(tract)) return null;
+  return { tract, signs };
+}
+
 const LENS_FACTOR = /^f_[a-z0-9_]{1,40}$/;
 
 /** The lens values a tile carries: factors from 0 to 100 (`f_*`) and the floodplain mark (`fp`, 1 or 2); null when none. */
@@ -274,6 +283,7 @@ export function parseShardParcel(raw: unknown, where = 'parcel', problems: strin
     landcare: landcare(raw.landcare),
     garden: raw.garden === true,
     lens: lensValues(raw.lens),
+    displacement: displacement(raw.displacement),
   };
 }
 

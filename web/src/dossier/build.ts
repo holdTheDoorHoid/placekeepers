@@ -9,6 +9,7 @@
 // is turned off shows the snapshot with a line saying so, or nothing with a line saying why.
 // Everything here is a plain function of its inputs, so tests can check every state.
 
+import { watchNote, watchSigns, type WatchNote } from '../displacement/watch.ts';
 import { correctionUrl, propertyPageUrl, atlasUrl, googleMapsUrl, streetViewUrl, TAX_CENTER_URL } from '../config/links.ts';
 import { PERMISSION_ROUTES } from '../config/permission.ts';
 import type { Manifest } from '../data/manifest.ts';
@@ -233,6 +234,11 @@ export interface DossierView {
     listed: boolean;
     suggestions: SuggestionView[];
     otherRoutes: RouteView[];
+    /**
+     * The displacement watch area the lot lies in (M4.1), from the map's `dw` or the dossier's
+     * `displacement`: its greening suggestions then add the area's signs and the protections.
+     */
+    watch: WatchNote | null;
   };
   owner: {
     names: string[];
@@ -743,7 +749,7 @@ export function buildDossier(input: DossierInput): DossierView {
       links,
       provenance: parcel ? snapshotProvenance : tile ? { tone: 'snapshot', text: p.map } : provenanceOf(live.property, false, null, liveOn),
     },
-    actions: { listed, suggestions: suggestionViews, otherRoutes },
+    actions: { listed, suggestions: suggestionViews, otherRoutes, watch: watchNote(registry, watchSigns(tile, parcel?.displacement?.signs)) },
     owner: {
       names,
       mailing: plain(property ? property.mailing : (shardOwner?.mailing ?? null)),

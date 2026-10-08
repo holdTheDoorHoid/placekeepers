@@ -8,6 +8,7 @@ import { boundary } from './boundary.ts';
 import { condition } from './condition.ts';
 import { cityTrees } from './city_trees.ts';
 import { crashes } from './crashes.ts';
+import { displacementWatch } from './displacement_watch.ts';
 import { floodplain } from './floodplain.ts';
 import { gardens } from './gardens.ts';
 import { heatTracts } from './heat_tracts.ts';
@@ -46,6 +47,7 @@ export const STYLES: Record<StyleId, StyleModule> = {
   public_place: publicPlace,
   condition,
   public_art: publicArt,
+  displacement_watch: displacementWatch,
 };
 
 export function styleFor(layer: Layer): StyleModule | null {

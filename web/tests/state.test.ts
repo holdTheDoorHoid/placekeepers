@@ -45,6 +45,8 @@ describe('defaults per view', () => {
       'segments',
       'memorials',
       'basemap',
+      // The displacement watch (M4.1): on for organizers, off in the field view.
+      'displacement_watch',
     ]);
   });
 
