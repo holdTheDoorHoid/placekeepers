@@ -531,7 +531,7 @@ export const strings = {
     signShort: {
       prices: 'home prices rising faster than across the city',
       assessments: "the City's assessed values rising faster than across the city",
-      mva: "the City's Market Value Analysis finds rising pressure",
+      mva: "the City's Market Value Analysis finding home prices climbing out of reach of longtime residents",
       companies: 'companies buying many of the homes sold',
       renters: 'at least three in five homes rented',
     },
@@ -572,7 +572,7 @@ export const strings = {
       'These are signs in public records, not a forecast. They cannot tell who has moved away or why, what rents are, or who lives here, and an area outside the watch can still feel rising prices.',
     legendArea: 'An area with signs that prices are rising',
     legendTap: 'Tap inside an area, or its edge close in, to see its signs.',
-    legendNote: 'Signs in public records, not a forecast. Greening cards in these areas add ways to protect neighbors.',
+    legendNote: 'Signs in public records, not a forecast. Greening, garden, seating and art cards in these areas add ways to protect neighbors.',
     exportColumn: (signs: string) => `Displacement watch area: ${signs}`,
     exportLine: (caution: string, links: string) => `About greening in displacement watch areas: ${caution} Ways to protect neighbors: ${links}`,
     placemakingExportLine: (caution: string, links: string) =>
