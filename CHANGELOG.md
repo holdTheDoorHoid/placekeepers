@@ -26,10 +26,12 @@ Action's Laser Vision app.
   less violence, so the lens and its suggestions make no such claim, and the seating, garden and
   mural suggestions carry a "Not about violence" badge.
 - Six suggestions for lots, each with the first lawful step. As of October 8, 2026: make a place
-  to sit in the shade (18,765 lots), start a community garden (20,653), ask about a mural or other
-  art (15,666), and, where a block the lot faces has a request still open, report illegal dumping
-  (650 lots), a dark street light (1,082) or graffiti (69) to Philly311. Reports are about
-  physical conditions only, never for the police.
+  to sit in the shade (18,765 lots), ask about a mural or other art (15,666), and, where a block
+  the lot faces has a request still open, report illegal dumping (650 lots), a dark street light
+  (1,082) or graffiti (69) to Philly311. Reports are about physical conditions only, never for the
+  police. The sixth, start a community garden, goes to lots far from a park and only where at
+  least 1,000 people live within a 5 minute walk, so it is not suggested where almost no one
+  lives.
 - The mural suggestion links to Mural Arts Philadelphia's own wall request page and copies
   nothing from its site. A new route points to Feet First Philly's public space mini grants,
   $500 to $2,500.
@@ -68,8 +70,8 @@ Action's Laser Vision app.
   records), OpenStreetMap (410) and Wikidata (69). A work listed in more than one source shows once
   (50 do), with a link to each. It is off by default, with a switch for each kind: murals,
   sculptures and statues, mosaics, and other kinds.
-- The public art layer reached the map in the last hours of v0.2's work, so v0.2's notes did not
-  describe it. It is described here for the first time.
+- An early look at this layer came in the last hours of v0.2's work, without notes of its own. It
+  is described here in full.
 - A work that any source marks as a memorial shows only as "Memorial artwork" (45 of them), with
   no title, artist or inscription, in the files and on the map. Names of people killed still come
   only from the hand curated memorials list.
@@ -103,7 +105,8 @@ Action's Laser Vision app.
   Neighborhood Gardens Trust, community land trusts, the City's Homestead Exemption and Longtime
   Owner Occupants Program, and help with a tangled title, each with the day its page was last
   checked. Outside every area the card keeps a one line caution. Lot pages, their print layout and
-  the downloads follow the same rule.
+  the downloads follow the same rule, and a lot page shows the full card once instead of repeating
+  it on every suggestion.
 - Tapping an area says what it cannot tell: signs in public records are not a forecast, and they
   cannot show who has moved away or why, or what rents are. Buyers' names are read only to tell a
   company from a person and are never kept.
@@ -226,6 +229,11 @@ amenities around the city.
 - 311 reports of illegal dumping, street and alley lights out, and graffiti, grouped by block
   over the last 90 days.
 - No lens or suggestions of their own yet; that is further Phase 3 work.
+
+### Public art, an early look
+
+- A public art layer also reached the map in the last hours of this release, off by default, with
+  no lens or notes of its own yet. Version 0.3 describes it.
 
 ### Map and views
 
