@@ -599,7 +599,9 @@ export const strings = {
                             ? 'Public art'
                             : style === 'traffic_stress'
                               ? 'Traffic stress for bikes'
-                              : 'Details',
+                              : style === 'parking_reports'
+                                ? 'Parking problems reported'
+                                : 'Details',
     memorialTitle: 'In memory',
     peopleHere: (n: number) => `${plural(n, 'person is', 'people are')} remembered here`,
     killed: {
@@ -667,6 +669,43 @@ export const strings = {
     noKsi: 'No one recorded killed or seriously injured while walking or cycling here in the last five years of PennDOT records',
     killed2: (n: number) => `${plural(n, 'person', 'people')} killed here in the last two years`,
     school: 'A school within 400 meters',
+  },
+
+  // Parking problems reported with Philly Bike Action's Laser Vision app (issue #37): the legend of
+  // src/map/styles/parking_reports.ts and an area someone tapped
+  // (src/components/streets/ParkingDetails.svelte). Counts per area about a block across, never a
+  // single report. Framed as evidence for physical fixes to the street; never a word about
+  // tickets, the Parking Authority, reporting drivers or enforcement (docs/ETHICS.md, "Policing").
+  parking: {
+    kinds: {
+      all: 'Vehicles blocking the way',
+      sidewalk: 'On a sidewalk',
+      bike_lane: 'In a bike lane',
+      crosswalk: 'On a crosswalk',
+      corner: 'On a corner',
+      ramp: 'Blocking a curb ramp',
+    } as Record<string, string>,
+    window: (start: string, end: string) => `From ${start} to ${end}`,
+    windowUnknown: 'Over 12 months',
+    heatTitle: (kind: string, window: string) => `${kind}: reports zoomed out. ${window}.`,
+    fewer: 'Fewer reports',
+    more: 'More reports',
+    binsTitle: 'Close in: reports in each area about a block across',
+    bins: (low: number, high: number | null) => (high === null ? `${formatNumber(low)} or more` : `${formatNumber(low)} to ${formatNumber(high)}`),
+    threshold: (min: number) => `Areas with fewer than ${min} reports are left out, so no single report shows. Zoom in and tap an area for its counts.`,
+    oneApp: "Where people using one app, Philly Bike Action's Laser Vision, reported vehicles in the way. Not every problem is reported.",
+    title: 'This area, about a block across',
+    summary: (n: number, window: string) => `${plural(n, 'report', 'reports')} of vehicles blocking the way. ${window}.`,
+    count: (n: number) => formatNumber(n),
+    fewerThan: (min: number) => `fewer than ${min}`,
+    byKind: 'By kind',
+    meaning:
+      'These are reports from people using one app, so they show where those people noticed vehicles in the way, not every problem. A kind with fewer than 5 reports here is not given as a number, so no single report shows.',
+    fixes:
+      'Many reports in one place are evidence for physical fixes: curb extensions, bollards, daylighted corners, protected bike lanes and loading zones.',
+    askCity: 'Ask the City about a fix',
+    source: "From Philly Bike Action's Laser Vision map",
+    refreshed: 'Counted again every week, with permission from Philly Bike Action.',
   },
 
   // SEPTA stops and routes (M2.1): the legends and what a stop's details panel says. Waits are

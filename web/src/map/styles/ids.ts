@@ -29,5 +29,7 @@ export const STYLE_IDS = [
   'walkability',
   'walking_distance',
   'traffic_stress',
+  // Parking problems reported with Laser Vision (issue #37)
+  'parking_reports',
 ] as const;
 export type StyleId = (typeof STYLE_IDS)[number];

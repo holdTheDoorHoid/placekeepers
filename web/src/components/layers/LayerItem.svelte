@@ -26,7 +26,7 @@
   const registry = $derived(store.registry);
   const visible = $derived(store.state.layers.includes(layer.id));
   const status = $derived(store.layerStatus[layer.id]);
-  const legend = $derived(styleFor(layer)?.legend({ layer, registry, state: store.state }) ?? []);
+  const legend = $derived(styleFor(layer)?.legend({ layer, registry, state: store.state, manifest: store.manifest }) ?? []);
   const sources = $derived(
     layer.sources.map((id) => registry.sources.find((s) => s.id === id)).filter((s) => s !== undefined),
   );

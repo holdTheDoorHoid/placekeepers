@@ -23,6 +23,7 @@ import { cellToBoundary, gridDisk, latLngToCell } from 'h3-js';
 import { AMENITY_LAYERS, AMENITY_SOURCES, amenityFixtures } from './amenity-fixtures.mjs';
 import { routeOsmStops, routeSheetFixtures } from './route-fixtures.mjs';
 import { WALK_LAYERS, WALK_SOURCES, walkFixtures } from './walk-fixtures.mjs';
+import { PARKING_LAYERS, PARKING_SOURCES, parkingFixtures } from './parking-fixtures.mjs';
 
 const FIXTURES = new URL('../fixtures/', import.meta.url);
 const ROOT = new URL('data/', FIXTURES);
@@ -550,6 +551,9 @@ writeFileSync(path('data/tiles/art.art.geojson'), collection(artWorks));
 // Walkability by block group, people and places within walking distance, and traffic stress for
 // people on bikes (M3.3, scripts/walk-fixtures.mjs).
 for (const [name, text] of walkFixtures(toLngLat)) writeFileSync(path(`data/${name}`), text);
+// Parking problems reported with Laser Vision, counted per block sized cell (issue #37,
+// scripts/parking-fixtures.mjs).
+for (const [name, text] of parkingFixtures(toLngLat)) writeFileSync(path(`data/${name}`), text);
 // The route survey sheets (scripts/route-fixtures.mjs): the index is listed in files, each route's
 // sheet is not (docs/CONTRACTS.md section 7).
 mkdirSync(path('data/tables/routes'), { recursive: true });
@@ -674,6 +678,7 @@ const manifest = {
     percent_for_art: ok(239, '2025-08-19'),
     wikidata_art: ok(72, null),
     ...Object.fromEntries(Object.entries(WALK_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
+    ...Object.fromEntries(Object.entries(PARKING_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
   },
   layers: {
     vacant_parcels: {
@@ -723,6 +728,7 @@ const manifest = {
     ...AMENITY_LAYERS,
     public_art: { file: 'tiles/art.pmtiles', source_layer: 'art', sources: ['percent_for_art', 'osm_philadelphia', 'wikidata_art'] },
     ...WALK_LAYERS,
+    ...PARKING_LAYERS,
   },
   files: Object.fromEntries(
     [
@@ -745,6 +751,7 @@ const manifest = {
       ...amenityFixtures(toLngLat).map(([name]) => name),
       'tiles/art.art.geojson',
       ...walkFixtures(toLngLat).map(([name]) => name),
+      ...parkingFixtures(toLngLat).map(([name]) => name),
       'tables/routes/index.json',
       'tables/stop_amenities.json',
       ...handWritten.map(([name]) => name).filter((name) => !shardFiles.some(([shard]) => shard === name)),
@@ -763,6 +770,7 @@ const manifest = {
     'Street, boundary, transit, amenity, heat, tree and floodplain tiles were skipped for this sample, so those layers are published as GeoJSON.',
     'Public art tiles were skipped for this sample too, so its layer is published as GeoJSON.',
     'Walking tiles were skipped for this sample too, so those layers are published as GeoJSON.',
+    'Parking report tiles were skipped for this sample too, so that layer is published as GeoJSON.',
   ],
 };
 writeFileSync(new URL('manifest.json', ROOT), JSON.stringify(manifest, null, 2) + '\n');

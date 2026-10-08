@@ -162,3 +162,11 @@ export const REACH_OPACITY = 0.5;
  */
 export const STRESS_COLORS: Record<number, string> = { 1: '#2166ac', 2: '#67a9cf', 3: '#e08214', 4: '#7f3b08' };
 export const STRESS_CASING = '#ffffff';
+
+/**
+ * Parking problems reported with Laser Vision (issue #37), few to many: ColorBrewer PuBu, a cool
+ * blue clear of the street group's amber High Injury Network, pink street blocks and brown
+ * crashes. The heat map fades in from clear; the hexagons close in use the same five steps.
+ */
+export const PARKING_RAMP = ['#d0d1e6', '#a6bddb', '#74a9cf', '#2b8cbe', '#045a8d'] as const;
+export const PARKING_OPACITY = 0.7;

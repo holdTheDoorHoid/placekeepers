@@ -14,7 +14,8 @@ export type Cadence = (typeof CADENCES)[number];
 export const ENDPOINT_KINDS = ['carto', 'arcgis', 'url', 'osm_extract', 'curated', 'sparql'] as const;
 export type EndpointKind = (typeof ENDPOINT_KINDS)[number];
 
-export const URL_FORMATS = ['csv', 'geojson', 'parquet', 'zip'] as const;
+// json: a reply the source's pipeline adapter asks for with query parameters (pba_laser, issue #37).
+export const URL_FORMATS = ['csv', 'geojson', 'parquet', 'zip', 'json'] as const;
 export type UrlFormat = (typeof URL_FORMATS)[number];
 
 export const APPLIES_TO = ['parcel', 'segment', 'crash', 'stop', 'cell'] as const;
