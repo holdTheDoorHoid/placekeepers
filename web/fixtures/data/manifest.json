@@ -443,6 +443,24 @@
       "rows": 1338,
       "newest_record": null,
       "message": null
+    },
+    "land_conveyances": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 21424,
+      "newest_record": "2026-08-10",
+      "message": null
+    },
+    "land_conveyed_by_fy": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 7,
+      "newest_record": null,
+      "message": null
     }
   },
   "layers": {
@@ -895,6 +913,10 @@
     "tables/owners.json": {
       "bytes": 1279,
       "sha256": "14ee4ed8f01714f174c4c98afb31c045d9577bdeeb1e7f3159a7d54377363ace"
+    },
+    "tables/land_bank.json": {
+      "bytes": 22765,
+      "sha256": "d0dead8695e5a34ce2b03853e1e45f98730c61d402264c4516161636c105d325"
     }
   },
   "dossiers": {
