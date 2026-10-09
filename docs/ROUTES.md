@@ -219,8 +219,10 @@ Evidence badges come from [EVIDENCE.md](EVIDENCE.md).
 These go into outreach drafts for the owner to send; agents never send them.
 
 1. OTIS: is there a permit for a bench on a sidewalk? What is the City's position on asphalt and
-   crosswalk art after the 2025 federal directive? How can residents request a bus shelter, and will
-   the City share the shelter inventory?
+   crosswalk art after the 2025 federal directive? How can residents request a bus shelter, and how
+   often is the City's published list of bus shelters (OpenDataPhilly "Bus Shelters", last changed
+   in January 2025) brought up to date? (The list itself is public, so no records request is
+   needed; corrected 2026-10-09 by M4.5.)
 2. Land Bank: are garden licenses and leases being issued now?
 3. PHS: how does a resident group join Community LandCare? How many lots are in LandCare today?
 4. Garden Justice Legal Initiative: how should we present the 2024 garden adverse possession law?

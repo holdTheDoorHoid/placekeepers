@@ -200,6 +200,64 @@ shared set of test cases (`pipeline/tests/fixtures/stop_join_parity.json`) holds
 pipeline's answers. If the table cannot be loaded, a stop's page says so instead of showing its
 answers, and every shelter and bench counts halfway on the map.
 
+**The City's shelters** (added 2026-10-09 by M4.5, issue #41). The City publishes its own list of
+the bus shelters it installs and maintains with its advertising partner (`bus_shelters`, 487 on
+the City's list, last changed 2025-01-15; docs/DATA_SOURCES.md, "Streets and stops"), each with
+SEPTA's stop number as the City recorded it. The pipeline matches each shelter to one of the stops
+the lens scores (`match_shelters` in `pipeline/src/placekeepers/derive/streets_stops.py`):
+
+- **by number**, when the number names the stop (today, or a number the stop had before) and the
+  stop stands within **30 meters**, with no other stop more than 3 meters closer (the rule for
+  OpenStreetMap's numbers above: at Girard Avenue and 11th Street a shelter numbered 1185, the stop
+  around the corner on 11th Street, stands 2.6 meters from stop 21001 on Girard Avenue, and the
+  point decides);
+- otherwise **by place**, to the nearest stop within **15 meters**.
+
+The reach by number is wider than OpenStreetMap's 15 meters because a shelter stands a few steps
+from the stop's pole: where the numbers agree, a median 4 meters, nine in ten within 15. Several
+shelters can serve one stop (Roosevelt Boulevard's stops have pairs, numbered "8-a" and "8-b"). The
+number is read from the City's text: "419", "22513-a", "SEPTA357"; another agency's ("NJT4") or a
+blank is matched by place only. On 2026-10-09: **462 of the 487 shelters stand at 451 stops**, 437
+by number and 25 by place (why the other 25 match nothing is in DATA_SOURCES.md).
+
+A stop carries `cs`, how many of the City's shelters stand there. It is the City's data, so unlike
+OpenStreetMap's answers it is published on SEPTA's stop (decision D1 is about OpenStreetMap's
+license; the City's and SEPTA's data already share these records). The lens counts a City shelter
+as a shelter: `f_noshelter` is 0 wherever `cs` is above 0, whatever OpenStreetMap says.
+OpenStreetMap agrees at 58 of the 451 stops, has no answer at 389, and says there is no shelter at
+4 (Market St & 4th St, Broad St & Spruce St, Olney Av & B St, Ridge Av & Hermitage St). There the
+two **disagree, and neither wins silently**: the stop's page says "The City's list has a shelter
+here, but OpenStreetMap says there is none. One of them may be out of date: a survey settles it.
+Until then the priority counts the City's shelter.", and the stop gets the survey suggestion
+instead of the request for a shelter. Every stop's page also says what the City's list says, as
+its own line beside OpenStreetMap's answers. 17 stops have a shelter in OpenStreetMap that the
+City's list does not: SEPTA's own shelters and others the City does not run; they count as before.
+
+**How the lens shifted** (2026-10-09, default weights, the same data otherwise): 393 stops change,
+389 whose shelter counted halfway (50 to 0) and the 4 where OpenStreetMap says none (100 to 0).
+Each drops about 11 points (median 10.7, at most 21.4); their median rank falls from 1,453 to
+3,524. All 17 of them among the 100 highest leave it, and 82 leave the 500 highest, making room for
+stops without a shelter. Requests for a shelter fall from 229 to 225 stops and surveys rise from
+7,649 to 7,652. The stops with a City shelter are busy (a median of 121 weekday boardings against
+20 for all stops; 297 of them are among the busiest 15 percent) and hold 19.7 percent of weekday
+boardings at the stops the lens scores, 20.5 percent with OpenStreetMap's shelters added, against
+the City's goal of 40 percent.
+
+Checked by hand on 2026-10-09 against the City's records and SEPTA's stops:
+
+| Stop | The City's shelter | OpenStreetMap | Before, after (score, rank of 7,912) |
+|---|---|---|---|
+| Roosevelt Blvd & Woodward St (stop 10) | pa-001372, numbered 10, 1.4 meters away: by number | no stop mapped | 53.6, 3,277; 42.9, 5,260 |
+| Broad St & Spruce St (stop 15188) | pa-001130, numbered 15188, 7.3 meters away: by number | no shelter, no bench (numbers agree): the two disagree | 76.1, 57; 54.6, 2,916; a survey instead of a shelter request |
+| JFK Blvd & 15th St (stop 17842) | two, numbered 17842, 2.0 and 7.3 meters away: by number | a shelter and a bench | 50.6, unchanged (ranked 3,848 then 3,725 as others moved) |
+| Girard Av & 39th St (stop 21025) | pa-002225, no number, 5.5 meters away: by place | no stop mapped | 53.4, 3,323; 42.7, 5,316 |
+| Roosevelt Blvd & Cottman Av, far side (stop 8) | two, numbered 8-a and 8-b, 17.1 and 10.4 meters away: by number | no stop mapped | 53.9, 3,239; 43.2, 5,222 |
+
+**The lamps the City lists by each stop** (also M4.5): `lp` counts the poles with a lamp the City
+lists within 30 meters, `le` how many of them are LED. The stop's page says it beside
+OpenStreetMap's answer about a light. It is context, not a factor; DESIGN.md section 5.7 gives the
+numbers behind leaving street lights out of the lens for now.
+
 **The factors.** Each runs from 0 to 100 among the bus and trolley stops on the map, as in every lens:
 the share of stops ranking lower. The shelter and bench factors are worked out in the browser from
 the joined answers; the others are in the published stops.
@@ -207,7 +265,7 @@ the joined answers; the others are in the published stops.
 | Factor | Measure | Badge | Default weight | Stops with data |
 |---|---|---|---|---|
 | People getting on each weekday | SEPTA's count (`b`); the share of stops with fewer | Context | 3 | 7,740 |
-| No shelter | 100 a survey found none, 0 a shelter or the whole stop under a roof, 50 not yet surveyed | Weak | 3 | all (7,608 halfway) |
+| No shelter | 100 a survey found none, 0 a shelter, the whole stop under a roof or a shelter on the City's list (from M4.5), 50 not yet surveyed | Weak | 3 | all (7,608 halfway on 2026-10-05; 7,219 on 2026-10-09 with the City's shelters) |
 | No bench | 100 a survey found none, 0 a bench, 50 not yet surveyed | Weak | 2 | all (7,646 halfway) |
 | Little shade nearby | tree canopy of 2018 on the land of the stop's hexagon (H3 resolution 9, about two blocks across; water left out); the share of stops with more canopy | Mixed | 2 | 7,911 |
 | Hot neighborhood in summer | the heat exposure score of the stop's census tract, from the City's heat vulnerability data; the share of stops in cooler tracts | Context | 1 | 7,545 |
@@ -231,8 +289,8 @@ the 7,912 the lens scores have at least one):
 
 | Suggestion | When | Stops | First step |
 |---|---|---|---|
-| Survey this stop with StreetComplete | the shelter or the bench is not known yet | 7,649 | install the free app and answer its questions at the stop |
-| Ask the City for a shelter at this stop | a survey found no shelter, and the stop is not under a roof | 229 | there is no public request form: write to OTIS (otis@phila.gov, 215-686-9003) with the stop's number and its riders, and copy the Council office and SEPTA |
+| Survey this stop with StreetComplete | the shelter or the bench is not known yet, or the City lists a shelter OpenStreetMap says is not there (from M4.5) | 7,649 (7,652 on 2026-10-09) | install the free app and answer its questions at the stop |
+| Ask the City for a shelter at this stop | a survey found no shelter, the stop is not under a roof, and the City's list has none there (from M4.5) | 229 (225 on 2026-10-09) | there is no public request form: write to OTIS (otis@phila.gov, 215-686-9003) with the stop's number and its riders, and copy the Council office and SEPTA |
 | Ask the City for a bench at this stop | a survey found no bench | 210 | the same: no public form, write to OTIS |
 | Report a dark streetlight at this stop | OpenStreetMap says the stop is not lit | 17 | report an outage to Philly311; a stop with no light at all is a question for OTIS |
 | Plant shade trees by this stop | among the quarter of stops with the least canopy (`f_shade` 75 or more) | 1,987 | the owners of the buildings beside the stop ask for a free street tree |
@@ -257,7 +315,8 @@ such as OpenStreetMap's, is linked by id and joined in the browser, never stored
 - Stops just outside the city are left out, even when Philadelphians use them.
 - OpenStreetMap knows about 1 stop in 12 so far, so most stops are ranked on riders, shade, heat,
   the High Injury Network and waits, with their shelter and bench counting halfway until someone
-  surveys them.
+  surveys them. From M4.5 the City's list settles the shelter at 451 stops, but it says nothing
+  about benches and was last changed in January 2025.
 - The canopy is from 2018 and the heat scores from 2017 to 2019, by 2010 census tracts.
 - The High Injury Network factor says the stop is on a street where people are hurt most; it knows
   nothing about the crosswalks at the stop.

@@ -131,6 +131,9 @@ suggest anything about people experiencing homelessness.
   evidence for physical fixes to the street, such as curb extensions, bollards, daylighted corners,
   protected bike lanes and loading zones, and the map never says a word about tickets, the Parking
   Authority or drivers.
+- School crossing guard posts (issue #41, from the owner's brief of 2026-10-09): shown as a safety
+  service that helps children and everyone else cross near schools, never described as
+  enforcement. Traffic calming is framed as a change to the street that neighbors can ask for.
 
 ## Displacement
 
