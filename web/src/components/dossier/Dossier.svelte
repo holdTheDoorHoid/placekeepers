@@ -6,6 +6,7 @@
   import type { Manifest } from '../../data/manifest.ts';
   import type { DossierView } from '../../dossier/build.ts';
   import type { OwnerListTarget } from '../../dossier/owners-table.ts';
+  import type { TimelineKind } from '../../dossier/timeline.ts';
   import { strings } from '../../strings.ts';
   import DossierActions from './DossierActions.svelte';
   import DossierHistory from './DossierHistory.svelte';
@@ -13,7 +14,6 @@
   import DossierOwner from './DossierOwner.svelte';
   import DossierSources from './DossierSources.svelte';
   import DossierSummary from './DossierSummary.svelte';
-  import OldAerialPhotos from './OldAerialPhotos.svelte';
 
   interface DossierActionsProps {
     onRetry?: () => void;
@@ -23,6 +23,9 @@
     onShowOnMap?: () => void;
     onClear?: () => void;
     onShowOwnerList?: (target: OwnerListTarget) => void;
+    /** Fetches the lot timeline's records from the weekly copy (when History comes into view). */
+    onOpenHistory?: () => void;
+    onToggleKind?: (kind: TimelineKind) => void;
   }
 
   let {
@@ -32,6 +35,7 @@
     idPrefix = 'pk-dossier',
     actions = {},
     tools,
+    historyExtra,
   }: {
     view: DossierView;
     manifest: Manifest | null;
@@ -40,6 +44,8 @@
     actions?: DossierActionsProps;
     /** More buttons beside Print, such as saving the lot to a list. */
     tools?: Snippet;
+    /** One more control in History, under the story of the lot (M4.3: old aerial photos). */
+    historyExtra?: Snippet;
   } = $props();
 
   const s = strings.dossier;
@@ -114,8 +120,15 @@
     </section>
     <section aria-labelledby="{idPrefix}-history-title">
       <h3 id="{idPrefix}-history-title" tabindex="-1">{s.sections.history}</h3>
-      <DossierHistory history={view.history} {idPrefix} onTurnOnLive={actions.onTurnOnLive} onRetry={actions.onRetry} />
-      <OldAerialPhotos liveOn={!view.banner.offerLive} onShowLayer={actions.onShowLayer} onShowOnMap={actions.onShowOnMap} onTurnOnLive={actions.onTurnOnLive} />
+      <DossierHistory
+        history={view.history}
+        {idPrefix}
+        onTurnOnLive={actions.onTurnOnLive}
+        onRetry={actions.onRetry}
+        onOpenHistory={actions.onOpenHistory}
+        onToggleKind={actions.onToggleKind}
+        extra={historyExtra}
+      />
     </section>
     <section aria-labelledby="{idPrefix}-nearby-title">
       <h3 id="{idPrefix}-nearby-title" tabindex="-1">{s.sections.nearby}</h3>

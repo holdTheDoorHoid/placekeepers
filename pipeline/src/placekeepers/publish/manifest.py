@@ -40,16 +40,17 @@ def build_id(generated_at: datetime, commit: str) -> str:
     return f"{iso_z(generated_at).replace(':', '-')}-{commit}"
 
 
-#: Dossier shards (dossiers/<digits>.json) are summarized in the manifest's `dossiers` block
+#: Dossier shards (dossiers/<digits>.json) and their history shards (dossiers/history/<digits>.json,
+#: issue #38) are summarized in the manifest's `dossiers` block
 #: rather than listed one by one, so the manifest every visitor fetches stays small.
-DOSSIER_SHARD = re.compile(r"^dossiers/\d+\.json$")
+DOSSIER_SHARD = re.compile(r"^dossiers/(history/)?\d+\.json$")
 #: the route survey sheets, which tables/routes/index.json lists (publish/route_sheets.py)
 ROUTE_SHEET = re.compile(r"^tables/routes/(?!index\.json$)[^/]+\.json$")
 
 
 def file_index(data_root: Path) -> dict[str, dict[str, Any]]:
-    """Every file under the data root except manifest.json, the dossier shards and the route
-    survey sheets."""
+    """Every file under the data root except manifest.json, the dossier and history shards and
+    the route survey sheets."""
     files = {}
     for path in sorted(data_root.rglob("*")):
         name = path.relative_to(data_root).as_posix()

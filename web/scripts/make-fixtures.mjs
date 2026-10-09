@@ -545,7 +545,7 @@ const kept = (folder) => {
         .map((name) => [`${folder}/${name}`, readFileSync(new URL(name, dir))])
     : [];
 };
-const handWritten = [...kept('dossiers'), ...kept('tables')];
+const handWritten = [...kept('dossiers'), ...kept('dossiers/history'), ...kept('tables')];
 rmSync(ROOT, { recursive: true, force: true });
 for (const [name, bytes] of handWritten) {
   mkdirSync(new URL(name.slice(0, name.lastIndexOf('/') + 1), ROOT), { recursive: true });
@@ -553,6 +553,8 @@ for (const [name, bytes] of handWritten) {
 }
 // Shards are named by digits and listed in the manifest's dossiers block, not in files.
 const shardFiles = handWritten.filter(([name]) => /^dossiers\/\d+\.json$/.test(name));
+// So are the lot timeline's history shards, one beside each dossier shard (issue #38).
+const historyFiles = handWritten.filter(([name]) => /^dossiers\/history\/\d+\.json$/.test(name));
 mkdirSync(path('sources'), { recursive: true });
 mkdirSync(path('data/tiles'), { recursive: true });
 writeFileSync(path('sources/parcels.geojson'), collection(parcels));
@@ -805,7 +807,9 @@ const manifest = {
       watchFile,
       'tables/routes/index.json',
       'tables/stop_amenities.json',
-      ...handWritten.map(([name]) => name).filter((name) => !shardFiles.some(([shard]) => shard === name)),
+      ...handWritten
+        .map(([name]) => name)
+        .filter((name) => ![...shardFiles, ...historyFiles].some(([shard]) => shard === name)),
     ].map((p) => [p, fileInfo(p)]),
   ),
   dossiers: shardFiles.length
@@ -814,6 +818,9 @@ const manifest = {
         prefixes: shardFiles.map(([name]) => name.slice('dossiers/'.length, -'.json'.length)),
         files: shardFiles.length,
         bytes: shardFiles.reduce((sum, [, bytes]) => sum + bytes.length, 0),
+        history: historyFiles.length
+          ? { files: historyFiles.length, bytes: historyFiles.reduce((sum, [, bytes]) => sum + bytes.length, 0), parts: ['li'] }
+          : null,
       }
     : null,
   displacement: WATCH_BLOCK,

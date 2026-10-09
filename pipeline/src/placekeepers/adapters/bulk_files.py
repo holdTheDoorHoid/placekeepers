@@ -152,3 +152,38 @@ class CagpTax2025(UrlAdapter):
             )
         finally:
             con.close()
+
+
+class CagpVacancyList2024(UrlAdapter):
+    """One of Clean & Green Philly's frozen June 2024 vacancy lists (issue #38): the vacant land
+    list L&I sent the project on 2024-06-24, the last fairly complete one before the City's own
+    list broke, or the project's own list of vacant buildings from the same day, which its README
+    says misses about a thousand or more buildings.
+
+    The lot timeline needs only which parcels were on the list and the list's date, so the
+    snapshot keeps the OPA account (nine digits) and that date: never the owner names, the address
+    or the shape the files also hold."""
+
+    list_date = date(2024, 6, 24)
+    required_columns = ("opa_id", "list_date")
+
+    def normalize(self, raw: RawFetch, out: Path) -> None:
+        path = self.data_file(raw)
+        con = self.ctx.duckdb()
+        try:
+            source = f"read_parquet({quote_literal(str(path))})"
+            columns = {row[0] for row in con.execute(f"DESCRIBE SELECT * FROM {source}").fetchall()}
+            if "opa_id" not in columns:
+                raise FetchError("The list has no opa_id column")
+            digits = "regexp_extract(trim(CAST(opa_id AS VARCHAR)), '^[0-9]{8,9}$')"
+            con.execute(
+                f"""COPY (
+                    SELECT DISTINCT lpad({digits}, 9, '0') AS opa_id,
+                           DATE '{self.list_date.isoformat()}' AS list_date
+                    FROM {source}
+                    WHERE {digits} <> ''
+                    ORDER BY opa_id
+                ) TO {quote_literal(str(out))} (FORMAT parquet, COMPRESSION zstd)"""
+            )
+        finally:
+            con.close()

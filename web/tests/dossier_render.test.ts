@@ -226,10 +226,13 @@ describe('the printed lot page', () => {
     for (const table of page.match(/<table\b[\s\S]*?<\/table>/g) ?? []) expect(table).toMatch(/<caption\b/);
   });
 
-  it('keeps to one page: at most a few transfers, flags and sources', () => {
+  it('keeps to one page: the newest records of the timeline, a few flags and sources', () => {
     const model = printModel(view('990000001'), now);
-    expect(model.history.transfers.length).toBeLessThanOrEqual(PRINT_LIMITS.transfers);
-    expect(model.history.moreTransfers).toBe(5 - PRINT_LIMITS.transfers);
+    // Before the History part opened, only the deeds are known: all 5, newest first, and a note.
+    expect(model.history.events.length).toBeLessThanOrEqual(PRINT_LIMITS.events);
+    expect(model.history.events.map((e) => e.date)).toEqual(['Jun 10, 2025', 'Nov 2, 2024', 'Mar 15, 2024', 'Mar 14, 2019', 'May 17, 2004']);
+    expect(model.history.moreEvents).toBe(0);
+    expect(model.history.timelineNote).toBe(strings.dossier.history.timeline.printWaiting);
     expect(model.owner.flags.length).toBeLessThanOrEqual(PRINT_LIMITS.flags);
     expect(model.sources.length).toBeLessThanOrEqual(PRINT_LIMITS.sources);
   });

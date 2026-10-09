@@ -44,7 +44,7 @@ Both allow browser requests without a key.
 | Imminently dangerous buildings | Carto `imm_dang` (123) | Strong building signal | Daily | Live |
 | Clean and seal | Carto `clean_seal` (107,228; 2006 onward) | Strong building signal | Daily | Live |
 | Demolitions | Carto `demolitions` (14,325; 2007 onward) | Lot created by demolition | Daily | Live |
-| L&I property history | OpenDataPhilly (since 2023) | Consolidated timeline per parcel | Daily | Live; not yet explored |
+| L&I property history | OpenDataPhilly (since 2023), a link to the search page li.phila.gov/Property-History | A per address search page, not a dataset | Daily | **Evaluated 2026-10-09 (M4.2), not used**: see "The lot timeline" below |
 | Building footprints | City ArcGIS `LI_BUILDING_FOOTPRINTS` (546,049), read as ArcGIS Hub's bulk GeoJSON | "No building on this parcel" | Weekly | Live |
 | Vacant lot cleanups | OpenDataPhilly "Vacant Lot Cleanups" (Community Life Improvement Program) | City cleaned this lot | Not stated | Live |
 | Aerial photography | OpenDataPhilly, vintages 1996 to 2025 | Shown as pictures from the City's servers under Then and now (M4.3, `city_aerial_photos`); later: vegetation trend per lot | Every 1 to 3 years | Live |
@@ -350,6 +350,53 @@ City. Its displacement risk ratio compares home prices with the incomes of longt
 2010, carried forward with inflation), against the city's own ratio, after HUD's rule that a home
 should cost about three times a family's income (Reinvestment Fund's 2023 presentation to the City).
 
+The lot timeline (M4.2, issue #38, 2026-10-09; DESIGN.md section 5.6, CONTRACTS.md section 6,
+history shards):
+
+| Source id | Endpoint | What we keep | Measured on 2026-10-09 | Health |
+|---|---|---|---|---|
+| `li_history` | Carto `violations`, `permits`, `demolitions`, `unsafe`, `imm_dang` and `clean_seal`, for the candidate parcels, in chunks of 5,000 accounts, each chunk of each table checked against a count | One row per record: the account, the kind, the day in Philadelphia, the City's title, the status and, for permits and demolitions, the permit type or whether the City did the work, read with the same expressions as the lot page's live query. Never a case, permit or violation number, an inspector, an applicant or a contractor | 1,045,610 records for 84,247 candidate parcels in 17 chunks, 4 minutes; a 4.5 MB snapshot: 796,299 violations (2007 on), 149,422 permits (2007 on), 85,051 clean and seal orders, 11,680 demolitions, 3,034 unsafe and 124 imminently dangerous notices | At least 850,000 rows, no more than 10 percent fewer, the newest record no older than 14 days |
+| `cagp_vacant_land_2024` | `raw.githubusercontent.com/CodeForPhilly/clean-and-green-philly/main/data/backup_data/land_backup_2024_06_24.parquet` (3.2 MB) | The OPA account (nine digits) and the list's day, 2024-06-24; never the owner names, address or shape the file also holds | 25,648 parcels | At least 25,000 rows, frozen |
+| `cagp_vacant_buildings_2024` | The same folder, `buildings_backup_2024_06_24.parquet` (0.6 MB) | The same | 9,955 parcels | At least 9,500 rows, frozen |
+
+The other L&I sources keep their own windows and columns for the vacancy model and the flags
+(violations and permits from 2016, days in UTC); `li_history` holds only what a lot page shows,
+all years, with days as the City's sites show them (an evening record is the same day in
+Philadelphia, about 0.2 percent of violations and permits), so the timeline reads the same with
+live data on or off. The June 2024 lists' provenance (Clean & Green Philly's README): the land list
+is the one L&I sent the project, the last fairly complete one before the City's own list broke;
+the buildings list is the project's own and misses about a thousand or more buildings, which the
+lot page's wording reflects ("Clean & Green Philly's own list").
+
+**Spot check, 2026-10-09 (issue #38).** 20 parcels chosen to cover every kind of record (City and
+private demolitions, a new construction permit, sheriff deeds, deeds from 1989, open unsafe and
+imminently dangerous notices, ten clean and seal orders, 47 violations, both June 2024 lists, a Land
+Bank lot, a parcel outside the downloads), each compared record by record with atlas.phila.gov
+(violations, permits, deeds) and property.phila.gov (sales, assessments), and with the City live.
+For the 19 candidate parcels the weekly copy and the live lookup gave the same timeline, record for
+record. All 311 violations atlas lists were there with the same title and status: 212 on the same
+day, 99 within two weeks, because atlas dates a violation by the day its case was opened
+(`casecreateddate`) and the lot page by the violation's own date (`violationdate`, as the flags
+do). All 28 permits, all 22 sales and all 242 yearly assessments matched. Every deed atlas lists
+was there; three more in the copy (on two parcels) are under the OPA account but not under the
+parcel atlas shows today, and property.phila.gov lists one of them. Atlas and property.phila.gov
+show no demolitions, clean and seal or notices; those matched the City's tables live. For the
+parcel outside the downloads, the weekly copy said its L&I records were not included and live data
+showed 32; atlas showed 9 more, filed under the neighboring account at the same address.
+
+**L&I property history, evaluated 2026-10-09 and not used.** OpenDataPhilly's "Licenses and
+Inspections Property History" (City of Philadelphia License, updated daily) has one resource, a
+link to li.phila.gov/Property-History. That page is a search application, one address at a time,
+built on the same City tables we already read (its script queries `PERMITS`, `VIOLATIONS`,
+`CASE_INVESTIGATIONS`, `APPEALS`, `BUSINESS_LICENSES` and building certificates on the City's
+Carto and ArcGIS services). It offers no bulk download and no documented API, so using it would
+mean scraping an undocumented back end; it holds no deeds, demolitions, clean and seal work, unsafe
+or imminently dangerous notices or vacancy records; and what it adds is about people or case files
+the lot page never shows: zoning appeals (which name the appellant), business and rental licenses
+(which name license holders and their contacts) and inspection visits (filed by case number).
+Our own merge of the six L&I tables, the deeds and the vacancy lists covers more of a lot's story,
+from the City's published tables, the same way live and weekly.
+
 **Then and now (M4.3, checked 2026-10-09).** Pictures the visitor's browser loads straight from
 the City's own map services, only once someone turns their layer on and only while "Fetch live
 City data" is on. Placekeepers never copies or hosts them; each week the pipeline only checks that
@@ -512,6 +559,7 @@ and `publish/laser.py`; tile properties in CONTRACTS.md section 4):
 | Walk Score | Terms forbid storing scores |
 | Mural Arts and Public Art Archive content | Terms (link out instead) |
 | Reddit, TPL website, Urban Displacement Project, Free Library website | Block automated access; never get around a block |
+| Build Philly Now's map (map.buildphillynow.org) and its other tools | All rights reserved, no open license. Its records are the City's own (it credits the Office of Property Assessment and L&I through the City's Carto service), so Placekeepers reads those City sources directly and never its tiles, API, estimates or presets (reviewed 2026-10-09, owner's instruction) |
 
 ## Access notes for builders
 

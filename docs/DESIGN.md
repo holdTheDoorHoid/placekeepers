@@ -635,7 +635,8 @@ As built (M1.6, 2026-10-04):
 - **History** shows every deed newest first (the date on the deed, the document in plain
   words, the price, from and to), the City's assessments as a small chart and the same numbers as a
   table, and the L&I timeline (violations, permits, demolitions, unsafe and imminently dangerous
-  notices, clean and seal) when live, or the snapshot's L&I summary.
+  notices, clean and seal) when live, or the snapshot's L&I summary. Since M4.2 (below), one
+  timeline of every record, with or without live data.
 - **Nearby** shows the snapshot's counts (shootings in the lot's hexagon, LandCare lots and gardens
   within 500 feet), or for a parcel with no dossier, live counts within 500 feet, with buttons that
   turn on the matching layers.
@@ -643,7 +644,8 @@ As built (M1.6, 2026-10-04):
   panel) uses the City's address service for addresses and intersections; a nine digit parcel number
   opens that lot directly, even with live data off.
 - **Print** gives one page per lot: the summary, what you can do, who owns it, recent history and
-  sources, ending with "Not legal advice."
+  sources, ending with "Not legal advice." Since M4.2, recent history is the story of the lot and
+  the timeline's 10 newest records.
 - Deeds show the date on the deed and the adjusted price rounded to the dollar (this property's
   share when one deed covered several), as the City's property page does, in the snapshot and live
   alike. The City's
@@ -667,6 +669,53 @@ As built (M1.6, 2026-10-04):
   lot says "Listed as available by the City's land agencies" and, where the lot may go to the
   neighbor next door (the map's `ly`), gives the side yard route as its first step, as the lot page
   does (after the v0.3 review, finding F7).
+
+**The story of the lot, as built (M4.2, issue #38, 2026-10-09).** What the owner will see in
+History, top to bottom:
+
+- **The story of this lot**: one or two plain sentences built only from records, each followed by
+  where it comes from ("From L&I's demolition records."). In order of preference: a completed
+  demolition ("A building stood here until 2011, when the City demolished it.", or "when it was
+  demolished under a private permit.") and a permit for new construction from that year on; an unsafe or
+  imminently dangerous notice still open; the City's clean and seal work; a sheriff sale; the
+  vacancy lists ("The City's list of vacant land of October 4, 2026 includes it, as a list of June
+  2024 did."); PHS LandCare's care since its year. Never a guess: a record dated in the future, a
+  demolition not marked completed, or a tank removal tells no story. A lot with none of these says
+  the records do not tell a story yet.
+- A spot under the story for one more control: M4.3 (issue #39) puts "See this lot in old aerial
+  photos" there (`historyExtra` in `web/src/components/dossier/Dossier.svelte`).
+- **Timeline**: every record newest first, grouped by year: deeds (the document in plain words, the
+  price, to whom), violations (the date and the City's own title, never a case number; violations
+  of one day together, repeats counted), permits (the permit type and the kind of work in plain
+  words, with its status), demolitions (by the City or under a private permit), clean and seal,
+  unsafe and imminently dangerous notices (open or resolved), and the dated vacancy records we hold:
+  the City's vacant land and vacant buildings lists, L&I's June 2024 vacant land list and Clean &
+  Green Philly's June 2024 buildings list (both as Clean & Green Philly kept them), and the year PHS
+  LandCare began caring for the lot. Seven switches (sales and transfers, violations, permits,
+  demolitions, clean and seal, notices, vacancy and care records) turn each kind off and on; the
+  choice stays in this browser. The six most recent years show first, with a button for the rest.
+  A record the City dated in the future says its date may be wrong.
+- Then the deed table and the assessments as before. Deeds before 2000, in the table and the
+  timeline, say they come from records the City says may be incomplete. The weekly copy holds every
+  deed `rtt_summary` has for each candidate parcel, back to 1974 (checked for every candidate on
+  2026-10-09), and every assessment year the City's `assessments` table holds (2015 to 2027, and a
+  handful from 2013 and 2014).
+- **The same timeline with live data on or off.** The weekly copy carries every L&I record of the
+  candidate parcels, all years (violations and permits from 2007), read with the same query the
+  page sends to the City live, with days as the City's sites show them; live data only adds newer
+  records. A parcel whose L&I records the weekly copy does not hold says so and offers live data,
+  never "no violations". The pipeline and the browser group records the same way, checked by both
+  test suites on one shared set of cases (`pipeline/tests/fixtures/timeline_parity.json`).
+- **Phones stay fast.** The timeline's records sit in their own files (`dossiers/history/`), one
+  beside each dossier file, fetched only when History comes into view (or the page is printed).
+  On 2026-10-09: 933 files, 57.5 MB on disk and 7.1 MB as served compressed; the largest, 115 kB
+  compressed. The dossier files are unchanged.
+- **Print** lists the story and the timeline's 10 newest records, leaving out the kinds switched
+  off, and says how many more are online.
+- The L&I Property History search (li.phila.gov, listed on OpenDataPhilly since 2023) was
+  evaluated and not used: it is a search page over the same City tables we read (permits,
+  violations, case investigations, appeals, business licenses), not a dataset, and it holds no
+  deeds, demolitions, clean and seal, unsafe notices or vacancy records (docs/DATA_SOURCES.md).
 
 **Owner information as built (M1.3, 2026-10-04).** What the owner will see, and the choices behind it:
 

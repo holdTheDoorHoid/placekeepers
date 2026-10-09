@@ -67,26 +67,26 @@
   <section>
     <h2>{s.print.recent}</h2>
     {#if m.history.notInCopy}<p>{m.history.notInCopy}</p>{/if}
-    {#if m.history.transfers.length}
+    {#each m.history.story as line (line)}<p>{line}</p>{/each}
+    {#if m.history.events.length}
       <table>
-        <caption>{s.history.transfersCaption}</caption>
+        <caption>{s.history.timeline.printTitle}</caption>
         <thead>
           <tr>
             <th scope="col">{s.history.date}</th>
-            <th scope="col">{s.history.document}</th>
-            <th scope="col">{s.history.price}</th>
-            <th scope="col">{s.history.from}</th>
-            <th scope="col">{s.history.to}</th>
+            <th scope="col">{s.history.timeline.recordColumn}</th>
+            <th scope="col">{s.history.timeline.whatColumn}</th>
           </tr>
         </thead>
         <tbody>
-          {#each m.history.transfers as row, i (i)}
-            <tr><td>{row.date}</td><td>{row.document}</td><td>{row.price}</td><td>{row.from}</td><td>{row.to}</td></tr>
+          {#each m.history.events as row, i (i)}
+            <tr><td>{row.date}</td><td>{row.kind}</td><td>{row.text}</td></tr>
           {/each}
         </tbody>
       </table>
-      {#if m.history.moreTransfers}<p class="meta">{s.print.moreOnline(m.history.moreTransfers)}</p>{/if}
+      {#if m.history.moreEvents}<p class="meta">{s.history.timeline.printMore(m.history.moreEvents)}</p>{/if}
     {/if}
+    {#if m.history.timelineNote}<p class="meta">{m.history.timelineNote}</p>{/if}
     {#if m.history.assessment}<p>{m.history.assessment}</p>{/if}
     {#each m.history.li as line (line)}<p>{line}</p>{/each}
   </section>

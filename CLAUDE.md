@@ -23,7 +23,8 @@ Read before doing anything: `docs/DESIGN.md` (authoritative), `docs/ETHICS.md` (
   `Placekeepers/<version> (+https://github.com/holdTheDoorHoid/placekeepers)`.
   Some servers (philart.net) need a browser style User-Agent; note it in the adapter.
 - Never get around a login, paywall, bot check, robots rule, or HTTP 403. Never scrape Mural Arts,
-  Walk Score, the Public Art Archive, commercial crime sites, or Reddit (see DATA_SOURCES.md).
+  Walk Score, the Public Art Archive, commercial crime sites, or Reddit (see DATA_SOURCES.md). Never use
+  Build Philly Now's map, tiles or API as a source: go to the City's own data it is built on.
 - Bulk OpenStreetMap data comes from a Geofabrik extract, not the public Overpass server.
 - Names of people killed come only from `data/curated/memorials.yaml`, edited by hand from public
   memorial lists. Never scrape names. Never publish driver details, case numbers, arrest information,

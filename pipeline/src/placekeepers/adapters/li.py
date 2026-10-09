@@ -11,14 +11,18 @@ are in each source's registry `where`. Field names verified against the live tab
   every parcel in the city over the last 26 months, since such a violation can be the only sign;
 * complaints: every complaint since 2023, citywide, with its location;
 * permits: every permit issued since 2016, citywide, lean columns;
-* unsafe, imminently dangerous, clean and seal, demolitions: the whole tables (small).
+* unsafe, imminently dangerous, clean and seal, demolitions: the whole tables (small);
+* li_history (issue #38): what the lot timeline shows from all six tables, for the candidate
+  parcels, all years, with days in Philadelphia (LiHistory below).
 """
 
 from __future__ import annotations
 
+import logging
+from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 from placekeepers.adapters.base import FetchError
 from placekeepers.adapters.carto import (
@@ -32,6 +36,8 @@ from placekeepers.adapters.carto import (
 )
 from placekeepers.cache import RawFetch
 from placekeepers.dates import months_before
+
+log = logging.getLogger(__name__)
 
 
 def _text(*names: str) -> tuple[Column, ...]:
@@ -205,3 +211,151 @@ class LiDemolitions(CartoAdapter):
         *POINT,
     )
     required_columns = ("opa_account_num", "typeofwork", "city_demo", "status", "start_date")
+
+
+@dataclass(frozen=True)
+class HistoryPart:
+    """One L&I table of the lot timeline: what kind of record it holds and the SQL for its date,
+    title, status and detail. The web app's live lookup asks the City for exactly these
+    expressions (web/src/dossier/carto.ts, liSql; checked by both test suites against
+    pipeline/tests/fixtures/timeline_parity.json), so the weekly copy and a live lot page read the
+    same records the same way."""
+
+    kind: str
+    table: str
+    date: str
+    title: str
+    status: str
+    detail: str
+
+
+#: An unsafe or imminently dangerous notice is open until L&I records it resolved.
+NOTICE_STATUS = "CASE WHEN violationresolutiondate IS NULL THEN 'OPEN' ELSE 'RESOLVED' END"
+
+#: The six L&I tables of the lot timeline, in the order the timeline lists kinds. Only dates, the
+#: City's titles and statuses, the permit type and whether the City did a demolition are read:
+#: never a case, permit or violation number, an inspector, an applicant or a contractor.
+HISTORY_PARTS = (
+    HistoryPart(
+        "violation", "violations", "violationdate", "violationcodetitle", "violationstatus", "NULL"
+    ),
+    HistoryPart(
+        "permit", "permits", "permitissuedate", "typeofwork", "status", "permitdescription"
+    ),
+    HistoryPart(
+        "demolition",
+        "demolitions",
+        "COALESCE(completed_date, start_date)",
+        "typeofwork",
+        "status",
+        "city_demo",
+    ),
+    HistoryPart("unsafe", "unsafe", "violationdate", "violationcodetitle", NOTICE_STATUS, "NULL"),
+    HistoryPart(
+        "imminently_dangerous",
+        "imm_dang",
+        "violationdate",
+        "violationcodetitle",
+        NOTICE_STATUS,
+        "NULL",
+    ),
+    HistoryPart(
+        "clean_seal",
+        "clean_seal",
+        "COALESCE(workordercompleteddate, casecreateddate)",
+        "workordertype",
+        "workorderstatus",
+        "NULL",
+    ),
+)
+
+
+class LiHistory(CartoAccountsAdapter):
+    """Every L&I record of the lot timeline for the candidate parcels, from all six tables and all
+    years (violations and permits from 2007, clean and seal from 2006): one row per record with
+    its kind, its day in Philadelphia, the City's title, its status and, for permits and
+    demolitions, one more plain detail. The registry names the largest table, `violations`; the
+    other five come in the same chunks of accounts, each chunk of each table checked against a
+    count of the same join.
+
+    The other L&I sources keep their own columns for the vacancy model and the flags; this one
+    holds only what a lot page shows, with days as the City's sites show them, so the weekly copy
+    and a live lot page give the same timeline (issue #38)."""
+
+    account_column = "opa_account_num"
+    columns = (
+        Column("opa_account_num", "opa_account_num"),
+        Column("kind", "kind"),
+        Column("date", "date", "LOCAL_DATE"),
+        Column("title", "title"),
+        Column("status", "status"),
+        Column("detail", "detail"),
+    )
+    required_columns = ("opa_account_num", "kind", "date", "title", "status")
+    parts: ClassVar[tuple[HistoryPart, ...]] = HISTORY_PARTS
+
+    def part_join(self, part: HistoryPart, accounts: list[str]) -> str:
+        for account in accounts:
+            if not (len(account) == 9 and account.isdigit()):
+                raise FetchError(f"{account!r} is not a 9 digit OPA account")
+        values = ", ".join(f"('{account}')" for account in accounts)
+        return (
+            f"FROM {part.table} JOIN (VALUES {values}) AS chosen(chosen_account) "
+            f"ON {part.table}.{self.account_column} = chosen.chosen_account"
+        )
+
+    def part_query(self, part: HistoryPart, accounts: list[str]) -> str:
+        select = (
+            f"{part.table}.{self.account_column} AS opa_account_num, '{part.kind}' AS kind, "
+            f"{part.date} AS date, {part.title} AS title, {part.status} AS status, "
+            f"{part.detail} AS detail"
+        )
+        return f"SELECT {select} {self.part_join(part, accounts)}"
+
+    def part_count_query(self, part: HistoryPart, accounts: list[str]) -> str:
+        return f"SELECT count(*) AS n {self.part_join(part, accounts)}"
+
+    def fetch(self, dest: Path) -> dict[str, Any]:
+        chosen = self.accounts()
+        if not chosen:
+            raise FetchError(
+                "There are no candidate parcels yet; fetch the vacancy indicators and OPA first"
+            )
+        size = self.accounts_per_chunk
+        chunks = [chosen[start : start + size] for start in range(0, len(chosen), size)]
+        by_kind: dict[str, int] = {}
+        total = 0
+        for number, accounts in enumerate(chunks, 1):
+            for part in self.parts:
+                path = dest / f"chunk-{number:05d}-{part.kind}.csv"
+                self.ctx.http.download(
+                    self.api_url,
+                    path,
+                    data={"q": self.part_query(part, accounts), "format": "csv"},
+                    check_file=_check_carto_csv,
+                )
+                rows, _ = scan_csv(path, None)
+                reply = self.ctx.http.get_json(
+                    self.api_url,
+                    data={"q": self.part_count_query(part, accounts)},
+                    check=_check_carto_json,
+                )
+                expected = int(reply["rows"][0]["n"])
+                if rows != expected:
+                    raise FetchError(
+                        f"Chunk {number} of {part.table} has {rows:,} rows but the table reports "
+                        f"{expected:,}; trying again next run"
+                    )
+                by_kind[part.kind] = by_kind.get(part.kind, 0) + rows
+                total += rows
+            log.info(
+                "%s: chunk %d of %d, %s rows so far", self.id, number, len(chunks), f"{total:,}"
+            )
+        return {
+            "rows": total,
+            "chunks": len(chunks),
+            "tables": [part.table for part in self.parts],
+            "by_kind": by_kind,
+            "accounts": len(chosen),
+            "candidates": getattr(self, "candidate_info", {}),
+        }

@@ -3,6 +3,7 @@
 // only the fields the contract names, so nothing else can reach the page.
 
 import type { Geometry } from 'geojson';
+import type { LiGroups, ListRecord } from './timeline.ts';
 
 export type VacancyKind = 'lot' | 'building';
 export type Confidence = 'high' | 'medium' | 'low';
@@ -287,4 +288,24 @@ export interface ParcelAtPoint {
 export interface ParcelShape {
   address: string | null;
   shape: Geometry | null;
+}
+
+// The lot timeline's history shards (issue #38) ---------------------------------------------------
+
+/** One parcel of a history shard (dossiers/history/<prefix>.json, docs/CONTRACTS.md section 6). */
+export interface HistoryParcel {
+  /**
+   * The parcel's L&I records grouped by kind (src/dossier/timeline.ts, LiGroups), or null when
+   * the weekly copy does not hold them for this parcel (it says so; never "none on record").
+   */
+  li: LiGroups | null;
+  /** The vacancy lists it is on, each with its day, newest first. */
+  lists: ListRecord[];
+}
+
+export interface HistoryShard {
+  generatedAt: string | null;
+  /** The parts this build holds for every parcel outside `partial`: "li" when the L&I records are in it. */
+  parts: string[];
+  parcels: Map<string, HistoryParcel>;
 }

@@ -380,6 +380,9 @@ data/
   dossiers/
     <first four digits of the OPA account>.json
     common.json           the parts of every flag that are the same for all parcels (section 6)
+    history/
+      <first four digits of the OPA account>.json   the lot timeline's L&I records and vacancy
+                          lists, one beside each dossier shard (section 6; added 2026-10-09 by M4.2)
   basemap/
     philly.pmtiles        Protomaps basemap extract
 ```
@@ -425,7 +428,8 @@ header's freshness badge.
   "files": {
     "tiles/context.pmtiles": {"bytes": 1234567, "sha256": "..."}
   },
-  "dossiers": {"prefix_digits": 4, "prefixes": ["0011", "0012", "8850"], "files": 929, "bytes": 108300000},
+  "dossiers": {"prefix_digits": 4, "prefixes": ["0011", "0012", "8850"], "files": 929, "bytes": 108300000,
+               "history": {"files": 929, "bytes": 57500000, "parts": ["li"]}},
   "vacancy": {
     "as_of": "2026-10-04",
     "lots": {"high": 24162, "medium": 6160, "low": 10454},
@@ -457,6 +461,12 @@ shard), `prefixes` (sorted, only the prefixes that have a file; the shard for pr
 `dossiers/3710.json`), `files` (how many shards) and `bytes` (their total size). It is `null` when
 no dossiers were written. `dossiers/common.json` and `tables/owners.json` are listed in `files` as
 usual. On 2026-10-04 the manifest is about 28 kB (5 kB compressed).
+`history` (added 2026-10-09 by M4.2, issue #38) summarizes the lot timeline's history shards
+(section 6): `files`, `bytes`, and `parts`, what they hold for every dossier parcel outside its own
+`partial` (`["li"]` when the L&I records are in this build, `[]` when `li_history` had no
+snapshot). Every prefix in `prefixes` then has `dossiers/history/<prefix>.json`; like the dossier
+shards, they are not listed in `files`. `history` is `null` (or absent, in older manifests) when no
+history shards were written.
 
 `vacancy` (added 2026-10-04, decision D10 in VERIFICATION.md) holds the vacancy model's counts for
 this build, so a page can quote the current numbers: `as_of` (the build date the model's time
@@ -1246,7 +1256,8 @@ in `partial` which records it was not built from). Any other parcel is looked up
 
 **Files** (changed 2026-10-04 by the orchestrator, so one lot opens fast on a phone): a parcel's
 dossier is in `dossiers/<first four digits of its 9 digit OPA account>.json`, which holds only
-parcels. The parts of each flag that are the same for every parcel, and the notices, are in one
+parcels, and the records its timeline adds are in `dossiers/history/` under the same name (below,
+"History shards"; added 2026-10-09 by M4.2). The parts of each flag that are the same for every parcel, and the notices, are in one
 file, `dossiers/common.json`, which the browser fetches once. On 2026-10-04: 77,866 parcels in 929
 files, 108.3 MB on disk and 14.5 MB as served compressed; the largest file (`8715.json`, 810
 parcels) is 1.2 MB, 178 kB compressed; the median file holds 52 parcels (74 kB). `common.json` is
@@ -1453,7 +1464,8 @@ the owner has a homestead exemption (with one, the page drops conservatorship fr
 routes);
 `rtt_summary` for every deed with the same fields as `transfers` (the date on the deed and the
 adjusted total, with the same fallbacks); `assessments`; and one query over `violations`, `permits`, `demolitions`, `unsafe`,
-`imm_dang` and `clean_seal` for the L&I timeline. A part that answers replaces the shard's part
+`imm_dang` and `clean_seal` for the L&I timeline, with the same expressions as the history shards'
+`li` (above), grouped the same way. A part that answers replaces the shard's part
 and is labeled live; one that fails or times out keeps the shard's, labeled with its date and the
 reason. The flags that depend on a live part are worked out again in the browser with the
 pipeline's rules (`absentee` and `possible_estate` from the owner, `sheriff_sales`,
@@ -1471,6 +1483,70 @@ parcel with no dossier (its prefix is not in the manifest's `dossiers.prefixes`,
 its shard) gets a page built only from these lookups, plus counts within 500 feet of its point
 (`shootings` in the last 12 and 36 months, and people killed in `fatal_crashes` since 2019). Text
 from City records is shown as published, except that a dash used as punctuation becomes a comma.
+
+### History shards (`dossiers/history/<prefix>.json`)
+
+Added 2026-10-09 by M4.2 (issue #38; `pipeline/src/placekeepers/publish/history.py`). What the lot
+timeline needs beyond the dossier shard, in one file beside each shard, with the same prefix, so a
+lot page fetches it only when its History part opens (or is printed) and opening a lot stays fast
+on a phone. Every dossier prefix has one, even when none of its parcels has a record. On
+2026-10-09: 933 files, 57.5 MB on disk, 7.1 MB as served compressed; the largest (`8715.json`)
+807 kB, 115 kB compressed; the median 34 kB.
+
+```json
+{
+  "schema": 1,
+  "generated_at": "2026-10-09T19:40:00Z",
+  "parts": ["li"],
+  "parcels": {
+    "371000001": {
+      "li": {
+        "violation": [["2025-08-01", "EXTERIOR AREA WEEDS", "OPEN"],
+                      ["2023-05-05", "RUBBISH & GARBAGE", "COMPLIED", null, 2]],
+        "permit": [["2012-08-01", "NEWCON", "COMPLETED", "ZONING/USE PERMIT"]],
+        "demolition": [["2011-06-14", "CASE", "COMPLETED", "YES"]]
+      },
+      "lists": [["2026-10-04", "city_land"], ["2024-06-24", "june_2024_land"]]
+    },
+    "372000006": {"partial": ["li"]}
+  }
+}
+```
+
+**`li`**: the parcel's L&I records by kind, in this order, each kind left out when it has none:
+`violation`, `permit`, `demolition`, `unsafe`, `imminently_dangerous`, `clean_seal`. Each record
+is `[day, title, status, detail, count]`: the day in Philadelphia (YYYY-MM-DD, or `null`), the
+City's title (the violation's title, the permit's kind of work, the demolition's kind of work, the
+notice's title, the work order's type), its status as the City writes it (for the notices, `OPEN`
+or `RESOLVED` by whether L&I recorded a resolution), the detail (the permit type such as
+`Residential Building Permit`; for a demolition `YES` when the City did it, `NO` under a private
+permit; `null` for the others), and how many records read the same, only when above 1. Trailing
+`null` values and a count of 1 are left off. Text is trimmed with runs of white space as one space,
+and empty text is `null`; a record with neither a day nor a title is left out; each kind is newest
+first, undated last, then by title, status and detail in code point order. The records come from
+`li_history` (`adapters/li.py`, `HISTORY_PARTS`), which reads each table with exactly the
+expressions the web app's live query uses (`web/src/dossier/carto.ts`, `LI_PARTS`); the pipeline
+groups them with `derive/timeline.py` and the browser groups a live answer the same way
+(`web/src/dossier/timeline.ts`, `groupLi`). Both test suites check
+`pipeline/tests/fixtures/timeline_parity.json`, written by `pipeline/tests/timeline_cases.py`.
+Never a case, permit or violation number, an inspector, an applicant, a contractor or a
+complainant.
+
+**`lists`**: `[day, list]` for each vacancy list the parcel is on, its latest day, newest first:
+`city_land` and `city_building` (the City's vacant property indicators, dated by the records'
+`date_update`), `june_2024_land` (L&I's vacant land list of 2024-06-24, as Clean & Green Philly
+kept it, source `cagp_vacant_land_2024`) and `june_2024_building` (Clean & Green Philly's own
+vacant buildings list of the same day, source `cagp_vacant_buildings_2024`).
+
+**`partial`**: `["li"]` for a dossier parcel whose L&I records were not downloaded (outside the
+candidate parcels, as in section 6's `partial`); the lot page then says the weekly copy does not
+include them and offers live data, never "no violations". A parcel the file does not name has no
+records: no L&I records when `parts` holds `"li"`, else none known.
+
+Deeds stay in the dossier shard (`transfers`) and the LandCare year in its `landcare`; the lot
+page puts them in the timeline itself. With live data on, the page uses the City's answer for the
+L&I records (it asks for up to 1,000; when the City cuts an answer short, the copy's records from
+its oldest day back complete it) and keeps the copy's `lists`.
 
 ### `tables/owners.json`
 

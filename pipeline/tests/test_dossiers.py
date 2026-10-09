@@ -285,6 +285,7 @@ def install_everything(ctx) -> None:
             {
                 "opa_id": land,
                 "bldg_desc": ["VAC LAND RES < ACRE"] * len(land),
+                "date_update": pa.array([datetime(2026, 10, 4)] * len(land), pa.timestamp("ms")),
                 "geometry": [wkb(parcel_box(a)) for a in land],
             }
         ),
@@ -296,6 +297,7 @@ def install_everything(ctx) -> None:
             {
                 "opa_id": ["374000001"],
                 "bldg_desc": ["ROW 2 STY MASONRY"],
+                "date_update": pa.array([datetime(2026, 10, 4)], pa.timestamp("ms")),
                 "geometry": [wkb(parcel_box("374000001"))],
             }
         ),
@@ -458,6 +460,64 @@ def install_everything(ctx) -> None:
         ),
         geometry=True,
     )
+    # The lot timeline (issue #38): L&I records as li_history keeps them (a case number column is
+    # added here only to prove nothing passes it on), and the June 2024 lists.
+    install(
+        "li_history",
+        pa.table(
+            {
+                "opa_account_num": ["371000001"] * 4 + ["374000001"] * 3,
+                "kind": [
+                    "violation",
+                    "violation",
+                    "violation",
+                    "permit",
+                    "demolition",
+                    "unsafe",
+                    "clean_seal",
+                ],
+                "date": dates(
+                    [
+                        "2025-08-01",
+                        "2023-05-05",
+                        "2023-05-05",
+                        "2012-08-01",
+                        "2011-06-14",
+                        "2024-03-03",
+                        "2019-06-01",
+                    ]
+                ),
+                "title": [
+                    "EXTERIOR AREA WEEDS",
+                    "RUBBISH & GARBAGE",
+                    "RUBBISH  & GARBAGE",
+                    "NEWCON",
+                    "MINOR DEMOLITION",
+                    "UNSAFE STRUCTURE",
+                    "CLEAN&SEAL",
+                ],
+                "status": [
+                    "OPEN",
+                    "COMPLIED",
+                    "COMPLIED",
+                    "COMPLETED",
+                    "COMPLETED",
+                    "OPEN",
+                    "Approved",
+                ],
+                "detail": [None, None, None, "ZONING/USE PERMIT", "NO", None, None],
+                "casenumber": ["C1", "C2", "C2", "P1", "D9", "U1", "S1"],
+            }
+        ),
+    )
+    install(
+        "cagp_vacant_land_2024",
+        pa.table({"opa_id": ["371000001", "372000001"], "list_date": dates(["2024-06-24"] * 2)}),
+    )
+    install(
+        "cagp_vacant_buildings_2024",
+        pa.table({"opa_id": ["374000001"], "list_date": dates(["2024-06-24"])}),
+    )
     garden = Point(*where("375000001"))
     install(
         "gardens_phs_ngt",
@@ -520,23 +580,30 @@ def test_one_shard_per_four_digit_prefix_summarized_in_the_manifest(built) -> No
     result, out = built
     files = sorted(p.name for p in (out / "dossiers").iterdir())
     shards = ["3710.json", "3720.json", "3730.json", "3740.json", "3750.json", "8850.json"]
-    assert files == [*shards, "common.json"]
+    assert files == [*shards, "common.json", "history"]
+    assert sorted(p.name for p in (out / "dossiers" / "history").iterdir()) == shards
     manifest = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
     assert manifest == result.manifest
     # The shards are summarized, not listed: the manifest every visitor fetches stays small.
     sizes = [(out / "dossiers" / name).stat().st_size for name in shards]
+    history_sizes = [(out / "dossiers" / "history" / name).stat().st_size for name in shards]
     assert manifest["dossiers"] == {
         "prefix_digits": 4,
         "prefixes": ["3710", "3720", "3730", "3740", "3750", "8850"],
         "files": 6,
         "bytes": sum(sizes),
+        "history": {"files": 6, "bytes": sum(history_sizes), "parts": ["li"]},
     }
-    assert not any(re.fullmatch(r"dossiers/\d+\.json", name) for name in manifest["files"])
+    assert not any(
+        re.fullmatch(r"dossiers/(history/)?\d+\.json", name) for name in manifest["files"]
+    )
     assert "dossiers/common.json" in manifest["files"]
     assert "tables/owners.json" in manifest["files"]
     # Everything on disk is either listed in `files` or a shard the block names.
     on_disk = sorted(p.relative_to(out).as_posix() for p in out.rglob("*") if p.is_file())
-    named = [f"dossiers/{prefix}.json" for prefix in manifest["dossiers"]["prefixes"]]
+    prefixes = manifest["dossiers"]["prefixes"]
+    named = [f"dossiers/{prefix}.json" for prefix in prefixes]
+    named += [f"dossiers/history/{prefix}.json" for prefix in prefixes]
     assert on_disk == sorted([*manifest["files"], *named, "manifest.json"])
     assert result.dossiers.parcels == 12
     assert result.dossiers.shards == 6
@@ -1022,12 +1089,46 @@ def check_no_forbidden(body: Any) -> None:
 
 def test_nothing_ethics_rules_out_is_published(built) -> None:
     _, out = built
-    for path in [*(out / "dossiers").iterdir(), out / "tables" / "owners.json"]:
+    for path in [*(out / "dossiers").rglob("*.json"), out / "tables" / "owners.json"]:
         body = json.loads(path.read_text(encoding="utf-8"))
         check_no_forbidden(body)
         text = path.read_text(encoding="utf-8")
-        for case_number in ("C1", "C2", "C3", "U1", "U2", "D1"):
+        for case_number in ("C1", "C2", "C3", "U1", "U2", "D1", "D9", "P1", "S1"):
             assert f'"{case_number}"' not in text, f"{path.name} has an L&I case number"
+
+
+def history(out: Path, account: str) -> dict[str, Any] | None:
+    body = json.loads(
+        (out / "dossiers" / "history" / f"{account[:4]}.json").read_text(encoding="utf-8")
+    )
+    assert list(body) == ["schema", "generated_at", "parts", "parcels"]
+    return body["parcels"].get(account)
+
+
+def test_history_shards_hold_the_timeline_records(built) -> None:
+    """The lot timeline (issue #38): each parcel's L&I records grouped by kind, newest first,
+    repeats counted, and the vacancy lists it is on with their days."""
+    _, out = built
+    assert history(out, "371000001") == {
+        "li": {
+            "violation": [
+                ["2025-08-01", "EXTERIOR AREA WEEDS", "OPEN"],
+                ["2023-05-05", "RUBBISH & GARBAGE", "COMPLIED", None, 2],
+            ],
+            "permit": [["2012-08-01", "NEWCON", "COMPLETED", "ZONING/USE PERMIT"]],
+        },
+        "lists": [["2026-10-04", "city_land"], ["2024-06-24", "june_2024_land"]],
+    }
+    assert history(out, "374000001") == {
+        "li": {
+            "demolition": [["2011-06-14", "MINOR DEMOLITION", "COMPLETED", "NO"]],
+            "unsafe": [["2024-03-03", "UNSAFE STRUCTURE", "OPEN"]],
+            "clean_seal": [["2019-06-01", "CLEAN&SEAL", "Approved"]],
+        },
+        "lists": [["2026-10-04", "city_building"], ["2024-06-24", "june_2024_building"]],
+    }
+    # A candidate with no record at all has no entry; its shard is still written.
+    assert history(out, "373000002") is None
 
 
 @pytest.mark.parametrize(
@@ -1148,6 +1249,9 @@ def test_the_dossier_and_the_map_follow_the_vacancy_model(context_factory, tmp_p
     assert outside["li"]["last_violation"] is None and outside["li"]["unsafe"] is False
     assert "years_since_sale" in {f["id"] for f in outside["owner"]["flags"]}  # OPA's last sale
     assert "partial" not in parcel(out, "372000001")
+    # Its timeline says the same of its L&I records: never "no violations" (issue #38).
+    assert history(out, "372000006") == {"partial": ["li"]}
+    assert "partial" not in (history(out, "372000001") or {})
     assert any("lack records downloaded only for candidate parcels" in note for note in notes)
     # Five parcels called vacant with high or medium confidence; the low one does not count.
     flags = {flag["id"]: flag for flag in parcel(out, "372000001")["owner"]["flags"]}
