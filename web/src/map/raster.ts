@@ -35,20 +35,31 @@ export function withoutOutsideLayers(reg: Registry, ids: readonly string[]): str
   return ids.filter((id) => !outside.has(id));
 }
 
-/** The source a raster layer draws (its single `arcgis_tiles` source), or null. */
-export function tileSource(layer: Layer, reg: Registry): Source | null {
-  if (!isOutsideLayer(layer)) return null;
-  const source = reg.sources.find((s) => s.id === layer.sources[0]);
-  return source && source.endpoint.kind === 'arcgis_tiles' ? source : null;
+/** The sources a raster layer draws (its `arcgis_tiles` sources), in registry order. */
+export function tileSources(layer: Layer, reg: Registry): Source[] {
+  if (!isOutsideLayer(layer)) return [];
+  return layer.sources
+    .map((id) => reg.sources.find((s) => s.id === id))
+    .filter((s): s is Source => s !== undefined && s.endpoint.kind === 'arcgis_tiles');
 }
 
-/** The service a raster layer shows now: the one its year setting chooses, else its only one. */
-export function chosenService(layer: Layer, reg: Registry, state: AppState): TileService | null {
-  const services = tileSource(layer, reg)?.endpoint.services ?? [];
-  if (services.length <= 1) return services[0] ?? null;
+/** One picture service with the source it belongs to (whose publisher and terms it carries). */
+export interface ChosenService {
+  source: Source;
+  service: TileService;
+}
+
+/**
+ * The service a raster layer shows now: the one its year setting chooses, among all its sources'
+ * services (the City's photos and the older ones it hosts for DVRPC and the USGS), else its only one.
+ */
+export function chosenService(layer: Layer, reg: Registry, state: AppState): ChosenService | null {
+  const all = tileSources(layer, reg).flatMap((source) => (source.endpoint.services ?? []).map((service) => ({ source, service })));
+  if (all.length <= 1) return all[0] ?? null;
   const setting = layer.settings.find((s) => s.id === YEAR_SETTING);
   const value = state.settings[layer.id]?.[YEAR_SETTING] ?? setting?.default;
-  return services.find((s) => s.key === value) ?? services.find((s) => s.key === setting?.default) ?? services.at(-1) ?? null;
+  const key = (k: unknown) => all.find((c) => c.service.key === k);
+  return key(value) ?? key(setting?.default) ?? all.at(-1) ?? null;
 }
 
 export interface RasterTiles {
@@ -63,9 +74,9 @@ export interface RasterTiles {
 
 /** Where a raster layer's tiles come from now, or null when the registry gives no service. */
 export function rasterTiles(layer: Layer, reg: Registry, state: AppState): RasterTiles | null {
-  const source = tileSource(layer, reg);
-  const service = chosenService(layer, reg, state);
-  if (!source || !service || !source.endpoint.url) return null;
+  const chosen = chosenService(layer, reg, state);
+  if (!chosen || !chosen.source.endpoint.url) return null;
+  const { source, service } = chosen;
   const path = service.service.split('/').map(encodeURIComponent).join('/');
   return {
     sourceId: `${RASTER_SOURCE_PREFIX}${source.id}:${service.key}`,

@@ -77,12 +77,12 @@ describe('the registry form for pictures from another server', () => {
     expect(errors).toContain('layers.yaml entry "hin_2025" needs "file" and "source_layer"');
   });
 
-  it('needs the year options to be the services in order, and a slider only on a choice', () => {
+  it('needs a year option for every service of every source, and a slider only on a choice', () => {
     const files = raw();
-    find(files.layers, 'aerial_photos').settings[0].options.reverse();
+    find(files.layers, 'aerial_photos').settings[0].options.splice(1, 1);
     find(files.layers, 'atlas_1860').settings[0].control = 'slider';
     const errors = errorsFor(files);
-    expect(errors).toContain('layers.yaml entry "aerial_photos": the "year" options should be the source\'s service keys in the same order');
+    expect(errors).toContain('layers.yaml entry "aerial_photos": the "year" options should be its sources\' service keys, each once');
     expect(errors).toContain('layers.yaml entry "atlas_1860".settings[0] is a range and cannot have "control"');
   });
 
@@ -112,9 +112,24 @@ describe('where each year\'s pictures come from', () => {
       bounds: [-75.29, 39.86, -74.95, 40.14],
     });
     expect(rasterTiles(photos, reg, withYear('1996'))?.tiles).toEqual([`${ROOT}/CityImagery_1996_6in/MapServer/tile/{z}/{y}/{x}`]);
-    expect(chosenService(photos, reg, withYear('2011'))?.service).toBe('CityImagery_2011_6in_LEAFOFF');
-    // A year the City does not serve falls back to the default.
-    expect(chosenService(photos, reg, withYear('2013'))?.key).toBe('2025');
+    expect(chosenService(photos, reg, withYear('2011'))?.service.service).toBe('CityImagery_2011_6in_LEAFOFF');
+    // A year no service has falls back to the default.
+    expect(chosenService(photos, reg, withYear('2013'))?.service.key).toBe('2025');
+  });
+
+  it('takes the older years from the photos the City hosts for DVRPC and the USGS, credited to them', () => {
+    for (const [year, source, service] of [
+      ['1959', 'dvrpc_aerial_photos', 'CityImagery_1959_DVRPC'],
+      ['1975', 'dvrpc_aerial_photos', 'CityImagery_1975_DVRPC'],
+      ['1999', 'usgs_aerial_photos_1999', 'CityImagery_1999_USGS'],
+    ] as const) {
+      const tiles = rasterTiles(photos, reg, withYear(year))!;
+      expect(tiles.sourceId).toBe(`pk-raster:${source}:${year}`);
+      expect(tiles.tiles).toEqual([`${ROOT}/${service}/MapServer/tile/{z}/{y}/{x}`]);
+      expect(reg.sources.find((s) => s.id === source)?.license).toBe('unstated');
+    }
+    const year = photos.settings.find((s) => s.id === 'year');
+    expect(year?.type === 'choice' && year.options.map((o) => o.value).slice(0, 5)).toEqual(['1959', '1975', '1996', '1999', '2000']);
   });
 
   it('asks for the atlas only where it has pictures', () => {
@@ -152,9 +167,19 @@ describe('the style', () => {
 
   it('says which year it shows and credits the makers', () => {
     const legend = (layer: Layer, state: AppState) => styleFor(layer)!.legend({ layer, registry: reg, state }).map((e) => (e.kind === 'note' ? e.text : ''));
-    expect(legend(photos, withYear('1996'))).toEqual([strings.historic.photoYear('1996'), strings.historic.blackAndWhite('1996'), strings.historic.under, strings.historic.photoCredit]);
+    const city = reg.sources.find((s) => s.id === 'city_aerial_photos')!.attribution;
+    const dvrpc = reg.sources.find((s) => s.id === 'dvrpc_aerial_photos')!.attribution;
+    expect(legend(photos, withYear('1996'))).toEqual([strings.historic.photoYear('1996'), strings.historic.blackAndWhite('1996'), strings.historic.under, city]);
+    expect(legend(photos, withYear('1975'))).toEqual([
+      strings.historic.photoYear('1975'),
+      strings.historic.blackAndWhite('1975'),
+      strings.historic.gaps1975,
+      strings.historic.under,
+      dvrpc,
+      strings.historic.termsNotStated,
+    ]);
     expect(legend(photos, withYear('2000'))).toContain(strings.historic.blackAndWhite('2000'));
-    expect(legend(photos, withYear('2004'))).toEqual([strings.historic.photoYear('2004'), strings.historic.under, strings.historic.photoCredit]);
+    expect(legend(photos, withYear('2004'))).toEqual([strings.historic.photoYear('2004'), strings.historic.under, city]);
     expect(legend(atlas, defaultState(reg, 'field'))).toEqual([strings.historic.atlasCoverage, strings.historic.atlasCredit]);
   });
 });
@@ -168,7 +193,7 @@ describe('privacy: these layers follow "Fetch live City data"', () => {
     // With live data on, the same link shows the 1996 photos.
     const on = store(true, hash);
     expect(on.state.layers).toEqual(expect.arrayContaining(['aerial_photos', 'atlas_1860']));
-    expect(chosenService(photos, reg, on.state)?.key).toBe('1996');
+    expect(chosenService(photos, reg, on.state)?.service.key).toBe('1996');
   });
 
   it('cannot be switched on while live data is off, and goes off when live data does', () => {
@@ -205,25 +230,25 @@ describe('privacy: these layers follow "Fetch live City data"', () => {
   it('shows the year as a slider through the years the City has, read out by year', () => {
     const on = store(true, 'v=a&l=aerial_photos&s=aerial_photos.year:2004');
     const { body } = render(LayerItem, { props: { store: on, layer: photos, idPrefix: 't' } });
-    expect(body).toMatch(/type="range"[^>]*min="0"[^>]*max="19"/);
+    expect(body).toMatch(/type="range"[^>]*min="0"[^>]*max="22"/);
     expect(body).toContain('aria-valuetext="2004"');
-    expect(body).toContain(strings.historic.sliderRange('1996', '2025'));
+    expect(body).toContain(strings.historic.sliderRange('1959', '2025'));
   });
 });
 
 describe('the lot page: "See this lot in old aerial photos"', () => {
-  it('opens the map at the lot with the 1996 photos', () => {
+  it('opens the map at the lot with the oldest photos', () => {
     const calls: unknown[] = [];
     const { body } = render(OldAerialPhotos, {
-      props: { liveOn: true, onShowLayer: (id: string, settings?: unknown) => calls.push([id, settings]), onShowOnMap: () => calls.push('map') },
+      props: { oldest: '1959', liveOn: true, onShowLayer: (id: string, settings?: unknown) => calls.push([id, settings]), onShowOnMap: () => calls.push('map') },
     });
     expect(body).toContain(strings.historic.lotButton);
-    expect(body).toContain(strings.historic.lotHelp);
+    expect(body).toContain(strings.historic.lotHelp('1959'));
     expect(body).not.toContain('disabled');
   });
 
   it('is turned off with the reason while live data is off', () => {
-    const { body } = render(OldAerialPhotos, { props: { liveOn: false, onShowLayer: () => {}, onTurnOnLive: () => {} } });
+    const { body } = render(OldAerialPhotos, { props: { oldest: '1959', liveOn: false, onShowLayer: () => {}, onTurnOnLive: () => {} } });
     expect(body).toMatch(/<button[^>]*disabled[^>]*>See this lot in old aerial photos/);
     expect(body).toContain(strings.historic.lotLiveOff);
     expect(body).toContain(strings.options.turnOn);

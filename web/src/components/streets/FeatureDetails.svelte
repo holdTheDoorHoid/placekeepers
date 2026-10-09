@@ -25,6 +25,7 @@
   import StressDetails from '../walk/StressDetails.svelte';
   import ParkingDetails from './ParkingDetails.svelte';
   import WatchDetails from '../displacement/WatchDetails.svelte';
+  import RedliningDetails from '../history/RedliningDetails.svelte';
   import { watchSummaryOf } from '../../displacement/watch.ts';
 
   let {
@@ -136,6 +137,8 @@
       registry={store.registry}
       related={(g) => store.controller?.featuresWith(target.layerId, 'g', g) ?? []}
     />
+  {:else if style === STYLES.redlining}
+    <RedliningDetails features={target.features} />
   {:else if style === STYLES.traffic_stress}
     <StressDetails features={target.features} />
   {:else if style === STYLES.parking_reports}

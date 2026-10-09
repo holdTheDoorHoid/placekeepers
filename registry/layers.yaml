@@ -986,13 +986,14 @@
   label: Aerial photos by year
   group: then_and_now
   description: >-
-    The City's aerial photographs of the whole city, taken from a plane each spring (most years
-    from March to May), for every year it has them since 1996. Slide through the years to see
-    what stood on a block before: houses that came down, lots that were cleared, gardens that
-    grew. The photos come straight from the City's servers when this layer is on, and are drawn
-    under everything else on the map. Older years are less sharp, and the 1996 and 2000 photos are
-    in black and white.
-  sources: [city_aerial_photos]
+    Aerial photographs of the whole city, taken from a plane: the City's own for every year it has
+    them since 1996 (each spring, most years from March to May), and older ones the City hosts,
+    from the Delaware Valley Regional Planning Commission (1959 and 1975) and the U.S. Geological
+    Survey (1999). Slide through the years to see what stood on a block before: houses that came
+    down, lots that were cleared, gardens that grew. The photos come straight from the City's
+    servers when this layer is on, and are drawn under everything else on the map. Older years
+    are less sharp, and the photos until 2000 are in black and white.
+  sources: [city_aerial_photos, dvrpc_aerial_photos, usgs_aerial_photos_1999]
   geometry: raster
   style: historic_imagery
   evidence: context
@@ -1003,7 +1004,10 @@
       type: choice
       control: slider
       options:
+        - {value: "1959", label: "1959"}
+        - {value: "1975", label: "1975"}
         - {value: "1996", label: "1996"}
+        - {value: "1999", label: "1999"}
         - {value: "2000", label: "2000"}
         - {value: "2004", label: "2004"}
         - {value: "2005", label: "2005"}
@@ -1054,4 +1058,31 @@
       max: 100
       step: 10
       default: 80
+  release: v0.4
+# The 1937 redlining map (owner, 2026-10-09): from the site's own file, never a download, under
+# Mapping Inequality's non commercial license (docs/CONTRACTS.md). Off by default in both views.
+- id: redlining_1937
+  label: 1937 redlining map (HOLC grades)
+  group: then_and_now
+  description: >-
+    In 1937 a federal agency, the Home Owners' Loan Corporation (HOLC), graded Philadelphia's
+    neighborhoods from A to D for how safe it judged mortgage lending there. The grades leaned on
+    who lived in each area: areas where Black families and many immigrant families lived were
+    usually graded D and outlined in red, which is where the word redlining comes from. This
+    layer shows the 1937 areas and grades as Mapping Inequality traced them. The grades are a
+    record of how the agency judged places in 1937; they say nothing about the people who live
+    there today. Tap an area for its grade and a link to its 1937 description at Mapping
+    Inequality. Non commercial use only.
+  sources: [mapping_inequality_1937]
+  file: tiles/redlining.pmtiles
+  source_layer: holc
+  geometry: polygon
+  style: redlining
+  evidence: context
+  default: {field: false, analysis: false}
+  settings:
+    - id: shade
+      label: Shade the areas (off shows their outlines and grades only)
+      type: toggle
+      default: true
   release: v0.4

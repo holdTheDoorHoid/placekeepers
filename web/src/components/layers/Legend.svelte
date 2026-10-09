@@ -63,7 +63,9 @@
         </ul>
       </li>
     {:else}
-      <li class="note">{entry.text}{#if entry.link}<br /><a href="{siteBase}{entry.link.page}/">{entry.link.label}</a>{/if}</li>
+      <li class="note">
+        {entry.text}{#if entry.link?.href}<br /><a href={entry.link.href} target="_blank" rel="noopener noreferrer">{entry.link.label}</a>{:else if entry.link}<br /><a href="{siteBase}{entry.link.page}/">{entry.link.label}</a>{/if}
+      </li>
     {/if}
   {/each}
 </ul>

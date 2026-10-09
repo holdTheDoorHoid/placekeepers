@@ -43,6 +43,8 @@ export interface License {
   label: string;
   url: string;
   share_alike: boolean;
+  /** Non commercial use only (added for the 1937 redlining map): its data stays in its own file. */
+  non_commercial?: boolean;
 }
 
 /** One picture service of an `arcgis_tiles` source (M4.3): its key (the year) and its name. */

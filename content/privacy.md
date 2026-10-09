@@ -32,8 +32,9 @@ it back on.
 
 ## Old aerial photos and the 1860 atlas
 
-Under "Then and now" in the layers, you can turn on the City's aerial photos of past years and its
-copy of the 1860 Hexamer and Locher atlas. Placekeepers does not copy these pictures. When you turn
+Under "Then and now" in the layers, you can turn on aerial photos of past years (the City's own,
+and older ones it hosts for regional and federal agencies) and the City's copy of the 1860 Hexamer
+and Locher atlas. Placekeepers does not copy these pictures. When you turn
 one of them on, your browser asks the City's own map service for the pieces of the picture that
 cover the part of the map you are looking at. That service runs on Esri's ArcGIS Online, which
 hosts the City's maps. Like the live lookups above, it sees your internet address and which part
@@ -42,6 +43,9 @@ you came from. Nothing is asked of it until you turn one of these layers on.
 
 These pictures follow the same switch, "Fetch live City data". While it is off, they cannot be
 turned on, and a link someone sends you cannot turn them on either.
+
+The 1937 redlining map in the same group is different: Placekeepers publishes it in its own files,
+so turning it on asks no other server for anything.
 
 ## If you have questions
 
