@@ -708,7 +708,9 @@ export function buildDossier(input: DossierInput): DossierView {
     else timelineNotes.push({ text: tl.liMissing, offerLive: !liveOn, retry: liveOn && live.li.status === 'failed' });
   }
   const timeline: TimelineView = {
-    status: history.status === 'idle' && !liveLi ? 'waiting' : history.status === 'loading' || history.status === 'idle' ? 'loading' : 'ready',
+    // Waiting until the History part asks for the weekly copy's records, even when the City has
+    // answered: the copy also holds the vacancy records.
+    status: history.status === 'idle' ? 'waiting' : history.status === 'loading' ? 'loading' : 'ready',
     story: built.story,
     years: byYear(visible),
     newest: visible

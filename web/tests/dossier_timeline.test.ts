@@ -250,6 +250,9 @@ describe('records the weekly copy does not hold', () => {
 
   it('waits for the History part to open, then loads, then reads the copy', () => {
     expect(buildDossier(input('990000002', { history: { status: 'idle' } })).history.timeline.status).toBe('waiting');
+    // Still waiting for the copy when the City answered first: the copy holds the vacancy records.
+    const liveFirst = buildDossier(input('990000002', { history: { status: 'idle' }, liveOn: true, live: { ...IDLE_PARTS, li: ok(liveFrom({})) } }));
+    expect(liveFirst.history.timeline.status).toBe('waiting');
     expect(buildDossier(input('990000002', { history: { status: 'loading' } })).history.timeline.status).toBe('loading');
     const failed = buildDossier(input('990000002', { history: { status: 'failed' } })).history.timeline;
     expect(failed.status).toBe('ready');
