@@ -55,7 +55,9 @@ import {
   type TimelineRow,
   type TimelineYear,
 } from './timeline.ts';
+import { buildRules, type RulesView } from './rules.ts';
 import type {
+  Appeal,
   Assessment,
   CityOwned,
   Confidence,
@@ -97,6 +99,8 @@ export interface LiveParts {
   assessments: Part<Assessment[]>;
   li: Part<LiveLi>;
   nearby: Part<LiveNearby>;
+  /** The parcel's appeals to the City's boards (M4.6). */
+  appeals: Part<Appeal[]>;
 }
 
 export const IDLE_PARTS: LiveParts = {
@@ -105,6 +109,7 @@ export const IDLE_PARTS: LiveParts = {
   assessments: { status: 'idle' },
   li: { status: 'idle' },
   nearby: { status: 'idle' },
+  appeals: { status: 'idle' },
 };
 
 export type ShardState =
@@ -302,7 +307,14 @@ export interface DossierView {
      * `displacement`: its greening suggestions then add the area's signs and the protections.
      */
     watch: WatchNote | null;
+    /**
+     * A federal brownfield record at or near the lot (M4.6), from the dossier's rules or the map's
+     * `bf`: its garden suggestions carry the soil note.
+     */
+    brownfield: boolean;
   };
+  /** Rules for this lot (M4.6, src/dossier/rules.ts), with where its appeals come from. */
+  rules: RulesView & { provenance: Provenance; appealsProvenance: Provenance };
   owner: {
     names: string[];
     mailing: string | null;
@@ -699,7 +711,9 @@ export function buildDossier(input: DossierInput): DossierView {
   if (liveLi) timelineLi = liveLi.truncated ? withOlder(groupLi(liveLi.events), copy?.li ?? null) : groupLi(liveLi.events);
   const tl = s.history.timeline;
   const settled = history.status !== 'idle' && history.status !== 'loading';
-  const built = buildTimeline({ transfers, li: timelineLi, lists: copy?.lists ?? [], landcare: parcel?.landcare ?? null, today: asOf });
+  // Appeals (M4.6): the City's answer when live, else the weekly copy's; null when not known.
+  const appeals: Appeal[] | null = live.appeals.status === 'ok' ? live.appeals.data : parcel && !parcel.missing.includes('appeals') ? (parcel.appeals ?? []) : null;
+  const built = buildTimeline({ transfers, li: timelineLi, appeals, lists: copy?.lists ?? [], landcare: parcel?.landcare ?? null, today: asOf });
   const hidden = new Set(input.hiddenKinds ?? []);
   const visible: TimelineRow[] = built.rows.filter((row) => !hidden.has(row.kind));
   const timelineNotes: TimelineView['notes'] = [];
@@ -736,6 +750,7 @@ export function buildDossier(input: DossierInput): DossierView {
     const within: string[] = [];
     if (shardNearby.landcare !== null) within.push(n.landcare(shardNearby.landcare));
     if (shardNearby.gardens !== null) within.push(n.gardens(shardNearby.gardens));
+    if (shardNearby.hearings != null && shardNearby.hearings > 0) within.push(n.hearings(shardNearby.hearings));
     if (within.length) groups.push({ heading: n.within500, rows: within });
     nearbyProvenance = snapshotProvenance;
   } else {
@@ -749,7 +764,7 @@ export function buildDossier(input: DossierInput): DossierView {
     }
     nearbyProvenance = provenanceOf(live.nearby, false, null, liveOn);
   }
-  const layerIds = ['shootings_hex', 'memorials', 'landcare_lots', 'gardens'];
+  const layerIds = ['shootings_hex', 'memorials', 'landcare_lots', 'gardens', ...(shardNearby?.hearings ? ['hearings'] : [])];
   const layers = layerIds
     .map((id) => registry.layers.find((l) => l.id === id))
     .filter((l): l is NonNullable<typeof l> => !!l && !state.layers.includes(l.id))
@@ -802,6 +817,17 @@ export function buildDossier(input: DossierInput): DossierView {
     addSource(CITY_LIST_SOURCE, listDate ? src.snapshot(listDate) : parcel ? snapshotWhen : p.map);
   }
   if (taxFlag) addSource('cagp_tax_2025', src.taxSnapshot);
+  // Rules for this lot (M4.6).
+  const lotRules = parcel?.rules ?? null;
+  if (lotRules?.districts.length || lotRules?.register) {
+    addSource('historic_districts', snapshotWhen);
+    addSource('historic_sites', snapshotWhen);
+  }
+  if (lotRules?.zoning) addSource('zoning_base_districts', snapshotWhen);
+  if (lotRules?.overlays.length) addSource('zoning_overlays', snapshotWhen);
+  if (lotRules?.brownfields.length) addSource('epa_brownfields', snapshotWhen);
+  const appealsWhen = whenFor(live.appeals, !!parcel && !parcel.missing.includes('appeals'));
+  if (appealsWhen && appeals?.length) addSource('appeals', appealsWhen);
   if (shardNearby) {
     if (shardNearby.s12 !== null || shardNearby.s36 !== null) addSource('shootings', snapshotWhen);
     if (shardNearby.landcare !== null) addSource('phs_landcare', snapshotWhen);
@@ -872,7 +898,25 @@ export function buildDossier(input: DossierInput): DossierView {
       links,
       provenance: parcel ? snapshotProvenance : tile ? { tone: 'snapshot', text: p.map } : provenanceOf(live.property, false, null, liveOn),
     },
-    actions: { listed, listing, suggestions: suggestionViews, otherRoutes, watch },
+    actions: { listed, listing, suggestions: suggestionViews, otherRoutes, watch, brownfield: (lotRules?.brownfields.length ?? 0) > 0 || int(tile?.bf) === 1 },
+    rules: {
+      ...buildRules({
+        opa,
+        address,
+        rules: lotRules,
+        listed: parcel !== null,
+        missing: parcel?.missing ?? [],
+        overlays: notes?.overlays ?? {},
+        appeals,
+        appealsUnknown:
+          appeals === null && live.appeals.status !== 'loading'
+            ? { offerLive: !liveOn, retry: liveOn && live.appeals.status === 'failed' }
+            : null,
+        today: asOf,
+      }),
+      provenance: parcel ? snapshotProvenance : { tone: 'quiet', text: '' },
+      appealsProvenance: provenanceOf(live.appeals, !!parcel && !parcel.missing.includes('appeals'), snapshotDate, liveOn),
+    },
     owner: {
       names,
       mailing: plain(property ? property.mailing : (shardOwner?.mailing ?? null)),

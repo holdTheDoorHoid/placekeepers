@@ -94,7 +94,7 @@ const liveLi: LiveLi = {
 };
 
 function allLive(property = liveProperty()): LiveParts {
-  return { property: ok(property), transfers: ok(liveTransfers), assessments: ok(liveAssessments), li: ok(liveLi), nearby: { status: 'idle' } };
+  return { property: ok(property), transfers: ok(liveTransfers), assessments: ok(liveAssessments), li: ok(liveLi), nearby: { status: 'idle' }, appeals: ok([]) };
 }
 
 describe('the weekly snapshot alone (live City data off)', () => {
@@ -159,7 +159,7 @@ describe('the weekly snapshot alone (live City data off)', () => {
   it('shows the nearby counts as area counts, and sources with their dates', () => {
     expect(view.nearby.groups).toEqual([
       { heading: 'In the area around this lot, about two blocks across', rows: ['2 people shot in the last 12 months', '7 people shot in the last 3 years'] },
-      { heading: 'Within 500 feet of this lot', rows: ['3 lots kept up by PHS LandCare', '1 community garden'] },
+      { heading: 'Within 500 feet of this lot', rows: ['3 lots kept up by PHS LandCare', '1 community garden', '1 hearing still to come about other properties'] },
     ]);
     const ids = view.sources.rows.map((r) => r.id);
     expect(ids).toEqual(expect.arrayContaining(['opa_properties', 'assessment_history', 'li_violations', 'cagp_tax_2025', 'shootings']));

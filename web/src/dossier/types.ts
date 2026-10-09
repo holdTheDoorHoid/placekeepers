@@ -132,6 +132,8 @@ export interface NoticeNote {
 export interface DossierNotes {
   flags: Record<string, FlagNote>;
   notices: Record<string, NoticeNote>;
+  /** Every zoning overlay by its key (M4.6), from dossiers/common.json. */
+  overlays?: Record<string, Overlay>;
 }
 
 export interface Transfer {
@@ -181,6 +183,8 @@ export interface Nearby {
   killed: number | null;
   landcare: number | null;
   gardens: number | null;
+  /** Hearings still to come within 500 feet, this lot's own left out (M4.6). */
+  hearings?: number | null;
 }
 
 export interface LandCare {
@@ -191,6 +195,95 @@ export interface LandCare {
 /** The parts of a dossier whose records the weekly copy holds only for some parcels (docs/CONTRACTS.md section 6). */
 export const PARTIAL_PARTS = ['transfers', 'assessments', 'li'] as const;
 export type PartialPart = (typeof PARTIAL_PARTS)[number];
+
+/**
+ * The parts built from citywide sources (M4.6): known for every parcel when their sources were in
+ * the build, named in the dossier's `partial` when they were not. The lot page then says the rule
+ * could not be checked, never that it does not apply.
+ */
+export const RULE_PARTS = ['historic', 'overlays', 'brownfields', 'appeals'] as const;
+export type RulePart = (typeof RULE_PARTS)[number];
+
+// The rules and records of each lot (M4.6, issue #42) ---------------------------------------------
+
+/** The board an appeal goes to (pipeline/src/placekeepers/derive/appeals.py, BOARDS). */
+export const APPEAL_BOARDS = ['zoning', 'li_review', 'building', 'other'] as const;
+export type AppealBoard = (typeof APPEAL_BOARDS)[number];
+
+/**
+ * One appeal, as the City publishes it (docs/CONTRACTS.md section 6, `appeals`). Who filed it and
+ * the owner the City names are shown on this lot's own page only (docs/ETHICS.md, "Appeals and
+ * hearings"). Its free text grounds are never copied: the page links to the City for them.
+ */
+export interface Appeal {
+  board: AppealBoard;
+  /** The City's application type, such as "Zoning Board of Adjustment" or "RB_ZBA". */
+  application: string | null;
+  /** The City's kind of appeal, such as "ZBA Permit Denial - Variance". */
+  type: string | null;
+  status: string | null;
+  decision: string | null;
+  /** Days in Philadelphia, YYYY-MM-DD. */
+  filed: string | null;
+  hearing: string | null;
+  /** The hearing's time in Philadelphia, HH:MM, or null when the City gives only the day. */
+  hearingTime: string | null;
+  decided: string | null;
+  /** The registered community organization the City told. */
+  rco: string | null;
+  appellant: string | null;
+  owner: string | null;
+}
+
+/** A zoning overlay, as dossiers/common.json describes it by its key. */
+export interface Overlay {
+  id: string;
+  name: string;
+  symbol: string | null;
+  /** 1 overlay district, 2 supplemental control, 3 Wissahickon Watershed impervious coverage limit, 0 other. */
+  type: number;
+  section: string | null;
+  link: string | null;
+  sunset: string | null;
+  pendingBill: string | null;
+  pendingUrl: string | null;
+}
+
+export interface HistoricDistrict {
+  name: string;
+  date: string | null;
+}
+
+/** The lot's entry on the Philadelphia Register of Historic Places. */
+export interface RegisterEntry {
+  address: string | null;
+  /** The day it was listed on its own, when it was. */
+  date: string | null;
+  /** Listed on its own on a day the City's layer does not give plainly. */
+  individual: boolean;
+  district: string | null;
+  districtDate: string | null;
+}
+
+export interface Brownfield {
+  id: string;
+  name: string | null;
+  address: string | null;
+  /** Meters from the lot's shape to the EPA's point. */
+  meters: number | null;
+}
+
+/** The rules for a lot (docs/CONTRACTS.md section 6, `rules`). */
+export interface LotRules {
+  districts: HistoricDistrict[];
+  register: RegisterEntry | null;
+  zoning: { code: string; group: string | null; pendingUrl: string | null } | null;
+  /** Keys into the overlays of dossiers/common.json. */
+  overlays: string[];
+  brownfields: Brownfield[];
+  /** More brownfield properties within 100 meters than are listed. */
+  brownfieldsMore: number;
+}
 
 /** One parcel from a dossier shard. A section the shard leaves out is null. */
 export interface ShardParcel {
@@ -221,6 +314,12 @@ export interface ShardParcel {
    * the same bits as the lot's `dw` on the map. Null outside every watch area.
    */
   displacement: { tract: string; signs: number } | null;
+  /** The rules for this lot (M4.6): null when none applies, or when they could not be checked (`missing`). */
+  rules: LotRules | null;
+  /** Its appeals, newest first (M4.6): empty when it has none, null when not known (`missing`). */
+  appeals: Appeal[] | null;
+  /** The citywide parts this dossier was built without (M4.6). */
+  missing: RulePart[];
 }
 
 export interface Shard {

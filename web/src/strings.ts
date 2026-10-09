@@ -1452,6 +1452,45 @@ export const strings = {
     empty: 'was not asked',
   } as Record<string, string>,
 
+  /**
+   * The map's layers of rules and records (M4.6): historic districts and properties, zoning
+   * overlays, hearings still to come and EPA brownfield sites, with what a tap shows
+   * (src/components/rules/RulesDetails.svelte). A hearing never names who filed the appeal.
+   */
+  rulesMap: {
+    legend: {
+      district: 'Historic district',
+      property: 'On the historic register',
+      overlay: 'Zoning overlay',
+      supplemental: 'Other special rule of the Zoning Code',
+      hearingZoning: 'Zoning hearing',
+      hearingOther: 'Hearing before another board',
+      brownfield: 'EPA brownfield site',
+    },
+    notes: {
+      historic: 'Changes here may need the Historical Commission\'s review; ask them first.',
+      overlays: 'Overlays overlap, and a few cover most of the city. Tap a spot to see every overlay there.',
+      hearings: 'Tap a hearing to see how to take part and to open the lot\'s page.',
+      brownfields: 'Not a map of all contaminated ground. Test the soil before growing food on or near one.',
+    },
+    districtTitle: (name: string) => name,
+    designated: (date: string) => `Designated on ${date}.`,
+    noDate: 'The City\'s layer gives no designation day.',
+    propertyTitle: 'On the Philadelphia Register of Historic Places',
+    listedOn: (date: string) => `Listed on its own on ${date}.`,
+    listedAlone: 'Listed on its own.',
+    inDistrict: (district: string, date: string | null) => `Part of ${district}${date ? `, designated on ${date}` : ''}.`,
+    overlaysHere: (n: number) => (n === 1 ? 'One overlay here' : `${formatNumber(n)} overlays here`),
+    hearingTitle: (board: string) => `${board} hearing`,
+    hearingWhen: (date: string, time: string | null) => `${date}${time ? `, at ${time}` : ''}`,
+    hearingsHere: (n: number) => `${formatNumber(n)} hearings here`,
+    about: (address: string) => `About ${address}.`,
+    rco: (name: string) => `Registered community organization notified: ${name}.`,
+    openLot: 'Open this lot\'s page',
+    namesNote: 'Who filed the appeal is shown on the lot\'s page only.',
+    brownfieldTitle: 'EPA brownfield site',
+  },
+
   dossier: {
     pageTitle: 'Lot page',
     loading: 'Loading the lot page',
@@ -1467,6 +1506,7 @@ export const strings = {
     sections: {
       summary: 'Summary',
       actions: 'What you can do',
+      rules: 'Rules for this lot',
       owner: 'Who owns it',
       history: 'History',
       nearby: 'Nearby',
@@ -1834,7 +1874,10 @@ export const strings = {
         noStory: 'The records we hold do not tell a story about this lot yet.',
         title: 'Timeline',
         caption: 'Everything on record for this property, newest first, by year',
-        intro: 'Sales, L&I records and vacancy records in one list, newest first. Switch a kind off to hide it.',
+        intro: 'Sales, L&I records, appeals and vacancy records in one list, newest first. Switch a kind off to hide it.',
+        /** An appeal on the day it was filed (M4.6): the board, the kind of appeal, and its hearing. */
+        appeal: (board: string, kind: string | null) => (kind ? `${board}: ${kind}` : board),
+        appealHearing: (date: string) => `hearing ${date}`,
         show: 'Show in the timeline',
         loading: 'Loading the timeline from the weekly copy.',
         failed: 'The timeline could not be loaded from the weekly copy.',
@@ -1878,6 +1921,7 @@ export const strings = {
           unsafe: 'Unsafe building notice',
           imminently_dangerous: 'Imminently dangerous building notice',
           clean_seal: 'Clean and seal',
+          appeal: 'Appeal',
           vacancy: 'Vacancy record',
         } as Record<string, string>,
         toggles: {
@@ -1887,6 +1931,7 @@ export const strings = {
           demolition: 'Demolitions',
           clean_seal: 'Clean and seal',
           notice: 'Unsafe and imminently dangerous notices',
+          appeal: 'Appeals',
           vacancy: 'Vacancy and care records',
         } as Record<string, string>,
         lists: {
@@ -1940,6 +1985,8 @@ export const strings = {
       killed: (n: number) => `${plural(n, 'person', 'people')} killed in traffic crashes since 2019`,
       landcare: (n: number) => `${plural(n, 'lot', 'lots')} kept up by PHS LandCare`,
       gardens: (n: number) => `${plural(n, 'community garden', 'community gardens')}`,
+      /** Hearings still to come about other properties within 500 feet (M4.6). */
+      hearings: (n: number) => `${plural(n, 'hearing', 'hearings')} still to come about other properties`,
       none: 'No nearby counts for this place yet.',
       showLayer: (label: string) => `Show ${label} on the map`,
     },
@@ -1975,6 +2022,161 @@ export const strings = {
       lastAssessment: (year: number, value: string) => `City assessment for ${year}: ${value}.`,
       moreSources: (n: number) => `${plural(n, 'more source', 'more sources')} on the lot page online.`,
       taxCenter: (url: string) => `Today's balance: the City's Tax Center, ${url}`,
+      rules: 'Rules for this lot',
+    },
+
+    /**
+     * Rules for this lot (M4.6, issue #42; src/dossier/rules.ts builds the part, and
+     * src/components/dossier/DossierRules.svelte shows it). Historic and zoning text names the rule
+     * and who to ask, and never says whether a lot can or cannot be built on. Brownfield text uses
+     * the owner's sentence word for word and never calls a place clean or safe. Who filed an appeal
+     * and the owner the City names appear here, on the lot's own page, and nowhere else
+     * (docs/ETHICS.md, "Appeals and hearings").
+     */
+    rules: {
+      intro:
+        'What City and federal records say applies to this lot: historic designation, zoning and its overlays, brownfield records, and appeals to the City\'s boards. None of this says whether something may be built here. Ask the office named before you plan anything.',
+      notOnList:
+        'Rules are worked out each week for the lots on our list, and this parcel is not on it. Atlas, the City\'s map, shows its zoning and overlays, and the Historical Commission can say whether it is historic.',
+      // A hearing still to come, shown at the top of the page.
+      hearingTitle: 'A hearing is coming up',
+      hearingSet: (board: string, date: string, time: string | null) =>
+        `${/^([AEIOU]|L&I)/i.test(board) ? 'An' : 'A'} ${board} hearing about this lot is set for ${date}${time ? `, at ${time}` : ''}.`,
+      hearingBoard: { zoning: 'zoning', li_review: 'L&I Review Board', building: 'Board of Building Standards', other: 'City board' } as Record<string, string>,
+      seeAppeal: 'See the appeal',
+      // Historic designation.
+      historicTitle: 'Historic designation',
+      inDistrict: (district: string, date: string | null) => `This lot is in ${district}${date ? `, designated on ${date}` : ''}.`,
+      districtName: (name: string) => (/district/i.test(name) ? `the ${name}` : `the ${name} historic district`),
+      listed: (date: string) => `This property is listed on its own on the Philadelphia Register of Historic Places, since ${date}.`,
+      listedNoDate: 'This property is listed on its own on the Philadelphia Register of Historic Places.',
+      listedInDistrict: (district: string) => `This property is on the Philadelphia Register of Historic Places as part of ${district}.`,
+      askFirst:
+        'Changes here may need the Historical Commission\'s review; ask them first. For a mural or a garden, ask the Commission before you start.',
+      contact: 'Philadelphia Historical Commission: 215 686 7660, preservation@phila.gov.',
+      confirm: 'The City asks everyone to confirm a property\'s historic status with the Commission.',
+      commissionSite: 'The Historical Commission\'s website',
+      projectReview: 'How the Commission reviews work on historic properties',
+      findHistoric: 'Find a historic property or district',
+      notHistoric: 'The Historical Commission\'s records do not list this lot as historic. Ask the Commission to be sure.',
+      // Zoning.
+      zoningTitle: 'Zoning',
+      base: (code: string, group: string | null) => `Base zoning: ${code}${group ? `, ${group}` : ''}.`,
+      zoningGroups: {
+        'RESIDENTIAL/MULTI-FAMILY/RESIDENTIAL MIXED-USE': 'a residential district',
+        'COMMERCIAL/COMMERCIAL MIXED-USE': 'a commercial and mixed use district',
+        'INDUSTRIAL/INDUSTRIAL MIXED-USE': 'an industrial district',
+        'SPECIAL PURPOSE': 'a special purpose district, such as parks, institutions or the airport',
+      } as Record<string, string>,
+      basePending: 'A bill pending in City Council would change it.',
+      readBill: 'Read the bill',
+      overlaysIntro: (n: number) => (n === 1 ? 'One overlay adds its own rules here:' : `${formatNumber(n)} overlays add their own rules here:`),
+      noOverlays: 'No zoning overlay covers this lot.',
+      overlayKinds: { 1: 'Overlay district', 2: 'Special rule', 3: 'Limit on paving' } as Record<number, string>,
+      readRule: (section: string | null) => (section ? `Read the rule: Zoning Code section ${section}` : 'Read the rule in the Zoning Code'),
+      sunset: (date: string) => `Set to end on ${date}.`,
+      pending: (bill: string | null) => `A bill pending in City Council${bill ? `, Bill ${bill},` : ''} would change it.`,
+      zoningNote:
+        'Zoning and overlays can change what is allowed on a lot. The City\'s maps can lag behind new bills, so check with the City\'s zoning office before you plan.',
+      zoningHelp: 'The City\'s zoning and planning help',
+      atlasZoning: 'This address on Atlas, the City\'s map',
+      /**
+       * Each overlay in plain words, by its symbol or by words in its name
+       * (src/dossier/rules.ts, overlayMeaning). They say what kind of rule it is, never what it allows.
+       */
+      overlayMeaning: {
+        '/CTR': 'Extra rules for Center City: uses, signs, building heights, parking and the street front.',
+        '/NCO': 'Rules that keep new buildings and additions in keeping with this neighborhood.',
+        '/NCA': 'Rules for the shops and uses along this commercial street.',
+        '/TOC': 'Rules near a rail station that favor homes and shops close to transit.',
+        '/NIS': 'Rules about where a supervised injection site may open. It covers most of the city.',
+        '/MIN': 'Rules about affordable homes in new housing.',
+        '/AHP': 'Rules that encourage keeping affordable homes.',
+        '/AHC': 'Height limits near the airport.',
+        '/HHC': 'Height limits near a heliport.',
+        '/ENV': 'Rules that protect natural features such as trees, steep slopes and streams.',
+        '/WWO': 'Rules that protect the Wissahickon Creek and its streams.',
+        '/DRC': 'Rules for land along the Delaware River.',
+        '/CDO': 'Rules for the Central Delaware riverfront.',
+        '/FNE': 'Extra rules for the Far Northeast.',
+        '/NE': 'Extra rules for the Northeast.',
+        '/UED': 'Rules about large lit displays and signs.',
+        council: 'Extra rules City Council set for part of one Council district.',
+        flood: 'Flood protection rules: limits on building and filling land where floods reach.',
+        steep: 'Limits on building and grading on steep slopes.',
+        coverage: 'Limits how much of a lot can be covered by buildings and paving, to protect the Wissahickon Creek.',
+        animal: 'An area where the Zoning Code lets people keep some farm animals, under its rules.',
+        signs: 'Rules about signs and billboards.',
+        childCare: 'Rules about family child care in homes.',
+        parking: 'Rules about how much parking new buildings need.',
+        loading: 'Rules about loading areas for buildings.',
+        dispensary: 'Rules about how close a medical marijuana dispensary may be to other places.',
+        institutional: 'Rules for institutions along Germantown Avenue.',
+        pump: 'Rules near a water pump station.',
+        floorArea: 'Rules about how much floor area buildings may have.',
+        waterfront: 'Building setbacks along the waterfront.',
+        overlay: 'An overlay district adds its own rules on top of the base zoning here.',
+        supplemental: 'A special rule the Zoning Code adds for this area.',
+      } as Record<string, string>,
+      // Brownfields: the owner's sentence, word for word.
+      brownfieldTitle: 'Brownfield records',
+      brownfield: 'A federal brownfield assessment or cleanup was recorded at or near this address. Test the soil before growing food.',
+      brownfieldSite: (name: string, feet: number) => `${name}, about ${formatNumber(feet)} feet from this lot`,
+      onLot: 'on this lot',
+      brownfieldMore: (n: number) => `and ${plural(n, 'more record', 'more records')} within about 330 feet`,
+      brownfieldNote: 'The EPA\'s records show where a federal brownfield grant paid for work. They do not say what is in the ground today.',
+      soilTest: 'Penn State Extension\'s soil test',
+      gardenGuide: 'The EPA\'s guide to gardening in city soil',
+      epaRecord: 'This record at the EPA',
+      // Appeals and hearings.
+      appealsTitle: 'Appeals and hearings',
+      appealsIntro: 'Appeals to the City\'s boards about this property, newest first, as the City publishes them.',
+      noAppeals: 'No appeals to the City\'s boards are on record for this property.',
+      appealsMissing: 'Our weekly copy was built without the City\'s appeals records, so this page cannot say whether there are any.',
+      appealsMissingOff: 'Live City data can show them.',
+      boards: {
+        zoning: 'Zoning Board of Adjustment',
+        li_review: 'L&I Review Board',
+        building: 'Board of Building Standards',
+        other: 'Another City board',
+      } as Record<string, string>,
+      comingUp: 'Coming up',
+      filed: (date: string) => `Filed ${date}`,
+      hearingOn: (date: string, time: string | null, upcoming: boolean) => `${upcoming ? 'Hearing set for' : 'Hearing'} ${date}${time ? `, at ${time}` : ''}`,
+      decidedOn: (date: string) => `Decided ${date}`,
+      status: (status: string) => `Status: ${status}`,
+      decision: (decision: string) => `Decision: ${decision}`,
+      rco: (name: string) => `The City notified this registered community organization: ${name}.`,
+      filedBy: 'Filed by',
+      ownerNamed: 'Owner named',
+      namesNote: 'Names are as the City publishes them. They appear on this lot\'s page only, never on the map or in downloads.',
+      grounds: 'Read the appeal and its grounds at the City (L&I property history)',
+      takePart: {
+        zoning: 'How to take part in a zoning hearing',
+        li_review: 'The L&I Review Board',
+        building: 'The Board of Building Standards',
+        other: 'The City\'s appeals calendar',
+      } as Record<string, string>,
+      calendar: 'The City\'s calendar of hearings',
+      decisions: {
+        'GRANTED/PROV': 'Granted with provisos',
+        'DENIED/PROV': 'Denied with provisos',
+        'DISMI/ENFORC': 'Dismissed',
+        'ADMIN/REVIEW': 'Sent for administrative review',
+        'HELD/INFO': 'Held for more information',
+        NEWHEARNOT: 'New hearing not granted',
+        BOARDAKNOWL: 'Acknowledged by the board',
+        'LATE-APPRVD': 'Late appeal approved',
+        'CITY AFFIRMED': 'The City\'s decision stands',
+        AFFIRMED: 'The City\'s decision stands',
+      } as Record<string, string>,
+      // Parts the weekly copy was built without.
+      missing: {
+        historic: 'Our weekly copy was built without the historic register, so this page cannot say whether this lot is historic. Ask the Historical Commission.',
+        overlays: 'Our weekly copy was built without the zoning overlays, so this page cannot list them. Atlas, the City\'s map, shows them.',
+        brownfields: 'Our weekly copy was built without the EPA\'s brownfield records, so this page cannot say whether there are any nearby.',
+      } as Record<string, string>,
+      none: 'None of these records name this lot.',
     },
   },
 } as const;

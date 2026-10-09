@@ -19,6 +19,7 @@ import { memorials } from './memorials.ts';
 import { parkingReports } from './parking_reports.ts';
 import { publicArt } from './public_art.ts';
 import { publicPlace } from './public_place.ts';
+import { brownfields, hearings, historicDistricts, historicProperties, zoningOverlays } from './rules.ts';
 import { shootingsHex } from './shootings_hex.ts';
 import { stopAmenities } from './stop_amenities.ts';
 import { streetSegments } from './street_segments.ts';
@@ -56,6 +57,11 @@ export const STYLES: Record<StyleId, StyleModule> = {
   traffic_stress: trafficStress,
   parking_reports: parkingReports,
   displacement_watch: displacementWatch,
+  historic_districts: historicDistricts,
+  historic_properties: historicProperties,
+  zoning_overlays: zoningOverlays,
+  hearings,
+  brownfields,
 };
 
 export function styleFor(layer: Layer): StyleModule | null {

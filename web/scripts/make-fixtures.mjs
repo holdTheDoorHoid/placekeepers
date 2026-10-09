@@ -25,6 +25,7 @@ import { WATCH_BLOCK, WATCH_LAYER, WATCH_SOURCES, watchFixtures, watchFor } from
 import { routeOsmStops, routeSheetFixtures } from './route-fixtures.mjs';
 import { WALK_LAYERS, WALK_SOURCES, walkFixtures } from './walk-fixtures.mjs';
 import { PARKING_LAYERS, PARKING_SOURCES, parkingFixtures } from './parking-fixtures.mjs';
+import { RULES_FILES, RULES_LAYERS, RULES_SOURCES, rulesFixtures } from './rules-fixtures.mjs';
 
 const FIXTURES = new URL('../fixtures/', import.meta.url);
 const ROOT = new URL('data/', FIXTURES);
@@ -202,6 +203,9 @@ RUNS.forEach((length, run) => {
     properties.rt = firstStepFor(properties, n);
     if (LISTED.has(n)) properties.la = 1;
     if (SIDE_YARD.has(n)) properties.ly = 1;
+    // The first run lies within 100 meters of the sample EPA brownfield site (M4.6,
+    // scripts/rules-fixtures.mjs), so its garden suggestions carry the soil note.
+    if (run === 0) properties.bf = 1;
     Object.assign(properties, reasonsFor(properties, n));
     // Some parcels have no tree canopy rank yet, as happens while data arrives.
     if (random() > 0.2) properties.f_canopy = between(0, 100);
@@ -597,6 +601,8 @@ for (const [name, text] of parkingFixtures(toLngLat)) writeFileSync(path(`data/$
 // The displacement watch (M4.1, scripts/displacement-fixtures.mjs).
 const [watchFile, watchText] = watchFixtures(box);
 writeFileSync(path(`data/${watchFile}`), watchText);
+// The rules and records of each lot (M4.6, scripts/rules-fixtures.mjs).
+for (const [name, text] of rulesFixtures(toLngLat, box)) writeFileSync(path(`data/${name}`), text);
 // The route survey sheets (scripts/route-fixtures.mjs): the index is listed in files, each route's
 // sheet is not (docs/CONTRACTS.md section 7).
 mkdirSync(path('data/tables/routes'), { recursive: true });
@@ -726,6 +732,8 @@ const manifest = {
     ...Object.fromEntries(Object.entries(PARKING_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
     // The displacement watch (M4.1)
     ...Object.fromEntries(Object.entries(WATCH_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
+    // The rules and records of each lot (M4.6)
+    ...Object.fromEntries(Object.entries(RULES_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
   },
   layers: {
     vacant_parcels: {
@@ -777,6 +785,7 @@ const manifest = {
     ...WALK_LAYERS,
     ...PARKING_LAYERS,
     ...WATCH_LAYER,
+    ...RULES_LAYERS,
   },
   files: Object.fromEntries(
     [
@@ -801,6 +810,7 @@ const manifest = {
       ...walkFixtures(toLngLat).map(([name]) => name),
       ...parkingFixtures(toLngLat).map(([name]) => name),
       watchFile,
+      ...RULES_FILES,
       'tables/routes/index.json',
       'tables/stop_amenities.json',
       ...handWritten
@@ -827,6 +837,7 @@ const manifest = {
     'Walking tiles were skipped for this sample too, so those layers are published as GeoJSON.',
     'Parking report tiles were skipped for this sample too, so that layer is published as GeoJSON.',
     'Displacement watch tiles were skipped for this sample too, so its layer is published as GeoJSON.',
+    'The rules and records tiles were skipped for this sample too, so those layers are published as GeoJSON.',
   ],
 };
 writeFileSync(new URL('manifest.json', ROOT), JSON.stringify(manifest, null, 2) + '\n');

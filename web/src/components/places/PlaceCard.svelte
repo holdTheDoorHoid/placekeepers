@@ -10,6 +10,8 @@
   import EvidenceBadge from '../common/EvidenceBadge.svelte';
   import ListToggle from '../lists/ListToggle.svelte';
   import DisplacementNote from './DisplacementNote.svelte';
+  import SoilNote from '../rules/SoilNote.svelte';
+  import { isGarden } from '../../config/suggestions.ts';
   import { watchNote, watchSigns } from '../../displacement/watch.ts';
   import { kindLabel } from './labels.ts';
 
@@ -61,6 +63,7 @@
       <span class="cost">{strings.place.cost(suggestion.cost)}</span>
     </p>
     <DisplacementNote suggestionId={suggestion.id} {watch} jumpTo={watchJump} withSigns />
+    {#if place.properties?.bf === 1 && isGarden(suggestion.id)}<SoilNote />{/if}
     <p class="step">
       <strong>{strings.place.firstStep}:</strong>
       {#if place.firstStep}{place.firstStep.route.label}. {place.firstStep.step}{:else if place.noRoute}{strings.permission.noRoute}{:else}{strings.permission.seeLotPage}{/if}

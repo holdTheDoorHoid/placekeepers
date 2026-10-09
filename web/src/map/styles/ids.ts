@@ -33,5 +33,11 @@ export const STYLE_IDS = [
   'parking_reports',
   // The displacement watch (M4.1)
   'displacement_watch',
+  // The rules and records of each lot (M4.6)
+  'historic_districts',
+  'historic_properties',
+  'zoning_overlays',
+  'hearings',
+  'brownfields',
 ] as const;
 export type StyleId = (typeof STYLE_IDS)[number];

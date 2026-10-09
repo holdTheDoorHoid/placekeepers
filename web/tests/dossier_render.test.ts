@@ -230,7 +230,8 @@ describe('the printed lot page', () => {
     const model = printModel(view('990000001'), now);
     // Before the History part opened, only the deeds are known: all 5, newest first, and a note.
     expect(model.history.events.length).toBeLessThanOrEqual(PRINT_LIMITS.events);
-    expect(model.history.events.map((e) => e.date)).toEqual(['Jun 10, 2025', 'Nov 2, 2024', 'Mar 15, 2024', 'Mar 14, 2019', 'May 17, 2004']);
+    // And its appeal of 2012 (M4.6), which the dossier carries itself, like the deeds.
+    expect(model.history.events.map((e) => e.date)).toEqual(['Jun 10, 2025', 'Nov 2, 2024', 'Mar 15, 2024', 'Mar 14, 2019', 'Jul 9, 2012', 'May 17, 2004']);
     expect(model.history.moreEvents).toBe(0);
     expect(model.history.timelineNote).toBe(strings.dossier.history.timeline.printWaiting);
     expect(model.owner.flags.length).toBeLessThanOrEqual(PRINT_LIMITS.flags);

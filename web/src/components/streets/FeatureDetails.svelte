@@ -25,6 +25,7 @@
   import StressDetails from '../walk/StressDetails.svelte';
   import ParkingDetails from './ParkingDetails.svelte';
   import WatchDetails from '../displacement/WatchDetails.svelte';
+  import RulesDetails from '../rules/RulesDetails.svelte';
   import { watchSummaryOf } from '../../displacement/watch.ts';
 
   let {
@@ -135,6 +136,12 @@
       lngLat={target.lngLat}
       registry={store.registry}
       related={(g) => store.controller?.featuresWith(target.layerId, 'g', g) ?? []}
+    />
+  {:else if style === STYLES.historic_districts || style === STYLES.historic_properties || style === STYLES.zoning_overlays || style === STYLES.hearings || style === STYLES.brownfields}
+    <RulesDetails
+      style={layer!.style as 'historic_districts' | 'historic_properties' | 'zoning_overlays' | 'hearings' | 'brownfields'}
+      features={target.features}
+      onOpenLot={(opa) => store.select(opa, null, { center: target.lngLat })}
     />
   {:else if style === STYLES.traffic_stress}
     <StressDetails features={target.features} />

@@ -13,10 +13,11 @@
 
 import type { Geometry } from 'geojson';
 import { PHILLY_BOUNDS } from '../state/defaults.ts';
+import { APPEAL_COLUMNS, readAppeals } from './appeals.ts';
 import { cityDate } from './dates.ts';
 import { fetchJson, type FailReason, type FetchOptions } from './http.ts';
 import { isOpaAccount, normalizeAccount } from './opa.ts';
-import type { Assessment, LiEvent, LiKind, LiveLi, LiveProperty, ParcelAtPoint, ParcelShape, Transfer } from './types.ts';
+import type { Appeal, Assessment, LiEvent, LiKind, LiveLi, LiveProperty, ParcelAtPoint, ParcelShape, Transfer } from './types.ts';
 import { LI_KINDS } from './types.ts';
 
 export const CARTO_SQL_URL = 'https://phl.carto.com/api/v2/sql';
@@ -127,6 +128,18 @@ export function liSql(opa: string): string {
       `SELECT '${part.kind}' AS kind, ${part.date} AS date, ${part.title} AS title, ${part.status} AS status, ${part.detail} AS detail FROM ${part.table} WHERE opa_account_num = ${a}`,
   );
   return `SELECT kind, date, title, status, detail FROM (${parts.join(' UNION ALL ')}) AS events ORDER BY date DESC NULLS LAST LIMIT ${MAX_LI_EVENTS}`;
+}
+
+/** At most this many appeals per lookup (the busiest parcel has a few dozen). */
+export const MAX_APPEALS = 200;
+
+/**
+ * A parcel's appeals (M4.6), newest first: the same columns the pipeline reads for the weekly copy
+ * (./appeals.ts, APPEAL_COLUMNS). Never the free text grounds, the proviso or the numbers of
+ * related permits and cases.
+ */
+export function appealsSql(opa: string): string {
+  return `SELECT ${APPEAL_COLUMNS.join(', ')} FROM appeals WHERE opa_account_num = ${accountLiteral(opa)} ORDER BY createddate DESC NULLS LAST LIMIT ${MAX_APPEALS}`;
 }
 
 /**
@@ -364,6 +377,10 @@ export function fetchAssessments(opa: string, options: FetchOptions = {}): Promi
 
 export function fetchLi(opa: string, options: FetchOptions = {}): Promise<LiveResult<LiveLi>> {
   return query(liSql(opa), readLi, options);
+}
+
+export function fetchAppeals(opa: string, options: FetchOptions = {}): Promise<LiveResult<Appeal[]>> {
+  return query(appealsSql(opa), readAppeals, options);
 }
 
 export function fetchNearby(lng: number, lat: number, options: FetchOptions = {}) {

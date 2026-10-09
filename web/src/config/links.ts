@@ -84,3 +84,51 @@ export function osmEditUrl(element: string | null, lng: number, lat: number): st
   if (match) return `https://www.openstreetmap.org/edit?${match[1] === 'n' ? 'node' : 'way'}=${match[2]}`;
   return `https://www.openstreetmap.org/edit#map=19/${lat.toFixed(6)}/${lng.toFixed(6)}`;
 }
+
+// The rules and records of each lot (M4.6, issue #42), each checked on 2026-10-09.
+
+/** The Philadelphia Historical Commission (215 686 7660, preservation@phila.gov). */
+export const HISTORICAL_COMMISSION_URL = 'https://www.phila.gov/departments/philadelphia-historical-commission/';
+/** How the Commission reviews work on historic properties. */
+export const HISTORIC_PROJECT_REVIEW_URL = 'https://www.phila.gov/departments/philadelphia-historical-commission/project-review/';
+/** The City's page for finding out whether a property or district is historic. */
+export const FIND_HISTORIC_URL = 'https://www.phila.gov/services/property-lots-housing/historic-properties/find-a-historic-property-or-district/';
+/** The City's zoning and planning help. */
+export const ZONING_HELP_URL = 'https://www.phila.gov/services/zoning-planning-development/';
+/** How anyone can take part in a Zoning Board of Adjustment hearing, in person, online, by phone or in writing. */
+export const ZBA_TAKE_PART_URL = 'https://www.phila.gov/services/zoning-planning-development/participate-in-a-zoning-board-of-adjustment-hearing/';
+/** The L&I Review Board and the Board of Building Standards. */
+export const LIRB_URL = 'https://www.phila.gov/departments/board-of-license-and-inspection-review/';
+export const BBS_URL = 'https://www.phila.gov/departments/board-of-building-standards/';
+/** L&I's calendar of appeal hearings. */
+export const APPEALS_CALENDAR_URL = 'https://li.phila.gov/appeals-calendar';
+/** Penn State Extension's soil test, which checks for lead. */
+export const SOIL_TEST_URL = 'https://agsci.psu.edu/aasl/soil-testing';
+/** The EPA's guide to growing gardens in urban soils. */
+export const EPA_GARDEN_GUIDE_URL = 'https://www.epa.gov/sites/default/files/2014-03/documents/urban_gardening_fina_fact_sheet.pdf';
+
+/** How to take part in a hearing, by board. */
+export const TAKE_PART_URLS: Record<string, string> = {
+  zoning: ZBA_TAKE_PART_URL,
+  li_review: LIRB_URL,
+  building: BBS_URL,
+  other: APPEALS_CALENDAR_URL,
+};
+
+/** One brownfield property in the EPA's facility registry, by its registry id. */
+export function epaRecordUrl(registryId: string): string {
+  return `https://frs-public.epa.gov/ords/frs_public2/fii_query_detail.disp_program_facility?p_registry_id=${encodeURIComponent(registryId)}`;
+}
+
+/**
+ * L&I's property history for an address, which lists the property's appeals and opens each one
+ * with its grounds. The lot page links there instead of copying the grounds.
+ */
+export function liHistoryUrl(address: string): string {
+  return `https://li.phila.gov/property-history/search?address=${encodeURIComponent(address)}`;
+}
+
+/** The zoning part of Atlas for a parcel: its base district, overlays and appeals. */
+export function atlasZoningUrl(opa: string): string {
+  return `https://atlas.phila.gov/${encodeURIComponent(opa)}/zoning`;
+}
