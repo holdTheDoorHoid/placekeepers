@@ -25,8 +25,10 @@ lots is 22 rows. Each property counts once per buyer: a later deed from a land a
 already received the property (a correction, a release of the agency's restrictions or of its right
 to take the lot back) is a `follow_up` and is not counted again. So is a deed from an agency for a
 property whose deed just before it, in the property's own history, went to a private owner: the
-land was no longer the agency's to convey (`owned_privately_before`). This is decided in the
-adapter (placekeepers.adapters.land_bank), the only place the names are read.
+land was no longer the agency's to convey (`owned_privately_before`); and so is a miscellaneous
+deed when the history holds no earlier deed at all, because the City's records use that kind for
+batch agreements that list lots before the agency holds them (`is_miscellaneous`). This is decided
+in the adapter (placekeepers.adapters.land_bank), the only place the names are read.
 
 **Buyers** are typed by the owner rule of the lot pages (placekeepers.derive.owners): a person, a
 company, a nonprofit, another public body (such as the Philadelphia Housing Authority) or unknown.
@@ -272,21 +274,31 @@ def earlier_deed(
     day: date | None,
     document_id: int | None,
 ) -> EarlierDeed | None:
-    """A deed of the property's history, or None for one that says nothing about who owned it
-    after: an agreement (the same parties on both sides) or a deed without a date or buyers. A
-    deed of condemnation lists the agency that takes the property among its sellers (checked
-    2026-10-09: the Redevelopment Authority's are written that way), so there either side
-    counts."""
+    """A deed of the property's history, or None for one that says nothing sure about who owned
+    it after: an agreement (the same parties on both sides), a deed without a date or buyers, or a
+    miscellaneous deed from a land agency (a release, a batch agreement or, rarely, a conveyance
+    that the name rule catches anyway). A deed of condemnation lists the agency that takes the
+    property among its sellers (checked 2026-10-09: the Redevelopment Authority's are written that
+    way), so there either side counts."""
     sellers = split_names(seller_names)
     buyers = split_names(buyer_names)
     if day is None or not buyers:
         return None
     if {match_form(n) for n in sellers} == {match_form(n) for n in buyers}:
         return None
+    if is_miscellaneous(document_type) and any(agency_of(n) for n in sellers):
+        return None
     to_agency = any(agency_of(n) for n in buyers)
     if "CONDEMNATION" in (document_type or "").upper():
         to_agency = to_agency or any(agency_of(n) for n in sellers)
     return EarlierDeed(day, int(document_id or 0), to_agency)
+
+
+def is_miscellaneous(document_type: str | None) -> bool:
+    """A miscellaneous deed ("MISCELLANEOUS DEED", "DEED MISCELLANEOUS" and their taxable kinds):
+    the City's records use it for restrictions, releases and batch agreements as well as for some
+    conveyances, so it counts only where the property's history shows an agency holding it."""
+    return "MISC" in (document_type or "").upper()
 
 
 def owned_privately_before(

@@ -197,6 +197,15 @@ def test_a_deed_for_property_already_in_private_hands_is_not_a_conveyance() -> N
     assert land_bank.owned_privately_before(history, d(2017, 5, 1), 2) is False
     assert land_bank.owned_privately_before(history, d(2018, 1, 18), 5) is True
     assert land_bank.owned_privately_before(history, d(2010, 1, 1), 9) is None
+    # A miscellaneous deed from an agency says nothing sure about who owned the property after.
+    assert (
+        land_bank.earlier_deed(
+            "MISCELLANEOUS DEED", "PHILADELPHIA LAND BANK", "X LLC", d(2019, 1, 1), 8
+        )
+        is None
+    )
+    assert land_bank.is_miscellaneous("DEED MISCELLANEOUS TAXABLE")
+    assert not land_bank.is_miscellaneous("DEED LAND BANK")
     # A deed of condemnation names the agency that takes the property among its sellers.
     taken = land_bank.earlier_deed(
         "DEED OF CONDEMNATION",
@@ -479,6 +488,20 @@ DEEDS = [
         9000,
         opa="100000007",
     ),
+    # A batch agreement listing lot 9 before the builder's deed, with no earlier record of the
+    # agency holding it: not a conveyance, and it does not hide the deed itself.
+    deed(
+        15,
+        513,
+        "MISCELLANEOUS DEED",
+        "2024-03-01",
+        PLB,
+        "BLUE OAK HOMES LLC",
+        0,
+        count=9,
+        opa="100000009",
+        where=centre(9),
+    ),
     # Lot 7 went to a private owner at the sheriff sale; the City's later deed to that owner
     # releases an old restriction and is not a conveyance.
     deed(14, 512, "MISCELLANEOUS DEED", "2022-03-01", CITY, "ROE RICHARD", 0, opa="100000007"),
@@ -616,15 +639,15 @@ def test_the_numbers_are_reproduced_from_the_fixtures(context_factory, tmp_path)
     )
     assert deeds["years"] == list(range(2014, 2026))
     # Counted: lots 2 and 4 (side yards), 6, 8, 9 and 10, the garden trust and the housing
-    # authority. Left out: the corrected deed and the release (follow ups), the move, the
-    # agreement and the two other documents.
+    # authority. Left out: the corrected deed, the release and the batch agreement (not new
+    # conveyances), the move, the agreement and the two other documents.
     assert (
         deeds["counted"],
         deeds["follow_ups"],
         deeds["moved"],
         deeds["agreements"],
         deeds["other"],
-    ) == (8, 2, 1, 1, 2)
+    ) == (8, 3, 1, 1, 2)
 
     every = data["agencies"]["all"]
     assert every["total"]["n"] == 8

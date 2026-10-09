@@ -205,12 +205,31 @@ class LandConveyances(CartoAdapter):
             )
         ]
         accounts = table.column("opa_account_num").to_pylist()
+        kinds_of = table.column("document_type").to_pylist()
         geometries = table.column(GEOMETRY_COLUMN).to_pylist()
         counts = table.column("property_count").to_pylist()
         days = table.column("display_date").to_pylist()
         ids = table.column("document_id").to_pylist()
 
         conveyed = [i for i, deed in enumerate(deeds) if deed.kind == "conveyance"]
+        # First, what each property's own history says: a deed for property already in private
+        # hands is a release or a correction, and a miscellaneous deed with no record of the
+        # agency holding the property lists lots it did not hold yet (a batch agreement recorded
+        # before the deeds). Neither is a conveyance.
+        history = self.histories(raw)
+        follow: dict[int, bool] = {}
+        for i in conveyed:
+            account = (accounts[i] or "").strip()
+            if not account or days[i] is None:
+                follow[i] = False
+                continue
+            before = land_bank.owned_privately_before(
+                history.get(account, []), days[i], int(ids[i] or 0)
+            )
+            follow[i] = bool(before) or (before is None and land_bank.is_miscellaneous(kinds_of[i]))
+        released = sum(follow.values())
+        # Then the same property conveyed again to the same buyer, or within a year.
+        kept = [i for i in conveyed if not follow[i]]
         rows = [
             land_bank.ConveyanceRow(
                 key=_property_key(accounts[i], geometries[i], ids[i], i),
@@ -218,21 +237,10 @@ class LandConveyances(CartoAdapter):
                 document_id=int(ids[i] or 0),
                 buyers=deeds[i].buyers,
             )
-            for i in conveyed
+            for i in kept
         ]
-        follow = dict(zip(conveyed, land_bank.follow_ups(rows), strict=True))
-        # A property already in private hands just before: a release, not a conveyance.
-        history = self.histories(raw)
-        released = 0
-        for i in conveyed:
-            account = (accounts[i] or "").strip()
-            if follow[i] or not account or days[i] is None:
-                continue
-            if land_bank.owned_privately_before(
-                history.get(account, []), days[i], int(ids[i] or 0)
-            ):
-                follow[i] = True
-                released += 1
+        for i, again in zip(kept, land_bank.follow_ups(rows), strict=True):
+            follow[i] = again
         singles = [i for i in conveyed if (counts[i] or 1) == 1]
         next_door = self.next_door(
             {i: (accounts[i], geometries[i]) for i in singles},
@@ -263,7 +271,11 @@ class LandConveyances(CartoAdapter):
         )
         write_geoparquet(table, out, kinds)
         found = {kind: sum(1 for d in deeds if d.kind == kind) for kind in land_bank.KINDS}
-        log.info("%s: %s deeds for property already in private hands", self.id, f"{released:,}")
+        log.info(
+            "%s: %s deeds for property already in private hands or not yet the agency's",
+            self.id,
+            f"{released:,}",
+        )
         log.info(
             "%s: %s; %s follow ups; %s of %s single lots go to an owner next door",
             self.id,
