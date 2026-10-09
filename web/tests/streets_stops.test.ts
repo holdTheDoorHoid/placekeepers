@@ -131,8 +131,8 @@ describe('the street poles', () => {
 describe('the City shelters, traffic calming and crossing guards', () => {
   it('say where a shelter is, which stop it serves and how it was matched', () => {
     const view = describeShelter({ id: 'pa-9002', nm: 'Sample 2 St & Sample 5 Ave (far side)', sid: '1009-a', st: 'sp1009', m: 1, dg: 1 });
+    expect(view.title).toBe('Sample 2 St & Sample 5 Ave (far side)');
     expect(view.lines).toEqual([
-      'Sample 2 St & Sample 5 Ave (far side)',
       t.shelterAt('1009'),
       t.shelterByNumber,
       t.shelterLens,
@@ -145,21 +145,18 @@ describe('the City shelters, traffic calming and crossing guards', () => {
   });
 
   it('date each traffic calming device and name its street', () => {
-    expect(describeCalming({ id: 1, d: '2023-08-01', p: 'SC-9001', s: 900004, name: 'SAMPLE 4 ST' }).lines).toEqual([
-      t.calmingWhat,
-      'On Sample 4 St.',
-      'It went in on August 1, 2023.',
-    ]);
+    const calming = describeCalming({ id: 1, d: '2023-08-01', p: 'SC-9001', s: 900004, name: 'SAMPLE 4 ST' });
+    expect(calming.title).toBe('On Sample 4 St');
+    expect(calming.lines).toEqual([t.calmingWhat, 'It went in on August 1, 2023.']);
   });
 
   it('describe a crossing guard post as a safety service near a school', () => {
-    expect(describeGuard({ id: 1, pl: 'Sample 3 & Sample 4', sn: 'Sample Elementary School' }).lines).toEqual([
-      t.guardAt('Sample 3 & Sample 4'),
-      t.guardSchool('Sample Elementary School'),
-      t.guardWhat,
-    ]);
+    const guard = describeGuard({ id: 1, pl: 'Sample 3 & Sample 4', sn: 'Sample Elementary School' });
+    expect(guard.title).toBe('Sample 3 & Sample 4');
+    expect(guard.lines).toEqual([t.guardHere, t.guardSchool('Sample Elementary School'), t.guardWhat]);
     const text = details('crossing_guards', [{ id: 2, pl: 'Sample 3 & Sample 5' }]);
-    expect(text).toContain('School crossing guard');
+    expect(text).toContain('Sample 3 & Sample 5');
+    expect(text).toContain(t.guardHere);
     expect(text).toContain(t.guardSource);
   });
 
@@ -260,6 +257,10 @@ describe('a City shelter in the transit comfort lens', () => {
     const agree = describeComfort(reg, defaultState(reg, 'analysis'), stop('sp1003'), TABLE);
     expect(agree.cityShelter).toBe(t.cityShelter(1));
     expect(agree.disagree).toBeNull();
+    // A City shelter OpenStreetMap has no answer about: the answer says both.
+    const unsurveyed = describeComfort(reg, defaultState(reg, 'analysis'), { md: 1, tc: 1, sid: '7', cs: 1 }, TABLE);
+    expect(unsurveyed.answers.find((a) => a.key === 'sh')?.value).toBe(t.answerCityShelter);
+    expect(unsurveyed.answers.find((a) => a.key === 'bn')?.value).toBe(strings.stopAmenities.unknown);
     const none = describeComfort(reg, defaultState(reg, 'analysis'), stop('sp1002'), TABLE);
     expect(none.cityShelter).toBe(t.noCityShelter);
     expect(none.lamps).toBeNull();

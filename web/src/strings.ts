@@ -815,7 +815,7 @@ export const strings = {
     zoomStreets: 'Zoom in to a few neighborhoods to see them.',
     calmingTitle: 'Traffic calming',
     calmingWhat: 'A speed cushion, hump or table the Streets Department lists, to slow drivers.',
-    calmingOn: (street: string) => `On ${street}.`,
+    calmingOn: (street: string) => `On ${street}`,
     calmingSince: (date: string) => `It went in on ${date}.`,
     calmingHere: (n: number) => `${plural(n, 'device', 'devices')} at this spot`,
     calmingSource: "From the Streets Department's list of traffic calming devices.",
@@ -823,7 +823,7 @@ export const strings = {
     guardLegend: 'A corner where the City posts a school crossing guard',
     guardLegendNote: 'Crossing guards help children and everyone else cross near schools at the start and end of the school day.',
     guardTitle: 'School crossing guard',
-    guardAt: (corner: string) => `The City posts a crossing guard at ${corner}.`,
+    guardHere: 'The City posts a school crossing guard at this corner.',
     guardSchool: (school: string) => `The nearest school on the City's list, within 400 meters: ${school}.`,
     guardWhat: 'Crossing guards help children and everyone else cross safely near schools at the start and end of the school day.',
     guardsHere: (n: number) => `${plural(n, 'post', 'posts')} at this spot`,
@@ -861,6 +861,7 @@ export const strings = {
     disagree:
       "The City's list has a shelter here, but OpenStreetMap says there is none. One of them may be out of date: a survey settles it. Until then the priority counts the City's shelter.",
     cityShelterLens: "The priority counts the City's shelter.",
+    answerCityShelter: "Not yet surveyed in OpenStreetMap, but on the City's list",
   },
 
   // Parking problems reported with Philly Bike Action's Laser Vision app (issue #37): the legend of

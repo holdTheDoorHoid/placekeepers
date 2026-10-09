@@ -846,6 +846,11 @@ both views, so they never crowd the lots and the High Injury Network:
 - **Bus shelters the City lists** (in Buses and trains): a blue ring around the stop each shelter
   serves; section 5.3 says how the lens counts it.
 
+The poles have a file of their own, `tiles/poles.pmtiles` (2.3 MB, zoom 15 only, like the City's
+trees), so the rest of the map never loads them. The counts on every street block and the two new
+point layers made `tiles/streets.pmtiles` 13 percent larger (11.6 to 13.1 MB on 2026-10-09), almost
+all of it in the close in tiles that carry every block.
+
 **Street lights as a lens factor: proposed, not built** (the owner decides). Measured on
 2026-10-09:
 

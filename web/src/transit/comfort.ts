@@ -159,9 +159,12 @@ export function describeComfort(
   const code = int(properties.a);
   const inOsm = code !== null;
 
+  const city = cityShelters(properties);
   const answers: StopAnswer[] = ANSWERS.map(([key, labelKey]) => {
     const value = int(properties[key]);
-    return { key, label: s.answers[labelKey] ?? key, value: value === null ? s.unknown : value === 1 ? s.yes : s.no, known: value !== null };
+    // OpenStreetMap's answers; where it has none about a shelter the City lists, say both (M4.5).
+    const unknown = key === 'sh' && city > 0 ? strings.streetsStops.answerCityShelter : s.unknown;
+    return { key, label: s.answers[labelKey] ?? key, value: value === null ? unknown : value === 1 ? s.yes : s.no, known: value !== null };
   });
   // A roof over the whole stop is listed only where OpenStreetMap says so.
   const covered = int(properties.cv);
@@ -177,7 +180,6 @@ export function describeComfort(
   if (int(properties.hin) === 1) facts.push(t.onHin);
 
   const how = int(properties.om);
-  const city = cityShelters(properties);
   const c = strings.streetsStops;
   return {
     lens,

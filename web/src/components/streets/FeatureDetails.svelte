@@ -48,6 +48,9 @@
   const poles = $derived(segment ? blockPolesLine(first) : null);
   const calming = $derived(segment ? blockCalming(first) : null);
   const memorialCalming = $derived(style === STYLES.memorials ? memorialCalmingLine(first) : null);
+  // "No traffic calming recorded here yet" stands beside the request when the block offers it, so
+  // it is not repeated among the facts.
+  const asksCalming = $derived(blockViews.some((v) => v.suggestion.id === 'traffic_calming_petition'));
   // The site root from the build (not config, so the details also render outside a browser).
   const links = { removalEmail: REMOVAL_EMAIL, contactUrl: `${import.meta.env.BASE_URL}contact/` };
   const s = strings.streets;
@@ -112,7 +115,7 @@
     {/if}
     <ul class="facts">
       {#each segment.facts as fact (fact)}<li>{fact}</li>{/each}
-      {#if calming}<li>{calming.line}</li>{/if}
+      {#if calming && !asksCalming}<li>{calming.line}</li>{/if}
       {#if poles}<li>{poles}</li>{/if}
     </ul>
     {#if calming?.arterial}<p class="small">{calming.arterial}</p>{/if}
@@ -123,7 +126,7 @@
           <li>
             <strong>{view.suggestion.label}</strong>
             <EvidenceBadge level={view.suggestion.evidence} />
-            {#if calming}<p class="small">{calming.line}</p>{/if}
+            {#if calming && view.suggestion.id === 'traffic_calming_petition'}<p class="small">{calming.line}</p>{/if}
             <p class="small">{view.suggestion.summary}</p>
             <p class="small">{s.cost(view.suggestion.cost)}</p>
             {#if view.firstStep}

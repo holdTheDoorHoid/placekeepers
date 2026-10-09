@@ -62,6 +62,7 @@
       {#if view.waiting}
         <p class="muted" role="status">{store.stopTableStatus === 'unavailable' ? t.answersUnavailable : t.answersLoading}</p>
       {:else}
+        {#if comfort.inOsm}<p class="small muted">{s.factsTitle}</p>{/if}
         <p>{comfort.summary}</p>
         <ul class="facts">
           {#each comfort.answers as answer (answer.key)}

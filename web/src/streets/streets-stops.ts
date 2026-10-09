@@ -33,8 +33,6 @@ function stopNumber(key: string | null): string | null {
 export function describeShelter(properties: Record<string, unknown>): SmallView {
   const t = strings.streetsStops;
   const lines: string[] = [];
-  const name = text(properties.nm);
-  if (name) lines.push(name);
   const stop = stopNumber(text(properties.st));
   const how = int(properties.m);
   if (stop) {
@@ -48,7 +46,7 @@ export function describeShelter(properties: Record<string, unknown>): SmallView 
   if (listed && (!stop || listed !== stop)) lines.push(t.shelterListed(listed));
   if (int(properties.dg) === 1) lines.push(t.shelterDigital);
   lines.push(t.shelterPartner);
-  return { title: t.shelterTitle, lines, source: t.shelterSource };
+  return { title: text(properties.nm) ?? t.shelterTitle, lines, source: t.shelterSource };
 }
 
 export function describePole(properties: Record<string, unknown>): SmallView {
@@ -65,21 +63,19 @@ export function describeCalming(properties: Record<string, unknown>): SmallView 
   const t = strings.streetsStops;
   const lines: string[] = [t.calmingWhat];
   const street = text(properties.name);
-  if (street) lines.push(t.calmingOn(titleStreet(street)));
   const day = formatDate(text(properties.d));
   if (day) lines.push(t.calmingSince(day));
-  return { title: t.calmingTitle, lines, source: t.calmingSource };
+  return { title: street ? t.calmingOn(titleStreet(street)) : t.calmingTitle, lines, source: t.calmingSource };
 }
 
 export function describeGuard(properties: Record<string, unknown>): SmallView {
   const t = strings.streetsStops;
-  const lines: string[] = [];
+  const lines: string[] = [t.guardHere];
   const corner = text(properties.pl);
-  if (corner) lines.push(t.guardAt(corner));
   const school = text(properties.sn);
   if (school) lines.push(t.guardSchool(school));
   lines.push(t.guardWhat);
-  return { title: t.guardTitle, lines, source: t.guardSource };
+  return { title: corner ?? t.guardTitle, lines, source: t.guardSource };
 }
 
 /** The poles line of a street block (`pl`, `lp`, `le`), or null when the block has no count. */

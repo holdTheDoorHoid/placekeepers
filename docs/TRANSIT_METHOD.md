@@ -230,7 +230,9 @@ two **disagree, and neither wins silently**: the stop's page says "The City's li
 here, but OpenStreetMap says there is none. One of them may be out of date: a survey settles it.
 Until then the priority counts the City's shelter.", and the stop gets the survey suggestion
 instead of the request for a shelter. Every stop's page also says what the City's list says, as
-its own line beside OpenStreetMap's answers. 17 stops have a shelter in OpenStreetMap that the
+its own line beside OpenStreetMap's answers, which are labeled "What OpenStreetMap says"; where
+OpenStreetMap has no answer about a shelter the City lists, the shelter reads "Not yet surveyed in
+OpenStreetMap, but on the City's list". 17 stops have a shelter in OpenStreetMap that the
 City's list does not: SEPTA's own shelters and others the City does not run; they count as before.
 
 **How the lens shifted** (2026-10-09, default weights, the same data otherwise): 393 stops change,
