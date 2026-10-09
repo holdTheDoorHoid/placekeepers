@@ -47,7 +47,7 @@ Both allow browser requests without a key.
 | L&I property history | OpenDataPhilly (since 2023) | Consolidated timeline per parcel | Daily | Live; not yet explored |
 | Building footprints | City ArcGIS `LI_BUILDING_FOOTPRINTS` (546,049), read as ArcGIS Hub's bulk GeoJSON | "No building on this parcel" | Weekly | Live |
 | Vacant lot cleanups | OpenDataPhilly "Vacant Lot Cleanups" (Community Life Improvement Program) | City cleaned this lot | Not stated | Live |
-| Aerial photography | OpenDataPhilly, vintages 1996 to 2023 | Later: vegetation trend per lot | Every 1 to 3 years | Live |
+| Aerial photography | OpenDataPhilly, vintages 1996 to 2025 | Shown as pictures from the City's servers under Then and now (M4.3, `city_aerial_photos`); later: vegetation trend per lot | Every 1 to 3 years | Live |
 | USPS vacancy via HUD | huduser.gov (login for registered agencies and nonprofits) | Tract level context | Quarterly | Not used: needs a registered partner |
 
 ### Care already happening
@@ -350,10 +350,45 @@ City. Its displacement risk ratio compares home prices with the incomes of longt
 2010, carried forward with inflation), against the city's own ratio, after HUD's rule that a home
 should cost about three times a family's income (Reinvestment Fund's 2023 presentation to the City).
 
-Still to come for the history release: City orthophotos 1996 to 2023, the 1860 Hexamer and Locher
-atlas (hosted by the City with the GeoHistory Network's permission), PhilaGeoHistory layers such as
-the 1942 land use map (**permission required** from the Athenaeum of Philadelphia), and HOLC
-redlining from Mapping Inequality (license text to confirm).
+**Then and now (M4.3, checked 2026-10-09).** Pictures the visitor's browser loads straight from
+the City's own map services, only once someone turns their layer on and only while "Fetch live
+City data" is on. Placekeepers never copies or hosts them; each week the pipeline only checks that
+every service still answers (endpoint kind `arcgis_tiles`, docs/CONTRACTS.md section 1).
+
+| Source id | What | Services | Terms | Health |
+|---|---|---|---|---|
+| `city_aerial_photos` | The City's aerial photographs (orthophotography), one service per year: 1996, 2000, 2004, 2005, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2022, 2023, 2024 and 2025 (the City serves none for 2001 to 2003, 2006, 2007, 2013 or 2021). Flown in spring (mostly March to May); 1996 is black and white | `CityImagery_<year>_<resolution>` in the City's ArcGIS Online organization (`https://tiles.arcgis.com/tiles/fLeGjb7u4uXqeF9q/arcgis/rest/services`), cached Web Mercator tiles to zoom 22; listed on [OpenDataPhilly](https://opendataphilly.org/datasets/aerial-photography/) and in the City's metadata catalog ("Aerial Imagery", 1996 to 2025) | City of Philadelphia License (OpenDataPhilly); each service's own license text and the metadata catalog's "Public Access and Use Constraints" are the City's standard terms: the City keeps its rights, the data is "as is", and the user holds the City harmless. Nothing forbids showing them from a public site, and the site shows them from the City's own servers | 20 services each answer their description and one tile at zoom 15 (on 2026-10-09 all 20 answered, in 39 seconds, one request a second) |
+| `city_atlas_1860` | The 1860 Hexamer and Locher atlas, a mosaic fitted to today's map by the Greater Philadelphia GeoHistory Network and hosted by the City "with their permission" (the City's words); it covers Center City and Northern Liberties only | `HistoricHexamerLocherAtlas_1860` in the same organization. Outside the atlas the service sends plain gray squares, so the map asks only inside west -75.1904, south 39.9266, east -75.1245, north 39.9771 (the tiles with pictures at zoom 14, measured on 2026-10-09) | The City's standard terms, as above, on the service and in the catalog ("Historic Maps"). The City's copy is the one used, as the roadmap asks; the GeoHistory Network's own site is not touched | 1 service |
+
+Choices: for 2011 the City has two flights, a leaf on one (June to August, 12 inch) and a leaf off
+one (May, 6 inch); the leaf off one is used, like the spring flights of the other years. For 2024
+it has a 1 inch and a 3 inch version; the 3 inch one is used, already finer than the map's closest
+zoom. The catalog's 2005 entry gives 2004 flight dates; the City's own year is used.
+
+Not used, and why:
+
+- **Mapping Inequality's 1937 redlining map (HOLC).** The University of Richmond's Digital
+  Scholarship Lab publishes its georectified rasters and spatial data "under a CC-BY-NC license"
+  ([data page](https://dsl.richmond.edu/panorama/redlining/data), linking
+  [CC BY-NC 2.5](https://creativecommons.org/licenses/by-nc/2.5/); its
+  [FAQ](https://dsl.richmond.edu/panorama/redlining/contactus): they "can be used for pretty much
+  anything that is not commercial with just a citation"). Non commercial, so it was not shipped and
+  the owner decides (the M4.3 report says what it would require). The scans of the original maps
+  and area descriptions are in the public domain (National Archives, City Survey Files 1935 to
+  1940), but they are not fitted to today's map.
+- **The other pictures the City hosts for the GeoHistory Network**: the 1875 G. M. Hopkins atlas,
+  the 1895 and 1910 Bromley atlases, the 1942 and 1962 land use maps, and the 1928 aerial photos
+  (`CityImagery_1928_RPF`, credited "City of Philadelphia, PhilaGeoHistory Network"). The City says
+  it hosts them with the Network's permission; PhilaGeoHistory's own terms ask for permission
+  before reuse, and the roadmap keeps its layers, such as the 1942 land use map, waiting for the
+  Athenaeum of Philadelphia's permission. A request is drafted for the owner.
+- **The 1959, 1975 and 1999 aerial photos the City hosts** (`CityImagery_1959_DVRPC`,
+  `CityImagery_1975_DVRPC`, `CityImagery_1999_USGS`, credited to DVRPC and the USGS): their
+  services state no license, describe themselves as "greybase test", and are not in OpenDataPhilly
+  or the City's catalog. The 1999 photos are likely a USGS work in the public domain and the DVRPC
+  ones may fall under DVRPC's data license; adding any of them later is one registry line once
+  their terms are confirmed.
+- **PhilaGeoHistory itself** (`philageohistory.org`): permission required, never fetched.
 
 ## Sources checked 2026-10-08
 

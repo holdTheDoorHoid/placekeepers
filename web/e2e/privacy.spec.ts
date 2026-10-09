@@ -1,15 +1,23 @@
 // Privacy, as docs/ETHICS.md promises it: with "Fetch live City data" off the site asks no other
-// server for anything, and with it on only the City's own servers (registry/options.yaml); "Near
+// server for anything, and with it on only the City's own servers (registry/options.yaml), its
+// picture server only once someone turns on the aerial photos or the 1860 atlas (M4.3); "Near
 // me" keeps the person's location on the page, out of storage, links and requests; saved lists
 // stay in this browser under placekeepers:v1:; and links that open a new tab carry no opener and
 // no referrer. Every request to another server is refused here, but the browser still asks, so
 // the test sees exactly what a visitor's browser would send.
 
 import { expect, test, type BrowserContext, type Page } from '@playwright/test';
-import { LAND_BANK_LOT, LOT, SAMPLE_CENTER, isPhone } from './helpers.ts';
+import { LAND_BANK_LOT, LOT, SAMPLE_CENTER, expectHash, isPhone } from './helpers.ts';
 
 /** The only other servers the code names on purpose: the City's Carto SQL API and its address service. */
 const CITY_ORIGINS = ['https://phl.carto.com', 'https://api.phila.gov'];
+/**
+ * The City's ArcGIS tile server, which the aerial photos and the 1860 atlas come from (M4.3). Only
+ * a layer someone turned on asks it for anything, and only while live City data is on.
+ */
+const IMAGERY_ORIGIN = 'https://tiles.arcgis.com';
+const CITY_TILES = (service: string) =>
+  new RegExp(`^https://tiles\\.arcgis\\.com/tiles/fLeGjb7u4uXqeF9q/arcgis/rest/services/${service}/MapServer/tile/\\d+/\\d+/\\d+$`);
 
 /** Every origin the browser asks for anything, pages, scripts and map workers included. */
 function watchOrigins(context: BrowserContext): { origins: Set<string>; urls: string[] } {
@@ -177,6 +185,66 @@ test.describe('privacy', () => {
       .poll(() => ['walk', 'cycling', 'displacement', 'parking'].filter((file) => !seen.urls.some((url) => url.includes(`/data/tiles/${file}.`))), { timeout: 30_000 })
       .toEqual([]);
 
+    const local = new URL(page.url()).origin;
+    expect([...seen.origins].filter((origin) => origin !== local)).toEqual([]);
+  });
+
+  test('pictures from the City\'s servers are asked for only once their layer is on', async ({ page, context }, info) => {
+    // Then and now (M4.3): the aerial photos and the 1860 atlas load straight from the City's
+    // ArcGIS tile server. A default load, in either view and on a lot page, asks it for nothing.
+    const seen = watchOrigins(context);
+    const pictures = () => seen.urls.filter((url) => url.startsWith(IMAGERY_ORIGIN));
+    await open(page, `v=f&m=17/${LOT.lat}/${LOT.lng}&p=${LOT.id}`);
+    await expect(page.getByRole('dialog', { name: LOT.address })).toContainText('Old aerial photos');
+    await page.goto('about:blank');
+    await open(page, `v=a&m=16/${LOT.lat}/${LOT.lng}`);
+    await page.waitForTimeout(1500);
+    expect(pictures()).toEqual([]);
+
+    // "See this lot in old aerial photos" on the lot page turns on the photos of 1996: only then
+    // does the browser ask, and only the City's own service for that year.
+    await page.goto('about:blank');
+    await open(page, `v=a&m=17/${LOT.lat}/${LOT.lng}&p=${LOT.id}`);
+    const lotPage = page.locator('article.dossier').first();
+    await lotPage.getByRole('button', { name: 'See this lot in old aerial photos' }).click();
+    await expect.poll(() => pictures().length, { timeout: 20_000 }).toBeGreaterThan(0);
+    for (const url of pictures()) expect(url).toMatch(CITY_TILES('CityImagery_1996_6in'));
+    await expectHash(page, 'l', /aerial_photos/);
+    await expectHash(page, 's', /aerial_photos\.year:1996/);
+
+    // The atlas asks only for its own service.
+    await page.goto('about:blank');
+    const before = pictures().length;
+    await open(page, `v=a&m=16/39.9505/-75.1500&l=atlas_1860`);
+    await expect.poll(() => pictures().length, { timeout: 20_000 }).toBeGreaterThan(before);
+    for (const url of pictures().slice(before)) expect(url).toMatch(CITY_TILES('HistoricHexamerLocherAtlas_1860'));
+    if (isPhone(info)) await page.getByRole('button', { name: 'Lens and layers' }).click();
+    await expect(page.locator('#pk-left').getByRole('switch', { name: '1860 atlas (Hexamer and Locher)' })).toBeChecked();
+  });
+
+  test('with live City data off, a link cannot turn the pictures on, and the switches say why', async ({ page, context }, info) => {
+    await page.addInitScript(() => localStorage.setItem('placekeepers:v1:options', JSON.stringify({ live_city_data: false })));
+    const seen = watchOrigins(context);
+    await open(page, `v=a&m=17/${LOT.lat}/${LOT.lng}&l=vacant_parcels,aerial_photos,atlas_1860&s=aerial_photos.year:1996&p=${LOT.id}`);
+    // The lot page's button is off, with the reason.
+    const lotPage = page.locator('article.dossier').first();
+    await expect(lotPage.getByRole('button', { name: 'See this lot in old aerial photos' })).toBeDisabled();
+    await expect(lotPage).toContainText('they need live City data, which is off');
+    if (isPhone(info)) {
+      await page.locator('#pk-right').getByRole('button', { name: 'Close panel' }).click();
+      await page.getByRole('button', { name: 'Lens and layers' }).click();
+    }
+    const left = page.locator('#pk-left');
+    for (const name of ['Aerial photos by year', '1860 atlas (Hexamer and Locher)']) {
+      const toggle = left.getByRole('switch', { name, exact: true });
+      await expect(toggle).toBeDisabled();
+      await expect(toggle).not.toBeChecked();
+    }
+    await expect(left).toContainText('so they can be turned on only while "Fetch live City data" is on');
+    // The address bar no longer lists them, so a link copied now cannot either.
+    await expectHash(page, 'l', /^vacant_parcels$/);
+    await page.waitForTimeout(1500);
+    expect(seen.urls.filter((url) => url.startsWith(IMAGERY_ORIGIN))).toEqual([]);
     const local = new URL(page.url()).origin;
     expect([...seen.origins].filter((origin) => origin !== local)).toEqual([]);
   });
