@@ -12,6 +12,8 @@ the live services on 2026-10-04.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from placekeepers.adapters.arcgis import ArcgisAdapter
 from placekeepers.adapters.url import UrlAdapter
 
@@ -61,6 +63,13 @@ class CityOwnedProperty(ArcgisAdapter):
     and side yard eligibility (LAMAAssets)."""
 
     required_columns = ("opabrt", "agency", "status_1", "sideyardeligible", "geometry")
+
+    def after_promote(self, folder: Path) -> None:
+        """Count this snapshot's listed lots by status into the source's history.json, so "The
+        Land Bank in numbers" can show the weekly count from October 2026 on (M4.4)."""
+        from placekeepers.derive.land_bank import record_list_counts
+
+        record_list_counts(folder)
 
 
 class PhsLandcare(ArcgisAdapter):

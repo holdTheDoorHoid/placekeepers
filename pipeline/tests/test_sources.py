@@ -206,7 +206,8 @@ def fake_layer(source_id: str, count: int = 3) -> FakeArcgis:
         {
             "type": "Feature",
             "properties": {name: arcgis_value(name, kind, n) for name, kind in spec["fields"]},
-            "geometry": mapping(arcgis_geometry(spec["geometry"], n)),
+            # A table (the Land Management dashboard's, M4.4) has no geometry at all.
+            "geometry": mapping(arcgis_geometry(spec["geometry"], n)) if spec["geometry"] else None,
         }
         for n in range(1, count + 1)
     ]

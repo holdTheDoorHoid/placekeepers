@@ -265,6 +265,12 @@ def validate_source(ctx: Context, source: Source) -> StepResult:
         store.record(meta)
         if validation.ok:
             store.promote(meta)
+            try:
+                adapter.after_promote(store.dir)
+            except Exception as exc:  # a running count must never fail the source
+                log.warning(
+                    "%s: could not update what it keeps across snapshots: %s", source.id, exc
+                )
             state.current = meta.snapshot_id
             state.last_result = "ok"
             state.message = None

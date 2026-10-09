@@ -25,6 +25,9 @@ log = logging.getLogger(__name__)
 
 CURRENT_LINK = "current.parquet"
 STATE_FILE = "state.json"
+#: What a source keeps across its snapshots (the weekly count of listed lots kept beside the City's
+#: list, placekeepers.derive.land_bank); never a snapshot's sidecar.
+HISTORY_FILE = "history.json"
 
 
 @dataclass
@@ -109,7 +112,7 @@ class SnapshotStore:
             return []
         metas = []
         for path in sorted(self.dir.glob("*.json")):
-            if path.name == STATE_FILE or path.name.startswith("."):
+            if path.name in (STATE_FILE, HISTORY_FILE) or path.name.startswith("."):
                 continue
             try:
                 metas.append(SnapshotMeta.from_json(json.loads(path.read_text(encoding="utf-8"))))
