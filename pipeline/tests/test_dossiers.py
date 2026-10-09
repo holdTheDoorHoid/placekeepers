@@ -1087,6 +1087,52 @@ def check_no_forbidden(body: Any) -> None:
             assert not FORBIDDEN_TEXT.search(what), f"{where_}: {what!r}"
 
 
+def test_two_builds_from_the_same_input_are_byte_identical(context_factory, tmp_path) -> None:
+    """Every build from the same snapshots writes the same dossier and history files, byte for
+    byte, even where several open violations fall on the newest day: the flag quotes the title
+    first in alphabetical order, as the lot page does with live data."""
+    ctx = context_factory(now=NOW)
+    install_everything(ctx)
+    titles = [
+        "VACANT STRUCTURE AND LAND",
+        "EXTERIOR AREA WEEDS",
+        "RUBBISH & GARBAGE",
+        "HVAC SYSTEM",
+    ]
+    install_snapshot(
+        ctx,
+        "li_violations",
+        pa.table(
+            {
+                "opa_account_num": ["371000001"] * 40,
+                "violationnumber": [f"V{n}" for n in range(40)],
+                "violationstatus": ["OPEN"] * 40,
+                "violationdate": dates(["2025-08-01"] * 40),
+                "violationcodetitle": [titles[n % 4] for n in range(40)],
+                "casenumber": [f"C{n}" for n in range(40)],
+            }
+        ),
+        geometry=False,
+        fetched_at="2026-10-04T14:30:00Z",
+    )
+    first, second = tmp_path / "first", tmp_path / "second"
+    publish(ctx, first)
+    publish(ctx, second)
+    files = sorted(
+        path.relative_to(first)
+        for path in [*first.glob("dossiers/**/*.json"), first / "tables" / "owners.json"]
+    )
+    assert len(files) > 6
+    for name in files:
+        assert (first / name).read_bytes() == (second / name).read_bytes(), name
+    flags = {flag["id"]: flag for flag in parcel(first, "371000001")["owner"]["flags"]}
+    assert flags["open_violations"]["data"] == {
+        "count": 40,
+        "last": "2025-08-01",
+        "title": "EXTERIOR AREA WEEDS",
+    }
+
+
 def test_nothing_ethics_rules_out_is_published(built) -> None:
     _, out = built
     for path in [*(out / "dossiers").rglob("*.json"), out / "tables" / "owners.json"]:

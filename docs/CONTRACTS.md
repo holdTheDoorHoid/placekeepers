@@ -1317,7 +1317,7 @@ Flags, in this order, with their `data`:
 | `years_since_sale` | private owners | `year`; with a known sale `date`, `price` and `source` (`opa_properties` when it comes from the assessor, before the deed records begin in 2000); with none, `sold: false` and `year` is the year since which there has been no sale on the open market |
 | `many_parcels` | private owners with at least 5 parcels we call vacant with high or medium confidence | `count`; for an organization `list` (a key of `tables/owners.json`); for an owner who may be a person `parcels`, their other parcels (each `id`, `address`, `kind`, `confidence`, as in `tables/owners.json`), never a `list` |
 | `fast_resales` | every owner | `count`, `dates` (two or more sales within 24 months of each other) |
-| `open_violations` | every owner | `count`, `last` (date), `title` (the City's violation title) |
+| `open_violations` | every owner | `count`, `last` (date), `title` (the City's title of the newest open violation; on a day with several, the title first in alphabetical order, so every build and the live lot page quote the same one) |
 | `unsafe`, `imminently_dangerous` | every owner | `since` (date) |
 
 Private owners are a person, a company, a nonprofit, or an owner name we could not type. How each

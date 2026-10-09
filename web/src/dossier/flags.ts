@@ -201,7 +201,13 @@ export interface LiFacts {
 /** What the L&I timeline says for the flags: open violations, and open unsafe or imminently dangerous notices. */
 export function liFacts(events: LiEvent[]): LiFacts {
   const open = events.filter((e) => e.kind === 'violation' && e.open);
-  const latest = [...open].sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))[0];
+  // The violation the flag quotes, as the pipeline picks it (publish/dossiers.py, LAST_OPEN_TITLE):
+  // the newest, and on a day with several, the title first in code point order; no title last.
+  const title = (e: LiEvent) => e.title?.replace(/\s+/g, ' ').trim() || null;
+  // Code point order with nulls last; `newest` puts the later day first, undated last.
+  const order = (x: string | null, y: string | null) => (x === y ? 0 : x === null ? 1 : y === null ? -1 : x < y ? -1 : 1);
+  const newest = (x: string | null, y: string | null) => (x === y ? 0 : x === null ? 1 : y === null ? -1 : x > y ? -1 : 1);
+  const latest = [...open].sort((a, b) => newest(a.date, b.date) || order(title(a), title(b)))[0];
   const since = (kind: LiEvent['kind']) =>
     events
       .filter((e) => e.kind === kind && e.open && e.date)
@@ -212,7 +218,7 @@ export function liFacts(events: LiEvent[]): LiFacts {
   return {
     openViolations: open.length,
     lastOpen: latest?.date ?? null,
-    lastOpenTitle: latest?.title ?? null,
+    lastOpenTitle: latest ? title(latest) : null,
     unsafeSince: unsafe,
     dangerousSince: dangerous,
   };
