@@ -258,6 +258,121 @@
       "text": "L&I lists 3 open violations."
     }
   ],
+  "last_open_pick": [
+    {
+      "rows": [
+        [
+          "2025-08-01",
+          "VACANT STRUCTURE AND LAND",
+          "OPEN"
+        ],
+        [
+          "2025-08-01",
+          "EXTERIOR AREA WEEDS",
+          "OPEN"
+        ],
+        [
+          "2024-01-10",
+          "RUBBISH & GARBAGE",
+          "OPEN"
+        ]
+      ],
+      "count": 3,
+      "last": "2025-08-01",
+      "title": "EXTERIOR AREA WEEDS",
+      "text": "L&I lists 3 open violations. The most recent, from August 1, 2025, is for exterior area weeds."
+    },
+    {
+      "rows": [
+        [
+          "2025-08-01",
+          "ZONING",
+          "OPEN"
+        ],
+        [
+          "2025-07-01",
+          "ALPHA",
+          "OPEN"
+        ]
+      ],
+      "count": 2,
+      "last": "2025-08-01",
+      "title": "ZONING",
+      "text": "L&I lists 2 open violations. The most recent, from August 1, 2025, is for zoning."
+    },
+    {
+      "rows": [
+        [
+          "2026-01-02",
+          "AAA NOT OPEN",
+          "COMPLIED"
+        ],
+        [
+          "2025-12-08",
+          "PLANS REQUIRED TO COMPLY",
+          "OPEN"
+        ],
+        [
+          "2025-12-08",
+          "HVAC SYSTEM",
+          "OPEN"
+        ]
+      ],
+      "count": 2,
+      "last": "2025-12-08",
+      "title": "HVAC SYSTEM",
+      "text": "L&I lists 2 open violations. The most recent, from December 8, 2025, is for hvac system."
+    },
+    {
+      "rows": [
+        [
+          "2025-05-05",
+          null,
+          "OPEN"
+        ],
+        [
+          "2025-05-05",
+          "WEEDS",
+          "OPEN"
+        ]
+      ],
+      "count": 2,
+      "last": "2025-05-05",
+      "title": "WEEDS",
+      "text": "L&I lists 2 open violations. The most recent, from May 5, 2025, is for weeds."
+    },
+    {
+      "rows": [
+        [
+          "2025-05-05",
+          "B  TITLE",
+          "OPEN"
+        ],
+        [
+          "2025-05-05",
+          "B SIGN",
+          "OPEN"
+        ]
+      ],
+      "count": 2,
+      "last": "2025-05-05",
+      "title": "B SIGN",
+      "text": "L&I lists 2 open violations. The most recent, from May 5, 2025, is for b sign."
+    },
+    {
+      "rows": [
+        [
+          "2025-05-05",
+          "WEEDS",
+          "CLOSED"
+        ]
+      ],
+      "count": 0,
+      "last": null,
+      "title": null,
+      "text": null
+    }
+  ],
   "unsafe_text": [
     {
       "since": "2023-05-02",

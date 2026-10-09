@@ -11,6 +11,7 @@ import {
   FLAG_IDS,
   absenteeText,
   flagParts,
+  liFacts,
   liFactFlags,
   ownerFlagAllowed,
   ownerFlags,
@@ -37,6 +38,7 @@ interface Fixture {
   no_sale_text: { year: number; text: string }[];
   resale_text: { count: number; first: string; last: string; recent: boolean; text: string }[];
   violations_text: { count: number; last: string | null; title: string | null; text: string }[];
+  last_open_pick: { rows: [string | null, string | null, string][]; count: number; last: string | null; title: string | null; text: string | null }[];
   unsafe_text: { since: string | null; text: string }[];
   dangerous_text: { since: string | null; text: string }[];
   owner_type: { names: string[]; type: string; reason: string }[];
@@ -99,6 +101,24 @@ describe('the web app says what the pipeline says', () => {
 
   it.each(fixture.violations_text)('open violations: $text', (c) => {
     expect(violationsText({ ...noLi, openViolations: c.count, lastOpen: c.last, lastOpenTitle: c.title })).toBe(c.text);
+  });
+
+  // Several open violations on the newest day: the same one is quoted in every build and live, in
+  // whatever order the City lists them.
+  it.each(fixture.last_open_pick)('quotes the same open violation as the pipeline: $title', (c) => {
+    const events = c.rows.map(([date, title, status]) => ({
+      kind: 'violation' as const,
+      date,
+      title,
+      status,
+      detail: null,
+      open: status === 'OPEN',
+    }));
+    for (const order of [events, [...events].reverse()]) {
+      const facts = liFacts(order);
+      expect([facts.openViolations, facts.lastOpen, facts.lastOpenTitle]).toEqual([c.count, c.last, c.title]);
+      if (c.text !== null) expect(violationsText(facts)).toBe(c.text);
+    }
   });
 
   it('unsafe and imminently dangerous', () => {
