@@ -198,7 +198,7 @@
         <details>
           <summary>{t.showNumbers}</summary>
           <!-- svelte-ignore a11y_no_noninteractive_tabindex (a table that may scroll sideways is reached with the keyboard) -->
-          <div class="table-wrap" role="region" aria-label={t.perYear.title} tabindex="0">
+          <div class="table-wrap" role="region" aria-label={t.tableLabel(t.perYear.title)} tabindex="0">
             <table>
               <thead>
                 <tr>
@@ -240,7 +240,7 @@
         <details>
           <summary>{t.showNumbers}</summary>
           <!-- svelte-ignore a11y_no_noninteractive_tabindex (a table that may scroll sideways is reached with the keyboard) -->
-          <div class="table-wrap" role="region" aria-label={t.buyers.title} tabindex="0">
+          <div class="table-wrap" role="region" aria-label={t.tableLabel(t.buyers.title)} tabindex="0">
             <table>
               <thead>
                 <tr>
@@ -286,7 +286,7 @@
         <details>
           <summary>{t.showNumbers}</summary>
           <!-- svelte-ignore a11y_no_noninteractive_tabindex (a table that may scroll sideways is reached with the keyboard) -->
-          <div class="table-wrap" role="region" aria-label={t.programs.series} tabindex="0">
+          <div class="table-wrap" role="region" aria-label={t.tableLabel(t.programs.series)} tabindex="0">
             <table>
               <thead><tr><th scope="col">{t.year}</th><th scope="col">{t.programs.series}</th><th scope="col">{t.properties}</th></tr></thead>
               <tbody>
@@ -302,7 +302,7 @@
           <h3>{t.programs.cityTitle}</h3>
           <p class="caption">{t.programs.cityCaption(formatDate(table.programs_fy.edited) ?? table.programs_fy.edited)}</p>
           <!-- svelte-ignore a11y_no_noninteractive_tabindex (a table that may scroll sideways is reached with the keyboard) -->
-          <div class="table-wrap" role="region" aria-label={t.programs.cityTitle} tabindex="0">
+          <div class="table-wrap" role="region" aria-label={t.tableLabel(t.programs.cityTitle)} tabindex="0">
             <table class="wide">
               <thead>
                 <tr>
@@ -341,7 +341,7 @@
           <p>{t.prices.summary(formatMoney(stats.total.price.median), percent(stats.total.price.nominal, stats.total.price.priced) ?? 0)}</p>
         {/if}
         <!-- svelte-ignore a11y_no_noninteractive_tabindex (a table that may scroll sideways is reached with the keyboard) -->
-        <div class="table-wrap" role="region" aria-label={t.prices.title} tabindex="0">
+        <div class="table-wrap" role="region" aria-label={t.tableLabel(t.prices.title)} tabindex="0">
           <table>
             <thead>
               <tr>
@@ -397,7 +397,7 @@
             <p class="small muted">{t.listed.oneWeek}</p>
           {/if}
           <!-- svelte-ignore a11y_no_noninteractive_tabindex (a table that may scroll sideways is reached with the keyboard) -->
-          <div class="table-wrap" role="region" aria-label={t.listed.title} tabindex="0">
+          <div class="table-wrap" role="region" aria-label={t.tableLabel(t.listed.title)} tabindex="0">
             <table>
               <thead>
                 <tr>
@@ -423,7 +423,7 @@
             <details>
               <summary>{t.listed.byStatus(formatDate(latestWeek.date) ?? latestWeek.date)}</summary>
               <!-- svelte-ignore a11y_no_noninteractive_tabindex (a table that may scroll sideways is reached with the keyboard) -->
-              <div class="table-wrap" role="region" aria-label={t.listed.byStatus(formatDate(latestWeek.date) ?? '')} tabindex="0">
+              <div class="table-wrap" role="region" aria-label={t.tableLabel(t.listed.byStatus(formatDate(latestWeek.date) ?? ''))} tabindex="0">
                 <table>
                   <thead><tr><th scope="col">{t.listed.status}</th><th scope="col">{t.listed.count}</th></tr></thead>
                   <tbody>

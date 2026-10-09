@@ -1377,6 +1377,7 @@ export const strings = {
       `${year} runs only to ${date}: the City's deed records are about eight weeks behind.`,
     noNames: 'We read the buyers\' names only to tell a person from a company and to check the house next door. We keep none of them.',
     showNumbers: 'Show the numbers',
+    tableLabel: (what: string) => `The numbers: ${what}`,
     downloadCsv: 'Download CSV',
     year: 'Year',
     total: 'Total',

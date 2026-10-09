@@ -95,7 +95,10 @@ def test_carto_sources_from_fixtures(source_id: str, context_factory) -> None:
     assert meta.rows == 5
     assert set(adapter.required_columns) <= set(meta.columns)
     if source.endpoint.where:
-        assert all(f"({source.endpoint.where})" in query for query in fake.queries)
+        # A source may also read the history of the properties it found, by their accounts
+        # (land_conveyances, M4.4); those queries name the accounts instead.
+        found = [q for q in fake.queries if "AS chosen(chosen_account)" not in q]
+        assert found and all(f"({source.endpoint.where})" in query for query in found)
 
 
 @pytest.mark.parametrize("source_id", ids_of(CartoAccountsAdapter))
