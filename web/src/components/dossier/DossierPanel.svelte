@@ -3,6 +3,7 @@
   // show the parcel on the map, or clear the selection.
   import { config } from '../../config/index.ts';
   import type { OwnerListTarget } from '../../dossier/owners-table.ts';
+  import type { TimelineKind } from '../../dossier/timeline.ts';
   import type { AppStore } from '../../state/store.svelte.ts';
   import { LIVE_CITY_DATA } from '../../state/options.ts';
   import { strings } from '../../strings.ts';
@@ -25,7 +26,13 @@
     onRetry: () => store.dossier.retry(),
     onTurnOnLive: () => store.setOption(LIVE_CITY_DATA, true),
     onShowLayer: (id: string) => store.setLayerVisible(id, true),
-    onPrint: () => window.print(),
+    // The printed page lists the timeline's newest records, so they are fetched first.
+    onPrint: async () => {
+      await store.dossier.loadHistory();
+      window.print();
+    },
+    onOpenHistory: () => void store.dossier.loadHistory(),
+    onToggleKind: (kind: TimelineKind) => store.dossier.toggleKind(kind),
     onShowOnMap,
     onClear: clearable ? () => store.select(null) : undefined,
     onShowOwnerList: (target: OwnerListTarget) => (ownerList = target),

@@ -4,9 +4,9 @@
 
 import { displacementCaution } from '../config/suggestions.ts';
 import { formatDate, strings } from '../strings.ts';
-import type { DossierView, TransferRow } from './build.ts';
+import type { DossierView } from './build.ts';
 
-export const PRINT_LIMITS = { suggestions: 3, steps: 3, flags: 6, transfers: 4, li: 4, sources: 6, reasons: 5 } as const;
+export const PRINT_LIMITS = { suggestions: 3, steps: 3, flags: 6, events: 10, li: 4, sources: 6, reasons: 5 } as const;
 
 export interface PrintModel {
   title: string;
@@ -38,7 +38,18 @@ export interface PrintModel {
     tax: string;
     deedFraud: string | null;
   };
-  history: { transfers: TransferRow[]; moreTransfers: number; assessment: string | null; li: string[]; notInCopy: string | null };
+  history: {
+    /** The story of the lot, each sentence with where it comes from. */
+    story: string[];
+    /** The timeline's 10 newest records the reader has not switched off (issue #38). */
+    events: { date: string; kind: string; text: string }[];
+    moreEvents: number;
+    /** Said when the timeline's records from the weekly copy were not loaded or not held. */
+    timelineNote: string | null;
+    assessment: string | null;
+    li: string[];
+    notInCopy: string | null;
+  };
   sources: string[];
   moreSources: string | null;
   notLegalAdvice: string;
@@ -67,7 +78,8 @@ function listingLines(listing: DossierView['actions']['listing'], watchPointer: 
 
 export function printModel(view: DossierView, now: Date = new Date()): PrintModel {
   const reasons = view.summary.reasons ? view.summary.reasons.agree : [];
-  const transfers = view.history.transfers ?? [];
+  const timeline = view.history.timeline;
+  const tl = strings.dossier.history.timeline;
   const latest = view.history.assessments?.find((a) => a.marketValue !== null) ?? null;
   const flags = view.owner.flags.slice(0, PRINT_LIMITS.flags).map((f) => ({
     title: f.title,
@@ -123,8 +135,10 @@ export function printModel(view: DossierView, now: Date = new Date()): PrintMode
       deedFraud: view.owner.deedFraud?.text ?? null,
     },
     history: {
-      transfers: transfers.slice(0, PRINT_LIMITS.transfers),
-      moreTransfers: Math.max(0, transfers.length - PRINT_LIMITS.transfers),
+      story: timeline.story.map((line) => `${line.text} ${tl.storySource(line.source)}`),
+      events: timeline.newest.slice(0, PRINT_LIMITS.events),
+      moreEvents: Math.max(0, timeline.shown - PRINT_LIMITS.events),
+      timelineNote: timeline.status !== 'ready' ? tl.printWaiting : (timeline.notes[0]?.text ?? null),
       assessment: latest ? strings.dossier.print.lastAssessment(latest.year, latest.value) : null,
       li: (view.history.li.summary ?? []).slice(0, PRINT_LIMITS.li),
       notInCopy: view.history.notInCopy?.text ?? null,

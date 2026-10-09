@@ -27,7 +27,7 @@ export const NEARBY_METERS = 152.4;
 /** At most this many transfers, assessments and L&I records per lookup. */
 export const MAX_TRANSFERS = 200;
 export const MAX_ASSESSMENTS = 100;
-export const MAX_LI_EVENTS = 400;
+export const MAX_LI_EVENTS = 1000;
 
 /** Thrown when something that is not a nine digit account or a point in the city reaches a query. */
 export class UnsafeQueryInput extends Error {
@@ -88,23 +88,45 @@ export function assessmentsSql(opa: string): string {
   return `SELECT year, market_value FROM assessments WHERE parcel_number = ${accountLiteral(opa)} ORDER BY year DESC LIMIT ${MAX_ASSESSMENTS}`;
 }
 
+/** One L&I table of the lot timeline: its kind and the SQL for its date, title, status and detail. */
+export interface LiPart {
+  kind: LiKind;
+  table: string;
+  date: string;
+  title: string;
+  status: string;
+  detail: string;
+}
+
+const NOTICE_STATUS = "CASE WHEN violationresolutiondate IS NULL THEN 'OPEN' ELSE 'RESOLVED' END";
+
+/**
+ * The six L&I tables of the lot timeline, read exactly as the pipeline reads them for the weekly
+ * copy (pipeline/src/placekeepers/adapters/li.py, HISTORY_PARTS; both test suites check
+ * pipeline/tests/fixtures/timeline_parity.json), so live and weekly timelines agree. Only dates,
+ * the City's titles and statuses, the permit type and whether the City did a demolition: never a
+ * case, permit or violation number, an inspector, an applicant or a contractor.
+ */
+export const LI_PARTS: readonly LiPart[] = [
+  { kind: 'violation', table: 'violations', date: 'violationdate', title: 'violationcodetitle', status: 'violationstatus', detail: 'NULL' },
+  { kind: 'permit', table: 'permits', date: 'permitissuedate', title: 'typeofwork', status: 'status', detail: 'permitdescription' },
+  { kind: 'demolition', table: 'demolitions', date: 'COALESCE(completed_date, start_date)', title: 'typeofwork', status: 'status', detail: 'city_demo' },
+  { kind: 'unsafe', table: 'unsafe', date: 'violationdate', title: 'violationcodetitle', status: NOTICE_STATUS, detail: 'NULL' },
+  { kind: 'imminently_dangerous', table: 'imm_dang', date: 'violationdate', title: 'violationcodetitle', status: NOTICE_STATUS, detail: 'NULL' },
+  { kind: 'clean_seal', table: 'clean_seal', date: 'COALESCE(workordercompleteddate, casecreateddate)', title: 'workordertype', status: 'workorderstatus', detail: 'NULL' },
+];
+
 /**
  * The L&I timeline in one query: violations, permits, demolitions, unsafe and imminently
  * dangerous notices, and clean and seal work, newest first, in the same five columns.
  */
 export function liSql(opa: string): string {
   const a = accountLiteral(opa);
-  const resolved = "CASE WHEN violationresolutiondate IS NULL THEN 'OPEN' ELSE 'RESOLVED' END";
-  return (
-    'SELECT kind, date, title, status, detail FROM (' +
-    `SELECT 'violation' AS kind, violationdate AS date, violationcodetitle AS title, violationstatus AS status, casestatus AS detail FROM violations WHERE opa_account_num = ${a} ` +
-    `UNION ALL SELECT 'permit', permitissuedate, typeofwork, status, permitdescription FROM permits WHERE opa_account_num = ${a} ` +
-    `UNION ALL SELECT 'demolition', COALESCE(completed_date, start_date), typeofwork, status, city_demo FROM demolitions WHERE opa_account_num = ${a} ` +
-    `UNION ALL SELECT 'unsafe', violationdate, violationcodetitle, ${resolved}, NULL FROM unsafe WHERE opa_account_num = ${a} ` +
-    `UNION ALL SELECT 'imminently_dangerous', violationdate, violationcodetitle, ${resolved}, NULL FROM imm_dang WHERE opa_account_num = ${a} ` +
-    `UNION ALL SELECT 'clean_seal', COALESCE(workordercompleteddate, casecreateddate), workordertype, workorderstatus, NULL FROM clean_seal WHERE opa_account_num = ${a}` +
-    `) AS events ORDER BY date DESC NULLS LAST LIMIT ${MAX_LI_EVENTS}`
+  const parts = LI_PARTS.map(
+    (part) =>
+      `SELECT '${part.kind}' AS kind, ${part.date} AS date, ${part.title} AS title, ${part.status} AS status, ${part.detail} AS detail FROM ${part.table} WHERE opa_account_num = ${a}`,
   );
+  return `SELECT kind, date, title, status, detail FROM (${parts.join(' UNION ALL ')}) AS events ORDER BY date DESC NULLS LAST LIMIT ${MAX_LI_EVENTS}`;
 }
 
 /**

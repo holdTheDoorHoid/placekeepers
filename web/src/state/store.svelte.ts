@@ -143,6 +143,8 @@ export class AppStore {
       liveOn: this.liveCityData,
       center: this.dossier.center,
       now: new Date(),
+      history: this.dossier.history,
+      hiddenKinds: this.dossier.hiddenKinds,
     });
   });
 

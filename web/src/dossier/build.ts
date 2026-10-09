@@ -42,13 +42,25 @@ import {
 import type { FailReason } from './http.ts';
 import { isPrivate, ownerTypeFromNames, sameOwners } from './owners.ts';
 import { plain } from './plain.ts';
-import { isSheriff } from './transfers.ts';
+import { FULL_RECORDS_FROM, isSheriff } from './transfers.ts';
+import {
+  LIST_SOURCES,
+  buildTimeline,
+  byYear,
+  groupLi,
+  withOlder,
+  type LiGroups,
+  type StorySentence,
+  type TimelineKind,
+  type TimelineRow,
+  type TimelineYear,
+} from './timeline.ts';
 import type {
   Assessment,
   CityOwned,
   Confidence,
   DossierNotes,
-  LiEvent,
+  HistoryParcel,
   LiSummary,
   LiveLi,
   LiveProperty,
@@ -106,6 +118,19 @@ export type ShardState =
   /** The shard could not be downloaded. */
   | { status: 'failed' };
 
+/**
+ * The lot timeline's records from the weekly copy (issue #38), fetched only when the History part
+ * opens: not asked yet, loading, found, or why not (this build has none for the parcel, has none
+ * at all, or the file could not be downloaded).
+ */
+export type HistoryState =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'found'; parcel: HistoryParcel; generatedAt: string | null }
+  | { status: 'unlisted' }
+  | { status: 'unpublished' }
+  | { status: 'failed' };
+
 export interface DossierInput {
   opa: string;
   registry: Registry;
@@ -119,6 +144,10 @@ export interface DossierInput {
   /** A point on the parcel, for links to street imagery, when known. */
   center: [number, number] | null;
   now: Date;
+  /** The weekly copy's timeline records (idle until the History part opens). */
+  history?: HistoryState;
+  /** The kinds of record the reader switched off in the timeline. */
+  hiddenKinds?: readonly TimelineKind[];
 }
 
 // Output ------------------------------------------------------------------------------------------
@@ -186,20 +215,35 @@ export interface TransferRow {
   from: string;
   to: string;
   sheriff: boolean;
+  /** Before 2000: from records the City says may be incomplete. */
+  early: boolean;
+}
+
+/**
+ * The story of the lot in one timeline (issue #38, src/dossier/timeline.ts): one or two sentences
+ * built only from records, then every record newest first by year, with the kinds the reader can
+ * switch off.
+ */
+export interface TimelineView {
+  /** waiting: the History part has not opened yet, and its records load when it does. */
+  status: 'waiting' | 'loading' | 'ready';
+  story: StorySentence[];
+  /** The years and rows the reader sees: the kinds switched off are left out. */
+  years: TimelineYear[];
+  /** The newest records first, one per line, for print: the kinds switched off are left out. */
+  newest: { date: string; kind: string; text: string }[];
+  /** How many records the reader sees in all. */
+  shown: number;
+  kinds: { id: TimelineKind; label: string; count: number; shown: boolean }[];
+  /** Records it cannot show, and why: never "none on record" for records never downloaded. */
+  notes: { text: string; offerLive: boolean; retry: boolean }[];
+  provenance: Provenance;
 }
 
 export interface AssessmentRow {
   year: number;
   value: string;
   marketValue: number | null;
-}
-
-export interface LiRow {
-  date: string;
-  kind: string;
-  what: string;
-  status: string | null;
-  open: boolean;
 }
 
 export interface NearbyGroup {
@@ -281,7 +325,8 @@ export interface DossierView {
     transfersProvenance: Provenance;
     assessments: AssessmentRow[] | null;
     assessmentsProvenance: Provenance;
-    li: { rows: LiRow[] | null; summary: string[] | null; truncated: boolean; liveForTimeline: boolean };
+    li: { summary: string[] | null };
+    timeline: TimelineView;
     /**
      * Said when records this dossier was not built from cannot be shown live (live data off, or
      * the City did not answer): they are not in the weekly copy, never "none on record".
@@ -371,30 +416,7 @@ export function transferRow(t: Transfer): TransferRow {
     from: namesText(t.from, t.fromMore),
     to: namesText(t.to, t.toMore),
     sheriff: isSheriff(t),
-  };
-}
-
-/** Abbreviations L&I writes in its titles, kept in capitals ("ID STRUCTURE" is imminently dangerous). */
-const LI_ABBREVIATIONS = new Set(['ID', 'L&I', 'HVAC']);
-
-/** An L&I title in sentence case, with its abbreviations still in capitals. */
-export function cityTitle(text: string): string {
-  return sentenceCase(text)
-    .split(' ')
-    .map((word) => (LI_ABBREVIATIONS.has(word.toUpperCase()) ? word.toUpperCase() : word))
-    .join(' ');
-}
-
-export function liRow(e: LiEvent): LiRow {
-  const h = strings.dossier.history;
-  const title = e.title ? cityTitle(e.title) : '';
-  const detail = e.kind === 'permit' && e.detail && e.detail.toLowerCase() !== (e.title ?? '').toLowerCase() ? cityTitle(e.detail) : '';
-  return {
-    date: e.date ? (formatDate(e.date, 'short') ?? e.date) : h.noDate,
-    kind: h.kinds[e.kind] ?? sentenceCase(e.kind),
-    what: plain([title, detail].filter(Boolean).join(': ')),
-    status: e.status ? plain(sentenceCase(e.status)) : null,
-    open: e.open,
+    early: t.date !== null && t.date < FULL_RECORDS_FROM,
   };
 }
 
@@ -458,6 +480,7 @@ export function routeView(route: Route): RouteView {
 
 export function buildDossier(input: DossierInput): DossierView {
   const { opa, registry, state, manifest, shard, tile, live, liveOn, center, now } = input;
+  const history: HistoryState = input.history ?? { status: 'idle' };
   const s = strings.dossier;
   const parcel = shard.status === 'found' ? shard.parcel : null;
   const snapshotDate = shard.status === 'found' ? shard.generatedAt : null;
@@ -656,7 +679,6 @@ export function buildDossier(input: DossierInput): DossierView {
   const assessments = unseen.includes('assessments') ? null : pick(live.assessments, parcel?.assessments ?? null);
   const liveLi = live.li.status === 'ok' ? live.li.data : null;
   const shardLi = parcel?.li ?? null;
-  const liRows = liveLi ? liveLi.events.map(liRow) : null;
   let liSummary: string[] | null = null;
   if (!liveLi && shardLi) liSummary = liSummaryLines(shardLi);
   if (liveLi) {
@@ -668,6 +690,36 @@ export function buildDossier(input: DossierInput): DossierView {
       imminentlyDangerous: facts.dangerousSince !== null,
     });
   }
+
+  // The timeline: deeds as shown above, L&I records live or from the weekly copy, and the copy's
+  // vacancy records, so it reads the same with live data on or off (live adds newer records).
+  const copy = history.status === 'found' ? history.parcel : null;
+  const copyDate = history.status === 'found' ? (history.generatedAt ?? snapshotDate) : snapshotDate;
+  let timelineLi: LiGroups | null = copy?.li ?? null;
+  if (liveLi) timelineLi = liveLi.truncated ? withOlder(groupLi(liveLi.events), copy?.li ?? null) : groupLi(liveLi.events);
+  const tl = s.history.timeline;
+  const settled = history.status !== 'idle' && history.status !== 'loading';
+  const built = buildTimeline({ transfers, li: timelineLi, lists: copy?.lists ?? [], landcare: parcel?.landcare ?? null, today: asOf });
+  const hidden = new Set(input.hiddenKinds ?? []);
+  const visible: TimelineRow[] = built.rows.filter((row) => !hidden.has(row.kind));
+  const timelineNotes: TimelineView['notes'] = [];
+  if (settled && timelineLi === null && live.li.status !== 'loading') {
+    if (history.status === 'failed' && live.li.status !== 'ok') timelineNotes.push({ text: tl.failed, offerLive: !liveOn, retry: true });
+    else timelineNotes.push({ text: tl.liMissing, offerLive: !liveOn, retry: liveOn && live.li.status === 'failed' });
+  }
+  const timeline: TimelineView = {
+    status: history.status === 'idle' && !liveLi ? 'waiting' : history.status === 'loading' || history.status === 'idle' ? 'loading' : 'ready',
+    story: built.story,
+    years: byYear(visible),
+    newest: visible
+      .filter((row) => row.day !== null)
+      .flatMap((row) => row.items.map((item) => ({ date: row.day!.length === 4 ? row.day! : (formatDate(row.day, 'short') ?? row.day!), kind: row.label, text: item.text })))
+      .slice(0, 10),
+    shown: visible.reduce((sum, row) => sum + row.items.length, 0),
+    kinds: built.kinds.map((k) => ({ ...k, shown: !hidden.has(k.id) })),
+    notes: timelineNotes,
+    provenance: provenanceOf(live.li, copy?.li != null, copyDate, liveOn),
+  };
 
   // Nearby -----------------------------------------------------------------------------------------
   const n = s.nearby;
@@ -737,6 +789,10 @@ export function buildDossier(input: DossierInput): DossierView {
     addSource('li_unsafe', liWhen);
     addSource('li_imminently_dangerous', liWhen);
   }
+  // The timeline's own records from the weekly copy (issue #38).
+  const copyWhen = snapshotDateText(copyDate) ? src.snapshot(snapshotDateText(copyDate)!) : src.snapshotNoDate;
+  if (copy?.li && live.li.status !== 'ok') addSource('li_history', copyWhen);
+  for (const record of copy?.lists ?? []) addSource(LIST_SOURCES[record.list], copyWhen);
   // The City's list of public property, dated by the day it was fetched (its records carry no
   // date of their own; issue #36).
   if ((shardOwner?.cityOwned && !ownerChanged) || listing) {
@@ -846,7 +902,8 @@ export function buildDossier(input: DossierInput): DossierView {
             .map((a) => ({ year: a.year, marketValue: a.marketValue, value: a.marketValue === null ? s.history.noValue : formatMoney(a.marketValue) }))
         : null,
       assessmentsProvenance: provenanceOf(live.assessments, parcel?.assessments != null && !unseen.includes('assessments'), snapshotDate, liveOn),
-      li: { rows: liRows, summary: liSummary, truncated: liveLi?.truncated ?? false, liveForTimeline: !liveLi },
+      li: { summary: liSummary },
+      timeline,
       liProvenance: provenanceOf(live.li, shardLi !== null, snapshotDate, liveOn),
       notInCopy: missing.length
         ? {
