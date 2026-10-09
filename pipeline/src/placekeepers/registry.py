@@ -70,6 +70,9 @@ class License(Strict):
     label: Text
     url: Url
     share_alike: bool
+    #: allows non commercial use only (added 2026-10-09 for the 1937 redlining map): data under
+    #: such a license is published in its own file, never in a download (docs/CONTRACTS.md)
+    non_commercial: bool = False
 
 
 class Group(Strict):
@@ -626,6 +629,7 @@ def _cross_check(
             if not page.is_file():
                 problems.append(f"{where}: guide page content/{layer.guide}.md does not exist")
         _check_tile_sources(layer, reg["sources"], where, problems)
+        _check_non_commercial(layer, reg, where, problems)
 
     for lens in reg["lenses"].values():
         where = f"registry/lenses.yaml: {lens.id}"
@@ -662,12 +666,46 @@ def _cross_check(
                 problems.append(f"{where}: partner '{partner_id}' is not in registry/partners.yaml")
 
 
+def _check_non_commercial(
+    layer: Layer, reg: dict[str, dict[str, Any]], where: str, problems: list[str]
+) -> None:
+    """A layer drawing a source under a non commercial license (such as the 1937 redlining map)
+    draws nothing else, and no other layer shares its file, so its data never mixes with data
+    under our own terms (added 2026-10-09, docs/CONTRACTS.md section 1)."""
+
+    def non_commercial(source_id: str) -> bool:
+        source = reg["sources"].get(source_id)
+        license_ = reg["licenses"].get(source.license) if source else None
+        return bool(license_ and license_.non_commercial)
+
+    if not any(non_commercial(source_id) for source_id in layer.sources):
+        return
+    if not all(non_commercial(source_id) for source_id in layer.sources):
+        problems.append(
+            f"{where}: it draws a source under a non commercial license, so it can draw no other "
+            "kind"
+        )
+    sharing = [
+        other.id
+        for other in reg["layers"].values()
+        if other.id != layer.id and other.file is not None and other.file == layer.file
+    ]
+    if sharing:
+        problems.append(
+            f"{where}: its data is under a non commercial license, so no other layer may share its "
+            f"file {layer.file} ({', '.join(sharing)})"
+        )
+
+
 def _check_tile_sources(
     layer: Layer, sources: dict[str, Source], where: str, problems: list[str]
 ) -> None:
-    """A raster layer draws exactly one `arcgis_tiles` source, and a layer with files never names
-    one. When the source has several services, the layer's `year` setting (a choice) chooses
-    among them: its option values are the services' keys, in the same order (M4.3)."""
+    """A raster layer draws only `arcgis_tiles` sources, at least one, and a layer with files never
+    names one. Every service key is used once across the layer's sources. When they hold several
+    services together, the layer's `year` setting (a choice) chooses among them: its option values
+    are exactly the services' keys, each once, in the order the slider shows them (M4.3; several
+    sources from 2026-10-09, so the photos the City hosts for DVRPC and the USGS keep their own
+    publishers and terms)."""
     tiles = [
         source
         for source_id in layer.sources
@@ -681,23 +719,29 @@ def _check_tile_sources(
                 "draw"
             )
         return
-    if len(layer.sources) != 1 or len(tiles) != 1:
-        problems.append(f"{where}: a raster layer needs exactly one source of kind arcgis_tiles")
+    if not tiles or len(tiles) != len(layer.sources):
+        problems.append(f"{where}: a raster layer draws only sources of kind arcgis_tiles")
         return
-    endpoint = tiles[0].endpoint
-    assert isinstance(endpoint, ArcgisTilesEndpoint)
-    keys = [service.key for service in endpoint.services]
+    keys = [
+        service.key
+        for source in tiles
+        if isinstance(source.endpoint, ArcgisTilesEndpoint)
+        for service in source.endpoint.services
+    ]
+    if len(set(keys)) != len(keys):
+        problems.append(f"{where}: its sources use a service key more than once: {keys}")
+        return
     year = next((setting for setting in layer.settings if setting.id == "year"), None)
     if len(keys) > 1:
         if year is None or year.type != "choice" or year.options is None:
             problems.append(
-                f"{where}: its source has {len(keys)} services, so it needs a choice setting "
+                f"{where}: its sources have {len(keys)} services, so it needs a choice setting "
                 "'year' to choose among them"
             )
-        elif [option.value for option in year.options] != keys:
+        elif sorted(option.value for option in year.options) != sorted(keys):
             problems.append(
-                f"{where}: the 'year' options {[o.value for o in year.options]} should be the "
-                f"source's service keys in the same order, {keys}"
+                f"{where}: the 'year' options {[o.value for o in year.options]} should be its "
+                f"sources' service keys, each once: {sorted(keys)}"
             )
     elif year is not None:
         problems.append(f"{where}: its source has one service, so it needs no 'year' setting")

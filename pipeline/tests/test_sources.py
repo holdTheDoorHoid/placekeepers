@@ -446,6 +446,11 @@ def file_for(source_id: str) -> tuple[bytes, dict[str, str]]:
         return redistricting_zip(), modified
     if source_id in ("cagp_vacant_land_2024", "cagp_vacant_buildings_2024"):
         return vacancy_list_file(), {}
+    if source_id == "mapping_inequality_1937":
+        # Mapping Inequality's areas of Philadelphia, as tests/test_redlining.py builds them.
+        from .test_redlining import holc_file
+
+        return json.dumps(holc_file()).encode(), {}
     if source_id == "pba_laser":
         # Philly Bike Action's map: the same pin for every day and every kind asked for.
         return json.dumps({"pins": [[39.9526, -75.1652, 1]], "unique_users_count": 1}).encode(), {}
