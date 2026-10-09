@@ -297,3 +297,24 @@ describe('the lot\'s size (M4.6)', () => {
     expect(parsed.lotSize).toEqual({ frontage: 20, depth: 100 });
   });
 });
+
+describe('historic district names', () => {
+  it('match across the two City layers, and the Register\'s capitals read as words', () => {
+    const view = (rules: object) =>
+      buildDossier(
+        input('990000005', {
+          shard: { status: 'found', parcel: { ...shard.parcels.get('990000005')!, rules: parseRules(rules) }, generatedAt: shard.generatedAt, notes },
+        }),
+      ).rules.historic!.lines;
+    expect(view({ historic: { districts: [{ name: 'Ridge Avenue Roxborough' }], register: { district: 'Ridge Ave Roxborough', district_date: '2018-10-12' } } })).toEqual([
+      'This lot is in the Ridge Avenue Roxborough historic district, designated on October 12, 2018.',
+      'This property is on the Philadelphia Register of Historic Places as part of the Ridge Avenue Roxborough historic district.',
+    ]);
+    expect(view({ historic: { districts: [{ name: 'Germantown Urban Village', date: '2024-02-09' }], register: { district: 'GERMANTOWN URBAN VILLAGE' } } })[1]).toBe(
+      'This property is on the Philadelphia Register of Historic Places as part of the Germantown Urban Village historic district.',
+    );
+    expect(view({ historic: { register: { district: 'SPRING GARDEN' } } })).toEqual([
+      'This property is on the Philadelphia Register of Historic Places as part of the Spring Garden historic district.',
+    ]);
+  });
+});

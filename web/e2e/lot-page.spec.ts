@@ -62,7 +62,7 @@ test.describe('lot page rules', () => {
     await expect(notice.getByRole('link', { name: 'How to take part in a zoning hearing' })).toHaveAttribute('href', /participate-in-a-zoning-board-of-adjustment-hearing/);
     await notice.getByRole('button', { name: 'See the appeal' }).click();
     const rules = details.locator('section', { has: page.getByRole('heading', { name: 'Rules for this lot', exact: true }) });
-    await expect(rules.getByRole('heading', { name: 'Appeals and hearings' })).toBeInViewport();
+    await expect(rules.getByRole('heading', { name: 'Rules for this lot', exact: true })).toBeInViewport();
     await expect(rules).toContainText('Zoning Board of Adjustment: Permit denial, variance');
     await expect(rules).toContainText('QUINN SAMPLE; SAMPLE HOLDINGS LLC');
     await expect(rules).toContainText('Sample Neighbors Association');

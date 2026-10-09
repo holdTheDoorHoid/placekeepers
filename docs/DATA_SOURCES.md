@@ -417,6 +417,35 @@ least one overlay (the /NIS overlay alone covers 52,448), 811 a historic distric
 (585 in a district, 759 on the Register, 299 of them listed on their own), and 3,062 lie within 100
 meters of an EPA brownfield property. 5,005 of them have appeals (6,730 in all).
 
+**Hand check, 2026-10-09 (issue #42).** Ten lots chosen to cover every rule (individually listed
+on the Register, on the Register as part of a district, in a district only, Center City, transit
+oriented, flood protection and steep slope overlays, two zoning hearings still to come, an L&I
+Review Board appeal, a 2010 appeal still marked open, and a lot near an EPA brownfield record) were
+compared with atlas.phila.gov's zoning and L&I tabs: 6012 Ridge Ave, 5419 Lena St, 4368 Main St,
+4920 Wakefield St, 2221 Madison Sq, 2910 E St, 1121 N Delaware Ave, 4505 Kingsessing Ave, 1847 W
+Albanus St and 3136 W Arizona St.
+
+- **Base zoning**: all 10 match atlas.
+- **Overlays**: all 10 match atlas exactly, 36 overlays in all, none missing and none extra
+  (including 4505 Kingsessing Ave, where atlas and the lot page both leave out the /NIS overlay
+  that covers most of the city).
+- **Appeals**: the two zoning hearings still to come match atlas's filing day, hearing day and
+  community organization (5419 Lena St, February 10, 2027, Baynton Hill Neighbors; 4505 Kingsessing
+  Ave, December 2, 2026, Spruce Hill Community Association); the L&I Review Board appeal of 1847 W
+  Albanus St (heard July 30, 2026, closed) and the 2010 appeal of 4368 Main St (heard June 15, 2010,
+  still marked open) match atlas's L&I tab; the six other lots have no appeals on either. Atlas
+  copies each appeal's grounds onto its page; the lot page links to the City for them instead.
+- **Historic designation**: atlas shows none. The Register's own address for each listed lot
+  matches its OPA address (all 4), and the districts' names and years match the Historical
+  Commission's list of districts (phila.gov, "Philadelphia historic districts") for East Logan
+  Street (2010), Germantown Urban Village (2024) and Ridge Avenue Roxborough (2018; the district
+  layer holds only the placeholder 1/1/3000, so the lot page takes the day from the Register's
+  record, October 12, 2018). For Main Street Manayunk the Commission's list says 1984, while the
+  City's district layer says March 18, 1983 and the Register says December 14, 1983: a
+  disagreement in the City's own records, shown as the district layer gives it.
+- **Brownfields**: atlas shows no EPA records; 3136 W Arizona St lies 80 meters from the EPA's
+  point for 2400 N 32nd St, the record the lot page names.
+
 The appeals table is what the City's L&I property history search (above, "evaluated and not used")
 reads for appeals. The owner decided on 2026-10-09 to show appeals with their names on each lot's
 own page; the lot page reads the City's table, not that search, and links to it for each appeal's

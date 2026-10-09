@@ -142,16 +142,44 @@ export interface RulesInput {
   today: string;
 }
 
+/** A district name as people write it: the Register sometimes writes it in capitals. */
+function districtWords(name: string): string {
+  const text = plain(name);
+  return text === text.toUpperCase() ? text.toLowerCase().replace(/\b([a-z])/g, (c) => c.toUpperCase()) : text;
+}
+
+/**
+ * Whether the Register's district name and a district's name are the same district: the two City
+ * layers write some names differently ("Ridge Ave Roxborough", "Ridge Avenue Roxborough").
+ */
+export function sameDistrict(a: string, b: string): boolean {
+  const n = (s: string) =>
+    s
+      .toLowerCase()
+      .replace(/\b(historic|district|thematic|the)\b/g, '')
+      .replace(/[^a-z0-9]/g, '');
+  const x = n(a);
+  const y = n(b);
+  return x === y || x.startsWith(y) || y.startsWith(x) || (x.length >= 6 && x.slice(0, 6) === y.slice(0, 6));
+}
+
 function historicView(rules: LotRules | null): RulesView['historic'] {
   if (!rules || (!rules.districts.length && !rules.register)) return null;
   const s = r();
-  const lines: string[] = [];
-  for (const d of rules.districts) lines.push(s.inDistrict(s.districtName(plain(d.name) ?? d.name), day(d.date)));
   const reg = rules.register;
+  // The Register's own district for this lot, matched to a district the lot lies in when the
+  // names agree, or when there is only one.
+  const match = reg?.district ? (rules.districts.find((d) => sameDistrict(d.name, reg.district!)) ?? (rules.districts.length === 1 ? rules.districts[0]! : null)) : null;
+  const lines: string[] = [];
+  for (const d of rules.districts) {
+    // A district the layer gives no day for takes the Register's day for it.
+    const date = d.date ?? (d === match ? (reg?.districtDate ?? null) : null);
+    lines.push(s.inDistrict(s.districtName(districtWords(d.name)), day(date)));
+  }
   if (reg) {
     if (reg.date) lines.push(s.listed(day(reg.date)!));
     else if (reg.individual) lines.push(s.listedNoDate);
-    else if (reg.district) lines.push(s.listedInDistrict(s.districtName(plain(reg.district) ?? reg.district)));
+    else if (reg.district) lines.push(s.listedInDistrict(s.districtName(districtWords(match ? match.name : reg.district))));
     else lines.push(s.listedNoDate);
   }
   return {
