@@ -920,6 +920,7 @@ export const strings = {
     zoomNote: 'Zoom in to a few neighborhoods to see the stops.',
     lensTitle: 'Priority under the transit comfort lens',
     lensUnsurveyed: 'Where no one has surveyed a stop yet, its shelter and bench count halfway.',
+    lensCityShelter: "A stop with a shelter on the City's list counts as sheltered.",
     lensStations: 'The lens scores bus and trolley stops only, so stations are hollow.',
     lensTunnel: 'The trolley stops in the tunnel under Center City and University City are hollow too: the lens leaves them out, as it does stations.',
     // The transit comfort lens at a stop (src/transit/comfort.ts).

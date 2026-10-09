@@ -234,6 +234,7 @@ function lensLegend(ctx: LegendContext): LegendEntry[] {
   if (stopScore(ctx)) {
     entries.push({ kind: 'ramp', title: t.lensTitle, stops: TRANSIT_RAMP, low: strings.lens.legendLow, high: strings.lens.legendHigh });
     entries.push({ kind: 'note', text: t.lensUnsurveyed });
+    entries.push({ kind: 'note', text: t.lensCityShelter });
     entries.push({ kind: 'note', text: t.lensTunnel });
   } else {
     entries.push({ kind: 'note', text: strings.lens.allOffFor('stop') });
