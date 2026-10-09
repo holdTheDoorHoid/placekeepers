@@ -21,6 +21,7 @@ from typing import Any
 from placekeepers.cache import atomic_write_json
 from placekeepers.context import Context
 from placekeepers.publish.dossiers import DossierResult, build_dossiers
+from placekeepers.publish.land_bank import LandBankResult, build_land_bank
 from placekeepers.publish.layers import builder_for
 from placekeepers.publish.manifest import MANIFEST, build_manifest, git_short_hash
 from placekeepers.publish.route_sheets import RouteSheetsResult, build_route_sheets
@@ -61,6 +62,8 @@ class PublishResult:
     #: what OpenStreetMap says at each stop, keyed by its id, for the browser to join to SEPTA's
     #: stops (publish/stop_table.py, decision D1)
     stop_table: StopTableResult | None = None
+    #: the numbers of "The Land Bank in numbers" (publish/land_bank.py, M4.4)
+    land_bank: LandBankResult | None = None
 
 
 def geojson_name(file: str, source_layer: str) -> str:
@@ -193,6 +196,9 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
         attributions: dict[str, list[str]] = {}
         seen: set[tuple[str, str]] = set()
         for layer in registry.layers.values():
+            if layer.file is None or layer.source_layer is None:
+                # Pictures the browser loads from the City's own servers (M4.3): nothing to build.
+                continue
             if layer.file.startswith(BASEMAP_DIR):
                 # The base map is made by the site (web/scripts/make-basemap.sh), never here.
                 continue
@@ -249,6 +255,8 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
         notes.extend(result.route_sheets.notes)
         result.stop_table = build_stop_table(ctx, statuses, staging)
         notes.extend(result.stop_table.notes)
+        result.land_bank = build_land_bank(ctx, statuses, staging, as_of)
+        notes.extend(result.land_bank.notes)
 
         exe = find_tippecanoe()
         if exe is None:

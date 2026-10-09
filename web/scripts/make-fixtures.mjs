@@ -26,6 +26,7 @@ import { routeOsmStops, routeSheetFixtures } from './route-fixtures.mjs';
 import { WALK_LAYERS, WALK_SOURCES, walkFixtures } from './walk-fixtures.mjs';
 import { PARKING_LAYERS, PARKING_SOURCES, parkingFixtures } from './parking-fixtures.mjs';
 import { RULES_FILES, RULES_LAYERS, RULES_SOURCES, rulesFixtures } from './rules-fixtures.mjs';
+import { HISTORIC_LAYERS, HISTORIC_SOURCES } from './historic-fixtures.mjs';
 
 const FIXTURES = new URL('../fixtures/', import.meta.url);
 const ROOT = new URL('data/', FIXTURES);
@@ -734,6 +735,11 @@ const manifest = {
     ...Object.fromEntries(Object.entries(WATCH_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
     // The rules and records of each lot (M4.6)
     ...Object.fromEntries(Object.entries(RULES_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
+    // Then and now (M4.3): the weekly check that the City's picture services answer
+    ...Object.fromEntries(Object.entries(HISTORIC_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
+    // The Land Bank in numbers (M4.4): its page reads tables/land_bank.json, made from these.
+    land_conveyances: ok(21424, '2026-08-10'),
+    land_conveyed_by_fy: ok(7, null),
   },
   layers: {
     vacant_parcels: {
@@ -786,6 +792,7 @@ const manifest = {
     ...PARKING_LAYERS,
     ...WATCH_LAYER,
     ...RULES_LAYERS,
+    ...HISTORIC_LAYERS,
   },
   files: Object.fromEntries(
     [

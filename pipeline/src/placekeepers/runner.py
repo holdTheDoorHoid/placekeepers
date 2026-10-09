@@ -61,6 +61,8 @@ def select_sources(registry: Registry, ids: list[str] | None) -> list[Source]:
 # unless its adapter sets a minimum wait (`min_refetch`, such as the OpenStreetMap extract's). A
 # snapshot made with another recipe (Adapter.recipe, such as the extract's tag list), or with none
 # recorded, is fetched again at once whatever the wait, so a registry change reaches the next run.
+# A picture service (`arcgis_tiles`, M4.3) is checked on every run whatever its cadence: the 1860
+# atlas never changes, but the server it comes from could stop answering any week.
 REFETCH_AFTER = {"frozen": None, "yearly": timedelta(days=30)}
 
 
@@ -78,6 +80,8 @@ def refetch_due(ctx: Context, source: Source) -> str | None:
     """None when the source should be fetched now, or the reason it does not need to be."""
     adapter = ADAPTERS.get(source.id)
     floor = adapter.min_refetch if adapter else None
+    if source.endpoint.kind == "arcgis_tiles":
+        return None
     if source.cadence not in REFETCH_AFTER and floor is None:
         return None
     current = SnapshotStore(ctx.cache, source.id).current()
@@ -265,6 +269,12 @@ def validate_source(ctx: Context, source: Source) -> StepResult:
         store.record(meta)
         if validation.ok:
             store.promote(meta)
+            try:
+                adapter.after_promote(store.dir)
+            except Exception as exc:  # a running count must never fail the source
+                log.warning(
+                    "%s: could not update what it keeps across snapshots: %s", source.id, exc
+                )
             state.current = meta.snapshot_id
             state.last_result = "ok"
             state.message = None

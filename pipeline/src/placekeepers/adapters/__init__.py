@@ -31,6 +31,7 @@ from placekeepers.adapters.environment import FemaFloodplain, StreetTrees
 from placekeepers.adapters.fatal_crashes import FatalCrashes
 from placekeepers.adapters.heat import HeatVulnerability
 from placekeepers.adapters.high_injury_network import HighInjuryNetwork
+from placekeepers.adapters.land_bank import LandConveyances, LandConveyedByFy
 from placekeepers.adapters.lens_context import CensusTracts2020, TreeCanopy2018
 from placekeepers.adapters.opa_properties import OpaProperties
 from placekeepers.adapters.osm import OsmExtract
@@ -49,6 +50,7 @@ from placekeepers.adapters.schools import Schools
 from placekeepers.adapters.septa import SeptaGtfs, SeptaRidershipBus, SeptaRidershipTrolley
 from placekeepers.adapters.shootings import Shootings
 from placekeepers.adapters.street_centerlines import StreetCenterlines
+from placekeepers.adapters.tiles import ArcgisTilesAdapter
 from placekeepers.adapters.url import UrlAdapter
 from placekeepers.adapters.vacant_indicators import VacantIndicatorsBldg, VacantIndicatorsLand
 from placekeepers.adapters.walk import (
@@ -152,6 +154,14 @@ ADAPTERS: dict[str, type[Adapter]] = {
     "zoning_overlays": ZoningOverlays,
     "appeals": Appeals,
     "epa_brownfields": EpaBrownfields,
+    # The Land Bank in numbers (M4.4): deeds from the City's land agencies and the City's own counts
+    # by program.
+    "land_conveyances": LandConveyances,
+    "land_conveyed_by_fy": LandConveyedByFy,
+    # Then and now (M4.3): picture services the browser loads from the City; the pipeline only
+    # checks that each one still answers
+    "city_aerial_photos": ArcgisTilesAdapter,
+    "city_atlas_1860": ArcgisTilesAdapter,
 }
 
 
@@ -165,6 +175,7 @@ __all__ = [
     "Adapter",
     "AdapterMismatch",
     "ArcgisAdapter",
+    "ArcgisTilesAdapter",
     "CartoAccountsAdapter",
     "CartoAdapter",
     "Column",

@@ -17,8 +17,11 @@ import {
   SETTING_TYPES,
   URL_FORMATS,
   VIEWS,
+  type Endpoint,
+  type Layer,
   type RawRegistryFiles,
   type Registry,
+  type Source,
 } from './types.ts';
 
 export const ID_PATTERN = /^[a-z][a-z0-9_]*$/;
@@ -34,12 +37,19 @@ const OSM_TAG_PATTERN = /^[A-Za-z0-9_:.-]+(=[A-Za-z0-9_:;.-]+)?$/;
 const OSM_EXTRACT_URL_PATTERN = /^https:\/\/\S+\.osm\.pbf$/;
 /** A layer's guide: the slug of a content page (content/<slug>.md). */
 const GUIDE_PATTERN = /^[a-z][a-z0-9-]*$/;
+/** A tile service's root on an ArcGIS server, and its services' keys and names (M4.3). */
+const TILES_URL_PATTERN = /^https:\/\/\S+\/rest\/services$/;
+const TILE_KEY_PATTERN = /^[A-Za-z0-9_-]+$/;
+const SERVICE_PATTERN = /^[^/?#&\s][^/?#&]*(\/[^/?#&\s][^/?#&]*)*$/;
+/** How a choice setting may be shown instead of radio buttons (M4.3). */
+const CONTROLS = ['slider'] as const;
 
 type Spec =
   | { t: 'string'; optional?: boolean; pattern?: RegExp; oneOf?: readonly string[]; allowEmpty?: boolean }
   | { t: 'number'; optional?: boolean; integer?: boolean; min?: number; max?: number }
   | { t: 'boolean'; optional?: boolean }
   | { t: 'strings'; optional?: boolean; pattern?: RegExp; nonEmpty?: boolean }
+  | { t: 'numbers'; optional?: boolean; length?: number }
   | { t: 'object'; optional?: boolean; fields: Fields }
   | { t: 'objects'; optional?: boolean; fields: Fields; nonEmpty?: boolean }
   | { t: 'weights'; optional?: boolean }
@@ -75,6 +85,14 @@ const SCHEMAS: Record<keyof Registry, Fields> = {
         format: str({ optional: true, oneOf: URL_FORMATS }),
         path: str({ optional: true }),
         tags: { t: 'strings', optional: true, pattern: OSM_TAG_PATTERN, nonEmpty: true },
+        // arcgis_tiles (M4.3): where the pictures are, and the services by key
+        bounds: { t: 'numbers', optional: true, length: 4 },
+        services: {
+          t: 'objects',
+          optional: true,
+          nonEmpty: true,
+          fields: { key: str({ pattern: TILE_KEY_PATTERN }), service: str({ pattern: SERVICE_PATTERN }) },
+        },
       },
     },
     license: id(),
@@ -97,8 +115,9 @@ const SCHEMAS: Record<keyof Registry, Fields> = {
     group: id(),
     description: text(),
     sources: ids({ nonEmpty: true }),
-    file: str({ pattern: DATA_PATH_PATTERN }),
-    source_layer: id(),
+    // A raster layer (M4.3) has neither: its pictures come from its source's own server.
+    file: str({ optional: true, pattern: DATA_PATH_PATTERN }),
+    source_layer: str({ optional: true, pattern: ID_PATTERN }),
     geometry: str({ oneOf: GEOMETRIES }),
     style: id(),
     evidence: evidence(),
@@ -121,6 +140,7 @@ const SCHEMAS: Record<keyof Registry, Fields> = {
         min: { t: 'number', optional: true },
         max: { t: 'number', optional: true },
         step: { t: 'number', optional: true, min: 0 },
+        control: str({ optional: true, oneOf: CONTROLS }),
       },
     },
     release: release(),
@@ -189,6 +209,7 @@ const SCHEMAS: Record<keyof Registry, Fields> = {
     min: { t: 'number', optional: true },
     max: { t: 'number', optional: true },
     step: { t: 'number', optional: true, min: 0 },
+    control: str({ optional: true, oneOf: CONTROLS }),
     release: release(),
   },
 };
@@ -201,6 +222,8 @@ const ENDPOINT_REQUIRED: Record<string, string[]> = {
   osm_extract: [],
   // A SPARQL query service such as Wikidata's (M3.2); the query lives in the pipeline's adapter.
   sparql: ['url'],
+  // Picture services the browser loads from their own server (M4.3).
+  arcgis_tiles: ['url', 'bounds', 'services'],
 };
 
 function isPlainObject(v: unknown): v is Record<string, unknown> {
@@ -264,6 +287,17 @@ function checkValue(spec: Spec, value: unknown, where: string, errors: string[])
       }
       return;
     }
+    case 'numbers': {
+      if (!Array.isArray(value)) {
+        errors.push(`${where} should be a list of numbers, found ${describe(value)}`);
+        return;
+      }
+      if (spec.length !== undefined && value.length !== spec.length) errors.push(`${where} should hold ${spec.length} numbers`);
+      value.forEach((item, i) => {
+        if (typeof item !== 'number' || !Number.isFinite(item)) errors.push(`${where}[${i}] should be a number`);
+      });
+      return;
+    }
     case 'object':
       checkFields(spec.fields, value, where, errors);
       return;
@@ -315,6 +349,7 @@ function entryName(file: string, entry: unknown, index: number): string {
 function checkSetting(raw: Record<string, unknown>, where: string, errors: string[]): void {
   const type = raw.type;
   const has = (k: string) => k in raw && raw[k] !== undefined;
+  if (has('control') && type !== 'choice') errors.push(`${where} is a ${String(type)} and cannot have "control"`);
   if (type === 'choice') {
     if (!has('options')) errors.push(`${where} is a choice and needs "options"`);
     for (const k of ['min', 'max', 'step']) if (has(k)) errors.push(`${where} is a choice and cannot have "${k}"`);
@@ -351,6 +386,61 @@ function checkSetting(raw: Record<string, unknown>, where: string, errors: strin
     }
     if (has('step') && raw.step === 0) errors.push(`${where}.step should be above 0`);
   }
+}
+
+/** An `arcgis_tiles` endpoint (M4.3): its server root, where its pictures are, unique services. */
+function checkTiles(endpoint: Endpoint, where: string, errors: string[]): void {
+  if (endpoint.url !== undefined && !TILES_URL_PATTERN.test(endpoint.url)) {
+    errors.push(`${where}.endpoint.url should be an https link ending in /rest/services`);
+  }
+  const bounds = endpoint.bounds;
+  if (bounds && bounds.length === 4) {
+    const [west, south, east, north] = bounds;
+    if (!(west >= -180 && west < east && east <= 180 && south >= -85 && south < north && north <= 85)) {
+      errors.push(`${where}.endpoint.bounds should be west, south, east, north in degrees, west below east and south below north`);
+    }
+  }
+  const services = endpoint.services ?? [];
+  const keys = services.map((s) => s.key);
+  const names = services.map((s) => s.service);
+  if (new Set(keys).size !== keys.length) errors.push(`${where}.endpoint.services repeat a key`);
+  if (new Set(names).size !== names.length) errors.push(`${where}.endpoint.services list a service twice`);
+}
+
+/**
+ * Where a layer's features come from (M4.3): a raster layer has no file and draws exactly one
+ * `arcgis_tiles` source, choosing among several of its services with a choice setting "year"
+ * whose options are their keys in order; any other layer has a file and a source layer and never
+ * names a tile service. The same rules as the pipeline's check.
+ */
+function checkLayerData(layer: Layer, sources: Source[], where: string, errors: string[]): void {
+  const tiles = layer.sources
+    .map((id) => sources.find((s) => s.id === id))
+    .filter((s): s is Source => s !== undefined && s.endpoint.kind === 'arcgis_tiles');
+  if (layer.geometry !== 'raster') {
+    if (layer.file === undefined || layer.source_layer === undefined) errors.push(`${where} needs "file" and "source_layer"`);
+    for (const source of tiles) errors.push(`${where} names the tile service "${source.id}", which only a raster layer can draw`);
+    return;
+  }
+  if (layer.file !== undefined || layer.source_layer !== undefined) {
+    errors.push(`${where} is a raster layer and cannot have "file" or "source_layer"`);
+  }
+  // The rest of the app reads them as text: a raster layer has none.
+  layer.file = '';
+  layer.source_layer = '';
+  if (layer.sources.length !== 1 || tiles.length !== 1) {
+    errors.push(`${where} is a raster layer and needs exactly one source of kind arcgis_tiles`);
+    return;
+  }
+  const keys = (tiles[0]!.endpoint.services ?? []).map((s) => s.key);
+  const year = layer.settings.find((s) => s.id === 'year');
+  if (keys.length > 1) {
+    if (!year || year.type !== 'choice') {
+      errors.push(`${where} draws ${keys.length} services and needs a choice setting "year" to choose among them`);
+    } else if (year.options.map((o) => o.value).join('\n') !== keys.join('\n')) {
+      errors.push(`${where}: the "year" options should be the source's service keys in the same order`);
+    }
+  } else if (year) errors.push(`${where} draws one service and needs no "year" setting`);
 }
 
 export interface ValidateOptions {
@@ -417,6 +507,10 @@ export function validateRegistry(raw: RawRegistryFiles, options: ValidateOptions
     if (source.endpoint.kind === 'sparql' && source.endpoint.url !== undefined && !source.endpoint.url.startsWith('https://')) {
       errors.push(`${where}.endpoint.url should be an https link to a query service`);
     }
+    if (source.endpoint.kind === 'arcgis_tiles') checkTiles(source.endpoint, where, errors);
+    else if (source.endpoint.bounds !== undefined || source.endpoint.services !== undefined) {
+      errors.push(`${where}.endpoint of kind ${source.endpoint.kind} cannot have "bounds" or "services"`);
+    }
   }
 
   for (const layer of reg.layers) {
@@ -429,6 +523,7 @@ export function validateRegistry(raw: RawRegistryFiles, options: ValidateOptions
     for (const view of VIEWS) {
       if (typeof layer.default[view] !== 'boolean') errors.push(`${where}.default needs "${view}"`);
     }
+    checkLayerData(layer, reg.sources, where, errors);
     const settingIds = new Set<string>();
     layer.settings.forEach((setting, i) => {
       const sw = `${where}.settings[${i}]`;

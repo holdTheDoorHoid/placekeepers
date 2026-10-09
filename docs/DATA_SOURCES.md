@@ -22,7 +22,7 @@ Both allow browser requests without a key.
 | OPA assessment history | Carto `assessments` (7.48 million rows) | Value by year for every parcel | Nightly | Live; never used by the original |
 | Real estate transfers | Carto `rtt_summary` (5.16 million rows, 1974-01-02 to 2026-08-11) | Every recorded deed, sheriff deed and mortgage, with date, grantors, grantees and consideration, joined by `opa_account_num` | About 8 week lag | Live; this is the "what it sold for, going back in time" source |
 | Water Department parcels | Carto `pwd_parcels` (547,410) | Parcel shapes | Not stated | Live |
-| City owned property | City ArcGIS `LAMAAssets` (7,740: Land Bank 2,528, Redevelopment Authority 1,670, PHDC 95, other agencies) | Public owner agency, side yard eligibility, each parcel's status, and the lots listed as available (the same list as the Philadelphia Land Bank's property map; see "Sources checked 2026-10-08") | Edited often; records carry no date | Live. The OpenDataPhilly page of the same name is a frozen 2015 archive; use the live service |
+| City owned property | City ArcGIS `LAMAAssets` (7,740: Land Bank 2,528, Redevelopment Authority 1,670, PHDC 95, other agencies) | Public owner agency, side yard eligibility, each parcel's status, and the lots listed as available (the same list as the Philadelphia Land Bank's property map; see "Sources checked 2026-10-08"); from October 2026 also counted by status every week ("The Land Bank in numbers") | Edited often; records carry no date | Live. The OpenDataPhilly page of the same name is a frozen 2015 archive; use the live service |
 | Tax balances | Carto `real_estate_tax_delinquencies` | Formerly per parcel tax debt and sheriff sale risk | n/a | **Restricted** since the original shut down (permission denied). Public data is aggregated by ZIP, district and tract only. Dossiers link to the City's Tax Center (tax-services.phila.gov) for the live balance |
 | Tax debt snapshot, July 2025 | Clean & Green Philly final output, `data/backup_data/all_properties_2025_07_09.parquet` (97.7 MB, Git LFS, via media.githubusercontent.com) | A dated "tax debt as of July 2025" flag | Frozen | Downloadable; label every use with its date |
 | Sheriff sales | No dataset. `rtt_summary` document types "DEED SHERIFF" (69,682) and "SHERIFF'S DEED" (19,370) give history | Past sheriff sales | n/a | History only; phillysheriff.com is browse only and is not scraped |
@@ -47,7 +47,7 @@ Both allow browser requests without a key.
 | L&I property history | OpenDataPhilly (since 2023), a link to the search page li.phila.gov/Property-History | A per address search page, not a dataset | Daily | **Evaluated 2026-10-09 (M4.2), not used**: see "The lot timeline" below |
 | Building footprints | City ArcGIS `LI_BUILDING_FOOTPRINTS` (546,049), read as ArcGIS Hub's bulk GeoJSON | "No building on this parcel" | Weekly | Live |
 | Vacant lot cleanups | OpenDataPhilly "Vacant Lot Cleanups" (Community Life Improvement Program) | City cleaned this lot | Not stated | Live |
-| Aerial photography | OpenDataPhilly, vintages 1996 to 2023 | Later: vegetation trend per lot | Every 1 to 3 years | Live |
+| Aerial photography | OpenDataPhilly, vintages 1996 to 2025 | Shown as pictures from the City's servers under Then and now (M4.3, `city_aerial_photos`); later: vegetation trend per lot | Every 1 to 3 years | Live |
 | USPS vacancy via HUD | huduser.gov (login for registered agencies and nonprofits) | Tract level context | Quarterly | Not used: needs a registered partner |
 
 ### Care already happening
@@ -451,10 +451,153 @@ reads for appeals. The owner decided on 2026-10-09 to show appeals with their na
 own page; the lot page reads the City's table, not that search, and links to it for each appeal's
 grounds.
 
-Still to come for the history release: City orthophotos 1996 to 2023, the 1860 Hexamer and Locher
-atlas (hosted by the City with the GeoHistory Network's permission), PhilaGeoHistory layers such as
-the 1942 land use map (**permission required** from the Athenaeum of Philadelphia), and HOLC
-redlining from Mapping Inequality (license text to confirm).
+**Then and now (M4.3, checked 2026-10-09).** Pictures the visitor's browser loads straight from
+the City's own map services, only once someone turns their layer on and only while "Fetch live
+City data" is on. Placekeepers never copies or hosts them; each week the pipeline only checks that
+every service still answers (endpoint kind `arcgis_tiles`, docs/CONTRACTS.md section 1).
+
+| Source id | What | Services | Terms | Health |
+|---|---|---|---|---|
+| `city_aerial_photos` | The City's aerial photographs (orthophotography), one service per year: 1996, 2000, 2004, 2005, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2022, 2023, 2024 and 2025 (the City serves none for 2001 to 2003, 2006, 2007, 2013 or 2021). Flown in spring (mostly March to May); 1996 and 2000 are black and white | `CityImagery_<year>_<resolution>` in the City's ArcGIS Online organization (`https://tiles.arcgis.com/tiles/fLeGjb7u4uXqeF9q/arcgis/rest/services`), cached Web Mercator tiles to zoom 22; listed on [OpenDataPhilly](https://opendataphilly.org/datasets/aerial-photography/) and in the City's metadata catalog ("Aerial Imagery", 1996 to 2025) | City of Philadelphia License (OpenDataPhilly); each service's own license text and the metadata catalog's "Public Access and Use Constraints" are the City's standard terms: the City keeps its rights, the data is "as is", and the user holds the City harmless. Nothing forbids showing them from a public site, and the site shows them from the City's own servers | 20 services each answer their description and one tile at zoom 15 (on 2026-10-09 all 20 answered, in 39 seconds, one request a second) |
+| `city_atlas_1860` | The 1860 Hexamer and Locher atlas, a mosaic fitted to today's map by the Greater Philadelphia GeoHistory Network and hosted by the City "with their permission" (the City's words); it covers Center City and Northern Liberties only | `HistoricHexamerLocherAtlas_1860` in the same organization. Outside the atlas the service sends plain gray squares, so the map asks only inside west -75.1904, south 39.9266, east -75.1245, north 39.9771 (the tiles with pictures at zoom 14, measured on 2026-10-09) | The City's standard terms, as above, on the service and in the catalog ("Historic Maps"). The City's copy is the one used, as the roadmap asks; the GeoHistory Network's own site is not touched | 1 service |
+
+Choices: for 2011 the City has two flights, a leaf on one (June to August, 12 inch) and a leaf off
+one (May, 6 inch); the leaf off one is used, like the spring flights of the other years. For 2024
+it has a 1 inch and a 3 inch version; the 3 inch one is used, already finer than the map's closest
+zoom. The catalog's 2005 entry gives 2004 flight dates; the City's own year is used.
+
+Not used, and why:
+
+- **Mapping Inequality's 1937 redlining map (HOLC).** The University of Richmond's Digital
+  Scholarship Lab publishes its georectified rasters and spatial data "under a CC-BY-NC license"
+  ([data page](https://dsl.richmond.edu/panorama/redlining/data), linking
+  [CC BY-NC 2.5](https://creativecommons.org/licenses/by-nc/2.5/); its
+  [FAQ](https://dsl.richmond.edu/panorama/redlining/contactus): they "can be used for pretty much
+  anything that is not commercial with just a citation"). Non commercial, so it was not shipped and
+  the owner decides (the M4.3 report says what it would require). The scans of the original maps
+  and area descriptions are in the public domain (National Archives, City Survey Files 1935 to
+  1940), but they are not fitted to today's map.
+- **The other pictures the City hosts for the GeoHistory Network**: the 1875 G. M. Hopkins atlas,
+  the 1895 and 1910 Bromley atlases, the 1942 and 1962 land use maps, and the 1928 aerial photos
+  (`CityImagery_1928_RPF`, credited "City of Philadelphia, PhilaGeoHistory Network"). The City says
+  it hosts them with the Network's permission; PhilaGeoHistory's own terms ask for permission
+  before reuse, and the roadmap keeps its layers, such as the 1942 land use map, waiting for the
+  Athenaeum of Philadelphia's permission. A request is drafted for the owner.
+- **The 1959, 1975 and 1999 aerial photos the City hosts** (`CityImagery_1959_DVRPC`,
+  `CityImagery_1975_DVRPC`, `CityImagery_1999_USGS`, credited to DVRPC and the USGS): their
+  services state no license, describe themselves as "greybase test", and are not in OpenDataPhilly
+  or the City's catalog. The 1999 photos are likely a USGS work in the public domain and the DVRPC
+  ones may fall under DVRPC's data license; adding any of them later is one registry line once
+  their terms are confirmed.
+- **PhilaGeoHistory itself** (`philageohistory.org`): permission required, never fetched.
+
+### The Land Bank in numbers (M4.4, sources checked 2026-10-09)
+
+Issue #40 asks how many properties the Philadelphia Land Bank and the City's other land agencies
+conveyed, by program and year. Four kinds of source were compared before building:
+
+| Source | Verdict |
+|---|---|
+| The City's deed records (Carto `rtt_summary`) | **Used** (`land_conveyances`): the only complete public record of who conveyed what, when and for how much. They do not say which program a conveyance came through |
+| The City's Land Management dashboard tables (City ArcGIS) | **Used** with credit (`land_conveyed_by_fy`): the City's own counts by program for fiscal years 2017 to 2023. Frozen since April 2023; its item states no license |
+| City Council's legislation records (Legistar) | **Not used**: the City's Legistar API refuses requests without a token |
+| The Land Bank's and PHDC's own reports and board documents | **Not used as data**: their terms forbid republishing; linked, and read by hand only to check our inference |
+| The City's list of public property (`city_owned_property`) | **Used**, as before, now also counted every week from October 2026 |
+
+**The City's deed records** (`land_conveyances`; endpoint and health rules in
+`registry/sources.yaml`; terms `city_terms`). Every deed since 2014 that names the Land Bank, the
+Redevelopment Authority, PHDC or the City among its sellers: 21,424 rows (one per property per
+document) from 2014-01-02 to 2026-08-10 on 2026-10-09, one chunk, then the full deed history of
+the 8,280 properties they name (44,886 deeds) in two chunks, under a minute in all. The adapter
+(`pipeline/src/placekeepers/adapters/land_bank.py`, rules in `derive/land_bank.py`) decides what
+each deed was while the names are in hand, then drops the names:
+
+- A **conveyance** is a plain deed whose sellers are all land agencies and whose buyers include
+  someone else: 6,248 rows. Not counted: 5,403 rows moving land between the agencies themselves
+  (2,732 of them to the Land Bank, mostly from the City and the Redevelopment Authority), 6,914
+  agreements (the City's records list both parties on both sides of easements, restrictions and
+  corrections), and 2,859 other documents (sheriff deeds, condemnations, a City department
+  granting an easement, the City as a trustee, a private party selling alongside an agency).
+- A conveyance counts once per property. 3,013 rows are not new: a deed for property whose
+  previous deed went to a private owner (a release of an old restriction or a correction, found
+  in the property's own history), a miscellaneous deed for property the records never show an
+  agency holding (batch agreements recorded before the deeds), or the same property again to the
+  same buyer or within a year. That leaves **3,235 properties conveyed from January 2014 to
+  August 2026** in 1,569 deeds: the Land Bank 1,032 (from 2017, its first conveyances), the
+  Redevelopment Authority 1,862, PHDC 145 and the City 196.
+- The buyers are typed by the owner rule of the lot pages: 943 people, 1,723 companies, 299
+  nonprofits (named as nonprofits; many are named like companies), 266 other public bodies, 4
+  unknown. Only the type is kept.
+- The price is what the deed records for this property (the adjusted total). For all four
+  agencies the middle price is $100; 583 of the Land Bank's 1,032 were $100 or less. A recorded
+  price is not always money paid: side yards and gardens carry a 30 year mortgage to the Land
+  Bank, and side yard deeds often record the lot's appraised value.
+- Council districts come from the deed's point and today's district lines; 285 have no point.
+- *Checked by hand against the City's property page* (property.phila.gov, 2026-10-09), 10
+  conveyances of every agency and kind of buyer. At first 6 agreed in date, price, seller and kind
+  of buyer (one of them, a "DEED LAND BANK", is not in the page's sale list, but the page names the
+  buyer as owner). 3 were not conveyances at all: the property had been privately owned for years,
+  and the agency's miscellaneous deed released an old restriction. 1 was dated five months early,
+  by a batch agreement recorded before the Land Bank held the lot. The release rule and the batch
+  rule above came from these; with them all 10 agree with the City's page.
+
+**Program, our inference.** The deed records do not name the program. One can be inferred: a single
+lot conveyed to a person who owns a parcel touching it (front, side or rear), by the City's owner
+list and the Water Department's parcel shapes on the day of the download, is probably a side or
+rear yard. The page always labels it as our inference. How often it is right:
+
+- *Checked by hand, 10 of them* (2019 to 2026, drawn at random): in all 10 the buyer is the owner
+  of record of the adjoining home and gets mail there (8 beside the lot, 2 behind it, a rear yard).
+- *Against the Land Bank's board agendas* (January 2025 to October 2026, 18 agendas read by hand
+  at 10 second intervals): they approved 6 side yards; 1 has been deeded by August 2026, and we
+  call it a side yard. The 3 development lots from the agendas already deeded are not called side
+  yards. Too few to measure more.
+- *Against the City's own counts*: for fiscal years 2019 to 2023 the City's dashboard counted 74
+  side yards. We infer 50 from the Land Bank's deeds alone and 73 from all four agencies' deeds
+  (the dashboard does not say which agencies it covers). Year by year the two differ both ways,
+  so this checks the size of the count, not each lot. Side yards we miss probably went to a
+  relative or a co-owner whose name differs from the owner of record next door, or to someone
+  who has sold their home since; lots sold to a neighbor through other programs would be counted
+  wrongly as side yards.
+- *A consistency check*: 31 of the 37 Land Bank lots we call side yards since 2023 have a mortgage
+  to the Land Bank recorded within 120 days, as the side yard program's terms require; so do 3
+  of the 6 single lots to people we do not call side yards.
+
+**The City's Land Management dashboard** (`land_conveyed_by_fy`, City ArcGIS
+`LMDashboard_PropertiesConveyedbyFY`, a public item of the City's organization,
+[item page](https://www.arcgis.com/home/item.html?id=db4dcb37071c4cdfb6ca4df82a1de1b3)). Seven
+rows, fiscal years 2017 to 2023: side yards, gardens or open space, business expansion, and homes
+built by income level (homes, not properties). Last edited 2023-04-11, so fiscal year 2023 stops
+early. Its side yards for fiscal years 2020 to 2023 add up to 67, the number WHYY reported in
+April 2026. The item's license field is empty (`unstated`): used with credit, and removed if the
+City asks. A second table of the same dashboard, `LandDispositionStatus` (applications received,
+denied, approved and settled), is not used: it was last edited in February 2022 and does not say
+which period it covers.
+
+**City Council's legislation records.** Council approves each Land Bank disposition by resolution.
+The City's Legistar API (`https://webapi.legistar.com/v1/phila/...`) answered every request on
+2026-10-09 with HTTP 403 "Token is required", so it is not used, and its public web pages are not
+scraped in its place. A token is an owner action: the Clerk of City Council (or Granicus, on the
+City's behalf) can issue one. Resolution titles would add the program and the date of Council's
+approval, which would also show how long approvals take.
+
+**The Land Bank's and PHDC's documents.** phillylandbank.org publishes board agendas and board
+packages from January 2025 on (its 2024 page lists none). Agendas group each disposition by
+program (affordable housing, assemblage, community use, gardens and open space, side or rear
+yards) and name the applicants. PHDC's terms of use
+([PDF](https://phillylandbank.org/wp-content/uploads/2025/03/PHDC-Website-Terms-of-Use.pdf)) claim
+the site's information and forbid republishing it in another form without written permission, and
+robots.txt asks for 10 seconds between requests. So the pipeline never reads them; the page links
+to the board's page, and the agendas were read by hand only to check our inference (nothing from
+them is copied). Asking PHDC for permission, or for a disposition list by program, would replace
+our inference with the Land Bank's own record.
+
+**Listed lots, week by week.** Each new good snapshot of `city_owned_property` adds a line to
+`history.json` in its snapshot folder: the day, how many records and parcels are listed as
+available, how many of those may go to a neighbor as a side yard, by agency, and every record by
+status. The weekly refresh keeps the file with the snapshot. The series starts with the snapshot
+of 2026-10-04: 1,687 records listed as available on 1,639 parcels, 1,291 of them open to a
+neighbor as a side yard.
 
 ## Sources checked 2026-10-08
 
@@ -578,6 +721,7 @@ and `publish/laser.py`; tile properties in CONTRACTS.md section 4):
 | Walk Score | Terms forbid storing scores |
 | Mural Arts and Public Art Archive content | Terms (link out instead) |
 | Reddit, TPL website, Urban Displacement Project, Free Library website | Block automated access; never get around a block |
+| Build Philly Now's map (map.buildphillynow.org) and its other tools | All rights reserved, no open license. Its records are the City's own (it credits the Office of Property Assessment and L&I through the City's Carto service), so Placekeepers reads those City sources directly and never its tiles, API, estimates or presets (reviewed 2026-10-09, owner's instruction) |
 
 ## Access notes for builders
 

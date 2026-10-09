@@ -18,13 +18,15 @@ change once published, because saved links contain them.
   publisher: Philadelphia Police Department
   homepage: https://opendataphilly.org/datasets/shooting-victims/
   endpoint:
-    kind: carto                       # carto | arcgis | url | osm_extract | curated | sparql
+    kind: carto                       # carto | arcgis | url | osm_extract | curated | sparql | arcgis_tiles
     table: shootings                  # carto: table (and optional where)
     # arcgis: service: <name>, layer: 0 (and optional url, see below)
     # url: url: <https link>, format: csv | geojson | parquet | zip | json
     # osm_extract: url: <https link to an .osm.pbf file>, tags: [key=value or key, ...]
     # curated: path: data/curated/<file>.yaml
     # sparql: url: <https link to a SPARQL query service>
+    # arcgis_tiles: url: <https link ending in /rest/services>, bounds: [w, s, e, n],
+    #   services: [{key: <text>, service: <name>}, ...]
   license: city_terms                 # key into registry/licenses.yaml
   attribution: "Shooting data: Philadelphia Police Department via OpenDataPhilly"
   cadence: daily                      # daily | weekly | monthly | yearly | irregular | frozen
@@ -90,6 +92,25 @@ source's adapter, as a Carto adapter's columns do (`wikidata_art`, in
 `pipeline/src/placekeepers/adapters/art.py`): one small query a week, sent as a POST form with the
 project's User-Agent, asking for JSON.
 
+An `arcgis_tiles` endpoint (added 2026-10-09 by M4.3) names picture services on an ArcGIS server,
+such as the City's aerial photographs, that **the visitor's browser loads straight from that
+server**: Placekeepers never copies or hosts the pictures. Its keys: `url`, the server's REST
+services root (`https://tiles.arcgis.com/tiles/fLeGjb7u4uXqeF9q/arcgis/rest/services` for the
+City's organization); `bounds`, where the pictures are, as west, south, east and north in degrees
+(the map asks for no tile outside it); and `services`, a list of `key` (letters, digits, `_` and
+`-`; for the aerial photos the year, which appears in links) and `service` (the service's name on
+the server, with its folder if it has one). Keys and services are each listed once. A tile's
+address is `<url>/<service>/MapServer/tile/{z}/{y}/{x}`, in Web Mercator, 256 pixels square.
+
+The pipeline downloads no pictures from such a source. Its adapter
+(`pipeline/src/placekeepers/adapters/tiles.py`) checks on every run, whatever the cadence, that
+each service still answers: its description says it serves cached Web Mercator tiles 256 pixels
+square down to zoom 19, and one tile in the middle of `bounds` at zoom 15 comes back as a picture.
+The snapshot holds one row per service (`key`, `service`, `ok`, `deepest_zoom`, `detail`); a
+service that does not answer fails the snapshot's checks, so the source turns `stale` with a
+message naming the service, and the weekly refresh opens the usual issue after two runs in a row.
+`city_aerial_photos` (20 years, 1996 to 2025) and `city_atlas_1860` are the first two.
+
 ### `registry/licenses.yaml`
 
 ```yaml
@@ -129,13 +150,28 @@ Setting keys by type (added 2026-10-04 by M0.3). Every setting has `id`, `label`
 
 | `type` | Other keys | `default` |
 |---|---|---|
-| `choice` | `options`: a list of `value` (text) and `label` | one of the option values, as text |
+| `choice` | `options`: a list of `value` (text) and `label`; optional `control: slider` (added by M4.3) to show it as a slider through the options in their order, such as years | one of the option values, as text |
 | `toggle` | none | `true` or `false` |
 | `range` | `min` and `max` (numbers), `step` (optional, default 1) | a number from `min` to `max` |
 
 What a setting does to the map is decided by the layer's style in `web/src/map/styles`, which lists
 the setting ids it puts into effect; a web test fails if a registry setting has no effect. Ids and
 option values appear in shared links, so they never change once published.
+
+**Raster layers** (added 2026-10-09 by M4.3): a layer with `geometry: raster` draws pictures from
+exactly one source of kind `arcgis_tiles`, loaded by the visitor's browser from that source's own
+server. It has no `file` and no `source_layer` (the web app's validator gives it empty text for
+both), and a layer of any other geometry never names an `arcgis_tiles` source. When the source has
+more than one service, the layer has a choice setting `year` whose option values are the services'
+keys in the same order, and it shows that service; with one service it has none. Each service is
+its own map source in the browser (`pk-raster:<source id>:<key>`, `web/src/map/raster.ts`), so
+changing the year swaps the source. A raster layer is drawn only while the app option
+`live_city_data` is on (section 1, options): with it off, the web app takes such layers out of the
+visible layers wherever they came from (a link, saved settings, a pasted link), shows their
+switches turned off with the reason, and asks the server for nothing. Both raster layers are off by
+default in both views, so nothing is asked of the City's picture server until someone turns one
+on. `aerial_photos` and `atlas_1860`, in the group `then_and_now`, style `historic_imagery`, are the
+first two.
 
 `guide` (optional, added 2026-10-04 by M2.2) is the slug of a content page, `content/<slug>.md`,
 that shows how anyone can help improve the layer's data. The web app links it from "About this
@@ -162,7 +198,8 @@ still to come and EPA brownfield sites), `streets`, `transit` (added
 (added 2026-10-05 by M3.1 for heat vulnerability, the City's trees and the floodplain), `amenities`,
 `public_places` and `conditions` (added 2026-10-05 by M3.5), `placemaking` (added 2026-10-05 by
 M3.2 for public art), `walking` (added 2026-10-05 by M3.3 for walkability, people and places within
-walking distance, and traffic stress for people on bikes), `safety_context`, `boundaries`,
+walking distance, and traffic stress for people on bikes), `then_and_now` (added 2026-10-09 by M4.3
+for the City's aerial photos by year and its 1860 atlas), `safety_context`, `boundaries`,
 `basemap`, each with a label and a one line
 description.
 
@@ -307,7 +344,10 @@ leaves them as they are. The pipeline checks the file like the others but does n
 `live_city_data` (default on) lets the browser ask the City's servers for live data: the live refresh
 of a lot page (section 6), opening a parcel that has no dossier, and address search, which uses the
 City's address service (`https://api.phila.gov/ais/v1/search/<text>`). With it off, the site asks
-the City for nothing and lot pages show the weekly snapshot, labeled with its date.
+the City for nothing and lot pages show the weekly snapshot, labeled with its date. From M4.3
+(2026-10-09) it also governs the raster layers (section 1, layers): the City's aerial photos and
+1860 atlas, whose tiles come from the City's ArcGIS tile server (`https://tiles.arcgis.com`) only
+once someone turns such a layer on, and never while this option is off.
 
 ## 2. Published data layout
 
@@ -347,6 +387,7 @@ data/
       index.json          every SEPTA bus and trolley route with a sheet
       <route id>.json     one route's stops in order, each direction, with the id of the OpenStreetMap stop at each
     stop_amenities.json   what OpenStreetMap says at each stop it knows, by its id (section 8; Open Database License; decision D1)
+    land_bank.json        The Land Bank in numbers: conveyances by year, agency, buyer type, program and district, the City's counts by program, and the weekly count of listed lots (section 9; aggregates only; added 2026-10-09 by M4.4)
   dossiers/
     <first four digits of the OPA account>.json
     common.json           the parts of every flag that are the same for all parcels (section 6)
@@ -356,6 +397,8 @@ data/
   basemap/
     philly.pmtiles        Protomaps basemap extract
 ```
+
+Raster layers (M4.3) have no files here at all: their pictures stay on the City's servers.
 
 `basemap/` (the extract, its fonts and its icons) is not written by the pipeline: the web side makes it
 with `web/scripts/make-basemap.sh`, and the weekly refresh adds it beside the pipeline's output when it
@@ -409,7 +452,12 @@ header's freshness badge.
 ```
 
 `status` is one of `ok`, `stale` (using the last good snapshot), `failing` (no usable snapshot), or
-`missing` (never fetched). `stale_since` is the date of the last good snapshot when stale.
+`missing` (never fetched). `stale_since` is the date of the last good snapshot when stale. For an
+`arcgis_tiles` source (M4.3) the snapshot is the weekly check, not a copy of the pictures: `ok`
+means every service answered, `stale` that at least one did not (the `message` names it, and
+`stale_since` is the day every one last answered), and `rows` is how many services were checked.
+A raster layer's entry in `layers` has `file` and `source_layer` set to `null` (added 2026-10-09 by
+M4.3), and `files` never lists anything for it.
 `sources` lists every source in the registry and `layers` every layer, whether or not it was built.
 `files` lists every file under the data root except `manifest.json` itself, the dossier shards,
 which `dossiers` summarizes, and the route survey sheets (`tables/routes/<route id>.json`), which
@@ -1376,7 +1424,7 @@ Flags, in this order, with their `data`:
 | `years_since_sale` | private owners | `year`; with a known sale `date`, `price` and `source` (`opa_properties` when it comes from the assessor, before the deed records begin in 2000); with none, `sold: false` and `year` is the year since which there has been no sale on the open market |
 | `many_parcels` | private owners with at least 5 parcels we call vacant with high or medium confidence | `count`; for an organization `list` (a key of `tables/owners.json`); for an owner who may be a person `parcels`, their other parcels (each `id`, `address`, `kind`, `confidence`, as in `tables/owners.json`), never a `list` |
 | `fast_resales` | every owner | `count`, `dates` (two or more sales within 24 months of each other) |
-| `open_violations` | every owner | `count`, `last` (date), `title` (the City's violation title) |
+| `open_violations` | every owner | `count`, `last` (date), `title` (the City's title of the newest open violation; on a day with several, the title first in alphabetical order, so every build and the live lot page quote the same one) |
 | `unsafe`, `imminently_dangerous` | every owner | `since` (date) |
 
 Private owners are a person, a company, a nonprofit, or an owner name we could not type. How each
@@ -1831,3 +1879,74 @@ Without the `osm_philadelphia` snapshot the file is not written, and the build n
 shows as not yet surveyed. When the browser cannot load it, a stop's page says so rather than showing
 its answers, and the map counts every shelter and bench halfway.
 
+
+## 9. The Land Bank in numbers (`tables/land_bank.json`)
+
+Added 2026-10-09 by M4.4 (issue #40). The numbers of the page "The Land Bank in numbers"
+(`web/land-bank/`): what the Philadelphia Land Bank and the City's other land agencies conveyed,
+from the City's deed records (`land_conveyances`), the City's own counts by program
+(`land_conveyed_by_fy`), and the weekly count of lots on the City's list of public property listed
+as available (`city_owned_property`). **Aggregates only**: counts, shares and medians. The file holds
+no name, no address and no parcel number (docs/ETHICS.md; `pipeline/tests/test_land_bank.py`
+checks it). Written by `pipeline/src/placekeepers/publish/land_bank.py` as compact JSON (about 22
+kB on 2026-10-09); listed in the manifest's `files`. The rules are in
+`pipeline/src/placekeepers/derive/land_bank.py` and docs/DATA_SOURCES.md.
+
+```json
+{
+  "schema": 1,
+  "generated": "2026-10-09",
+  "deeds": {"first": "2014-01-02", "last": "2026-08-10", "fetched": "2026-10-09",
+            "years": [2014, 2015, 2026], "partial_year": 2026, "nominal_max": 100,
+            "counted": 3235, "follow_ups": 3013, "moved": 5403, "agreements": 6914, "other": 2859},
+  "agencies": {
+    "all": {
+      "years": [{"year": 2014, "n": 312, "deeds": 120, "moved_out": 318, "moved_in": 318,
+                 "buyers": {"individual": 159, "company": 86, "nonprofit": 17, "public": 50, "unknown": 0},
+                 "programs": {"side_yard": 49, "other": 263},
+                 "price": {"median": 5734, "priced": 276, "nominal": 88, "none": 36}}],
+      "total": {"n": 3235, "deeds": 1569, "moved_out": 5403, "moved_in": 5403, "buyers": {}, "programs": {}, "price": {}},
+      "districts": [{"district": 1, "n": 424, "years": [30, 25]}, {"district": null, "n": 285, "years": [9, 7]}]
+    },
+    "PLB": {}, "PRA": {}, "PHDC": {}, "PUB": {}
+  },
+  "programs_fy": {"edited": "2023-04-11",
+                  "rows": [{"fy": 2023, "side_yards": 12, "gardens": 0, "business": 4,
+                            "homes_below_30": 51, "homes_60_80": 239, "homes_80_120": 33,
+                            "homes_market": 73, "inferred_plb": 9, "inferred_all": 13}]},
+  "listed": {"weeks": [{"date": "2026-10-04", "listed": 1687, "parcels": 1639, "side_yard": 1291,
+                        "by_agency": {"PLB": 441, "PRA": 161, "PHDC": 9, "PUB": 1076},
+                        "by_status": {"Owned - On Hold for AHD": 1934, "Owned - Available": 1654}}]}
+}
+```
+
+| Field | Meaning |
+|---|---|
+| `deeds.first`, `deeds.last` | the oldest and newest deed date among the deeds read (days in Philadelphia) |
+| `deeds.fetched` | the day the deed records were read |
+| `deeds.years` | every calendar year from 2014 to the newest deed's year; every `years` list below has one entry per year, in this order |
+| `deeds.partial_year` | the newest year when it is not complete (the records run about eight weeks behind), else `null` |
+| `deeds.nominal_max` | a token price: this many dollars or less ($100, as on the lot pages) |
+| `deeds.counted` | properties counted as conveyed (one row per property per deed) |
+| `deeds.follow_ups` | conveyance rows not counted again: corrections and releases (the property was already in private hands, or already conveyed to the same buyer or within a year), and miscellaneous deeds for property the records never show an agency holding |
+| `deeds.moved`, `deeds.agreements`, `deeds.other` | rows left out: moves between the four agencies, agreements recorded as deeds (the same parties on both sides, or an agency on both sides), and other documents |
+| `agencies` | `all` (the four together) and each agency by the City owned layer's codes: `PLB` the Land Bank, `PRA` the Redevelopment Authority, `PHDC`, `PUB` the City |
+| `n` | properties conveyed |
+| `deeds` | distinct deeds among them |
+| `moved_out`, `moved_in` | properties this agency handed to, or received from, another of the four (for `all`, every move, the same number in both) |
+| `buyers` | properties by the buyers' type, by the owner rule of the lot pages: `individual` (people), `company`, `nonprofit` (named as one), `public` (another public body, such as the Philadelphia Housing Authority), `unknown` |
+| `programs` | `side_yard`: one lot to a person who owns a parcel touching it (front, side or rear), by the City's owner list and parcel shapes on the day of the download, **our inference**; `other`: not known from the deed |
+| `price` | the price the deed records for this property (the adjusted total, else the total): `median` (whole dollars, `null` when none), `priced` (properties with a price), `nominal` (priced at `nominal_max` or less), `none` (no price recorded) |
+| `districts` | properties by today's council district (1 to 10, from the deed's point), then `null` for deeds with no location; `years` per year as in `deeds.years` |
+| `programs_fy` | the City's Land Management dashboard: `edited` (its last edit), and per fiscal year (July to June, named for the year it ends) side yards, gardens or open space and business expansion in properties, homes built by income level, and our inferred side yards in the same fiscal year from the Land Bank (`inferred_plb`) and from all four (`inferred_all`); `null` when the source is missing |
+| `listed.weeks` | one entry per day the City's list was fetched (the last snapshot of that day), oldest first: records listed as available (a status beginning "Owned - Available"), distinct parcels among them, those open to a neighbor as a side yard, the listed records by agency, and every record by status as the City writes it; `listed` is `null` before any snapshot was counted |
+
+The weekly counts come from `history.json` in the `city_owned_property` snapshot folder of the
+cache (`{"schema": 1, "snapshots": [{"snapshot", "date", "records", "listed", "parcels",
+"side_yard", "by_agency", "by_status"}]}`), which gains a line when a new good snapshot of the list
+becomes current (the adapter's `after_promote`), or at publish for a snapshot it lacks. The weekly
+refresh packs the file with the snapshot (`.github/scripts/refresh.py`, `HISTORY_FILE`), so the
+series survives from week to week; if the saved snapshots are ever lost, it starts again.
+
+Without the `land_conveyances` snapshot the file is not written and the build notes say so; the page
+then says the numbers are not published yet.

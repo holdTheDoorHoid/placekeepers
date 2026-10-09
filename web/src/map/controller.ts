@@ -17,6 +17,7 @@ import type { Geometry } from 'geojson';
 import { Protocol } from 'pmtiles';
 import { resolveLayerData, type LayerData, type Manifest } from '../data/manifest.ts';
 import { basemapCredit, isProtomaps } from './basemap.ts';
+import { RASTER_MAX_ZOOM, RASTER_SOURCE_PREFIX, isOutsideLayer, rasterTiles } from './raster.ts';
 import { NO_PADDING, type Padding } from './covered.ts';
 import { linePaths, pointOnPaths, type CrashInView, type LineInView } from '../streets/blocks.ts';
 import { registerArchive, styleArchives } from './pmtiles-source.ts';
@@ -107,6 +108,11 @@ export interface ControllerOptions {
    * left uncovered. The map flies with it as padding, so places land where people can see them.
    */
   padding?: () => Padding | null;
+  /**
+   * Whether the map may load pictures from the City's own servers (the raster layers of M4.3):
+   * true only while "Fetch live City data" is on. Off unless said, so nothing is asked by mistake.
+   */
+  outsideAllowed?: boolean;
 }
 
 interface Applied {
@@ -173,6 +179,8 @@ export class MapController {
   /** A camera move waiting for the next frame, when panels have opened or closed. */
   private pendingMove: { center: [number, number]; zoom: number | null; animate: boolean } | null = null;
   private moveFrame = 0;
+  /** Pictures from the City's servers may be drawn (live City data is on). */
+  private outsideAllowed: boolean;
 
   constructor(options: ControllerOptions) {
     for (const url of styleArchives(options.style)) registerArchive(pmtilesProtocol(), url);
@@ -183,6 +191,7 @@ export class MapController {
     this.state = options.state;
     this.protomaps = isProtomaps(options.style);
     this.padding = options.padding ?? (() => NO_PADDING);
+    this.outsideAllowed = options.outsideAllowed ?? false;
     let style = options.style;
     if (typeof style !== 'string') {
       // The base map starts in the look and visibility the state asks for, with no flash of the
@@ -309,6 +318,16 @@ export class MapController {
     for (const [layerId, applied] of this.applied) {
       if (applied.style === STYLES.transit_stops) this.syncLayer(layerId);
     }
+  }
+
+  /**
+   * Allows or stops pictures from the City's own servers (M4.3), following "Fetch live City data".
+   * Stopped, those layers are hidden at once and no further tile is asked for.
+   */
+  setOutsideAllowed(allowed: boolean): void {
+    if (allowed === this.outsideAllowed) return;
+    this.outsideAllowed = allowed;
+    this.sync();
   }
 
   setManifest(manifest: Manifest | null): void {
@@ -565,6 +584,10 @@ export class MapController {
       this.syncBase(layer);
       return;
     }
+    if (isOutsideLayer(layer)) {
+      this.syncRaster(layer, style);
+      return;
+    }
     const visible = this.state.layers.includes(layerId);
     const applied = this.applied.get(layerId);
 
@@ -614,6 +637,59 @@ export class MapController {
       if (prev?.id === spec.id) this.updateLayer(prev, spec);
     });
     applied.specs = next;
+  }
+
+  /**
+   * A picture layer from the City's servers (M4.3). Its source is added only once the layer is on
+   * and pictures are allowed, so nothing is asked of the City before. Each service (each year) is
+   * its own source: choosing another year swaps the source, and the old one is let go.
+   */
+  private syncRaster(layer: Layer, style: StyleModule): void {
+    const applied = this.applied.get(layer.id);
+    if (!this.outsideAllowed || !this.state.layers.includes(layer.id)) {
+      if (applied) {
+        const hidden = this.withVisibility(applied.specs, false);
+        hidden.forEach((spec, i) => this.updateLayer(applied.specs[i]!, spec));
+        applied.specs = hidden;
+      }
+      return;
+    }
+    const target = rasterTiles(layer, this.registry, this.state);
+    if (!target) {
+      this.report(layer.id, 'unavailable');
+      return;
+    }
+    const context = (sourceId: string) => ({ layer, registry: this.registry, state: this.state, sourceId, sourceLayer: null });
+    if (applied && applied.sourceId === target.sourceId) {
+      const next = this.withVisibility(style.layers(context(applied.sourceId)), true);
+      next.forEach((spec, i) => {
+        const prev = applied.specs[i];
+        if (prev?.id === spec.id) this.updateLayer(prev, spec);
+      });
+      applied.specs = next;
+      return;
+    }
+    if (applied) {
+      for (const spec of applied.specs) if (this.map.getLayer(spec.id)) this.map.removeLayer(spec.id);
+      if (this.map.getSource(applied.sourceId)) this.map.removeSource(applied.sourceId);
+      this.applied.delete(layer.id);
+      // A new year starts afresh: an error in the last one says nothing about it.
+      this.reported.delete(layer.id);
+    }
+    if (!this.map.getSource(target.sourceId)) {
+      this.map.addSource(target.sourceId, {
+        type: 'raster',
+        tiles: target.tiles,
+        tileSize: 256,
+        maxzoom: RASTER_MAX_ZOOM,
+        ...(target.bounds ? { bounds: target.bounds } : {}),
+      });
+    }
+    const specs = this.withVisibility(style.layers(context(target.sourceId)), true);
+    const before = this.beforeId(style.zIndex);
+    for (const spec of specs) this.map.addLayer(spec, before);
+    this.applied.set(layer.id, { style, sourceId: target.sourceId, sourceLayer: null, specs });
+    this.report(layer.id, 'ok');
   }
 
   private highlightFor(layerId: string): (string | number)[] {
@@ -736,6 +812,10 @@ export class MapController {
   private handleError(e: { sourceId?: string; error?: Error }): void {
     if (e.sourceId) {
       for (const [layerId, applied] of this.applied) if (applied.sourceId === e.sourceId) this.report(layerId, 'error');
+      // A picture tile the City's server did not send (M4.3) leaves MapLibre with nothing new to
+      // draw, so it may never call the map idle and the loading note would stay over the map.
+      // One more frame lets it settle, with or without the pictures.
+      if (e.sourceId.startsWith(RASTER_SOURCE_PREFIX)) this.map.triggerRepaint();
     }
     console.warn('Placekeepers map:', e.error?.message ?? e);
   }

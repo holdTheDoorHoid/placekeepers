@@ -1,8 +1,9 @@
 <script lang="ts">
-  // One layer setting from the registry: a switch (toggle), a set of radio buttons (choice)
-  // or a slider (range).
+  // One layer setting from the registry: a switch (toggle), a set of radio buttons (choice), a
+  // slider through a choice's options (a choice with `control: slider`, M4.3) or a slider (range).
   import type { Layer, LayerSetting } from '../../registry/types.ts';
   import type { AppStore } from '../../state/store.svelte.ts';
+  import { strings } from '../../strings.ts';
 
   let { store, layer, setting, idPrefix }: { store: AppStore; layer: Layer; setting: LayerSetting; idPrefix: string } =
     $props();
@@ -21,6 +22,28 @@
       onchange={(e) => store.setSetting(layer.id, setting.id, e.currentTarget.checked)}
     />
     <label for={controlId}>{setting.label}</label>
+  </div>
+{:else if setting.type === 'choice' && setting.control === 'slider'}
+  <!-- A choice shown as a slider through its options in order, such as the years of the aerial
+       photos (M4.3). Screen readers hear the option's label, not its position. -->
+  {@const index = Math.max(0, setting.options.findIndex((o) => o.value === value))}
+  <div class="range">
+    <label for={controlId}>{setting.label}</label>
+    <div class="range-row">
+      <input
+        id={controlId}
+        type="range"
+        min="0"
+        max={setting.options.length - 1}
+        step="1"
+        value={index}
+        aria-valuetext={setting.options[index]?.label}
+        aria-describedby="{controlId}-span"
+        oninput={(e) => store.setSetting(layer.id, setting.id, setting.options[Number(e.currentTarget.value)]!.value)}
+      />
+      <output for={controlId}>{setting.options[index]?.label}</output>
+    </div>
+    <p class="span" id="{controlId}-span">{strings.historic.sliderRange(setting.options[0]!.label, setting.options.at(-1)!.label)}</p>
   </div>
 {:else if setting.type === 'choice'}
   <fieldset class="choice">
@@ -86,5 +109,14 @@
   output {
     min-width: 3ch;
     text-align: right;
+  }
+  .range-row input {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .span {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--pk-muted);
   }
 </style>

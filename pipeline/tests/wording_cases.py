@@ -24,6 +24,8 @@ from datetime import date
 from pathlib import Path
 from typing import Any
 
+import duckdb
+
 from placekeepers.derive import owners as ow
 from placekeepers.derive import transfers as tr
 from placekeepers.derive import wording
@@ -37,6 +39,7 @@ from placekeepers.derive.flags import (
     owner_flags,
     shows_deed_fraud_notice,
 )
+from placekeepers.publish.dossiers import violation_summary_sql
 
 FIXTURE = Path(__file__).parent / "fixtures" / "wording_parity.json"
 
@@ -73,6 +76,54 @@ RESALE_TEXT = [
     (2, "2011-01-05", "2011-08-01", False),
     (2, "2010-12-05", "2011-08-01", False),
 ]
+
+#: Open violations as the City lists them (day, title, status): which one the flag quotes. The
+#: newest, and on a day with several, the title first in alphabetical order (no title last).
+LAST_OPEN_PICK = [
+    [
+        ("2025-08-01", "VACANT STRUCTURE AND LAND", "OPEN"),
+        ("2025-08-01", "EXTERIOR AREA WEEDS", "OPEN"),
+        ("2024-01-10", "RUBBISH & GARBAGE", "OPEN"),
+    ],
+    [("2025-08-01", "ZONING", "OPEN"), ("2025-07-01", "ALPHA", "OPEN")],
+    [
+        ("2026-01-02", "AAA NOT OPEN", "COMPLIED"),
+        ("2025-12-08", "PLANS REQUIRED TO COMPLY", "OPEN"),
+        ("2025-12-08", "HVAC SYSTEM", "OPEN"),
+    ],
+    [("2025-05-05", None, "OPEN"), ("2025-05-05", "WEEDS", "OPEN")],
+    [("2025-05-05", "B  TITLE", "OPEN"), ("2025-05-05", "B SIGN", "OPEN")],
+    [("2025-05-05", "WEEDS", "CLOSED")],
+]
+
+
+def last_open_pick(rows: list[tuple[str | None, str | None, str]]) -> dict[str, Any]:
+    """The pipeline's own summary of one parcel's violations (publish/dossiers.py) on these rows."""
+    con = duckdb.connect()
+    try:
+        con.execute(
+            "CREATE TABLE v (opa_account_num VARCHAR, violationnumber VARCHAR, "
+            "violationstatus VARCHAR, violationdate DATE, violationcodetitle VARCHAR)"
+        )
+        for n, (when, title, status) in enumerate(rows):
+            con.execute(
+                "INSERT INTO v VALUES ('371000001', ?, ?, ?, ?)", [f"V{n}", status, when, title]
+            )
+        sql = violation_summary_sql("v", "opa_account_num") + " GROUP BY 1"
+        found = con.execute(sql).fetchone()
+    finally:
+        con.close()
+    _, _, n_open, _, last_open, title = found
+    count = int(n_open or 0)
+    title = " ".join(title.split()) if title else None
+    return {
+        "rows": [list(row) for row in rows],
+        "count": count,
+        "last": last_open.isoformat() if last_open else None,
+        "title": title,
+        "text": wording.violations_text(count, last_open, title) if count else None,
+    }
+
 
 VIOLATIONS_TEXT = [
     (1, "2025-04-09", "NEW USE"),
@@ -462,6 +513,7 @@ def build() -> dict[str, Any]:
             }
             for count, last, title in VIOLATIONS_TEXT
         ],
+        "last_open_pick": [last_open_pick(rows) for rows in LAST_OPEN_PICK],
         "unsafe_text": [
             {"since": since, "text": wording.unsafe_text(day(since))}
             for since in ("2023-05-02", None)

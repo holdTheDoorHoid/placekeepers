@@ -9,8 +9,10 @@
     Philadelphia's public servers for the newest records: the owner, sales, assessments and
     inspections. These requests go straight from your device to the City, never through
     Placekeepers, and the City's servers see them as they would see a visit to the City's own
-    property website. Turn this off to use only the weekly copy of the data that Placekeepers
-    publishes. Address search and opening a parcel that is not on our list need it on.
+    property website. The City's aerial photos and its 1860 atlas, under "Then and now", also come
+    straight from the City's servers, but only once you turn one of them on. Turn this off to use
+    only the weekly copy of the data that Placekeepers publishes. Address search, opening a parcel
+    that is not on our list, and the old photos and atlas need it on.
   type: toggle
   default: true
   release: v0.1

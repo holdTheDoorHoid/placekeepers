@@ -5,8 +5,9 @@ Standard library only, so any job can run it with a plain Python 3.12. Commands:
 
     refresh.py pack --cache DIR --out DIR
         One tar per source holding what the next run needs: the source's state (which carries
-        the count of failed attempts in a row) and its last good snapshot. These become the
-        assets of the rolling `data-snapshots` release. A source whose files are exactly as they
+        the count of failed attempts in a row), its history.json when it keeps one (the weekly
+        count of listed lots), and its last good snapshot. These become the assets of the
+        rolling `data-snapshots` release. A source whose files are exactly as they
         were restored (a frozen source, or a yearly one not due again) is not packed; its asset
         name goes in unchanged.txt instead, so the release keeps last week's copy.
 
@@ -71,6 +72,9 @@ from zoneinfo import ZoneInfo
 SNAPSHOTS = "snapshots"
 STATE_FILE = "state.json"
 CURRENT_LINK = "current.parquet"
+# What a source keeps across its snapshots, such as the weekly count of listed lots that the City's
+# list of public property adds to (placekeepers.derive.land_bank); travels with the snapshot.
+HISTORY_FILE = "history.json"
 ASSET_PREFIX = "snapshot-"
 SNAPSHOT_ASSET = re.compile(r"^snapshot-[a-z][a-z0-9_]*\.tar$")
 ENCRYPTED_ASSET = re.compile(r"^snapshot-[a-z][a-z0-9_]*\.tar\.gpg$")
@@ -90,12 +94,16 @@ FAILED = ("stale", "failing")
 
 
 def snapshot_files(source_dir: Path) -> list[Path]:
-    """The files of one source worth keeping: its state, and its last good snapshot (the file
-    current.parquet points at, that snapshot's JSON sidecar, and the link itself)."""
+    """The files of one source worth keeping: its state, what it keeps across snapshots (its
+    history.json, when it has one), and its last good snapshot (the file current.parquet points
+    at, that snapshot's JSON sidecar, and the link itself)."""
     files: list[Path] = []
     state = source_dir / STATE_FILE
     if state.is_file():
         files.append(state)
+    history = source_dir / HISTORY_FILE
+    if history.is_file() and not history.is_symlink():
+        files.append(history)
     link = source_dir / CURRENT_LINK
     if link.is_symlink():
         target = source_dir / link.readlink()
@@ -409,6 +417,9 @@ class SourceInfo:
     name: str
     publisher: str
     homepage: str
+    #: pictures each visitor's browser loads from the publisher's own server (an `arcgis_tiles`
+    #: endpoint, M4.3): the site keeps no copy of them, so "the last good copy" does not apply
+    external: bool = False
 
 
 def load_sources(registry_dir: Path) -> dict[str, SourceInfo]:
@@ -416,14 +427,25 @@ def load_sources(registry_dir: Path) -> dict[str, SourceInfo]:
 
     entries = yaml.safe_load((registry_dir / "sources.yaml").read_text(encoding="utf-8")) or []
     return {
-        entry["id"]: SourceInfo(entry["id"], entry["name"], entry["publisher"], entry["homepage"])
+        entry["id"]: SourceInfo(
+            entry["id"],
+            entry["name"],
+            entry["publisher"],
+            entry["homepage"],
+            (entry.get("endpoint") or {}).get("kind") == "arcgis_tiles",
+        )
         for entry in entries
     }
 
 
 def sources_to_json(sources: dict[str, SourceInfo]) -> str:
     data = {
-        source_id: {"name": info.name, "publisher": info.publisher, "homepage": info.homepage}
+        source_id: {
+            "name": info.name,
+            "publisher": info.publisher,
+            "homepage": info.homepage,
+            **({"external": True} if info.external else {}),
+        }
         for source_id, info in sources.items()
     }
     return json.dumps(data, indent=2, ensure_ascii=False) + "\n"
@@ -437,6 +459,7 @@ def sources_from_json(path: Path) -> dict[str, SourceInfo]:
             str(entry.get("name") or source_id),
             str(entry.get("publisher") or "its publisher"),
             str(entry.get("homepage") or ""),
+            entry.get("external") is True,
         )
         for source_id, entry in data.items()
         if isinstance(entry, dict)
@@ -456,7 +479,13 @@ def issue_title(info: SourceInfo) -> str:
     return f"Data source needs attention: {info.name}"
 
 
-def meanwhile(entry: dict[str, Any]) -> str:
+def meanwhile(entry: dict[str, Any], external: bool = False) -> str:
+    if external:
+        return (
+            "These pictures load straight from the publisher's server in each visitor's browser, "
+            "and the site keeps no copy of them, so where the server stopped answering they may "
+            "not show on the map. The Data status page says so."
+        )
     if entry.get("status") == "stale":
         since = when(entry.get("stale_since")) or when(entry.get("last_success"))
         copy = f"the last good copy, from {since}" if since else "the last good copy"
@@ -476,7 +505,7 @@ def issue_body(info: SourceInfo, entry: dict[str, Any], run_url: str | None) -> 
         f"**{info.name}**, published by {info.publisher}, did not refresh correctly in this "
         "week's data refresh or in the one before.",
         "",
-        f"**Meanwhile:** {meanwhile(entry)}",
+        f"**Meanwhile:** {meanwhile(entry, info.external)}",
         "",
     ]
     if entry.get("message"):
@@ -519,7 +548,7 @@ def update_comment(info: SourceInfo, entry: dict[str, Any], today: date) -> str:
     text = f"Still {status_words} in the refresh of {day_in_words(today)}."
     if entry.get("message"):
         text += f" {entry['message'].rstrip('.')}."
-    return f"{text} {meanwhile(entry)}\n"
+    return f"{text} {meanwhile(entry, info.external)}\n"
 
 
 def close_comment(info: SourceInfo, today: date) -> str:

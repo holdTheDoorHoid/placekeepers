@@ -247,7 +247,12 @@ Philadelphia Register of Historic Places (from close in), the Planning Commissio
 hearings still to come before the City's boards (a setting shows the Zoning Board's only), and the
 EPA's brownfield sites. Tapping one says what it is in plain words, who to ask, and for a hearing
 how to take part and a button to the lot's page; a hearing never names who filed the appeal. The
-historic layers may move into M4.3's "Then and now" group when both are merged.
+historic layers stay in this group rather than M4.3's "Then and now": historic designation is a
+rule for the lot today, not its history (orchestrator, 2026-10-09).
+
+As built (M4.3, 2026-10-09): two layers draw pictures rather than things, the City's aerial photos
+by year and its copy of the 1860 atlas (section 5.11). A picture is known by its source and its
+year (`aerial_photos` and `1996`), which is what a link keeps.
 
 ### 5.2 The registry: one source of truth for every toggle
 
@@ -269,6 +274,14 @@ registry. A pipeline check fails the build if a layer has no description, licens
 Settings persist in the address bar (shareable) and in browser storage under keys namespaced
 `placekeepers:v1:` (the github.io origin is shared with the owner's other sites). "Reset to defaults"
 is always available.
+
+As built (M4.3, 2026-10-09): **pictures from another server** have their own registry form.
+A source of kind `arcgis_tiles` lists picture services on an ArcGIS server, such as the City's
+aerial photos of each year, with where their pictures are; a layer with `geometry: raster` draws
+one such source, with a "Year" setting shown as a slider when there are several. The visitor's
+browser loads the pictures from the City's server; nothing is copied, built or hosted here, and the
+pipeline only checks each week that every service answers (section 8.4). Details in CONTRACTS.md
+section 1.
 
 The base map is a layer too (`basemap`, in the "Base map" group, added by M1.7): its switch turns
 streets and place names off, leaving a plain background, and its look can be light or gray, so the
@@ -601,7 +614,11 @@ Sections, in order:
    data is no longer public: the dossier shows the original project's July 2025 snapshot, always
    labeled with its date, and links to the City's Tax Center for today's balance.
 5. **History**: every recorded sale and transfer with date, document type and price; assessments
-   over time; permits, violations, demolitions; later, what stood here in old maps.
+   over time; permits, violations, demolitions; later, what stood here in old maps. As built
+   (M4.3, 2026-10-09): under the story of the lot (M4.2), "See this lot in old aerial photos"
+   turns on the City's aerial photos at 1996, the oldest, and shows the lot on the map (on a phone
+   the lot page closes first, as for "Show on map"); with live City data off the button is off and
+   says why (section 5.11).
 6. **Nearby**: shooting counts, crashes, memorials, LandCare lots, gardens, schools.
 7. **Sources and freshness**, and "report a correction".
 
@@ -1027,6 +1044,89 @@ clear terms but are an inventory from 2018 aerial photos that was never checked 
 turning them into gaps by block is work for a later milestone. Walk Score's terms forbid storing
 its scores. Details are in DATA_SOURCES.md, "Walkability and people".
 
+### 5.10 The Land Bank in numbers
+
+As built (M4.4, issue #40, 2026-10-09). A page of its own, `land-bank/`, reached from the site menu
+of every page ("The Land Bank in numbers"), for the Philadelphia Land Steward Union's campaign and
+anyone else who wants the facts. It serves by being accurate: neutral sentences, no slogans, and it
+speaks for neither the Land Steward Union nor the Land Bank.
+
+- **What it counts.** Properties the Philadelphia Land Bank, the Philadelphia Redevelopment
+  Authority, PHDC and the City conveyed, from the City's deed records since 2014: a plain deed from
+  the agencies to someone outside them, each property once. Moves between the agencies,
+  corrections, releases of old restrictions and agreements recorded as deeds are left out and
+  counted apart (DATA_SOURCES.md, "The Land Bank in numbers"). On 2026-10-09: 3,235 properties
+  from January 2014 to August 2026, 1,032 of them by the Land Bank (from 2017).
+- **What the page shows**, for all four agencies together or one at a time (a choice kept in the
+  link, `?agency=PLB`): a sentence with the totals and the moves between agencies; conveyances per
+  year, stacked by agency; who the buyers are (people, companies, nonprofits, other public bodies)
+  per year and as shares; side or rear yards per year, labelled as our inference, with how it was
+  checked and the City's own counts by program for fiscal years 2017 to 2023 beside it; the
+  prices the deeds record (the middle price and the share at a token price) with why a recorded
+  price is not always money paid; counts by today's council districts; the weekly count of lots
+  listed as available, which starts on 2026-10-04 and says so; what the numbers cannot show; and
+  every source with its date.
+- **Charts** follow the lot page's assessment chart (thin columns, a rounded top, recessive grid,
+  the highest value labelled, each value on hover), with a legend for two or more series, colors
+  in a fixed order checked for color blindness, and the same numbers in a table under each chart.
+- **Downloads.** Each section has a CSV download built in the browser from the published file. Its
+  first line points to the terms of use, as every export does (ETHICS.md, "Bulk export").
+- **Aggregates only.** No names, no addresses and no parcel numbers on the page, in its file or in
+  its downloads. Organizations are never named, not even in totals. The buyers' names are read
+  only in the pipeline, to tell a person from a company, to check the parcel next door and to
+  recognize the same buyer twice, and are never kept.
+- **The program is mostly unknown.** The deeds do not name it. The one inference, a single lot to
+  a person who owns a home touching it, is always labelled as ours, with its checks. The City's
+  Legistar API (Council's resolutions) refuses requests without a token, and the Land Bank's own
+  board documents may not be republished without PHDC's permission; both would name the program
+  for every conveyance (owner items, DATA_SOURCES.md).
+
+### 5.11 Then and now: old aerial photos and the 1860 atlas
+
+As built (M4.3, 2026-10-09). **What the owner sees:** a new group in the layer panel, **Then and
+now**, with two layers, off by default in both views:
+
+- **Aerial photos by year**: the City's own aerial photographs of the whole city, one for each year
+  it has them: 1996, 2000, 2004, 2005, 2008 to 2012, 2014 to 2020, and 2022 to 2025, twenty in
+  all. A slider moves through the years (2025 by default; 1996 and 2000 are black and white), and
+  a second setting sets how strongly the photo shows, so today's streets and labels can show
+  through. The photo lies under every other layer and under the base map's labels,
+  so lots, streets and memorials stay on top. The legend says the year, that the photos were taken
+  from a plane in spring, and credits the City.
+- **1860 atlas (Hexamer and Locher)**: the atlas the City hosts, fitted to today's map by the
+  Greater Philadelphia GeoHistory Network. It covers Center City and Northern Liberties only, which
+  the legend says, and starts at 80 percent strength so today's streets show through; the map asks
+  only for the area it covers.
+- On the lot page, under History, **"See this lot in old aerial photos"** (section 5.6).
+
+**Privacy.** These are the site's first pictures from another server. Nothing is asked of the
+City's picture server until someone turns one of the layers on, in either view, on a lot page, or
+from a link. They follow "Fetch live City data": with it off, their switches are off and say why
+(with a button to turn live data on), the lot page's button is off, and a link that names them, or
+settings saved earlier, cannot turn them on; the map then asks the picture server for nothing, and
+the address bar drops them. The Privacy page says what the picture server sees (the internet
+address and which part of the city is on screen; no cookies and no referrer). The privacy end to
+end test checks a default load, the lot page button, the atlas, and a link with live data off.
+
+**Never copied.** The pictures stay on the City's servers (its ArcGIS Online organization,
+`tiles.arcgis.com`): the browser asks for the tiles of the chosen year, and Placekeepers builds,
+stores and hosts none of them. The City's terms on every service are its standard ones (the City
+keeps its rights, as is, hold harmless), which allow this (DATA_SOURCES.md, "History and
+displacement").
+
+**Health.** These layers are not built by the pipeline, so the weekly refresh checks instead that
+each of the 21 services still answers with a picture (section 8.4); a broken service shows on the
+Data status page, which says plainly that some pictures may not show, and opens the usual issue
+after two weeks in a row.
+
+**Left out, and why.** Mapping Inequality's 1937 redlining map: its data is licensed for non
+commercial use only (CC BY-NC), which the owner must weigh first. The GeoHistory Network's other
+maps that the City hosts (the 1875, 1895 and 1910 atlases, the 1942 and 1962 land use maps, the
+1928 aerial photos) and PhilaGeoHistory's own layers: they wait for the Athenaeum of
+Philadelphia's permission. The 1959, 1975 and 1999 photos the City hosts for DVRPC and the USGS:
+their services state no terms. A swipe to compare two years side by side: not built; the strength
+setting and the slider cover most of it. Details in DATA_SOURCES.md.
+
 ## 6. Finding vacant land without depending on one source
 
 The City's vacancy indicator stopped being accurate in June 2024, and that alone ended the original
@@ -1183,6 +1283,12 @@ Built in M0.4 (2026-10-04). Changes from the original plan are marked.
     issue gets a comment; when the source is ok again the issue closes itself.
 - To test the alarm, a manual run can make one source's download fail on purpose (the
   `break_source` input); the source keeps its last good copy, exactly as in a real outage.
+- Pictures the browser loads from another server (M4.3, the City's aerial photos and 1860 atlas,
+  endpoint kind `arcgis_tiles`) have no copy to keep. Instead, every run checks that each picture
+  service still answers (its description and one tile, a second apart, about 40 seconds for 21
+  services), whatever the source's cadence. A service that does not answer turns the source stale
+  with its name in the message; the Data status page says some pictures may not show, and the
+  issue opened after two runs says the same rather than "the map keeps the last good copy".
 - Least privilege: the jobs that install or run packages (`pipeline`, `site`) only ever hold a read
   token. The jobs that can write (`save` for release assets, `issues` for issues) install nothing and
   run only `gh` and the repository's standard library helper, so a compromised package can never
@@ -1298,3 +1404,8 @@ docs/            design, roadmap, research
    and Parks and Recreation whether the map may include their art lists (docs/ROUTES.md section 6),
    and decide whether famous monuments that sources mark as memorials may show their names, from a
    hand curated list (section 5.8).
+7. The Land Bank in numbers (section 5.10): optionally ask the Clerk of City Council for a Legistar
+   API token (Council's resolutions name the program and the date of approval), ask PHDC for
+   permission to use the Land Bank's board documents or for a list of dispositions by program, and
+   ask the City whether its Land Management dashboard table, which states no license, may be
+   reused. The page works without any of them and labels the program as our inference.

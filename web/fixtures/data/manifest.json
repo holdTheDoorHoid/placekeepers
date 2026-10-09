@@ -497,6 +497,42 @@
       "rows": 351,
       "newest_record": null,
       "message": null
+    },
+    "city_aerial_photos": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 20,
+      "newest_record": null,
+      "message": null
+    },
+    "city_atlas_1860": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 1,
+      "newest_record": null,
+      "message": null
+    },
+    "land_conveyances": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 21424,
+      "newest_record": "2026-08-10",
+      "message": null
+    },
+    "land_conveyed_by_fy": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 7,
+      "newest_record": null,
+      "message": null
     }
   },
   "layers": {
@@ -830,6 +866,20 @@
       "sources": [
         "epa_brownfields"
       ]
+    },
+    "aerial_photos": {
+      "file": null,
+      "source_layer": null,
+      "sources": [
+        "city_aerial_photos"
+      ]
+    },
+    "atlas_1860": {
+      "file": null,
+      "source_layer": null,
+      "sources": [
+        "city_atlas_1860"
+      ]
     }
   },
   "files": {
@@ -1000,6 +1050,10 @@
     "dossiers/common.json": {
       "bytes": 7125,
       "sha256": "5cdd68a449a9aacd5852138d209cd07605f8ad3324e20d4ad86a30dc87dc7b99"
+    },
+    "tables/land_bank.json": {
+      "bytes": 22765,
+      "sha256": "d0dead8695e5a34ce2b03853e1e45f98730c61d402264c4516161636c105d325"
     },
     "tables/owners.json": {
       "bytes": 1279,

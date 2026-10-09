@@ -517,20 +517,36 @@ VIOLATION_COLUMNS = (
     "violationcodetitle",
 )
 
+#: The open violation the flag quotes: the newest, and among several on that day the title first in
+#: alphabetical (code point) order, with white space runs as one space; no title last. Every build,
+#: and the lot page with live data (web/src/dossier/flags.ts, liFacts), picks the same one
+#: (checked by tests/fixtures/wording_parity.json, `last_open_pick`).
+OPEN_TITLE_KEY = "nullif(trim(regexp_replace(violationcodetitle, '\\s+', ' ', 'g')), '')"
+LAST_OPEN_TITLE = (
+    f"first({OPEN_TITLE_KEY} ORDER BY violationdate DESC NULLS LAST, "
+    f"{OPEN_TITLE_KEY} ASC NULLS LAST) FILTER (WHERE violationstatus = 'OPEN')"
+)
+
+
+def violation_summary_sql(source: str, account: str) -> str:
+    """Per account: violations, open violations, the latest violation, the latest open one and the
+    title the flag quotes (LAST_OPEN_TITLE). `source` is a table or subquery with the
+    VIOLATION_COLUMNS; `account` the SQL for its account."""
+    return f"""SELECT {account} AS a,
+                   count(DISTINCT violationnumber),
+                   count(DISTINCT violationnumber) FILTER (WHERE violationstatus = 'OPEN'),
+                   max(violationdate),
+                   max(violationdate) FILTER (WHERE violationstatus = 'OPEN'),
+                   {LAST_OPEN_TITLE}
+            FROM {source}"""
+
 
 def read_violations(con: Any, path: Path) -> dict[str, LiSummary]:
     account = account_sql("opa_account_num")
     rows = _rows(
         con,
-        f"""SELECT {account} AS a,
-                   count(DISTINCT violationnumber),
-                   count(DISTINCT violationnumber) FILTER (WHERE violationstatus = 'OPEN'),
-                   max(violationdate),
-                   max(violationdate) FILTER (WHERE violationstatus = 'OPEN'),
-                   arg_max(violationcodetitle, violationdate)
-                       FILTER (WHERE violationstatus = 'OPEN')
-            FROM {_source(path, VIOLATION_COLUMNS)}
-            WHERE {account} IN (SELECT a FROM acc) GROUP BY 1""",
+        violation_summary_sql(_source(path, VIOLATION_COLUMNS), account)
+        + f" WHERE {account} IN (SELECT a FROM acc) GROUP BY 1",
     )
     return {
         a: LiSummary(
@@ -1225,7 +1241,7 @@ def lots_layer_geojson(ctx: Context, out_root: Path) -> Path | None:
     """Where publish has just written the lots layer as GeoJSON (it builds the map layers before
     the dossiers), or None when the registry has no lots layer."""
     for layer in ctx.registry.layers.values():
-        if layer.style == LOTS_STYLE:
+        if layer.style == LOTS_STYLE and layer.file and layer.source_layer:
             file = Path(layer.file)
             return out_root / file.with_name(f"{file.stem}.{layer.source_layer}.geojson")
     return None

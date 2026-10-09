@@ -31,6 +31,22 @@ export const GJLI_URL = 'https://www.pubintlaw.org/cases-and-advocacy/garden-jus
  */
 export const LAND_BANK_MAP_URL = 'https://phillylandbank.org/view-properties-map/';
 
+/** The Philadelphia Land Bank's board page: agendas, board packages and minutes (checked 2026-10-09). */
+export const LAND_BANK_BOARD_URL = 'https://phillylandbank.org/philadelphia-land-bank-board/';
+
+/** The City's real estate transfers on OpenDataPhilly: the deed records the Land Bank page counts. */
+export const REAL_ESTATE_TRANSFERS_URL = 'https://opendataphilly.org/datasets/real-estate-transfers/';
+
+/** The City's Land Management dashboard table of properties conveyed by fiscal year (frozen April 2023). */
+export const LAND_CONVEYED_BY_FY_URL = 'https://www.arcgis.com/home/item.html?id=db4dcb37071c4cdfb6ca4df82a1de1b3';
+
+/** City Council's legislation search, where Council's resolutions on Land Bank dispositions are published. */
+export const COUNCIL_LEGISLATION_URL = 'https://phila.legistar.com/Legislation.aspx';
+
+/** How the Land Bank page counts, in the repository's data source notes. */
+export const LAND_BANK_METHOD_URL =
+  'https://github.com/holdTheDoorHoid/placekeepers/blob/main/docs/DATA_SOURCES.md#the-land-bank-in-numbers-m44-sources-checked-2026-10-09';
+
 /** The project's repository, where corrections are reported. */
 export const REPO_URL = 'https://github.com/holdTheDoorHoid/placekeepers';
 

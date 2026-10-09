@@ -13,6 +13,7 @@ import { isSample } from '../places/sample.ts';
 import type { InspectTarget, LayerStatus, MapController, MemorialInView, ParcelInView, StopInView } from '../map/controller.ts';
 import type { CrashInView, LineInView } from '../streets/blocks.ts';
 import { lensChanges } from '../map/lens-layers.ts';
+import { outsideLayerIds, withoutOutsideLayers } from '../map/raster.ts';
 import { STOP_TABLE, loadStopTable, type StopTable } from '../transit/answers.ts';
 import type { Registry, SettingValue, ViewName } from '../registry/types.ts';
 import { strings } from '../strings.ts';
@@ -177,6 +178,19 @@ export class AppStore {
     });
     this.lists = new ListStore(deps.listStorage);
     this.dossierOpen = initial.state.selected !== null;
+    // A link, or settings saved before live data was turned off, never turns on pictures from the
+    // City's servers past that switch (M4.3).
+    this.keepOutsideLayersOff();
+  }
+
+  /**
+   * With live City data off, takes the layers whose pictures come from the City's servers (the
+   * aerial photos and the 1860 atlas, M4.3) off the map, wherever they came from.
+   */
+  private keepOutsideLayersOff(): void {
+    if (this.liveCityData) return;
+    const allowed = withoutOutsideLayers(this.registry, this.state.layers);
+    if (allowed.length !== this.state.layers.length) this.state.layers = allowed;
   }
 
   /** Downloads what OpenStreetMap says at SEPTA's stops, once, when the manifest lists it. */
@@ -210,7 +224,10 @@ export class AppStore {
     if (!this.registry.options.some((o) => o.id === id)) return;
     this.options[id] = value;
     saveOptions(this.registry, $state.snapshot(this.options));
-    if (id === LIVE_CITY_DATA) this.dossier.liveChanged();
+    if (id === LIVE_CITY_DATA) {
+      this.dossier.liveChanged();
+      this.keepOutsideLayersOff();
+    }
   }
 
   private touch(): void {
@@ -242,7 +259,16 @@ export class AppStore {
     this.touch();
   }
 
+  /** True when a layer cannot be turned on now: its pictures come from the City and live data is off. */
+  layerBlocked(id: string): boolean {
+    return !this.liveCityData && outsideLayerIds(this.registry).has(id);
+  }
+
   setLayerVisible(id: string, visible: boolean): void {
+    if (visible && this.layerBlocked(id)) {
+      this.say(strings.historic.refused);
+      return;
+    }
     const next = new Set(this.state.layers);
     if (visible) next.add(id);
     else next.delete(id);
@@ -252,7 +278,7 @@ export class AppStore {
 
   setLayersVisible(ids: string[], visible: boolean): void {
     const next = new Set(this.state.layers);
-    for (const id of ids) {
+    for (const id of visible ? ids.filter((i) => !this.layerBlocked(i)) : ids) {
       if (visible) next.add(id);
       else next.delete(id);
     }
@@ -392,6 +418,7 @@ export class AppStore {
     this.viewPinned = viewPinned;
     this.selectedProperties = null;
     this.dossierOpen = state.selected !== null;
+    this.keepOutsideLayersOff();
   }
 
   /**
