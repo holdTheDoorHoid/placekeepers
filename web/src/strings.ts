@@ -1442,7 +1442,7 @@ export const strings = {
     refused: 'Old aerial photos and the 1860 atlas come from the City\'s servers. Turn on live City data in Settings to see them.',
     serverError: 'The City\'s picture server did not send every part of this picture. Try again later.',
     photoYear: (year: string) => `The City's aerial photo of ${year}, taken from a plane in spring.`,
-    blackAndWhite: 'The 1996 photos are in black and white.',
+    blackAndWhite: (year: string) => `The ${year} photos are in black and white.`,
     under: 'The photo lies under every other layer. Lower its strength to see today\'s streets through it.',
     photoCredit: 'Photos: City of Philadelphia, Office of Innovation and Technology.',
     atlasCoverage: 'The atlas covers Center City and Northern Liberties only.',

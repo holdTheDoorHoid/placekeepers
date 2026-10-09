@@ -10,6 +10,9 @@ import { strings } from '../../strings.ts';
 import { chosenService, rasterOpacity, rasterTiles, tileSource } from '../raster.ts';
 import { partId, type LegendEntry, type StyleContext, type StyleModule } from './types.ts';
 
+/** The years whose photos the City has only in black and white (checked 2026-10-09). */
+const BLACK_AND_WHITE = new Set(['1996', '2000']);
+
 export const historicImagery: StyleModule = {
   // The lowest of the data layers: a photo covers the base map, never the places drawn on it.
   zIndex: 1,
@@ -36,7 +39,7 @@ export const historicImagery: StyleModule = {
     if (services.length > 1) {
       const year = chosenService(ctx.layer, ctx.registry, ctx.state)?.key ?? '';
       entries.push({ kind: 'note', text: h.photoYear(year) });
-      if (year === '1996') entries.push({ kind: 'note', text: h.blackAndWhite });
+      if (BLACK_AND_WHITE.has(year)) entries.push({ kind: 'note', text: h.blackAndWhite(year) });
       entries.push({ kind: 'note', text: h.under });
       entries.push({ kind: 'note', text: h.photoCredit });
     } else {

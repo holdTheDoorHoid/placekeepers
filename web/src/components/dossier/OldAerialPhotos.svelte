@@ -17,7 +17,7 @@
     onTurnOnLive,
   }: {
     liveOn: boolean;
-    onShowLayer?: (id: string, settings?: Record<string, SettingValue>) => void;
+    onShowLayer?: (id: string, settings?: Record<string, SettingValue>, message?: string) => void;
     onShowOnMap?: () => void;
     onTurnOnLive?: () => void;
   } = $props();
@@ -26,7 +26,7 @@
   const whyId = `${uid}-why`;
 
   function show() {
-    onShowLayer?.(LAYER, { year: OLDEST });
+    onShowLayer?.(LAYER, { year: OLDEST }, h.shown);
     onShowOnMap?.();
   }
 </script>
@@ -42,3 +42,9 @@
     {#if onTurnOnLive}<button class="button small quiet" type="button" onclick={onTurnOnLive}>{strings.options.turnOn}</button>{/if}
   {/if}
 {/if}
+
+<style>
+  h4 {
+    margin-top: 14px;
+  }
+</style>

@@ -903,10 +903,10 @@ As built (M4.3, 2026-10-09). **What the owner sees:** a new group in the layer p
 now**, with two layers, off by default in both views:
 
 - **Aerial photos by year**: the City's own aerial photographs of the whole city, one for each year
-  it has them: 1996, 2000, 2004, 2005, 2008 to 2012, 2014 to 2020, and 2022 to
-  2025, twenty in all. A slider moves through the years (2025 by default; 1996 is
-  black and white), and a second setting sets how strongly the photo shows, so today's streets and
-  labels can show through. The photo lies under every other layer and under the base map's labels,
+  it has them: 1996, 2000, 2004, 2005, 2008 to 2012, 2014 to 2020, and 2022 to 2025, twenty in
+  all. A slider moves through the years (2025 by default; 1996 and 2000 are black and white), and
+  a second setting sets how strongly the photo shows, so today's streets and labels can show
+  through. The photo lies under every other layer and under the base map's labels,
   so lots, streets and memorials stay on top. The legend says the year, that the photos were taken
   from a plane in spring, and credits the City.
 - **1860 atlas (Hexamer and Locher)**: the atlas the City hosts, fitted to today's map by the

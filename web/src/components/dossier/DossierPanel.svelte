@@ -25,9 +25,10 @@
   const actions = $derived({
     onRetry: () => store.dossier.retry(),
     onTurnOnLive: () => store.setOption(LIVE_CITY_DATA, true),
-    onShowLayer: (id: string, settings: Record<string, SettingValue> = {}) => {
+    onShowLayer: (id: string, settings: Record<string, SettingValue> = {}, message?: string) => {
       for (const [setting, value] of Object.entries(settings)) store.setSetting(id, setting, value);
       store.setLayerVisible(id, true);
+      if (message && store.state.layers.includes(id)) store.say(message);
     },
     onPrint: () => window.print(),
     onShowOnMap,

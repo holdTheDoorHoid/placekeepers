@@ -990,7 +990,8 @@
     from March to May), for every year it has them since 1996. Slide through the years to see
     what stood on a block before: houses that came down, lots that were cleared, gardens that
     grew. The photos come straight from the City's servers when this layer is on, and are drawn
-    under everything else on the map. Older years are less sharp, and 1996 is in black and white.
+    under everything else on the map. Older years are less sharp, and the 1996 and 2000 photos are
+    in black and white.
   sources: [city_aerial_photos]
   geometry: raster
   style: historic_imagery

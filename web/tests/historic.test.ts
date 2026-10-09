@@ -152,8 +152,9 @@ describe('the style', () => {
 
   it('says which year it shows and credits the makers', () => {
     const legend = (layer: Layer, state: AppState) => styleFor(layer)!.legend({ layer, registry: reg, state }).map((e) => (e.kind === 'note' ? e.text : ''));
-    expect(legend(photos, withYear('1996'))).toEqual([strings.historic.photoYear('1996'), strings.historic.blackAndWhite, strings.historic.under, strings.historic.photoCredit]);
-    expect(legend(photos, withYear('2020'))).not.toContain(strings.historic.blackAndWhite);
+    expect(legend(photos, withYear('1996'))).toEqual([strings.historic.photoYear('1996'), strings.historic.blackAndWhite('1996'), strings.historic.under, strings.historic.photoCredit]);
+    expect(legend(photos, withYear('2000'))).toContain(strings.historic.blackAndWhite('2000'));
+    expect(legend(photos, withYear('2004'))).toEqual([strings.historic.photoYear('2004'), strings.historic.under, strings.historic.photoCredit]);
     expect(legend(atlas, defaultState(reg, 'field'))).toEqual([strings.historic.atlasCoverage, strings.historic.atlasCredit]);
   });
 });
