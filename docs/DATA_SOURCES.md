@@ -368,6 +368,22 @@ is the one L&I sent the project, the last fairly complete one before the City's 
 the buildings list is the project's own and misses about a thousand or more buildings, which the
 lot page's wording reflects ("Clean & Green Philly's own list").
 
+**Spot check, 2026-10-09 (issue #38).** 20 parcels chosen to cover every kind of record (City and
+private demolitions, a new construction permit, sheriff deeds, deeds from 1989, open unsafe and
+imminently dangerous notices, ten clean and seal orders, 47 violations, both June 2024 lists, a Land
+Bank lot, a parcel outside the downloads), each compared record by record with atlas.phila.gov
+(violations, permits, deeds) and property.phila.gov (sales, assessments), and with the City live.
+For the 19 candidate parcels the weekly copy and the live lookup gave the same timeline, record for
+record. All 311 violations atlas lists were there with the same title and status: 212 on the same
+day, 99 within two weeks, because atlas dates a violation by the day its case was opened
+(`casecreateddate`) and the lot page by the violation's own date (`violationdate`, as the flags
+do). All 28 permits, all 22 sales and all 242 yearly assessments matched. Every deed atlas lists
+was there; three more in the copy (on two parcels) are under the OPA account but not under the
+parcel atlas shows today, and property.phila.gov lists one of them. Atlas and property.phila.gov
+show no demolitions, clean and seal or notices; those matched the City's tables live. For the
+parcel outside the downloads, the weekly copy said its L&I records were not included and live data
+showed 32; atlas showed 9 more, filed under the neighboring account at the same address.
+
 **L&I property history, evaluated 2026-10-09 and not used.** OpenDataPhilly's "Licenses and
 Inspections Property History" (City of Philadelphia License, updated daily) has one resource, a
 link to li.phila.gov/Property-History. That page is a search application, one address at a time,
