@@ -41,6 +41,7 @@ def relaxed(source):
         update={"health": source.health.model_copy(update={"max_age_days": 100_000})}
     )
 
+
 # The kinds of deed ------------------------------------------------------------------------------
 
 
