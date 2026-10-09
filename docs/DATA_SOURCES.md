@@ -393,7 +393,7 @@ each deed was while the names are in hand, then drops the names:
   nonprofits (named as nonprofits; many are named like companies), 266 other public bodies, 4
   unknown. Only the type is kept.
 - The price is what the deed records for this property (the adjusted total). For all four
-  agencies the middle price is $100; half the Land Bank's 1,032 were $100 or less. A recorded
+  agencies the middle price is $100; 583 of the Land Bank's 1,032 were $100 or less. A recorded
   price is not always money paid: side yards and gardens carry a 30 year mortgage to the Land
   Bank, and side yard deeds often record the lot's appraised value.
 - Council districts come from the deed's point and today's district lines; 285 have no point.
