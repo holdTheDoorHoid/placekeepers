@@ -1076,3 +1076,80 @@
       type: toggle
       default: true
   release: v0.3
+# Then and now (M4.3): pictures loaded straight from the City's map services in the visitor's
+# browser (`geometry: raster`, docs/CONTRACTS.md section 1). Off by default in both views; they can
+# be turned on only while "Fetch live City data" is on, and a shared link never turns them on past
+# that switch.
+- id: aerial_photos
+  label: Aerial photos by year
+  group: then_and_now
+  description: >-
+    The City's aerial photographs of the whole city, taken from a plane each spring (most years
+    from March to May), for every year it has them since 1996. Slide through the years to see
+    what stood on a block before: houses that came down, lots that were cleared, gardens that
+    grew. The photos come straight from the City's servers when this layer is on, and are drawn
+    under everything else on the map. Older years are less sharp, and the 1996 and 2000 photos are
+    in black and white.
+  sources: [city_aerial_photos]
+  geometry: raster
+  style: historic_imagery
+  evidence: context
+  default: {field: false, analysis: false}
+  settings:
+    - id: year
+      label: Year
+      type: choice
+      control: slider
+      options:
+        - {value: "1996", label: "1996"}
+        - {value: "2000", label: "2000"}
+        - {value: "2004", label: "2004"}
+        - {value: "2005", label: "2005"}
+        - {value: "2008", label: "2008"}
+        - {value: "2009", label: "2009"}
+        - {value: "2010", label: "2010"}
+        - {value: "2011", label: "2011"}
+        - {value: "2012", label: "2012"}
+        - {value: "2014", label: "2014"}
+        - {value: "2015", label: "2015"}
+        - {value: "2016", label: "2016"}
+        - {value: "2017", label: "2017"}
+        - {value: "2018", label: "2018"}
+        - {value: "2019", label: "2019"}
+        - {value: "2020", label: "2020"}
+        - {value: "2022", label: "2022"}
+        - {value: "2023", label: "2023"}
+        - {value: "2024", label: "2024"}
+        - {value: "2025", label: "2025"}
+      default: "2025"
+    - id: opacity
+      label: How strongly the photo shows, in percent
+      type: range
+      min: 10
+      max: 100
+      step: 10
+      default: 100
+  release: v0.4
+- id: atlas_1860
+  label: 1860 atlas (Hexamer and Locher)
+  group: then_and_now
+  description: >-
+    Hexamer and Locher's 1860 atlas of Philadelphia, drawn block by block with its buildings and
+    lots, fitted to today's map by the Greater Philadelphia GeoHistory Network and hosted by the
+    City.
+    It covers Center City and Northern Liberties only. Lower its strength to see today's streets
+    through it. It comes straight from the City's servers when this layer is on.
+  sources: [city_atlas_1860]
+  geometry: raster
+  style: historic_imagery
+  evidence: context
+  default: {field: false, analysis: false}
+  settings:
+    - id: opacity
+      label: How strongly the atlas shows, in percent
+      type: range
+      min: 10
+      max: 100
+      step: 10
+      default: 80
+  release: v0.4

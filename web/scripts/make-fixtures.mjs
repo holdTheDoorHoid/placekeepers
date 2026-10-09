@@ -34,6 +34,7 @@ import {
   blockPoles,
   streetsStopsFixtures,
 } from './streetstops-fixtures.mjs';
+import { HISTORIC_LAYERS, HISTORIC_SOURCES } from './historic-fixtures.mjs';
 
 const FIXTURES = new URL('../fixtures/', import.meta.url);
 const ROOT = new URL('data/', FIXTURES);
@@ -753,6 +754,11 @@ const manifest = {
     ...Object.fromEntries(Object.entries(PARKING_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
     // The displacement watch (M4.1)
     ...Object.fromEntries(Object.entries(WATCH_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
+    // The Land Bank in numbers (M4.4): the deeds and the City's own counts by program
+    land_conveyances: ok(21424, '2026-08-10'),
+    land_conveyed_by_fy: ok(7, null),
+    // Then and now (M4.3): the weekly check that the City's picture services answer
+    ...Object.fromEntries(Object.entries(HISTORIC_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
     // Streets and stops (M4.5)
     ...Object.fromEntries(Object.entries(STREETS_STOPS_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
   },
@@ -806,6 +812,7 @@ const manifest = {
     ...WALK_LAYERS,
     ...PARKING_LAYERS,
     ...WATCH_LAYER,
+    ...HISTORIC_LAYERS,
     ...STREETS_STOPS_LAYERS,
   },
   files: Object.fromEntries(

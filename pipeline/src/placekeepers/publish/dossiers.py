@@ -1152,7 +1152,7 @@ def lots_layer_geojson(ctx: Context, out_root: Path) -> Path | None:
     """Where publish has just written the lots layer as GeoJSON (it builds the map layers before
     the dossiers), or None when the registry has no lots layer."""
     for layer in ctx.registry.layers.values():
-        if layer.style == LOTS_STYLE:
+        if layer.style == LOTS_STYLE and layer.file and layer.source_layer:
             file = Path(layer.file)
             return out_root / file.with_name(f"{file.stem}.{layer.source_layer}.geojson")
     return None

@@ -462,6 +462,24 @@
       "newest_record": null,
       "message": null
     },
+    "city_aerial_photos": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 20,
+      "newest_record": null,
+      "message": null
+    },
+    "city_atlas_1860": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 1,
+      "newest_record": null,
+      "message": null
+    },
     "bus_shelters": {
       "status": "ok",
       "last_attempt": "2026-10-04T10:00:05Z",
@@ -796,6 +814,20 @@
         "census_tracts_2020"
       ]
     },
+    "aerial_photos": {
+      "file": null,
+      "source_layer": null,
+      "sources": [
+        "city_aerial_photos"
+      ]
+    },
+    "atlas_1860": {
+      "file": null,
+      "source_layer": null,
+      "sources": [
+        "city_atlas_1860"
+      ]
+    },
     "city_shelters": {
       "file": "tiles/transit.pmtiles",
       "source_layer": "shelters",
@@ -965,26 +997,6 @@
       "bytes": 699,
       "sha256": "581eeee3fc1b224be1b9e81e31de9900030e9bb5fdb1af6f9611d4b6fb072656"
     },
-    "tables/routes/index.json": {
-      "bytes": 1009,
-      "sha256": "01d11edc7bc2753a818222918f2fb5ed042bcdca16e6b3035495189721127b7f"
-    },
-    "tables/stop_amenities.json": {
-      "bytes": 816,
-      "sha256": "38c390974adf3da957434dee853b0339f873238d406295ce2685963d7572ced4"
-    },
-    "dossiers/common.json": {
-      "bytes": 6273,
-      "sha256": "0d67d9dff15bd839a6a612255281d43b1267e03d123f7a77540d26503ff5537e"
-    },
-    "tables/owners.json": {
-      "bytes": 1279,
-      "sha256": "14ee4ed8f01714f174c4c98afb31c045d9577bdeeb1e7f3159a7d54377363ace"
-    },
-    "tables/land_bank.json": {
-      "bytes": 22765,
-      "sha256": "d0dead8695e5a34ce2b03853e1e45f98730c61d402264c4516161636c105d325"
-    },
     "tiles/transit.shelters.geojson": {
       "bytes": 797,
       "sha256": "fda34f53a89b723cfcf740a62ed5b4da97266f14b66569d47938d307e481433a"
@@ -1000,6 +1012,26 @@
     "tiles/streets.guards.geojson": {
       "bytes": 340,
       "sha256": "d7060bc59f150d51c54ecf2364bf9b601ccebe3aad9aa2dfbfc33a389dc76a87"
+    },
+    "tables/routes/index.json": {
+      "bytes": 1009,
+      "sha256": "01d11edc7bc2753a818222918f2fb5ed042bcdca16e6b3035495189721127b7f"
+    },
+    "tables/stop_amenities.json": {
+      "bytes": 816,
+      "sha256": "38c390974adf3da957434dee853b0339f873238d406295ce2685963d7572ced4"
+    },
+    "dossiers/common.json": {
+      "bytes": 6273,
+      "sha256": "0d67d9dff15bd839a6a612255281d43b1267e03d123f7a77540d26503ff5537e"
+    },
+    "tables/land_bank.json": {
+      "bytes": 22765,
+      "sha256": "d0dead8695e5a34ce2b03853e1e45f98730c61d402264c4516161636c105d325"
+    },
+    "tables/owners.json": {
+      "bytes": 1279,
+      "sha256": "14ee4ed8f01714f174c4c98afb31c045d9577bdeeb1e7f3159a7d54377363ace"
     }
   },
   "dossiers": {

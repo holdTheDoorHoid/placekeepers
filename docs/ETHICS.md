@@ -79,12 +79,6 @@ that sends letters to owners automatically.
   our words, that it may turn down any sale or lease, even of a property it lists. The filter is
   named for the City's status, never for how easy a lot would be to get.
 
-- The Land Bank in numbers (issue #40, rules set in the milestone brief on 2026-10-09): aggregates only. No names
-  of people on the page or in its downloads, and organizations only in totals, never a list of
-  who got which lot (as built, no organization is named at all). Neutral facts: no slogans, and
-  the page speaks for neither the Land Steward Union nor the Land Bank. It says what the numbers
-  cannot show, and labels the program it infers as an inference.
-
 **Bulk export.** The owner chose not to restrict exports. CSV and GeoJSON exports include the flags,
 with a first line pointing to the terms of use.
 
@@ -131,9 +125,6 @@ suggest anything about people experiencing homelessness.
   evidence for physical fixes to the street, such as curb extensions, bollards, daylighted corners,
   protected bike lanes and loading zones, and the map never says a word about tickets, the Parking
   Authority or drivers.
-- School crossing guard posts (issue #41, from the owner's brief of 2026-10-09): shown as a safety
-  service that helps children and everyone else cross near schools, never described as
-  enforcement. Traffic calming is framed as a change to the street that neighbors can ask for.
 
 ## Displacement
 

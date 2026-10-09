@@ -2,8 +2,10 @@
   // One registry layer: its switch, evidence badge, settings and legend (while shown), and an
   // "About this layer" section with the plain description, a link to its guide when it has one
   // (how anyone can help improve its data), sources, licenses and credits.
+  import { isOutsideLayer } from '../../map/raster.ts';
   import { styleFor } from '../../map/styles/index.ts';
   import type { Layer } from '../../registry/types.ts';
+  import { LIVE_CITY_DATA } from '../../state/options.ts';
   import type { AppStore } from '../../state/store.svelte.ts';
   import { strings } from '../../strings.ts';
   import EvidenceBadge from '../common/EvidenceBadge.svelte';
@@ -24,7 +26,9 @@
   } = $props();
 
   const registry = $derived(store.registry);
-  const visible = $derived(store.state.layers.includes(layer.id));
+  // Pictures from the City's servers (M4.3) cannot be turned on while live City data is off.
+  const blocked = $derived(store.layerBlocked(layer.id));
+  const visible = $derived(store.state.layers.includes(layer.id) && !blocked);
   const status = $derived(store.layerStatus[layer.id]);
   const legend = $derived(styleFor(layer)?.legend({ layer, registry, state: store.state, manifest: store.manifest }) ?? []);
   const sources = $derived(
@@ -46,16 +50,23 @@
       type="checkbox"
       role="switch"
       checked={visible}
+      disabled={blocked}
+      aria-describedby={blocked ? `${switchId}-why` : undefined}
       onchange={(e) => store.setLayerVisible(layer.id, e.currentTarget.checked)}
     />
     <label for={switchId}>{layer.label}</label>
     <EvidenceBadge level={layer.evidence} />
   </div>
 
-  {#if visible && status === 'unavailable'}
+  {#if blocked}
+    <p class="status" id="{switchId}-why">
+      {strings.historic.liveOff}
+      <button class="button small quiet" type="button" onclick={() => store.setOption(LIVE_CITY_DATA, true)}>{strings.options.turnOn}</button>
+    </p>
+  {:else if visible && status === 'unavailable'}
     <p class="status">{styleFor(layer)?.base ? strings.basemap.unavailable : strings.layers.noData}</p>
   {:else if visible && status === 'error'}
-    <p class="status">{strings.layers.dataError}</p>
+    <p class="status">{isOutsideLayer(layer) ? strings.historic.serverError : strings.layers.dataError}</p>
   {/if}
 
   {#if visible}

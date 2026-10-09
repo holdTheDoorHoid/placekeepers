@@ -339,6 +339,26 @@ def test_issue_text_is_plain_and_complete_for_a_stale_source() -> None:
     )
 
 
+def test_issue_text_for_pictures_the_site_never_copies() -> None:
+    # The City's aerial photos load straight from its servers (M4.3): there is no copy to fall
+    # back on, so the issue says what a broken service means instead.
+    info = refresh.SourceInfo(
+        "city_aerial_photos",
+        "Aerial photographs by year (orthophotos)",
+        "City of Philadelphia, Office of Innovation and Technology",
+        "https://opendataphilly.org/datasets/aerial-photography/",
+        external=True,
+    )
+    entry = {**STALE, "message": "Not every picture service answered: 2023 (CityImagery_2023)"}
+    body = refresh.issue_body(info, entry, None)
+    assert "last good copy" not in body.split("**Details**")[0]
+    assert "These pictures load straight from the publisher's server" in body
+    assert "Not every picture service answered: 2023" in body
+    assert no_dash_punctuation(body)
+    comment = refresh.update_comment(info, entry, date(2026, 10, 19))
+    assert "These pictures load straight" in comment and "last good copy" not in comment
+
+
 def test_issue_text_for_a_source_with_no_usable_copy() -> None:
     body = refresh.issue_body(SOURCES["high_injury_network"], FAILING, None)
     assert "There is no usable copy of this source" in body
@@ -491,6 +511,9 @@ def test_source_names_travel_as_json_between_jobs(tmp_path: Path) -> None:
     from_json = refresh.sources_from_json(out)
     assert from_json == refresh.load_sources(REPO / "registry")
     assert from_json["shootings"].publisher == "Philadelphia Police Department"
+    # Picture services the browser loads from the City keep their own issue wording (M4.3).
+    assert from_json["city_aerial_photos"].external is True
+    assert from_json["shootings"].external is False
 
 
 def test_issues_with_sources_json_need_no_yaml(tmp_path: Path, capsys, monkeypatch) -> None:

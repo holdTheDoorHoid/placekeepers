@@ -49,6 +49,7 @@ from placekeepers.adapters.streets_stops import (
     StreetPoles,
     TrafficCalming,
 )
+from placekeepers.adapters.tiles import ArcgisTilesAdapter
 from placekeepers.adapters.url import UrlAdapter
 from placekeepers.adapters.vacant_indicators import VacantIndicatorsBldg, VacantIndicatorsLand
 from placekeepers.adapters.walk import (
@@ -156,6 +157,10 @@ ADAPTERS: dict[str, type[Adapter]] = {
     # by program.
     "land_conveyances": LandConveyances,
     "land_conveyed_by_fy": LandConveyedByFy,
+    # Then and now (M4.3): picture services the browser loads from the City; the pipeline only
+    # checks that each one still answers
+    "city_aerial_photos": ArcgisTilesAdapter,
+    "city_atlas_1860": ArcgisTilesAdapter,
 }
 
 
@@ -169,6 +174,7 @@ __all__ = [
     "Adapter",
     "AdapterMismatch",
     "ArcgisAdapter",
+    "ArcgisTilesAdapter",
     "CartoAccountsAdapter",
     "CartoAdapter",
     "Column",

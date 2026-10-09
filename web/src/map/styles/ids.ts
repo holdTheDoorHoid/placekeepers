@@ -39,5 +39,7 @@ export const STYLE_IDS = [
   'street_poles',
   'traffic_calming',
   'crossing_guards',
+  // Then and now (M4.3): pictures from the City's own servers
+  'historic_imagery',
 ] as const;
 export type StyleId = (typeof STYLE_IDS)[number];
