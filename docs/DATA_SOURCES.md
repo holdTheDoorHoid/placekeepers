@@ -397,6 +397,13 @@ each deed was while the names are in hand, then drops the names:
   price is not always money paid: side yards and gardens carry a 30 year mortgage to the Land
   Bank, and side yard deeds often record the lot's appraised value.
 - Council districts come from the deed's point and today's district lines; 285 have no point.
+- *Checked by hand against the City's property page* (property.phila.gov, 2026-10-09), 10
+  conveyances of every agency and kind of buyer. At first 6 agreed in date, price, seller and kind
+  of buyer (one of them, a "DEED LAND BANK", is not in the page's sale list, but the page names the
+  buyer as owner). 3 were not conveyances at all: the property had been privately owned for years,
+  and the agency's miscellaneous deed released an old restriction. 1 was dated five months early,
+  by a batch agreement recorded before the Land Bank held the lot. The release rule and the batch
+  rule above came from these; with them all 10 agree with the City's page.
 
 **Program, our inference.** The deed records do not name the program. One can be inferred: a single
 lot conveyed to a person who owns a parcel touching it (front, side or rear), by the City's owner
