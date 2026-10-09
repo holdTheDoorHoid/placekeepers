@@ -22,7 +22,7 @@ Both allow browser requests without a key.
 | OPA assessment history | Carto `assessments` (7.48 million rows) | Value by year for every parcel | Nightly | Live; never used by the original |
 | Real estate transfers | Carto `rtt_summary` (5.16 million rows, 1974-01-02 to 2026-08-11) | Every recorded deed, sheriff deed and mortgage, with date, grantors, grantees and consideration, joined by `opa_account_num` | About 8 week lag | Live; this is the "what it sold for, going back in time" source |
 | Water Department parcels | Carto `pwd_parcels` (547,410) | Parcel shapes | Not stated | Live |
-| City owned property | City ArcGIS `LAMAAssets` (7,740: Land Bank 2,528, Redevelopment Authority 1,670, PHDC 95, other agencies) | Public owner agency, side yard eligibility, each parcel's status, and the lots listed as available (the same list as the Philadelphia Land Bank's property map; see "Sources checked 2026-10-08") | Edited often; records carry no date | Live. The OpenDataPhilly page of the same name is a frozen 2015 archive; use the live service |
+| City owned property | City ArcGIS `LAMAAssets` (7,740: Land Bank 2,528, Redevelopment Authority 1,670, PHDC 95, other agencies) | Public owner agency, side yard eligibility, each parcel's status, and the lots listed as available (the same list as the Philadelphia Land Bank's property map; see "Sources checked 2026-10-08"); from October 2026 also counted by status every week ("The Land Bank in numbers") | Edited often; records carry no date | Live. The OpenDataPhilly page of the same name is a frozen 2015 archive; use the live service |
 | Tax balances | Carto `real_estate_tax_delinquencies` | Formerly per parcel tax debt and sheriff sale risk | n/a | **Restricted** since the original shut down (permission denied). Public data is aggregated by ZIP, district and tract only. Dossiers link to the City's Tax Center (tax-services.phila.gov) for the live balance |
 | Tax debt snapshot, July 2025 | Clean & Green Philly final output, `data/backup_data/all_properties_2025_07_09.parquet` (97.7 MB, Git LFS, via media.githubusercontent.com) | A dated "tax debt as of July 2025" flag | Frozen | Downloadable; label every use with its date |
 | Sheriff sales | No dataset. `rtt_summary` document types "DEED SHERIFF" (69,682) and "SHERIFF'S DEED" (19,370) give history | Past sheriff sales | n/a | History only; phillysheriff.com is browse only and is not scraped |
@@ -354,6 +354,107 @@ Still to come for the history release: City orthophotos 1996 to 2023, the 1860 H
 atlas (hosted by the City with the GeoHistory Network's permission), PhilaGeoHistory layers such as
 the 1942 land use map (**permission required** from the Athenaeum of Philadelphia), and HOLC
 redlining from Mapping Inequality (license text to confirm).
+
+### The Land Bank in numbers (M4.4, sources checked 2026-10-09)
+
+Issue #40 asks how many properties the Philadelphia Land Bank and the City's other land agencies
+conveyed, by program and year. Four kinds of source were compared before building:
+
+| Source | Verdict |
+|---|---|
+| The City's deed records (Carto `rtt_summary`) | **Used** (`land_conveyances`): the only complete public record of who conveyed what, when and for how much. They do not say which program a conveyance came through |
+| The City's Land Management dashboard tables (City ArcGIS) | **Used** with credit (`land_conveyed_by_fy`): the City's own counts by program for fiscal years 2017 to 2023. Frozen since April 2023; its item states no license |
+| City Council's legislation records (Legistar) | **Not used**: the City's Legistar API refuses requests without a token |
+| The Land Bank's and PHDC's own reports and board documents | **Not used as data**: their terms forbid republishing; linked, and read by hand only to check our inference |
+| The City's list of public property (`city_owned_property`) | **Used**, as before, now also counted every week from October 2026 |
+
+**The City's deed records** (`land_conveyances`; endpoint and health rules in
+`registry/sources.yaml`; terms `city_terms`). Every deed since 2014 that names the Land Bank, the
+Redevelopment Authority, PHDC or the City among its sellers: 21,424 rows (one per property per
+document) from 2014-01-02 to 2026-08-10 on 2026-10-09, one chunk, then the full deed history of
+the 8,280 properties they name (44,886 deeds) in two chunks, under a minute in all. The adapter
+(`pipeline/src/placekeepers/adapters/land_bank.py`, rules in `derive/land_bank.py`) decides what
+each deed was while the names are in hand, then drops the names:
+
+- A **conveyance** is a plain deed whose sellers are all land agencies and whose buyers include
+  someone else: 6,248 rows. Not counted: 5,403 rows moving land between the agencies themselves
+  (2,732 of them to the Land Bank, mostly from the City and the Redevelopment Authority), 6,914
+  agreements (the City's records list both parties on both sides of easements, restrictions and
+  corrections), and 2,859 other documents (sheriff deeds, condemnations, a City department
+  granting an easement, the City as a trustee, a private party selling alongside an agency).
+- A conveyance counts once per property. 3,013 rows are not new: a deed for property whose
+  previous deed went to a private owner (a release of an old restriction or a correction, found
+  in the property's own history), a miscellaneous deed for property the records never show an
+  agency holding (batch agreements recorded before the deeds), or the same property again to the
+  same buyer or within a year. That leaves **3,235 properties conveyed from January 2014 to
+  August 2026** in 1,569 deeds: the Land Bank 1,032 (from 2017, its first conveyances), the
+  Redevelopment Authority 1,862, PHDC 145 and the City 196.
+- The buyers are typed by the owner rule of the lot pages: 943 people, 1,723 companies, 299
+  nonprofits (named as nonprofits; many are named like companies), 266 other public bodies, 4
+  unknown. Only the type is kept.
+- The price is what the deed records for this property (the adjusted total). For all four
+  agencies the middle price is $100; half the Land Bank's 1,032 were $100 or less. A recorded
+  price is not always money paid: side yards and gardens carry a 30 year mortgage to the Land
+  Bank, and side yard deeds often record the lot's appraised value.
+- Council districts come from the deed's point and today's district lines; 285 have no point.
+
+**Program, our inference.** The deed records do not name the program. One can be inferred: a single
+lot conveyed to a person who owns a parcel touching it (front, side or rear), by the City's owner
+list and the Water Department's parcel shapes on the day of the download, is probably a side or
+rear yard. The page always labels it as our inference. How often it is right:
+
+- *Checked by hand, 10 of them* (2019 to 2026, drawn at random): in all 10 the buyer is the owner
+  of record of the adjoining home and gets mail there (8 beside the lot, 2 behind it, a rear yard).
+- *Against the Land Bank's board agendas* (January 2025 to October 2026, 18 agendas read by hand
+  at 10 second intervals): they approved 6 side yards; 1 has been deeded by August 2026, and we
+  call it a side yard. The 3 development lots from the agendas already deeded are not called side
+  yards. Too few to measure more.
+- *Against the City's own counts*: for fiscal years 2019 to 2023 the City's dashboard counted 74
+  side yards. We infer 50 from the Land Bank's deeds alone and 73 from all four agencies' deeds
+  (the dashboard does not say which agencies it covers). Year by year the two differ both ways,
+  so this checks the size of the count, not each lot. Side yards we miss probably went to a
+  relative or a co-owner whose name differs from the owner of record next door, or to someone
+  who has sold their home since; lots sold to a neighbor through other programs would be counted
+  wrongly as side yards.
+- *A consistency check*: 31 of the 37 Land Bank lots we call side yards since 2023 have a mortgage
+  to the Land Bank recorded within 120 days, as the side yard program's terms require; so do 3
+  of the 6 single lots to people we do not call side yards.
+
+**The City's Land Management dashboard** (`land_conveyed_by_fy`, City ArcGIS
+`LMDashboard_PropertiesConveyedbyFY`, a public item of the City's organization,
+[item page](https://www.arcgis.com/home/item.html?id=db4dcb37071c4cdfb6ca4df82a1de1b3)). Seven
+rows, fiscal years 2017 to 2023: side yards, gardens or open space, business expansion, and homes
+built by income level (homes, not properties). Last edited 2023-04-11, so fiscal year 2023 stops
+early. Its side yards for fiscal years 2020 to 2023 add up to 67, the number WHYY reported in
+April 2026. The item's license field is empty (`unstated`): used with credit, and removed if the
+City asks. A second table of the same dashboard, `LandDispositionStatus` (applications received,
+denied, approved and settled), is not used: it was last edited in February 2022 and does not say
+which period it covers.
+
+**City Council's legislation records.** Council approves each Land Bank disposition by resolution.
+The City's Legistar API (`https://webapi.legistar.com/v1/phila/...`) answered every request on
+2026-10-09 with HTTP 403 "Token is required", so it is not used, and its public web pages are not
+scraped in its place. A token is an owner action: the Clerk of City Council (or Granicus, on the
+City's behalf) can issue one. Resolution titles would add the program and the date of Council's
+approval, which would also show how long approvals take.
+
+**The Land Bank's and PHDC's documents.** phillylandbank.org publishes board agendas and board
+packages from January 2025 on (its 2024 page lists none). Agendas group each disposition by
+program (affordable housing, assemblage, community use, gardens and open space, side or rear
+yards) and name the applicants. PHDC's terms of use
+([PDF](https://phillylandbank.org/wp-content/uploads/2025/03/PHDC-Website-Terms-of-Use.pdf)) claim
+the site's information and forbid republishing it in another form without written permission, and
+robots.txt asks for 10 seconds between requests. So the pipeline never reads them; the page links
+to the board's page, and the agendas were read by hand only to check our inference (nothing from
+them is copied). Asking PHDC for permission, or for a disposition list by program, would replace
+our inference with the Land Bank's own record.
+
+**Listed lots, week by week.** Each new good snapshot of `city_owned_property` adds a line to
+`history.json` in its snapshot folder: the day, how many records and parcels are listed as
+available, how many of those may go to a neighbor as a side yard, by agency, and every record by
+status. The weekly refresh keeps the file with the snapshot. The series starts with the snapshot
+of 2026-10-04: 1,687 records listed as available on 1,639 parcels, 1,291 of them open to a
+neighbor as a side yard.
 
 ## Sources checked 2026-10-08
 
