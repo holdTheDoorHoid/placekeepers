@@ -337,6 +337,7 @@ data/
       index.json          every SEPTA bus and trolley route with a sheet
       <route id>.json     one route's stops in order, each direction, with the id of the OpenStreetMap stop at each
     stop_amenities.json   what OpenStreetMap says at each stop it knows, by its id (section 8; Open Database License; decision D1)
+    land_bank.json        The Land Bank in numbers: conveyances by year, agency, buyer type, program and district, the City's counts by program, and the weekly count of listed lots (section 9; aggregates only; added 2026-10-09 by M4.4)
   dossiers/
     <first four digits of the OPA account>.json
     common.json           the parts of every flag that are the same for all parcels (section 6)
@@ -1616,3 +1617,74 @@ Without the `osm_philadelphia` snapshot the file is not written, and the build n
 shows as not yet surveyed. When the browser cannot load it, a stop's page says so rather than showing
 its answers, and the map counts every shelter and bench halfway.
 
+
+## 9. The Land Bank in numbers (`tables/land_bank.json`)
+
+Added 2026-10-09 by M4.4 (issue #40). The numbers of the page "The Land Bank in numbers"
+(`web/land-bank/`): what the Philadelphia Land Bank and the City's other land agencies conveyed,
+from the City's deed records (`land_conveyances`), the City's own counts by program
+(`land_conveyed_by_fy`), and the weekly count of lots on the City's list of public property listed
+as available (`city_owned_property`). **Aggregates only**: counts, shares and medians. The file holds
+no name, no address and no parcel number (docs/ETHICS.md; `pipeline/tests/test_land_bank.py`
+checks it). Written by `pipeline/src/placekeepers/publish/land_bank.py` as compact JSON (about 22
+kB on 2026-10-09); listed in the manifest's `files`. The rules are in
+`pipeline/src/placekeepers/derive/land_bank.py` and docs/DATA_SOURCES.md.
+
+```json
+{
+  "schema": 1,
+  "generated": "2026-10-09",
+  "deeds": {"first": "2014-01-02", "last": "2026-08-10", "fetched": "2026-10-09",
+            "years": [2014, 2015, 2026], "partial_year": 2026, "nominal_max": 100,
+            "counted": 3235, "follow_ups": 3013, "moved": 5403, "agreements": 6914, "other": 2859},
+  "agencies": {
+    "all": {
+      "years": [{"year": 2014, "n": 312, "deeds": 120, "moved_out": 318, "moved_in": 318,
+                 "buyers": {"individual": 159, "company": 86, "nonprofit": 17, "public": 50, "unknown": 0},
+                 "programs": {"side_yard": 49, "other": 263},
+                 "price": {"median": 5734, "priced": 276, "nominal": 88, "none": 36}}],
+      "total": {"n": 3235, "deeds": 1569, "moved_out": 5403, "moved_in": 5403, "buyers": {}, "programs": {}, "price": {}},
+      "districts": [{"district": 1, "n": 424, "years": [30, 25]}, {"district": null, "n": 285, "years": [9, 7]}]
+    },
+    "PLB": {}, "PRA": {}, "PHDC": {}, "PUB": {}
+  },
+  "programs_fy": {"edited": "2023-04-11",
+                  "rows": [{"fy": 2023, "side_yards": 12, "gardens": 0, "business": 4,
+                            "homes_below_30": 51, "homes_60_80": 239, "homes_80_120": 33,
+                            "homes_market": 73, "inferred_plb": 9, "inferred_all": 13}]},
+  "listed": {"weeks": [{"date": "2026-10-04", "listed": 1687, "parcels": 1639, "side_yard": 1291,
+                        "by_agency": {"PLB": 441, "PRA": 161, "PHDC": 9, "PUB": 1076},
+                        "by_status": {"Owned - On Hold for AHD": 1934, "Owned - Available": 1654}}]}
+}
+```
+
+| Field | Meaning |
+|---|---|
+| `deeds.first`, `deeds.last` | the oldest and newest deed date among the deeds read (days in Philadelphia) |
+| `deeds.fetched` | the day the deed records were read |
+| `deeds.years` | every calendar year from 2014 to the newest deed's year; every `years` list below has one entry per year, in this order |
+| `deeds.partial_year` | the newest year when it is not complete (the records run about eight weeks behind), else `null` |
+| `deeds.nominal_max` | a token price: this many dollars or less ($100, as on the lot pages) |
+| `deeds.counted` | properties counted as conveyed (one row per property per deed) |
+| `deeds.follow_ups` | conveyance rows not counted again: corrections and releases (the property was already in private hands, or already conveyed to the same buyer or within a year), and miscellaneous deeds for property the records never show an agency holding |
+| `deeds.moved`, `deeds.agreements`, `deeds.other` | rows left out: moves between the four agencies, agreements recorded as deeds (the same parties on both sides, or an agency on both sides), and other documents |
+| `agencies` | `all` (the four together) and each agency by the City owned layer's codes: `PLB` the Land Bank, `PRA` the Redevelopment Authority, `PHDC`, `PUB` the City |
+| `n` | properties conveyed |
+| `deeds` | distinct deeds among them |
+| `moved_out`, `moved_in` | properties this agency handed to, or received from, another of the four (for `all`, every move, the same number in both) |
+| `buyers` | properties by the buyers' type, by the owner rule of the lot pages: `individual` (people), `company`, `nonprofit` (named as one), `public` (another public body, such as the Philadelphia Housing Authority), `unknown` |
+| `programs` | `side_yard`: one lot to a person who owns a parcel touching it (front, side or rear), by the City's owner list and parcel shapes on the day of the download, **our inference**; `other`: not known from the deed |
+| `price` | the price the deed records for this property (the adjusted total, else the total): `median` (whole dollars, `null` when none), `priced` (properties with a price), `nominal` (priced at `nominal_max` or less), `none` (no price recorded) |
+| `districts` | properties by today's council district (1 to 10, from the deed's point), then `null` for deeds with no location; `years` per year as in `deeds.years` |
+| `programs_fy` | the City's Land Management dashboard: `edited` (its last edit), and per fiscal year (July to June, named for the year it ends) side yards, gardens or open space and business expansion in properties, homes built by income level, and our inferred side yards in the same fiscal year from the Land Bank (`inferred_plb`) and from all four (`inferred_all`); `null` when the source is missing |
+| `listed.weeks` | one entry per day the City's list was fetched (the last snapshot of that day), oldest first: records listed as available (a status beginning "Owned - Available"), distinct parcels among them, those open to a neighbor as a side yard, the listed records by agency, and every record by status as the City writes it; `listed` is `null` before any snapshot was counted |
+
+The weekly counts come from `history.json` in the `city_owned_property` snapshot folder of the
+cache (`{"schema": 1, "snapshots": [{"snapshot", "date", "records", "listed", "parcels",
+"side_yard", "by_agency", "by_status"}]}`), which gains a line when a new good snapshot of the list
+becomes current (the adapter's `after_promote`), or at publish for a snapshot it lacks. The weekly
+refresh packs the file with the snapshot (`.github/scripts/refresh.py`, `HISTORY_FILE`), so the
+series survives from week to week; if the saved snapshots are ever lost, it starts again.
+
+Without the `land_conveyances` snapshot the file is not written and the build notes say so; the page
+then says the numbers are not published yet.

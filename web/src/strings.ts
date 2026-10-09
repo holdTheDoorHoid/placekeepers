@@ -1366,9 +1366,9 @@ export const strings = {
       PUB: 'the City of Philadelphia',
     } as Record<string, string>,
     headline: (agency: string, n: number, deeds: number, from: string, to: string) =>
-      `From ${from} to ${to}, ${agency} conveyed ${plural(n, 'property', 'properties')} in ${plural(deeds, 'deed', 'deeds')}.`,
+      `In the City's deed records from ${from} to ${to}, ${agency} conveyed ${plural(n, 'property', 'properties')} in ${plural(deeds, 'deed', 'deeds')}.`,
     movedAll: (n: number) =>
-      `Not counted: ${plural(n, 'property', 'properties')} moved between the agencies themselves, such as from the City to the Land Bank, before any of them conveyed it.`,
+      `Not counted: ${plural(n, 'move', 'moves')} of a property from one agency to another, such as from the City to the Land Bank.`,
     moved: (received: number, handed: number) =>
       `It also received ${plural(received, 'property', 'properties')} from the other agencies and handed ${formatNumber(handed)} to them. Those moves are not counted as conveyances.`,
     whatCounts:
@@ -1433,12 +1433,12 @@ export const strings = {
       median: 'Middle price',
       nominal: 'Token price',
       none: 'No price recorded',
-      summary: (median: string, pct: number) => `Middle price over these years: ${median}. ${pct}% were sold for a token price.`,
+      summary: (median: string, pct: number) => `Middle price over these years: ${median}. ${pct}% were conveyed for a token price.`,
     },
     districts: {
       title: 'By council district',
       caption:
-        'Where the properties are, by today\'s council district lines (the districts were redrawn in 2022, so earlier years are placed by today\'s lines).',
+        'Where the properties are, by today\'s council district lines. District lines change after each census, so earlier years are placed by today\'s lines too.',
       district: 'District',
       districtName: (n: number) => `District ${n}`,
       noLocation: 'No location in the records',

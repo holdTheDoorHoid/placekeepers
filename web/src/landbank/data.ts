@@ -146,10 +146,10 @@ export function percent(part: number, whole: number): number | null {
   return whole > 0 ? Math.round((100 * part) / whole) : null;
 }
 
-/** The years with conveyances counted from the first one, so a chart of the Land Bank (which
- * began conveying in 2017) does not open with empty years. */
+/** The years from the first one with a conveyance, so a chart of the Land Bank (which began
+ * conveying in 2017) does not open with empty years. */
 export function yearsFromFirst(stats: AgencyStats): YearBlock[] {
-  const first = stats.years.findIndex((y) => y.n > 0 || y.moved_in > 0 || y.moved_out > 0);
+  const first = stats.years.findIndex((y) => y.n > 0);
   return first < 0 ? [] : stats.years.slice(first);
 }
 

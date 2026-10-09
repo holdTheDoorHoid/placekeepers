@@ -503,6 +503,9 @@
   section {
     margin: 24px 0;
   }
+  section h3 {
+    margin-top: 20px;
+  }
   .choose label {
     display: flex;
     flex-wrap: wrap;

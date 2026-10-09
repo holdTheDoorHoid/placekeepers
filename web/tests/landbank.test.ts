@@ -64,9 +64,8 @@ describe('the yearly series', () => {
   it('starts at the first year with anything to show', () => {
     const t = table();
     expect(yearsFromFirst(t.agencies.all)[0]!.year).toBe(2014);
-    // The Land Bank began conveying in 2017; it received land from 2016.
-    expect(yearsFromFirst(t.agencies.PLB)[0]!.year).toBeLessThanOrEqual(2017);
-    expect(yearsFromFirst(t.agencies.PLB).every((y) => y.year >= 2015)).toBe(true);
+    // The Land Bank began conveying in 2017.
+    expect(yearsFromFirst(t.agencies.PLB)[0]!.year).toBe(2017);
   });
 
   it('adds up: the agencies of each year make the year, and the years make the total', () => {
