@@ -15,7 +15,7 @@
 import type { ExpressionSpecification, FilterSpecification, LayerSpecification } from 'maplibre-gl';
 import type { Lens } from '../../registry/types.ts';
 import { strings } from '../../strings.ts';
-import { IN_LENS, answerExpression } from '../../transit/answers.ts';
+import { IN_LENS, answerExpression, shelterExpression } from '../../transit/answers.ts';
 import { lensColorExpression, lensScoreExpression, type ColorRamp, type LensExpressionOptions } from '../lens.ts';
 import { hasMode } from './crashes.ts';
 import { SELECTED } from './palette.ts';
@@ -77,12 +77,13 @@ export function colorBy(ctx: LegendContext): ColorBy {
 /**
  * How the lens reads a stop: SEPTA's and the City's factors from the stop itself, the shelter and
  * bench from what OpenStreetMap says at the linked stop (decision D1: joined here in the browser,
- * from tables/stop_amenities.json, and halfway when unknown), and only for stops it scores (`tc`).
+ * from tables/stop_amenities.json, and halfway when unknown), a shelter wherever the City's own
+ * list has one (`cs`, M4.5), and only for stops it scores (`tc`).
  */
 export function stopLensOptions(ctx: LegendContext): LensExpressionOptions {
   return {
     values: {
-      f_noshelter: answerExpression(ctx.stopAnswers?.f_noshelter),
+      f_noshelter: shelterExpression(ctx.stopAnswers?.f_noshelter),
       f_nobench: answerExpression(ctx.stopAnswers?.f_nobench),
     },
     when: ['==', ['to-number', ['get', IN_LENS], 0], 1],

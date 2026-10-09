@@ -72,6 +72,26 @@ CASES: list[tuple[str, dict[str, Any], dict[str, Any] | None]] = [
         {**STOP, "f_shade": 80, "sg": "stop_shade_trees"},
         None,
     ),
+    # The City's own shelters (M4.5, `cs`): a City shelter counts as a shelter whatever
+    # OpenStreetMap says, and where OpenStreetMap says there is none the two disagree, so the stop
+    # gets a survey and no request for a shelter.
+    ("a City shelter, OpenStreetMap not surveyed", {**STOP, "o": "n11", "cs": 1}, {"c": 0}),
+    ("a City shelter, no OpenStreetMap stop", {**STOP, "cs": 1}, None),
+    (
+        "a City shelter, OpenStreetMap agreeing, the bench answered",
+        {**STOP, "o": "n12", "cs": 1},
+        {"c": 3, "sh": 1, "bn": 1, "n": ["100"]},
+    ),
+    (
+        "two City shelters, OpenStreetMap saying there is none: they disagree",
+        {**STOP, "o": "n13", "cs": 2},
+        {"c": 1, "sh": 0, "bn": 0, "lt": 1},
+    ),
+    (
+        "a City shelter, OpenStreetMap saying the stop is under a roof",
+        {**STOP, "o": "n14", "cs": 1},
+        {"c": 3, "sh": 0, "cv": 1, "bn": 1},
+    ),
     ("a subway station: left as it is", {"id": "sp102", "sid": "102", "md": 4}, {"c": 1, "sh": 0}),
     (
         "a trolley tunnel station: no mark, left as it is",

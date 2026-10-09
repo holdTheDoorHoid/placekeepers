@@ -29,6 +29,7 @@ import pyarrow.parquet as pq
 import shapely
 
 from placekeepers.context import Context
+from placekeepers.derive.bus_stops import SeptaPoint
 from placekeepers.derive.street_safety import PHILLY_LAT, PHILLY_LNG, plural, to_meters
 from placekeepers.derive.transit import (
     MIDDAY_MINUTES,
@@ -156,6 +157,43 @@ def in_city(lats: list[float], lngs: list[float], shape: object | None) -> list[
     return [bool(flag) for flag in shapely.contains(shape, points)]
 
 
+def city_stop_rows(paths: dict[str, Path]) -> tuple[list[dict], str | None]:
+    """SEPTA's stops with service in Philadelphia (the city's shape widened by
+    CITY_MARGIN_METERS), and the source the shape came from (None: a box around the city)."""
+    rows = _stops(paths)
+    shape, used = city_shape(paths)
+    inside = in_city([r["lat"] for r in rows], [r["lng"] for r in rows], shape)
+    return [row for row, keep in zip(rows, inside, strict=True) if keep], used
+
+
+def on_the_street(row: dict) -> bool:
+    """A bus or trolley stop the transit comfort lens scores: not a station of the subway, the El
+    or Regional Rail, and not one of the trolley tunnel stations underground."""
+    if not (row.get("modes") or 0) & (MODE_BUS | MODE_TROLLEY):
+        return False
+    numbers = {row["stop_id"], *(str(x) for x in (row.get("former_ids") or []))}
+    return not numbers & TUNNEL_STATIONS
+
+
+def street_stops(paths: dict[str, Path]) -> list[tuple[str, SeptaPoint]]:
+    """The stops the transit comfort lens scores, as (Placekeepers key, SeptaPoint), in the order
+    build_transit_stops scores them. The City's shelters are matched to these (M4.5)."""
+    rows, _ = city_stop_rows(paths)
+    return [
+        (
+            row["key"],
+            SeptaPoint(
+                row["stop_id"],
+                tuple(str(x) for x in (row.get("former_ids") or [])),
+                row["lat"],
+                row["lng"],
+            ),
+        )
+        for row in rows
+        if on_the_street(row)
+    ]
+
+
 def _stops(paths: dict[str, Path]) -> list[dict]:
     table = pq.read_table(paths[GTFS])
     present = [c for c in STOP_COLUMNS if c in table.column_names]
@@ -212,14 +250,11 @@ def build_transit_stops(
         with GeoJSONWriter(out):
             pass
         return BuildResult(0, ["stops: SEPTA's schedules are missing"])
-    rows = _stops(paths)
-    shape, used = city_shape(paths)
-    if shape is None:
+    rows, used = city_stop_rows(paths)
+    if used is None:
         notes.append(
             "stops: the City Council districts are missing, so a box around the city was used"
         )
-    inside = in_city([r["lat"] for r in rows], [r["lng"] for r in rows], shape)
-    rows = [row for row, keep in zip(rows, inside, strict=True) if keep]
 
     counts = {}
     for source in RIDERSHIP:
@@ -256,9 +291,7 @@ def build_transit_stops(
 
     # The transit comfort lens and the suggestions, for bus and trolley stops on the street
     # (M2.3); the trolley tunnel stations underground are left out, as stations are.
-    street = [
-        k for k, (sid, former, _) in enumerate(candidates) if not {sid, *former} & TUNNEL_STATIONS
-    ]
+    street = [k for k in range(len(candidates)) if on_the_street(rows[surface[k]])]
     comfort = comfort_for_stops(
         [
             SeptaStop(sid, tuple(former), place.lat, place.lng)
@@ -276,6 +309,15 @@ def build_transit_stops(
         [candidates[k][2].lat for k in street], [candidates[k][2].lng for k in street], paths
     )
     for index, props in enumerate(walking):
+        extra.setdefault(surface[street[index]], {}).update(props)
+    # The lamps the City lists by each of those stops (M4.5): beside OpenStreetMap's answer about
+    # a light, and for the street light factor proposed in docs/TRANSIT_METHOD.md.
+    from placekeepers.publish.streets_stops import lamps_near
+
+    lamps = lamps_near(
+        paths, [candidates[k][2].lat for k in street], [candidates[k][2].lng for k in street]
+    )
+    for index, props in enumerate(lamps):
         extra.setdefault(surface[street[index]], {}).update(props)
     # The displacement watch (M4.1): the signs of the watch area a bus or trolley stop lies in, so
     # its shade trees card adds the ways to protect neighbors.
@@ -405,6 +447,8 @@ TRANSIT_BUILDERS: tuple[LayerBuilder, ...] = (
                     *WALK_SOURCES,
                     "census_tracts_2020",
                     *WATCH_SOURCES,
+                    # The lamps the City lists by each stop (M4.5, `lp` and `le`).
+                    "street_poles",
                 )
             )
             if s != GTFS

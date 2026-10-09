@@ -6,7 +6,9 @@ import { amenity } from './amenity.ts';
 import { basemap } from './basemap.ts';
 import { boundary } from './boundary.ts';
 import { condition } from './condition.ts';
+import { cityShelters } from './city_shelters.ts';
 import { cityTrees } from './city_trees.ts';
+import { crossingGuards } from './crossing_guards.ts';
 import { crashes } from './crashes.ts';
 import { displacementWatch } from './displacement_watch.ts';
 import { floodplain } from './floodplain.ts';
@@ -21,7 +23,9 @@ import { publicArt } from './public_art.ts';
 import { publicPlace } from './public_place.ts';
 import { shootingsHex } from './shootings_hex.ts';
 import { stopAmenities } from './stop_amenities.ts';
+import { streetPoles } from './street_poles.ts';
 import { streetSegments } from './street_segments.ts';
+import { trafficCalming } from './traffic_calming.ts';
 import { trafficStress } from './traffic_stress.ts';
 import { transitRoutes } from './transit_routes.ts';
 import { transitStops } from './transit_stops.ts';
@@ -56,6 +60,10 @@ export const STYLES: Record<StyleId, StyleModule> = {
   traffic_stress: trafficStress,
   parking_reports: parkingReports,
   displacement_watch: displacementWatch,
+  city_shelters: cityShelters,
+  street_poles: streetPoles,
+  traffic_calming: trafficCalming,
+  crossing_guards: crossingGuards,
 };
 
 export function styleFor(layer: Layer): StyleModule | null {

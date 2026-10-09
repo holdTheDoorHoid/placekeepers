@@ -225,7 +225,8 @@ describe('stops in "What you can do nearby"', () => {
     expect(ids).not.toContain('sp1003');
     expect(ids).not.toContain('sp1006');
     expect(ids).not.toContain('sr90009');
-    expect(ids.sort()).toEqual(['sp1001', 'sp1002', 'sp1004', 'sp1008', 'sp1105']);
+    // sp1009 (M4.5): the City lists a shelter where OpenStreetMap says none, so it asks for a survey.
+    expect(ids.sort()).toEqual(['sp1001', 'sp1002', 'sp1004', 'sp1008', 'sp1009', 'sp1105']);
     const distances = near.map((s) => s.distance);
     expect([...distances].sort((a, b) => a - b)).toEqual(distances);
     expect(nearestStops(reg, state('field'), inputs, anchor, TABLE, 2)).toHaveLength(2);

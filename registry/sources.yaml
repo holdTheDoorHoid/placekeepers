@@ -580,6 +580,50 @@
   cadence: daily
   health: {min_rows: 2000, max_drop_pct: 50, newest_field: requested, max_age_days: 10}
   release: v0.3
+# Milestone M4.5 (issue #41): streets and stops. Four City layers, each with an explicit field list
+# (pipeline/src/placekeepers/adapters/streets_stops.py; docs/DATA_SOURCES.md, "Streets and stops").
+# The bus shelters are the City's own list, so "no public inventory exists" no longer holds.
+- id: bus_shelters
+  name: Bus shelters
+  publisher: City of Philadelphia, Office of Transportation and Infrastructure Systems
+  homepage: https://opendataphilly.org/datasets/bus-shelters/
+  endpoint: {kind: arcgis, service: bus_transit_shelters, layer: 0}
+  license: city_terms
+  attribution: "Bus shelters: City of Philadelphia, Office of Transportation and Infrastructure Systems"
+  cadence: irregular
+  health: {min_rows: 400, max_drop_pct: 15}
+  release: v0.4
+- id: street_poles
+  name: Street poles
+  publisher: City of Philadelphia, Streets Department (Street Lighting Division)
+  homepage: https://opendataphilly.org/datasets/street-poles/
+  # About 203,000 points in about 102 pages of 2,000, one request a second.
+  endpoint: {kind: arcgis, service: Street_Poles, layer: 0}
+  license: city_terms
+  attribution: "Street poles: City of Philadelphia Streets Department"
+  cadence: weekly
+  health: {min_rows: 180000, max_drop_pct: 5}
+  release: v0.4
+- id: traffic_calming
+  name: Traffic calming devices
+  publisher: City of Philadelphia, Streets Department
+  homepage: https://opendataphilly.org/datasets/traffic-calming/
+  endpoint: {kind: arcgis, service: traffic_calming_devices, layer: 0}
+  license: city_terms
+  attribution: "Traffic calming devices: City of Philadelphia Streets Department"
+  cadence: irregular
+  health: {min_rows: 1500, max_drop_pct: 10}
+  release: v0.4
+- id: crossing_guards
+  name: School crossing guard locations
+  publisher: City of Philadelphia, Streets Department
+  homepage: https://opendataphilly.org/datasets/school-crossing-guard-locations/
+  endpoint: {kind: arcgis, service: School_Crossing_Guards, layer: 0}
+  license: city_terms
+  attribution: "School crossing guard locations: City of Philadelphia"
+  cadence: irregular
+  health: {min_rows: 600, max_drop_pct: 20}
+  release: v0.4
 # Milestone M3.2: public art. OpenStreetMap's artworks come with osm_philadelphia (tourism=artwork,
 # above); these are the City's list and Wikidata's. philart.net, the Association for Public Art's
 # map and Philadelphia's Magic Gardens' mosaic map are not used until their owners agree, and

@@ -10,10 +10,10 @@
   description: Where prices are rising, so that greening and other improvements can be paired with protections for the neighbors who live there now.
 - id: streets
   label: Streets and memorials
-  description: The High Injury Network, crashes, and people killed on our streets.
+  description: The High Injury Network, crashes, people killed on our streets, and the street poles, traffic calming and school crossing guards the City lists.
 - id: transit
   label: Buses and trains
-  description: SEPTA stops and routes, how often service comes, how many people get on, and which stops have a shelter or a bench.
+  description: SEPTA stops and routes, how often service comes, how many people get on, and which stops have a shelter or a bench, from the City's list of shelters and OpenStreetMap.
 - id: heat
   label: Heat, trees and flooding
   description: How hard summer heat hits each neighborhood, the trees the City keeps on its streets and in its parks, and where FEMA expects flooding.

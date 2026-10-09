@@ -10,6 +10,11 @@
 // join_published), and tests/stop_join_parity.test.ts checks the two agree on
 // pipeline/tests/fixtures/stop_join_parity.json. A shelter or bench no one has answered for yet
 // counts halfway (NOT_SURVEYED), never as missing.
+//
+// The City's own shelters (M4.5) are the City's data, published on the stop as `cs` (how many
+// shelters its list has there). A City shelter counts as a shelter whatever OpenStreetMap says;
+// where OpenStreetMap says there is none, the two disagree, the stop's page says so, and the stop
+// gets a survey instead of a request for a shelter the City already lists.
 
 import type { ExpressionSpecification } from 'maplibre-gl';
 
@@ -19,6 +24,8 @@ export const STOP_TABLE = 'tables/stop_amenities.json';
 export const NOT_SURVEYED = 50;
 /** The property of a published stop the transit comfort lens scores (not stations, nor the trolley tunnel stations). */
 export const IN_LENS = 'tc';
+/** The property of a published stop counting the shelters on the City's own list there (M4.5). */
+export const CITY_SHELTER = 'cs';
 /** `om`: the stop numbers agree, or the two only stand at the same place. */
 export const BY_NUMBER = 1;
 export const BY_PLACE = 2;
@@ -73,9 +80,12 @@ export function parseStopTable(json: unknown): StopTable | null {
   return { asOf, credit: text(json.credit), license: text(json.license), stops };
 }
 
-/** 100 when a survey found it missing, 0 when it is there (or the whole stop is under a roof), halfway when unknown. */
-export function yesNoNeed(answer: number | undefined | null, covered?: number | null): number {
-  if (covered === 1 || answer === 1) return 0;
+/**
+ * 100 when a survey found it missing, 0 when it is there (or the whole stop is under a roof, or,
+ * for a shelter, the City lists one: `city`, the stop's `cs`), halfway when unknown.
+ */
+export function yesNoNeed(answer: number | undefined | null, covered?: number | null, city?: number | null): number {
+  if (covered === 1 || answer === 1 || (city ?? 0) > 0) return 0;
   if (answer === 0) return 100;
   return NOT_SURVEYED;
 }
@@ -83,6 +93,17 @@ export function yesNoNeed(answer: number | undefined | null, covered?: number | 
 function int(value: unknown): number | undefined {
   const n = typeof value === 'number' ? value : typeof value === 'string' && value.trim() !== '' ? Number(value) : NaN;
   return Number.isFinite(n) ? Math.round(n) : undefined;
+}
+
+/** How many shelters the City's own list has at a published stop (`cs`), 0 when none. */
+export function cityShelters(properties: Record<string, unknown>): number {
+  const n = int(properties[CITY_SHELTER]);
+  return n !== undefined && n > 0 ? n : 0;
+}
+
+/** The City lists a shelter at the stop and OpenStreetMap says there is none (nor a roof). */
+export function disagree(properties: Record<string, unknown>): boolean {
+  return cityShelters(properties) > 0 && int(properties.sh) === 0 && int(properties.cv) !== 1;
 }
 
 /** The OpenStreetMap stop linked to a published SEPTA stop, if the table has it. */
@@ -115,13 +136,14 @@ export function joinStop(properties: Record<string, unknown>, table: StopTable |
   const bench = int(joined.bn);
   const lit = int(joined.li);
   const covered = int(joined.cv);
-  joined.f_noshelter = yesNoNeed(shelter, covered);
+  const city = cityShelters(joined);
+  joined.f_noshelter = yesNoNeed(shelter, covered, city);
   joined.f_nobench = yesNoNeed(bench);
 
   const found = new Set<string>(String(properties.sg ?? '').split(',').filter(Boolean));
-  const shelterKnown = shelter !== undefined || covered === 1;
-  if (!shelterKnown || bench === undefined) found.add('stop_survey');
-  if (shelter === 0 && covered !== 1) found.add('stop_shelter_request');
+  const shelterKnown = shelter !== undefined || covered === 1 || city > 0;
+  if (!shelterKnown || bench === undefined || disagree(joined)) found.add('stop_survey');
+  if (shelter === 0 && covered !== 1 && city === 0) found.add('stop_shelter_request');
   if (bench === 0) found.add('stop_bench_request');
   if (lit === 0) found.add('stop_streetlight_report');
   const known = new Set<string>(STOP_SUGGESTIONS);
@@ -163,6 +185,14 @@ export function answerExpression(groups: { need: string[]; met: string[] } | und
   if (groups?.met.length) branches.push([...groups.met], 0);
   if (branches.length === 0) return NOT_SURVEYED;
   return ['match', ['to-string', ['get', 'o']], ...branches, NOT_SURVEYED] as unknown as ExpressionSpecification;
+}
+
+/**
+ * The shelter factor for a stop on the map: 0 where the City's list has a shelter (`cs`, M4.5),
+ * else what OpenStreetMap says at the linked stop, else halfway.
+ */
+export function shelterExpression(groups: { need: string[]; met: string[] } | undefined): ExpressionSpecification {
+  return ['case', ['>', ['to-number', ['get', CITY_SHELTER], 0], 0], 0, answerExpression(groups)] as ExpressionSpecification;
 }
 
 const tables = new Map<string, Promise<StopTable | null>>();

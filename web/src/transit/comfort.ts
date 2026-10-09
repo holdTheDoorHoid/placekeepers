@@ -18,7 +18,8 @@ import type { Lens, Partner, Registry, Route, Suggestion } from '../registry/typ
 import type { AppState } from '../state/defaults.ts';
 import { strings } from '../strings.ts';
 import { osmUrl } from './amenities.ts';
-import { IN_LENS, joinStop, type StopTable } from './answers.ts';
+import { IN_LENS, cityShelters, disagree, joinStop, type StopTable } from './answers.ts';
+import { stopLampsLine } from '../streets/streets-stops.ts';
 import { describeStop, stopKind, type StopKind } from './describe.ts';
 
 /** The lens that ranks stops: the first registry lens that applies to stops. */
@@ -73,6 +74,12 @@ export interface StopComfortView {
   osmUrl: string | null;
   /** Shade and the High Injury Network, as plain sentences. */
   facts: string[];
+  /** What the City's own list of bus shelters says here (M4.5), in a sentence. */
+  cityShelter: string;
+  /** The City lists a shelter here and OpenStreetMap says there is none: the two disagree. */
+  disagree: string | null;
+  /** The lamps the City lists within 30 meters, beside OpenStreetMap's answer about a light. */
+  lamps: string | null;
   suggestions: StopSuggestionView[];
 }
 
@@ -91,7 +98,7 @@ const ANSWERS = [
 export function unsurveyedFactors(lens: Lens | null, properties: Record<string, unknown>): string[] {
   if (!lens) return [];
   const fields: string[] = [];
-  if (int(properties.sh) === null && int(properties.cv) !== 1) fields.push('f_noshelter');
+  if (int(properties.sh) === null && int(properties.cv) !== 1 && cityShelters(properties) === 0) fields.push('f_noshelter');
   if (int(properties.bn) === null) fields.push('f_nobench');
   return lens.factors.filter((f) => fields.includes(f.field) && properties[f.field] !== undefined).map((f) => f.id);
 }
@@ -170,6 +177,8 @@ export function describeComfort(
   if (int(properties.hin) === 1) facts.push(t.onHin);
 
   const how = int(properties.om);
+  const city = cityShelters(properties);
+  const c = strings.streetsStops;
   return {
     lens,
     why,
@@ -184,6 +193,9 @@ export function describeComfort(
     matched: how === 1 ? t.matchedByNumber : how === 2 ? t.matchedByPlace : null,
     osmUrl: osmUrl(properties.o),
     facts,
+    cityShelter: city > 0 ? c.cityShelter(city) : c.noCityShelter,
+    disagree: disagree(properties) ? c.disagree : null,
+    lamps: stopLampsLine(properties),
     suggestions: stopSuggestionViews(reg, state, properties),
   };
 }

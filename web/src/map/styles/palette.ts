@@ -180,3 +180,21 @@ export const PARKING_OPACITY = 0.7;
 export const WATCH_FILL = '#b4bfcc';
 export const WATCH_FILL_OPACITY = 0.32;
 export const WATCH_LINE = '#3a4a5c';
+
+/**
+ * Streets and stops (M4.5). The City's bus shelters are a deep blue ring around the stop they
+ * serve, so the stop's own color still shows inside it. The street poles the City lists are small
+ * dots, close in only: a warm yellow for an LED lamp, a deep orange for the older high pressure
+ * sodium lamp, a muted khaki for a lamp of a kind the City does not name, and a hollow gray ring
+ * for a pole with no lamp listed (so no lamp listed never looks like a dark street). Traffic
+ * calming is charcoal with a yellow ring, like the paint on a speed cushion; crossing guard posts
+ * are a deep pink, clear of the memorials' violet and the High Injury Network's amber.
+ */
+export const CITY_SHELTER_RING = '#1f5c99';
+export const POLE_COLORS = { led: '#f2c230', other: '#c4560b', unknown: '#a89a5c' } as const;
+export const POLE_RING = '#4a4a3a';
+export const POLE_NONE_RING = '#8a9099';
+export const CALMING_FILL = '#3d3d3d';
+export const CALMING_RING = '#f2c94c';
+export const GUARD_FILL = '#c51b7d';
+export const GUARD_RING = '#ffffff';

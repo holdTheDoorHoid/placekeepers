@@ -24,6 +24,8 @@
   import PlaceDetails from '../amenities/PlaceDetails.svelte';
   import StressDetails from '../walk/StressDetails.svelte';
   import ParkingDetails from './ParkingDetails.svelte';
+  import StreetStopDetails from './StreetStopDetails.svelte';
+  import { blockCalming, blockPolesLine, memorialCalmingLine } from '../../streets/streets-stops.ts';
   import WatchDetails from '../displacement/WatchDetails.svelte';
   import { watchSummaryOf } from '../../displacement/watch.ts';
 
@@ -40,6 +42,12 @@
   const first = $derived(target.features[0] ?? {});
   const views = $derived(style === STYLES.memorials ? suggestionViews(store.registry, store.state, first) : []);
   const segment = $derived(style === STYLES.street_segments ? describeSegment(store.registry, store.state, first) : null);
+  // Streets and stops (M4.5): the poles and traffic calming the City lists on a block, and the
+  // request for traffic calming where it may apply.
+  const blockViews = $derived(segment ? suggestionViews(store.registry, store.state, first) : []);
+  const poles = $derived(segment ? blockPolesLine(first) : null);
+  const calming = $derived(segment ? blockCalming(first) : null);
+  const memorialCalming = $derived(style === STYLES.memorials ? memorialCalmingLine(first) : null);
   // The site root from the build (not config, so the details also render outside a browser).
   const links = { removalEmail: REMOVAL_EMAIL, contactUrl: `${import.meta.env.BASE_URL}contact/` };
   const s = strings.streets;
@@ -72,6 +80,7 @@
             <strong>{view.suggestion.label}</strong>
             <EvidenceBadge level={view.suggestion.evidence} />
             <BlessingNote suggestionId={view.suggestion.id} />
+            {#if view.suggestion.id === 'traffic_calming_petition' && memorialCalming}<p class="small">{memorialCalming}</p>{/if}
             <p class="small">{view.suggestion.summary}</p>
             <p class="small">{s.cost(view.suggestion.cost)}</p>
             {#if view.firstStep}
@@ -103,7 +112,27 @@
     {/if}
     <ul class="facts">
       {#each segment.facts as fact (fact)}<li>{fact}</li>{/each}
+      {#if calming}<li>{calming.line}</li>{/if}
+      {#if poles}<li>{poles}</li>{/if}
     </ul>
+    {#if calming?.arterial}<p class="small">{calming.arterial}</p>{/if}
+    {#if blockViews.length}
+      <h4>{s.canDo}</h4>
+      <ul class="suggestions">
+        {#each blockViews as view (view.suggestion.id)}
+          <li>
+            <strong>{view.suggestion.label}</strong>
+            <EvidenceBadge level={view.suggestion.evidence} />
+            {#if calming}<p class="small">{calming.line}</p>{/if}
+            <p class="small">{view.suggestion.summary}</p>
+            <p class="small">{s.cost(view.suggestion.cost)}</p>
+            {#if view.firstStep}
+              <p class="small"><strong>{s.firstStep}:</strong> {view.firstStep.step} <span class="muted">({view.firstStep.route.label})</span></p>
+            {/if}
+          </li>
+        {/each}
+      </ul>
+    {/if}
     {#if segment.why}<WhyBreakdown why={segment.why} idPrefix="feature" appliesTo="segment" />{/if}
   {:else if style === STYLES.transit_stops}
     <TransitStopDetails {store} features={target.features} guide={layer?.guide} />
@@ -136,6 +165,14 @@
       registry={store.registry}
       related={(g) => store.controller?.featuresWith(target.layerId, 'g', g) ?? []}
     />
+  {:else if style === STYLES.city_shelters}
+    <StreetStopDetails kind="shelter" features={target.features} />
+  {:else if style === STYLES.street_poles}
+    <StreetStopDetails kind="pole" features={target.features} />
+  {:else if style === STYLES.traffic_calming}
+    <StreetStopDetails kind="calming" features={target.features} />
+  {:else if style === STYLES.crossing_guards}
+    <StreetStopDetails kind="guard" features={target.features} />
   {:else if style === STYLES.traffic_stress}
     <StressDetails features={target.features} />
   {:else if style === STYLES.parking_reports}

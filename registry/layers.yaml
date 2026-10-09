@@ -226,8 +226,18 @@
     Each street block colored by the street safety lens: whether it is on the High Injury Network,
     how many people were killed or seriously injured there while walking or cycling in the five
     most recent years of PennDOT records, whether someone was killed there in the last two years,
-    and whether a school is within 400 meters. Move the lens sliders to change the blend.
-  sources: [street_centerlines, high_injury_network, crashes_2020_2024, fatal_crashes, schools]
+    and whether a school is within 400 meters. Move the lens sliders to change the blend. A block
+    also says how many poles the City lists along it and how many of their lamps are LED, and the
+    traffic calming the City lists there.
+  sources:
+    - street_centerlines
+    - high_injury_network
+    - crashes_2020_2024
+    - fatal_crashes
+    - schools
+    # The poles and traffic calming the City lists along each block (M4.5)
+    - street_poles
+    - traffic_calming
   file: tiles/streets.pmtiles
   source_layer: segments
   geometry: line
@@ -297,7 +307,8 @@
     Department's records of deaths in traffic crashes since 2019, each marked quietly where it
     happened. A name appears only when a public memorial list already shares it, and anyone can
     ask for a name or a marker to be removed.
-  sources: [fatal_crashes, memorial_names]
+  # traffic_calming: what the City lists on the block, beside the traffic calming request (M4.5)
+  sources: [fatal_crashes, memorial_names, traffic_calming]
   file: tiles/streets.pmtiles
   source_layer: memorials
   geometry: point
@@ -344,6 +355,69 @@
         - {value: ramp, label: Blocking a curb ramp}
       default: all
   release: v0.3
+# Streets and stops (M4.5, issue #41): the City's street poles, traffic calming devices and school
+# crossing guard posts. Off by default in both views, so they do not crowd the lots and the High
+# Injury Network; the street blocks carry the counts.
+- id: street_poles
+  label: Street poles and the lamps the City lists
+  group: streets
+  description: >-
+    Every street pole the Streets Department lists, with the lamps it lists on them: LED, the
+    older high pressure sodium, or a lamp of a kind it does not name. Many poles, such as PECO's
+    and the poles of traffic signals, list no lamp. This is what the City has installed, not
+    whether a lamp works tonight: report a light that is out to Philly311 with the pole's number.
+    Shown close in, a few blocks across.
+  sources: [street_poles]
+  file: tiles/poles.pmtiles
+  source_layer: poles
+  geometry: point
+  style: street_poles
+  evidence: context
+  default: {field: false, analysis: false}
+  settings:
+    - id: show
+      label: Show
+      type: choice
+      options:
+        - {value: all, label: Every pole}
+        - {value: lamps, label: Poles with a lamp the City lists}
+        - {value: not_led, label: "Lamps the City does not list as LED"}
+      default: all
+  release: v0.4
+- id: traffic_calming
+  label: Traffic calming the City lists
+  group: streets
+  description: >-
+    Speed cushions, humps and tables the Streets Department has put in to slow drivers on
+    residential streets, with the day each went in. Neighbors can ask the City for them on a
+    residential street; arterials and state roads do not qualify. A street block shows how many
+    it has and since when, and a High Injury Network block where people were hurt says when none
+    is recorded yet.
+  sources: [traffic_calming, street_centerlines]
+  file: tiles/streets.pmtiles
+  source_layer: calming
+  geometry: point
+  style: traffic_calming
+  evidence: context
+  default: {field: false, analysis: false}
+  settings: []
+  release: v0.4
+- id: crossing_guards
+  label: School crossing guard posts
+  group: streets
+  description: >-
+    The corners where the City posts a school crossing guard, a safety service that helps
+    children and everyone else cross near schools at the start and end of the school day. Each
+    post names its corner and the nearest school within 400 meters.
+  sources: [crossing_guards, schools]
+  file: tiles/streets.pmtiles
+  source_layer: guards
+  geometry: point
+  style: crossing_guards
+  evidence: context
+  default: {field: false, analysis: false}
+  settings: []
+  release: v0.4
 - id: basemap
   label: Base map
   group: basemap
@@ -378,15 +452,19 @@
     Every SEPTA bus and trolley stop in Philadelphia, from SEPTA's current schedules: the routes
     that stop there, how often a bus or trolley comes on a typical weekday, Saturday and Sunday,
     when service starts and ends, and how many people get on there on an average weekday, from
-    SEPTA's own counts. Each stop shows what riders find there where OpenStreetMap knows it, its
-    priority under the transit comfort lens, and what neighbors can do about it. Subway, El and
-    Regional Rail stations can be added in the settings.
+    SEPTA's own counts. Each stop shows what riders find there where OpenStreetMap knows it, a
+    shelter where the City's own list has one, its priority under the transit comfort lens, and
+    what neighbors can do about it. Subway, El and Regional Rail stations can be added in the
+    settings.
   sources:
     - septa_gtfs
     - septa_ridership_bus
     - septa_ridership_trolley
     # The transit comfort lens (M2.3); land use gives the water left out of the canopy measure
     - osm_philadelphia
+    # The City's own shelters and the lamps it lists by each stop (M4.5)
+    - bus_shelters
+    - street_poles
     - tree_canopy_2018
     - census_tracts_2020
     - land_use
@@ -486,6 +564,25 @@
         - {value: unsurveyed, label: Stops not yet surveyed}
       default: all
   release: v0.2
+# The City's own bus shelters (M4.5, issue #41), apart from what OpenStreetMap says.
+- id: city_shelters
+  label: Bus shelters the City lists
+  group: transit
+  description: >-
+    The bus shelters on the City's own list, which it installs and maintains with its advertising
+    partner, with the SEPTA stop each one serves. A stop with a City shelter counts as sheltered in
+    the transit comfort lens. Where OpenStreetMap says a stop has no shelter but the City lists
+    one, the stop's page says the two disagree, and a survey settles it. The list was last
+    changed in January 2025, so a shelter put in or taken out since may be missing.
+  sources: [bus_shelters, septa_gtfs]
+  file: tiles/transit.pmtiles
+  source_layer: shelters
+  geometry: point
+  style: city_shelters
+  evidence: not_violence
+  default: {field: false, analysis: false}
+  settings: []
+  release: v0.4
 # Heat, trees and the floodplain (M3.1). Context for the heat and shade lens, off by default in
 # both views: their fills would compete with the lots' colors, and the trees are many.
 - id: heat_tracts
@@ -760,9 +857,10 @@
   group: conditions
   description: >-
     Blocks where someone asked Philly311 to fix a street light or an alley light that was out in
-    the last 90 days, with how many requests and whether any is still open. Counted by block, never
-    by address, and with nothing about who reported.
-  sources: [philly311_conditions, street_centerlines]
+    the last 90 days, with how many requests and whether any is still open, beside the poles and
+    lamps the City lists along the block. Counted by block, never by address, and with nothing
+    about who reported.
+  sources: [philly311_conditions, street_centerlines, street_poles]
   file: tiles/conditions.pmtiles
   source_layer: lights
   geometry: point

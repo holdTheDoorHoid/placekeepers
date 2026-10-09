@@ -25,6 +25,15 @@ import { WATCH_BLOCK, WATCH_LAYER, WATCH_SOURCES, watchFixtures, watchFor } from
 import { routeOsmStops, routeSheetFixtures } from './route-fixtures.mjs';
 import { WALK_LAYERS, WALK_SOURCES, walkFixtures } from './walk-fixtures.mjs';
 import { PARKING_LAYERS, PARKING_SOURCES, parkingFixtures } from './parking-fixtures.mjs';
+import {
+  BLOCK_CALMING,
+  LIGHTS_POLES,
+  MEMORIAL_CALMING,
+  STREETS_STOPS_LAYERS,
+  STREETS_STOPS_SOURCES,
+  blockPoles,
+  streetsStopsFixtures,
+} from './streetstops-fixtures.mjs';
 
 const FIXTURES = new URL('../fixtures/', import.meta.url);
 const ROOT = new URL('data/', FIXTURES);
@@ -391,13 +400,17 @@ const STOP_SAMPLES = [
     o: 'n9100002', tc: 1, f_riders: 60, f_shade: 83, f_heat: 33, f_hin: 100, f_wait: 20, cp: 2, hin: 1,
     sg: 'stop_shade_trees' }],
   [[480, 180], { id: 'sp1003', sid: '1003', nm: 'Sample 3 St & Sample 5 Ave', md: 3, r: 'T1,47', tw: 180, ts: 120, tu: 100, bh: 12, hp: 5, hm: 7, hs: 9, hu: 10, ft: 300, lt: 1450, ev: 20, wc: 1, b: 1240, bp: 'Spring 2026',
-    o: 'w9100003', tc: 1, f_riders: 80, f_shade: 17, f_heat: 0, f_hin: 0, f_wait: 0, cp: 31 }],
+    o: 'w9100003', tc: 1, cs: 1, f_riders: 80, f_shade: 17, f_heat: 0, f_hin: 0, f_wait: 0, cp: 31, lp: 3, le: 2 }],
   [[640, -60], { id: 'sp1004', sid: '1004', nm: 'Sample 1 St & Sample 8 Ave', md: 1, r: '60', tw: 22, ts: 12, tu: 0, bh: 2, hp: 40, hm: 60, hs: 120, ft: 380, lt: 1180, ev: 0, wc: 1,
     o: 'n9100004', tc: 1, f_shade: 67, f_heat: 83, f_hin: 0, f_wait: 60, cp: 6 }],
   [[560, 60], { id: 'sp1105', sid: '1005', nm: 'Sample 2 St & Sample 6 Ave (midblock, near side)', md: 1, r: '60', tw: 22, ts: 12, tu: 0, bh: 2, hp: 40, hm: 60, hs: 120, ft: 385, lt: 1185, ev: 0, wc: 2, fid: '1105', b: 4, bp: 'Spring 2026', bx: '1105',
     tc: 1, f_riders: 20, f_shade: 50, f_heat: 67, f_hin: 0, f_wait: 60, cp: 12 }],
   [[320, 180], { id: 'sp1008', sid: '1008', nm: 'Sample 3 St & Sample 2 St', md: 1, r: '441', tw: 1, ts: 0, tu: 0, bh: 1, ft: 388, lt: 388, ev: 0, wc: 1, b: 0, bp: 'Spring 2026',
     o: 'n9100008', tc: 1, f_riders: 0, f_shade: 0, f_heat: 0, f_hin: 0, cp: 40 }],
+  // Added by M4.5: two shelters on the City's list (`cs`) where OpenStreetMap says there is none,
+  // so the two disagree, and the lamps the City lists within 30 meters (`lp`, `le`).
+  [[400, 60], { id: 'sp1009', sid: '1009', nm: 'Sample 2 St & Sample 5 Ave (far side)', md: 1, r: '60', tw: 22, ts: 12, tu: 0, bh: 2, hp: 40, hm: 60, hs: 120, ft: 386, lt: 1186, ev: 0, wc: 1, b: 60, bp: 'Spring 2026',
+    o: 'n9100009', tc: 1, cs: 2, f_riders: 50, f_shade: 40, f_heat: 50, f_hin: 0, f_wait: 60, cp: 20, lp: 2, le: 2 }],
   [[160, -20], { id: 'sp1006', sid: '1006', nm: 'Sample', md: 4, r: 'B1,B2,B3', tw: 283, ts: 153, tu: 113, bh: 27, hp: 2, hm: 5, hs: 7, hu: 7, ft: 307, lt: 1455, ev: 23, wc: 2 }],
   [[161, -20], { id: 'sp1007', sid: '1007', nm: 'Sample', md: 4, r: 'B1,B2,B3', tw: 284, ts: 152, tu: 104, bh: 26, hp: 2, hm: 4, hs: 7, hu: 10, ft: 315, lt: 1485, ev: 28, wc: 2 }],
   [[800, 180], { id: 'sr90009', sid: '90009', nm: 'Sample Regional Rail Station', md: 8, r: 'CHW', tw: 42, ts: 18, tu: 18, bh: 3, hp: 40, hm: 60, hs: 120, hu: 120, ft: 330, lt: 1430, ev: 6, wc: 1 }],
@@ -438,6 +451,7 @@ const LINKED_OSM_STOPS = {
   w9100003: { c: 3, sh: 1, bn: 1, lt: 1, n: ['1003'] },
   n9100004: { c: 0 },
   n9100008: { c: 0, sh: 0, n: ['1008'] },
+  n9100009: { c: 1, sh: 0, bn: 0, lt: 1, n: ['1009'] },
 };
 const tableEntry = (properties) => {
   const entry = { c: properties.c };
@@ -575,6 +589,10 @@ writeFileSync(path('sources/gardens.geojson'), collection(gardenPoints));
 writeFileSync(path('data/tiles/boundaries.council_districts.geojson'), collection(councilDistricts));
 writeFileSync(path('data/tiles/boundaries.rcos.geojson'), collection(communityOrganizations));
 writeFileSync(path('data/tiles/boundaries.neighborhoods.geojson'), collection(neighborhoods));
+// Streets and stops (M4.5, scripts/streetstops-fixtures.mjs): the poles and traffic calming the City
+// lists along each block, and beside each memorial's traffic calming request.
+for (const segment of segments) Object.assign(segment.properties, blockPoles(segment.properties.id), BLOCK_CALMING[segment.properties.id] ?? {});
+for (const memorial of memorials) Object.assign(memorial.properties, MEMORIAL_CALMING[memorial.properties.id] ?? {});
 writeFileSync(path('data/tiles/streets.segments.geojson'), collection(segments));
 writeFileSync(path('data/tiles/streets.crashes.geojson'), collection(crashes));
 writeFileSync(path('data/tiles/streets.memorials.geojson'), collection(memorials));
@@ -586,7 +604,16 @@ writeFileSync(path('data/tiles/environment.floodplain.geojson'), collection(floo
 writeFileSync(path('data/tiles/trees.trees.geojson'), collection(cityTrees));
 // Amenities from OpenStreetMap, public places from the City and conditions reported to 311 (M3.5,
 // scripts/amenity-fixtures.mjs).
-for (const [name, text] of amenityFixtures(toLngLat)) writeFileSync(path(`data/${name}`), text);
+for (const [name, text] of amenityFixtures(toLngLat)) {
+  // The 311 street light blocks carry the poles the City lists along them (M4.5).
+  if (name === 'tiles/conditions.lights.geojson') {
+    const lights = JSON.parse(text);
+    for (const f of lights.features) Object.assign(f.properties, LIGHTS_POLES[f.properties.id] ?? {});
+    writeFileSync(path(`data/${name}`), JSON.stringify(lights) + '\n');
+  } else writeFileSync(path(`data/${name}`), text);
+}
+// The City's bus shelters, street poles, traffic calming and crossing guard posts (M4.5).
+for (const [name, text] of streetsStopsFixtures(toLngLat)) writeFileSync(path(`data/${name}`), text);
 writeFileSync(path('data/tiles/art.art.geojson'), collection(artWorks));
 // Walkability by block group, people and places within walking distance, and traffic stress for
 // people on bikes (M3.3, scripts/walk-fixtures.mjs).
@@ -726,6 +753,8 @@ const manifest = {
     ...Object.fromEntries(Object.entries(PARKING_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
     // The displacement watch (M4.1)
     ...Object.fromEntries(Object.entries(WATCH_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
+    // Streets and stops (M4.5)
+    ...Object.fromEntries(Object.entries(STREETS_STOPS_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
   },
   layers: {
     vacant_parcels: {
@@ -777,6 +806,7 @@ const manifest = {
     ...WALK_LAYERS,
     ...PARKING_LAYERS,
     ...WATCH_LAYER,
+    ...STREETS_STOPS_LAYERS,
   },
   files: Object.fromEntries(
     [
@@ -801,6 +831,7 @@ const manifest = {
       ...walkFixtures(toLngLat).map(([name]) => name),
       ...parkingFixtures(toLngLat).map(([name]) => name),
       watchFile,
+      ...streetsStopsFixtures(toLngLat).map(([name]) => name),
       'tables/routes/index.json',
       'tables/stop_amenities.json',
       ...handWritten
@@ -827,6 +858,7 @@ const manifest = {
     'Walking tiles were skipped for this sample too, so those layers are published as GeoJSON.',
     'Parking report tiles were skipped for this sample too, so that layer is published as GeoJSON.',
     'Displacement watch tiles were skipped for this sample too, so its layer is published as GeoJSON.',
+    'Street pole, shelter, traffic calming and crossing guard tiles were skipped for this sample too, so those layers are published as GeoJSON.',
   ],
 };
 writeFileSync(new URL('manifest.json', ROOT), JSON.stringify(manifest, null, 2) + '\n');

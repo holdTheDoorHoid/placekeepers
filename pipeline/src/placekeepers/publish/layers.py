@@ -583,3 +583,9 @@ BUILDERS = (*BUILDERS, *PARKING_BUILDERS)
 from placekeepers.publish.displacement import DISPLACEMENT_BUILDERS  # noqa: E402
 
 BUILDERS = (*BUILDERS, *DISPLACEMENT_BUILDERS)
+
+# Streets and stops (M4.5): the City's bus shelters, street poles, traffic calming devices and
+# school crossing guard posts.
+from placekeepers.publish.streets_stops import STREETS_STOPS_BUILDERS  # noqa: E402
+
+BUILDERS = (*BUILDERS, *STREETS_STOPS_BUILDERS)
