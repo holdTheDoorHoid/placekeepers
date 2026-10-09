@@ -741,3 +741,46 @@
   cadence: irregular
   health: {min_rows: 1200, max_drop_pct: 5}
   release: v0.3
+# Milestone M4.2 (issue #38): the lot timeline.
+- id: li_history
+  name: L&I records for the lot timeline
+  publisher: City of Philadelphia, Department of Licenses and Inspections
+  homepage: https://opendataphilly.org/datasets/licenses-and-inspections-code-violations/
+  # For the candidate parcels only, every record of six L&I tables, all years: violations, permits,
+  # demolitions, unsafe and imminently dangerous notices, and clean and seal work. Each row keeps
+  # the kind, the day in Philadelphia, the City's title, the status and, for permits and
+  # demolitions, the permit type or whether the City did the work. Never a case, permit or
+  # violation number, an inspector, an applicant or a contractor. The registry names the largest
+  # table; the adapter (adapters/li.py, LiHistory) reads the other five the same way.
+  endpoint: {kind: carto, table: violations}
+  license: city_terms
+  attribution: "Violations, permits, demolitions, unsafe and imminently dangerous notices, and clean and seal: City of Philadelphia, Department of Licenses and Inspections"
+  cadence: weekly
+  health: {min_rows: 850000, max_drop_pct: 10, newest_field: date, max_age_days: 14}
+  release: v0.4
+- id: cagp_vacant_land_2024
+  name: Vacant land list, June 2024 (L&I, kept by Clean & Green Philly)
+  publisher: City of Philadelphia, Department of Licenses and Inspections, as kept by Clean & Green Philly (Code for Philly)
+  homepage: https://github.com/CodeForPhilly/clean-and-green-philly/blob/main/data/backup_data/README.md
+  # The vacant land list L&I sent Clean & Green Philly on 2024-06-24, the last fairly complete
+  # list before the City's own list broke. Frozen. Only the parcel numbers and the list's date are
+  # kept (adapters/bulk_files.py, CagpVacancyList2024).
+  endpoint: {kind: url, url: "https://raw.githubusercontent.com/CodeForPhilly/clean-and-green-philly/main/data/backup_data/land_backup_2024_06_24.parquet", format: parquet}
+  license: city_terms
+  attribution: "Vacant land list of June 2024: City of Philadelphia, Department of Licenses and Inspections, as kept by Clean & Green Philly (Code for Philly)"
+  cadence: frozen
+  health: {min_rows: 25000, max_drop_pct: 0}
+  release: v0.4
+- id: cagp_vacant_buildings_2024
+  name: Vacant buildings list, June 2024 (Clean & Green Philly)
+  publisher: Clean & Green Philly, Code for Philly
+  homepage: https://github.com/CodeForPhilly/clean-and-green-philly/blob/main/data/backup_data/README.md
+  # The list of vacant buildings Clean & Green Philly made itself on 2024-06-24; its README says
+  # it likely misses a thousand or more buildings. Frozen. Only the parcel numbers and the list's
+  # date are kept.
+  endpoint: {kind: url, url: "https://raw.githubusercontent.com/CodeForPhilly/clean-and-green-philly/main/data/backup_data/buildings_backup_2024_06_24.parquet", format: parquet}
+  license: mit_cagp
+  attribution: "Vacant buildings list of June 2024: Clean & Green Philly (Code for Philly)"
+  cadence: frozen
+  health: {min_rows: 9500, max_drop_pct: 0}
+  release: v0.4
