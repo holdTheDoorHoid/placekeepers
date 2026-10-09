@@ -79,12 +79,6 @@ that sends letters to owners automatically.
   our words, that it may turn down any sale or lease, even of a property it lists. The filter is
   named for the City's status, never for how easy a lot would be to get.
 
-- The Land Bank in numbers (issue #40, rules set in the milestone brief on 2026-10-09): aggregates only. No names
-  of people on the page or in its downloads, and organizations only in totals, never a list of
-  who got which lot (as built, no organization is named at all). Neutral facts: no slogans, and
-  the page speaks for neither the Land Steward Union nor the Land Bank. It says what the numbers
-  cannot show, and labels the program it infers as an inference.
-
 **Bulk export.** The owner chose not to restrict exports. CSV and GeoJSON exports include the flags,
 with a first line pointing to the terms of use.
 
