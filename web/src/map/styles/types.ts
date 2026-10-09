@@ -33,9 +33,13 @@ export interface StyleContext {
 
 export type LegendContext = Omit<StyleContext, 'sourceId' | 'sourceLayer'>;
 
-/** A link a legend entry offers to one of the site's content pages, named by its slug (M2.2). */
+/**
+ * A link a legend entry offers: to one of the site's content pages, named by its slug (M2.2), or to
+ * another site by its full address (`href`, added for the 1937 redlining map's credit).
+ */
 export interface LegendLink {
-  page: string;
+  page?: string;
+  href?: string;
   label: string;
 }
 

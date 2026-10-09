@@ -66,7 +66,7 @@ const ids = (extra: { nonEmpty?: boolean } = {}): Spec => ({ t: 'strings', patte
 
 const SCHEMAS: Record<keyof Registry, Fields> = {
   groups: { id: id(), label: text(), description: text() },
-  licenses: { id: id(), label: text(), url: url(), share_alike: { t: 'boolean' } },
+  licenses: { id: id(), label: text(), url: url(), share_alike: { t: 'boolean' }, non_commercial: { t: 'boolean', optional: true } },
   sources: {
     id: id(),
     name: text(),
@@ -407,10 +407,10 @@ function checkTiles(endpoint: Endpoint, where: string, errors: string[]): void {
 }
 
 /**
- * Where a layer's features come from (M4.3): a raster layer has no file and draws exactly one
- * `arcgis_tiles` source, choosing among several of its services with a choice setting "year"
- * whose options are their keys in order; any other layer has a file and a source layer and never
- * names a tile service. The same rules as the pipeline's check.
+ * Where a layer's features come from (M4.3): a raster layer has no file and draws only
+ * `arcgis_tiles` sources, choosing among their services with a choice setting "year" whose options
+ * are all their keys, each once; any other layer has a file and a source layer and never names a
+ * tile service. The same rules as the pipeline's check.
  */
 function checkLayerData(layer: Layer, sources: Source[], where: string, errors: string[]): void {
   const tiles = layer.sources
@@ -427,19 +427,39 @@ function checkLayerData(layer: Layer, sources: Source[], where: string, errors: 
   // The rest of the app reads them as text: a raster layer has none.
   layer.file = '';
   layer.source_layer = '';
-  if (layer.sources.length !== 1 || tiles.length !== 1) {
-    errors.push(`${where} is a raster layer and needs exactly one source of kind arcgis_tiles`);
+  if (tiles.length === 0 || tiles.length !== layer.sources.length) {
+    errors.push(`${where} is a raster layer and draws only sources of kind arcgis_tiles`);
     return;
   }
-  const keys = (tiles[0]!.endpoint.services ?? []).map((s) => s.key);
+  const keys = tiles.flatMap((source) => (source.endpoint.services ?? []).map((s) => s.key));
+  if (new Set(keys).size !== keys.length) {
+    errors.push(`${where}: its sources use a service key more than once`);
+    return;
+  }
   const year = layer.settings.find((s) => s.id === 'year');
   if (keys.length > 1) {
     if (!year || year.type !== 'choice') {
       errors.push(`${where} draws ${keys.length} services and needs a choice setting "year" to choose among them`);
-    } else if (year.options.map((o) => o.value).join('\n') !== keys.join('\n')) {
-      errors.push(`${where}: the "year" options should be the source's service keys in the same order`);
+    } else if ([...year.options.map((o) => o.value)].sort().join('\n') !== [...keys].sort().join('\n')) {
+      errors.push(`${where}: the "year" options should be its sources' service keys, each once`);
     }
   } else if (year) errors.push(`${where} draws one service and needs no "year" setting`);
+}
+
+/**
+ * A layer drawing a source under a non commercial license (the 1937 redlining map) draws nothing
+ * else, and no other layer shares its file, so its data never mixes with data under the site's own
+ * terms. The same rule as the pipeline's check.
+ */
+function checkNonCommercial(layer: Layer, reg: Registry, where: string, errors: string[]): void {
+  const nonCommercial = (id: string) => {
+    const source = reg.sources.find((s) => s.id === id);
+    return reg.licenses.find((l) => l.id === source?.license)?.non_commercial === true;
+  };
+  if (!layer.sources.some(nonCommercial)) return;
+  if (!layer.sources.every(nonCommercial)) errors.push(`${where} draws a source under a non commercial license and can draw no other kind`);
+  const sharing = reg.layers.filter((other) => other.id !== layer.id && other.file && other.file === layer.file).map((other) => other.id);
+  if (sharing.length) errors.push(`${where} is under a non commercial license, so no other layer may share its file (${sharing.join(', ')})`);
 }
 
 export interface ValidateOptions {
@@ -523,6 +543,7 @@ export function validateRegistry(raw: RawRegistryFiles, options: ValidateOptions
       if (typeof layer.default[view] !== 'boolean') errors.push(`${where}.default needs "${view}"`);
     }
     checkLayerData(layer, reg.sources, where, errors);
+    checkNonCommercial(layer, reg, where, errors);
     const settingIds = new Set<string>();
     layer.settings.forEach((setting, i) => {
       const sw = `${where}.settings[${i}]`;

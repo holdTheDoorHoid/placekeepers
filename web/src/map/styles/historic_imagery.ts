@@ -7,11 +7,11 @@
 
 import type { LayerSpecification } from 'maplibre-gl';
 import { strings } from '../../strings.ts';
-import { chosenService, rasterOpacity, rasterTiles, tileSource } from '../raster.ts';
+import { chosenService, rasterOpacity, rasterTiles, tileSources } from '../raster.ts';
 import { partId, type LegendEntry, type StyleContext, type StyleModule } from './types.ts';
 
-/** The years whose photos the City has only in black and white (checked 2026-10-09). */
-const BLACK_AND_WHITE = new Set(['1996', '2000']);
+/** The years whose photos are in black and white (checked 2026-10-09). */
+const BLACK_AND_WHITE = new Set(['1959', '1975', '1996', '1999', '2000']);
 
 export const historicImagery: StyleModule = {
   // The lowest of the data layers: a photo covers the base map, never the places drawn on it.
@@ -33,15 +33,21 @@ export const historicImagery: StyleModule = {
 
   legend(ctx) {
     const h = strings.historic;
-    const source = tileSource(ctx.layer, ctx.registry);
-    const services = source?.endpoint.services ?? [];
+    const sources = tileSources(ctx.layer, ctx.registry);
+    const services = sources.flatMap((s) => s.endpoint.services ?? []);
     const entries: LegendEntry[] = [];
     if (services.length > 1) {
-      const year = chosenService(ctx.layer, ctx.registry, ctx.state)?.key ?? '';
+      const chosen = chosenService(ctx.layer, ctx.registry, ctx.state);
+      const year = chosen?.service.key ?? '';
       entries.push({ kind: 'note', text: h.photoYear(year) });
       if (BLACK_AND_WHITE.has(year)) entries.push({ kind: 'note', text: h.blackAndWhite(year) });
+      if (year === '1975') entries.push({ kind: 'note', text: h.gaps1975 });
       entries.push({ kind: 'note', text: h.under });
-      entries.push({ kind: 'note', text: h.photoCredit });
+      // Each year is credited to its own publisher, as its source says.
+      if (chosen) entries.push({ kind: 'note', text: chosen.source.attribution });
+      if (chosen?.source.license === 'unstated') {
+        entries.push({ kind: 'note', text: h.termsNotStated });
+      }
     } else {
       entries.push({ kind: 'note', text: h.atlasCoverage });
       entries.push({ kind: 'note', text: h.atlasCredit });

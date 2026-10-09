@@ -94,6 +94,7 @@
                 <a href={row.source.homepage} target="_blank" rel="noopener noreferrer">{s.homepage}</a>.
                 {#if lic}{s.license}: <a href={lic.url} target="_blank" rel="noopener noreferrer">{lic.label}</a>.{/if}
               </p>
+              {#if lic?.non_commercial}<p class="non-commercial">{strings.redlining.statusNote}</p>{/if}
             {/if}
           </li>
         {/each}
