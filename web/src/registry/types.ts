@@ -49,6 +49,8 @@ export interface Endpoint {
   table?: string;
   where?: string;
   service?: string;
+  /** arcgis: a feature service unless it says MapServer (M4.6). */
+  server?: 'FeatureServer' | 'MapServer';
   layer?: number;
   url?: string;
   format?: UrlFormat;

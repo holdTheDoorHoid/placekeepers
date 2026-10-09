@@ -57,6 +57,7 @@ from placekeepers.context import Context
 from placekeepers.derive import city_list
 from placekeepers.derive import owners as ow
 from placekeepers.derive import transfers as tr
+from placekeepers.derive.appeals import is_upcoming
 from placekeepers.derive.flags import (
     FLAG_NOTES,
     HELP_ROUTES,
@@ -71,6 +72,7 @@ from placekeepers.derive.flags import (
 )
 from placekeepers.derive.heat import load_heat, with_heat
 from placekeepers.derive.heat import output_path as heat_output
+from placekeepers.derive.lot_rules import lot_rules
 from placekeepers.derive.placemaking import load_placemaking, with_more
 from placekeepers.derive.placemaking import output_path as placemaking_output
 from placekeepers.derive.routes import first_route_code, routes_for, suggestions_for
@@ -122,6 +124,13 @@ OPTIONAL = (
     "li_history",
     "cagp_vacant_land_2024",
     "cagp_vacant_buildings_2024",
+    # The rules and records of each lot (publish/rules.py, M4.6)
+    "historic_districts",
+    "historic_sites",
+    "zoning_overlays",
+    "zoning_base_districts",
+    "epa_brownfields",
+    "appeals",
 )
 #: The parts of a dossier whose records are downloaded only for the candidate parcels
 #: (placekeepers.candidates), with the source each comes from. A dossier lists in `partial` the
@@ -131,6 +140,15 @@ CANDIDATE_PARTS = (
     ("transfers", "real_estate_transfers", "deeds"),
     ("assessments", "assessment_history", "assessments"),
     ("li", "li_violations", "violations"),
+)
+#: The parts of a dossier built from citywide sources (M4.6): they are known for every parcel
+#: when their sources have a snapshot, and named in `partial` when they have none, so the lot
+#: page never says "no appeals" or leaves out a rule it could not check.
+CITYWIDE_PARTS = (
+    ("historic", ("historic_districts", "historic_sites")),
+    ("overlays", ("zoning_overlays",)),
+    ("brownfields", ("epa_brownfields",)),
+    ("appeals", ("appeals",)),
 )
 #: The map style of the lots layer, whose features carry each parcel's lens factors (`f_*`) and
 #: floodplain mark (`fp`), docs/CONTRACTS.md section 4.
@@ -194,6 +212,8 @@ class DossierResult:
     partial: Counter = field(default_factory=Counter)
     #: the history shards of the lot timeline (publish/history.py), when written
     history: HistoryResult | None = None
+    #: dossiers with each kind of rule, appeals and upcoming hearings (M4.6), for the build notes
+    rules: Counter = field(default_factory=Counter)
 
     def manifest_block(self) -> dict[str, Any] | None:
         """The manifest's `dossiers` summary (docs/CONTRACTS.md section 3), or None when no
@@ -778,6 +798,13 @@ def route_codes(
 
 
 # Building the dossiers
+def _read_appeals(con: Any, path: Path) -> dict[str, list[dict[str, Any]]]:
+    # Imported here: placekeepers.publish.rules is loaded with the map layers.
+    from placekeepers.publish.rules import read_appeals
+
+    return read_appeals(con, path)
+
+
 def read_records(con: Any, paths: dict[str, Path]) -> dict[str, dict[str, Any]]:
     """Every per parcel record the dossiers use, read for the accounts in the table `acc`."""
     has = paths.__contains__
@@ -826,6 +853,8 @@ def read_records(con: Any, paths: dict[str, Path]) -> dict[str, dict[str, Any]]:
         if has("li_demolitions")
         else {},
         "tax": read_tax(con, paths["cagp_tax_2025"]) if has("cagp_tax_2025") else {},
+        # Every appeal of each parcel, as its lot page lists it (M4.6).
+        "appeals": _read_appeals(con, paths["appeals"]) if has("appeals") else {},
     }
 
 
@@ -942,15 +971,32 @@ def build_dossiers(
 
     watch = parcel_watch(ctx.cache.root / "derived")
 
+    # The rules of each lot (M4.6): historic districts and the Register, the base zoning
+    # district and the overlays, and brownfield properties within 100 meters; its appeals; and
+    # the hearings still to come within 500 feet. Imported here: placekeepers.publish.rules is
+    # loaded with the map layers.
+    from placekeepers.publish.rules import hearings_near, load_rules, lot_shapes, upcoming_hearings
+
+    rule_set = load_rules(paths, as_of)
+    lot_rule = lot_rules(accounts, lot_shapes(ctx, paths, set(accounts)), points, rule_set.sets)
+    hearings = upcoming_hearings(paths["appeals"], as_of) if "appeals" in paths else []
+    near_hearings = hearings_near(hearings, {a: points[a] for a in accounts if a in points})
+    missing_citywide = [
+        part
+        for part, sources in CITYWIDE_PARTS
+        if any(source_id not in paths for source_id in sources)
+    ]
+
     def partial_parts(account: str) -> list[str]:
         """The parts whose records were not downloaded for this parcel: its source has no
-        snapshot, or the parcel was not a candidate (and the snapshot holds nothing for it)."""
+        snapshot, or the parcel was not a candidate (and the snapshot holds nothing for it).
+        Then the citywide parts whose sources have no snapshot (M4.6)."""
         return [
             part
             for part, source_id, kind in CANDIDATE_PARTS
             if source_id not in paths
             or (account not in downloaded_for and account not in records[kind])
-        ]
+        ] + missing_citywide
 
     shards: dict[str, dict[str, Any]] = defaultdict(dict)
     for account in accounts:
@@ -1074,6 +1120,18 @@ def build_dossiers(
         if account in watch:
             tract, signs = watch[account]
             dossier["displacement"] = {"tract": tract, "signs": signs}
+        if "appeals" in paths and "nearby" in dossier and account in points:
+            dossier["nearby"]["hearings_within_500ft"] = near_hearings.get(account, 0)
+        if account in lot_rule:
+            dossier["rules"] = lot_rule[account]
+            for key in dossier["rules"]:
+                result.rules[key] += 1
+        found_appeals = records["appeals"].get(account)
+        if found_appeals:
+            dossier["appeals"] = found_appeals
+            result.rules["appeals"] += 1
+            if any(is_upcoming(appeal, as_of) for appeal in found_appeals):
+                result.rules["upcoming_hearing"] += 1
         shards[account[:SHARD_DIGITS]][account] = dossier
 
         result.owner_types[owner_type.type] += 1
@@ -1089,7 +1147,15 @@ def build_dossiers(
 
     generated_at = iso_z(ctx.now())
     write_shards(result, out_root, shards, generated_at)
-    write_common(result, out_root, generated_at)
+    write_common(result, out_root, generated_at, rule_set.overlays)
+    if result.rules:
+        result.notes.append(
+            f"Rules on the lot pages: {result.rules['historic']:,} lots in a historic district or "
+            f"on the Register, {result.rules['overlays']:,} with zoning overlays, "
+            f"{result.rules['brownfields']:,} at or near a brownfield property, "
+            f"{result.rules['appeals']:,} with appeals ({result.rules['upcoming_hearing']:,} with "
+            "a hearing still to come)"
+        )
     # The lot timeline's records, in their own files beside the shards (issue #38). The shards
     # are written, so their parcels can go before the timeline's records are read.
     shards.clear()
@@ -1231,17 +1297,28 @@ def write_shards(
     result.prefixes = sorted(shards)
 
 
-def write_common(result: DossierResult, out_root: Path, generated_at: str) -> None:
+def write_common(
+    result: DossierResult,
+    out_root: Path,
+    generated_at: str,
+    overlays: dict[str, dict[str, Any]] | None = None,
+) -> None:
     """dossiers/common.json: each flag's careful note, next step, routes, links and sources, and
-    the notices, which are the same for every parcel."""
+    the notices, which are the same for every parcel; and every zoning overlay by its key, which
+    each lot's `rules.overlays` names (M4.6)."""
     target = out_root / COMMON_FILE
     target.parent.mkdir(parents=True, exist_ok=True)
-    body = {
+    body: dict[str, Any] = {
         "schema": SCHEMA,
         "generated_at": generated_at,
         "flags": FLAG_NOTES,
         "notices": NOTICES,
     }
+    if overlays:
+        body["overlays"] = {
+            key: {k: v for k, v in record.items() if k != "id"}
+            for key, record in sorted(overlays.items())
+        }
     target.write_text(dump(body), encoding="utf-8")
     result.common_bytes = target.stat().st_size
 

@@ -237,6 +237,20 @@ TILE_OPTIONS: dict[str, list[str]] = {
         "--no-tile-size-limit",
         "--detect-shared-borders",
     ],
+    # The rules and records of each lot (M4.6): historic districts and zoning overlays (a few
+    # hundred large shapes) and the brownfield properties and hearings still to come (a few
+    # hundred points each) at every zoom; the Register's 15,000 parcel shapes only from zoom 13,
+    # where a parcel is big enough to see, every one kept.
+    "tiles/rules.pmtiles": [
+        "--minimum-zoom=10",
+        "--maximum-zoom=16",
+        "--base-zoom=10",
+        "--no-feature-limit",
+        "--no-tile-size-limit",
+        "--no-tiny-polygon-reduction-at-maximum-zoom",
+        "--feature-filter",
+        json.dumps({"historic_sites": [">=", "$zoom", 13]}, separators=(",", ":")),
+    ],
     # Boundaries are few, large shapes: simplified at low zooms, borders kept shared, and
     # detailed enough at zoom 14 to be stretched further by the map.
     "tiles/boundaries.pmtiles": [

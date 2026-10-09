@@ -23,6 +23,9 @@ tables/owners.json. The tests below check, in every one of them:
   never on a parcel with a homestead exemption;
 * names only from memorials.yaml, and everything in suppressed.yaml gone from every file;
 * the citywide owners table lists organizations only, never a person;
+* who filed an appeal and the owner the City names appear only in that lot's own dossier shard
+  (tests/test_lot_rules.py checks every file; here the map's hearings carry only their contract
+  properties);
 * a dossier built without some records says so (`partial`) instead of claiming there are none.
 
 Rules that need a person to judge (care framing, quiet design, what the interface shows) are
@@ -48,6 +51,7 @@ from placekeepers.publish import publish
 
 from . import streets_fixtures as fx
 from .conftest import REPO_ROOT, install_snapshot
+from .rules_fixtures import install_rules
 from .test_dossiers import HOMESTEAD, NOW, dates, install_everything
 from .test_laser import install_laser
 
@@ -70,7 +74,9 @@ CONTRACT_PROPERTIES = {
     | {"f_vacant", "f_shoot", "f_poverty", "f_canopy"}
     # Listed as available by the City's land agencies (issue #36), and may go to the neighbor
     # next door as a side yard
-    | {"la", "ly"},
+    | {"la", "ly"}
+    # At or near a brownfield property (M4.6)
+    | {"bf"},
     "h3": {"h", "s12", "s36"},
     "hin": {"id", "name", "len"},
     "crashes": {"id", "y", "ya", "sev", "m"},
@@ -84,6 +90,13 @@ CONTRACT_PROPERTIES = {
     "neighborhoods": {"id", "nm"},
     # Parking problems reported with Laser Vision, counts per cell only (issue #37)
     "parking": {"id", "n", "sw", "bl", "cw", "co", "rp"},
+    # The rules and records of each lot (M4.6): never who filed an appeal, the owner's name or
+    # the appeal's number
+    "historic_districts": {"id", "nm", "dd"},
+    "historic_sites": {"ad", "d", "i", "dn", "dd"},
+    "overlays": {"id", "nm", "sy", "t", "cs", "cl", "su", "pb", "pu"},
+    "hearings": {"id", "d", "tm", "b", "ty", "ad", "rco"},
+    "brownfields": {"id", "nm", "ad"},
 }
 
 #: Keys that would mean a published file says something about a person it must not.
@@ -235,6 +248,7 @@ def built(context_factory, repo_copy, tmp_path) -> tuple[Path, Path, str]:
     install_case_numbers(ctx)
     install_streets(ctx)
     install_laser(ctx, LASER_CELLS)
+    install_rules(ctx)
     first = tmp_path / "first"
     publish(ctx, first)
     memorials = published_files(first)["tiles/streets.memorials.geojson"]["features"]

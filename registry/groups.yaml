@@ -8,6 +8,9 @@
 - id: displacement
   label: Prices and protections
   description: Where prices are rising, so that greening and other improvements can be paired with protections for the neighbors who live there now.
+- id: rules
+  label: Land rules and hearings
+  description: Historic districts and properties, zoning overlays, hearings still to come about lots and buildings, and federal brownfield sites.
 - id: streets
   label: Streets and memorials
   description: The High Injury Network, crashes, and people killed on our streets.

@@ -106,6 +106,9 @@ class ArcgisEndpoint(Strict):
     service: Annotated[str, StringConstraints(pattern=r"^[^/?#&\s][^/?#&]*(/[^/?#&\s][^/?#&]*)*$")]
     layer: Annotated[int, Field(strict=True, ge=0)]
     url: Annotated[str, StringConstraints(pattern=r"^https://\S+/rest/services$")] | None = None
+    #: the kind of service: a feature service unless it says MapServer (added 2026-10-09 by M4.6
+    #: for the EPA's facility registry service, which is a map service)
+    server: Literal["FeatureServer", "MapServer"] | None = None
 
 
 class UrlEndpoint(Strict):

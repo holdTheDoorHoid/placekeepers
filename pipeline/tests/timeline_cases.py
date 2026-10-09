@@ -11,6 +11,10 @@ date reading and grouping, and writes the answers to tests/fixtures/timeline_par
 * web/tests/dossier_timeline_parity.test.ts checks that the web app gives the same answers, and
   that its live query reads the same columns of the same tables (`parts`).
 
+Since M4.6 (issue #42) it also holds appeals: rows as the City sends them, the columns both sides
+read (`appeal_columns`), and the appeals a lot page lists from them (`appeal_cases`), with the
+hearings still to come on `appeal_today`.
+
 After changing the grouping, the date rule or the queries, write the file again with:
 
     python pipeline/tests/timeline_cases.py
@@ -26,6 +30,8 @@ import duckdb
 
 from placekeepers.adapters.carto import Column, _cast
 from placekeepers.adapters.li import HISTORY_PARTS
+from placekeepers.adapters.rules import APPEAL_COLUMNS
+from placekeepers.derive.appeals import appeal_records, is_upcoming
 from placekeepers.derive.timeline import li_groups
 
 FIXTURE = Path(__file__).parent / "fixtures" / "timeline_parity.json"
@@ -119,6 +125,141 @@ CASES: list[dict[str, Any]] = [
 ]
 
 
+#: Appeals as the City's Carto API sends them as JSON (M4.6, issue #42), each case one parcel's
+#: answer. The names are invented. `today` is the day the "hearing still to come" rule is
+#: checked against.
+APPEAL_TODAY = "2026-10-09"
+
+
+def appeal(number: str | None, **fields: Any) -> dict[str, Any]:
+    row: dict[str, Any] = {name: None for name in APPEAL_COLUMNS}
+    row["appealnumber"] = number
+    row.update(fields)
+    return row
+
+
+APPEAL_CASES: list[dict[str, Any]] = [
+    {
+        "name": "a zoning appeal set for a hearing, in the afternoon in winter",
+        "rows": [
+            appeal(
+                "ZP-2026-008500",
+                applicationtype="Zoning Board of Adjustment",
+                appealtype="ZBA Permit Denial - Variance",
+                appealstatus="Prepare Meeting",
+                createddate="2026-10-06T19:31:35Z",
+                scheduleddate="2027-02-24T20:30:00Z",
+                coordinatingrco="Example Neighbors Association",
+                primaryappellant="ROSA EXAMPLE; EXAMPLE ROSA",
+                opa_owner="EXAMPLE ROSA",
+            )
+        ],
+    },
+    {
+        "name": "the older system's codes, a decision, and a filing in the evening",
+        "rows": [
+            appeal(
+                "57281",
+                applicationtype="RB_ZBA",
+                appealstatus="CLOSED",
+                decision="GRANTED/PROV",
+                createddate="2015-03-03T01:39:00Z",
+                scheduleddate="2015-04-15T13:30:00Z",
+                decisiondate="2015-04-15T04:00:00Z",
+                primaryappellant="  SAMPLE   BUILDERS  LLC ",
+                opa_owner="SAMPLE BUILDERS LLC",
+            ),
+            appeal(
+                "40125",
+                applicationtype="RB_LIRB",
+                appealstatus="CLOSED",
+                decision="AFFIRMED",
+                createddate="2012-07-09T15:12:00Z",
+                scheduleddate="2012-08-21T04:00:00Z",
+                primaryappellant="JORDAN SAMPLE",
+            ),
+            appeal(
+                "12001",
+                applicationtype="RB_BBS",
+                appealstatus="CLOSED",
+                decision="",
+                createddate="2009-01-05",
+            ),
+        ],
+    },
+    {
+        "name": "the same appeal twice, a continued hearing, a withdrawn one and other boards",
+        "rows": [
+            appeal(
+                "LIRB-2026-000123",
+                applicationtype="L&I Review Board Codes",
+                appealtype="LIRB Violation Appeal",
+                appealstatus="In Process",
+                decision="Continued",
+                createddate="2026-06-01T14:00:00Z",
+                scheduleddate="2026-10-09T16:30:00Z",
+                primaryappellant="CASEY SAMPLE",
+            ),
+            appeal(
+                "LIRB-2026-000123",
+                applicationtype="L&I Review Board Codes",
+                appealstatus="In Process",
+                createddate="2026-06-01T14:00:00Z",
+            ),
+            appeal(
+                "LIRB-2026-000124",
+                applicationtype="L&I Review Board Codes",
+                appealstatus="Closed",
+                decision="Withdrawn",
+                createddate="2026-06-01T14:00:00Z",
+                scheduleddate="2026-11-12T17:00:00Z",
+            ),
+            appeal(
+                "TRB-2025-000009",
+                applicationtype="Tax Review Board",
+                appealtype="TRB - Case Review ",
+                appealstatus="Completed",
+                createddate="2025-07-22T20:02:46Z",
+            ),
+            appeal(
+                "BBS-2026-000077",
+                applicationtype="Board of Building Standards",
+                appealtype="BBS Permit Denial",
+                appealstatus="In Process",
+                createddate="2026-03-08T07:30:00Z",
+                scheduleddate="2026-10-08T17:00:00Z",
+            ),
+        ],
+    },
+    {
+        "name": "a hearing at midnight says only its day, and a row with no number says nothing",
+        "rows": [
+            appeal(
+                "ZP-2025-001000",
+                applicationtype="Zoning Board of Adjustment",
+                appealstatus="Scheduled",
+                createddate="2025-11-02T05:30:00Z",
+                scheduleddate="2026-11-04T05:00:00Z",
+            ),
+            appeal(None, applicationtype="Zoning Board of Adjustment", createddate="2025-01-01"),
+            appeal("   ", applicationtype="Zoning Board of Adjustment"),
+        ],
+    },
+    {"name": "no appeals at all", "rows": []},
+]
+
+
+def appeal_answer(case: dict[str, Any]) -> dict[str, Any]:
+    records = appeal_records(case["rows"])
+    return {
+        "name": case["name"],
+        "rows": case["rows"],
+        "appeals": records,
+        # The positions of the hearings still to come in the list.
+        "upcoming": [i for i, r in enumerate(records) if is_upcoming(r, APPEAL_TODAY)],
+    }
+
+
 def local_days(raw: list[str | None]) -> list[str | None]:
     """The pipeline's own reading of each raw date (adapters/carto.py, LOCAL_DATE): a bare day as
     written, a timestamp as its day in Philadelphia. Carto's CSV writes "2019-05-02 04:00:00+00"
@@ -161,6 +302,11 @@ def build() -> dict[str, Any]:
             for part in HISTORY_PARTS
         ],
         "cases": [case_answer(case) for case in CASES],
+        # Appeals (M4.6): the columns both sides read, and how each side turns rows into a lot
+        # page's appeals.
+        "appeal_columns": list(APPEAL_COLUMNS),
+        "appeal_today": APPEAL_TODAY,
+        "appeal_cases": [appeal_answer(case) for case in APPEAL_CASES],
     }
 
 
