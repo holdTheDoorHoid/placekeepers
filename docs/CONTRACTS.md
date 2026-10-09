@@ -844,8 +844,8 @@ names none), `d` and `tm` (the day and the time in Philadelphia, HH:MM; no `tm` 
 the day only), `b` (1 Zoning Board of Adjustment, 2 L&I Review Board, 3 Board of Building
 Standards, 0 another board), `ty` (the kind of appeal in the City's words, else its application
 type), `ad` (the address) and `rco` (the registered community organization the City notified). **It
-never carries who filed the appeal, the owner's name or the appeal's number** (docs/ETHICS.md,
-"Appeals and hearings"); a test fails if any published file but the lot's own dossier shard holds
+never carries who filed the appeal, the owner's name or the appeal's number** (DESIGN.md section
+5.6, the limits on appeals); a test fails if any published file but the lot's own dossier shard holds
 an appellant's name.
 
 **`brownfields` (rules.pmtiles, points)**: the EPA's brownfield properties in Philadelphia
@@ -1521,7 +1521,7 @@ older codes, such as `RB_ZBA`, and its newer words); `application`, `type`, `sta
 Philadelphia; `hearing_time`: HH:MM in Philadelphia, left out when the City writes midnight (a day
 alone); `rco`: the registered community organization the City notified; `appellant` and `owner`:
 who filed it and the owner the City names, as the City writes them. Keys with no value are left
-out. **Names appear in the lot's own dossier record only** (docs/ETHICS.md, "Appeals and hearings"):
+out. **Names appear in the lot's own dossier record only** (DESIGN.md section 5.6, the limits on appeals):
 never in a map layer, `tables/`, the manifest, `dossiers/common.json`, the history shards or a
 download. Never the appeal's number (a zoning appeal's is the zoning permit's number), its free
 text grounds or its proviso. The pipeline reads the City's columns and makes these records with

@@ -749,8 +749,8 @@ History, top to bottom:
 - **Appeals and hearings**: every appeal as the City publishes it, a hearing still to come first,
   then newest first: the board and the kind of appeal in plain words ("Zoning Board of Adjustment:
   Permit denial, variance"), the filing, hearing and decision days, its decision and status, the
-  registered community organization the City notified, who filed it and the owner named (docs/ETHICS.md,
-  "Appeals and hearings": this lot's page only), a link to the City's L&I property history for the
+  registered community organization the City notified, who filed it and the owner named (this lot's page
+  only; the limits below), a link to the City's L&I property history for the
   grounds, and a note that names appear on this lot's page only. Live from the City when "Fetch live
   City data" is on, from the weekly copy otherwise, labeled either way; when neither has them, the
   page says it cannot tell and offers live data, never "no appeals".
@@ -771,6 +771,32 @@ History, top to bottom:
 - The Summary adds the lot's size as the City's assessor records it ("about 16 feet wide on the
   street and 80 feet deep"), live or from the weekly copy, an optional extra of the issue. Whether a
   lot is on a corner is not in the City's records we read, so the page does not say it.
+
+**Limits on appeals and on rule wording (orchestrator, 2026-10-09, carried over from decision D3;
+the owner can undo them).** The owner's decision to show appeals in full is in docs/ETHICS.md
+("Appeals and hearings"); these limits are how the site carries it out.
+
+- Names from an appeal appear only on the lot's own page: in that lot's own dossier record (its
+  shard, like the owner names and deed parties already there) and in the City's live answer for
+  that one parcel. Never in a map layer, a citywide table, a search, a list of places, a printed
+  sheet, the timeline or a download. The map's hearings carry the day, the time, the board, the
+  kind of appeal, the address and the community organization, and never a name. Tests prove it:
+  every published file but the lot's own shard is searched for an appellant's name
+  (`pipeline/tests/test_lot_rules.py`), and the site's downloads and map taps are checked too
+  (`web/tests/rules.test.ts`, `web/e2e/privacy.spec.ts`).
+- The risk this guards against: someone gathering who filed zoning appeals across the city to
+  pressure them. With names only on each lot's own page, there is no citywide list of appellants to
+  copy from the site.
+- The appeal's free text grounds and provisos are never copied: the lot page links to the City's
+  L&I property history for them. The appeal's own number is never shown or published: for a zoning
+  appeal it is the zoning permit's number, and permit numbers are never published.
+- The hearing notice is framed for taking part, as the City invites any neighbor to do, never as a
+  way to find or contact the person who filed.
+- Historic and zoning text names the rule and the office to ask, and leads with the lawful step:
+  "Changes here may need the Historical Commission's review; ask them first.", with the
+  Commission's phone (215 686 7660). For a mural or a garden on a historic property, the page says
+  to ask the Commission before starting. Nothing on the site says a lot is or is not buildable, or
+  that something is allowed there.
 
 **Owner information as built (M1.3, 2026-10-04).** What the owner will see, and the choices behind it:
 

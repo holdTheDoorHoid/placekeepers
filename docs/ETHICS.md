@@ -15,7 +15,6 @@ easy, obvious one. Builders must follow this page; changes need the owner's agre
 | Over policing | Map used to direct enforcement at people | No police suggestions, ever; 311 suggestions cover physical conditions only |
 | Displacement | Greening raises values and rents | Displacement watch overlay and "pair with protections" cards |
 | Harm to grieving families | A name shown where a family did not want it | Names only from public memorial lists, quiet design, removal on request |
-| Targeting people who appeal | Someone gathers who filed zoning appeals across the city to pressure them | Appeal names only on that lot's own page, never on the map, in a list, a search or a download (below, "Appeals and hearings") |
 | False comfort about soil | A garden planted on a former industrial lot because the map showed no warning | Brownfield records named "at or near this address", with "Test the soil before growing food" on every garden suggestion near one, and never "clean" or "safe" |
 
 ## Owner information
@@ -93,31 +92,13 @@ of appeal, its status and decision, the days it was filed, heard and decided, th
 community organization the City notified, who filed it and the owner the City names. A hearing
 still to come goes at the top of the page, with the City's page on how to take part.
 
-**Limits (orchestrator, 2026-10-09, carried over from decision D3; the owner can undo them).**
+How the site carries this out, with the limits the orchestrator set on where names appear, is in
+DESIGN.md section 5.6 ("Rules for this lot, as built").
 
-- Names from an appeal appear only on the lot's own page: in that lot's own dossier record (its
-  shard, like the owner names and deed parties already there) and in the City's live answer for
-  that one parcel. Never in a map layer, a citywide table, a search, a list of places, a
-  printed sheet or a download. The map's hearings carry the day, the time, the board, the kind of
-  appeal, the address and the community organization, and never a name. Tests prove it: every
-  published file but the lot's own shard is searched for an appellant's name
-  (`pipeline/tests/test_lot_rules.py`), and the site's downloads and map taps are checked too
-  (`web/tests/rules.test.ts`).
-- The appeal's free text grounds and provisos are never copied: the lot page links to the City's
-  L&I property history for them. The appeal's own number is never shown or published: for a zoning
-  appeal it is the zoning permit's number, and permit numbers are never published.
-- The hearing notice is framed for taking part, as the City invites any neighbor to do, never as a
-  way to find or contact the person who filed.
+## Brownfield records
 
-## Rules for a lot: historic designation, zoning and brownfields
+**Decision (owner, 2026-10-09), chosen with the EPA's brownfield source (M4.6, issue #42).**
 
-Added 2026-10-09 (M4.6, issue #42).
-
-- Historic and zoning text names the rule and the office to ask, and leads with the lawful step:
-  *"Changes here may need the Historical Commission's review; ask them first."*, with the
-  Commission's phone (215 686 7660). For a mural or a garden on a historic property, the page says
-  to ask the Commission before starting. Nothing on the site says a lot is or is not buildable, or
-  that something is allowed there.
 - Brownfield records read, word for word: *"A federal brownfield assessment or cleanup was recorded
   at or near this address. Test the soil before growing food."* The same note goes on every garden
   suggestion for a lot near one, on the lot page and on the map's nearby cards. Never "clean" or
