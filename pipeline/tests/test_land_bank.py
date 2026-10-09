@@ -181,6 +181,33 @@ def test_follow_ups_are_not_counted_again() -> None:
     assert follow_ups(rows) == [False, True, True, False, False, False, True]
 
 
+def test_a_deed_for_property_already_in_private_hands_is_not_a_conveyance() -> None:
+    d = date
+    history = [
+        land_bank.earlier_deed(
+            "DEED", "CITY OF PHILADELPHIA", "PHILADELPHIA LAND BANK", d(2016, 4, 1), 1
+        ),
+        land_bank.earlier_deed("DEED", "PHILADELPHIA LAND BANK", "MOORE BENGIE", d(2017, 5, 1), 2),
+        land_bank.earlier_deed("DEED", "MOORE BENGIE", "HORIZON II LLC", d(2018, 1, 11), 3),
+        # An agreement says nothing about who owns the property.
+        land_bank.earlier_deed("MISCELLANEOUS DEED", "A;B", "B;A", d(2018, 1, 12), 4),
+    ]
+    assert history[3] is None
+    history = [deed for deed in history if deed]
+    assert land_bank.owned_privately_before(history, d(2017, 5, 1), 2) is False
+    assert land_bank.owned_privately_before(history, d(2018, 1, 18), 5) is True
+    assert land_bank.owned_privately_before(history, d(2010, 1, 1), 9) is None
+    # A deed of condemnation names the agency that takes the property among its sellers.
+    taken = land_bank.earlier_deed(
+        "DEED OF CONDEMNATION",
+        "PHILADELPHIA REDEVELOPMENT AUTHORITY",
+        "ROE RICHARD",
+        d(2015, 1, 1),
+        7,
+    )
+    assert taken is not None and taken.to_agency
+
+
 def test_the_program_is_only_inferred_for_one_lot_to_a_person_next_door() -> None:
     assert land_bank.program_of("individual", 1, True) == "side_yard"
     assert land_bank.program_of("individual", 1, False) == "other"
@@ -452,6 +479,9 @@ DEEDS = [
         9000,
         opa="100000007",
     ),
+    # Lot 7 went to a private owner at the sheriff sale; the City's later deed to that owner
+    # releases an old restriction and is not a conveyance.
+    deed(14, 512, "MISCELLANEOUS DEED", "2022-03-01", CITY, "ROE RICHARD", 0, opa="100000007"),
 ]
 
 
@@ -586,14 +616,15 @@ def test_the_numbers_are_reproduced_from_the_fixtures(context_factory, tmp_path)
     )
     assert deeds["years"] == list(range(2014, 2026))
     # Counted: lots 2 and 4 (side yards), 6, 8, 9 and 10, the garden trust and the housing
-    # authority. Left out: the follow up, the move, the agreement and the two other documents.
+    # authority. Left out: the corrected deed and the release (follow ups), the move, the
+    # agreement and the two other documents.
     assert (
         deeds["counted"],
         deeds["follow_ups"],
         deeds["moved"],
         deeds["agreements"],
         deeds["other"],
-    ) == (8, 1, 1, 1, 2)
+    ) == (8, 2, 1, 1, 2)
 
     every = data["agencies"]["all"]
     assert every["total"]["n"] == 8

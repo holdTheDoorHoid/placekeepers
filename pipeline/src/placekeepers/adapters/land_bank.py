@@ -21,17 +21,27 @@ documents; the dashboard table has 7 rows, fiscal years 2017 to 2023.
 
 from __future__ import annotations
 
+import csv
 import logging
-from datetime import date
+from collections import defaultdict
+from datetime import date, datetime
 from pathlib import Path
 from typing import Any, ClassVar
+from zoneinfo import ZoneInfo
 
 import pyarrow as pa
 import pyarrow.parquet as pq
 import shapely
 
 from placekeepers.adapters.arcgis import ArcgisAdapter
-from placekeepers.adapters.carto import CartoAdapter, Column
+from placekeepers.adapters.base import FetchError
+from placekeepers.adapters.carto import (
+    CartoAdapter,
+    Column,
+    _check_carto_csv,
+    _check_carto_json,
+    scan_csv,
+)
 from placekeepers.adapters.osm import load_spatial
 from placekeepers.cache import RawFetch
 from placekeepers.derive import land_bank
@@ -46,6 +56,28 @@ log = logging.getLogger(__name__)
 TOUCH_DEGREES = 0.00002
 #: The size of a lot found only by its point (no parcel shape): about three meters.
 POINT_DEGREES = 0.00003
+PHILADELPHIA = ZoneInfo("America/New_York")
+#: The history download: each named property's own deeds, from any seller, in chunks of accounts.
+HISTORY_COLUMNS = (
+    "document_id",
+    "document_type",
+    "display_date",
+    "opa_account_num",
+    "grantors",
+    "grantees",
+)
+ACCOUNTS_PER_CHUNK = 5000
+
+
+def local_day(text: str | None) -> date | None:
+    """A Carto date or timestamp as its day in Philadelphia, as the City's pages show it."""
+    text = (text or "").strip()
+    if not text:
+        return None
+    if len(text) == 10:
+        return date.fromisoformat(text)
+    moment = datetime.fromisoformat(text.replace(" ", "T"))
+    return moment.astimezone(PHILADELPHIA).date()
 
 
 class LandConveyances(CartoAdapter):
@@ -82,6 +114,80 @@ class LandConveyances(CartoAdapter):
         "adjusted_total_consideration",
     )
 
+    def fetch(self, dest: Path) -> dict[str, Any]:
+        """The deeds from the agencies, then every deed of the properties they name, from any
+        seller, so the release rule can see who owned each property before."""
+        info = super().fetch(dest)
+        accounts: set[str] = set()
+        for path in sorted(dest.glob("chunk-*.csv")):
+            with path.open(newline="", encoding="utf-8") as handle:
+                for row in csv.DictReader(handle):
+                    account = (row.get("opa_account_num") or "").strip()
+                    if len(account) == 9 and account.isdigit():
+                        accounts.add(account)
+        chosen = sorted(accounts)
+        size = ACCOUNTS_PER_CHUNK
+        total = 0
+        for number, start in enumerate(range(0, len(chosen), size), 1):
+            part = chosen[start : start + size]
+            path = dest / f"history-{number:05d}.csv"
+            self.ctx.http.download(
+                self.api_url,
+                path,
+                data={"q": self.history_query(part), "format": "csv"},
+                check_file=_check_carto_csv,
+            )
+            rows, _ = scan_csv(path, None)
+            reply = self.ctx.http.get_json(
+                self.api_url,
+                data={"q": self.history_query(part, count=True)},
+                check=_check_carto_json,
+            )
+            expected = int(reply["rows"][0]["n"])
+            if rows != expected:
+                raise FetchError(
+                    f"History chunk {number} has {rows:,} rows but the table reports "
+                    f"{expected:,}; trying again next run"
+                )
+            total += rows
+        log.info("%s: %s earlier deeds of %s properties", self.id, f"{total:,}", f"{len(chosen):,}")
+        info["history_rows"] = total
+        info["history_accounts"] = len(chosen)
+        return info
+
+    def history_query(self, accounts: list[str], *, count: bool = False) -> str:
+        for account in accounts:
+            if not (len(account) == 9 and account.isdigit()):
+                raise FetchError(f"{account!r} is not a 9 digit OPA account")
+        values = ", ".join(f"('{account}')" for account in accounts)
+        table = self.endpoint.table
+        what = (
+            "count(*) AS n" if count else ", ".join(f"{table}.{c} AS {c}" for c in HISTORY_COLUMNS)
+        )
+        return (
+            f"SELECT {what} FROM {table} JOIN (VALUES {values}) AS chosen(chosen_account) "
+            f"ON {table}.opa_account_num = chosen.chosen_account "
+            f"WHERE {table}.document_type ILIKE '%DEED%'"
+        )
+
+    def histories(self, raw: RawFetch) -> dict[str, list[land_bank.EarlierDeed]]:
+        """Each property's own deeds, read from the history download (names only in memory)."""
+        assert raw.dir is not None
+        found: dict[str, list[land_bank.EarlierDeed]] = defaultdict(list)
+        for path in sorted(raw.dir.glob("history-*.csv")):
+            with path.open(newline="", encoding="utf-8") as handle:
+                for row in csv.DictReader(handle):
+                    deed = land_bank.earlier_deed(
+                        row.get("document_type"),
+                        row.get("grantors"),
+                        row.get("grantees"),
+                        local_day(row.get("display_date")),
+                        int(float(row["document_id"])) if row.get("document_id") else None,
+                    )
+                    if deed is not None:
+                        found[(row.get("opa_account_num") or "").strip()].append(deed)
+        return found
+
     def normalize(self, raw: RawFetch, out: Path) -> None:
         named = out.with_name(f"{out.name}.names")
         try:
@@ -115,6 +221,18 @@ class LandConveyances(CartoAdapter):
             for i in conveyed
         ]
         follow = dict(zip(conveyed, land_bank.follow_ups(rows), strict=True))
+        # A property already in private hands just before: a release, not a conveyance.
+        history = self.histories(raw)
+        released = 0
+        for i in conveyed:
+            account = (accounts[i] or "").strip()
+            if follow[i] or not account or days[i] is None:
+                continue
+            if land_bank.owned_privately_before(
+                history.get(account, []), days[i], int(ids[i] or 0)
+            ):
+                follow[i] = True
+                released += 1
         singles = [i for i in conveyed if (counts[i] or 1) == 1]
         next_door = self.next_door(
             {i: (accounts[i], geometries[i]) for i in singles},
@@ -145,6 +263,7 @@ class LandConveyances(CartoAdapter):
         )
         write_geoparquet(table, out, kinds)
         found = {kind: sum(1 for d in deeds if d.kind == kind) for kind in land_bank.KINDS}
+        log.info("%s: %s deeds for property already in private hands", self.id, f"{released:,}")
         log.info(
             "%s: %s; %s follow ups; %s of %s single lots go to an owner next door",
             self.id,

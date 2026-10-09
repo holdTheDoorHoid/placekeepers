@@ -23,8 +23,10 @@ include someone else. Left out, and counted apart:
 **Counting properties.** The City's records hold one row per property per document, so a deed for 22
 lots is 22 rows. Each property counts once per buyer: a later deed from a land agency to someone who
 already received the property (a correction, a release of the agency's restrictions or of its right
-to take the lot back) is a `follow_up` and is not counted again. This is decided in the adapter
-(placekeepers.adapters.land_bank), the only place the names are read.
+to take the lot back) is a `follow_up` and is not counted again. So is a deed from an agency for a
+property whose deed just before it, in the property's own history, went to a private owner: the
+land was no longer the agency's to convey (`owned_privately_before`). This is decided in the
+adapter (placekeepers.adapters.land_bank), the only place the names are read.
 
 **Buyers** are typed by the owner rule of the lot pages (placekeepers.derive.owners): a person, a
 company, a nonprofit, another public body (such as the Philadelphia Housing Authority) or unknown.
@@ -251,6 +253,58 @@ def follow_ups(rows: Sequence[ConveyanceRow]) -> list[bool]:
         names[row.key] |= mine
         people[row.key] |= keys
     return result
+
+
+@dataclass(frozen=True)
+class EarlierDeed:
+    """One deed in a property's own history (any seller), as the release rule reads it."""
+
+    day: date
+    document_id: int
+    #: a land agency is among the buyers
+    to_agency: bool
+
+
+def earlier_deed(
+    document_type: str | None,
+    seller_names: str | None,
+    buyer_names: str | None,
+    day: date | None,
+    document_id: int | None,
+) -> EarlierDeed | None:
+    """A deed of the property's history, or None for one that says nothing about who owned it
+    after: an agreement (the same parties on both sides) or a deed without a date or buyers. A
+    deed of condemnation lists the agency that takes the property among its sellers (checked
+    2026-10-09: the Redevelopment Authority's are written that way), so there either side
+    counts."""
+    sellers = split_names(seller_names)
+    buyers = split_names(buyer_names)
+    if day is None or not buyers:
+        return None
+    if {match_form(n) for n in sellers} == {match_form(n) for n in buyers}:
+        return None
+    to_agency = any(agency_of(n) for n in buyers)
+    if "CONDEMNATION" in (document_type or "").upper():
+        to_agency = to_agency or any(agency_of(n) for n in sellers)
+    return EarlierDeed(day, int(document_id or 0), to_agency)
+
+
+def owned_privately_before(
+    history: Sequence[EarlierDeed], day: date, document_id: int
+) -> bool | None:
+    """True when the deed just before this one (by date, then document number) went to someone
+    other than a land agency: the property was already in private hands, so a deed from an agency
+    now is a correction or a release of its restrictions, not a conveyance. False when it went to
+    an agency, None when the records hold no earlier deed (counted as a conveyance)."""
+    before = [
+        deed
+        for deed in history
+        if (deed.day, deed.document_id) < (day, document_id) and deed.document_id != document_id
+    ]
+    if not before:
+        return None
+    latest = max(before, key=lambda deed: (deed.day, deed.document_id))
+    return not latest.to_agency
 
 
 # Listed lots, week by week ---------------------------------------------------------------------
