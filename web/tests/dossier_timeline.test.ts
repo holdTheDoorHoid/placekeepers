@@ -82,7 +82,7 @@ describe('the story of the lot', () => {
     ]);
   });
 
-  it('says when it was demolished under a private permit, and a permit for new construction since', () => {
+  it('says when it was demolished under a private permit, and a permit for new construction from that year on', () => {
     expect(buildDossier(input('990000004')).history.timeline.story.map((s) => s.text)).toEqual([
       'A building stood here until 2019, when it was demolished under a private permit.',
       'L&I issued a permit for new construction here in 2021.',
@@ -109,6 +109,20 @@ describe('the story of the lot', () => {
       "L&I's list of vacant land of June 2024 included it.",
     ]);
     expect(buildDossier(input('990000098')).history.timeline.story).toEqual([]);
+  });
+
+  it('counts a permit for new construction from the year of the demolition, not before', () => {
+    const li: LiGroups = {
+      demolition: [{ date: '2016-10-07', title: 'FULL', status: 'COMPLETED', detail: 'NO', count: 1 }],
+      permit: [
+        { date: '2016-09-06', title: 'ENTIRE', status: 'COMPLETED', detail: 'NEW CONSTRUCTION PERMIT', count: 1 },
+        { date: '2015-03-01', title: 'NEWCON', status: 'COMPLETED', detail: 'ZONING/USE PERMIT', count: 1 },
+      ],
+    };
+    expect(storyOf({ transfers: [], li, lists: [], landcare: null, today: '2026-10-04' }).map((s) => s.text)).toEqual([
+      'A building stood here until 2016, when it was demolished under a private permit.',
+      'L&I issued a permit for new construction here in 2016.',
+    ]);
   });
 
   it('never tells a story from a record dated in the future, or a demolition not completed', () => {

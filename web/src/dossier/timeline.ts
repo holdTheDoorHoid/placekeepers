@@ -420,7 +420,10 @@ export function storyOf(input: TimelineInput): StorySentence[] {
   const lastDemolition = demolished[0] ?? null;
   if (lastDemolition) {
     out.push({ text: byCity(lastDemolition) ? s.cityDemolished(yearOf(lastDemolition.date!)) : s.privateDemolished(yearOf(lastDemolition.date!)), source: s.sources.demolitions });
-    const built = (li.permit ?? []).filter((r) => past(r) && r.date! > lastDemolition.date! && isNewConstruction(r));
+    // A permit for new construction from the year of the demolition on (owners often get it
+    // before the old building is down).
+    const fromYear = `${yearOf(lastDemolition.date!)}-01-01`;
+    const built = (li.permit ?? []).filter((r) => past(r) && r.date! >= fromYear && isNewConstruction(r));
     const firstBuilt = built[built.length - 1];
     if (firstBuilt) out.push({ text: s.newConstruction(yearOf(firstBuilt.date!)), source: s.sources.permits });
   }

@@ -20,3 +20,30 @@ test.describe('lot page', () => {
     expect(Math.round(adds.reduce((sum, n) => sum + n, 0) * 10) / 10).toBe(total);
   });
 });
+
+// The story of the lot in one timeline (issue #38), from the weekly copy alone: the City's live
+// lookups are refused here, so everything shown comes from the sample history shard, which loads
+// only when History comes into view.
+test.describe('lot page history', () => {
+  test('tells the story of the lot from records, and each kind of record can be switched off', async ({ page }) => {
+    const asked: string[] = [];
+    page.on('request', (request) => {
+      if (request.url().includes('/dossiers/history/')) asked.push(request.url());
+    });
+    await openMap(page, 'v=a&m=16/40.06/-75.03&p=990000002');
+    const details = page.locator('#pk-right');
+    await expect(details.getByRole('heading', { name: '1203 N SAMPLE ST' })).toBeVisible();
+    const history = details.locator('section', { has: page.getByRole('heading', { name: 'History', exact: true }) });
+    await history.getByRole('heading', { name: 'The story of this lot' }).scrollIntoViewIfNeeded();
+    await expect(history.getByText('A building stood here until 2011, when the City demolished it.')).toBeVisible();
+    await expect(history.getByText("From L&I's demolition records.")).toBeVisible();
+    expect(asked).toHaveLength(1);
+    const events = history.locator('.events li.event');
+    await expect(events.filter({ hasText: 'High weeds-cut' })).toHaveCount(1);
+    await history.getByRole('checkbox', { name: /Violations/ }).uncheck();
+    await expect(events.filter({ hasText: 'High weeds-cut' })).toHaveCount(0);
+    await expect(events.filter({ hasText: 'City demolition, by the City' })).toHaveCount(1);
+    await history.getByRole('checkbox', { name: /Violations/ }).check();
+    await expect(events.filter({ hasText: 'High weeds-cut' })).toHaveCount(1);
+  });
+});
