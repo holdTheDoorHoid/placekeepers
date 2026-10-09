@@ -25,6 +25,7 @@ import { WATCH_BLOCK, WATCH_LAYER, WATCH_SOURCES, watchFixtures, watchFor } from
 import { routeOsmStops, routeSheetFixtures } from './route-fixtures.mjs';
 import { WALK_LAYERS, WALK_SOURCES, walkFixtures } from './walk-fixtures.mjs';
 import { PARKING_LAYERS, PARKING_SOURCES, parkingFixtures } from './parking-fixtures.mjs';
+import { HISTORIC_LAYERS, HISTORIC_SOURCES } from './historic-fixtures.mjs';
 
 const FIXTURES = new URL('../fixtures/', import.meta.url);
 const ROOT = new URL('data/', FIXTURES);
@@ -726,6 +727,8 @@ const manifest = {
     ...Object.fromEntries(Object.entries(PARKING_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
     // The displacement watch (M4.1)
     ...Object.fromEntries(Object.entries(WATCH_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
+    // Then and now (M4.3): the weekly check that the City's picture services answer
+    ...Object.fromEntries(Object.entries(HISTORIC_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
   },
   layers: {
     vacant_parcels: {
@@ -777,6 +780,7 @@ const manifest = {
     ...WALK_LAYERS,
     ...PARKING_LAYERS,
     ...WATCH_LAYER,
+    ...HISTORIC_LAYERS,
   },
   files: Object.fromEntries(
     [

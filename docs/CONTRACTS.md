@@ -18,13 +18,15 @@ change once published, because saved links contain them.
   publisher: Philadelphia Police Department
   homepage: https://opendataphilly.org/datasets/shooting-victims/
   endpoint:
-    kind: carto                       # carto | arcgis | url | osm_extract | curated | sparql
+    kind: carto                       # carto | arcgis | url | osm_extract | curated | sparql | arcgis_tiles
     table: shootings                  # carto: table (and optional where)
     # arcgis: service: <name>, layer: 0 (and optional url, see below)
     # url: url: <https link>, format: csv | geojson | parquet | zip | json
     # osm_extract: url: <https link to an .osm.pbf file>, tags: [key=value or key, ...]
     # curated: path: data/curated/<file>.yaml
     # sparql: url: <https link to a SPARQL query service>
+    # arcgis_tiles: url: <https link ending in /rest/services>, bounds: [w, s, e, n],
+    #   services: [{key: <text>, service: <name>}, ...]
   license: city_terms                 # key into registry/licenses.yaml
   attribution: "Shooting data: Philadelphia Police Department via OpenDataPhilly"
   cadence: daily                      # daily | weekly | monthly | yearly | irregular | frozen
@@ -84,6 +86,25 @@ source's adapter, as a Carto adapter's columns do (`wikidata_art`, in
 `pipeline/src/placekeepers/adapters/art.py`): one small query a week, sent as a POST form with the
 project's User-Agent, asking for JSON.
 
+An `arcgis_tiles` endpoint (added 2026-10-09 by M4.3) names picture services on an ArcGIS server,
+such as the City's aerial photographs, that **the visitor's browser loads straight from that
+server**: Placekeepers never copies or hosts the pictures. Its keys: `url`, the server's REST
+services root (`https://tiles.arcgis.com/tiles/fLeGjb7u4uXqeF9q/arcgis/rest/services` for the
+City's organization); `bounds`, where the pictures are, as west, south, east and north in degrees
+(the map asks for no tile outside it); and `services`, a list of `key` (letters, digits, `_` and
+`-`; for the aerial photos the year, which appears in links) and `service` (the service's name on
+the server, with its folder if it has one). Keys and services are each listed once. A tile's
+address is `<url>/<service>/MapServer/tile/{z}/{y}/{x}`, in Web Mercator, 256 pixels square.
+
+The pipeline downloads no pictures from such a source. Its adapter
+(`pipeline/src/placekeepers/adapters/tiles.py`) checks on every run, whatever the cadence, that
+each service still answers: its description says it serves cached Web Mercator tiles 256 pixels
+square down to zoom 19, and one tile in the middle of `bounds` at zoom 15 comes back as a picture.
+The snapshot holds one row per service (`key`, `service`, `ok`, `deepest_zoom`, `detail`); a
+service that does not answer fails the snapshot's checks, so the source turns `stale` with a
+message naming the service, and the weekly refresh opens the usual issue after two runs in a row.
+`city_aerial_photos` (20 years, 1996 to 2025) and `city_atlas_1860` are the first two.
+
 ### `registry/licenses.yaml`
 
 ```yaml
@@ -123,13 +144,28 @@ Setting keys by type (added 2026-10-04 by M0.3). Every setting has `id`, `label`
 
 | `type` | Other keys | `default` |
 |---|---|---|
-| `choice` | `options`: a list of `value` (text) and `label` | one of the option values, as text |
+| `choice` | `options`: a list of `value` (text) and `label`; optional `control: slider` (added by M4.3) to show it as a slider through the options in their order, such as years | one of the option values, as text |
 | `toggle` | none | `true` or `false` |
 | `range` | `min` and `max` (numbers), `step` (optional, default 1) | a number from `min` to `max` |
 
 What a setting does to the map is decided by the layer's style in `web/src/map/styles`, which lists
 the setting ids it puts into effect; a web test fails if a registry setting has no effect. Ids and
 option values appear in shared links, so they never change once published.
+
+**Raster layers** (added 2026-10-09 by M4.3): a layer with `geometry: raster` draws pictures from
+exactly one source of kind `arcgis_tiles`, loaded by the visitor's browser from that source's own
+server. It has no `file` and no `source_layer` (the web app's validator gives it empty text for
+both), and a layer of any other geometry never names an `arcgis_tiles` source. When the source has
+more than one service, the layer has a choice setting `year` whose option values are the services'
+keys in the same order, and it shows that service; with one service it has none. Each service is
+its own map source in the browser (`pk-raster:<source id>:<key>`, `web/src/map/raster.ts`), so
+changing the year swaps the source. A raster layer is drawn only while the app option
+`live_city_data` is on (section 1, options): with it off, the web app takes such layers out of the
+visible layers wherever they came from (a link, saved settings, a pasted link), shows their
+switches turned off with the reason, and asks the server for nothing. Both raster layers are off by
+default in both views, so nothing is asked of the City's picture server until someone turns one
+on. `aerial_photos` and `atlas_1860`, in the group `then_and_now`, style `historic_imagery`, are the
+first two.
 
 `guide` (optional, added 2026-10-04 by M2.2) is the slug of a content page, `content/<slug>.md`,
 that shows how anyone can help improve the layer's data. The web app links it from "About this
@@ -154,7 +190,8 @@ checks it).
 (added 2026-10-05 by M3.1 for heat vulnerability, the City's trees and the floodplain), `amenities`,
 `public_places` and `conditions` (added 2026-10-05 by M3.5), `placemaking` (added 2026-10-05 by
 M3.2 for public art), `walking` (added 2026-10-05 by M3.3 for walkability, people and places within
-walking distance, and traffic stress for people on bikes), `safety_context`, `boundaries`,
+walking distance, and traffic stress for people on bikes), `then_and_now` (added 2026-10-09 by M4.3
+for the City's aerial photos by year and its 1860 atlas), `safety_context`, `boundaries`,
 `basemap`, each with a label and a one line
 description.
 
@@ -299,7 +336,10 @@ leaves them as they are. The pipeline checks the file like the others but does n
 `live_city_data` (default on) lets the browser ask the City's servers for live data: the live refresh
 of a lot page (section 6), opening a parcel that has no dossier, and address search, which uses the
 City's address service (`https://api.phila.gov/ais/v1/search/<text>`). With it off, the site asks
-the City for nothing and lot pages show the weekly snapshot, labeled with its date.
+the City for nothing and lot pages show the weekly snapshot, labeled with its date. From M4.3
+(2026-10-09) it also governs the raster layers (section 1, layers): the City's aerial photos and
+1860 atlas, whose tiles come from the City's ArcGIS tile server (`https://tiles.arcgis.com`) only
+once someone turns such a layer on, and never while this option is off.
 
 ## 2. Published data layout
 
@@ -347,6 +387,8 @@ data/
   basemap/
     philly.pmtiles        Protomaps basemap extract
 ```
+
+Raster layers (M4.3) have no files here at all: their pictures stay on the City's servers.
 
 `basemap/` (the extract, its fonts and its icons) is not written by the pipeline: the web side makes it
 with `web/scripts/make-basemap.sh`, and the weekly refresh adds it beside the pipeline's output when it
@@ -400,7 +442,12 @@ header's freshness badge.
 ```
 
 `status` is one of `ok`, `stale` (using the last good snapshot), `failing` (no usable snapshot), or
-`missing` (never fetched). `stale_since` is the date of the last good snapshot when stale.
+`missing` (never fetched). `stale_since` is the date of the last good snapshot when stale. For an
+`arcgis_tiles` source (M4.3) the snapshot is the weekly check, not a copy of the pictures: `ok`
+means every service answered, `stale` that at least one did not (the `message` names it, and
+`stale_since` is the day every one last answered), and `rows` is how many services were checked.
+A raster layer's entry in `layers` has `file` and `source_layer` set to `null` (added 2026-10-09 by
+M4.3), and `files` never lists anything for it.
 `sources` lists every source in the registry and `layers` every layer, whether or not it was built.
 `files` lists every file under the data root except `manifest.json` itself, the dossier shards,
 which `dossiers` summarizes, and the route survey sheets (`tables/routes/<route id>.json`), which

@@ -813,4 +813,70 @@
   attribution: "Conveyances by program, fiscal years 2017 to 2023: City of Philadelphia, Department of Planning and Development (Land Management dashboard)"
   cadence: frozen
   health: {min_rows: 5, max_drop_pct: 0}
+# Then and now (M4.3): pictures the visitor's browser loads straight from the City's own map
+# services, only once someone turns their layer on and only while "Fetch live City data" is on.
+# Placekeepers never copies or hosts them; each week the pipeline only checks that every service
+# still answers with its picture tiles (docs/CONTRACTS.md section 1, `arcgis_tiles`).
+  release: v0.4
+- id: city_aerial_photos
+  name: Aerial photographs by year (orthophotos)
+  publisher: City of Philadelphia, Office of Innovation and Technology
+  homepage: https://opendataphilly.org/datasets/aerial-photography/
+  # Every year the City serves as its own orthophotography, with the City's standard terms on each
+  # service (checked 2026-10-09). 2011 has two flights; the leaf off one (May 2011) is used, like
+  # the spring flights of the other years. 2024 has a 1 inch version too; the 3 inch one is used,
+  # already finer than the map's closest zoom. Not used: CityImagery_1928_RPF (credited to the
+  # PhilaGeoHistory Network, so it waits for the Athenaeum of Philadelphia's permission) and the
+  # 1959, 1975 and 1999 photos the City hosts for DVRPC and the USGS, whose services state no terms
+  # (docs/DATA_SOURCES.md, "History and displacement").
+  endpoint:
+    kind: arcgis_tiles
+    url: https://tiles.arcgis.com/tiles/fLeGjb7u4uXqeF9q/arcgis/rest/services
+    bounds: [-75.29, 39.86, -74.95, 40.14]
+    services:
+      - {key: "1996", service: CityImagery_1996_6in}
+      - {key: "2000", service: CityImagery_2000_18in}
+      - {key: "2004", service: CityImagery_2004_6in}
+      - {key: "2005", service: CityImagery_2005_16in}
+      - {key: "2008", service: CityImagery_2008_3in}
+      - {key: "2009", service: CityImagery_2009_6in}
+      - {key: "2010", service: CityImagery_2010_3in}
+      - {key: "2011", service: CityImagery_2011_6in_LEAFOFF}
+      - {key: "2012", service: CityImagery_2012_3in}
+      - {key: "2014", service: CityImagery_2014_6in}
+      - {key: "2015", service: CityImagery_2015_3in}
+      - {key: "2016", service: CityImagery_2016_3in}
+      - {key: "2017", service: CityImagery_2017_3in}
+      - {key: "2018", service: CityImagery_2018_3in}
+      - {key: "2019", service: CityImagery_2019_3in}
+      - {key: "2020", service: CityImagery_2020_3in}
+      - {key: "2022", service: CityImagery_2022_2in}
+      - {key: "2023", service: CityImagery_2023}
+      - {key: "2024", service: CityImagery_2024_3in}
+      - {key: "2025", service: CityImagery_2025_3in}
+  license: city_terms
+  attribution: "Aerial photographs: City of Philadelphia, Office of Innovation and Technology"
+  cadence: irregular
+  health: {min_rows: 20, max_drop_pct: 10}
+  release: v0.4
+- id: city_atlas_1860
+  name: 1860 Hexamer and Locher atlas
+  publisher: Greater Philadelphia GeoHistory Network, hosted by the City of Philadelphia
+  homepage: https://opendataphilly.org/datasets/aerial-photography/
+  # The City's own copy of the atlas, made by the Greater Philadelphia GeoHistory Network and
+  # hosted by the City with the Network's permission, under the City's standard terms. It covers
+  # Center City and Northern Liberties only; outside it the service sends plain gray squares, so
+  # the map asks only for the area the atlas covers (measured on 2026-10-09 from its tiles at
+  # zoom 14). The other historic atlases and land use maps the City hosts for the Network wait for
+  # the Athenaeum of Philadelphia's permission (docs/DATA_SOURCES.md).
+  endpoint:
+    kind: arcgis_tiles
+    url: https://tiles.arcgis.com/tiles/fLeGjb7u4uXqeF9q/arcgis/rest/services
+    bounds: [-75.1904, 39.9266, -75.1245, 39.9771]
+    services:
+      - {key: "1860", service: HistoricHexamerLocherAtlas_1860}
+  license: city_terms
+  attribution: "1860 atlas by Hexamer and Locher: Greater Philadelphia GeoHistory Network, hosted by the City of Philadelphia"
+  cadence: frozen
+  health: {min_rows: 1, max_drop_pct: 0}
   release: v0.4

@@ -33,5 +33,7 @@ export const STYLE_IDS = [
   'parking_reports',
   // The displacement watch (M4.1)
   'displacement_watch',
+  // Then and now (M4.3): pictures from the City's own servers
+  'historic_imagery',
 ] as const;
 export type StyleId = (typeof STYLE_IDS)[number];

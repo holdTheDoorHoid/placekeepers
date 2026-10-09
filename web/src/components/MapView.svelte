@@ -61,6 +61,8 @@
         style: basemap.style,
         state: $state.snapshot(store.state),
         manifest: store.manifest,
+        // Pictures from the City's servers (M4.3) only while live City data is on.
+        outsideAllowed: store.liveCityData,
         events: {
           move: (position, byPerson) => store.setMap(position, byPerson),
           select: (id, properties, lngLat) => store.select(id, properties, { center: lngLat ?? null }),
@@ -98,6 +100,11 @@
   $effect(() => {
     const manifest = store.manifest;
     store.controller?.setManifest(manifest);
+  });
+
+  $effect(() => {
+    const allowed = store.liveCityData;
+    store.controller?.setOutsideAllowed(allowed);
   });
 
   $effect(() => {

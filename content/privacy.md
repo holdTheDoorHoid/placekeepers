@@ -30,6 +30,19 @@ with its date, and the search box works only with a nine digit parcel number. Yo
 in your own browser and is never put in a link you share, so a link someone sends you cannot turn
 it back on.
 
+## Old aerial photos and the 1860 atlas
+
+Under "Then and now" in the layers, you can turn on the City's aerial photos of past years and its
+copy of the 1860 Hexamer and Locher atlas. Placekeepers does not copy these pictures. When you turn
+one of them on, your browser asks the City's own map service for the pieces of the picture that
+cover the part of the map you are looking at. That service runs on Esri's ArcGIS Online, which
+hosts the City's maps. Like the live lookups above, it sees your internet address and which part
+of the city is on your screen, and your browser sends it no cookies and does not say which site
+you came from. Nothing is asked of it until you turn one of these layers on.
+
+These pictures follow the same switch, "Fetch live City data". While it is off, they cannot be
+turned on, and a link someone sends you cannot turn them on either.
+
 ## If you have questions
 
 If anything here is unclear, or you think the site is doing something it should not, please use

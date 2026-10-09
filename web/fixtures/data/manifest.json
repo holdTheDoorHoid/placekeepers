@@ -461,6 +461,24 @@
       "rows": 7,
       "newest_record": null,
       "message": null
+    },
+    "city_aerial_photos": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 20,
+      "newest_record": null,
+      "message": null
+    },
+    "city_atlas_1860": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 1,
+      "newest_record": null,
+      "message": null
     }
   },
   "layers": {
@@ -758,6 +776,20 @@
         "market_value_analysis",
         "opa_properties",
         "census_tracts_2020"
+      ]
+    },
+    "aerial_photos": {
+      "file": null,
+      "source_layer": null,
+      "sources": [
+        "city_aerial_photos"
+      ]
+    },
+    "atlas_1860": {
+      "file": null,
+      "source_layer": null,
+      "sources": [
+        "city_atlas_1860"
       ]
     }
   },
