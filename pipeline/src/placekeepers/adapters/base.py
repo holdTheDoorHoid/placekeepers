@@ -146,3 +146,9 @@ class Adapter(ABC):
     def extra_checks(self, path: Path, newest: date | None) -> list[Check]:
         """Rules a source needs beyond its registry health rules. None by default."""
         return []
+
+    def after_promote(self, folder: Path) -> None:  # noqa: B027 (a hook; nothing by default)
+        """Called with the source's snapshot folder, under its lock, right after a new good
+        snapshot became current, for sources that keep something across snapshots (the weekly
+        count of listed lots, placekeepers.derive.land_bank). Nothing by default. A failure here
+        is logged and never fails the source."""

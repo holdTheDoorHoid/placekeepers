@@ -100,6 +100,25 @@ def test_pack_keeps_only_the_state_and_the_last_good_snapshot(tmp_path: Path) ->
         assert tar.getnames() == ["high_injury_network/state.json"]
 
 
+def test_a_source_history_travels_with_its_snapshot(tmp_path: Path) -> None:
+    # The weekly count of listed lots (M4.4) lives beside the City's list's snapshots; without it
+    # in the tar, every weekly run would start the series again.
+    cache = make_cache(tmp_path / "cache")
+    history = cache / "snapshots" / "shootings" / "history.json"
+    history.write_text('{"schema": 1, "snapshots": []}\n', encoding="utf-8")
+    refresh.pack(cache, tmp_path / "assets")
+    with tarfile.open(tmp_path / "assets" / "snapshot-shootings.tar") as tar:
+        assert "shootings/history.json" in tar.getnames()
+    fresh = tmp_path / "fresh"
+    refresh.restore(fresh, tmp_path / "assets")
+    restored = fresh / "snapshots" / "shootings" / "history.json"
+    assert restored.read_text(encoding="utf-8") == history.read_text(encoding="utf-8")
+    # A changed history alone is enough to pack the source again.
+    assert refresh.pack(fresh, tmp_path / "again") == []
+    restored.write_text('{"schema": 1, "snapshots": [{"date": "2026-10-11"}]}\n', encoding="utf-8")
+    assert [t.name for t in refresh.pack(fresh, tmp_path / "third")] == ["snapshot-shootings.tar"]
+
+
 def test_pack_of_an_empty_cache_writes_nothing(tmp_path: Path) -> None:
     assert refresh.pack(tmp_path / "nothing", tmp_path / "out") == []
 

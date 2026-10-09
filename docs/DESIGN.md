@@ -931,6 +931,43 @@ clear terms but are an inventory from 2018 aerial photos that was never checked 
 turning them into gaps by block is work for a later milestone. Walk Score's terms forbid storing
 its scores. Details are in DATA_SOURCES.md, "Walkability and people".
 
+### 5.10 The Land Bank in numbers
+
+As built (M4.4, issue #40, 2026-10-09). A page of its own, `land-bank/`, reached from the site menu
+of every page ("The Land Bank in numbers"), for the Philadelphia Land Steward Union's campaign and
+anyone else who wants the facts. It serves by being accurate: neutral sentences, no slogans, and it
+speaks for neither the Land Steward Union nor the Land Bank.
+
+- **What it counts.** Properties the Philadelphia Land Bank, the Philadelphia Redevelopment
+  Authority, PHDC and the City conveyed, from the City's deed records since 2014: a plain deed from
+  the agencies to someone outside them, each property once. Moves between the agencies,
+  corrections, releases of old restrictions and agreements recorded as deeds are left out and
+  counted apart (DATA_SOURCES.md, "The Land Bank in numbers"). On 2026-10-09: 3,235 properties
+  from January 2014 to August 2026, 1,032 of them by the Land Bank (from 2017).
+- **What the page shows**, for all four agencies together or one at a time (a choice kept in the
+  link, `?agency=PLB`): a sentence with the totals and the moves between agencies; conveyances per
+  year, stacked by agency; who the buyers are (people, companies, nonprofits, other public bodies)
+  per year and as shares; side or rear yards per year, labelled as our inference, with how it was
+  checked and the City's own counts by program for fiscal years 2017 to 2023 beside it; the
+  prices the deeds record (the middle price and the share at a token price) with why a recorded
+  price is not always money paid; counts by today's council districts; the weekly count of lots
+  listed as available, which starts on 2026-10-04 and says so; what the numbers cannot show; and
+  every source with its date.
+- **Charts** follow the lot page's assessment chart (thin columns, a rounded top, recessive grid,
+  the highest value labelled, each value on hover), with a legend for two or more series, colors
+  in a fixed order checked for color blindness, and the same numbers in a table under each chart.
+- **Downloads.** Each section has a CSV download built in the browser from the published file. Its
+  first line points to the terms of use, as every export does (ETHICS.md, "Bulk export").
+- **Aggregates only.** No names, no addresses and no parcel numbers on the page, in its file or in
+  its downloads. Organizations are never named, not even in totals. The buyers' names are read
+  only in the pipeline, to tell a person from a company, to check the parcel next door and to
+  recognize the same buyer twice, and are never kept.
+- **The program is mostly unknown.** The deeds do not name it. The one inference, a single lot to
+  a person who owns a home touching it, is always labelled as ours, with its checks. The City's
+  Legistar API (Council's resolutions) refuses requests without a token, and the Land Bank's own
+  board documents may not be republished without PHDC's permission; both would name the program
+  for every conveyance (owner items, DATA_SOURCES.md).
+
 ## 6. Finding vacant land without depending on one source
 
 The City's vacancy indicator stopped being accurate in June 2024, and that alone ended the original
@@ -1202,3 +1239,8 @@ docs/            design, roadmap, research
    and Parks and Recreation whether the map may include their art lists (docs/ROUTES.md section 6),
    and decide whether famous monuments that sources mark as memorials may show their names, from a
    hand curated list (section 5.8).
+7. The Land Bank in numbers (section 5.10): optionally ask the Clerk of City Council for a Legistar
+   API token (Council's resolutions name the program and the date of approval), ask PHDC for
+   permission to use the Land Bank's board documents or for a list of dispositions by program, and
+   ask the City whether its Land Management dashboard table, which states no license, may be
+   reused. The page works without any of them and labels the program as our inference.

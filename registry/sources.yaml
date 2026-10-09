@@ -784,3 +784,33 @@
   cadence: frozen
   health: {min_rows: 9500, max_drop_pct: 0}
   release: v0.4
+- id: land_conveyances
+  name: Deeds from the City's land agencies since 2014
+  publisher: City of Philadelphia, Department of Records
+  homepage: https://opendataphilly.org/datasets/real-estate-transfers/
+  # Every deed since 2014 naming the Land Bank, the Redevelopment Authority, PHDC or the City among
+  # its sellers (a wide net; the adapter decides which deeds are conveyances). The sellers' and
+  # buyers' names are read only to classify each deed, type the buyers and check whether a buyer
+  # owns the parcel next door, and are never kept. The street address is never downloaded.
+  endpoint:
+    kind: carto
+    table: rtt_summary
+    where: "display_date >= '2014-01-01' AND document_type ILIKE '%DEED%' AND (grantors ILIKE '%LAND BANK%' OR grantors ~* 'REDEV[A-Z]* AUTH|PHILA[A-Z]* REDEVELOP|PHDC|PHILA[A-Z]* HOUSING DEV|CITY OF PHI?LA|PHILA[A-Z]* CITY OF|PUBLIC PROP')"
+  license: city_terms
+  attribution: "Deeds: City of Philadelphia, Department of Records"
+  cadence: weekly
+  health: {min_rows: 15000, max_drop_pct: 10, newest_field: display_date, max_age_days: 120}
+  release: v0.4
+- id: land_conveyed_by_fy
+  name: Properties conveyed by program and fiscal year, 2017 to 2023 (Land Management dashboard)
+  publisher: City of Philadelphia, Department of Planning and Development (Land Management)
+  homepage: https://www.arcgis.com/home/item.html?id=db4dcb37071c4cdfb6ca4df82a1de1b3
+  # A public table of the City's ArcGIS organization behind its Land Management dashboard: side
+  # yards, gardens and business expansion by fiscal year, and homes by income level. Last edited
+  # 2023-04-11, so fiscal year 2023 ends early. Its item states no license (checked 2026-10-09).
+  endpoint: {kind: arcgis, service: LMDashboard_PropertiesConveyedbyFY, layer: 0}
+  license: unstated
+  attribution: "Conveyances by program, fiscal years 2017 to 2023: City of Philadelphia, Department of Planning and Development (Land Management dashboard)"
+  cadence: frozen
+  health: {min_rows: 5, max_drop_pct: 0}
+  release: v0.4

@@ -5,8 +5,9 @@ Standard library only, so any job can run it with a plain Python 3.12. Commands:
 
     refresh.py pack --cache DIR --out DIR
         One tar per source holding what the next run needs: the source's state (which carries
-        the count of failed attempts in a row) and its last good snapshot. These become the
-        assets of the rolling `data-snapshots` release. A source whose files are exactly as they
+        the count of failed attempts in a row), its history.json when it keeps one (the weekly
+        count of listed lots), and its last good snapshot. These become the assets of the
+        rolling `data-snapshots` release. A source whose files are exactly as they
         were restored (a frozen source, or a yearly one not due again) is not packed; its asset
         name goes in unchanged.txt instead, so the release keeps last week's copy.
 
@@ -71,6 +72,9 @@ from zoneinfo import ZoneInfo
 SNAPSHOTS = "snapshots"
 STATE_FILE = "state.json"
 CURRENT_LINK = "current.parquet"
+# What a source keeps across its snapshots, such as the weekly count of listed lots that the City's
+# list of public property adds to (placekeepers.derive.land_bank); travels with the snapshot.
+HISTORY_FILE = "history.json"
 ASSET_PREFIX = "snapshot-"
 SNAPSHOT_ASSET = re.compile(r"^snapshot-[a-z][a-z0-9_]*\.tar$")
 ENCRYPTED_ASSET = re.compile(r"^snapshot-[a-z][a-z0-9_]*\.tar\.gpg$")
@@ -90,12 +94,16 @@ FAILED = ("stale", "failing")
 
 
 def snapshot_files(source_dir: Path) -> list[Path]:
-    """The files of one source worth keeping: its state, and its last good snapshot (the file
-    current.parquet points at, that snapshot's JSON sidecar, and the link itself)."""
+    """The files of one source worth keeping: its state, what it keeps across snapshots (its
+    history.json, when it has one), and its last good snapshot (the file current.parquet points
+    at, that snapshot's JSON sidecar, and the link itself)."""
     files: list[Path] = []
     state = source_dir / STATE_FILE
     if state.is_file():
         files.append(state)
+    history = source_dir / HISTORY_FILE
+    if history.is_file() and not history.is_symlink():
+        files.append(history)
     link = source_dir / CURRENT_LINK
     if link.is_symlink():
         target = source_dir / link.readlink()

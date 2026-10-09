@@ -102,6 +102,8 @@ export const strings = {
     menuTitle: 'Site menu',
     menuLabel: 'Site pages',
     map: 'Map',
+    /** Not a content page: its own app page (M4.4), listed after the content pages. */
+    landBank: 'The Land Bank in numbers',
     pages: [
       { slug: 'about', label: 'About' },
       { slug: 'why', label: 'Why this works' },
@@ -1335,6 +1337,167 @@ export const strings = {
     stressLanes: (n: number) => `${plural(n, 'lane', 'lanes')} in all.`,
     streetsHere: (n: number) => `${plural(n, 'street', 'streets')} here`,
     stressDetailsSource: "From DVRPC's Level of Traffic Stress network, rated from lanes, speeds and bike lanes.",
+  },
+
+  /** The Land Bank in numbers (M4.4, issue #40): counts only, neutral facts, no names. */
+  landBank: {
+    pageTitle: 'The Land Bank in numbers',
+    back: 'Back to the map',
+    intro:
+      'How many properties the Philadelphia Land Bank and the City\'s other land agencies have conveyed, year by year, from the City\'s own deed records. Counts and totals only: no names and no addresses.',
+    loading: 'Loading the numbers',
+    loadFailed: 'The numbers could not be loaded. Check your connection and try again.',
+    retry: 'Try again',
+    missing: 'The numbers are not published yet. They appear after the next weekly data refresh.',
+    agencyLabel: 'Agency',
+    agencyHelp: 'Every section below follows this choice, except the City\'s own counts by program and the weekly count of listed lots.',
+    agencies: {
+      all: 'All four agencies',
+      PLB: 'Philadelphia Land Bank',
+      PRA: 'Redevelopment Authority',
+      PHDC: 'PHDC',
+      PUB: 'City of Philadelphia',
+    } as Record<string, string>,
+    agencyLong: {
+      all: 'the four land agencies together',
+      PLB: 'the Philadelphia Land Bank',
+      PRA: 'the Philadelphia Redevelopment Authority',
+      PHDC: 'the Philadelphia Housing Development Corporation (PHDC)',
+      PUB: 'the City of Philadelphia',
+    } as Record<string, string>,
+    headline: (agency: string, n: number, deeds: number, from: string, to: string) =>
+      `In the City's deed records from ${from} to ${to}, ${agency} conveyed ${plural(n, 'property', 'properties')} in ${plural(deeds, 'deed', 'deeds')}.`,
+    movedAll: (n: number) =>
+      `Not counted: ${plural(n, 'move', 'moves')} of a property from one agency to another, such as from the City to the Land Bank.`,
+    moved: (received: number, handed: number) =>
+      `It also received ${plural(received, 'property', 'properties')} from the other agencies and handed ${formatNumber(handed)} to them. Those moves are not counted as conveyances.`,
+    whatCounts:
+      'A conveyance here is a deed from a land agency to someone outside the four agencies: a person, a company, a nonprofit, or another public body such as the Philadelphia Housing Authority. Each property counts once. Corrections, releases of old restrictions, moves between the agencies and agreements recorded as deeds are left out.',
+    partial: (year: number, date: string) =>
+      `${year} runs only to ${date}: the City's deed records are about eight weeks behind.`,
+    noNames: 'We read the buyers\' names only to tell a person from a company and to check the house next door. We keep none of them.',
+    showNumbers: 'Show the numbers',
+    tableLabel: (what: string) => `The numbers: ${what}`,
+    downloadCsv: 'Download CSV',
+    year: 'Year',
+    total: 'Total',
+    properties: 'Properties',
+    chartLabel: (what: string, from: number, to: number, max: string) => `${what}, ${from} to ${to}. The highest year has ${max}. The same numbers are in the table below the chart.`,
+    perYear: {
+      title: 'Conveyances per year',
+      caption: 'Properties conveyed each year. One deed can convey many properties.',
+      deeds: 'Deeds',
+    },
+    buyers: {
+      title: 'Who the buyers are',
+      caption:
+        'Each buyer\'s type, read from the name the deed records. A nonprofit is counted as one only when its name says so; many nonprofits are named like companies and are counted as companies.',
+      groups: {
+        individual: 'People',
+        company: 'Companies',
+        nonprofit: 'Nonprofits',
+        public: 'Other public bodies',
+        unknown: 'Not clear',
+      } as Record<string, string>,
+      share: (label: string, pct: number) => `${label}: ${pct}%`,
+      shares: 'Share of all the properties conveyed in these years',
+    },
+    programs: {
+      title: 'By program',
+      caption:
+        'The deeds do not say which program a conveyance came through. One can be inferred: a single lot conveyed to a person who owns a home touching it is probably a side or rear yard. This chart counts those lots, our inference. The rest are not known from the records, which does not mean they were not side yards.',
+      series: 'Side or rear yards, our inference',
+      checked:
+        'How we checked it (October 9, 2026): 10 of these lots, drawn at random from 2019 to 2026, looked up by hand. In all 10 the buyer is the owner of record of the home beside or behind the lot and gets mail there. Whether each one came through the side yard program is still our inference.',
+      compare: (cityTotal: number, ours: number, oursPlb: number, from: number, to: number) =>
+        `For fiscal years ${from} to ${to} the City's own dashboard counted ${formatNumber(cityTotal)} side yards. From the deeds we infer ${formatNumber(ours)} from all four agencies, ${formatNumber(oursPlb)} of them from the Land Bank.`,
+      cityTitle: 'The City\'s own count by program',
+      cityCaption: (edited: string) =>
+        `From the City's Land Management dashboard, by fiscal year (July to June). It was last updated ${edited}, so the last year is incomplete, and it counts homes built, not properties, for housing.`,
+      fy: 'Fiscal year',
+      sideYards: 'Side yards',
+      gardens: 'Gardens or open space',
+      business: 'Business expansion',
+      homesBelow30: 'Homes, below 30% of area income',
+      homes60to80: 'Homes, 60% to 80%',
+      homes80to120: 'Homes, 80% to 120%',
+      homesMarket: 'Homes, market rate',
+      oursPlb: 'Our side yard inference, Land Bank',
+      oursAll: 'Our side yard inference, all four',
+      fyLabel: (fy: number) => `${fy - 1} to ${fy}`,
+    },
+    prices: {
+      title: 'Prices recorded on the deeds',
+      caption: (max: string) =>
+        `The price is what the deed records for each property (its share when one deed covered several). It is not always money paid: some programs sell for a token price and protect the lot's use with a 30 year mortgage, and side yard deeds often record the lot's appraised value. The middle price has half the prices below it and half above. "Token" means ${max} or less.`,
+      priced: 'With a price',
+      median: 'Middle price',
+      nominal: 'Token price',
+      none: 'No price recorded',
+      summary: (median: string, pct: number) => `Middle price over these years: ${median}. ${pct}% were conveyed for a token price.`,
+    },
+    districts: {
+      title: 'By council district',
+      caption:
+        'Where the properties are, by today\'s council district lines. District lines change after each census, so earlier years are placed by today\'s lines too.',
+      district: 'District',
+      districtName: (n: number) => `District ${n}`,
+      noLocation: 'No location in the records',
+      allYears: 'All years',
+      chartLabel: 'Properties conveyed in each council district. The same numbers are in the table below.',
+    },
+    listed: {
+      title: 'Lots listed as available, week by week',
+      caption: (from: string) =>
+        `The City's list of public property, the same list the Land Bank's property map shows, counted each week that our copy of it was refreshed. The count starts on ${from}; there are no earlier weekly counts.`,
+      date: 'Date of the list',
+      records: 'Listed as available',
+      parcels: 'Parcels',
+      sideYard: 'Open to a neighbor as a side yard',
+      oneWeek: 'A chart appears once there are two weeks to compare.',
+      byStatus: (date: string) => `Every lot on the list by its status, ${date}`,
+      status: 'Status',
+      count: 'Records',
+      chartLabel: (from: string, to: string) => `Lots listed as available each week, ${from} to ${to}. The same numbers are in the table below.`,
+      mapLink: 'The Land Bank\'s map of listed properties',
+    },
+    limits: {
+      title: 'What these numbers cannot show',
+      items: [
+        'How long applicants waited, how many applied, or how many were turned down. The public records hold deeds, not applications.',
+        'The program behind most conveyances. The deeds do not say; side and rear yards are our inference, and the City\'s own counts by program stop in April 2023.',
+        'What was built or grown afterwards, or whether a lot\'s restrictions were kept.',
+        'What a buyer finally paid. A deed records a price, and some programs pair a token price with a 30 year mortgage.',
+        'Land the agencies lease or license, such as garden agreements. No deed records those.',
+        'Deeds before 2014, and deeds from the last eight weeks or so, which the City has not published yet.',
+      ],
+    },
+    sources: {
+      title: 'Sources and dates',
+      deeds: (fetched: string, last: string) =>
+        `Deeds: City of Philadelphia, Department of Records, real estate transfers, read ${fetched}; the newest deed is dated ${last}.`,
+      programs: (edited: string) =>
+        `Counts by program: City of Philadelphia, Department of Planning and Development, Land Management dashboard, last updated ${edited}.`,
+      listed:
+        'Listed lots: City of Philadelphia, Department of Planning and Development (Land Management), as the Philadelphia Land Bank\'s property map shows them.',
+      districts: 'Council districts: City of Philadelphia, today\'s lines.',
+      neighbours:
+        'For the side yard inference: the City\'s owner list (Office of Property Assessment) and parcel shapes (Water Department).',
+      board: 'The Land Bank\'s board agendas, which list each disposition by program',
+      council: 'City Council\'s legislation, where Council approves each Land Bank disposition',
+      method: 'How we count, in detail',
+      deedsLink: 'The City\'s real estate transfers',
+      programsLink: 'The City\'s Land Management dashboard table',
+    },
+    csv: {
+      years: (agency: string) => `Conveyances by year and agency (all four agencies and each one; this page showed ${agency}).`,
+      districts: 'Conveyances by council district (today\'s lines) and year, for all four agencies and each one.',
+      programs: 'The City\'s own counts by program and fiscal year, beside our side yard inference.',
+      listed: 'Lots on the City\'s list of public property listed as available, each week from the start of the count.',
+      counts: 'Counts only: no names, no addresses and no parcel numbers.',
+      dates: (fetched: string, last: string) => `Deeds read ${fetched}; the newest deed is dated ${last}.`,
+      file: (part: string, day: string) => `placekeepers-land-bank-${part}-${day}.csv`,
+    },
   },
 
   basemap: {

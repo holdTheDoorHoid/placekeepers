@@ -97,7 +97,10 @@ def test_carto_sources_from_fixtures(source_id: str, context_factory) -> None:
     assert meta.rows == 5
     assert set(adapter.required_columns) <= set(meta.columns)
     if source.endpoint.where:
-        assert all(f"({source.endpoint.where})" in query for query in fake.queries)
+        # A source may also read the history of the properties it found, by their accounts
+        # (land_conveyances, M4.4); those queries name the accounts instead.
+        found = [q for q in fake.queries if "AS chosen(chosen_account)" not in q]
+        assert found and all(f"({source.endpoint.where})" in query for query in found)
 
 
 # The lot timeline's L&I records read six tables; tests/test_sources.py covers them below.
@@ -262,7 +265,8 @@ def fake_layer(source_id: str, count: int = 3) -> FakeArcgis:
         {
             "type": "Feature",
             "properties": {name: arcgis_value(name, kind, n) for name, kind in spec["fields"]},
-            "geometry": mapping(arcgis_geometry(spec["geometry"], n)),
+            # A table (the Land Management dashboard's, M4.4) has no geometry at all.
+            "geometry": mapping(arcgis_geometry(spec["geometry"], n)) if spec["geometry"] else None,
         }
         for n in range(1, count + 1)
     ]

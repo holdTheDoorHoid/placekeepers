@@ -5,6 +5,7 @@
 // no referrer. Every request to another server is refused here, but the browser still asks, so
 // the test sees exactly what a visitor's browser would send.
 
+import { readFileSync } from 'node:fs';
 import { expect, test, type BrowserContext, type Page } from '@playwright/test';
 import { LAND_BANK_LOT, LOT, SAMPLE_CENTER, isPhone } from './helpers.ts';
 
@@ -199,6 +200,32 @@ test.describe('privacy', () => {
     // The ticks kept under the old name came along.
     const moved = await page.evaluate(() => localStorage.getItem('placekeepers:v1:survey:60:1'));
     expect(JSON.parse(moved ?? '{}')).toEqual({ sp1206: { sh: 'y' } });
+  });
+
+  test('The Land Bank in numbers asks no other server, keeps nothing, and its download starts with the terms', async ({ page, context }) => {
+    // Added by M4.4 (issue #40): the page reads one file of the site's own and only links out.
+    const seen = watchOrigins(context);
+    await page.route(/^https?:\/\/(?!localhost[:/])/, (route) => route.abort());
+    await page.goto('./land-bank/');
+    await expect(page.getByRole('heading', { name: 'Conveyances per year' })).toBeVisible();
+    await page.getByRole('combobox', { name: 'Agency' }).selectOption('PRA');
+    const [file] = await Promise.all([
+      page.waitForEvent('download'),
+      page.locator('section', { has: page.getByRole('heading', { name: 'Conveyances per year' }) }).getByRole('button', { name: 'Download CSV' }).click(),
+    ]);
+    const text = readFileSync((await file.path())!, 'utf8').replace('\uFEFF', '');
+    expect(text.split('\r\n')[0]).toMatch(/^# Placekeepers export: for community care and lawful action only\. Read the terms of use first: /);
+    expect(text).toContain('# Counts only: no names, no addresses and no parcel numbers.');
+    // Counts only: no parcel number in the file.
+    expect(text).not.toMatch(/\b\d{9}\b/);
+
+    const local = new URL(page.url()).origin;
+    expect([...seen.origins].filter((origin) => origin !== local)).toEqual([]);
+    expect(seen.urls.filter((url) => url.startsWith(local) && url.includes('/data/'))).toEqual([expect.stringMatching(/\/data\/tables\/land_bank\.json$/)]);
+    const kept = await page.evaluate(() => ({ local: Object.keys(localStorage), session: Object.keys(sessionStorage), cookie: document.cookie }));
+    expect(kept).toEqual({ local: [], session: [], cookie: '' });
+    // Its links out carry no opener and no referrer.
+    for (const link of await page.locator('a[target="_blank"]').all()) await expect(link).toHaveAttribute('rel', 'noopener noreferrer');
   });
 
   test('links that open a new tab carry no opener and no referrer', async ({ page }, info) => {

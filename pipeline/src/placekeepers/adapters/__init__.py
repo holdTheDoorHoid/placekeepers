@@ -31,6 +31,7 @@ from placekeepers.adapters.environment import FemaFloodplain, StreetTrees
 from placekeepers.adapters.fatal_crashes import FatalCrashes
 from placekeepers.adapters.heat import HeatVulnerability
 from placekeepers.adapters.high_injury_network import HighInjuryNetwork
+from placekeepers.adapters.land_bank import LandConveyances, LandConveyedByFy
 from placekeepers.adapters.lens_context import CensusTracts2020, TreeCanopy2018
 from placekeepers.adapters.opa_properties import OpaProperties
 from placekeepers.adapters.osm import OsmExtract
@@ -139,6 +140,10 @@ ADAPTERS: dict[str, type[Adapter]] = {
     # The lot timeline (M4.2): Clean & Green Philly's copies of the June 2024 vacancy lists
     "cagp_vacant_land_2024": CagpVacancyList2024,
     "cagp_vacant_buildings_2024": CagpVacancyList2024,
+    # The Land Bank in numbers (M4.4): deeds from the City's land agencies and the City's own counts
+    # by program.
+    "land_conveyances": LandConveyances,
+    "land_conveyed_by_fy": LandConveyedByFy,
 }
 
 

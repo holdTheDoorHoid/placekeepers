@@ -172,6 +172,37 @@ test.describe('accessibility', () => {
     }
   });
 
+  test('The Land Bank in numbers passes the checks, never scrolls sideways and works by keyboard', async ({ page }, info) => {
+    // Added by M4.4 (issue #40): an app page of its own, reached from the site menu.
+    await page.route(/^https?:\/\/(?!localhost[:/])/, (route) => route.abort());
+    if (isPhone(info)) await page.setViewportSize({ width: 320, height: 640 });
+    await page.goto('./land-bank/');
+    await expect(page.getByRole('heading', { level: 1, name: 'The Land Bank in numbers' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Conveyances per year' })).toBeVisible();
+    // Every chart has a text alternative, and its numbers in a table.
+    for (const chart of await page.locator('svg[role="img"]').all()) await expect(chart).toHaveAttribute('aria-label', /\S/);
+    for (const details of await page.locator('details').all()) await details.locator('summary').click();
+    await expectAccessible(page, 'the Land Bank page, every table open');
+    await noSidewaysScroll(page);
+
+    // The agency choice works from the keyboard, follows into the link, and changes the numbers.
+    const select = page.getByRole('combobox', { name: 'Agency' });
+    await select.focus();
+    await select.selectOption('PLB');
+    await expect(page.locator('.headline')).toContainText('the Philadelphia Land Bank conveyed');
+    await expect(page).toHaveURL(/[?&]agency=PLB/);
+    await expectAccessible(page, 'the Land Bank page, one agency');
+    await noSidewaysScroll(page);
+    await page.reload();
+    await expect(page.getByRole('combobox', { name: 'Agency' })).toHaveValue('PLB');
+
+    // The site menu lists the page, marked as the current one.
+    await page.getByRole('button', { name: 'Menu', exact: true }).click();
+    const menu = page.getByRole('dialog', { name: 'Site menu' });
+    await expect(menu.getByRole('link', { name: 'The Land Bank in numbers' })).toHaveAttribute('aria-current', 'page');
+    await expectAccessible(page, 'the site menu on the Land Bank page');
+  });
+
   test('keyboard: the controls come before the map, and a memorial opens without the map', async ({ page }) => {
     await openMap(page, FIELD);
     // The search box, Near me and the chips come first, then the list of places, then the map.
