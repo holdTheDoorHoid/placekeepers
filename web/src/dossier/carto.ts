@@ -63,7 +63,7 @@ export function propertySql(opa: string): string {
   return (
     'SELECT parcel_number, location, owner_1, owner_2, mailing_care_of, mailing_address_1, mailing_address_2, ' +
     'mailing_street, mailing_city_state, mailing_zip, category_code_description, building_code_description, ' +
-    'sale_date, sale_price, market_value, homestead_exemption, ST_Y(the_geom) AS lat, ST_X(the_geom) AS lng ' +
+    'sale_date, sale_price, market_value, homestead_exemption, frontage, depth, ST_Y(the_geom) AS lat, ST_X(the_geom) AS lng ' +
     `FROM opa_properties_public WHERE parcel_number = ${accountLiteral(opa)} LIMIT 1`
   );
 }
@@ -222,6 +222,12 @@ export function mailingText(parts: (string | null | undefined)[]): string | null
   return lines.length ? lines.join(', ') : null;
 }
 
+/** A length in feet the assessor records, to a tenth, or null when missing or not plausible. */
+function feet(value: unknown): number | null {
+  const n = num(value);
+  return n !== null && n > 0 && n < 5280 ? Math.round(n * 10) / 10 : null;
+}
+
 export function readProperty(opa: string, rows: Row[]): LiveProperty | null {
   const row = rows.find((r) => normalizeAccount(r.parcel_number) === opa) ?? null;
   if (!row) return null;
@@ -244,6 +250,8 @@ export function readProperty(opa: string, rows: Row[]): LiveProperty | null {
     salePrice: wholeDollars(row.sale_price),
     marketValue: wholeDollars(row.market_value),
     homestead: (num(row.homestead_exemption) ?? 0) > 0,
+    frontage: feet(row.frontage),
+    depth: feet(row.depth),
     lng: lng !== null && lat !== null ? lng : null,
     lat: lng !== null && lat !== null ? lat : null,
   };

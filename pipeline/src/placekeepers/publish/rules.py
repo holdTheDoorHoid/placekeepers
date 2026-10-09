@@ -279,8 +279,12 @@ def ap_columns() -> list[str]:
     return list(APPEAL_COLUMNS)
 
 
-def upcoming_hearings(path: Path, today: date) -> list[dict[str, Any]]:
-    """Every hearing still to come, with its parcel, address and point: the map's hearings."""
+def upcoming_hearings(
+    path: Path, today: date, unplaced: list[dict[str, Any]] | None = None
+) -> list[dict[str, Any]]:
+    """Every hearing still to come, with its parcel, address and point: the map's hearings. Those
+    the City gives no point in the city go into `unplaced`, when given (they are on their lot
+    pages only)."""
     table = pq.read_table(path, columns=["opa_account_num", "address", *ap_columns(), "lat", "lng"])
     out = []
     for row in table.to_pylist():
@@ -289,6 +293,8 @@ def upcoming_hearings(path: Path, today: date) -> list[dict[str, Any]]:
             continue
         lat, lng = row["lat"], row["lng"]
         if lat is None or lng is None or not (39.8 <= lat <= 40.2 and -75.35 <= lng <= -74.9):
+            if unplaced is not None:
+                unplaced.append(record)
             continue
         out.append(
             {
@@ -418,7 +424,8 @@ def hearing_properties(hearing: dict[str, Any]) -> dict[str, Any]:
 
 
 def build_hearings(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) -> BuildResult:
-    hearings = upcoming_hearings(paths[APPEALS_SOURCE], as_of)
+    unplaced: list[dict[str, Any]] = []
+    hearings = upcoming_hearings(paths[APPEALS_SOURCE], as_of, unplaced)
     with GeoJSONWriter(out) as writer:
         for hearing in hearings:
             point = {
@@ -433,7 +440,8 @@ def build_hearings(ctx: Context, paths: dict[str, Path], out: Path, as_of: date)
         f"Hearings still to come on {as_of.isoformat()}: {len(hearings):,} "
         f"({boards['zoning']:,} before the Zoning Board of Adjustment, {boards['li_review']:,} the "
         f"L&I Review Board, {boards['building']:,} the Board of Building Standards, "
-        f"{boards['other']:,} other boards)"
+        f"{boards['other']:,} other boards); {len(unplaced):,} more have no point in the City's "
+        "records and show on their lot pages only"
     )
     return BuildResult(writer.count, [note])
 

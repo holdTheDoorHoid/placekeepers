@@ -325,3 +325,17 @@ def test_parcels_without_a_point_or_shape_get_no_rules() -> None:
         "111111111": {"zoning": {"code": "RSA-5"}}
     }
     assert shapely.is_valid(lr.valid(shapely.Polygon([(0, 0), (1, 1), (1, 0), (0, 1)])))
+
+
+def test_the_lot_size_is_the_assessors_frontage_and_depth() -> None:
+    """The lot page's size line (M4.6): both measures above 0 and under a mile, to a tenth."""
+    from placekeepers.publish.dossiers import Opa, lot_size
+
+    def opa(frontage, depth):
+        return Opa(None, [], None, None, None, None, None, None, None, None, False, frontage, depth)
+
+    assert lot_size(opa(16.0, 80.55)) == {"frontage": 16.0, "depth": 80.5}
+    assert lot_size(opa(0.0, 80.0)) is None
+    assert lot_size(opa(16.0, None)) is None
+    assert lot_size(opa(16.0, 99999.0)) is None
+    assert lot_size(None) is None

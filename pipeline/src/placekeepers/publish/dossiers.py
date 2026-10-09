@@ -340,6 +340,9 @@ class Opa:
     lng: float | None
     #: an owner occupied homestead exemption: the City's record that someone lives there (or did)
     homestead: bool = False
+    #: the lot's frontage and depth in feet, as the assessor records them (M4.6); None when unknown
+    frontage: float | None = None
+    depth: float | None = None
 
 
 OPA_COLUMNS = (
@@ -358,6 +361,8 @@ OPA_COLUMNS = (
     "lat",
     "lng",
     "homestead_exemption",
+    "frontage",
+    "depth",
 )
 
 
@@ -384,6 +389,8 @@ def read_opa(con: Any, path: Path) -> dict[str, Opa]:
         lat,
         lng,
         homestead,
+        frontage,
+        depth,
     ) in rows:
         last_line = " ".join(part for part in (city_state, zip_code) if part) or None
         out[account] = Opa(
@@ -398,8 +405,21 @@ def read_opa(con: Any, path: Path) -> dict[str, Opa]:
             lat=lat,
             lng=lng,
             homestead=bool(homestead and homestead > 0),
+            frontage=frontage,
+            depth=depth,
         )
     return out
+
+
+def lot_size(record: Opa | None) -> dict[str, float] | None:
+    """The lot's frontage and depth in feet, to a tenth, when the assessor records both as more
+    than zero and less than a mile (M4.6, the dossier's `lot_size`)."""
+    if record is None or record.frontage is None or record.depth is None:
+        return None
+    frontage, depth = float(record.frontage), float(record.depth)
+    if not (0 < frontage < 5280 and 0 < depth < 5280):
+        return None
+    return {"frontage": round(frontage, 1), "depth": round(depth, 1)}
 
 
 def read_city_owned(con: Any, path: Path) -> dict[str, dict[str, Any]]:
@@ -1120,6 +1140,9 @@ def build_dossiers(
         if account in watch:
             tract, signs = watch[account]
             dossier["displacement"] = {"tract": tract, "signs": signs}
+        size = lot_size(record)
+        if size:
+            dossier["lot_size"] = size
         if "appeals" in paths and "nearby" in dossier and account in points:
             dossier["nearby"]["hearings_within_500ft"] = near_hearings.get(account, 0)
         if account in lot_rule:

@@ -181,6 +181,10 @@ Two additions that were not on the roadmap, both done on 2026-10-08 and in v0.3:
   permission.
 - **M4.4 Land Bank statistics**: conveyances by program and year, for the Land Steward Union's
   campaign.
+- **M4.6 Lot rules and records** (issue #42, added by the owner on 2026-10-09): historic districts
+  and the Philadelphia Register, zoning overlays, EPA brownfield records, and appeals and hearings
+  on the lot page, in its timeline and on the map, with names from appeals on the lot's own page
+  only (docs/ETHICS.md, "Appeals and hearings").
 
 ## Phase 5: v0.5 Organizing tools
 

@@ -409,7 +409,16 @@ export function parseShardParcel(raw: unknown, where = 'parcel', problems: strin
     rules: parseRules(raw.rules),
     appeals: missing.includes('appeals') ? null : (list(raw.appeals, parseAppeal, `${where}.appeals`, problems) ?? []),
     missing,
+    lotSize: lotSize(raw.lot_size),
   };
+}
+
+/** The lot's frontage and depth in feet (M4.6), or null. */
+function lotSize(v: unknown): { frontage: number; depth: number } | null {
+  if (!isObj(v)) return null;
+  const frontage = typeof v.frontage === 'number' && Number.isFinite(v.frontage) ? v.frontage : null;
+  const depth = typeof v.depth === 'number' && Number.isFinite(v.depth) ? v.depth : null;
+  return frontage !== null && depth !== null && frontage > 0 && depth > 0 ? { frontage, depth } : null;
 }
 
 export function parseShard(json: unknown): ShardParseResult {

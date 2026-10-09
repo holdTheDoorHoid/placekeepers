@@ -23,6 +23,7 @@
   <PlaceReasons properties={summary.reasonProperties} {manifest} level={4} />
 {/if}
 {#if summary.cityCalls}<p>{summary.cityCalls}</p>{/if}
+{#if summary.lotSize}<p>{summary.lotSize}</p>{/if}
 {#each summary.care as line (line)}<p class="care">{line}</p>{/each}
 <ProvenanceLine provenance={summary.provenance} />
 

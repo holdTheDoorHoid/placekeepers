@@ -8,6 +8,9 @@
 import { expect, test, type BrowserContext, type Page } from '@playwright/test';
 import { LAND_BANK_LOT, LOT, SAMPLE_CENTER, isPhone } from './helpers.ts';
 
+/** The rules and records layers of M4.6, in tiles/rules.pmtiles (published as GeoJSON in the sample). */
+const RULES_FILES = ['historic_districts', 'historic_sites', 'overlays', 'hearings', 'brownfields'];
+
 /** The only other servers the code names on purpose: the City's Carto SQL API and its address service. */
 const CITY_ORIGINS = ['https://phl.carto.com', 'https://api.phila.gov'];
 
@@ -177,6 +180,30 @@ test.describe('privacy', () => {
       .poll(() => ['walk', 'cycling', 'displacement', 'parking'].filter((file) => !seen.urls.some((url) => url.includes(`/data/tiles/${file}.`))), { timeout: 30_000 })
       .toEqual([]);
 
+    const local = new URL(page.url()).origin;
+    expect([...seen.origins].filter((origin) => origin !== local)).toEqual([]);
+  });
+
+  test('the rules layers and a lot page with appeals ask no other server, and the map never names who filed', async ({ page, context }) => {
+    // M4.6 (issue #42): historic districts and properties, zoning overlays, hearings and brownfield
+    // sites come in the site's own files. A hearing tapped on the map shows no name; the lot page
+    // shows who filed its appeal (docs/ETHICS.md, "Appeals and hearings"). Live City data is off,
+    // so any request to another server would be a leak.
+    await page.addInitScript(() => localStorage.setItem('placekeepers:v1:options', JSON.stringify({ live_city_data: false })));
+    const seen = watchOrigins(context);
+    const layers = 'vacant_parcels,historic_districts,historic_properties,zoning_overlays,hearings,brownfields';
+    await open(page, `v=a&m=17/${LOT.lat}/${LOT.lng}&l=${layers}`);
+    await expect
+      .poll(() => RULES_FILES.filter((file) => !seen.urls.some((url) => url.includes(`/data/tiles/rules.${file}.`))), { timeout: 30_000 })
+      .toEqual([]);
+    // Every rules file holds only its contract's properties: no name from an appeal reaches the map.
+    for (const file of RULES_FILES) {
+      const body = await (await page.request.get(`data/tiles/rules.${file}.geojson`)).text();
+      expect(body).not.toContain('QUINN');
+      expect(body).not.toContain('HOLDINGS');
+    }
+    await open(page, `v=a&m=17/${LOT.lat}/${LOT.lng}&p=${LOT.id}`);
+    await expect(page.locator('article.dossier').first()).toContainText('QUINN SAMPLE');
     const local = new URL(page.url()).origin;
     expect([...seen.origins].filter((origin) => origin !== local)).toEqual([]);
   });

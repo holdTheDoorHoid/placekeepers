@@ -283,3 +283,17 @@ describe('downloads (docs/ETHICS.md, "Appeals and hearings")', () => {
     expect(JSON.stringify(row)).not.toMatch(/QUINN|hearing|appeal/i);
   });
 });
+
+describe('the lot\'s size (M4.6)', () => {
+  it('says the frontage and depth the assessor records, live, as a measure only', () => {
+    const live = {
+      opa: '990000005', address: '1305 N EXAMPLE AVE', names: ['SAMPLE HOLDINGS LLC'], mailing: null, mailingStreet: null, mailingCityState: null, mailingZip: null,
+      category: 'VACANT LAND', buildingDescription: null, saleDate: null, salePrice: null, marketValue: null, homestead: false, frontage: 16, depth: 80.5, lng: -75.15572, lat: 39.98513,
+    };
+    const view = buildDossier(input('990000005', { liveOn: true, live: { ...IDLE_PARTS, property: ok(live) } }));
+    expect(view.summary.lotSize).toBe("The City's assessor records it as about 16 feet wide on the street and 81 feet deep.");
+    expect(buildDossier(input('990000005')).summary.lotSize).toBeNull();
+    const parsed = parseShard({ schema: 1, parcels: { '990000005': { lot_size: { frontage: 20, depth: 100 } } } }).shard!.parcels.get('990000005')!;
+    expect(parsed.lotSize).toEqual({ frontage: 20, depth: 100 });
+  });
+});

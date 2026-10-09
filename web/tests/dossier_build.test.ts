@@ -72,6 +72,8 @@ function liveProperty(over: Partial<LiveProperty> = {}): LiveProperty {
     salePrice: 15000,
     marketValue: 12000,
     homestead: false,
+    frontage: 16,
+    depth: 80.5,
     lng: -75.15572,
     lat: 39.98513,
     ...over,

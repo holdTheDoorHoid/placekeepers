@@ -397,6 +397,31 @@ the lot page never shows: zoning appeals (which name the appellant), business an
 Our own merge of the six L&I tables, the deeds and the vacancy lists covers more of a lot's story,
 from the City's published tables, the same way live and weekly.
 
+The rules and records of each lot (M4.6, issue #42, 2026-10-09; DESIGN.md section 5.6,
+CONTRACTS.md sections 4 and 6, docs/ETHICS.md "Appeals and hearings"):
+
+| Source id | Endpoint | What we keep | Measured on 2026-10-09 | Health |
+|---|---|---|---|---|
+| `historic_districts` | City ArcGIS `HistoricDistricts_Local` (the Historical Commission's local districts) | Name, the designation date as stored and as the Commission's text (the text is right where the date holds the placeholder 3000-01-01: Powelton Village, designated 11/10/2022), shape | 45 districts, 1 second; 4 with the placeholder (3 of them with no other date) and 7 with no date at all | At least 40 rows, no more than 10 percent fewer |
+| `historic_sites` | City ArcGIS `Historic_sites_PhilReg` (the Philadelphia Register of Historic Places) | Address, the dates it was listed on its own, its district and that district's date, the parcel shape. No parcel number: joined to parcels by shape | 14,980 properties in 8 pages, 10 seconds: 5,621 listed on their own, 12,328 in a district | At least 14,000 rows, no more than 5 percent fewer |
+| `zoning_overlays` | City ArcGIS `Zoning_Overlays` (the Planning Commission) | Name, symbol, type, Zoning Code section and link, sunset date, pending bill and its link, shape | 196 shapes in 1 page, 15 seconds: 166 overlay districts, 25 supplemental controls, 5 Wissahickon Watershed impervious coverage limits; 1 with a pending bill, 2 with a sunset date | At least 180 rows, no more than 10 percent fewer |
+| `appeals` | Carto `appeals` (L&I, the whole table) | The appeal number (only to list each appeal once; never published), the application type, the kind of appeal, status, decision, the filing, hearing and decision times as the City writes them, the registered community organization notified, who filed it and the owner named, the OPA account, the address and the point. Never the grounds, the proviso, or the related permit and case numbers | 44,739 appeals from 2007-01-22 to 2026-10-06 in 1 chunk, 3 seconds, 12 MB: 27,345 to the Zoning Board of Adjustment, 11,499 to the L&I Review Board, 3,002 to the Board of Building Standards, the rest to other boards; 763 hearings still to come, to 2027-03-24; 6,078 name a community organization | At least 40,000 rows, no more than 5 percent fewer, the newest filing no older than 30 days |
+| `epa_brownfields` | EPA `geodata.epa.gov/arcgis/rest/services/OEI/FRS_INTERESTS/MapServer/0` (ACRES), only `STATE_CODE='PA' AND COUNTY_NAME='PHILADELPHIA'`; public domain (EPA data license) | The EPA's registry id, the site's name and address, the post code, how precise its point is, the last day a grant reported on it, the point | 351 properties (342 distinct registry ids), 2 seconds; the server answered "Service not found" (HTTP 404) to about one request in three and worked a moment later, so the adapter tries up to six times. Points are addresses: 226 placed to within 30 meters, 64 within 50 | At least 300 rows, no more than 10 percent fewer |
+
+OpenDataPhilly's links for the historic layers point to Carto copies (`historicdistricts_local`,
+17 rows; `historic_sites_philreg`, 23,375 rows) that are older than the live ArcGIS layers and
+disagree with them (the Build Philly Now review, 2026-10-09); they are not used.
+
+Joined to the 60,421 lots on the map on 2026-10-09: 59,260 have a base zoning district, 56,194 at
+least one overlay (the /NIS overlay alone covers 52,448), 811 a historic district or the Register
+(585 in a district, 759 on the Register, 299 of them listed on their own), and 3,062 lie within 100
+meters of an EPA brownfield property. 5,005 of them have appeals (6,730 in all).
+
+The appeals table is what the City's L&I property history search (above, "evaluated and not used")
+reads for appeals. The owner decided on 2026-10-09 to show appeals with their names on each lot's
+own page; the lot page reads the City's table, not that search, and links to it for each appeal's
+grounds.
+
 Still to come for the history release: City orthophotos 1996 to 2023, the 1860 Hexamer and Locher
 atlas (hosted by the City with the GeoHistory Network's permission), PhilaGeoHistory layers such as
 the 1942 land use map (**permission required** from the Athenaeum of Philadelphia), and HOLC

@@ -1550,6 +1550,9 @@ export const strings = {
       confidenceTitle: 'How sure we are',
       signals: (n: number) => `${plural(n, 'independent City record agrees', 'independent City records agree')} that it is vacant.`,
       cityCalls: (category: string) => `City property records call it: ${category}.`,
+      /** The lot's size (M4.6), as the assessor records it: a measure, never a judgment of what fits there. */
+      lotSize: (frontage: number, depth: number) =>
+        `The City's assessor records it as about ${formatNumber(Math.round(frontage))} feet wide on the street and ${formatNumber(Math.round(depth))} feet deep.`,
       landcare: 'Already maintained by PHS LandCare.',
       landcareSince: (year: number) => `Already maintained by PHS LandCare since ${year}.`,
       garden: 'People already garden here. Ask them before you plan anything.',

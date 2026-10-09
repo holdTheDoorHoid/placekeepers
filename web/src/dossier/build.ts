@@ -285,6 +285,8 @@ export interface DossierView {
     /** How many independent records agree that it is vacant. */
     signals: string | null;
     cityCalls: string | null;
+    /** The lot's frontage and depth as the assessor records them (M4.6), live or from the weekly copy. */
+    lotSize: string | null;
     care: string[];
     lens: Lens | null;
     why: ScoreExplanation | null;
@@ -891,6 +893,12 @@ export function buildDossier(input: DossierInput): DossierView {
       reasons,
       signals: signalCount !== null && signalCount > 0 ? s.summary.signals(signalCount) : null,
       cityCalls: property?.category ? s.summary.cityCalls(plain(sentenceCase(property.category))) : null,
+      lotSize:
+        property?.frontage && property.depth
+          ? s.summary.lotSize(property.frontage, property.depth)
+          : parcel?.lotSize
+            ? s.summary.lotSize(parcel.lotSize.frontage, parcel.lotSize.depth)
+            : null,
       care,
       lens,
       why,

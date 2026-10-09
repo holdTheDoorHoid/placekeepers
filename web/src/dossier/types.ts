@@ -320,6 +320,8 @@ export interface ShardParcel {
   appeals: Appeal[] | null;
   /** The citywide parts this dossier was built without (M4.6). */
   missing: RulePart[];
+  /** The lot's frontage and depth in feet, as the assessor records them (M4.6), or null. */
+  lotSize: { frontage: number; depth: number } | null;
 }
 
 export interface Shard {
@@ -352,6 +354,9 @@ export interface LiveProperty {
    * lot page then never offers conservatorship or shows a possible estate (docs/ETHICS.md).
    */
   homestead: boolean;
+  /** The lot's frontage and depth in feet, as the assessor records them (M4.6). */
+  frontage: number | null;
+  depth: number | null;
   lng: number | null;
   lat: number | null;
 }
