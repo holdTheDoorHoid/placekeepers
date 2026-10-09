@@ -17,7 +17,7 @@ import type { Geometry } from 'geojson';
 import { Protocol } from 'pmtiles';
 import { resolveLayerData, type LayerData, type Manifest } from '../data/manifest.ts';
 import { basemapCredit, isProtomaps } from './basemap.ts';
-import { RASTER_MAX_ZOOM, isOutsideLayer, rasterTiles } from './raster.ts';
+import { RASTER_MAX_ZOOM, RASTER_SOURCE_PREFIX, isOutsideLayer, rasterTiles } from './raster.ts';
 import { NO_PADDING, type Padding } from './covered.ts';
 import { linePaths, pointOnPaths, type CrashInView, type LineInView } from '../streets/blocks.ts';
 import { registerArchive, styleArchives } from './pmtiles-source.ts';
@@ -812,6 +812,10 @@ export class MapController {
   private handleError(e: { sourceId?: string; error?: Error }): void {
     if (e.sourceId) {
       for (const [layerId, applied] of this.applied) if (applied.sourceId === e.sourceId) this.report(layerId, 'error');
+      // A picture tile the City's server did not send (M4.3) leaves MapLibre with nothing new to
+      // draw, so it may never call the map idle and the loading note would stay over the map.
+      // One more frame lets it settle, with or without the pictures.
+      if (e.sourceId.startsWith(RASTER_SOURCE_PREFIX)) this.map.triggerRepaint();
     }
     console.warn('Placekeepers map:', e.error?.message ?? e);
   }

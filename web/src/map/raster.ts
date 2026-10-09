@@ -16,6 +16,8 @@ import type { AppState } from '../state/defaults.ts';
 export const YEAR_SETTING = 'year';
 /** The deepest zoom the map asks for (src/map/controller.ts allows zoom 19). */
 export const RASTER_MAX_ZOOM = 19;
+/** The start of every picture source's id on the map. */
+export const RASTER_SOURCE_PREFIX = 'pk-raster:';
 
 /** True for a layer whose pictures the browser loads from another server. */
 export function isOutsideLayer(layer: Layer): boolean {
@@ -66,7 +68,7 @@ export function rasterTiles(layer: Layer, reg: Registry, state: AppState): Raste
   if (!source || !service || !source.endpoint.url) return null;
   const path = service.service.split('/').map(encodeURIComponent).join('/');
   return {
-    sourceId: `pk-raster:${source.id}:${service.key}`,
+    sourceId: `${RASTER_SOURCE_PREFIX}${source.id}:${service.key}`,
     key: service.key,
     tiles: [`${source.endpoint.url}/${path}/MapServer/tile/{z}/{y}/{x}`],
     bounds: source.endpoint.bounds,
