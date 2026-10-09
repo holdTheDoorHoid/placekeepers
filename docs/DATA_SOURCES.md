@@ -524,6 +524,7 @@ and `publish/laser.py`; tile properties in CONTRACTS.md section 4):
 | Walk Score | Terms forbid storing scores |
 | Mural Arts and Public Art Archive content | Terms (link out instead) |
 | Reddit, TPL website, Urban Displacement Project, Free Library website | Block automated access; never get around a block |
+| Build Philly Now's map (map.buildphillynow.org) and its other tools | All rights reserved, no open license. Its records are the City's own (it credits the Office of Property Assessment and L&I through the City's Carto service), so Placekeepers reads those City sources directly and never its tiles, API, estimates or presets (reviewed 2026-10-09, owner's instruction) |
 
 ## Access notes for builders
 
