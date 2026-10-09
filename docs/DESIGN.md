@@ -601,9 +601,10 @@ Sections, in order:
    labeled with its date, and links to the City's Tax Center for today's balance.
 4. **History**: every recorded sale and transfer with date, document type and price; assessments
    over time; permits, violations, demolitions; later, what stood here in old maps. As built
-   (M4.3, 2026-10-09): "See this lot in old aerial photos" turns on the City's aerial photos at
-   1996, the oldest, and shows the lot on the map (on a phone the lot page closes first, as for
-   "Show on map"); with live City data off the button is off and says why (section 5.10).
+   (M4.3, 2026-10-09): under the story of the lot (M4.2), "See this lot in old aerial photos"
+   turns on the City's aerial photos at 1996, the oldest, and shows the lot on the map (on a phone
+   the lot page closes first, as for "Show on map"); with live City data off the button is off and
+   says why (section 5.10).
 5. **Nearby**: shooting counts, crashes, memorials, LandCare lots, gardens, schools.
 6. **Sources and freshness**, and "report a correction".
 

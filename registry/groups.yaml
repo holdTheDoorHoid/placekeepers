@@ -34,7 +34,7 @@
   description: How walkable each area is, how many people and everyday places are within a short walk, and how stressful each street is for people on bikes.
 - id: then_and_now
   label: Then and now
-  description: The City's aerial photos of every year since 1996 and its copy of the 1860 atlas, to see what stood on a block before. They load from the City's servers only when turned on.
+  description: What stood on a block before, and what of the past is still there. The City's aerial photos of every year since 1996 and its 1860 atlas load from the City's servers only when turned on.
 - id: safety_context
   label: Where care is needed most
   description: Context that shows where improvements are likely to help most.
