@@ -49,6 +49,12 @@ export interface ManifestDossiers {
   prefixes: Set<string>;
   files: number | null;
   bytes: number | null;
+  /**
+   * The lot timeline's history shards (issue #38): one beside each dossier shard, at
+   * dossiers/history/<prefix>.json; `parts` names what they hold for every parcel ("li": the L&I
+   * records). Null when this build has none (older manifests).
+   */
+  history?: { files: number | null; bytes: number | null; parts: string[] } | null;
 }
 
 export interface Manifest {
@@ -119,7 +125,18 @@ function parseDossiers(raw: unknown, problems: string[]): ManifestDossiers | nul
     if (typeof prefix === 'string' && pattern.test(prefix)) prefixes.add(prefix);
     else problems.push(`dossiers.prefixes has "${String(prefix)}", which is not ${digits} digits`);
   }
-  return { prefix_digits: digits, prefixes, files: count(raw, 'files', 'dossiers', problems), bytes: count(raw, 'bytes', 'dossiers', problems) };
+  let history: ManifestDossiers['history'] = null;
+  if (isObject(raw.history)) {
+    const parts = Array.isArray(raw.history.parts) ? raw.history.parts.filter((p): p is string => typeof p === 'string') : [];
+    history = { files: count(raw.history, 'files', 'dossiers.history', problems), bytes: count(raw.history, 'bytes', 'dossiers.history', problems), parts };
+  } else if (raw.history !== undefined && raw.history !== null) problems.push('dossiers.history should be an object or null');
+  return {
+    prefix_digits: digits,
+    prefixes,
+    files: count(raw, 'files', 'dossiers', problems),
+    bytes: count(raw, 'bytes', 'dossiers', problems),
+    history,
+  };
 }
 
 export function parseManifest(json: unknown): ParseResult {

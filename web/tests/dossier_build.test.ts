@@ -11,7 +11,6 @@ import { parseManifest } from '../src/data/manifest.ts';
 import {
   IDLE_PARTS,
   buildDossier,
-  cityTitle,
   documentLabel,
   reasonBesideCityList,
   transferRow,
@@ -23,6 +22,7 @@ import { displayedBreakdown } from '../src/map/lens.ts';
 import { strings } from '../src/strings.ts';
 import { plain } from '../src/dossier/plain.ts';
 import { parseCommon, parseShard } from '../src/dossier/shard.ts';
+import { cityWords } from '../src/dossier/timeline.ts';
 import type { Assessment, LiveLi, LiveProperty, Transfer } from '../src/dossier/types.ts';
 import { defaultState } from '../src/state/defaults.ts';
 
@@ -104,7 +104,8 @@ describe('the weekly snapshot alone (live City data off)', () => {
     expect(view.banner).toMatchObject({ tone: 'snapshot', text: 'Live City data is off. This page shows the weekly snapshot of October 4, 2026.', offerLive: true });
     expect(view.owner.provenance.text).toBe('Live City data is off, so this is the weekly snapshot of October 4, 2026.');
     expect(view.history.transfersProvenance.text).toBe('Live City data is off, so this is the weekly snapshot of October 4, 2026.');
-    expect(view.history.li.liveForTimeline).toBe(true);
+    // The timeline waits for the History part to open before it fetches its records.
+    expect(view.history.timeline.status).toBe('waiting');
   });
 
   it('shows the summary from the vacancy model with its reasons in the model\'s own sentences', () => {
@@ -185,7 +186,7 @@ describe('live City data', () => {
     expect(view.owner.provenance).toEqual({ tone: 'live', text: 'Live from the City at 2:14 PM.' });
     expect(view.history.transfers!.map((t) => t.date)).toEqual(['Sep 2, 2026']);
     expect(view.history.assessments!.map((a) => a.year)).toEqual([2027, 2026]);
-    expect(view.history.li.rows!.map((r) => r.kind)).toEqual(['Violation', 'Permit']);
+    expect(view.history.timeline.years.flatMap((y) => y.rows.map((r) => r.label))).toEqual(['Deed', 'Violation', 'Permit']);
     expect(view.summary.cityCalls).toBe('City property records call it: Vacant land.');
     // The deed of September 2026 is a sale: the years since the last sale flag says 2026 now.
     expect(view.owner.flags.find((f) => f.id === 'years_since_sale')!).toMatchObject({ text: 'Last sold in 2026.', provenance: { tone: 'live' } });
@@ -444,8 +445,8 @@ describe('details', () => {
   });
 
   it('writes L&I titles in sentence case, keeping their abbreviations', () => {
-    expect(cityTitle('ID STRUCTURE')).toBe('ID structure');
-    expect(cityTitle('EXTERIOR AREA WEEDS')).toBe('Exterior area weeds');
+    expect(cityWords('ID STRUCTURE')).toBe('ID structure');
+    expect(cityWords('EXTERIOR AREA WEEDS')).toBe('Exterior area weeds');
   });
 
   it('marks sheriff deeds and deeds that covered several properties', () => {

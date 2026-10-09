@@ -6,7 +6,12 @@ from placekeepers.adapters import li, places
 from placekeepers.adapters.arcgis import ArcgisAdapter
 from placekeepers.adapters.art import PercentForArt, WikidataArt
 from placekeepers.adapters.base import Adapter, AdapterMismatch, FetchError, Validation
-from placekeepers.adapters.bulk_files import AcsPoverty, AcsTenure, CagpTax2025
+from placekeepers.adapters.bulk_files import (
+    AcsPoverty,
+    AcsTenure,
+    CagpTax2025,
+    CagpVacancyList2024,
+)
 from placekeepers.adapters.carto import CartoAccountsAdapter, CartoAdapter, Column
 from placekeepers.adapters.city_places import (
     LibraryLocations,
@@ -67,6 +72,8 @@ ADAPTERS: dict[str, type[Adapter]] = {
     "li_imminently_dangerous": li.LiImminentlyDangerous,
     "li_clean_and_seal": li.LiCleanAndSeal,
     "li_demolitions": li.LiDemolitions,
+    # The lot timeline (M4.2, issue #38): every L&I record a lot page shows, for the candidates
+    "li_history": li.LiHistory,
     # M1.1 land, care and boundaries
     "building_footprints": places.BuildingFootprints,
     "land_use": places.LandUse,
@@ -129,6 +136,9 @@ ADAPTERS: dict[str, type[Adapter]] = {
     "assessment_values": AssessmentValues,
     "acs_tenure": AcsTenure,
     "market_value_analysis": MarketValueAnalysis,
+    # The lot timeline (M4.2): Clean & Green Philly's copies of the June 2024 vacancy lists
+    "cagp_vacant_land_2024": CagpVacancyList2024,
+    "cagp_vacant_buildings_2024": CagpVacancyList2024,
 }
 
 

@@ -13,6 +13,9 @@ Written under the data root:
     dossiers/<first four digits of the OPA account>.json    the parcels, one file per prefix
     dossiers/common.json  the parts of each flag that are the same for every parcel (its careful
                           note, next step, routes, links and sources) and the notices, fetched once
+    dossiers/history/<prefix>.json  what the lot timeline adds to the shard: each parcel's L&I
+                          records and the vacancy lists it is on (publish/history.py, issue #38),
+                          fetched only when a lot page's History part opens
     tables/owners.json    every organization holding many vacant parcels, with each parcel's
                           account, address, kind and confidence, so "this owner's list" needs no
                           other file. An owner who may be a person is never listed there: each of
@@ -74,6 +77,7 @@ from placekeepers.derive.routes import first_route_code, routes_for, suggestions
 from placekeepers.derive.vacancy import REASONS
 from placekeepers.derive.vacancy import output_path as vacancy_output
 from placekeepers.health import SourceStatus
+from placekeepers.publish.history import HistoryResult, build_history
 from placekeepers.publish.layers import (
     H3_RESOLUTION,
     PARCEL_SOURCES,
@@ -114,6 +118,10 @@ OPTIONAL = (
     "shootings",
     "vacant_indicators_land",
     "vacant_indicators_bldg",
+    # The lot timeline's history shards (publish/history.py, issue #38)
+    "li_history",
+    "cagp_vacant_land_2024",
+    "cagp_vacant_buildings_2024",
 )
 #: The parts of a dossier whose records are downloaded only for the candidate parcels
 #: (placekeepers.candidates), with the source each comes from. A dossier lists in `partial` the
@@ -184,6 +192,8 @@ class DossierResult:
     routes: Counter = field(default_factory=Counter)
     #: dossiers built without some records (their `partial`), by part, and in all
     partial: Counter = field(default_factory=Counter)
+    #: the history shards of the lot timeline (publish/history.py), when written
+    history: HistoryResult | None = None
 
     def manifest_block(self) -> dict[str, Any] | None:
         """The manifest's `dossiers` summary (docs/CONTRACTS.md section 3), or None when no
@@ -195,6 +205,7 @@ class DossierResult:
             "prefixes": self.prefixes,
             "files": self.shards,
             "bytes": self.bytes,
+            "history": self.history.manifest_block() if self.history else None,
         }
 
 
@@ -1079,6 +1090,22 @@ def build_dossiers(
     generated_at = iso_z(ctx.now())
     write_shards(result, out_root, shards, generated_at)
     write_common(result, out_root, generated_at)
+    # The lot timeline's records, in their own files beside the shards (issue #38). The shards
+    # are written, so their parcels can go before the timeline's records are read.
+    shards.clear()
+    con = ctx.duckdb()
+    try:
+        con.execute("CREATE TABLE acc AS SELECT unnest($1::VARCHAR[]) AS a", [accounts])
+        result.history = build_history(
+            con, paths, accounts, downloaded_for, out_root, generated_at, SHARD_DIGITS
+        )
+    finally:
+        con.close()
+    if not result.history.li:
+        result.notes.append(
+            "the lot timeline was built without L&I records (li_history has no snapshot); lot "
+            "pages say so and offer live City data"
+        )
     organizations = {key: found for key, found in listed.items() if key not in people}
     write_owners_table(result, out_root, organizations, opa, vacancy, generated_at)
     result.people_listed = len(people)

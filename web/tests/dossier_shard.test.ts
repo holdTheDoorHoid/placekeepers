@@ -83,7 +83,13 @@ describe('finding a parcel\'s shard', () => {
   const manifest = parseManifest(MANIFEST).manifest!;
 
   it('reads the manifest\'s dossiers block, and tolerates manifests without one', () => {
-    expect(manifest.dossiers).toEqual({ prefix_digits: 4, prefixes: new Set(['9900']), files: 1, bytes: expect.any(Number) });
+    expect(manifest.dossiers).toEqual({
+      prefix_digits: 4,
+      prefixes: new Set(['9900']),
+      files: 1,
+      bytes: expect.any(Number),
+      history: { files: 1, bytes: expect.any(Number), parts: ['li'] },
+    });
     const older = structuredClone(MANIFEST);
     delete older.dossiers;
     expect(parseManifest(older).manifest!.dossiers).toBeNull();

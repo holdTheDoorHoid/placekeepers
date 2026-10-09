@@ -16,11 +16,26 @@ import {
   fetchTransfers,
   type LiveResult,
 } from './carto.ts';
-import { IDLE_PARTS, type LiveParts, type Part, type ShardState } from './build.ts';
+import { IDLE_PARTS, type HistoryState, type LiveParts, type Part, type ShardState } from './build.ts';
+import { historyOf, historyPath, loadHistoryShard } from './history.ts';
 import { LIVE_TIMEOUT_MS } from './http.ts';
 import { isOpaAccount } from './opa.ts';
 import { loadCommon, loadShard, shardLocation } from './shard.ts';
+import { isTimelineKind, type TimelineKind } from './timeline.ts';
 import type { DossierNotes } from './types.ts';
+import { readItem, writeItem } from '../state/storage.ts';
+
+/** The kinds of record a reader switched off in the timeline, remembered in this browser only. */
+export const TIMELINE_HIDDEN_KEY = 'timeline-hidden';
+
+function readHidden(): TimelineKind[] {
+  try {
+    const raw = JSON.parse(readItem(TIMELINE_HIDDEN_KEY) ?? '[]') as unknown;
+    return Array.isArray(raw) ? [...new Set(raw.filter(isTimelineKind))] : [];
+  } catch {
+    return [];
+  }
+}
 
 /** The shard's own shared wording first (it was written with that shard), then dossiers/common.json. */
 function mergeNotes(own: DossierNotes | null, common: DossierNotes | null): DossierNotes | null {
@@ -60,8 +75,13 @@ export class DossierController {
   tile = $state.raw<Record<string, unknown> | null>(null);
   center = $state.raw<[number, number] | null>(null);
   shape = $state.raw<Geometry | null>(null);
+  /** The lot timeline's records from the weekly copy, asked for when the History part opens. */
+  history = $state.raw<HistoryState>({ status: 'idle' });
+  /** The kinds of record the reader switched off in the timeline. */
+  hiddenKinds = $state.raw<TimelineKind[]>(readHidden());
 
   private readonly deps: DossierDeps;
+  private historyRun: Promise<void> | null = null;
   private run = 0;
   private abort: AbortController | null = null;
   private readonly cache = new Map<string, { at: number; part: Part<unknown> }>();
@@ -91,6 +111,8 @@ export class DossierController {
     else if (!same) this.shape = null;
     if (same) return;
     this.opa = opa;
+    this.history = { status: 'idle' };
+    this.historyRun = null;
     this.start(false);
   }
 
@@ -104,11 +126,53 @@ export class DossierController {
     this.tile = null;
     this.center = null;
     this.shape = null;
+    this.history = { status: 'idle' };
+    this.historyRun = null;
   }
 
-  /** Asks the City again for every part that failed. */
+  /** Asks the City again for every part that failed, and the weekly copy's timeline if it failed. */
   retry(): void {
-    if (this.opa) this.start(true);
+    if (!this.opa) return;
+    this.start(true);
+    if (this.history.status === 'failed') {
+      this.history = { status: 'idle' };
+      this.historyRun = null;
+      void this.loadHistory();
+    }
+  }
+
+  /** Switches a kind of record on or off in the timeline, and remembers it in this browser. */
+  toggleKind(kind: TimelineKind): void {
+    const hidden = this.hiddenKinds.includes(kind) ? this.hiddenKinds.filter((k) => k !== kind) : [...this.hiddenKinds, kind];
+    this.hiddenKinds = hidden;
+    writeItem(TIMELINE_HIDDEN_KEY, JSON.stringify(hidden));
+  }
+
+  /**
+   * Fetches the lot timeline's records from the weekly copy (its history shard), once per lot:
+   * when the History part opens, or before printing. Settles when they are in, or known to be
+   * missing.
+   */
+  loadHistory(): Promise<void> {
+    const opa = this.opa;
+    if (!opa) return Promise.resolve();
+    if (this.historyRun) return this.historyRun;
+    this.history = { status: 'loading' };
+    this.historyRun = (async () => {
+      const manifest = await this.deps.manifest();
+      const path = historyPath(opa, manifest);
+      if (opa !== this.opa) return;
+      if (!path) {
+        // A build with history shards has none for a parcel without a dossier.
+        this.history = { status: manifest?.dossiers?.history ? 'unlisted' : 'unpublished' };
+        return;
+      }
+      const result = await loadHistoryShard(this.deps.dataBase, path, this.deps.fetchImpl);
+      if (opa !== this.opa) return;
+      if (result.ok) this.history = { status: 'found', parcel: historyOf(result.shard, opa), generatedAt: result.shard.generatedAt };
+      else this.history = { status: result.reason === 'not_published' ? 'unpublished' : 'failed' };
+    })();
+    return this.historyRun;
   }
 
   /** Follows the "Fetch live City data" option: asks the City when it is turned on, and stops when it is turned off. */

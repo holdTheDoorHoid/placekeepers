@@ -224,11 +224,14 @@ describe('finding each layer\'s file', () => {
       .filter((p) => p !== 'manifest.json')
       .sort();
     const shard = /^dossiers\/(\d+)\.json$/;
+    // The lot timeline's history shards, one beside each dossier shard (issue #38).
+    const historyShard = /^dossiers\/history\/(\d+)\.json$/;
     // Route survey sheets are listed in tables/routes/index.json, not in files (CONTRACTS.md section 7).
     const routeSheet = /^tables\/routes\/(?!index\.json$)[^/]+\.json$/;
-    expect(Object.keys(manifest!.files).sort()).toEqual(onDisk.filter((p) => !shard.test(p) && !routeSheet.test(p)));
+    expect(Object.keys(manifest!.files).sort()).toEqual(onDisk.filter((p) => !shard.test(p) && !historyShard.test(p) && !routeSheet.test(p)));
     const prefixes = onDisk.map((p) => shard.exec(p)?.[1]).filter((p): p is string => !!p);
     expect([...manifest!.dossiers!.prefixes].sort()).toEqual(prefixes);
+    expect(onDisk.map((p) => historyShard.exec(p)?.[1]).filter((p): p is string => !!p)).toEqual(prefixes);
   });
 
   it('points every fixture layer at a file that exists, using both file types', () => {

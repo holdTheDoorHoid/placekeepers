@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import io
 import json
+import re
 from datetime import UTC, date, datetime
 
 import httpx
@@ -20,6 +21,7 @@ from placekeepers.adapters import ADAPTERS, ArcgisAdapter, CartoAccountsAdapter,
 from placekeepers.adapters.carto import CartoAdapter, Column
 from placekeepers.adapters.displacement import AssessmentValues
 from placekeepers.adapters.lens_context import TreeCanopy2018
+from placekeepers.adapters.li import HISTORY_PARTS, LiHistory
 from placekeepers.candidates import Candidates
 from placekeepers.registry import Source
 from placekeepers.runner import fetch_source, validate_source
@@ -98,7 +100,8 @@ def test_carto_sources_from_fixtures(source_id: str, context_factory) -> None:
         assert all(f"({source.endpoint.where})" in query for query in fake.queries)
 
 
-@pytest.mark.parametrize("source_id", ids_of(CartoAccountsAdapter))
+# The lot timeline's L&I records read six tables; tests/test_sources.py covers them below.
+@pytest.mark.parametrize("source_id", ids_of(CartoAccountsAdapter, exclude=LiHistory))
 def test_account_sources_from_fixtures(source_id: str, context_factory, monkeypatch) -> None:
     adapter = ADAPTERS[source_id]
     chosen = ["370000001", "370000003", "370000004"]
@@ -142,6 +145,59 @@ def test_account_sources_go_in_chunks_and_check_each(context_factory, monkeypatc
     other.mkdir()
     with pytest.raises(Exception, match="Chunk 1 has 2 rows but the table reports 3"):
         SmallChunks(source, ctx).fetch(other)
+
+
+def history_rows(table: str, kind: str, count: int) -> list[dict]:
+    """Rows of one L&I table as the timeline query names its columns."""
+    return [
+        {
+            "cartodb_id": n,
+            "opa_account_num": f"37000000{n}",
+            "kind": kind,
+            "date": f"2019-0{n}-02 23:30:00+00",
+            "title": f"{kind.upper()} TITLE {n}",
+            "status": "OPEN",
+            "detail": "YES" if kind == "demolition" else None,
+            "casenumber": f"CASE{n}",
+        }
+        for n in range(1, count + 1)
+    ]
+
+
+def test_the_timeline_reads_six_tables_in_chunks_without_case_numbers(
+    context_factory, monkeypatch
+) -> None:
+    """The lot timeline's L&I records (issue #38): every table in the same chunks of candidate
+    parcels, each chunk counted, days in Philadelphia, and never a case number."""
+    chosen = [f"37000000{n}" for n in range(1, 5)]
+    monkeypatch.setattr(
+        "placekeepers.adapters.carto.candidate_accounts", lambda ctx: Candidates(accounts=chosen)
+    )
+
+    monkeypatch.setattr(LiHistory, "accounts_per_chunk", 3)
+    tables = {part.table: history_rows(part.table, part.kind, 4) for part in HISTORY_PARTS}
+    ctx = context_factory(now=NOW)
+    source = relaxed(ctx.registry.sources["li_history"])
+    assert source.endpoint.table == "violations"
+    fake = FakeCarto(tables=tables)
+    ctx = context_factory(handler=fake, now=NOW)
+    # The fixture's records are old: leave the age rule out here.
+    timeless = source.health.model_copy(update={"max_age_days": None, "newest_field": None})
+    store = run(ctx, source.model_copy(update={"health": timeless}))
+    meta = store.current()
+    # Two chunks of accounts, six tables each, every one counted.
+    selects = [q for q in fake.queries if not q.startswith("SELECT count")]
+    counts = [q for q in fake.queries if q.startswith("SELECT count")]
+    assert len(selects) == len(counts) == 12
+    assert {re.search(r"FROM (\w+)", q).group(1) for q in selects} == set(tables)
+    assert meta.rows == 4 * 6
+    table = pq.read_table(store.path_for(meta))
+    assert table.column_names == ["opa_account_num", "kind", "date", "title", "status", "detail"]
+    # 23:30 in UTC on January 2 is still January 2 in Philadelphia (6:30 PM).
+    assert set(table.column("date").to_pylist()) == {date(2019, n, 2) for n in range(1, 5)}
+    for query in selects:
+        assert "casenumber" not in query and "permitnumber" not in query
+        assert "applicant" not in query and "contractor" not in query and "inspector" not in query
 
 
 def test_vacancy_violations_come_for_the_whole_city_without_repeats(
@@ -341,6 +397,21 @@ def tax_file() -> bytes:
     return buffer.getvalue()
 
 
+def vacancy_list_file() -> bytes:
+    """A June 2024 vacancy list as Clean & Green Philly saved it: owner names, an address and a
+    shape beside the account, which is sometimes a number that lost its leading zero."""
+    table = pa.table(
+        {
+            "address": ["2931 N LAWRENCE ST", "100 SAMPLE ST", "NOWHERE", "2931 N LAWRENCE ST"],
+            "owner_1": ["MORALES ROSA", "SOMEONE", "NOBODY", "MORALES ROSA"],
+            "opa_id": ["371000001", "11000017", "not a number", "371000001"],
+        }
+    )
+    buffer = io.BytesIO()
+    pq.write_table(table, buffer)
+    return buffer.getvalue()
+
+
 def file_for(source_id: str) -> tuple[bytes, dict[str, str]]:
     modified = {"Last-Modified": "Sat, 03 Oct 2026 05:23:42 GMT"}
     if source_id in ("building_footprints", "land_use"):
@@ -369,6 +440,8 @@ def file_for(source_id: str) -> tuple[bytes, dict[str, str]]:
         return septa_zip(), modified
     if source_id == "census_blocks_2020":
         return redistricting_zip(), modified
+    if source_id in ("cagp_vacant_land_2024", "cagp_vacant_buildings_2024"):
+        return vacancy_list_file(), {}
     if source_id == "pba_laser":
         # Philly Bike Action's map: the same pin for every day and every kind asked for.
         return json.dumps({"pins": [[39.9526, -75.1652, 1]], "unique_users_count": 1}).encode(), {}
@@ -411,6 +484,19 @@ def test_poverty_keeps_philadelphia_tracts_and_drops_missing_codes(context_facto
     ]
     assert rows[1]["below_poverty"] is None and rows[1]["population_for_poverty"] == 1000
     assert (rows[0]["survey_start_year"], rows[0]["survey_end_year"]) == (2020, 2024)
+
+
+def test_june_2024_lists_keep_only_the_accounts_and_the_lists_date(context_factory) -> None:
+    ctx = context_factory(
+        handler=lambda request: httpx.Response(200, content=vacancy_list_file()), now=NOW
+    )
+    store = run(ctx, relaxed(ctx.registry.sources["cagp_vacant_land_2024"]))
+    table = pq.read_table(store.path_for(store.current()))
+    assert table.column_names == ["opa_id", "list_date"]
+    assert table.to_pylist() == [
+        {"opa_id": "011000017", "list_date": date(2024, 6, 24)},
+        {"opa_id": "371000001", "list_date": date(2024, 6, 24)},
+    ]
 
 
 def test_tax_snapshot_keeps_only_the_tax_fields_with_its_date(context_factory) -> None:
