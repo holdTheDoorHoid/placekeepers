@@ -160,6 +160,8 @@ export function parseManifest(json: unknown): ParseResult {
   if (json.layers !== undefined && !isObject(json.layers)) problems.push('layers should be an object');
   for (const [id, raw] of Object.entries(isObject(json.layers) ? json.layers : {})) {
     const where = `layers.${id}`;
+    // A layer of pictures from the City's own servers has no file here (M4.3, `file: null`).
+    if (isObject(raw) && raw.file === null) continue;
     if (!isObject(raw) || typeof raw.file !== 'string' || !SAFE_PATH.test(raw.file)) {
       problems.push(`${where} needs a file path inside the data root`);
       continue;
@@ -385,6 +387,7 @@ export interface StatusText {
 
 export function describeStatus(row: StatusRow): StatusText {
   const s = strings.status;
+  if (row.source?.endpoint.kind === 'arcgis_tiles') return describePictureStatus(row);
   if (row.basemap) {
     const built = formatDate(row.basemap.built);
     const summary = !row.basemap.available ? s.basemapMissing : built ? s.basemapMade(built) : s.basemapNoDate;
@@ -409,6 +412,33 @@ export function describeStatus(row: StatusRow): StatusText {
     if (e.rows !== null) details.push(s.rows(e.rows));
     const newest = formatDate(e.newest_record);
     if (newest) details.push(s.newest(newest));
+    if (e.message) details.push(s.message(e.message));
+  }
+  return { label: s.statusLabel[row.status], summary, details };
+}
+
+/**
+ * A source of pictures the browser loads from the City's servers (M4.3): the site keeps no copy,
+ * so its status says whether every service answered the weekly check, not which copy is in use.
+ */
+function describePictureStatus(row: StatusRow): StatusText {
+  const s = strings.status;
+  const h = strings.historic;
+  const e = row.entry;
+  const since = formatDate(e?.stale_since ?? e?.last_success);
+  let summary: string | null = null;
+  if (row.status === 'ok') summary = h.statusOk;
+  else if (row.status === 'stale') summary = since ? h.statusStale(since) : h.statusFailing;
+  else if (row.status === 'failing') summary = h.statusFailing;
+  else if (row.status === 'missing') summary = s.missingText;
+  else summary = s.unknownText;
+  const details: string[] = [];
+  if (e) {
+    const success = formatDate(e.last_success);
+    if (success) details.push(h.lastCheck(success));
+    const attempt = formatDate(e.last_attempt);
+    if (attempt && e.last_attempt !== e.last_success) details.push(s.lastAttempt(attempt));
+    if (e.rows !== null) details.push(h.services(e.rows));
     if (e.message) details.push(s.message(e.message));
   }
   return { label: s.statusLabel[row.status], summary, details };

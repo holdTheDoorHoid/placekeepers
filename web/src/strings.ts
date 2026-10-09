@@ -1434,6 +1434,36 @@ export const strings = {
     failed: (reason: string) => `The City's parcel map ${reason}. Try again in a moment.`,
   },
 
+  // Then and now (M4.3): the City's aerial photos by year and its 1860 atlas, loaded straight from
+  // the City's servers only while "Fetch live City data" is on (src/map/raster.ts).
+  historic: {
+    liveOff:
+      'These pictures come straight from the City\'s servers, so they can be turned on only while "Fetch live City data" is on (in Settings, under "Privacy and live data").',
+    refused: 'Old aerial photos and the 1860 atlas come from the City\'s servers. Turn on live City data in Settings to see them.',
+    serverError: 'The City\'s picture server did not send every part of this picture. Try again later.',
+    photoYear: (year: string) => `The City's aerial photo of ${year}, taken from a plane in spring.`,
+    blackAndWhite: 'The 1996 photos are in black and white.',
+    under: 'The photo lies under every other layer. Lower its strength to see today\'s streets through it.',
+    photoCredit: 'Photos: City of Philadelphia, Office of Innovation and Technology.',
+    atlasCoverage: 'The atlas covers Center City and Northern Liberties only.',
+    atlasCredit: 'Atlas fitted to today\'s map by the Greater Philadelphia GeoHistory Network and hosted by the City of Philadelphia with its permission.',
+    sliderRange: (first: string, last: string) => `From ${first} to ${last}`,
+    // The lot page, under History
+    lotTitle: 'Old aerial photos',
+    lotButton: 'See this lot in old aerial photos',
+    lotHelp:
+      'Opens the map at this lot with the City\'s aerial photo of 1996, the oldest it has. Slide through the years since then under "Then and now" in the layers.',
+    lotLiveOff: 'The photos come straight from the City\'s servers, so they need live City data, which is off.',
+    shown: 'Aerial photos of 1996 are on. Slide through the years under "Then and now" in the layers.',
+    // The Data status page, for a source of pictures the site never copies
+    statusOk: 'Every picture service answered at the last weekly check. The pictures load straight from the City\'s servers when someone turns their layer on.',
+    statusStale: (date: string) =>
+      `At the last weekly check not every picture service answered, so some pictures may not show. Every one last answered on ${date}.`,
+    statusFailing: 'The picture services did not answer at the weekly check, so the pictures may not show.',
+    services: (n: number) => `${plural(n, 'picture service', 'picture services')} checked`,
+    lastCheck: (date: string) => `Last check where every service answered: ${date}`,
+  },
+
   options: {
     title: 'Privacy and live data',
     privacyLink: 'How Placekeepers handles your privacy',

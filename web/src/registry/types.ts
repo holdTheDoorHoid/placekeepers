@@ -5,13 +5,14 @@
 export const EVIDENCE_LEVELS = ['strong', 'moderate', 'mixed', 'weak', 'not_violence', 'context'] as const;
 export type Evidence = (typeof EVIDENCE_LEVELS)[number];
 
-export const GEOMETRIES = ['point', 'line', 'polygon'] as const;
+// raster: pictures the browser loads from an `arcgis_tiles` source's own server (M4.3).
+export const GEOMETRIES = ['point', 'line', 'polygon', 'raster'] as const;
 export type Geometry = (typeof GEOMETRIES)[number];
 
 export const CADENCES = ['daily', 'weekly', 'monthly', 'yearly', 'irregular', 'frozen'] as const;
 export type Cadence = (typeof CADENCES)[number];
 
-export const ENDPOINT_KINDS = ['carto', 'arcgis', 'url', 'osm_extract', 'curated', 'sparql'] as const;
+export const ENDPOINT_KINDS = ['carto', 'arcgis', 'url', 'osm_extract', 'curated', 'sparql', 'arcgis_tiles'] as const;
 export type EndpointKind = (typeof ENDPOINT_KINDS)[number];
 
 // json: a reply the source's pipeline adapter asks for with query parameters (pba_laser, issue #37).
@@ -44,6 +45,12 @@ export interface License {
   share_alike: boolean;
 }
 
+/** One picture service of an `arcgis_tiles` source (M4.3): its key (the year) and its name. */
+export interface TileService {
+  key: string;
+  service: string;
+}
+
 export interface Endpoint {
   kind: EndpointKind;
   table?: string;
@@ -55,6 +62,10 @@ export interface Endpoint {
   path?: string;
   /** osm_extract: the OpenStreetMap tags the pipeline keeps, "key=value" or "key" (M2.2). */
   tags?: string[];
+  /** arcgis_tiles: where the pictures are, as west, south, east and north (M4.3). */
+  bounds?: [number, number, number, number];
+  /** arcgis_tiles: the picture services, in order (M4.3). */
+  services?: TileService[];
 }
 
 export interface SourceHealth {
@@ -96,6 +107,8 @@ export interface ChoiceSetting extends SettingBase {
   type: 'choice';
   options: ChoiceOption[];
   default: string;
+  /** "slider": shown as a slider through the options in order, such as years (M4.3). */
+  control?: 'slider';
 }
 
 export interface RangeSetting extends SettingBase {
@@ -116,6 +129,10 @@ export interface Layer {
   group: string;
   description: string;
   sources: string[];
+  /**
+   * The file under the data root and the layer inside it. A raster layer has neither in the YAML
+   * (its pictures come from its source's own server, M4.3); the validator gives it empty text.
+   */
   file: string;
   source_layer: string;
   geometry: Geometry;

@@ -66,6 +66,8 @@ describe('map styles', () => {
   it('produce valid MapLibre layers for tiles and for GeoJSON, in every state', () => {
     for (const state of states()) {
       for (const layer of reg.layers) {
+        // Pictures from the City's servers draw raster sources of their own (tests/historic.test.ts).
+        if (layer.geometry === 'raster') continue;
         const style = styleFor(layer)!;
         const tiles = style.layers({ layer, registry: reg, state, sourceId: 'tiles', sourceLayer: layer.source_layer });
         if (style.base) {

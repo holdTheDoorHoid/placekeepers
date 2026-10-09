@@ -3,6 +3,7 @@
   // show the parcel on the map, or clear the selection.
   import { config } from '../../config/index.ts';
   import type { OwnerListTarget } from '../../dossier/owners-table.ts';
+  import type { SettingValue } from '../../registry/types.ts';
   import type { AppStore } from '../../state/store.svelte.ts';
   import { LIVE_CITY_DATA } from '../../state/options.ts';
   import { strings } from '../../strings.ts';
@@ -24,7 +25,10 @@
   const actions = $derived({
     onRetry: () => store.dossier.retry(),
     onTurnOnLive: () => store.setOption(LIVE_CITY_DATA, true),
-    onShowLayer: (id: string) => store.setLayerVisible(id, true),
+    onShowLayer: (id: string, settings: Record<string, SettingValue> = {}) => {
+      for (const [setting, value] of Object.entries(settings)) store.setSetting(id, setting, value);
+      store.setLayerVisible(id, true);
+    },
     onPrint: () => window.print(),
     onShowOnMap,
     onClear: clearable ? () => store.select(null) : undefined,

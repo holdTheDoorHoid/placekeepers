@@ -234,8 +234,9 @@ describe('finding each layer\'s file', () => {
   it('points every fixture layer at a file that exists, using both file types', () => {
     const { manifest } = parseManifest(fixtureJson);
     const kinds = new Set<string>();
-    // The base map is made by the site, not published in the data root (CONTRACTS.md section 2).
-    for (const l of reg.layers.filter((layer) => !layer.file.startsWith('basemap/'))) {
+    // The base map is made by the site, not published in the data root (CONTRACTS.md section 2),
+    // and pictures from the City's servers have no file at all (M4.3).
+    for (const l of reg.layers.filter((layer) => !layer.file.startsWith('basemap/') && layer.geometry !== 'raster')) {
       const result = resolveLayerData(l, manifest, FIXTURE_ROOT.href);
       expect(result.ok, l.id).toBe(true);
       if (!result.ok) continue;
