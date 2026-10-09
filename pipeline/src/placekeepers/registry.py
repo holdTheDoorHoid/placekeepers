@@ -54,7 +54,7 @@ Weight = Annotated[int, Field(strict=True, ge=0, le=5)]
 Evidence = Literal["strong", "moderate", "mixed", "weak", "not_violence", "context"]
 Cadence = Literal["daily", "weekly", "monthly", "yearly", "irregular", "frozen"]
 AppliesTo = Literal["parcel", "segment", "crash", "stop", "cell"]
-EndpointKind = Literal["carto", "arcgis", "url", "osm_extract", "curated", "sparql"]
+EndpointKind = Literal["carto", "arcgis", "url", "osm_extract", "curated", "sparql", "arcgis_tiles"]
 
 
 class Strict(BaseModel):
@@ -87,6 +87,8 @@ class Partner(Strict):
 
 # ---------------------------------------------------------------------------------------------
 # sources.yaml
+
+Number = StrictInt | StrictFloat
 
 
 class CartoEndpoint(Strict):
@@ -161,13 +163,56 @@ class SparqlEndpoint(Strict):
     url: Annotated[str, StringConstraints(pattern=r"^https://\S+$")]
 
 
+#: An ArcGIS service name, with its folder when it has one (`transportation/lts_network`).
+ServiceName = Annotated[str, StringConstraints(pattern=r"^[^/?#&\s][^/?#&]*(/[^/?#&\s][^/?#&]*)*$")]
+
+
+class TileService(Strict):
+    """One picture service of an `arcgis_tiles` source: `key` is what the layer's `year` setting
+    names it by (and what appears in links), `service` its name on the server."""
+
+    key: Annotated[str, StringConstraints(pattern=r"^[A-Za-z0-9_-]+$")]
+    service: ServiceName
+
+
+class ArcgisTilesEndpoint(Strict):
+    """Cached picture tiles on an ArcGIS server (added 2026-10-09 by M4.3, docs/CONTRACTS.md
+    section 1), such as the City's aerial photographs. The visitor's browser loads the tiles
+    straight from the server (`<url>/<service>/MapServer/tile/{z}/{y}/{x}`) once someone turns the
+    layer on; the pipeline never copies them. Each run it only checks that every service still
+    answers with Web Mercator tiles (placekeepers.adapters.tiles). `bounds` (west, south, east,
+    north, in degrees) is where the pictures are: the map asks for no tile outside it."""
+
+    kind: Literal["arcgis_tiles"]
+    url: Annotated[str, StringConstraints(pattern=r"^https://\S+/rest/services$")]
+    bounds: Annotated[list[Number], Field(min_length=4, max_length=4)]
+    services: Annotated[list[TileService], Field(min_length=1)]
+
+    @model_validator(mode="after")
+    def _bounds_and_services(self) -> ArcgisTilesEndpoint:
+        west, south, east, north = self.bounds
+        if not (-180 <= west < east <= 180 and -85 <= south < north <= 85):
+            raise ValueError(
+                f"bounds {self.bounds} should be west, south, east, north in degrees, west below "
+                "east and south below north"
+            )
+        keys = [service.key for service in self.services]
+        names = [service.service for service in self.services]
+        if len(set(keys)) != len(keys):
+            raise ValueError(f"service keys repeat: {keys}")
+        if len(set(names)) != len(names):
+            raise ValueError(f"a service is listed twice: {names}")
+        return self
+
+
 Endpoint = Annotated[
     CartoEndpoint
     | ArcgisEndpoint
     | UrlEndpoint
     | OsmExtractEndpoint
     | CuratedEndpoint
-    | SparqlEndpoint,
+    | SparqlEndpoint
+    | ArcgisTilesEndpoint,
     Field(discriminator="kind"),
 ]
 
@@ -207,11 +252,9 @@ class Option(Strict):
     label: Text
 
 
-Number = StrictInt | StrictFloat
-
-
 class Setting(Strict):
-    """A layer setting. Keys by type (docs/CONTRACTS.md section 1): a choice has `options`; a
+    """A layer setting. Keys by type (docs/CONTRACTS.md section 1): a choice has `options` and
+    may have `control: slider` (shown as a slider through its options in order, added by M4.3); a
     toggle has no other keys; a range has `min`, `max` and an optional `step` (default 1). Keys
     that do not belong to the type are an error, exactly as in the web app's check."""
 
@@ -223,13 +266,20 @@ class Setting(Strict):
     min: Number | None = None
     max: Number | None = None
     step: Number | None = None
+    control: Literal["slider"] | None = None
 
     @model_validator(mode="after")
     def _keys_fit_the_type(self) -> Setting:
         present = {
-            key for key in ("options", "min", "max", "step") if getattr(self, key) is not None
+            key
+            for key in ("options", "min", "max", "step", "control")
+            if getattr(self, key) is not None
         }
-        allowed = {"choice": {"options"}, "toggle": set(), "range": {"min", "max", "step"}}
+        allowed = {
+            "choice": {"options", "control"},
+            "toggle": set(),
+            "range": {"min", "max", "step"},
+        }
         extra = sorted(present - allowed[self.type])
         if extra:
             raise ValueError(f"a {self.type} setting cannot have {', '.join(extra)}")
@@ -269,13 +319,20 @@ class Layer(Strict):
     group: Id
     description: Text
     sources: Annotated[list[Id], Field(min_length=1)]
-    # A relative path under the data root. Segments cannot start with a dot or a slash.
-    file: Annotated[
-        str,
-        StringConstraints(pattern=r"^[A-Za-z0-9_][A-Za-z0-9_.-]*(/[A-Za-z0-9_][A-Za-z0-9_.-]*)*$"),
-    ]
-    source_layer: Id
-    geometry: Literal["point", "line", "polygon"]
+    # A relative path under the data root. Segments cannot start with a dot or a slash. A raster
+    # layer (pictures from an `arcgis_tiles` source, added by M4.3) has neither a file nor a
+    # source layer: the browser loads its tiles from the source's own server.
+    file: (
+        Annotated[
+            str,
+            StringConstraints(
+                pattern=r"^[A-Za-z0-9_][A-Za-z0-9_.-]*(/[A-Za-z0-9_][A-Za-z0-9_.-]*)*$"
+            ),
+        ]
+        | None
+    ) = None
+    source_layer: Id | None = None
+    geometry: Literal["point", "line", "polygon", "raster"]
     style: Id
     evidence: Evidence
     default: LayerDefault
@@ -284,6 +341,23 @@ class Layer(Strict):
     guide: Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9-]*$")] | None = None
     settings: list[Setting] = []
     release: Release
+
+    @model_validator(mode="after")
+    def _file_fits_the_geometry(self) -> Layer:
+        if self.geometry == "raster":
+            if self.file is not None or self.source_layer is not None:
+                raise ValueError(
+                    "a raster layer has no file or source_layer: its pictures come from its "
+                    "source's tile service"
+                )
+        elif self.file is None or self.source_layer is None:
+            raise ValueError(f"a {self.geometry} layer needs a file and a source_layer")
+        return self
+
+    @property
+    def external(self) -> bool:
+        """True for a layer whose pictures the browser loads from another server (M4.3)."""
+        return self.geometry == "raster"
 
 
 # ---------------------------------------------------------------------------------------------
@@ -551,6 +625,7 @@ def _cross_check(
             page = repo_root / "content" / f"{layer.guide}.md"
             if not page.is_file():
                 problems.append(f"{where}: guide page content/{layer.guide}.md does not exist")
+        _check_tile_sources(layer, reg["sources"], where, problems)
 
     for lens in reg["lenses"].values():
         where = f"registry/lenses.yaml: {lens.id}"
@@ -585,6 +660,47 @@ def _cross_check(
         for partner_id in suggestion.partners:
             if partner_id not in partners:
                 problems.append(f"{where}: partner '{partner_id}' is not in registry/partners.yaml")
+
+
+def _check_tile_sources(
+    layer: Layer, sources: dict[str, Source], where: str, problems: list[str]
+) -> None:
+    """A raster layer draws exactly one `arcgis_tiles` source, and a layer with files never names
+    one. When the source has several services, the layer's `year` setting (a choice) chooses
+    among them: its option values are the services' keys, in the same order (M4.3)."""
+    tiles = [
+        source
+        for source_id in layer.sources
+        if (source := sources.get(source_id)) is not None
+        and isinstance(source.endpoint, ArcgisTilesEndpoint)
+    ]
+    if layer.geometry != "raster":
+        for source in tiles:
+            problems.append(
+                f"{where}: source '{source.id}' is a tile service, which only a raster layer can "
+                "draw"
+            )
+        return
+    if len(layer.sources) != 1 or len(tiles) != 1:
+        problems.append(f"{where}: a raster layer needs exactly one source of kind arcgis_tiles")
+        return
+    endpoint = tiles[0].endpoint
+    assert isinstance(endpoint, ArcgisTilesEndpoint)
+    keys = [service.key for service in endpoint.services]
+    year = next((setting for setting in layer.settings if setting.id == "year"), None)
+    if len(keys) > 1:
+        if year is None or year.type != "choice" or year.options is None:
+            problems.append(
+                f"{where}: its source has {len(keys)} services, so it needs a choice setting "
+                "'year' to choose among them"
+            )
+        elif [option.value for option in year.options] != keys:
+            problems.append(
+                f"{where}: the 'year' options {[o.value for o in year.options]} should be the "
+                f"source's service keys in the same order, {keys}"
+            )
+    elif year is not None:
+        problems.append(f"{where}: its source has one service, so it needs no 'year' setting")
 
 
 def load_registry(registry_dir: Path, *, repo_root: Path | None = None) -> Registry:

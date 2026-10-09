@@ -37,6 +37,7 @@ from placekeepers.adapters.schools import Schools
 from placekeepers.adapters.septa import SeptaGtfs, SeptaRidershipBus, SeptaRidershipTrolley
 from placekeepers.adapters.shootings import Shootings
 from placekeepers.adapters.street_centerlines import StreetCenterlines
+from placekeepers.adapters.tiles import ArcgisTilesAdapter
 from placekeepers.adapters.url import UrlAdapter
 from placekeepers.adapters.vacant_indicators import VacantIndicatorsBldg, VacantIndicatorsLand
 from placekeepers.adapters.walk import (
@@ -129,6 +130,10 @@ ADAPTERS: dict[str, type[Adapter]] = {
     "assessment_values": AssessmentValues,
     "acs_tenure": AcsTenure,
     "market_value_analysis": MarketValueAnalysis,
+    # Then and now (M4.3): picture services the browser loads from the City; the pipeline only
+    # checks that each one still answers
+    "city_aerial_photos": ArcgisTilesAdapter,
+    "city_atlas_1860": ArcgisTilesAdapter,
 }
 
 
@@ -142,6 +147,7 @@ __all__ = [
     "Adapter",
     "AdapterMismatch",
     "ArcgisAdapter",
+    "ArcgisTilesAdapter",
     "CartoAccountsAdapter",
     "CartoAdapter",
     "Column",

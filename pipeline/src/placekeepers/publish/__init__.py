@@ -193,6 +193,9 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
         attributions: dict[str, list[str]] = {}
         seen: set[tuple[str, str]] = set()
         for layer in registry.layers.values():
+            if layer.file is None or layer.source_layer is None:
+                # Pictures the browser loads from the City's own servers (M4.3): nothing to build.
+                continue
             if layer.file.startswith(BASEMAP_DIR):
                 # The base map is made by the site (web/scripts/make-basemap.sh), never here.
                 continue
