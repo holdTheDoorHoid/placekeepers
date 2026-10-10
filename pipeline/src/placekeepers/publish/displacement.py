@@ -70,6 +70,12 @@ def watch_properties(row: dict[str, Any]) -> dict[str, Any]:
     if row["mva_block_groups"]:
         properties["mb"] = int(row["mva_block_groups"])
         properties["mr"] = int(row["mva_rising"])
+    # Rent burden (owner, 2026-10-09): the same `rh`, `rb` and `rbm` as the card's context.
+    counted = int(row.get("renters_counted") or 0)
+    if counted >= dw.MIN_RENTERS and row.get("rent_burden_pct") is not None:
+        properties["rh"] = counted
+        properties["rb"] = _whole(row["rent_burden_pct"])
+        properties["rbm"] = _margin(row.get("rent_burden_moe"))
     return properties
 
 
@@ -196,8 +202,13 @@ def manifest_block(ctx: Context) -> dict[str, Any] | None:
             "cb": _whole(city.get("company_pct")),
             "ac": _whole(city.get("assessment_change_pct")),
             "rp": _whole(city.get("renter_pct")),
-            # The city's neighborhood context (M4.7), from the Census's own row for the city.
-            "rb": _whole(around.get("rent_burden_50_pct")),
+            # The city's neighborhood context (M4.7), from the Census's own row for the city;
+            # its rent burden is also the rent burden sign's baseline (owner, 2026-10-09).
+            "rb": _whole(
+                city.get("rent_burden_pct")
+                if city.get("rent_burden_pct") is not None
+                else around.get("rent_burden_50_pct")
+            ),
             "gr": around.get("median_rent"),
             "hi": around.get("median_income"),
             "vp": _whole(around.get("vacant_pct")),

@@ -172,12 +172,12 @@ describe('the neighborhood context of a watch area', () => {
 
   it('gives every number with its margin and the city\'s own', () => {
     const rows = describeContext(AREAS[0], summary);
-    expect(rows.map((r) => r.id)).toEqual(['burden', 'rent', 'income', 'vacant']);
-    expect(rows[0]!.text).toBe('41% of the 880 renter households here (give or take 9 points), against 30% across the city. Rising rents fall hardest on them.');
-    expect(rows[1]!.text).toBe('$1,180 a month, with the utilities the renter pays (give or take $95), against $1,397 across the city.');
-    expect(rows[2]!.text).toBe('$41,250 a year (give or take $6,900), against $61,953 across the city.');
-    expect(rows[3]!.text).toBe('290 of the 2,120 homes here, 14% (give or take 4 points), against 9% across the city.');
-    expect(rows[3]!.parts).toEqual([
+    // Rent burden is a sign since 2026-10-09 (owner), listed with the signs, not here.
+    expect(rows.map((r) => r.id)).toEqual(['rent', 'income', 'vacant']);
+    expect(rows[0]!.text).toBe('$1,180 a month, with the utilities the renter pays (give or take $95), against $1,397 across the city.');
+    expect(rows[1]!.text).toBe('$41,250 a year (give or take $6,900), against $61,953 across the city.');
+    expect(rows[2]!.text).toBe('290 of the 2,120 homes here, 14% (give or take 4 points), against 9% across the city.');
+    expect(rows[2]!.parts).toEqual([
       'For rent: 60 (give or take 35)',
       'For sale: 15 (give or take 14)',
       'Rented or sold, not yet moved into: 20 (give or take 18)',
@@ -188,11 +188,10 @@ describe('the neighborhood context of a watch area', () => {
 
   it('says when a number has too little behind it, and shows nothing for a build without it', () => {
     const rows = describeContext(AREAS[1], summary);
-    expect(rows[0]!.text).toBe(strings.displacement.burdenTooFew);
-    expect(rows[1]!.text).toBe(strings.displacement.rentNone);
+    expect(rows[0]!.text).toBe(strings.displacement.rentNone);
     const bare = { id: '42101900300', w: 28 };
     expect(describeContext(bare, { ...summary, context: null })).toEqual([]);
-    expect(describeArea(AREAS[0], summary).context).toHaveLength(4);
+    expect(describeArea(AREAS[0], summary).context).toHaveLength(3);
   });
 
   it('never frames a number as a reason to buy or invest', () => {
@@ -204,7 +203,8 @@ describe('the neighborhood context of a watch area', () => {
     const store = { registry: reg, state: defaultState(reg, 'analysis'), manifest, inspected: null } as unknown as AppStore;
     const html = render(FeatureDetails, { props: { store, target: { layerId: 'displacement_watch', features: [AREAS[0]], lngLat: [-75.16, 39.98] } } }).body;
     expect(html).toContain(strings.displacement.contextTitle);
-    expect(html).toContain('data-context="burden"');
+    expect(html).toContain('data-context="rent"');
+    expect(html).toContain('data-sign="rent_burden"');
     expect(html).toContain('so in a small area they are rough');
   });
 });

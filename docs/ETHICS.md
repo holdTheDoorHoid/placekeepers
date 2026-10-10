@@ -160,11 +160,12 @@ How the watch decides where the full card appears (M4.1, 2026-10-08; the method 
 section 5.3):
 
 - A displacement watch area is a census tract with at least two signs, at least one of them from
-  prices themselves: sale prices, assessed values or the Market Value Analysis. The five signs are
+  prices themselves: sale prices, assessed values or the Market Value Analysis. The six signs are
   home sale prices rising much faster than across the city, the City's assessed values rising much
   faster than across the city, the City's Market Value Analysis finding prices climbing out of
-  reach of longtime residents, many homes bought by companies, and at least three in five homes
-  rented.
+  reach of longtime residents, many homes bought by companies, at least three in five homes
+  rented, and many renters paying half their income or more on rent (rent burden added by the
+  owner, 2026-10-09).
 - Inside a watch area, the full card appears once per page or view (owner, 2026-10-08): the
   sentence above word for word, the area's signs, and a link to each protection's own page with the
   day it was last checked. A lot page and its print show it once, at the top of "What you can do",

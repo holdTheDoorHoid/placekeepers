@@ -84,7 +84,7 @@ export const strings = {
     loadingMap: 'Loading the map',
     mapFailed: 'The map could not start in this browser. Try another browser, or update this one.',
     sampleData: 'Sample data for testing. These are not real places.',
-    earlyPreview: 'Version 0.3: an early public version. Check facts with the City before you act.',
+    earlyPreview: 'Version 0.4: an early public version. Check facts with the City before you act.',
     followAlong: 'Follow along',
     repoUrl: 'https://github.com/holdTheDoorHoid/placekeepers',
     skipToList: 'Skip to the list of places',
@@ -556,6 +556,7 @@ export const strings = {
       mva: "the City's Market Value Analysis finding home prices climbing out of reach of longtime residents",
       companies: 'companies buying many of the homes sold',
       renters: 'at least three in five homes rented',
+      rent_burden: 'many renters paying half their income or more on rent',
     },
     // A tapped watch area (src/components/displacement/WatchDetails.svelte).
     heading: 'Signs that prices are rising here',
@@ -569,6 +570,7 @@ export const strings = {
       mva: "The City's Market Value Analysis",
       companies: 'Buyers that are companies',
       renters: 'Renters',
+      rent_burden: 'Renters paying half their income or more on rent',
     },
     span: (a0: string, a1: string, b0: string, b1: string) => `sales of ${a0} to ${a1} and of ${b0} to ${b1}`,
     pricesText: (p0: string, p1: string, change: number, city: number | null, span: string) =>
@@ -600,13 +602,12 @@ export const strings = {
     contextNoisy:
       "These are estimates from a survey of some homes over five years, so in a small area they are rough: the true number is likely within the margin shown (the Census Bureau's margin of error, at 90 percent confidence).",
     contextTitles: {
-      burden: 'Renters paying half their income or more on rent',
       rent: 'Middle rent',
       income: 'Middle household income',
       vacant: 'Empty homes',
     } as Record<string, string>,
-    burdenText: (share: number, margin: number | null, households: number, city: number | null) =>
-      `${share}% of the ${formatNumber(households)} renter households here${giveOrTake(margin, 'points')}${city === null ? '' : `, against ${city}% across the city`}. Rising rents fall hardest on them.`,
+    burdenText: (share: number, margin: number | null, households: number, city: number | null, years: readonly [number, number] | null) =>
+      `${share}% of the ${formatNumber(households)} renter households here pay half their income or more on rent and utilities${giveOrTake(margin, 'points')}${city === null ? '' : `, against ${city}% across the city`}${years ? ` (Census Bureau survey, ${years[0]} to ${years[1]})` : ''}. Rising rents fall hardest on them.`,
     burdenTooFew: 'Too few renter households in the Census survey to tell.',
     rentText: (rent: string, margin: string | null, city: string | null) =>
       `${rent} a month, with the utilities the renter pays${margin ? ` (give or take ${margin})` : ''}${city ? `, against ${city} across the city` : ''}.`,
