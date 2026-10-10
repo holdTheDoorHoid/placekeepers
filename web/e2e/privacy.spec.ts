@@ -229,16 +229,16 @@ test.describe('privacy', () => {
     await page.waitForTimeout(1500);
     expect(pictures()).toEqual([]);
 
-    // "See this lot in old aerial photos" on the lot page turns on the photos of 1996: only then
-    // does the browser ask, and only the City's own service for that year.
+    // "See this lot in old aerial photos" on the lot page turns on the oldest photos, of 1959 (the
+    // City hosts them for DVRPC): only then does the browser ask, and only the City's service for that year.
     await page.goto('about:blank');
     await open(page, `v=a&m=17/${LOT.lat}/${LOT.lng}&p=${LOT.id}`);
     const lotPage = page.locator('article.dossier').first();
     await lotPage.getByRole('button', { name: 'See this lot in old aerial photos' }).click();
     await expect.poll(() => pictures().length, { timeout: 20_000 }).toBeGreaterThan(0);
-    for (const url of pictures()) expect(url).toMatch(CITY_TILES('CityImagery_1996_6in'));
+    for (const url of pictures()) expect(url).toMatch(CITY_TILES('CityImagery_1959_DVRPC'));
     await expectHash(page, 'l', /aerial_photos/);
-    await expectHash(page, 's', /aerial_photos\.year:1996/);
+    await expectHash(page, 's', /aerial_photos\.year:1959/);
 
     // The atlas asks only for its own service.
     await page.goto('about:blank');
@@ -253,7 +253,7 @@ test.describe('privacy', () => {
   test('with live City data off, a link cannot turn the pictures on, and the switches say why', async ({ page, context }, info) => {
     await page.addInitScript(() => localStorage.setItem('placekeepers:v1:options', JSON.stringify({ live_city_data: false })));
     const seen = watchOrigins(context);
-    await open(page, `v=a&m=17/${LOT.lat}/${LOT.lng}&l=vacant_parcels,aerial_photos,atlas_1860&s=aerial_photos.year:1996&p=${LOT.id}`);
+    await open(page, `v=a&m=17/${LOT.lat}/${LOT.lng}&l=vacant_parcels,aerial_photos,atlas_1860,redlining_1937&s=aerial_photos.year:1996&p=${LOT.id}`);
     // The lot page's button is off, with the reason.
     const lotPage = page.locator('article.dossier').first();
     await expect(lotPage.getByRole('button', { name: 'See this lot in old aerial photos' })).toBeDisabled();
@@ -269,8 +269,13 @@ test.describe('privacy', () => {
       await expect(toggle).not.toBeChecked();
     }
     await expect(left).toContainText('so they can be turned on only while "Fetch live City data" is on');
-    // The address bar no longer lists them, so a link copied now cannot either.
-    await expectHash(page, 'l', /^vacant_parcels$/);
+    // The 1937 redlining map comes from the site's own file, so it stays on, asks no other server,
+    // and shows its non commercial note.
+    await expect(left.getByRole('switch', { name: '1937 redlining map (HOLC grades)', exact: true })).toBeChecked();
+    await expect(left).toContainText('Non commercial use only');
+    await expect.poll(() => seen.urls.some((url) => url.includes('/data/tiles/redlining.')), { timeout: 30_000 }).toBe(true);
+    // The address bar no longer lists the pictures, so a link copied now cannot either.
+    await expectHash(page, 'l', /^vacant_parcels,redlining_1937$/);
     await page.waitForTimeout(1500);
     expect(seen.urls.filter((url) => url.startsWith(IMAGERY_ORIGIN))).toEqual([]);
     const local = new URL(page.url()).origin;

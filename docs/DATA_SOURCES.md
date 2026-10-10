@@ -466,29 +466,30 @@ one (May, 6 inch); the leaf off one is used, like the spring flights of the othe
 it has a 1 inch and a 3 inch version; the 3 inch one is used, already finer than the map's closest
 zoom. The catalog's 2005 entry gives 2004 flight dates; the City's own year is used.
 
+Added on 2026-10-09, as the owner decided:
+
+| Source id | What | Terms | Health |
+|---|---|---|---|
+| `dvrpc_aerial_photos` | The 1959 and 1975 aerial photos the City hosts for the Delaware Valley Regional Planning Commission (`CityImagery_1959_DVRPC`, `CityImagery_1975_DVRPC`), black and white. The 1975 photos leave gaps in the far south of the city, around the airport and the Navy Yard | Not stated (`unstated`): the services credit "City of Philadelphia, Delaware Valley Regional Planning Commission", carry no license text, describe themselves as "greybase test" and are in neither OpenDataPhilly nor the City's catalog. Credited to DVRPC; taken down if DVRPC or the City asks | 2 services, checked weekly like the City's own |
+| `usgs_aerial_photos_1999` | The 1999 aerial photos the City hosts for the U.S. Geological Survey (`CityImagery_1999_USGS`), black and white | Not stated (`unstated`), as above, credited "City of Philadelphia, United States Geological Survey". Likely a USGS work in the public domain, not confirmed | 1 service, checked weekly |
+| `mapping_inequality_1937` | Mapping Inequality's areas of the Home Owners' Loan Corporation's 1937 map of Philadelphia ([its map](https://dsl.richmond.edu/panorama/redlining/map/PA/Philadelphia/context)), from the city's own file `static/citiesData/PAPhiladelphia1937/geojson.json` (92 kB, 83 areas: 10 graded A, 28 B, 18 C, 26 D, one ungraded). Only each area's label, grade and shape are kept; the file holds no description text, and the descriptions (a separate download) are never taken | **CC BY-NC 2.5, non commercial only** ([data page](https://dsl.richmond.edu/panorama/redlining/data): the georectified rasters and spatial data "are available under a CC-BY-NC license"; [FAQ](https://dsl.richmond.edu/panorama/redlining/contactus): they "can be used for pretty much anything that is not commercial with just a citation"). What it requires and how the site meets it: credit with the title, the authors, a link and the license notice (on the legend, the tapped area's card, About this layer and the Data status page, with "Non commercial use only"); say what changed (the site shows "the areas and grades only"); and no commercial use, so its data stays apart from everything under our own terms (ODbL for data, GPL for code), which allow commercial reuse: its own file, marked with its license in the manifest, never in a download or any other file (docs/CONTRACTS.md) | Frozen: downloaded once; at least 80 areas |
+
+**Where the redlining map loads from.** The site publishes it in its own file, so the visitor's
+browser asks only Placekeepers' own site for it: no request goes to the University of Richmond,
+and the layer is not held behind "Fetch live City data". The University's server is asked once, by
+the pipeline, when the frozen file is first downloaded (its robots.txt answered 404, no rules).
+
 Not used, and why:
 
-- **Mapping Inequality's 1937 redlining map (HOLC).** The University of Richmond's Digital
-  Scholarship Lab publishes its georectified rasters and spatial data "under a CC-BY-NC license"
-  ([data page](https://dsl.richmond.edu/panorama/redlining/data), linking
-  [CC BY-NC 2.5](https://creativecommons.org/licenses/by-nc/2.5/); its
-  [FAQ](https://dsl.richmond.edu/panorama/redlining/contactus): they "can be used for pretty much
-  anything that is not commercial with just a citation"). Non commercial, so it was not shipped and
-  the owner decides (the M4.3 report says what it would require). The scans of the original maps
-  and area descriptions are in the public domain (National Archives, City Survey Files 1935 to
-  1940), but they are not fitted to today's map.
+- The scans of the original 1937 maps and their area descriptions are in the public domain
+  (National Archives, City Survey Files 1935 to 1940), but the descriptions are never copied: the
+  map links to each area's description at Mapping Inequality.
 - **The other pictures the City hosts for the GeoHistory Network**: the 1875 G. M. Hopkins atlas,
   the 1895 and 1910 Bromley atlases, the 1942 and 1962 land use maps, and the 1928 aerial photos
   (`CityImagery_1928_RPF`, credited "City of Philadelphia, PhilaGeoHistory Network"). The City says
   it hosts them with the Network's permission; PhilaGeoHistory's own terms ask for permission
   before reuse, and the roadmap keeps its layers, such as the 1942 land use map, waiting for the
   Athenaeum of Philadelphia's permission. A request is drafted for the owner.
-- **The 1959, 1975 and 1999 aerial photos the City hosts** (`CityImagery_1959_DVRPC`,
-  `CityImagery_1975_DVRPC`, `CityImagery_1999_USGS`, credited to DVRPC and the USGS): their
-  services state no license, describe themselves as "greybase test", and are not in OpenDataPhilly
-  or the City's catalog. The 1999 photos are likely a USGS work in the public domain and the DVRPC
-  ones may fall under DVRPC's data license; adding any of them later is one registry line once
-  their terms are confirmed.
 - **PhilaGeoHistory itself** (`philageohistory.org`): permission required, never fetched.
 
 ### The Land Bank in numbers (M4.4, sources checked 2026-10-09)

@@ -198,3 +198,17 @@ export const HISTORIC_COLORS = {
 export const OVERLAY_COLORS = { fill: '#8f8a3c', fillOpacity: 0.06, line: '#5f5a12', supplemental: '#9c975a' } as const;
 export const HEARING_COLORS = { zoning: '#6a3d9a', zoningRing: '#ffffff', other: '#e3d7f0', otherRing: '#6a3d9a' } as const;
 export const BROWNFIELD_COLORS = { fill: '#9a4f2c', ring: '#ffffff' } as const;
+
+/**
+ * The 1937 redlining map (owner, 2026-10-09): the HOLC map's own four colors, muted so they sit
+ * quietly under the lots, with each area's letter on it so the grade never rests on color alone.
+ * A light gray for the one area the map left ungraded.
+ */
+export const HOLC_COLORS: Record<string, string> = {
+  A: '#5d9a6a',
+  B: '#4d82ad',
+  C: '#c9a43a',
+  D: '#b8574c',
+};
+export const HOLC_UNGRADED = '#9b9b9b';
+export const HOLC_FILL_OPACITY = 0.3;

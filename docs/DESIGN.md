@@ -616,9 +616,9 @@ Sections, in order:
 5. **History**: every recorded sale and transfer with date, document type and price; assessments
    over time; permits, violations, demolitions; later, what stood here in old maps. As built
    (M4.3, 2026-10-09): under the story of the lot (M4.2), "See this lot in old aerial photos"
-   turns on the City's aerial photos at 1996, the oldest, and shows the lot on the map (on a phone
-   the lot page closes first, as for "Show on map"); with live City data off the button is off and
-   says why (section 5.11).
+   turns on the aerial photos at the oldest year (1959 from 2026-10-09) and shows the lot on the
+   map (on a phone the lot page closes first, as for "Show on map"); with live City data off the
+   button is off and says why (section 5.11).
 6. **Nearby**: shooting counts, crashes, memorials, LandCare lots, gardens, schools.
 7. **Sources and freshness**, and "report a correction".
 
@@ -1115,17 +1115,36 @@ keeps its rights, as is, hold harmless), which allow this (DATA_SOURCES.md, "His
 displacement").
 
 **Health.** These layers are not built by the pipeline, so the weekly refresh checks instead that
-each of the 21 services still answers with a picture (section 8.4); a broken service shows on the
+each of the 24 services still answers with a picture (section 8.4); a broken service shows on the
 Data status page, which says plainly that some pictures may not show, and opens the usual issue
 after two weeks in a row.
 
-**Left out, and why.** Mapping Inequality's 1937 redlining map: its data is licensed for non
-commercial use only (CC BY-NC), which the owner must weigh first. The GeoHistory Network's other
-maps that the City hosts (the 1875, 1895 and 1910 atlases, the 1942 and 1962 land use maps, the
-1928 aerial photos) and PhilaGeoHistory's own layers: they wait for the Athenaeum of
-Philadelphia's permission. The 1959, 1975 and 1999 photos the City hosts for DVRPC and the USGS:
-their services state no terms. A swipe to compare two years side by side: not built; the strength
-setting and the slider cover most of it. Details in DATA_SOURCES.md.
+**Added on 2026-10-09, as the owner decided.**
+
+- **Older photos on the same slider**: 1959 and 1975 (photos the City hosts for the Delaware Valley
+  Regional Planning Commission) and 1999 (for the U.S. Geological Survey), 23 years in all, from
+  1959. Their services state no terms, so the registry records them as not stated; the legend
+  credits each year to its own publisher and says so, and says where the 1975 photos have gaps (the
+  far south, around the airport and the Navy Yard). They come from the same City server, behind the
+  same "Fetch live City data" switch, and are checked each week like the City's own years. The lot
+  page's button now opens at 1959, the oldest.
+- **1937 redlining map (HOLC grades)**, a layer in Then and now, off by default in both views: the
+  Home Owners' Loan Corporation's 1937 areas and grades of Philadelphia, as Mapping Inequality
+  traced them, in the 1937 map's own colors, muted, with each area's label on it. The legend lists
+  the four grades in plain words, a short neutral account of what redlining was and that the grades
+  say nothing about the people who live there today, the credit with its link, and "Non commercial
+  use only" with the license. Tapping an area gives its grade and a link to its 1937 description at
+  Mapping Inequality; the descriptions are never copied onto the map. Its license (CC BY-NC 2.5)
+  allows non commercial use only, so its data stays apart from everything under the site's own
+  terms: a file of its own, named with its license in the manifest, never in a download or any
+  other file, and the Data status page marks the source "Non commercial use only". The file is the
+  site's own, so the visitor's browser asks no one else for it, and the layer needs no live data.
+
+**Left out, and why.** The GeoHistory Network's other maps that the City hosts (the 1875, 1895 and
+1910 atlases, the 1942 and 1962 land use maps, the 1928 aerial photos) and PhilaGeoHistory's own
+layers: they wait for the Athenaeum of Philadelphia's permission. A swipe to compare two years side
+by side: not built; the strength setting and the slider cover most of it. Details in
+DATA_SOURCES.md.
 
 ## 6. Finding vacant land without depending on one source
 
@@ -1285,7 +1304,7 @@ Built in M0.4 (2026-10-04). Changes from the original plan are marked.
   `break_source` input); the source keeps its last good copy, exactly as in a real outage.
 - Pictures the browser loads from another server (M4.3, the City's aerial photos and 1860 atlas,
   endpoint kind `arcgis_tiles`) have no copy to keep. Instead, every run checks that each picture
-  service still answers (its description and one tile, a second apart, about 40 seconds for 21
+  service still answers (its description and one tile, a second apart, about 45 seconds for 24
   services), whatever the source's cadence. A service that does not answer turns the source stale
   with its name in the message; the Data status page says some pictures may not show, and the
   issue opened after two runs says the same rather than "the map keeps the last good copy".

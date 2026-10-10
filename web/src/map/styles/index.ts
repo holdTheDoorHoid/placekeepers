@@ -13,6 +13,7 @@ import { floodplain } from './floodplain.ts';
 import { gardens } from './gardens.ts';
 import { heatTracts } from './heat_tracts.ts';
 import { historicImagery } from './historic_imagery.ts';
+import { redlining } from './redlining.ts';
 import { hin } from './hin.ts';
 import type { StyleId } from './ids.ts';
 import { landcare } from './landcare.ts';
@@ -64,6 +65,7 @@ export const STYLES: Record<StyleId, StyleModule> = {
   hearings,
   brownfields,
   historic_imagery: historicImagery,
+  redlining,
 };
 
 export function styleFor(layer: Layer): StyleModule | null {

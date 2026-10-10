@@ -40,6 +40,12 @@
     onShowOwnerList: (target: OwnerListTarget) => (ownerList = target),
   });
 
+  /** The first year of the aerial photos' slider, where the lot page's button opens them (M4.3). */
+  const oldestPhotoYear = $derived.by(() => {
+    const year = store.registry.layers.find((l) => l.id === 'aerial_photos')?.settings.find((s) => s.id === 'year');
+    return year?.type === 'choice' ? (year.options[0]?.value ?? '') : '';
+  });
+
   /** Turns on a layer with some of its settings, as the old aerial photos button does (M4.3). */
   function showLayerWith(id: string, settings: Record<string, SettingValue> = {}, message?: string) {
     for (const [setting, value] of Object.entries(settings)) store.setSetting(id, setting, value);
@@ -62,7 +68,7 @@
       {/if}
     {/snippet}
     {#snippet historyExtra()}
-      <OldAerialPhotos liveOn={store.liveCityData} onShowLayer={showLayerWith} {onShowOnMap} onTurnOnLive={actions.onTurnOnLive} />
+      <OldAerialPhotos oldest={oldestPhotoYear} liveOn={store.liveCityData} onShowLayer={showLayerWith} {onShowOnMap} onTurnOnLive={actions.onTurnOnLive} />
     {/snippet}
   </Dossier>
 {/if}

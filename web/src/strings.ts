@@ -685,7 +685,9 @@ export const strings = {
                               ? 'Traffic stress for bikes'
                               : style === 'parking_reports'
                                 ? 'Parking problems reported'
-                                : 'Details',
+                                : style === 'redlining'
+                                  ? '1937 redlining map'
+                                  : 'Details',
     memorialTitle: 'In memory',
     peopleHere: (n: number) => `${plural(n, 'person is', 'people are')} remembered here`,
     killed: {
@@ -1604,20 +1606,21 @@ export const strings = {
       'These pictures come straight from the City\'s servers, so they can be turned on only while "Fetch live City data" is on (in Settings, under "Privacy and live data").',
     refused: 'Old aerial photos and the 1860 atlas come from the City\'s servers. Turn on live City data in Settings to see them.',
     serverError: 'The City\'s picture server did not send every part of this picture. Try again later.',
-    photoYear: (year: string) => `The City's aerial photo of ${year}, taken from a plane in spring.`,
+    photoYear: (year: string) => `The aerial photo of ${year}, taken from a plane.`,
+    gaps1975: 'The 1975 photos leave gaps in the far south of the city, around the airport and the Navy Yard.',
+    termsNotStated: 'Its publisher states no terms of use for these photos; they are shown as the City hosts them, credited, and come down if the publisher asks.',
     blackAndWhite: (year: string) => `The ${year} photos are in black and white.`,
     under: 'The photo lies under every other layer. Lower its strength to see today\'s streets through it.',
-    photoCredit: 'Photos: City of Philadelphia, Office of Innovation and Technology.',
     atlasCoverage: 'The atlas covers Center City and Northern Liberties only.',
     atlasCredit: 'Atlas fitted to today\'s map by the Greater Philadelphia GeoHistory Network and hosted by the City of Philadelphia with its permission.',
     sliderRange: (first: string, last: string) => `From ${first} to ${last}`,
     // The lot page, under History
     lotTitle: 'Old aerial photos',
     lotButton: 'See this lot in old aerial photos',
-    lotHelp:
-      'Opens the map at this lot with the City\'s aerial photo of 1996, the oldest it has. Slide through the years since then under "Then and now" in the layers.',
+    lotHelp: (year: string) =>
+      `Opens the map at this lot with the aerial photo of ${year}, the oldest the City hosts. Slide through the years since then under "Then and now" in the layers.`,
     lotLiveOff: 'The photos come straight from the City\'s servers, so they need live City data, which is off.',
-    shown: 'Aerial photos of 1996 are on. Slide through the years under "Then and now" in the layers.',
+    shown: (year: string) => `Aerial photos of ${year} are on. Slide through the years under "Then and now" in the layers.`,
     // The Data status page, for a source of pictures the site never copies
     statusOk: 'Every picture service answered at the last weekly check. The pictures load straight from the City\'s servers when someone turns their layer on.',
     statusStale: (date: string) =>
@@ -1625,6 +1628,36 @@ export const strings = {
     statusFailing: 'The picture services did not answer at the weekly check, so the pictures may not show.',
     services: (n: number) => `${plural(n, 'picture service', 'picture services')} checked`,
     lastCheck: (date: string) => `Last check where every service answered: ${date}`,
+  },
+
+  // The 1937 redlining map (owner, 2026-10-09): Mapping Inequality's areas and grades, under its
+  // non commercial license (src/map/styles/redlining.ts, RedliningDetails.svelte). Plain, neutral
+  // words: the grades are a record of how a federal agency judged places in 1937.
+  redlining: {
+    detailsTitle: '1937 redlining map',
+    grades: {
+      A: 'A, graded "best" in 1937',
+      B: 'B, graded "still desirable"',
+      C: 'C, graded "definitely declining"',
+      D: 'D, graded "hazardous" and outlined in red: redlined',
+    } as Record<string, string>,
+    ungraded: 'Not graded (industrial and commercial land)',
+    area: (label: string, grade: string) => `Area ${label}, graded ${grade} in 1937`,
+    areaUngraded: (label: string) => `${label}: an area the 1937 map left ungraded`,
+    context:
+      'In 1937 a federal agency, the Home Owners\' Loan Corporation, graded the city\'s neighborhoods from A to D for how safe it judged mortgage lending there. The grades leaned on who lived in each area: areas where Black families and many immigrant families lived were usually graded D and outlined in red. Lending was harder to get there for decades, and the practice is called redlining.',
+    notToday: 'The grades are a record of how a federal agency judged places in 1937. They say nothing about the people who live there today.',
+    legendTap: 'Tap an area for its grade and a link to its 1937 description.',
+    description: (label: string) => `Read the 1937 description of area ${label} at Mapping Inequality`,
+    descriptionNote: 'The 1937 descriptions are not copied here: they stay on Mapping Inequality, with the history around them.',
+    credit:
+      'Areas and grades from Mapping Inequality: Redlining in New Deal America, by Robert K. Nelson, LaDale Winling, et al., University of Richmond Digital Scholarship Lab. Placekeepers shows the areas and grades only.',
+    homepage: 'https://dsl.richmond.edu/panorama/redlining/map/PA/Philadelphia/context',
+    homepageLabel: 'Mapping Inequality: Philadelphia',
+    nonCommercial: 'Non commercial use only. Licensed under Creative Commons Attribution NonCommercial 2.5, apart from the rest of the map\'s data.',
+    licenseUrl: 'https://creativecommons.org/licenses/by-nc/2.5/',
+    licenseLabel: 'CC BY-NC 2.5',
+    statusNote: 'Non commercial use only: this source is licensed for non commercial use, so the site publishes it in a file of its own and never in a download.',
   },
 
   options: {

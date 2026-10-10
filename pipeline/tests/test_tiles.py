@@ -94,6 +94,13 @@ def test_the_real_registry_has_the_city_picture_services() -> None:
     assert years[0] == "1996" and years[-1] == "2025" and len(years) == 20
     assert years == sorted(years)
     layer = registry.layers["aerial_photos"]
+    # The older photos the City hosts for DVRPC and the USGS keep their own publishers and terms.
+    assert layer.sources == ["city_aerial_photos", "dvrpc_aerial_photos", "usgs_aerial_photos_1999"]
+    for older in ("dvrpc_aerial_photos", "usgs_aerial_photos_1999"):
+        assert registry.sources[older].license == "unstated"
+    slider = next(s for s in layer.settings if s.id == "year")
+    assert [o.value for o in slider.options][:5] == ["1959", "1975", "1996", "1999", "2000"]
+    assert len(slider.options) == 23
     assert layer.external and layer.file is None and layer.source_layer is None
     year = next(setting for setting in layer.settings if setting.id == "year")
     assert year.control == "slider" and year.default == "2025"
@@ -135,16 +142,14 @@ def test_a_vector_layer_needs_a_file_and_never_draws_a_tile_service(repo_copy: P
     )
 
 
-def test_the_year_setting_names_the_services_in_order(repo_copy: Path) -> None:
-    def swap(layers: list[dict[str, Any]]) -> None:
-        options = next(s for s in by_id(layers, "aerial_photos")["settings"] if s["id"] == "year")[
-            "options"
-        ]
-        options[0], options[1] = options[1], options[0]
+def test_the_year_setting_names_every_service_of_every_source(repo_copy: Path) -> None:
+    def drop_1975(layers: list[dict[str, Any]]) -> None:
+        year = next(s for s in by_id(layers, "aerial_photos")["settings"] if s["id"] == "year")
+        year["options"] = [o for o in year["options"] if o["value"] != "1975"]
 
-    edit(repo_copy, "layers", swap)
+    edit(repo_copy, "layers", drop_1975)
     [problem] = problems(repo_copy)
-    assert "the 'year' options" in problem and "service keys in the same order" in problem
+    assert "the 'year' options" in problem and "service keys, each once" in problem
 
     def drop(layers: list[dict[str, Any]]) -> None:
         layer = by_id(layers, "aerial_photos")
@@ -155,14 +160,21 @@ def test_the_year_setting_names_the_services_in_order(repo_copy: Path) -> None:
     assert "needs a choice setting 'year'" in problem
 
 
-def test_a_raster_layer_draws_exactly_one_tile_service(repo_copy: Path) -> None:
+def test_a_raster_layer_draws_only_tile_services_with_keys_used_once(repo_copy: Path) -> None:
     edit(
         repo_copy,
         "layers",
         lambda layers: by_id(layers, "atlas_1860").update(sources=["city_atlas_1860", "shootings"]),
     )
     [problem] = problems(repo_copy)
-    assert "atlas_1860" in problem and "exactly one source of kind arcgis_tiles" in problem
+    assert "atlas_1860" in problem and "draws only sources of kind arcgis_tiles" in problem
+
+    def same_year(sources: list[dict[str, Any]]) -> None:
+        by_id(sources, "usgs_aerial_photos_1999")["endpoint"]["services"][0]["key"] = "2000"
+
+    edit(repo_copy, "sources", same_year)
+    found = problems(repo_copy)
+    assert any("aerial_photos" in p and "use a service key more than once" in p for p in found)
 
 
 @pytest.mark.parametrize(
@@ -289,15 +301,15 @@ def test_the_atlas_check_asks_for_a_tile_inside_the_atlas(context_factory) -> No
 def test_publish_lists_the_picture_layers_without_files(context_factory, tmp_path: Path) -> None:
     ctx = context_factory(now=datetime(2026, 10, 4, 15, 0, tzinfo=UTC))
     result = publish(ctx, tmp_path / "data")
-    for layer_id, source_id in (
-        ("aerial_photos", "city_aerial_photos"),
-        ("atlas_1860", "city_atlas_1860"),
+    for layer_id, sources in (
+        ("aerial_photos", ["city_aerial_photos", "dvrpc_aerial_photos", "usgs_aerial_photos_1999"]),
+        ("atlas_1860", ["city_atlas_1860"]),
     ):
         assert result.manifest["layers"][layer_id] == {
             "file": None,
             "source_layer": None,
-            "sources": [source_id],
+            "sources": sources,
         }
-        assert source_id in result.manifest["sources"]
+        assert all(source_id in result.manifest["sources"] for source_id in sources)
         # Never "not built yet" or "no usable data": there is nothing to build.
         assert not any(note.startswith(f"{layer_id} ") for note in result.manifest["notes"])

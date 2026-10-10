@@ -26,6 +26,7 @@
   import ParkingDetails from './ParkingDetails.svelte';
   import WatchDetails from '../displacement/WatchDetails.svelte';
   import RulesDetails from '../rules/RulesDetails.svelte';
+  import RedliningDetails from '../history/RedliningDetails.svelte';
   import { watchSummaryOf } from '../../displacement/watch.ts';
 
   let {
@@ -143,6 +144,8 @@
       features={target.features}
       onOpenLot={(opa) => store.select(opa, null, { center: target.lngLat })}
     />
+  {:else if style === STYLES.redlining}
+    <RedliningDetails features={target.features} />
   {:else if style === STYLES.traffic_stress}
     <StressDetails features={target.features} />
   {:else if style === STYLES.parking_reports}

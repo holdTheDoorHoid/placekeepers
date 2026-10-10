@@ -507,12 +507,39 @@
       "newest_record": null,
       "message": null
     },
+    "dvrpc_aerial_photos": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 2,
+      "newest_record": null,
+      "message": null
+    },
+    "usgs_aerial_photos_1999": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 1,
+      "newest_record": null,
+      "message": null
+    },
     "city_atlas_1860": {
       "status": "ok",
       "last_attempt": "2026-10-04T10:00:05Z",
       "last_success": "2026-10-04T10:00:05Z",
       "stale_since": null,
       "rows": 1,
+      "newest_record": null,
+      "message": null
+    },
+    "mapping_inequality_1937": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 83,
       "newest_record": null,
       "message": null
     },
@@ -871,7 +898,9 @@
       "file": null,
       "source_layer": null,
       "sources": [
-        "city_aerial_photos"
+        "city_aerial_photos",
+        "dvrpc_aerial_photos",
+        "usgs_aerial_photos_1999"
       ]
     },
     "atlas_1860": {
@@ -879,6 +908,13 @@
       "source_layer": null,
       "sources": [
         "city_atlas_1860"
+      ]
+    },
+    "redlining_1937": {
+      "file": "tiles/redlining.pmtiles",
+      "source_layer": "holc",
+      "sources": [
+        "mapping_inequality_1937"
       ]
     }
   },
@@ -1038,6 +1074,11 @@
     "tiles/rules.brownfields.geojson": {
       "bytes": 212,
       "sha256": "0d7e4f24465306a63bd21a7cea77cd26c59aab8471656038c3942f2397171c00"
+    },
+    "tiles/redlining.holc.geojson": {
+      "bytes": 977,
+      "sha256": "e44997a6bc387a9dcadf27be88cdbb8be027139128af40e57b5f016158533b28",
+      "license": "cc_by_nc_2_5"
     },
     "tables/routes/index.json": {
       "bytes": 1009,

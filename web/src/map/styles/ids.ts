@@ -39,7 +39,8 @@ export const STYLE_IDS = [
   'zoning_overlays',
   'hearings',
   'brownfields',
-  // Then and now (M4.3): pictures from the City's own servers
+  // Then and now (M4.3): pictures from the City's own servers, and the 1937 redlining map
   'historic_imagery',
+  'redlining',
 ] as const;
 export type StyleId = (typeof STYLE_IDS)[number];
