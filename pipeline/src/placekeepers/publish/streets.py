@@ -34,7 +34,11 @@ from placekeepers.curated import (
     removal_address,
 )
 from placekeepers.derive.memorials import (
+    STREET_METERS as CALMING_STREET_METERS,
+)
+from placekeepers.derive.memorials import (
     SUGGESTION_ORDER,
+    TRAFFIC_CALMING,
     build_memorials,
     count_by_year_and_mode,
     fatal_records,
@@ -199,11 +203,54 @@ def build_segments(ctx: Context, paths: dict[str, Path], out: Path, as_of: date)
     else:
         notes.append("segments: the school list is missing; blocks are scored without it")
 
+    # Streets and stops (M4.5): the poles the City lists along each block, its traffic calming,
+    # and the request for traffic calming on a High Injury Network block where people were hurt
+    # and none is recorded, where the street may qualify.
+    from placekeepers.publish.streets_stops import (
+        TRAFFIC_CALMING,
+        block_calming,
+        block_poles,
+        calming_properties,
+        may_ask_for_calming,
+        pole_properties,
+    )
+
+    poles = block_poles(paths)
+    calming = block_calming(paths)
+    allowed = TRAFFIC_CALMING in ctx.registry.suggestions
+    asked = waiting = 0
     factors = SegmentFactors(hin=hin, ksi=ksi, killed2=killed2, school=school)
     with GeoJSONWriter(out) as writer:
         for index in range(len(network)):
-            writer.write(factors.properties(network, index), geometry_json(network.lines[index]))
+            props = factors.properties(network, index)
+            props.update(pole_properties(poles, index))
+            hurt = bool(hin and hin[index] and ksi and ksi[index] > 0)
+            props.update(calming_properties(calming, index, hurt))
+            if props.get("tc") == 0:
+                waiting += 1
+                if allowed and may_ask_for_calming(network, index):
+                    props["sg"] = TRAFFIC_CALMING
+                    asked += 1
+            writer.write(props, geometry_json(network.lines[index]))
     notes.append(f"segments: {writer.count:,} street blocks scored for the street safety lens")
+    if poles is not None:
+        with_poles = sum(1 for n in poles.poles if n)
+        lamps = sum(poles.lamps)
+        notes.append(
+            f"segments: {with_poles:,} blocks have poles the City lists; {lamps:,} poles with a "
+            f"lamp, {sum(poles.led):,} of them LED"
+        )
+    else:
+        notes.append("segments: the street poles are missing, so blocks have no pole counts")
+    if calming is not None:
+        calmed = sum(1 for n in calming.devices if n)
+        notes.append(
+            f"segments: {calmed:,} blocks have traffic calming the City lists; "
+            f"{waiting:,} High Injury Network blocks where people were hurt have none recorded, "
+            f"{asked:,} of them residential streets that may qualify for the City's program"
+        )
+    else:
+        notes.append("segments: the traffic calming devices are missing")
     return BuildResult(writer.count, notes)
 
 
@@ -248,6 +295,20 @@ def build_memorial_layer(
         records, curated, suppressions, network=network, suggestion_ids=allowed
     )
     notes.extend(found)
+    # Beside the traffic calming request (M4.5): what the City lists on the crash site's block.
+    from placekeepers.publish.streets_stops import block_calming
+
+    calming = block_calming(paths)
+    if calming is not None and network is not None:
+        asking = [m for m in memorials if TRAFFIC_CALMING in m.suggestions]
+        points = points_in_meters([m.lat for m in asking], [m.lng for m in asking])
+        for memorial, block in zip(
+            asking, network.nearest_segment(points, CALMING_STREET_METERS), strict=True
+        ):
+            devices = calming.devices[block] if block is not None else 0
+            memorial.calming = devices
+            if devices and calming.first[block] is not None:
+                memorial.calming_since = calming.first[block].year
     with GeoJSONWriter(out) as writer:
         for memorial in memorials:
             writer.write(memorial.properties(), _point(memorial.lat, memorial.lng))
@@ -281,9 +342,16 @@ STREET_BUILDERS: tuple[LayerBuilder, ...] = (
             "schools",
         ),
         build_segments,
+        # The poles and the traffic calming the City lists along each block (M4.5).
+        extras=("street_poles", "traffic_calming"),
     ),
     LayerBuilder(STREETS_FILE, "crashes", CRASH_SOURCES, build_crashes),
     LayerBuilder(
-        STREETS_FILE, "memorials", ("fatal_crashes", "street_centerlines"), build_memorial_layer
+        STREETS_FILE,
+        "memorials",
+        ("fatal_crashes", "street_centerlines"),
+        build_memorial_layer,
+        # What the City lists on the block, beside the traffic calming request (M4.5).
+        extras=("traffic_calming",),
     ),
 )

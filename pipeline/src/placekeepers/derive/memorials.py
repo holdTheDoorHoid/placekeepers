@@ -14,6 +14,8 @@ Every marker carries (docs/CONTRACTS.md, `memorials`):
     sg    suggestion ids for the crash site, comma separated
     nm    the name, only from the curated file and only when not suppressed
     src   the public memorial page, only with a curated entry
+    tc    with the traffic calming request only: the devices the City lists on the crash site's
+          block (0 when none is recorded), and `ty` the year of the first (M4.5)
 
 All markers are published; the map shows people walking, cycling or riding a scooter by default and
 everyone else when the memorials layer's "every fatal crash" setting is on.
@@ -83,6 +85,10 @@ class Memorial:
     source: str | None = None
     entry_id: str | None = None
     suggestions: list[str] = field(default_factory=list)
+    #: traffic calming devices the City lists on the block, for the traffic calming request (M4.5);
+    #: None when not known
+    calming: int | None = None
+    calming_since: int | None = None
 
     def properties(self) -> dict:
         props: dict = {"id": self.id, "d": self.date.isoformat(), "m": self.modes}
@@ -90,6 +96,10 @@ class Memorial:
             props["pl"] = self.place
         if self.suggestions:
             props["sg"] = ",".join(self.suggestions)
+        if self.calming is not None and TRAFFIC_CALMING in self.suggestions:
+            props["tc"] = self.calming
+            if self.calming and self.calming_since:
+                props["ty"] = self.calming_since
         if self.name:
             props["nm"] = self.name
         if self.source:

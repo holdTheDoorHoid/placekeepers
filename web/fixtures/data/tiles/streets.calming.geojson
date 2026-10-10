@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"id":1,"d":"2023-08-01","p":"SC-9001","s":900004,"name":"SAMPLE 4 ST"},"geometry":{"type":"Point","coordinates":[-75.151786,39.984479]}},{"type":"Feature","properties":{"id":2,"d":"2024-06-15","p":"SC-9001","s":900004,"name":"SAMPLE 4 ST"},"geometry":{"type":"Point","coordinates":[-75.151083,39.984479]}}]}

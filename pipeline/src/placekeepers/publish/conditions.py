@@ -22,7 +22,8 @@ or two), so a late snapshot still shows a full 90 days, dated by the manifest's 
 Each point: `id` (the block's `seg_id`, which M3.4 can join to the `segments` layer), `name` (the
 street, as the City writes it), `n` (requests in the window), `o` (how many are still open in the
 City's table), `d` (the day of the newest request) and, for lights, `a` (how many of the `n` were
-alley lights). Nothing about who reported, no request numbers, addresses or text: the snapshot
+alley lights) and the poles the City lists along the block (`pl`, `lp`, `le`, as on the street
+blocks; M4.5). Nothing about who reported, no request numbers, addresses or text: the snapshot
 never held them.
 """
 
@@ -141,6 +142,12 @@ def condition_builder(kind: str):
         network = street_network(paths["street_centerlines"])
         counts = requests_by_block(rows, codes, network, span)
         per_block = counts.per_block
+        # Beside a street light reported out, the poles the City lists along the block (M4.5).
+        poles = None
+        if kind == "lights":
+            from placekeepers.publish.streets_stops import block_poles
+
+            poles = block_poles(paths)
         with GeoJSONWriter(out) as writer:
             for block in sorted(per_block, key=lambda b: network.ids[b]):
                 entry = per_block[block]
@@ -154,6 +161,10 @@ def condition_builder(kind: str):
                 }
                 if kind == "lights" and entry["a"]:
                     properties["a"] = entry["a"]
+                if poles is not None:
+                    from placekeepers.publish.streets_stops import pole_properties
+
+                    properties.update(pole_properties(poles, block))
                 point = {
                     "type": "Point",
                     "coordinates": [round(middle.x, 7), round(middle.y, 7)],
@@ -183,7 +194,10 @@ CONDITION_BUILDERS: tuple[LayerBuilder, ...] = tuple(
         kind,
         (SOURCE,),
         condition_builder(kind),
-        extras=("street_centerlines",),
+        # The street lights' blocks carry the poles the City lists along them (M4.5).
+        extras=("street_centerlines", "street_poles")
+        if kind == "lights"
+        else ("street_centerlines",),
     )
     for kind in KINDS
 )

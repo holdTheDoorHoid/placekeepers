@@ -731,9 +731,17 @@ export const strings = {
                               ? 'Traffic stress for bikes'
                               : style === 'parking_reports'
                                 ? 'Parking problems reported'
-                                : style === 'redlining'
-                                  ? '1937 redlining map'
-                                  : 'Details',
+                                : style === 'city_shelters'
+                                  ? 'Bus shelter'
+                                  : style === 'street_poles'
+                                    ? 'Street pole'
+                                    : style === 'traffic_calming'
+                                      ? 'Traffic calming'
+                                      : style === 'crossing_guards'
+                                        ? 'School crossing guard'
+                                        : style === 'redlining'
+                                          ? '1937 redlining map'
+                                          : 'Details',
     memorialTitle: 'In memory',
     peopleHere: (n: number) => `${plural(n, 'person is', 'people are')} remembered here`,
     killed: {
@@ -803,6 +811,107 @@ export const strings = {
     school: 'A school within 400 meters',
   },
 
+  // Streets and stops (M4.5, issue #41): the City's bus shelters, street poles, traffic calming
+  // and school crossing guard posts, in the legends of src/map/styles/city_shelters.ts,
+  // street_poles.ts, traffic_calming.ts and crossing_guards.ts, what a tapped one says
+  // (src/components/streets/StreetStopDetails.svelte, src/streets/streets-stops.ts), and the
+  // lines they add to a street block, a memorial, a stop and a 311 street light block. Poles are
+  // "poles" and lamps are "lamps the City lists": never how bright a street is, or that it is lit.
+  // Crossing guards are a safety service, never enforcement (docs/ETHICS.md).
+  streetsStops: {
+    shelterLegend: "A shelter on the City's list, as a ring around its stop",
+    shelterLegendLens: 'A stop with a City shelter counts as sheltered in the transit comfort lens.',
+    shelterLegendDate: 'The City last changed its list in January 2025, so a shelter put in or taken out since may be missing.',
+    shelterTitle: "A bus shelter on the City's list",
+    shelterAt: (stop: string) => `It serves SEPTA stop ${stop}.`,
+    shelterListed: (number: string) => `The City lists it with the stop number ${number}.`,
+    shelterByNumber: "Matched to the SEPTA stop by the stop number on the City's list.",
+    shelterByPlace: "Matched to the nearest SEPTA stop, within 15 meters: the City's list gives no stop number that fits.",
+    shelterNoStop: 'We found no SEPTA stop it serves: it stands more than 15 meters from every stop, or its stop has closed.',
+    shelterDigital: 'Its advertising panel is a digital screen.',
+    shelterLens: 'The stop it serves counts as sheltered in the transit comfort lens.',
+    shelterPartner: 'The City installs and maintains these shelters with its advertising partner, which the advertising pays for.',
+    shelterSource: "From the City's list of bus shelters (Office of Transportation and Infrastructure Systems).",
+    sheltersHere: (n: number) => `${plural(n, 'shelter', 'shelters')} at this spot`,
+
+    poleLed: 'An LED lamp the City lists',
+    poleOther: 'An older high pressure sodium lamp',
+    poleUnknown: 'A lamp of a kind the City does not name',
+    poleNone: 'A pole with no lamp listed, such as a signal or utility pole',
+    polesNote: 'The lamps the City lists, not whether a lamp works tonight. Report a light that is out to Philly311.',
+    polesZoom: 'Zoom in to a few blocks to see the poles.',
+    poleTitle: (number: string | null) => (number ? `Street pole ${number}` : 'A street pole with no number listed'),
+    poleKind: {
+      0: 'The City lists no lamp on this pole.',
+      1: 'The City lists an LED lamp on this pole.',
+      2: 'The City lists an older high pressure sodium lamp on this pole.',
+      3: 'The City lists a lamp on this pole, but not its kind.',
+    } as Record<number, string>,
+    poleOwner: {
+      1: "The City's Streets Department owns the pole.",
+      2: 'PECO owns the pole.',
+      3: 'PennDOT owns the pole.',
+      4: 'Someone other than the City, PECO or PennDOT owns the pole.',
+    } as Record<number, string>,
+    poleReport: (number: string) => `If a light here is out, tell Philly311 the pole number, ${number}.`,
+    poleReportNoNumber: 'If a light here is out, tell Philly311 where it is.',
+    polesHere: (n: number) => `${plural(n, 'pole', 'poles')} at this spot`,
+    poleSource: "From the Streets Department's list of street poles, refreshed every week.",
+
+    calmingLegend: 'A speed cushion, hump or table',
+    calmingLegendNote: 'Neighbors can ask the City for traffic calming on a residential street.',
+    zoomStreets: 'Zoom in to a few neighborhoods to see them.',
+    calmingTitle: 'Traffic calming',
+    calmingWhat: 'A speed cushion, hump or table the Streets Department lists, to slow drivers.',
+    calmingOn: (street: string) => `On ${street}`,
+    calmingSince: (date: string) => `It went in on ${date}.`,
+    calmingHere: (n: number) => `${plural(n, 'device', 'devices')} at this spot`,
+    calmingSource: "From the Streets Department's list of traffic calming devices.",
+
+    guardLegend: 'A corner where the City posts a school crossing guard',
+    guardLegendNote: 'Crossing guards help children and everyone else cross near schools at the start and end of the school day.',
+    guardTitle: 'School crossing guard',
+    guardHere: 'The City posts a school crossing guard at this corner.',
+    guardSchool: (school: string) => `The nearest school on the City's list, within 400 meters: ${school}.`,
+    guardWhat: 'Crossing guards help children and everyone else cross safely near schools at the start and end of the school day.',
+    guardsHere: (n: number) => `${plural(n, 'post', 'posts')} at this spot`,
+    guardSource: "From the City's list of school crossing guard locations.",
+
+    // What a street block adds (src/streets/describe.ts).
+    blockPoles: (poles: number, lamps: number, led: number) =>
+      lamps === 0
+        ? `The City lists ${plural(poles, 'pole', 'poles')} along this block, with no lamp listed on ${poles === 1 ? 'it' : 'them'}.`
+        : `The City lists ${plural(poles, 'pole', 'poles')} along this block, ${formatNumber(lamps)} with a lamp, ${led === lamps ? (lamps === 1 ? 'which is LED' : 'all of them LED') : `${formatNumber(led)} of them LED`}.`,
+    blockNoPoles: 'The City lists no street poles along this block.',
+    blockCalming: (n: number, year: number | null) =>
+      year
+        ? `Traffic calming here since ${year}: the City lists ${plural(n, 'speed cushion, hump or table', 'speed cushions, humps or tables')} on this block.`
+        : `The City lists ${plural(n, 'speed cushion, hump or table', 'speed cushions, humps or tables')} on this block.`,
+    blockNoCalming: 'No traffic calming recorded here yet.',
+    blockArterial:
+      "The City's speed cushions are for residential streets. On a street like this one, ask the City's Office of Transportation and Infrastructure Systems about other changes.",
+    // Beside the traffic calming request on a memorial.
+    memorialCalming: (n: number, year: number | null) =>
+      year ? `Traffic calming on this block since ${year}: the City lists ${plural(n, 'device', 'devices')}.` : `The City lists ${plural(n, 'traffic calming device', 'traffic calming devices')} on this block.`,
+    memorialNoCalming: 'No traffic calming recorded on this block yet.',
+    // A 311 street light block.
+    lightsPoles: (poles: number, lamps: number, led: number) =>
+      lamps === 0
+        ? `The City lists ${plural(poles, 'pole', 'poles')} along this block, with no lamp listed.`
+        : `Along this block the City lists ${plural(lamps, 'pole', 'poles')} with a lamp, ${led === lamps ? (lamps === 1 ? 'LED' : 'all LED') : `${formatNumber(led)} of them LED`}. Turn on "Street poles and the lamps the City lists" and zoom in to find each pole's number.`,
+    // A stop.
+    stopLamps: (lamps: number, led: number) =>
+      lamps === 0
+        ? 'The City lists no pole with a lamp within 30 meters of this stop.'
+        : `The City lists ${plural(lamps, 'pole', 'poles')} with a lamp within 30 meters of this stop, ${led === lamps ? (lamps === 1 ? 'LED' : 'all LED') : `${formatNumber(led)} of them LED`}.`,
+    cityShelter: (n: number) => (n === 1 ? "The City's list of bus shelters has a shelter here." : `The City's list of bus shelters has ${formatNumber(n)} shelters here.`),
+    noCityShelter: "No shelter here on the City's list of bus shelters, which holds the shelters it runs with its advertising partner.",
+    disagree:
+      "The City's list has a shelter here, but OpenStreetMap says there is none. One of them may be out of date: a survey settles it. Until then the priority counts the City's shelter.",
+    cityShelterLens: "The priority counts the City's shelter.",
+    answerCityShelter: "Not yet surveyed in OpenStreetMap, but on the City's list",
+  },
+
   // Parking problems reported with Philly Bike Action's Laser Vision app (issue #37): the legend of
   // src/map/styles/parking_reports.ts and an area someone tapped
   // (src/components/streets/ParkingDetails.svelte). Counts per area about a block across, never a
@@ -860,6 +969,7 @@ export const strings = {
     zoomNote: 'Zoom in to a few neighborhoods to see the stops.',
     lensTitle: 'Priority under the transit comfort lens',
     lensUnsurveyed: 'Where no one has surveyed a stop yet, its shelter and bench count halfway.',
+    lensCityShelter: "A stop with a shelter on the City's list counts as sheltered.",
     lensStations: 'The lens scores bus and trolley stops only, so stations are hollow.',
     lensTunnel: 'The trolley stops in the tunnel under Center City and University City are hollow too: the lens leaves them out, as it does stations.',
     // The transit comfort lens at a stop (src/transit/comfort.ts).

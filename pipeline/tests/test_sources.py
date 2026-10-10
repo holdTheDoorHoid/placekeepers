@@ -245,9 +245,10 @@ def arcgis_value(name: str, kind: str, n: int) -> object:
         return SEPT_27_MS
     if lower in ACCOUNT_COLUMNS:
         return f"37000000{n}"
-    return {"program": "PLC", "supported": "PHS", "year": "2022", "district": str(n)}.get(
-        lower, f"{name} {n}"
-    )
+    # A stop number and a kind of lamp the streets and stops checks (M4.5) recognize.
+    known = {"program": "PLC", "supported": "PHS", "year": "2022", "district": str(n)}
+    known.update({"stopid": str(400 + n), "bulb_type": "LED"})
+    return known.get(lower, f"{name} {n}")
 
 
 def arcgis_geometry(kind: str, n: int):

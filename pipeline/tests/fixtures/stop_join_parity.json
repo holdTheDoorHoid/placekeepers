@@ -406,6 +406,172 @@
    }
   },
   {
+   "name": "a City shelter, OpenStreetMap not surveyed",
+   "tile": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n11",
+    "cs": 1
+   },
+   "osm": {
+    "c": 0
+   },
+   "joined": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n11",
+    "cs": 1,
+    "a": 0,
+    "om": 2,
+    "f_noshelter": 0,
+    "f_nobench": 50,
+    "sg": "stop_survey"
+   }
+  },
+  {
+   "name": "a City shelter, no OpenStreetMap stop",
+   "tile": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "cs": 1
+   },
+   "osm": null,
+   "joined": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "cs": 1,
+    "f_noshelter": 0,
+    "f_nobench": 50,
+    "sg": "stop_survey"
+   }
+  },
+  {
+   "name": "a City shelter, OpenStreetMap agreeing, the bench answered",
+   "tile": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n12",
+    "cs": 1
+   },
+   "osm": {
+    "c": 3,
+    "sh": 1,
+    "bn": 1,
+    "n": [
+     "100"
+    ]
+   },
+   "joined": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n12",
+    "cs": 1,
+    "a": 3,
+    "om": 1,
+    "sh": 1,
+    "bn": 1,
+    "f_noshelter": 0,
+    "f_nobench": 0
+   }
+  },
+  {
+   "name": "two City shelters, OpenStreetMap saying there is none: they disagree",
+   "tile": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n13",
+    "cs": 2
+   },
+   "osm": {
+    "c": 1,
+    "sh": 0,
+    "bn": 0,
+    "lt": 1
+   },
+   "joined": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n13",
+    "cs": 2,
+    "a": 1,
+    "om": 2,
+    "sh": 0,
+    "bn": 0,
+    "li": 1,
+    "f_noshelter": 0,
+    "f_nobench": 100,
+    "sg": "stop_survey,stop_bench_request"
+   }
+  },
+  {
+   "name": "a City shelter, OpenStreetMap saying the stop is under a roof",
+   "tile": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n14",
+    "cs": 1
+   },
+   "osm": {
+    "c": 3,
+    "sh": 0,
+    "cv": 1,
+    "bn": 1
+   },
+   "joined": {
+    "id": "sp100",
+    "sid": "100",
+    "md": 1,
+    "f_riders": 60,
+    "f_shade": 40,
+    "tc": 1,
+    "o": "n14",
+    "cs": 1,
+    "a": 3,
+    "om": 2,
+    "sh": 0,
+    "bn": 1,
+    "cv": 1,
+    "f_noshelter": 0,
+    "f_nobench": 0
+   }
+  },
+  {
    "name": "a subway station: left as it is",
    "tile": {
     "id": "sp102",

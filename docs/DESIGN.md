@@ -204,6 +204,10 @@ As built (M1.10, interface review, 2026-10-04; details in
 | Amenity: bench, picnic table, drinking water, toilet, little free library | OpenStreetMap element id | v0.3 (M3.5) |
 | Public place: library, recreation center, pool or sprayground, park drinking fountain | The City's object id, prefixed by its layer | v0.3 (M3.5) |
 | Conditions reported to 311 on a block: dumping, lights out, graffiti | Street centerline segment (`seg_id`), the same block as the street safety layer | v0.3 (M3.5) |
+| Bus shelter on the City's list | The advertising partner's site id (`pa-` and a number), linked to the SEPTA stop it serves | v0.4 (M4.5) |
+| Street pole and the lamps the City lists on it | The Streets Department's pole number | v0.4 (M4.5) |
+| Traffic calming device (speed cushion, hump or table) | The City's object id, and its street block (`seg_id`) | v0.4 (M4.5) |
+| School crossing guard post | The City's object id | v0.4 (M4.5) |
 
 As built (M2.1, 2026-10-04): a stop's identity is a Placekeepers key, `sp` and its SEPTA stop number
 when first seen (`sr` for Regional Rail), which never changes. When SEPTA renumbers a stop in place
@@ -338,6 +342,24 @@ any lens (a slider or a preset) turns on the layer that draws its places, colore
 a note says so; a lens whose places are not on the map says so above its sliders, with a button to
 show them. The method is in [TRANSIT_METHOD.md](TRANSIT_METHOD.md) and the evidence in
 [EVIDENCE.md](EVIDENCE.md), "Bus stop comfort".
+
+As built (M4.5, issue #41, 2026-10-09): **a City shelter counts as a shelter.** The City publishes
+its own list of the 487 bus shelters it runs with its advertising partner (DATA_SOURCES.md,
+"Streets and stops"), and a SEPTA stop now carries how many of them stand there (`cs`). The lens
+counts such a stop as sheltered whatever OpenStreetMap says. Where OpenStreetMap says the stop
+has no shelter, the two disagree: neither wins silently. The stop's page says "The City's list
+has a shelter here, but OpenStreetMap says there is none. One of them may be out of date: a
+survey settles it. Until then the priority counts the City's shelter.", and the stop gets the
+suggestion to survey it instead of asking the City for a shelter it already lists. Every stop's
+page also says what the City's list says ("The City's list of bus shelters has a shelter here",
+or that it has none), beside what OpenStreetMap says, which stays in its own records and is
+joined in the browser (decision D1). On 2026-10-09, 462 of the City's shelters stand at 451 of
+the 7,912 stops the lens scores; 393 of those stops change: 389 that no one had surveyed (their
+shelter counted halfway) and 4 where OpenStreetMap says there is no shelter (Market St & 4th St,
+Broad St & Spruce St, Olney Av & B St, Ridge Av & Hermitage St). Under the default weights each
+drops about 11 points (10.7 to 21.4), and all 17 such stops among the 100 highest leave it (82 of
+the 500 highest). The stops with a City shelter hold 19.7 percent of weekday boardings, against
+the City's goal of 40 percent. The method is in TRANSIT_METHOD.md, "The City's shelters".
 
 As built (M3.1, 2026-10-05): the **heat and shade lens** ranks the vacant parcels on the map for
 where planting trees or greening a lot would cool people most. Each factor is ranked from 0 to 100
@@ -903,6 +925,69 @@ own. No word anywhere about tickets, the Parking Authority, reporting drivers or
 (ETHICS.md, "Policing"). On 2026-10-08: 1,112 areas holding 23,254 of 26,060 reports. Details in
 DATA_SOURCES.md ("Sources checked 2026-10-08") and CONTRACTS.md section 4.
 
+As built (M4.5, issue #41, 2026-10-09): **streets and stops.** Three City layers join the
+**Streets and memorials** group, and one the **Buses and trains** group, each off by default in
+both views, so they never crowd the lots and the High Injury Network:
+
+- **Street poles and the lamps the City lists**: every pole the Streets Department lists (203,096),
+  close in only (zoom 15 and up), as a small dot colored by the lamp the City lists on it: an LED
+  lamp, the older high pressure sodium lamp, a lamp of a kind it does not name, or a hollow ring
+  where no lamp is listed (such as a signal pole or one of PECO's). A setting shows every pole,
+  only poles with a lamp, or only lamps the City does not list as LED. A tapped pole gives its
+  number, which Philly311 asks for when a light is out. The words are always "poles" and "lamps
+  the City lists", never "brightness" or "lit": the list says what is installed, not what works
+  tonight. Each street block says how many poles the City lists along it and how many of their
+  lamps are LED, and each block of "Street and alley lights reported out" (311) says the same
+  beside its requests, so a neighbor sees both what is installed and what people reported out.
+- **Traffic calming the City lists**: every speed cushion, hump or table (1,780, from 2009 to
+  September 2026), with the day it went in and its street. A street block with some says "Traffic
+  calming here since 2023: the City lists 2 speed cushions, humps or tables on this block." A High
+  Injury Network block where people were killed or seriously injured walking or cycling and none
+  is recorded says "No traffic calming recorded here yet." (1,045 blocks on 2026-10-09). Where the
+  street may qualify for the City's program (a collector or local street that is not a state road,
+  the crash sites' rule; 125 of those blocks), the block offers the existing request, "Ask for
+  traffic calming on this residential street", beside that line; on an arterial it says the
+  City's speed cushions are for residential streets and to ask OTIS about other changes. A
+  memorial with the traffic calming request says beside it what the City lists on its block (282
+  of the 297 with the request have none recorded).
+- **School crossing guard posts**: the 758 corners where the City posts a crossing guard, each
+  with the nearest school on the City's list within 400 meters (727 have one). A safety service
+  that helps children and everyone else cross near schools, never described as enforcement
+  (ETHICS.md, "Policing").
+- **Bus shelters the City lists** (in Buses and trains): a blue ring around the stop each shelter
+  serves; section 5.3 says how the lens counts it.
+
+The poles have a file of their own, `tiles/poles.pmtiles` (2.3 MB, zoom 15 only, like the City's
+trees), so the rest of the map never loads them. The counts on every street block and the two new
+point layers made `tiles/streets.pmtiles` 13 percent larger (11.6 to 13.1 MB on 2026-10-09), almost
+all of it in the close in tiles that carry every block.
+
+**Street lights as a lens factor: proposed, not built** (the owner decides). Measured on
+2026-10-09:
+
+- The City's list barely varies where it could matter. 95 percent of the 130,241 lamps it lists
+  are LED, and only 3,186 of the 36,309 blocks with a lamp have any that is not. Lamps per 100
+  meters of block have a median of 2.6 to 2.8 in every street class. Only 162 of the 7,912 stops
+  the transit lens scores (2 percent, with 25,927 weekday boardings) and 474 of the 30,322 vacant
+  lots of high or medium confidence (1.6 percent) have no lamp listed within 30 and 50 meters.
+- Where lamps are missing from the list, the reason is often whose pole it is. 23,332 of PECO's
+  poles list no lamp, and they gather in Council Districts 6, 9 and 10, where 55 to 60 percent of
+  poles list a lamp against 66 to 70 percent in Districts 1, 2, 3 and 5. A factor would partly
+  measure which poles the City tracks.
+- The list says what is installed, not what works. OpenStreetMap says 17 stops are not lit, and
+  the City lists 1 to 12 lamps within 30 meters of every one of them. The working signal is 311's
+  lights out requests, which the map already uses for the "report a dark street light" cards.
+- What a factor would do: in the transit comfort lens, "no lamp the City lists within 30 meters"
+  (100 or 0, badge Weak, weight 1) would lift those 162 stops by about 3.5 points (median 46.6 to
+  50.1), moving 5 of them into the 100 highest and 13 into the 500 highest. In the violence lens
+  it would touch 1.6 percent of lots. Street lighting's evidence is Moderate for crime
+  (EVIDENCE.md), but the transit lens makes no crime claim, and in the violence lens the factor
+  would barely vary.
+
+The recommendation is to leave street lights out of every lens for now and keep them as context
+beside the 311 requests, as built. Revisit if the City publishes which lamps are out (or PECO's
+lamps), or if the owner wants the transit factor above at a low weight.
+
 ### 5.8 Public art
 
 As built (M3.2, 2026-10-05): a **Public art** layer in a new **Art and placemaking** group, one dot
@@ -1392,6 +1477,11 @@ docs/            design, roadmap, research
   stop, and from a route's details: tapping a bus, trolley or subway route line now opens it. On
   2026-10-05 there are sheets for 123 routes (117 bus, 6 trolley); OpenStreetMap matched about
   660 of SEPTA's stops on them, so most rows read "not found in OpenStreetMap" for now.
+  As built (M4.5, 2026-10-09): the City's own list of bus shelters is public after all (the
+  design once said no list existed), and the map reads it (section 5.3). OpenStreetMap and the
+  survey remain the way to record benches, lights and shelters the City's list lacks or that have
+  come and gone since its last change in January 2025; where the two disagree about a shelter,
+  the stop's page says so and suggests a survey.
 - Corrections use a GitHub issue form prefilled with the parcel or place id.
 - Takedown requests go to a dedicated email address (the owner creates it; the owner's personal email
   is never published). Memorial removals are honored without questions.

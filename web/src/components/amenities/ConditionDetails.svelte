@@ -4,6 +4,7 @@
   // block: never an address, and nothing about who reported. Physical conditions only; nothing
   // here ever suggests the police (docs/ETHICS.md).
   import { describeCondition } from '../../amenities/describe.ts';
+  import { lightsPolesLine } from '../../streets/streets-stops.ts';
   import type { Route } from '../../registry/types.ts';
   import { strings } from '../../strings.ts';
 
@@ -12,6 +13,8 @@
   const view = $derived(describeCondition(layerId, properties));
   const t = strings.conditions;
   const link = $derived(route?.links[0] ?? null);
+  // Beside a street light reported out, the poles the City lists along the block (M4.5).
+  const poles = $derived(layerId === 'dark_lights' ? lightsPolesLine(properties) : null);
 </script>
 
 <section class="condition">
@@ -19,6 +22,7 @@
   {#if view.place}<p class="muted small">{view.place}</p>{/if}
   <p>{view.summary}</p>
   {#if view.facts.length}<p class="small">{view.facts.join(' ')}</p>{/if}
+  {#if poles}<p class="small">{poles}</p>{/if}
   <p class="muted small">{t.meaning} {t.byBlock}</p>
   {#if link}<p class="small"><a href={link.url} target="_blank" rel="noopener noreferrer">{t.report}</a></p>{/if}
   <p class="muted small">{t.source}</p>

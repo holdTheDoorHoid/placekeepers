@@ -569,6 +569,42 @@
       "rows": 83,
       "newest_record": null,
       "message": null
+    },
+    "bus_shelters": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 487,
+      "newest_record": null,
+      "message": null
+    },
+    "street_poles": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 203096,
+      "newest_record": null,
+      "message": null
+    },
+    "traffic_calming": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 1780,
+      "newest_record": null,
+      "message": null
+    },
+    "crossing_guards": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 758,
+      "newest_record": null,
+      "message": null
     }
   },
   "layers": {
@@ -909,6 +945,37 @@
       "sources": [
         "mapping_inequality_1937"
       ]
+    },
+    "city_shelters": {
+      "file": "tiles/transit.pmtiles",
+      "source_layer": "shelters",
+      "sources": [
+        "bus_shelters",
+        "septa_gtfs"
+      ]
+    },
+    "street_poles": {
+      "file": "tiles/poles.pmtiles",
+      "source_layer": "poles",
+      "sources": [
+        "street_poles"
+      ]
+    },
+    "traffic_calming": {
+      "file": "tiles/streets.pmtiles",
+      "source_layer": "calming",
+      "sources": [
+        "traffic_calming",
+        "street_centerlines"
+      ]
+    },
+    "crossing_guards": {
+      "file": "tiles/streets.pmtiles",
+      "source_layer": "guards",
+      "sources": [
+        "crossing_guards",
+        "schools"
+      ]
     }
   },
   "files": {
@@ -945,20 +1012,20 @@
       "sha256": "7b12cb6d791ce59e1cf68aec9151841c6f521de4c2a4fff924aa8466e1523324"
     },
     "tiles/streets.memorials.geojson": {
-      "bytes": 1441,
-      "sha256": "85188b978eea0f9f6267455862127eb9884e4d0abe7f4ce0ab01181f3e7c18d0"
+      "bytes": 1465,
+      "sha256": "26ae2b4df2ff4db27e6d264f09873b104c73e55202235d59ecdd15d93c3bf436"
     },
     "tiles/streets.segments.geojson": {
-      "bytes": 6870,
-      "sha256": "7dacd780736a10a2f3c8a2a3f28839491aa326d4936ae139bcf825c55d5d3c35"
+      "bytes": 7426,
+      "sha256": "ff396bb37e2d44bb9ac0bbb24be08a3a27cd98d915ab4e69421b298ad2d1c256"
     },
     "tiles/transit.routes.geojson": {
       "bytes": 1103,
       "sha256": "ba6d52260354a67d1609cfa76aa2696ba0dacded44f23dba816aead9ffdd08c0"
     },
     "tiles/transit.stops.geojson": {
-      "bytes": 3174,
-      "sha256": "515c594b418fb995680c228136aa05c84e5d82acf0eb4a8949b1ebbc2f133849"
+      "bytes": 3607,
+      "sha256": "3ef08278a56acbedf06753eb7299b70dbcccac6f3d57b44cf6adf5c25b79e911"
     },
     "tiles/amenities.stops.geojson": {
       "bytes": 1235,
@@ -1025,8 +1092,8 @@
       "sha256": "4f155d9e6b3b5806a72babf790b8d0551e17e2621939b6615ee6faebd6c2330f"
     },
     "tiles/conditions.lights.geojson": {
-      "bytes": 203,
-      "sha256": "0d2466ba34afeb0349640d1e3074226c5e6e587bc3fe4483704bed682bd069fc"
+      "bytes": 224,
+      "sha256": "fd6ec2edc1d7e4931323d34cb70a93e191af1e428bb751bcc3861894c83b2d09"
     },
     "tiles/conditions.graffiti.geojson": {
       "bytes": 202,
@@ -1056,6 +1123,22 @@
       "bytes": 975,
       "sha256": "c72a4ae33288fb85b0eb46bf9e2b9a114571e0edbd35b3354d8ed8499613ad05"
     },
+    "tiles/transit.shelters.geojson": {
+      "bytes": 797,
+      "sha256": "fda34f53a89b723cfcf740a62ed5b4da97266f14b66569d47938d307e481433a"
+    },
+    "tiles/poles.poles.geojson": {
+      "bytes": 999,
+      "sha256": "16d5e228a16843543ab7604d258ad7be26fd5f968adc79053d17ec5a6ad8ae2f"
+    },
+    "tiles/streets.calming.geojson": {
+      "bytes": 380,
+      "sha256": "1cf05e21b4d3a9fd722810c7da000ec631f96f9935420e414b99cf0fd89b55ea"
+    },
+    "tiles/streets.guards.geojson": {
+      "bytes": 340,
+      "sha256": "d7060bc59f150d51c54ecf2364bf9b601ccebe3aad9aa2dfbfc33a389dc76a87"
+    },
     "tiles/redlining.holc.geojson": {
       "bytes": 977,
       "sha256": "e44997a6bc387a9dcadf27be88cdbb8be027139128af40e57b5f016158533b28",
@@ -1066,8 +1149,8 @@
       "sha256": "01d11edc7bc2753a818222918f2fb5ed042bcdca16e6b3035495189721127b7f"
     },
     "tables/stop_amenities.json": {
-      "bytes": 763,
-      "sha256": "28b139874ea1f6a099b26faaec67230cbd44da8de648de9a9af66df2cacbcb17"
+      "bytes": 816,
+      "sha256": "38c390974adf3da957434dee853b0339f873238d406295ce2685963d7572ced4"
     },
     "dossiers/common.json": {
       "bytes": 6273,
@@ -1157,6 +1240,7 @@
     "Public art tiles were skipped for this sample too, so its layer is published as GeoJSON.",
     "Walking tiles were skipped for this sample too, so those layers are published as GeoJSON.",
     "Parking report tiles were skipped for this sample too, so that layer is published as GeoJSON.",
-    "Displacement watch tiles were skipped for this sample too, so its layer is published as GeoJSON."
+    "Displacement watch tiles were skipped for this sample too, so its layer is published as GeoJSON.",
+    "Street pole, shelter, traffic calming and crossing guard tiles were skipped for this sample too, so those layers are published as GeoJSON."
   ]
 }
