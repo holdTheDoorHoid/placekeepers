@@ -3,6 +3,220 @@
 Numbers below are from the live manifest and the project's docs, each said "as of" its own date,
 and change a little every week as the data refreshes.
 
+## v0.4 (2026-10-10)
+
+Phase 4 of the roadmap, history and displacement, is finished. Every lot page now tells the story
+of the lot: one timeline of its sales, inspections, permits and demolitions, with or without live
+City data. A new group of layers, "Then and now," shows the City's aerial photos from 1959 to 2025
+on a year slider, the 1860 atlas and the 1937 redlining map. A new page, "The Land Bank in
+numbers," counts what the City's land agencies have sold or transferred. The lot page also gains
+"Rules for this lot": historic designation, zoning overlays, federal brownfield records, and every
+appeal and upcoming hearing. The displacement watch gains a sixth sign, rent burden, and a card of
+rents, incomes and empty homes. Three additions came from a review of another map, Build Philly
+Now's, on October 9, 2026: the City's bus shelters, street lights, traffic calming and crossing
+guards; the rules and hearings above; and rents, incomes, empty homes, cooling and warming centers
+and playgrounds. Nothing from that map is used. Its map, tiles and API are never read; each of
+these comes from the City, the Census Bureau or the EPA directly.
+
+### The story of each lot
+
+- Under History, a lot page opens with "The story of this lot": one or two plain sentences built
+  only from records, each followed by where it comes from. For example, "A building stood here
+  until 2011, when the City demolished it." A lot whose records tell no story yet says so, and a
+  record the map is unsure of, such as one dated in the future, tells none.
+- Below the story, one timeline, newest first and grouped by year, of deeds, violations (the date
+  and the City's own title, never a case number), permits, demolitions, clean and seal work,
+  unsafe and imminently dangerous notices, appeals, and the dated records of vacancy and care that
+  the map holds: the City's lists of vacant land and buildings, the June 2024 lists, and the year
+  PHS LandCare began caring for the lot. Eight switches turn each kind off and on, and the choice
+  stays in your browser.
+- The same timeline appears whether "Fetch live City data" is on or off. The weekly copy holds
+  every record; live data only adds newer ones. A lot whose records the weekly copy lacks says so
+  and offers live data, never "no violations."
+- Every deed on record back to 1974 is there, and deeds before 2000 say they come from records the
+  City says may be incomplete. The assessments chart and table now show every year the City holds,
+  2015 to 2027.
+- The timeline's records sit in files fetched only when History comes into view, so the rest of
+  the lot page stays as small as before. As of October 9, 2026: 933 files, the largest 115 kB
+  compressed. The print layout carries the story and the 10 newest records.
+- Under the story, "See this lot in old aerial photos" opens the map at the lot with the oldest
+  photo, from 1959. It is off when live City data is off, and says why.
+
+### Rules for each lot
+
+- A new part of the lot page, "Rules for this lot," between "What you can do" and "Who owns it."
+  It says whether the lot is in a local historic district or on the Philadelphia Register of
+  Historic Places, and leads with the lawful step: changes may need the Historical Commission's
+  review, so ask it first, and for a mural or a garden, ask before you start. It names the base
+  zoning and each zoning overlay in plain words, with a link to its section of the Zoning Code and
+  any bill pending in City Council. It never says a lot is or is not buildable.
+- Federal brownfield records: where the EPA's records show a brownfield assessment or cleanup at
+  or near the address, the page says so, tells you to test the soil before growing food, and says
+  the records show where a grant paid for work, not what is in the ground today. Garden
+  suggestions near one carry the same soil note. The page never calls a place "clean" or "safe."
+- Every appeal the City publishes about the lot, as the City publishes it: the board and kind of
+  appeal in plain words, the filing, hearing and decision days, the decision, the registered
+  community organization notified, and who filed it. A hearing still to come goes at the top of
+  the page ("A zoning hearing about this lot is set for ..."), with the City's page on how to take
+  part. The appeal's reasons are linked to the City, never copied.
+- As of October 9, 2026: 1,655 lots in a historic district or on the Register, 77,290 with zoning
+  overlays, 3,744 at or near a brownfield property, and 7,427 with appeals, 260 of them with a
+  hearing still to come. 726 hearings are still to come across the city (499 before the Zoning
+  Board of Adjustment, 196 the L&I Review Board and 31 the Board of Building Standards).
+- Five layers in a new "Land rules and hearings" group, all off by default: historic districts
+  (45), properties on the Register (14,980, from close in), zoning overlays (196, with a setting
+  for the overlay districts only), hearings still to come, and brownfield sites (351). Tapping a
+  hearing says how to take part and opens the lot's page; it never names who filed.
+- The lot's size as the City's assessor records it ("about 16 feet wide on the street and 80 feet
+  deep") now sits in the Summary.
+- Not done: whether a lot is on a corner (the City records we read do not say) and who represents
+  you (ward, state and Congressional districts).
+
+### Then and now
+
+- A new "Then and now" group in the layer panel, all off by default.
+- **Aerial photos by year:** 23 photographs of the whole city, from 1959 to 2025, on a year slider
+  with a setting for how strongly the photo shows, so today's streets can show through. 20 are the
+  City's own (1996, 2000, 2004, 2005, 2008 to 2012, 2014 to 2020, 2022 to 2025). 1959 and 1975 are
+  the Delaware Valley Regional Planning Commission's, and 1999 is the U.S. Geological Survey's,
+  all hosted by the City. The legend names each year's publisher and says where the 1975 photos
+  have gaps (the far south, around the airport and the Navy Yard).
+- **1860 atlas (Hexamer and Locher):** the atlas the City hosts, fitted to today's map by the
+  Greater Philadelphia GeoHistory Network. It covers Center City and Northern Liberties only.
+- **1937 redlining map:** the Home Owners' Loan Corporation's areas and grades of Philadelphia, as
+  Mapping Inequality traced them: 83 areas (10 graded A, 28 B, 18 C, 26 D and 1 ungraded). The
+  legend says in plain words what redlining was and that the grades say nothing about the people
+  who live there today. Tapping an area links to its 1937 description at Mapping Inequality; the
+  descriptions are not copied. Non commercial use only; see "Safeguards and privacy."
+- The pictures stay on the City's servers. Your browser asks for the tiles of the year you chose,
+  and Placekeepers stores and hosts none of them.
+- The Data status page checks each of the 24 picture services every week, and says plainly when
+  some pictures may not show.
+
+### The Land Bank in numbers
+
+- A new page, reachable from the menu, for the Philadelphia Land Steward Union's campaign and
+  anyone else who wants the facts. It is neutral: no slogans, and it speaks for neither the Land
+  Steward Union nor the Land Bank.
+- What it counts: properties the Philadelphia Land Bank, the Redevelopment Authority, PHDC and the
+  City sold or transferred to someone outside those agencies, from the City's deed records since
+  2014, each property once. As of October 9, 2026: 3,235 properties from January 2014 to August 2026,
+  1,032 of them by the Land Bank (which began in 2017), 1,862 by the Redevelopment Authority, 145
+  by PHDC and 196 by the City. Moves between the agencies are counted apart.
+- It shows, for all four agencies or one at a time: conveyances per year, who the buyers are
+  (people, companies, nonprofits, other public bodies), side and rear yards per year, the prices
+  deeds record, counts by council district, and the weekly count of lots listed as available,
+  which starts in October 2026 and says so. Each section has a table under its chart and a CSV
+  download.
+- Honest about what is unknown. The deeds do not name the program, so side yards are our
+  inference (a single lot to a person who owns the home touching it), always labeled as ours,
+  with how it was checked and the City's own counts by program for fiscal years 2017 to 2023
+  beside it. A recorded price is not always money paid. The page says what the public records
+  cannot show, such as how long applicants waited.
+- Aggregates only: no names, no addresses and no parcel numbers on the page or in its downloads,
+  and organizations are never named.
+
+### Streets and stops
+
+- **Bus shelters the City lists:** the City's list of 487 shelters is on the map, and the transit
+  comfort lens now counts a stop with a City shelter as sheltered. As of October 9, 2026, 462 of
+  the City's shelters stand at 451 of the 7,912 stops the lens scores, and 393 of those stops,
+  whose shelter had counted as unknown or missing, now score about 11 points lower. Where
+  OpenStreetMap
+  says a stop has no shelter and the City says it does (4 stops), the stop's page says the two
+  disagree and suggests a survey instead of a request. The City's list was last edited in January
+  2025. The survey guide no longer says no list of shelters exists.
+- **Street poles and the lamps the City lists:** 203,096 poles, shown close in only, colored by
+  the lamp the City lists on them: 130,241 have a lamp listed, 123,749 of those LED. The words are
+  always "poles" and "lamps the City lists," never "brightness" or "lit," because the list says
+  what is installed, not what works tonight. Each street block says how many poles the City lists
+  along it, beside the 311 reports of lights out. A tapped pole shows its number, which Philly311
+  asks for.
+- **Traffic calming the City lists:** 1,780 speed cushions, humps and tables. A street block says
+  "Traffic calming here since 2023" where there is some. On a High Injury Network block where
+  people were killed or seriously injured walking or cycling and none is recorded (1,045 blocks),
+  it says "No traffic calming recorded here yet," and where the street may qualify for the City's
+  program (125 of them), it offers the existing request.
+- **School crossing guard posts:** 758 corners where the City posts a guard, each with the nearest
+  school within 400 meters (727 have one). Described as a safety service, never as enforcement.
+- All four layers are off by default. Street lights stay a layer, not part of any lens: the
+  City's list barely varies from block to block, and where it lists no lamp the reason is often
+  whose pole it is.
+
+### Displacement watch, and neighborhood context
+
+- The watch now also counts rent burden, a sixth sign: renters paying half their income or more on
+  rent, in a tract where that share is at least 10 points above the city's (29.5%, so 39.5% or
+  more) and at least 100 renter households live. Like the renters and company buyers signs, it
+  says who is exposed to rising prices, not that prices are rising, so an area still needs a sign
+  about prices. With it, [N watch areas] of the city's 408 census tracts are in the watch.
+- Tapping a watch area now also shows "Rents, incomes and empty homes here," from the Census
+  Bureau's survey for 2020 to 2024: the share of renters paying half their income or more on rent,
+  the middle rent, the middle household income, and how many homes are empty (and, folded away, why
+  the Census says they are). Each number has its margin of error and the city's own figure beside
+  it: 29.5% of renters paying half their income or more, a middle rent of $1,397, a middle income
+  of $61,953, and 9.2% of homes empty. Small tracts are rough, and the card says so, and shows
+  "too few to tell" below 100 renter households or homes. No number is framed as a reason to buy or
+  invest.
+- **Cooling and warming centers:** a layer beside the pools and park water: 86 places the City
+  lists as warming or cooling sites, as of October 9, 2026. Each shows what the City lists (hours,
+  what it offers, access for people with disabilities) "as listed," never live. Sites open and
+  close with the weather, so the map says to call the site or 311 first. 55 of them are libraries
+  and recreation centers the map already shows; each place gets one marker.
+- **Playgrounds:** a layer of Parks and Recreation's 462 playgrounds, each with the ages it is
+  meant for. A lot page names the nearest one, how far it is in a straight line, and whether that
+  is within a 5 or a 10 minute walk. The owner decided not to add "no playground within a short
+  walk" to the placemaking score, since it mostly repeats "far from a park"; playgrounds stay on
+  lot pages and as a layer.
+
+### Safeguards and privacy
+
+- Nothing is asked of the City's picture server until you turn on an aerial photo layer or the
+  atlas. These layers follow "Fetch live City data": with it off, their switches are off and say
+  why, and a shared link or an earlier saved setting cannot turn them on. A test checks that a
+  default load makes no request to the picture server. The Privacy page says what that server
+  sees: your internet address and which part of the city is on screen.
+- The 1937 redlining map is licensed for non commercial use only (Creative Commons Attribution
+  NonCommercial 2.5). Its data stays in a file of its own, marked with its license, and is never in
+  a download or any other file. The legend, the tapped area, "About this layer" and the Data status
+  page carry its credit and say "Non commercial use only."
+- Names from appeals appear only on the lot's own page: never in a map layer, a citywide table, a
+  search, a list of places, the timeline, a printed sheet or a download. Tests search every other
+  published file for an appellant's name.
+- The Land Bank page publishes aggregates only. The buyers' names are read in the pipeline only to
+  tell a person from a company and to check the parcel next door, and are never kept.
+- Brownfield wording never says "clean" or "safe." Street light wording never says "brightness" or
+  "lit." Crossing guards are never described as enforcement.
+- No police suggestions, ever. Reports to Philly311 are for physical conditions only.
+
+### New data, and what was checked
+
+- New sources: the City's deed records for the land agencies, the City's Land Management dashboard
+  (program counts for fiscal years 2017 to 2023), the City's aerial photos, DVRPC's photos of 1959
+  and 1975, the U.S. Geological Survey's photos of 1999, the City's copy of the 1860 atlas, Mapping
+  Inequality's 1937 areas, the City's shelters, street poles, traffic calming and crossing guards,
+  the Historical Commission's districts and Register, the Planning Commission's zoning overlays,
+  L&I's appeals, the EPA's brownfield records, five Census Bureau tables (rent as a share of
+  income, middle rent, middle income, homes empty and why), the City's warming and cooling sites,
+  and Parks and Recreation's playgrounds.
+- Checked and not used: City Council's resolutions through its Legistar API, which asks for a token
+  and would name the program for every conveyance; the Land Bank's and PHDC's board documents,
+  whose terms forbid republishing them (read by hand only to check our side yard inference); the
+  GeoHistory Network's other maps (the 1875, 1895 and 1910 atlases, the 1942 and 1962 land use
+  maps, the 1928 photos), which wait for the Athenaeum of Philadelphia's permission; and L&I's Property History search, which
+  is a search page over tables we already read. Older Carto copies of the historic layers disagree
+  with the City's current ones, so the current ones are used. Full findings are in
+  docs/DATA_SOURCES.md.
+- Proposed with numbers and left to the owner: street lights as a lens factor (left out), and
+  "no playground within a short walk" as a placemaking factor (declined).
+
+### Site pages
+
+- A new page, The Land Bank in numbers, in the site menu of every page. The Privacy page explains
+  the aerial photos and the atlas. The Survey bus stops guide now says the City publishes its
+  shelter list.
+- The note at the top of the site says "Version 0.4."
+
 ## v0.3 (2026-10-08)
 
 Phase 3 of the roadmap, heat and shade and placemaking, is finished. A new placemaking lens ranks

@@ -178,8 +178,8 @@ As built (M1.10, interface review, 2026-10-04; details in
 - **Phones.** Phones get the field view held either way up; turned sideways, the open sheet runs down
   the left of the map. On the narrowest phones "Copy link" moves into the menu and Settings shows a
   gear (still named "Settings" for screen readers), so the top bar keeps to two rows even with a
-  wide font or larger text. The note at the top (since v0.3, "Version 0.3: an early public
-  version"; before that "Version 0.1: a first public version") can be hidden once read (this
+  wide font or larger text. The note at the top (since v0.4, "Version 0.4: an early public
+  version"; from v0.3, "Version 0.3"; before that "Version 0.1: a first public version") can be hidden once read (this
   browser remembers, under `placekeepers:v1:note`). "Stop" sits beside the note that the location is in use, so the search box keeps its width. The chips row fades at its edge to show it scrolls. Buttons, chips and
   sliders are at least 40 pixels tall on touch screens.
 - **Loading.** The data layers download beside the base map instead of after it has drawn, and the
