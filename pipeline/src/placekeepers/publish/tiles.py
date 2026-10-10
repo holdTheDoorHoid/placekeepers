@@ -152,6 +152,16 @@ TILE_OPTIONS: dict[str, list[str]] = {
         "--no-feature-limit",
         "--no-tile-size-limit",
     ],
+    # The street poles the City lists (M4.5): about 203,000 points, shown only close in, so the
+    # file holds them at zoom 15 alone (a few blocks across) and the map stretches it further in.
+    # Every pole is kept.
+    "tiles/poles.pmtiles": [
+        "--minimum-zoom=15",
+        "--maximum-zoom=15",
+        "--base-zoom=15",
+        "--no-feature-limit",
+        "--no-tile-size-limit",
+    ],
     # Public places from the City and conditions reported to 311, by block (M3.5): a few thousand
     # points, every one at every zoom.
     "tiles/places.pmtiles": [

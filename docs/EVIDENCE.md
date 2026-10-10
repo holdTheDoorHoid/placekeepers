@@ -99,7 +99,10 @@ neighbors seeing visible investment, not only better visibility. A randomized tr
 public housing (Chalfin and colleagues, *Journal of Quantitative Criminology* 2022,
 [doi:10.1007/s10940-020-09490-6](https://doi.org/10.1007/s10940-020-09490-6)) found a significant drop
 in nighttime outdoor crime *(size to confirm; secondary sources say about a third)*. Philadelphia
-publishes its street pole locations, and outage reports to 311 show where lights are out.
+publishes its street pole locations, and outage reports to 311 show where lights are out. From
+M4.5 (2026-10-09) the map shows the lamps the City lists beside the 311 reports, as context only:
+95 percent of them are LED and nearly every block lists some, so the list says little about where
+streets are dark at night, and it is not a lens factor (DESIGN.md section 5.7 has the numbers).
 
 ## Trees and green space: Mixed
 

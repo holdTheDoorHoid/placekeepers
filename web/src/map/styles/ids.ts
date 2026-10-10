@@ -39,6 +39,12 @@ export const STYLE_IDS = [
   'zoning_overlays',
   'hearings',
   'brownfields',
+  // Streets and stops (M4.5): the City's bus shelters, street poles, traffic calming and school
+  // crossing guard posts
+  'city_shelters',
+  'street_poles',
+  'traffic_calming',
+  'crossing_guards',
   // Then and now (M4.3): pictures from the City's own servers, and the 1937 redlining map
   'historic_imagery',
   'redlining',

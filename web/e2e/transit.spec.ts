@@ -63,6 +63,26 @@ test.describe('transit comfort', () => {
     await expect(details).toBeHidden();
   });
 
+  test('a stop where the City lists a shelter and OpenStreetMap says none says so plainly', async ({ page }) => {
+    // The sample stop sp1009 (web/scripts/make-fixtures.mjs, M4.5): two shelters on the City's list,
+    // and OpenStreetMap says there is no shelter. The lens counts the City's shelter; the page says
+    // the two disagree and suggests a survey, never a request for a shelter the City already lists.
+    await openMap(page, 'v=f&m=17/39.985539/-75.15331');
+    await page.getByRole('button', { name: 'Bus stops' }).click();
+    await page.getByRole('button', { name: /What you can do nearby/ }).click();
+    const card = page.locator('article.card[data-stop="sp1009"]');
+    await expect(card).toBeVisible();
+    await expect(card).toContainText('Survey this stop with StreetComplete');
+    await card.locator('button.open').click();
+    const details = page.getByRole('dialog', { name: 'Stop' });
+    await expect(details).toContainText("The City's list of bus shelters has 2 shelters here.");
+    await expect(details).toContainText("The City's list has a shelter here, but OpenStreetMap says there is none.");
+    await expect(details).toContainText('Shelter: No');
+    await expect(details).toContainText('The City lists 2 poles with a lamp within 30 meters of this stop, all LED.');
+    await expect(details).not.toContainText('Ask the City for a shelter at this stop');
+    await expectAccessible(page, 'a stop where the City and OpenStreetMap disagree');
+  });
+
   test('using the transit comfort lens shows the stops, colored by it', async ({ page }, info) => {
     test.skip(isPhone(info), 'The lens sliders sit in the analysis view, beside the map on a wide screen.');
     await openMap(page, `v=a&m=16/${STOP.lat}/${STOP.lng}`);

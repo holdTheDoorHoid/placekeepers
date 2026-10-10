@@ -276,6 +276,13 @@ not let us grant. The pipeline keeps the reference join
 (`placekeepers.derive.transit_comfort.join_published`); the cases in
 `pipeline/tests/fixtures/stop_join_parity.json` hold both sides to the same answers.
 
+A third rule for the same lens (added 2026-10-09 by M4.5, issue #41): `f_noshelter` is 0 wherever
+the stop's `cs` (the shelters on the City's own list at the stop, section 4) is above 0, whatever
+OpenStreetMap says. `cs` is the City's data and is published on the stop; the map style reads it
+first (`shelterExpression` in `web/src/transit/answers.ts`) and falls back to the join. Where `cs`
+is above 0 and OpenStreetMap says `sh` 0 (and not `cv` 1), the two disagree: the web app says so on
+the stop's page, and the lens still counts the City's shelter.
+
 ### `registry/suggestions.yaml`
 
 ```yaml
@@ -305,7 +312,16 @@ first route. Of these, `sg` in transit.pmtiles carries only those SEPTA's and th
 decide (planting shade trees); the four that follow from what OpenStreetMap says at the stop
 (survey it, ask for a shelter, ask for a bench, report a dark streetlight) are worked out in the
 browser by the same rules (decision D1, section 1 lenses), and a stop lists them all in that order:
-survey, shelter, bench, streetlight, shade trees.
+survey, shelter, bench, streetlight, shade trees. From M4.5 (2026-10-09) the City's shelters (`cs`)
+take part: a stop with one is never asked for a shelter, and one where OpenStreetMap says there is
+none gets the survey (section 4, `stops`).
+
+`traffic_calming_petition` (`applies_to: crash`, carried by `memorials`) is also carried by street
+blocks from M4.5 (2026-10-09): `sg` on a `segments` feature names it on a High Injury Network block
+where people were killed or seriously injured walking or cycling, no traffic calming is recorded,
+and the street may qualify (a collector or local street that is not a state road, the crash
+sites' rule). The web app lists it under the block's details with "No traffic calming recorded
+here yet." beside it.
 
 Greening suggestions (listed in `web/src/config/suggestions.ts`: `clean_and_green`,
 `plant_shade_trees`, `cool_green_lot` and `stop_shade_trees`; added 2026-10-04 by M1.10, decision
@@ -375,11 +391,12 @@ data/
   manifest.json
   tiles/
     lots.pmtiles          layer "parcels"   (vacancy candidates)
-    streets.pmtiles       layers "hin", "segments", "crashes", "memorials"
+    streets.pmtiles       layers "hin", "segments", "crashes", "memorials", "calming", "guards" (traffic calming and crossing guard posts, M4.5)
     context.pmtiles       layer "h3"        (area cells, resolution 9)
     care.pmtiles          layers "landcare", "gardens"
     boundaries.pmtiles    layers "council_districts", "rcos", "neighborhoods"
-    transit.pmtiles       layers "stops", "routes"   (SEPTA, added 2026-10-04 by M2.1; the transit comfort lens on "stops", M2.3; never OpenStreetMap's answers)
+    transit.pmtiles       layers "stops", "routes"   (SEPTA, added 2026-10-04 by M2.1; the transit comfort lens on "stops", M2.3; never OpenStreetMap's answers), "shelters" (the City's bus shelters, M4.5)
+    poles.pmtiles         layer "poles"     (the street poles the City lists, zoom 15 only; M4.5)
     amenities.pmtiles     layers "stops" (shelters and benches at stops, M2.2), "benches",
                           "picnic_tables", "water", "toilets", "bookcases" (M3.5): from OpenStreetMap
     places.pmtiles        layers "park_water", "libraries", "recreation", "pools" (the City's; M3.5)
@@ -943,6 +960,12 @@ the map shows markers with 1, 2 or 8 by default. `src` is present only with a cu
 (suggestion ids for the crash site, comma separated, the memorial suggestion first). Nothing else
 about the person is ever published: no age, sex, case number, arrest or driver details.
 
+Added 2026-10-09 by M4.5: a marker whose `sg` holds `traffic_calming_petition` carries `tc`, the
+traffic calming devices the City lists on the crash site's block (the nearest block within 30
+meters, as for the suggestion; 0 when none is recorded), and `ty`, the year of the first, when
+`tc` is above 0. Both are absent without the `traffic_calming` snapshot. They are about the street,
+never the person.
+
 **`segments` (streets.pmtiles, lines)**, added 2026-10-04 by M1.5: one feature per street block from
 the City's street centerlines (classes that carry traffic). `id` (the City's `seg_id`), `name`
 (street name as the City writes it, such as "N BROAD ST"), `cls` (the City's street class: 1
@@ -954,6 +977,21 @@ the block or at its corners in the two years before the build, from the Police r
 when a school is within 400 meters). A crash within 10 meters of an intersection counts for every
 block that meets there; any other crash counts for the nearest block within 30 meters (60 meters for
 the Police records, whose points are less precise).
+
+Added 2026-10-09 by M4.5 (issue #41; `pipeline/src/placekeepers/publish/streets_stops.py`), from
+the City's street poles and traffic calming devices:
+
+| Property | Type | Meaning |
+|---|---|---|
+| `pl` | int | street poles the City lists that count for this block: each pole counts for its nearest block within 30 meters; 0 when none; absent when the `street_poles` snapshot is missing |
+| `lp` | int | of those, poles with a lamp the City lists (a kind of lamp named, LED or HPS, or a number of lamps above 0); only when above 0 |
+| `le` | int | of those, poles with an LED lamp; only with `lp` |
+| `tc` | int | traffic calming devices the City lists on this block (by the device's `seg_id`, else the nearest block within 30 meters); 0 only on a High Injury Network block (`hin` 1) with `ksi` above 0, where none is recorded; absent otherwise, and everywhere when the `traffic_calming` snapshot is missing |
+| `ty` | int | the year the first of them went in; only with `tc` above 0 |
+| `sg` | string | `traffic_calming_petition` where `tc` is 0 and the street may qualify for the City's program (`cls` 4 or 5 and not a state road); absent otherwise |
+
+"Share LED" is `le` divided by `lp`. The words for these are "poles" and "lamps the City lists",
+never that a street is lit: the list says what is installed, not what works.
 
 In the tiles (not the GeoJSON), low zooms carry only what matters most citywide: crashes with a death
 or serious injury, blocks with `hin`, `ksi` or `k2`, and every memorial. Other crashes and blocks near
@@ -1047,6 +1085,9 @@ contributors".
 | `sg` | string | the suggestions SEPTA's and the City's data decide, comma separated: `stop_shade_trees` (`f_shade` of 75 or more); absent when none |
 | `f_walk`, `f_neighbors`, `f_dest` | int | the walking factors of the lots (added 2026-10-05 by M3.3; `parcels` above), measured from the stop and ranked among the stops `tc` marks, more ranking higher; no lens lists them yet (`factors_at` in `derive/walk.py`) |
 | `dw` | int | the signs of the displacement watch area the stop stands in, as `dw` on the lots (added 2026-10-08 by M4.1); absent outside every watch area |
+| `cs` | int | how many shelters on the City's own list stand at this stop (added 2026-10-09 by M4.5; `match_shelters` in `derive/streets_stops.py`: by SEPTA's stop number within 30 meters with no other stop more than 3 meters closer, else the nearest stop within 15 meters); absent when none, or without the `bus_shelters` snapshot. The City's data, so it is published here; the lens counts it as a shelter |
+| `lp` | int | poles with a lamp the City lists within 30 meters of the stop (added 2026-10-09 by M4.5); absent without the `street_poles` snapshot |
+| `le` | int | how many of those are LED; with `lp` |
 
 What the browser adds by the join (never published here): `a` (the linked stop's `c`: 3 a shelter
 or roof, 2 a bench but no shelter mapped, 1 neither, 0 not yet surveyed; absent when no
@@ -1055,8 +1096,10 @@ stop numbers agree: an `n` of the linked stop names `sid` or a number in `fid`; 
 stand at the same place); `sh`, `bn`, `li` (lit; `lt` here is the last departure) and `cv`, 1 yes
 and 0 no, absent when unknown; `f_noshelter` (100 when a survey found no shelter, 0 with a shelter
 or the whole stop under a roof, 50 when not yet surveyed) and `f_nobench` (100, 0 or 50 the same
-way); and the suggestions in this order: `stop_survey` (shelter or bench not known yet),
-`stop_shelter_request` (a survey found no shelter, and the stop is not under a roof),
+way; from M4.5 `f_noshelter` is 0 wherever `cs` is above 0); and the suggestions in this order:
+`stop_survey` (shelter or bench not known yet, or `cs` above 0 while OpenStreetMap says `sh` 0
+and not `cv` 1: the City and OpenStreetMap disagree), `stop_shelter_request` (a survey found no
+shelter, the stop is not under a roof, and `cs` is absent),
 `stop_bench_request` (a survey found no bench), `stop_streetlight_report` (OpenStreetMap says the
 stop is not lit), then those in `sg`.
 
@@ -1076,6 +1119,22 @@ the city. Routes whose trips have no shapes in the feed are left out.
 | `md` | int | the mode, as for `stops` |
 | `tw` | int | trips on the typical weekday |
 | `hp`, `hm` | int | the typical wait from 7 to 9 and from 10 to 2 on the weekday, where the route runs most often (its busiest stop in its busiest direction); absent when none |
+
+Added 2026-10-09 by M4.5 (issue #41), from the `bus_shelters` snapshot (the City's data, under its
+open data terms like the rest of this file):
+
+**`shelters` (transit.pmtiles, points)**: every shelter on the City's list of bus shelters, the ones
+it installs and maintains with its advertising partner, at the City's point. In the tiles, from
+zoom 10 like the routes; the map draws them from zoom 12, as a ring around the stop.
+
+| Property | Type | Meaning |
+|---|---|---|
+| `id` | string | the advertising partner's site id as the City lists it (`siteid`, such as "pa-002294") |
+| `nm` | string | the site's name without the City's internal codes ("- Shelter CH14", "-PBS1", notes in parentheses), with SEPTA's side of the street in words and the corner it names ("Roosevelt Blvd & Broad St (far side), southeast corner") |
+| `sid` | string | the stop number exactly as the City lists it ("419", "8-a", "NJT4"); absent when blank |
+| `dg` | int | 1 when its advertising panel is a digital screen; absent otherwise |
+| `st` | string | the key of the SEPTA stop it serves (`id` in `stops`), when it matches one; absent otherwise |
+| `m` | int | how it matched: 1 by the stop number, 2 by place; with `st` |
 
 Added 2026-10-04 by M2.2, from the `osm_philadelphia` snapshot (OpenStreetMap, so the layers of
 this file are under the Open Database License and credited "© OpenStreetMap contributors").
@@ -1175,6 +1234,7 @@ request is one point, at the middle of the block:
 | `o` | int | how many of them were still open in the City's table when the snapshot was made |
 | `d` | string | the day of the newest request on the block, YYYY-MM-DD in Philadelphia |
 | `a` | int | `lights` only: how many of the `n` were about an alley light; absent when none |
+| `pl`, `lp`, `le` | int | `lights` only (added 2026-10-09 by M4.5): the poles the City lists along the block, as on the block in `segments`; absent without the `street_poles` snapshot |
 
 The window's last day is the source's `newest_record` in the manifest (the City's table runs a day
 or two behind). Nothing else from 311 is published or even downloaded: no request number, address,
@@ -1190,6 +1250,39 @@ the condition occurs: some blocks ask more often than others, so no count or a l
 sign of a clean block, and no count is ever a factor. Suggestions built on them stay with physical
 conditions and the City's own services (Philly311, the route `report_to_311` in
 `registry/routes.yaml`), never the police (docs/ETHICS.md).
+
+Added 2026-10-09 by M4.5 (issue #41; `pipeline/src/placekeepers/publish/streets_stops.py`), from
+the City's street poles, traffic calming devices and school crossing guard locations:
+
+**`poles` (poles.pmtiles, points, zoom 15 only)**: every street pole the Streets Department lists
+inside a box around the city, in the order of its number. The map stretches zoom 15 further in and
+shows nothing below it.
+
+| Property | Type | Meaning |
+|---|---|---|
+| `id` | int | the City's pole number (`pole_num`), which Philly311 asks for when a light is out; absent when the City gives none |
+| `k` | int | the lamp the City lists: 0 none, 1 LED, 2 high pressure sodium (the City's HPS), 3 a lamp of a kind it does not name (`nlumin` above 0 with `bulb_type` UNKNOWN) |
+| `o` | int | the owner: 1 the Streets Department, 2 PECO, 3 PennDOT, 4 someone else; absent when blank |
+
+**`calming` (streets.pmtiles, points)**: every traffic calming device (speed cushion, hump or
+table) the Streets Department lists, kept at every zoom.
+
+| Property | Type | Meaning |
+|---|---|---|
+| `id` | int | the City's object id |
+| `d` | string | the day it went in, YYYY-MM-DD (the City's midnight in Philadelphia, stored in UTC, read as its UTC calendar day) |
+| `p` | string | the City's project id, shared by the devices of one project ("SC-1040"); absent when blank |
+| `s` | int | the street block it counts for (`id` in `segments`); absent when it is on none |
+| `name` | string | that block's street, as the City writes it; with `s` |
+
+**`guards` (streets.pmtiles, points)**: every corner where the City posts a school crossing guard,
+kept at every zoom. A safety service; nothing about enforcement is published or said.
+
+| Property | Type | Meaning |
+|---|---|---|
+| `id` | int | the City's object id |
+| `pl` | string | the corner in words, from the City's `address` ("BYBERRY & PROCTOR" as "Byberry & Proctor") |
+| `sn` | string | the nearest school on the City's list within 400 meters, its name in words; absent when none |
 
 Added 2026-10-05 by M3.3 (walking, cycling and people; `pipeline/src/placekeepers/publish/walk.py`,
 the method in DESIGN section 5.9). `walk.pmtiles` holds public domain data from the EPA and the

@@ -22,6 +22,14 @@ records whether the stop numbers agree (BY_NUMBER) or the two only stand at the 
 answers (`sh`, `bn`, `li`, 1 yes and 0 no, absent when unknown). A SEPTA stop that OpenStreetMap
 does not have yet gets none of these: not yet surveyed, never "missing".
 
+**The City's shelters** (M4.5, issue #41): `cs` counts the shelters on the City's own list at the
+stop (placekeepers.derive.streets_stops.match_shelters: by SEPTA's stop number, then by place).
+It is the City's data, so it is published on the stop. The lens counts a City shelter as a
+shelter (`f_noshelter` 0) whatever OpenStreetMap says. Where the City lists a shelter and
+OpenStreetMap says there is none, the two disagree: neither wins silently, the stop's page says
+so, and the stop gets the suggestion to survey it (a survey settles it) instead of asking the City
+for a shelter it already lists.
+
 **Never stored with SEPTA's data** (decision D1 of docs/VERIFICATION_V0_2.md). OpenStreetMap's
 answers, and everything worked out only from them (OSM_FIELDS, OSM_SUGGESTIONS), are never
 published on SEPTA's stop records: the combination would be a derivative database the Open
@@ -42,7 +50,7 @@ halfway does neither, and the stop gets the suggestion to survey it.
 * `f_riders`: weekday boardings, SEPTA's count; the share of stops with fewer. Left out where
   SEPTA has no count yet.
 * `f_noshelter`: 100 when a survey found no shelter, 0 when there is one (or the whole stop is
-  under a roof), 50 when not yet surveyed.
+  under a roof, or the City lists a shelter there), 50 when not yet surveyed.
 * `f_nobench`: 100 when a survey found no bench, 0 when there is one, 50 when not yet surveyed.
 * `f_shade`: how little tree canopy covers the land of the stop's H3 cell (resolution 9, about two
   blocks across; canopy of 2018, water left out); the share of stops with more canopy.
@@ -53,7 +61,8 @@ halfway does neither, and the stop gets the suggestion to survey it.
   shorter waits. Left out for a stop with no midday service.
 
 **Suggestions** (registry/suggestions.yaml), in this order: survey the stop first when its shelter
-or bench is not known yet; ask for a shelter where a survey found none; ask for a bench where a
+or bench is not known yet, or when the City lists a shelter OpenStreetMap says is not there; ask
+for a shelter where a survey found none and the City lists none; ask for a bench where a
 survey found none; report a dark streetlight where OpenStreetMap says the stop is not lit; plant
 shade trees where the stop is among the quarter with the least canopy (`f_shade` of SHADE_FROM or
 more). Only the last is published in `sg`; the browser works out the other four.
@@ -81,6 +90,12 @@ from placekeepers.derive.bus_stops import (
     stop_numbers,
 )
 from placekeepers.derive.street_safety import plural, points_in_meters, to_meters
+from placekeepers.derive.streets_stops import (
+    ShelterSummary,
+    load_city_shelters,
+    match_shelters,
+    summarize_shelters,
+)
 
 log = logging.getLogger(__name__)
 
@@ -137,12 +152,16 @@ OSM_FIELDS = frozenset({"a", "om", "sh", "bn", "li", "cv", "f_noshelter", "f_nob
 OSM_SUGGESTIONS = frozenset(
     {"stop_survey", "stop_shelter_request", "stop_bench_request", "stop_streetlight_report"}
 )
+#: The published property counting the shelters on the City's own list at the stop (M4.5).
+CITY_SHELTER = "cs"
 #: The published property that marks a stop the lens scores (bus and trolley stops on the street;
 #: not the stations, nor the trolley tunnel stations): the browser gives it the halfway answers.
 IN_LENS = "tc"
 
-#: Sources the factors read, each optional: without one, its factor is left out.
+#: Sources the factors read, each optional: without one, its factor is left out. Without the
+#: City's shelters, only OpenStreetMap's answers say whether a stop has a shelter.
 SOURCES = (
+    "bus_shelters",
     "tree_canopy_2018",
     "census_tracts_2020",
     "land_use",
@@ -229,9 +248,10 @@ def rank(values: Sequence[float | None]) -> list[int | None]:
     return rank_or_none(values)
 
 
-def yes_no_need(answer: int | None, covered: int | None = None) -> int:
-    """100 when a survey found it missing, 0 when it is there, NOT_SURVEYED when unknown."""
-    if covered == 1 or answer == 1:
+def yes_no_need(answer: int | None, covered: int | None = None, city: object = None) -> int:
+    """100 when a survey found it missing, 0 when it is there (or, for a shelter, the City lists
+    one: `city`, the stop's `cs`), NOT_SURVEYED when unknown."""
+    if covered == 1 or answer == 1 or (isinstance(city, int) and city > 0):
         return 0
     if answer == 0:
         return 100
@@ -318,15 +338,28 @@ def near_hin(lats: Sequence[float], lngs: Sequence[float], path: Path | None) ->
 # Suggestions
 
 
+def city_shelters(props: Mapping[str, object]) -> int:
+    """How many shelters the City lists at the stop (`cs`), 0 when none."""
+    value = props.get(CITY_SHELTER)
+    return value if isinstance(value, int) and value > 0 else 0
+
+
+def disagree(props: Mapping[str, object]) -> bool:
+    """The City lists a shelter at the stop, and OpenStreetMap says there is none (and that the
+    stop is not under a roof)."""
+    return city_shelters(props) > 0 and props.get("sh") == 0 and props.get("cv") != 1
+
+
 def stop_suggestions(props: Mapping[str, object], known: set[str] | None = None) -> list[str]:
     """The suggestion ids for a stop with these tile properties (module docstring), limited to
     the suggestions the registry has."""
     shelter, bench, lit, covered = (props.get(k) for k in ("sh", "bn", "li", "cv"))
-    shelter_known = shelter is not None or covered == 1
+    city = city_shelters(props)
+    shelter_known = shelter is not None or covered == 1 or city > 0
     found: list[str] = []
-    if not shelter_known or bench is None:
+    if not shelter_known or bench is None or disagree(props):
         found.append("stop_survey")
-    if shelter == 0 and covered != 1:
+    if shelter == 0 and covered != 1 and city == 0:
         found.append("stop_shelter_request")
     if bench == 0:
         found.append("stop_bench_request")
@@ -359,7 +392,9 @@ def join_published(
         for key, short in (("sh", "sh"), ("bn", "bn"), ("lt", "li"), ("cv", "cv")):
             if entry.get(key) is not None:
                 joined[short] = entry[key]
-    joined["f_noshelter"] = yes_no_need(joined.get("sh"), joined.get("cv"))
+    joined["f_noshelter"] = yes_no_need(
+        joined.get("sh"), joined.get("cv"), joined.get(CITY_SHELTER)
+    )
     joined["f_nobench"] = yes_no_need(joined.get("bn"))
     # The suggestions OpenStreetMap's answers decide, then the published ones, in the order a
     # stop lists them.
@@ -386,6 +421,8 @@ class ComfortResult:
     joined: list[dict] = field(default_factory=list)
     notes: list[str] = field(default_factory=list)
     summary: MatchSummary = field(default_factory=MatchSummary)
+    #: the City's shelters matched to these stops (None without the `bus_shelters` snapshot)
+    shelters: ShelterSummary | None = None
 
 
 def published(joined: Mapping[str, object]) -> dict:
@@ -434,6 +471,14 @@ def comfort_for_stops(
         matches, result.summary = match_osm(stops, osm_stops)
     else:
         result.notes.append("transit comfort: OpenStreetMap is missing, so no stop is surveyed")
+    # The City's own shelters (M4.5): its data, published on the stop as `cs`.
+    if "bus_shelters" in paths:
+        shelters = load_city_shelters(paths["bus_shelters"])
+        found = match_shelters(shelters, [SeptaPoint(s.sid, s.former, s.lat, s.lng) for s in stops])
+        for match in found.values():
+            props = result.joined[match.stop]
+            props[CITY_SHELTER] = int(props.get(CITY_SHELTER, 0)) + 1
+        result.shelters = summarize_shelters(shelters, found)
     for index, match in matches.items():
         answers = match.stop.answers
         props = result.joined[index]
@@ -450,7 +495,9 @@ def comfort_for_stops(
     hin = near_hin(lats, lngs, paths.get("high_injury_network"))
     columns = {
         "f_riders": rank(list(boardings)),
-        "f_noshelter": [yes_no_need(p.get("sh"), p.get("cv")) for p in result.joined],
+        "f_noshelter": [
+            yes_no_need(p.get("sh"), p.get("cv"), p.get(CITY_SHELTER)) for p in result.joined
+        ],
         "f_nobench": [yes_no_need(p.get("bn")) for p in result.joined],
         # Less canopy ranks higher: the share of stops with strictly more canopy.
         "f_shade": rank([None if c is None else -c for c in shade]),
@@ -497,6 +544,24 @@ def _notes(result: ComfortResult, total: int, paths: Mapping[str, Path]) -> list
             f"but no shelter mapped, {statuses.count(1):,} with neither); the other "
             f"{total - surveyed:,} are not yet surveyed (an answer no one has given yet counts "
             "halfway)"
+        )
+    if result.shelters is not None:
+        c = result.shelters
+        at = [p for p in result.joined if city_shelters(p) > 0]
+        osm_yes = sum(1 for p in at if p.get("sh") == 1 or p.get("cv") == 1)
+        osm_no = sum(1 for p in at if disagree(p))
+        unknown = len(at) - osm_yes - osm_no
+        notes.append(
+            f"transit comfort: {c.matched:,} of the City's {c.shelters:,} bus shelters stand at "
+            f"{c.stops:,} of these stops ({c.by_number:,} by SEPTA's stop number, {c.by_place:,} "
+            f"by place; {c.numbered:,} name a SEPTA stop number); OpenStreetMap agrees there is a "
+            f"shelter at {osm_yes:,} of those stops, says there is none at {osm_no:,} (the two "
+            f"disagree, and the stop gets a survey), and has no answer at {unknown:,}"
+        )
+    else:
+        notes.append(
+            "transit comfort: the City's bus shelters are missing, so only OpenStreetMap says "
+            "whether a stop has a shelter"
         )
     missing = [
         source

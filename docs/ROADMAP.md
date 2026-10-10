@@ -127,8 +127,8 @@ ready for the owner.
   ridership; mapping stop ids across New Bus Network phases (Phase 1 began 2026-08-23; phases run
   to August 2027).
 - **M2.2 Shelters and benches** (done, 2026-10-05): OpenStreetMap from a weekly Geofabrik
-  extract; a StreetComplete survey guide for neighbors; the City's shelter list if the Right to
-  Know request succeeds.
+  extract; a StreetComplete survey guide for neighbors. The City's own shelter list turned out to
+  be public on OpenDataPhilly all along; M4.5 reads it, so no Right to Know request is needed.
 - **M2.3 Transit comfort lens and suggestions** (done, 2026-10-05): boardings, missing shelter or
   bench, heat and shade at the stop, crossing on the High Injury Network; suggestions for shelter
   requests, benches, shade trees, and lighting reports.
@@ -181,6 +181,12 @@ Two additions that were not on the roadmap, both done on 2026-10-08 and in v0.3:
   permission.
 - **M4.4 Land Bank statistics**: conveyances by program and year, for the Land Steward Union's
   campaign.
+- **M4.5 Streets and stops** (issue #41, added by the owner on 2026-10-09 after the Build Philly
+  Now review): the City's own bus shelters, counted as shelters in the transit comfort lens, with
+  the stop's page saying where the City and OpenStreetMap disagree; the City's street poles and
+  the lamps it lists, by block and beside 311 reports of lights out; its traffic calming devices
+  by block; and its school crossing guard posts. A street light lens factor is proposed with
+  numbers, not built (DESIGN.md section 5.7).
 - **M4.6 Lot rules and records** (issue #42, added by the owner on 2026-10-09): historic districts
   and the Philadelphia Register, zoning overlays, EPA brownfield records, and appeals and hearings
   on the lot page, in its timeline and on the map, with names from appeals on the lot's own page
@@ -220,7 +226,10 @@ None of these block Phase 0.
 4. Optional: a free Census API key, stored as a repository secret. Not needed for the poverty
    rate, which comes from the Census Bureau's bulk table files without a key.
 5. Later: a Cloudflare account and R2 bucket when tiles outgrow GitHub Pages.
-6. Optional: a Right to Know request to OTIS for the bus shelter inventory (draft provided).
+6. ~~Optional: a Right to Know request to OTIS for the bus shelter inventory.~~ Not needed (M4.5,
+   2026-10-09): the City publishes its list of bus shelters on OpenDataPhilly, and the map reads
+   it. Still worth asking OTIS, in the outreach draft, how often that list is updated: it was last
+   changed in January 2025.
 7. Optional: check a few dozen lots in person or on street imagery for the vacancy spot check.
 8. Ask PHS about reuse terms for its map of gardens it and the Neighborhood Gardens Trust support
    (the `PHS_NGT_Supported_Current_view` layer states no license). The map shows these gardens with

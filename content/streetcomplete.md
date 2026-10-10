@@ -2,10 +2,13 @@
 
 Waiting for a bus is easier with a roof overhead and somewhere to sit. Placekeepers wants to show
 which Philadelphia bus and trolley stops have a shelter or a bench, so neighbors and organizers can
-see where riders still wait without one. No public list of bus shelters exists, so our map uses
-OpenStreetMap, the free map of the world that anyone can improve. OpenStreetMap still knows very
-little about the city's stops. You can help fill that gap with a free phone app called
-StreetComplete, a few minutes at a time.
+see where riders still wait without one. The City publishes a list of the shelters it runs with its
+advertising partner, about 490 of them, and the map shows it. That list says nothing about
+benches or lights, leaves out shelters that are not the City's, and was last changed in January
+2025. So the map also uses OpenStreetMap, the free map of the world that anyone can improve, which
+still knows very little about the city's stops. You can help fill that gap with a free phone app
+called StreetComplete, a few minutes at a time. Where the City's list and OpenStreetMap disagree
+about a shelter, the stop's page says so, and a survey settles it.
 
 [Open the map with the stops that are not yet surveyed](../#l=stop_amenities&s=stop_amenities.show:unsurveyed)
 
@@ -176,7 +179,8 @@ feet), when that stop does not answer the question itself. A stop's own answer a
 
 Your answers feed the map's **transit comfort** lens, which ranks bus and trolley stops by where a
 shelter, a bench or shade would help riders most. A stop where a survey found nothing to sit under
-or on moves up; a stop no one has surveyed yet counts halfway until someone does. Turn on the bus
+or on moves up; a stop no one has surveyed yet counts halfway until someone does. A stop where the
+City's list has a shelter counts as sheltered. Turn on the bus
 stops (the **Bus stops** chip, or **Bus and trolley stops** in the layer list) and tap a stop to see
 its priority and what neighbors can do there.
 

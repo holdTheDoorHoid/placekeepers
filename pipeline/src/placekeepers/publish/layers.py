@@ -627,6 +627,12 @@ from placekeepers.publish.rules import RULES_BUILDERS  # noqa: E402
 
 BUILDERS = (*BUILDERS, *RULES_BUILDERS)
 
+# Streets and stops (M4.5): the City's bus shelters, street poles, traffic calming devices and
+# school crossing guard posts.
+from placekeepers.publish.streets_stops import STREETS_STOPS_BUILDERS  # noqa: E402
+
+BUILDERS = (*BUILDERS, *STREETS_STOPS_BUILDERS)
+
 # The 1937 redlining map (owner, 2026-10-09): its own file, under its non commercial license.
 from placekeepers.publish.redlining import REDLINING_BUILDERS  # noqa: E402
 
