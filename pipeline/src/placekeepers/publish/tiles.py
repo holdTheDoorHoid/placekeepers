@@ -237,9 +237,6 @@ TILE_OPTIONS: dict[str, list[str]] = {
             separators=(",", ":"),
         ),
     ],
-    # The displacement watch areas (M4.1): about a hundred census tracts, like the boundaries:
-    # every area kept at every zoom (never dropped to thin a tile), borders shared, and detailed
-    # enough at zoom 14 to be stretched further by the map.
     # The 1937 redlining map (owner, 2026-10-09): 83 areas, every one kept at every zoom.
     "tiles/redlining.pmtiles": [
         "--minimum-zoom=8",
@@ -248,6 +245,9 @@ TILE_OPTIONS: dict[str, list[str]] = {
         "--no-tile-size-limit",
         "--detect-shared-borders",
     ],
+    # The displacement watch areas (M4.1): about a hundred census tracts, like the boundaries:
+    # every area kept at every zoom (never dropped to thin a tile), borders shared, and detailed
+    # enough at zoom 14 to be stretched further by the map.
     "tiles/displacement.pmtiles": [
         "--minimum-zoom=8",
         "--maximum-zoom=14",

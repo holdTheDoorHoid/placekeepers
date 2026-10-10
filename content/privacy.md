@@ -17,8 +17,9 @@ your device and we never see it. Clearing your browser's data will erase it.
 ## Live lookups to the City
 
 When you open a lot page or search for an address, your browser asks the City of Philadelphia's
-own public servers for the newest records: the owner and mailing address, sales, assessments and
-inspections, and, for a parcel that is not on our list, counts of what is nearby. These requests go
+own public servers for the newest records: the owner and mailing address, sales, assessments,
+inspections and appeals to the City's boards, and, for a parcel that is not on our list, counts of
+what is nearby. These requests go
 straight from your device to the City, never through Placekeepers, because there is no Placekeepers
 server. The City's servers see them the way they would see a visit to the City's own property
 website: they see your internet address and the parcel or address you looked up. Your browser sends

@@ -50,6 +50,15 @@ def test_agencies_are_recognized_by_name_and_departments_are_not() -> None:
     assert agency_of("REDEVELOPMENT AUTHORITY OF THE CITY OF PHILADELPHIA") == "PRA"
     assert agency_of("PHILADELPHIA REDEVELOPMENT AUTHORIT") == "PRA"
     assert agency_of("PHILADELPHIA HOUSING DEVELOPMENT CORPORATION") == "PHDC"
+    # Misspellings the deed records carry (v0.4 review: three conveyances and a move were missed).
+    assert agency_of("PHILADLEPHIA HOUSING DEVELOPMENT CORPORATION") == "PHDC"
+    assert agency_of("PHILADEPLPHIA HOUSING DEVELOPEMNT CORPORATION") == "PHDC"
+    assert agency_of("REDEVELOPMENT AUTORITY OF THE CITY") == "PRA"
+    assert agency_of("REDEVELOPMENTAUTHORITY") == "PRA"
+    assert agency_of("CITY OF PHILDELPHIA") == "PUB"
+    assert agency_of("CITY OFPHILADELPHIA") == "PUB"
+    assert agency_of("PROPERTY REDEVELOPMENT CORPORATION") is None
+    assert agency_of("KENSINGTON REDEVELOPMENT HOLDINGS LLC") is None
     assert agency_of("CITY OF PHILADELPHIA") == "PUB"
     assert agency_of("DEPARTMENT OF PUBLIC PROPERTY") == "PUB"
     # A department granting an easement, the City as a trustee and other housing bodies are not.

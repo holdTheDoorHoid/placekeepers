@@ -160,7 +160,7 @@ its license, so the Data status page lists it and the weekly health check runs.
   sources: [shootings]
   file: tiles/context.pmtiles         # path under the published data root
   source_layer: h3
-  geometry: polygon                   # point | line | polygon
+  geometry: polygon                   # point | line | polygon | raster
   style: shootings_hex                # key into web/src/map/styles (web owns styling)
   evidence: context                   # strong | moderate | mixed | weak | not_violence | context
   default: {field: false, analysis: true}
@@ -230,7 +230,7 @@ still to come and EPA brownfield sites), `streets`, `transit` (added
 `public_places` and `conditions` (added 2026-10-05 by M3.5), `placemaking` (added 2026-10-05 by
 M3.2 for public art), `walking` (added 2026-10-05 by M3.3 for walkability, people and places within
 walking distance, and traffic stress for people on bikes), `then_and_now` (added 2026-10-09 by M4.3
-for the City's aerial photos by year and its 1860 atlas), `safety_context`, `boundaries`,
+for the aerial photos by year and the 1860 atlas, and the same day for the 1937 redlining map), `safety_context`, `boundaries`,
 `basemap`, each with a label and a one line
 description.
 

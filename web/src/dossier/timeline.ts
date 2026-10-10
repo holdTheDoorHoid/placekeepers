@@ -436,9 +436,11 @@ export function storyOf(input: TimelineInput): StorySentence[] {
   const unsafe = (li.unsafe ?? []).filter((r) => past(r) && (r.status ?? '').toUpperCase() === 'OPEN');
   if (out.length < 2 && dangerous.length) out.push({ text: s.dangerous(formatDate(dangerous[dangerous.length - 1]!.date!)!), source: s.sources.notices });
   else if (out.length < 2 && unsafe.length) out.push({ text: s.unsafe(formatDate(unsafe[unsafe.length - 1]!.date!)!), source: s.sources.notices });
-  // Cleaned and sealed, when no demolition followed.
+  // Cleaned and sealed, only where no demolition is recorded: before a demolition the sealed
+  // building is gone, and after one the City's clean and seal work was on the empty lot, so "the
+  // building" would contradict the sentence above.
   const sealed = (li.clean_seal ?? []).filter((r) => past(r) && SEALED.has((r.status ?? '').toUpperCase()));
-  if (out.length < 2 && sealed.length && !(lastDemolition && lastDemolition.date! >= sealed[0]!.date!)) {
+  if (out.length < 2 && sealed.length && !lastDemolition) {
     out.push({ text: s.sealed(yearOf(sealed[0]!.date!), sealed.length), source: s.sources.cleanSeal });
   }
   // A sheriff sale.

@@ -284,9 +284,9 @@ off, the library's own details say the City also lists it as a site.
 playgrounds, each with the ages it is meant for (2 to 5, 5 to 12, or 2 to 12) and the year it was
 installed when the City says. The lot page's Nearby names the nearest one (section 5.6).
 
-As built (M4.3, 2026-10-09): two layers draw pictures rather than things, the City's aerial photos
-by year and its copy of the 1860 atlas (section 5.11). A picture is known by its source and its
-year (`aerial_photos` and `1996`), which is what a link keeps.
+As built (M4.3, 2026-10-09): two layers draw pictures rather than things, the aerial photos by
+year and the City's copy of the 1860 atlas (section 5.11). A picture is known by its layer and its
+year (the layer `aerial_photos` with its `year` setting at `1996`), which is what a link keeps.
 
 ### 5.2 The registry: one source of truth for every toggle
 
@@ -312,7 +312,8 @@ is always available.
 As built (M4.3, 2026-10-09): **pictures from another server** have their own registry form.
 A source of kind `arcgis_tiles` lists picture services on an ArcGIS server, such as the City's
 aerial photos of each year, with where their pictures are; a layer with `geometry: raster` draws
-one such source, with a "Year" setting shown as a slider when there are several. The visitor's
+one or more such sources, with a "Year" setting shown as a slider when they hold several services
+(the aerial photos draw three: the City's own years, DVRPC's and the USGS's). The visitor's
 browser loads the pictures from the City's server; nothing is copied, built or hosted here, and the
 pipeline only checks each week that every service answers (section 8.4). Details in CONTRACTS.md
 section 1.
@@ -339,7 +340,7 @@ needed). Every score has a "why" breakdown showing each factor's contribution.
 | Violence reduction | Vacant parcels | Untreated vacant lot or open abandoned building (Strong); shootings within about a quarter mile in the last 12 and 36 months (the outcome the trials measured; frames where care helps most); neighborhood poverty rate (the trial effect was concentrated below the poverty line); not already maintained by LandCare (Strong); tree canopy deficit (Mixed, low default weight) | First |
 | Street safety | Street segments and crash sites | On the High Injury Network; people killed or seriously injured walking or cycling in 5 years; any fatal crash in 2 years; school within 400 m; later, busy bus stop nearby | First |
 | Heat and shade | Vacant parcels | Neighborhood heat vulnerability, from the City's index (Context); few trees nearby, 2018 canopy within about a quarter mile (Mixed); few City trees on the block, within 100 meters (Mixed); people this would reach, residents per square kilometer of the tract (Context). FEMA's floodplain is shown beside the score, never in it | v0.3 (M3.1) |
-| Transit comfort | SEPTA bus and trolley stops | People getting on each weekday (Context); no shelter (Weak); no bench (Weak); little shade nearby (Mixed); hot neighborhood in summer (Context); on the High Injury Network (Context); long waits at midday (Weak). A shelter or bench not yet surveyed counts halfway | v0.2 (M2.3) |
+| Transit comfort | SEPTA bus and trolley stops | People getting on each weekday (Context); no shelter (Weak); no bench (Weak); little shade nearby (Mixed); hot neighborhood in summer (Context); on the High Injury Network (Context); long waits at midday (Weak). A shelter or bench not yet surveyed counts halfway; a shelter on the City's own list counts as a shelter (M4.5) | v0.2 (M2.3) |
 | Placemaking | Vacant parcels | People within a 5 minute walk (Context); everyday places within a 10 minute walk (Mixed); walkability (Mixed); far from a park (Context); no public art nearby, from the City's list and Wikidata (Context); on or near a commercial corridor (Mixed). The walking factors come from M3.3 (section 5.9) | v0.3 (M3.4) |
 
 As built (M2.3, 2026-10-05): the transit comfort lens colors SEPTA's bus and trolley stops (the
@@ -816,7 +817,8 @@ History, top to bottom:
   where it comes from ("From L&I's demolition records."). In order of preference: a completed
   demolition ("A building stood here until 2011, when the City demolished it.", or "when it was
   demolished under a private permit.") and a permit for new construction from that year on; an unsafe or
-  imminently dangerous notice still open; the City's clean and seal work; a sheriff sale; the
+  imminently dangerous notice still open; the City's clean and seal work (only where no
+  demolition is recorded: after one, that work was on the empty lot, not a building); a sheriff sale; the
   vacancy lists ("The City's list of vacant land of October 4, 2026 includes it, as a list of June
   2024 did."); PHS LandCare's care since its year. Never a guess: a record dated in the future, a
   demolition not marked completed, or a tank removal tells no story. A lot with none of these says
@@ -886,7 +888,14 @@ History, top to bottom:
   EPA's registry, a soil test and the EPA's guide to gardening in city soil, and "The EPA's records
   show where a federal brownfield grant paid for work. They do not say what is in the ground
   today." The garden suggestion of such a lot carries the same soil note, on the lot page and on the
-  map's nearby cards (the lots layer's `bf`).
+  map's nearby cards (the lots layer's `bf`), and, after the v0.4 review, in its printed sheet and
+  beside the suggestion in the CSV and GeoJSON downloads (column `soil_note`).
+- The risk this guards against (moved here from ETHICS.md's table of risks, 2026-10-10): false
+  comfort about soil, a garden planted on a former industrial lot because the map showed no
+  warning. Hence the records are named "at or near this address", every garden suggestion near one
+  says to test the soil, and the wording is never "clean" or "safe": the EPA's records say a federal
+  grant paid for work, not what is in the ground today, and the map says it is not a map of all
+  contaminated ground.
 - **Appeals and hearings**: every appeal as the City publishes it, a hearing still to come first,
   then newest first: the board and the kind of appeal in plain words ("Zoning Board of Adjustment:
   Permit denial, variance"), the filing, hearing and decision days, its decision and status, the
@@ -1066,11 +1075,12 @@ trees), so the rest of the map never loads them. The counts on every street bloc
 point layers made `tiles/streets.pmtiles` 13 percent larger (11.6 to 13.1 MB on 2026-10-09), almost
 all of it in the close in tiles that carry every block.
 
-**Street lights as a lens factor: proposed, not built** (the owner decides). Measured on
+**Street lights as a lens factor: proposed, not built**, and left out on 2026-10-09 when M4.5
+merged (issue #41): street lights stay a layer. Measured on
 2026-10-09:
 
-- The City's list barely varies where it could matter. 95 percent of the 130,241 lamps it lists
-  are LED, and only 3,186 of the 36,309 blocks with a lamp have any that is not. Lamps per 100
+- The City's list barely varies where it could matter. 95 percent of the 130,241 poles that list
+  a lamp list an LED one, and only 3,186 of the 36,309 blocks with a lamp have any that is not. Lamps per 100
   meters of block have a median of 2.6 to 2.8 in every street class. Only 162 of the 7,912 stops
   the transit lens scores (2 percent, with 25,927 weekday boardings) and 474 of the 30,322 vacant
   lots of high or medium confidence (1.6 percent) have no lamp listed within 30 and 50 meters.
@@ -1271,15 +1281,17 @@ speaks for neither the Land Steward Union nor the Land Bank.
 ### 5.11 Then and now: old aerial photos and the 1860 atlas
 
 As built (M4.3, 2026-10-09). **What the owner sees:** a new group in the layer panel, **Then and
-now**, with two layers, off by default in both views:
+now**, with three layers, off by default in both views (the third, the 1937 redlining map, was
+added the same day and is described below):
 
 - **Aerial photos by year**: the City's own aerial photographs of the whole city, one for each year
-  it has them: 1996, 2000, 2004, 2005, 2008 to 2012, 2014 to 2020, and 2022 to 2025, twenty in
-  all. A slider moves through the years (2025 by default; 1996 and 2000 are black and white), and
+  it has them: 1996, 2000, 2004, 2005, 2008 to 2012, 2014 to 2020, and 2022 to 2025, twenty of
+  the City's own (23 years in all with the older photos below). A slider moves through the years
+  (2025 by default; the photos of 2000 and earlier are black and white), and
   a second setting sets how strongly the photo shows, so today's streets and labels can show
   through. The photo lies under every other layer and under the base map's labels,
-  so lots, streets and memorials stay on top. The legend says the year, that the photos were taken
-  from a plane in spring, and credits the City.
+  so lots, streets and memorials stay on top. The legend says the year and that the photo was
+  taken from a plane, and credits the year's own publisher.
 - **1860 atlas (Hexamer and Locher)**: the atlas the City hosts, fitted to today's map by the
   Greater Philadelphia GeoHistory Network. It covers Center City and Northern Liberties only, which
   the legend says, and starts at 80 percent strength so today's streets show through; the map asks
@@ -1620,3 +1632,6 @@ docs/            design, roadmap, research
    permission to use the Land Bank's board documents or for a list of dispositions by program, and
    ask the City whether its Land Management dashboard table, which states no license, may be
    reused. The page works without any of them and labels the program as our inference.
+8. Then and now (section 5.11): send the Athenaeum of Philadelphia the permission request for the
+   GeoHistory Network's other maps the City hosts (the 1875, 1895 and 1910 atlases, the 1942 and
+   1962 land use maps, the 1928 aerial photos); the draft is with the owner's outreach drafts.

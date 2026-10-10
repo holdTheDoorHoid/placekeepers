@@ -64,8 +64,9 @@ tapping the area shows rents, incomes and empty homes from the Census Bureau's s
 its margin of error.
 
 **Then and now.** The City's aerial photos from 1959 to 2025 on a year slider, the 1860 atlas, and
-the 1937 redlining map. They load from the City's servers only when you turn them on. Each lot page
-has a button, "See this lot in old aerial photos."
+the 1937 redlining map. The photos and the atlas load from the City's servers only when you turn
+them on; the redlining map comes from this site, in a file of its own under Mapping Inequality's
+non commercial license. Each lot page has a button, "See this lot in old aerial photos."
 
 **The Land Bank in numbers.** A page counting the properties the Land Bank, the Redevelopment
 Authority, PHDC and the City have sold or transferred since 2014, by year, by agency and by kind of

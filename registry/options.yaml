@@ -6,8 +6,8 @@
   label: Fetch live City data
   description: >-
     When you open a lot page or search for an address, your browser asks the City of
-    Philadelphia's public servers for the newest records: the owner, sales, assessments and
-    inspections. These requests go straight from your device to the City, never through
+    Philadelphia's public servers for the newest records: the owner, sales, assessments,
+    inspections and appeals. These requests go straight from your device to the City, never through
     Placekeepers, and the City's servers see them as they would see a visit to the City's own
     property website. The City's aerial photos and its 1860 atlas, under "Then and now", also come
     straight from the City's servers, but only once you turn one of them on. Turn this off to use

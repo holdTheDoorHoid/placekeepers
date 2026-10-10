@@ -298,7 +298,7 @@ City's own services, never from another site's map built on them. Published by `
 * **Poles.** 130,241 poles list a lamp: 123,749 LED (95 percent), 1,002 high pressure sodium and
   5,490 a lamp of a kind not named. 72,855 list no lamp: 44,962 of the Streets Department's own
   (most of them of the kinds the division codes `SNP`, `C20` and `C13`, which almost never list
-  a lamp), 23,332 PECO's and 4,257 with no owner. PECO's poles gather in the Northeast and North Philadelphia, so in Council Districts 6,
+  a lamp), 23,332 PECO's, 4,257 with no owner and 304 of other owners. PECO's poles gather in the Northeast and North Philadelphia, so in Council Districts 6,
   9 and 10 only 55 to 60 percent of poles list a lamp, against 66 to 70 percent in Districts 1, 2, 3
   and 5. 197,496 poles stand within 30 meters of a street that carries traffic and count for its
   nearest block; the rest stand along paths, in parks and in parking lots.
@@ -588,6 +588,10 @@ no license and no description.
   `credit: false`), so the Data status page lists it and the weekly health check runs. The legend,
   a tapped site and the layer's "About" section name no publisher as a credit, and the places
   tile file's attribution leaves it out.
+- **Owner decision (2026-10-10): the publisher stays named in "About this layer".** Inside the
+  layer's closed "About this layer" note the source is still listed as the Office of Emergency
+  Management's, with "no license stated", and the layer's description says whose list it is. That
+  says where the list comes from; there is no credit line anywhere else on the map.
 - Never live: the map says the status and hours are as the City listed them on the day it copied
   the list, and to call the site or 311 before going.
 - Health: at least 40 rows, no more than 40 percent fewer than the last good copy (sites come and

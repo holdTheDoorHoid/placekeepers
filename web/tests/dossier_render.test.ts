@@ -238,6 +238,18 @@ describe('the printed lot page', () => {
     expect(model.sources.length).toBeLessThanOrEqual(PRINT_LIMITS.sources);
   });
 
+  it('prints the soil note beside a garden suggestion near a brownfield record, and only there', () => {
+    // 990000002 has an EPA brownfield record nearby (M4.6) and suggests a community garden.
+    const model = printModel(view('990000002'), now);
+    const garden = model.actions.find((a) => a.label === 'Start a community garden')!;
+    expect(garden.soil).toBe('A federal brownfield assessment or cleanup was recorded at or near this address. Test the soil before growing food.');
+    for (const other of model.actions.filter((a) => a !== garden)) expect(other.soil).toBeNull();
+    const page = render(DossierPrint, { props: { view: view('990000002'), now } }).body;
+    expect(page).toContain('Test the soil before growing food.');
+    // No brownfield record near 990000005: no soil note on its sheet.
+    expect(printModel(view('990000005'), now).actions.every((a) => a.soil === null)).toBe(true);
+  });
+
   it('prints the possible estate flag in full and the deed fraud notice', () => {
     const model = printModel(view('990000005'), now);
     expect(model.owner.flags.find((f) => f.title === 'Possible estate')!.text).toBe(quote('"Possible estate" reads:'));
