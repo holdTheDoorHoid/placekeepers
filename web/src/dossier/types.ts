@@ -185,6 +185,8 @@ export interface Nearby {
   gardens: number | null;
   /** Hearings still to come within 500 feet, this lot's own left out (M4.6). */
   hearings?: number | null;
+  /** The nearest playground (M4.7): the park's name and the straight line distance in meters. */
+  playground: { name: string; meters: number } | null;
 }
 
 export interface LandCare {

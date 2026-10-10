@@ -97,6 +97,8 @@ CONTRACT_PROPERTIES = {
     "overlays": {"id", "nm", "sy", "t", "cs", "cl", "su", "pb", "pu"},
     "hearings": {"id", "d", "tm", "b", "ty", "ad", "rco"},
     "brownfields": {"id", "nm", "ad"},
+    # Playgrounds (M4.7, issue #43)
+    "playgrounds": {"id", "nm", "ag", "yr"},
 }
 
 #: Keys that would mean a published file says something about a person it must not.

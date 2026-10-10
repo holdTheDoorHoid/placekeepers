@@ -1,11 +1,18 @@
 <script lang="ts">
   // A public place from the City someone tapped (M3.5): a library, a recreation center, a pool or
-  // sprayground, or a drinking fountain in a park, with what the City lists about it.
+  // sprayground, or a drinking fountain in a park, with what the City lists about it. From M4.7 a
+  // warming or cooling site (as listed on the day the map copied the list, never live, and with
+  // no credit line, as the owner decided) and a playground.
   import { describePlace } from '../../amenities/describe.ts';
+  import type { Manifest } from '../../data/manifest.ts';
 
-  let { layerId, properties }: { layerId: string; properties: Record<string, unknown> } = $props();
+  let {
+    layerId,
+    properties,
+    manifest = null,
+  }: { layerId: string; properties: Record<string, unknown>; manifest?: Manifest | null } = $props();
 
-  const view = $derived(describePlace(layerId, properties));
+  const view = $derived(describePlace(layerId, properties, manifest));
 </script>
 
 <section class="place">

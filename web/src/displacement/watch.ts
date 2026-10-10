@@ -141,6 +141,19 @@ export interface WatchCity {
   cb: number | null;
   ac: number | null;
   rp: number | null;
+  /** The city's neighborhood context (M4.7): the share of renters paying half their income or
+   * more on rent, the middle rent and household income, and the share of homes empty. */
+  rb: number | null;
+  gr: number | null;
+  hi: number | null;
+  vp: number | null;
+}
+
+/** The survey behind the neighborhood context (M4.7), or null when it was not measured. */
+export interface WatchContext {
+  survey_years: [number, number] | null;
+  min_renters: number;
+  min_homes: number;
 }
 
 export interface WatchThresholds {
@@ -161,6 +174,7 @@ export interface WatchSummary {
   city: WatchCity;
   thresholds: WatchThresholds;
   areas: { tracts: number | null; watch: number | null };
+  context: WatchContext | null;
 }
 
 const DEFAULT_THRESHOLDS: WatchThresholds = {
@@ -196,6 +210,7 @@ export function parseWatchSummary(raw: unknown): WatchSummary | null {
   const day = (k: string): string | null => (periods && typeof periods[k] === 'string' ? (periods[k] as string) : null);
   const p = { earlier_from: day('earlier_from'), earlier_to: day('earlier_to'), recent_from: day('recent_from'), recent_to: day('recent_to') };
   const areas = isObj(raw.areas) ? raw.areas : {};
+  const context = isObj(raw.context) ? raw.context : null;
   const thresholds = { ...DEFAULT_THRESHOLDS };
   for (const key of Object.keys(DEFAULT_THRESHOLDS) as (keyof WatchThresholds)[]) {
     const value = num(t[key]);
@@ -206,9 +221,23 @@ export function parseWatchSummary(raw: unknown): WatchSummary | null {
     assessment_years: pair(raw.assessment_years),
     survey_years: pair(raw.survey_years),
     mva: typeof raw.mva === 'string' ? raw.mva : null,
-    city: { p0: num(city.p0), p1: num(city.p1), pc: num(city.pc), cb: num(city.cb), ac: num(city.ac), rp: num(city.rp) },
+    city: {
+      p0: num(city.p0),
+      p1: num(city.p1),
+      pc: num(city.pc),
+      cb: num(city.cb),
+      ac: num(city.ac),
+      rp: num(city.rp),
+      rb: num(city.rb),
+      gr: num(city.gr),
+      hi: num(city.hi),
+      vp: num(city.vp),
+    },
     thresholds,
     areas: { tracts: num(areas.tracts), watch: num(areas.watch) },
+    context: context
+      ? { survey_years: pair(context.survey_years), min_renters: num(context.min_renters) ?? 100, min_homes: num(context.min_homes) ?? 100 }
+      : null,
   };
 }
 
@@ -227,11 +256,77 @@ export interface SignRow {
   text: string;
 }
 
+/** One number of a watch area's neighborhood context (M4.7), with its margin in its words. */
+export interface ContextRow {
+  id: 'burden' | 'rent' | 'income' | 'vacant';
+  title: string;
+  text: string;
+  /** Why the empty homes are empty, each with its margin (empty homes only). */
+  parts: string[];
+}
+
 export interface AreaView {
   title: string;
   place: string | null;
   holding: SignRow[];
   other: SignRow[];
+  /** The neighborhood context, or empty when the build has none (before M4.7). */
+  context: ContextRow[];
+}
+
+/** The order the reasons homes are empty are listed in. */
+const WHY_EMPTY = ['vr', 'vs', 'vn', 'vz', 'vo'] as const;
+
+/**
+ * A watch area's neighborhood context from the Census Bureau's survey (M4.7): renters paying half
+ * their income or more on rent, the middle rent and income, and empty homes, each with its margin
+ * of error and the city's own figure. Nothing when the area carries none of it.
+ */
+export function describeContext(properties: Record<string, unknown>, summary: WatchSummary | null): ContextRow[] {
+  const d = strings.displacement;
+  const city = summary?.city;
+  const has = ['rh', 'gr', 'hi', 'hu'].some((k) => num(properties[k]) !== null);
+  if (!has && !summary?.context) return [];
+  const rows: ContextRow[] = [];
+  const rb = num(properties.rb);
+  const rh = num(properties.rh);
+  rows.push({
+    id: 'burden',
+    title: d.contextTitles.burden!,
+    text: rb !== null && rh !== null ? d.burdenText(rb, num(properties.rbm), rh, city?.rb ?? null) : d.burdenTooFew,
+    parts: [],
+  });
+  const gr = num(properties.gr);
+  const grm = num(properties.grm);
+  rows.push({
+    id: 'rent',
+    title: d.contextTitles.rent!,
+    text: gr !== null ? d.rentText(money(gr), grm !== null ? money(grm) : null, city?.gr != null ? money(city.gr) : null) : d.rentNone,
+    parts: [],
+  });
+  const hi = num(properties.hi);
+  const him = num(properties.him);
+  rows.push({
+    id: 'income',
+    title: d.contextTitles.income!,
+    text: hi !== null ? d.incomeText(money(hi), him !== null ? money(him) : null, city?.hi != null ? money(city.hi) : null) : d.incomeNone,
+    parts: [],
+  });
+  const vh = num(properties.vh);
+  const hu = num(properties.hu);
+  const vp = num(properties.vp);
+  const parts: string[] = [];
+  for (const key of WHY_EMPTY) {
+    const n = num(properties[key]);
+    if (n !== null) parts.push(d.whyRow(d.whyRows[key]!, n, num(properties[`${key}m`])));
+  }
+  rows.push({
+    id: 'vacant',
+    title: d.contextTitles.vacant!,
+    text: vh !== null && hu !== null && vp !== null ? d.vacantText(vh, hu, vp, num(properties.vpm), city?.vp ?? null) : d.vacantTooFew,
+    parts: vh !== null && vh > 0 ? parts : [],
+  });
+  return rows;
 }
 
 function year(day: string | undefined | null): string {
@@ -257,7 +352,7 @@ export function describeArea(properties: Record<string, unknown>, summary: Watch
   const bits = num(properties.w) ?? 0;
   const id = typeof properties.id === 'string' ? properties.id : '';
   const place = typeof properties.nm === 'string' && properties.nm ? properties.nm : null;
-  const city = summary?.city ?? { p0: null, p1: null, pc: null, cb: null, ac: null, rp: null };
+  const city = summary?.city ?? { p0: null, p1: null, pc: null, cb: null, ac: null, rp: null, rb: null, gr: null, hi: null, vp: null };
   const t = summary?.thresholds ?? DEFAULT_THRESHOLDS;
   const periods = summary?.periods ?? null;
   const span = periods ? d.span(year(periods.earlier_from), year(periods.earlier_to), year(periods.recent_from), year(periods.recent_to)) : '';
@@ -313,5 +408,6 @@ export function describeArea(properties: Record<string, unknown>, summary: Watch
     place,
     holding: rows.filter((r) => r.holds).sort((a, b) => order(a) - order(b)),
     other: rows.filter((r) => !r.holds).sort((a, b) => order(a) - order(b)),
+    context: describeContext(properties, summary),
   };
 }

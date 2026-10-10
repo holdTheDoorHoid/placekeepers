@@ -451,6 +451,25 @@ def install_everything(ctx) -> None:
             }
         ),
     )
+    # Two playgrounds (M4.7): one 0.002 degrees (222 meters) north of 371000001's point, one far
+    # away. A lot page names the nearest.
+    lng, lat = where("371000001")
+    install(
+        "ppr_playgrounds",
+        pa.table(
+            {
+                "objectid": [1, 2],
+                "park_name": ["Sample  Playground", "Faraway Playground"],
+                "age_range": ["2_5_YEARS", "5_12_YEARS"],
+                "geometry": [
+                    wkb(shapely.Point(lng, lat + 0.002)),
+                    wkb(shapely.Point(lng + 0.2, lat)),
+                ],
+            }
+        ),
+        geometry=True,
+        types=["Point"],
+    )
     install(
         "phs_landcare",
         pa.table(
@@ -857,6 +876,17 @@ def test_a_garden_lot_in_community_landcare(built) -> None:
     ]
     assert record["nearby"]["gardens_within_500ft"] == 1
     assert record["nearby"]["landcare_within_500ft"] == 2
+
+
+def test_nearby_names_the_nearest_playground_in_a_straight_line(built) -> None:
+    _, out = built
+    # 222 meters north, rounded to 10 meters; the name with its spaces tidied.
+    assert parcel(out, "371000001")["nearby"]["playground"] == {
+        "nm": "Sample Playground",
+        "m": 220,
+    }
+    nearest = parcel(out, "375000001")["nearby"]["playground"]
+    assert nearest["nm"] == "Sample Playground" and nearest["m"] % 10 == 0
 
 
 def test_the_lots_layer_carries_the_owner_type(built) -> None:

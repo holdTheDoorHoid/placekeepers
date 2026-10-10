@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"id":"pg1","nm":"Sample Playground","ag":1,"yr":2018},"geometry":{"type":"Point","coordinates":[-75.155655,39.98703]}},{"type":"Feature","properties":{"id":"pg2","nm":"Sample Playground","ag":2},"geometry":{"type":"Point","coordinates":[-75.155491,39.98703]}}]}

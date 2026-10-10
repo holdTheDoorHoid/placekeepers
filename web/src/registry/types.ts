@@ -45,6 +45,11 @@ export interface License {
   share_alike: boolean;
   /** Non commercial use only (added for the 1937 redlining map): its data stays in its own file. */
   non_commercial?: boolean;
+  /**
+   * False when the map shows no credit line for sources under it (added for the warming and
+   * cooling sites, owner 2026-10-09). The Data status page still lists the source.
+   */
+  credit?: boolean;
 }
 
 /** One picture service of an `arcgis_tiles` source (M4.3): its key (the year) and its name. */

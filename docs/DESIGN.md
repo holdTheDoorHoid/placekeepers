@@ -253,6 +253,36 @@ EPA's brownfield sites. Tapping one says what it is in plain words, who to ask, 
 how to take part and a button to the lot's page; a hearing never names who filed the appeal. The
 historic layers stay in this group rather than M4.3's "Then and now": historic designation is a
 rule for the lot today, not its history (orchestrator, 2026-10-09).
+As built (M4.7, issue #43, 2026-10-09): **Cooling and warming centers**, a layer in "Libraries,
+recreation centers and pools", beside the pools, spraygrounds and park water, off by default in
+both views. It draws the 86 places the City's Office of Emergency Management lists as warming or
+cooling sites (87 records, one listed twice): libraries, Parks and Recreation sites, community
+partners and Philadelphia Housing Authority community centers. A site listed as open is a filled
+purple dot, one listed as closed or with no status a hollow ring; settings show sites for heat or
+cold, for cooling only or for warming only, and all of them or only those listed as open.
+Tapping one gives what the City lists: the address, open or closed, whether it is a warming site,
+a cooling site or both, the hours, what it offers, room, access for people with disabilities, a
+water station and a restroom, each "as listed", and the line "As the City listed them on <the day
+the map copied the list> (the list was last changed on <the City's last edit>). Not live: sites
+open and close with the weather, so call the site or 311 before you go." Never live hours.
+**No credit line** (owner, 2026-10-09: "show without credit"): the legend and the tapped site
+name no publisher, the map's tile file carries no attribution for it, and the layer's "About"
+section lists the source without its credit line; nothing is asked of the Office of Emergency
+Management. The registry still records the source, its address and that no license is stated
+(the license `unstated_uncredited`, with `credit: false`), so the Data status page and the weekly
+health check work.
+
+**One place, one marker.** 55 of the sites are places the map already has: 27 Free Library
+branches and 28 Parks and Recreation sites. A site is the same place when it is of the same kind
+and stands within 5 meters of ours (the City copied the point), or within 150 meters with a word
+of its name in common (so a hospitality hub 52 meters from a recreation center stays a place of
+its own). While the sites are on, such a library or recreation center is left to the site's
+marker, and tapping it shows the site and, under it, the library or center itself; with the sites
+off, the library's own details say the City also lists it as a site.
+
+**Playgrounds**, a layer in "Art and placemaking", off by default: Parks and Recreation's 462
+playgrounds, each with the ages it is meant for (2 to 5, 5 to 12, or 2 to 12) and the year it was
+installed when the City says. The lot page's Nearby names the nearest one (section 5.6).
 
 As built (M4.3, 2026-10-09): two layers draw pictures rather than things, the City's aerial photos
 by year and its copy of the 1860 atlas (section 5.11). A picture is known by its source and its
@@ -467,6 +497,20 @@ On 2026-10-08 the three new factors and the longer lists of suggestions made til
 percent larger (8.8 to 9.6 MB): the two distances about 5 percent once rounded (10 before), the
 corridor 1 percent and the suggestions 2 percent.
 
+**Proposed to the owner, not built (M4.7): "no playground within a short walk" as a factor.**
+Measured on 2026-10-09 in a straight line from each parcel's point to Parks and Recreation's 462
+playgrounds: 15,032 of the map's 40,416 vacant lots (37%) have none within 400 meters (a 5
+minute walk as section 5.9 counts it), and 1,381 none within 800 meters; the middle lot is 331
+meters from one. The factor would mostly repeat "far from a park", because playgrounds stand on
+the park land that factor measures: 13,048 of those 15,032 lots are already farther from a park
+than half the places. Ranked like the park distance and added at weight 1 to the Balanced
+preset, 1,609 lots' scores would move 5 points or more and about 770 lots would enter the top
+fifth (as many would leave it); at weight 2, 11,635 would move 5 points or more and about 1,380
+would swap. 13,920 of the 15,032 lots have at least 1,000 people within a 5 minute walk. The
+recommendation is not to add it as a factor, since it is close to "far from a park", and to let
+the lot page's nearest playground and the playgrounds layer carry it; if the owner wants it,
+weight 1 changes the order least. It is the owner's call.
+
 **Displacement watch** is not a priority lens. It is a caution overlay, shown wherever a suggestion
 could raise property values. It changes no score and no order, and it ranks no neighborhood.
 
@@ -552,15 +596,16 @@ tracts, company buyers 66, assessed values 78, renters 110, the Market Value Ana
 had too few home sales to judge prices.
 
 **What it cannot tell**, said on every tapped area: these are signs in public records, not a
-forecast. They cannot tell who has moved away or why, what rents are (no public record of rents
-covers the city), or who lives in an area, and an area outside the watch can still feel rising
-prices. A middle price moves when the kind of homes sold changes (more renovated houses, more new
+forecast. They cannot tell who has moved away or why, what rents are today (no public record of
+rents covers the city; the Census survey's middle rent on the card since M4.7 averages five
+years), or who lives in an area, and an area outside the watch can still feel rising prices. A middle price moves when the kind of homes sold changes (more renovated houses, more new
 ones) as well as when the same homes cost more; the assessed values, which compare each home with
 itself, are the check on that. Names of buyers are read only to tell a company from a person and
 are never kept (docs/ETHICS.md).
 
 **Left out, and why.** Census block groups: too few sales for a middle price in most of them. Rents:
-no public, citywide record. The Market Value Analysis's own sale prices and investor counts: the
+no public, citywide record of today's rents (the Census survey's five year middle rent is shown
+on the card as context since M4.7, below, never as a sign). The Market Value Analysis's own sale prices and investor counts: the
 City's deed records give the same at the tract level, with our own published rule. The 2023 edition
 of the analysis: the 2026 edition, which the City put on its open data hub on 2026-07-16 under the
 same terms, is newer and sorts every block group by displacement pressure; the source reads both, so
@@ -570,6 +615,52 @@ caution.
 
 The method in code is `pipeline/src/placekeepers/derive/displacement.py`; the files are in
 docs/CONTRACTS.md (sections 3, 4 and 6).
+
+As built (M4.7, issue #43, 2026-10-09): **neighborhood context on the card.** Tapping a watch
+area now also shows "Rents, incomes and empty homes here", from five tables of the Census
+Bureau's survey (2020 to 2024, the same file family as the renters sign):
+
+- **Renters paying half their income or more on rent** (with utilities), as a share of the renter
+  households whose share could be computed, and how many households that is;
+- **the middle rent** (rent plus the utilities the renter pays) and **the middle household
+  income**;
+- **empty homes**: how many of the area's homes, and the share, and in a fold, why they are
+  empty as the Census sorts them (for rent; for sale; rented or sold, not yet moved into; seasonal
+  or occasional use; held off the market for other reasons, such as repairs, a family's legal
+  trouble or abandonment).
+
+Each number carries its margin of error ("give or take 9 points", the Census Bureau's 90 percent
+margin) and the city's own figure from the Census's row for the whole city (a city's median cannot
+be added up from its tracts), and a note under them says these are survey estimates over five
+years, rough in a small area. Shares follow the Census Bureau's formulas for a proportion and a
+sum; a margin is rounded up at a half and never shown as 0. A share is shown only with at least
+100 renter households (or homes) behind it, the watch's own floor; otherwise the card says there
+are too few to tell, as it says when the Census computed no middle rent or income. Measured on
+2026-10-09: the city's figures are 29.5% of renters paying half their income or more (give or
+take 1 point), a middle rent of $1,397 and a middle income of $61,953, and 9.2% of homes empty;
+of the 408 tracts, 377 have enough renters for the share, 383 a middle rent, 375 a middle income
+and 386 enough homes for the empty share. The margins are wide: half the tracts' rent burden
+shares are give or take 14 points or more.
+
+These numbers are **context, never a sign**: they change no watch area, no score and no order,
+and like every number on the map they are published only for watch areas (ETHICS.md); the other
+tracts' numbers stay in the pipeline (`derived/tract_context.parquet`) for proposals like the one
+below. The wording never frames a number as a reason to buy or invest: the rent burden line says
+that rising rents fall hardest on the renters it counts. The method in code is
+`pipeline/src/placekeepers/derive/tract_context.py`; the files are in docs/CONTRACTS.md (sections
+3 and 4).
+
+**Proposed to the owner, not built (M4.7): rent burden as a sign.** A sixth sign, "many renters
+already pay half their income on rent", would hold where that share is at least 10 points above
+the city's (29.5%, so 39.5% or more) with at least 100 renter households. Measured on 2026-10-09
+it holds in 105 tracts, 46 of them already watch areas. Counted like the renters and company
+buyers signs (who is exposed, so a watch area still needs a sign about prices), it would add 8
+watch areas, holding 14,415 occupied homes and 1,054 of the map's 40,416 vacant lots (the watch
+has 96 areas and 26,227 of those lots now). Counted as a sign about prices, it would add 21
+areas (33,501 homes, 1,697 lots); at 15 points above the city, 6 or 15; at 5 points, 10 or 29.
+The margins argue for care: requiring the whole margin above the line leaves 11 tracts and 1 new
+area. The recommendation is the first form (10 points, a sign of exposure), and it is the owner's
+call.
 
 **Population density** never multiplies a violence score. It appears only as "people this would
 reach".
@@ -641,7 +732,10 @@ Sections, in order:
    turns on the aerial photos at the oldest year (1959 from 2026-10-09) and shows the lot on the
    map (on a phone the lot page closes first, as for "Show on map"); with live City data off the
    button is off and says why (section 5.11).
-6. **Nearby**: shooting counts, crashes, memorials, LandCare lots, gardens, schools.
+6. **Nearby**: shooting counts, crashes, memorials, LandCare lots, gardens, schools. As built
+   (M4.7, 2026-10-09): also the nearest playground, with its park's name and how far it is in a
+   straight line from the lot's point, rounded to 10 meters, and whether that is within a 5 or a
+   10 minute walk as section 5.9 counts them, with a button that turns on the playgrounds layer.
 7. **Sources and freshness**, and "report a correction".
 
 The dossier is built from the weekly snapshot and, when the setting "fetch live City data" is on

@@ -1044,3 +1044,92 @@
   cadence: frozen
   health: {min_rows: 80, max_drop_pct: 0}
   release: v0.4
+# Neighborhood context (M4.7, issue #43): five more tables of the Census Bureau's table based
+# summary file, read like acs_tenure (one file for the whole country, no key, only Philadelphia's
+# 408 tracts kept). They give the context the card of a displacement watch area shows (rent
+# burden, middle rent and income, empty homes and why), each with its margin of error. They change
+# no sign and no watch area.
+- id: acs_rent_burden
+  name: Rent as a share of income by census tract (ACS 2020 to 2024)
+  publisher: U.S. Census Bureau, American Community Survey
+  homepage: https://www.census.gov/programs-surveys/acs/data/summary-file.html
+  # Table B25070, gross rent as a percentage of household income (47 MB).
+  endpoint: {kind: url, url: "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b25070.dat", format: csv}
+  license: public_domain
+  attribution: "Rent as a share of income: U.S. Census Bureau, American Community Survey 2020 to 2024 five year estimates"
+  cadence: yearly
+  health: {min_rows: 380, max_drop_pct: 5}
+  release: v0.4
+- id: acs_occupancy
+  name: Homes lived in and empty by census tract (ACS 2020 to 2024)
+  publisher: U.S. Census Bureau, American Community Survey
+  homepage: https://www.census.gov/programs-surveys/acs/data/summary-file.html
+  # Table B25002, occupancy status.
+  endpoint: {kind: url, url: "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b25002.dat", format: csv}
+  license: public_domain
+  attribution: "Homes lived in and empty: U.S. Census Bureau, American Community Survey 2020 to 2024 five year estimates"
+  cadence: yearly
+  health: {min_rows: 380, max_drop_pct: 5}
+  release: v0.4
+- id: acs_vacancy
+  name: Why homes are empty by census tract (ACS 2020 to 2024)
+  publisher: U.S. Census Bureau, American Community Survey
+  homepage: https://www.census.gov/programs-surveys/acs/data/summary-file.html
+  # Table B25004, vacancy status.
+  endpoint: {kind: url, url: "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b25004.dat", format: csv}
+  license: public_domain
+  attribution: "Why homes are empty: U.S. Census Bureau, American Community Survey 2020 to 2024 five year estimates"
+  cadence: yearly
+  health: {min_rows: 380, max_drop_pct: 5}
+  release: v0.4
+- id: acs_income
+  name: Middle household income by census tract (ACS 2020 to 2024)
+  publisher: U.S. Census Bureau, American Community Survey
+  homepage: https://www.census.gov/programs-surveys/acs/data/summary-file.html
+  # Table B19013, median household income in the past 12 months.
+  endpoint: {kind: url, url: "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b19013.dat", format: csv}
+  license: public_domain
+  attribution: "Household income: U.S. Census Bureau, American Community Survey 2020 to 2024 five year estimates"
+  cadence: yearly
+  health: {min_rows: 380, max_drop_pct: 5}
+  release: v0.4
+- id: acs_rent
+  name: Middle rent by census tract (ACS 2020 to 2024)
+  publisher: U.S. Census Bureau, American Community Survey
+  homepage: https://www.census.gov/programs-surveys/acs/data/summary-file.html
+  # Table B25064, median gross rent (rent plus the utilities the renter pays).
+  endpoint: {kind: url, url: "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b25064.dat", format: csv}
+  license: public_domain
+  attribution: "Rent: U.S. Census Bureau, American Community Survey 2020 to 2024 five year estimates"
+  cadence: yearly
+  health: {min_rows: 380, max_drop_pct: 5}
+  release: v0.4
+# Warming and cooling sites (M4.7; owner, 2026-10-09: "show without credit"). The item states no
+# license. The map shows the sites with no credit line and nothing is asked of the Office of
+# Emergency Management; this entry still records the source, its address and that no license is
+# stated, so the Data status page and the weekly health check work (docs/DATA_SOURCES.md).
+- id: warming_cooling_sites
+  name: Warming and cooling sites
+  publisher: City of Philadelphia, Office of Emergency Management
+  homepage: https://www.arcgis.com/home/item.html?id=c09633f01d3b439c9488f7551a16175c
+  # A public "view" copy the City made on 2026-07-01 (87 sites on 2026-10-09, last edited
+  # 2026-10-07), so its address could change; a failed download keeps the last good copy and the
+  # weekly check opens an issue. The day the City last edited the list is kept as source_date.
+  endpoint: {kind: arcgis, service: Warming_Cooling_Sites_PUBLICVIEW, layer: 0}
+  license: unstated_uncredited
+  attribution: "Warming and cooling sites: City of Philadelphia, Office of Emergency Management (no license stated; no credit line shown, as the owner decided)"
+  cadence: weekly
+  health: {min_rows: 40, max_drop_pct: 40, newest_field: source_date, max_age_days: 400}
+  release: v0.4
+- id: ppr_playgrounds
+  name: Playgrounds
+  publisher: City of Philadelphia, Parks and Recreation
+  homepage: https://www.arcgis.com/home/item.html?id=899c807e205244278b3f39421be8489c
+  # 462 playgrounds on 2026-10-09, last edited 2026-08-21. The older PPR_Playground_Equipment
+  # (2016) is not used.
+  endpoint: {kind: arcgis, service: PPR_Playgrounds, layer: 0}
+  license: city_terms
+  attribution: "Playgrounds: City of Philadelphia Parks and Recreation"
+  cadence: weekly
+  health: {min_rows: 400, max_drop_pct: 10}
+  release: v0.4

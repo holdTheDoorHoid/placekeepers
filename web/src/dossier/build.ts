@@ -754,6 +754,9 @@ export function buildDossier(input: DossierInput): DossierView {
     if (shardNearby.gardens !== null) within.push(n.gardens(shardNearby.gardens));
     if (shardNearby.hearings != null && shardNearby.hearings > 0) within.push(n.hearings(shardNearby.hearings));
     if (within.length) groups.push({ heading: n.within500, rows: within });
+    if (shardNearby.playground) {
+      groups.push({ heading: n.playgroundHeading, rows: [n.playground(shardNearby.playground.name, shardNearby.playground.meters)] });
+    }
     nearbyProvenance = snapshotProvenance;
   } else {
     const liveNearby = live.nearby.status === 'ok' ? live.nearby.data : null;
@@ -766,7 +769,14 @@ export function buildDossier(input: DossierInput): DossierView {
     }
     nearbyProvenance = provenanceOf(live.nearby, false, null, liveOn);
   }
-  const layerIds = ['shootings_hex', 'memorials', 'landcare_lots', 'gardens', ...(shardNearby?.hearings ? ['hearings'] : [])];
+  const layerIds = [
+    'shootings_hex',
+    'memorials',
+    'landcare_lots',
+    'gardens',
+    ...(shardNearby?.hearings ? ['hearings'] : []),
+    ...(shardNearby?.playground ? ['playgrounds'] : []),
+  ];
   const layers = layerIds
     .map((id) => registry.layers.find((l) => l.id === id))
     .filter((l): l is NonNullable<typeof l> => !!l && !state.layers.includes(l.id))
@@ -833,6 +843,7 @@ export function buildDossier(input: DossierInput): DossierView {
   if (shardNearby) {
     if (shardNearby.s12 !== null || shardNearby.s36 !== null) addSource('shootings', snapshotWhen);
     if (shardNearby.landcare !== null) addSource('phs_landcare', snapshotWhen);
+    if (shardNearby.playground) addSource('ppr_playgrounds', snapshotWhen);
     if (shardNearby.gardens !== null) {
       addSource('gardens_phs_ngt', snapshotWhen);
       addSource('gardens_registered', snapshotWhen);

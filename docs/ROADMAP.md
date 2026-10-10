@@ -191,6 +191,12 @@ Two additions that were not on the roadmap, both done on 2026-10-08 and in v0.3:
   and the Philadelphia Register, zoning overlays, EPA brownfield records, and appeals and hearings
   on the lot page, in its timeline and on the map, with names from appeals on the lot's own page
   only (DESIGN.md section 5.6).
+- **M4.7 Neighborhood context** (done, 2026-10-09, issue #43; added by the owner after the Build
+  Philly Now review): rent burden, middle rent and income, and empty homes with their margins on
+  the watch areas' cards; the City's warming and cooling sites (shown without a credit line, as
+  the owner decided) beside the pools; playgrounds, and the nearest one on each lot page. Rent
+  burden as a watch sign and "no playground within a short walk" as a placemaking factor are
+  proposals with numbers for the owner (DESIGN.md section 5.3), not built.
 
 ## Phase 5: v0.5 Organizing tools
 

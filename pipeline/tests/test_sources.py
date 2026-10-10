@@ -382,6 +382,144 @@ TENURE_ROWS = (
 )
 
 
+def acs_table(table: str, lines: int, rows: dict[str, list[int]]) -> str:
+    """A Census summary file table: GEO_ID, then each line's estimate and margin of error, with
+    `rows` giving each place's numbers in that order (estimate, margin, estimate, margin, ...)."""
+    header = ["GEO_ID"]
+    for n in range(1, lines + 1):
+        header += [f"{table}_E{n:03d}", f"{table}_M{n:03d}"]
+    body = ["|".join(header)]
+    for geo, values in rows.items():
+        assert len(values) == 2 * lines
+        body.append("|".join([geo, *(str(v) for v in values)]))
+    return "\n".join(body) + "\n"
+
+
+#: Rent as a share of income (B25070): 1,000 renter households in the first tract, 50 whose share
+#: was not computed, 300 paying half their income or more; a second with no answer at all.
+RENT_BURDEN_ROWS = acs_table(
+    "B25070",
+    11,
+    {
+        "0100000US": [44000000, 100000] * 11,
+        "0500000US42101": [
+            327523,
+            4547,
+            11788,
+            1202,
+            25924,
+            2000,
+            37782,
+            2291,
+            37892,
+            2015,
+            32314,
+            1905,
+            25077,
+            1832,
+            17540,
+            1408,
+            26766,
+            2018,
+            90159,
+            3348,
+            22281,
+            1775,
+        ],
+        "0500000US42045": [200000, 3000] * 11,
+        "1400000US42101000101": [
+            1000,
+            90,
+            50,
+            20,
+            60,
+            25,
+            80,
+            30,
+            90,
+            35,
+            100,
+            40,
+            110,
+            40,
+            60,
+            30,
+            100,
+            35,
+            300,
+            60,
+            50,
+            20,
+        ],
+        "1400000US42101000102": [0, 11] + [-666666666, -222222222] * 10,
+        "1400000US42045400100": [3000, 200] * 11,
+    },
+)
+OCCUPANCY_ROWS = acs_table(
+    "B25002",
+    3,
+    {
+        "0500000US42101": [748270, 241, 679428, 2660, 68842, 2623],
+        "1400000US42101000101": [1200, 100, 1000, 90, 200, 60],
+        "1400000US42101000102": [10, 8, 10, 8, 0, 11],
+        "1400000US42045400100": [5000, 200, 4800, 200, 200, 50],
+    },
+)
+VACANCY_ROWS = acs_table(
+    "B25004",
+    8,
+    {
+        "0500000US42101": [
+            68842,
+            2623,
+            18918,
+            1501,
+            7159,
+            748,
+            3774,
+            655,
+            3658,
+            594,
+            2630,
+            494,
+            37,
+            39,
+            32666,
+            1654,
+        ],
+        "1400000US42101000101": [200, 60, 50, 30, 10, 12, 20, 15, 5, 8, 15, 12, 0, 12, 100, 45],
+        "1400000US42045400100": [200, 50] * 8,
+    },
+)
+INCOME_ROWS = acs_table(
+    "B19013",
+    1,
+    {
+        "0500000US42101": [61953, 919],
+        "1400000US42101000101": [41250, 6900],
+        "1400000US42101000102": [-666666666, -222222222],
+        "1400000US42045400100": [90000, 5000],
+    },
+)
+RENT_ROWS = acs_table(
+    "B25064",
+    1,
+    {
+        "0500000US42101": [1397, 14],
+        "1400000US42101000101": [1180, 95],
+        "1400000US42101000102": [-666666666, -222222222],
+        "1400000US42045400100": [1600, 100],
+    },
+)
+ACS_CONTEXT_ROWS = {
+    "acs_rent_burden": RENT_BURDEN_ROWS,
+    "acs_occupancy": OCCUPANCY_ROWS,
+    "acs_vacancy": VACANCY_ROWS,
+    "acs_income": INCOME_ROWS,
+    "acs_rent": RENT_ROWS,
+}
+
+
 def tax_file() -> bytes:
     table = pa.table(
         {
@@ -439,6 +577,8 @@ def file_for(source_id: str) -> tuple[bytes, dict[str, str]]:
         return ACS_ROWS.encode(), modified
     if source_id == "acs_tenure":
         return TENURE_ROWS.encode(), modified
+    if source_id in ACS_CONTEXT_ROWS:
+        return ACS_CONTEXT_ROWS[source_id].encode(), modified
     if source_id == "cagp_tax_2025":
         return tax_file(), {}
     if source_id == "septa_gtfs":
