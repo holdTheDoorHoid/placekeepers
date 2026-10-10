@@ -27,6 +27,8 @@
   import WatchDetails from '../displacement/WatchDetails.svelte';
   import RedliningDetails from '../history/RedliningDetails.svelte';
   import { watchSummaryOf } from '../../displacement/watch.ts';
+  import { sitePlace } from '../../amenities/describe.ts';
+  import { COOLING_LAYER } from '../../map/styles/public_place.ts';
 
   let {
     store,
@@ -122,7 +124,15 @@
     {/each}
   {:else if style === STYLES.public_place}
     {#each target.features.slice(0, 4) as properties, i (i)}
-      <PlaceDetails layerId={target.layerId} {properties} />
+      {@const place = target.layerId === COOLING_LAYER ? sitePlace(properties) : null}
+      <PlaceDetails layerId={target.layerId} {properties} manifest={store.manifest} />
+      {#if place && store.state.layers.includes(place.layerId)}
+        <!-- One place, one marker (M4.7): the library or recreation center this site is, whose own
+             marker the site's marker stands for while both layers are on. -->
+        {#each (store.controller?.featuresWith(place.layerId, 'id', place.id) ?? []).slice(0, 1) as related, j (j)}
+          <PlaceDetails layerId={place.layerId} properties={related} />
+        {/each}
+      {/if}
     {/each}
   {:else if style === STYLES.condition}
     {#each target.features.slice(0, 4) as properties, i (i)}

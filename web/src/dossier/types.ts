@@ -181,6 +181,8 @@ export interface Nearby {
   killed: number | null;
   landcare: number | null;
   gardens: number | null;
+  /** The nearest playground (M4.7): the park's name and the straight line distance in meters. */
+  playground: { name: string; meters: number } | null;
 }
 
 export interface LandCare {

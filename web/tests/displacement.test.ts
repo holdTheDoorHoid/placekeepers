@@ -382,7 +382,7 @@ describe('a tapped watch area', () => {
   const summary = manifest.displacement!;
 
   it('reads the manifest block', () => {
-    expect(summary.city).toEqual({ p0: 180000, p1: 230000, pc: 28, cb: 27, ac: 69, rp: 48 });
+    expect(summary.city).toEqual({ p0: 180000, p1: 230000, pc: 28, cb: 27, ac: 69, rp: 48, rb: 30, gr: 1397, hi: 61953, vp: 9 });
     expect(summary.periods?.recent_to).toBe('2026-09-02');
     expect(summary.thresholds.price_points).toBe(25);
   });

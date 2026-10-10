@@ -12,11 +12,51 @@
 export const WATCH_AREAS = [
   [
     [300, 650],
-    { id: '42101900200', w: 7, nm: 'Sample Heights', n0: 212, n1: 158, p0: 61000, p1: 112000, pc: 84, cb: 46, ah: 1450, ac: 131, oc: 1830, rp: 52, mb: 3, mr: 0 },
+    {
+      id: '42101900200',
+      w: 7,
+      nm: 'Sample Heights',
+      n0: 212,
+      n1: 158,
+      p0: 61000,
+      p1: 112000,
+      pc: 84,
+      cb: 46,
+      ah: 1450,
+      ac: 131,
+      oc: 1830,
+      rp: 52,
+      mb: 3,
+      mr: 0,
+      // The neighborhood context (M4.7), each number with its margin of error.
+      rh: 880,
+      rb: 41,
+      rbm: 9,
+      gr: 1180,
+      grm: 95,
+      hi: 41250,
+      him: 6900,
+      hu: 2120,
+      vh: 290,
+      vhm: 80,
+      vp: 14,
+      vpm: 4,
+      vr: 60,
+      vrm: 35,
+      vs: 15,
+      vsm: 14,
+      vn: 20,
+      vnm: 18,
+      vz: 0,
+      vzm: 17,
+      vo: 195,
+      vom: 70,
+    },
   ],
   [
     [650, 1050],
-    { id: '42101900300', w: 28, nm: 'Sample Park', n0: 31, n1: 24, ah: 640, ac: 112, oc: 950, rp: 71, mb: 2, mr: 1 },
+    // Too few renter households for a share, and no middle rent the Census could compute.
+    { id: '42101900300', w: 28, nm: 'Sample Park', n0: 31, n1: 24, ah: 640, ac: 112, oc: 950, rp: 71, mb: 2, mr: 1, hi: 30500, him: 9100, hu: 1010, vh: 60, vhm: 30, vp: 6, vpm: 3, vo: 60, vom: 30 },
   ],
 ];
 
@@ -38,13 +78,31 @@ export const WATCH_SOURCES = {
   assessment_values: [1159065, null],
   acs_tenure: [408, null],
   market_value_analysis: [1338, null],
+  // The neighborhood context's tables (M4.7): the 408 tracts and the city's own row.
+  acs_rent_burden: [409, null],
+  acs_rent: [409, null],
+  acs_income: [409, null],
+  acs_occupancy: [409, null],
+  acs_vacancy: [409, null],
 };
 
 export const WATCH_LAYER = {
   displacement_watch: {
     file: 'tiles/displacement.pmtiles',
     source_layer: 'watch',
-    sources: ['real_estate_sales', 'assessment_values', 'acs_tenure', 'market_value_analysis', 'opa_properties', 'census_tracts_2020'],
+    sources: [
+      'real_estate_sales',
+      'assessment_values',
+      'acs_tenure',
+      'market_value_analysis',
+      'opa_properties',
+      'census_tracts_2020',
+      'acs_rent_burden',
+      'acs_rent',
+      'acs_income',
+      'acs_occupancy',
+      'acs_vacancy',
+    ],
   },
 };
 
@@ -55,7 +113,7 @@ export const WATCH_BLOCK = {
   assessment_years: [2022, 2027],
   survey_years: [2020, 2024],
   mva: 'Market Value Analysis 2026',
-  city: { p0: 180000, p1: 230000, pc: 28, cb: 27, ac: 69, rp: 48 },
+  city: { p0: 180000, p1: 230000, pc: 28, cb: 27, ac: 69, rp: 48, rb: 30, gr: 1397, hi: 61953, vp: 9 },
   thresholds: {
     price_points: 25,
     company_points: 15,
@@ -69,4 +127,5 @@ export const WATCH_BLOCK = {
     gap_years: 5,
   },
   areas: { tracts: 408, watch: 2 },
+  context: { survey_years: [2020, 2024], min_renters: 100, min_homes: 100 },
 };

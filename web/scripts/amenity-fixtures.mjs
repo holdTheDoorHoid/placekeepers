@@ -44,6 +44,8 @@ const SAMPLES = [
         [300, 205],
         {
           id: 'lib1',
+          // Also the City's warming and cooling site cool1 (M4.7): one marker while both are on.
+          cc: 'cool1',
           nm: 'Sample Library',
           ad: '1 Sample Street',
           zip: '19133',
@@ -66,6 +68,39 @@ const SAMPLES = [
       [[380, 212], { id: 'pool1', nm: 'Sample Pool', k: 1, st: 1, in: 0, ada: 1, ad: '2 SAMPLE ST', op: '2026-06-24' }],
       [[540, 212], { id: 'spray1', nm: 'Sample Playground', k: 2, st: 1 }],
       [[700, 212], { id: 'spray2', nm: 'Sample Square', k: 3, st: 0 }],
+    ],
+  ],
+  // Warming and cooling sites and playgrounds (M4.7): cool1 is the sample library itself, at its
+  // point; cool2 a community partner listed as closed, for cooling only.
+  [
+    'tiles/places.cooling.geojson',
+    [
+      [
+        [300, 205],
+        {
+          id: 'cool1',
+          nm: 'Sample',
+          k: 1,
+          ad: '1 Sample St.',
+          hr: '9a-7p',
+          c: 1,
+          w: 1,
+          st: 1,
+          sv: 'Book Drop Browse Shelves Computer Use Wi-fi',
+          ada: 1,
+          ws: 1,
+          pl: 'lib1',
+          pn: 'Sample Library',
+        },
+      ],
+      [[860, 212], { id: 'cool2', nm: 'Sample Community Partner', k: 3, ad: '9 Example Ave.', hr: '11a-7p', c: 1, w: 0, st: 0, cap: 20 }],
+    ],
+  ],
+  [
+    'tiles/places.playgrounds.geojson',
+    [
+      [[200, 226], { id: 'pg1', nm: 'Sample Playground', ag: 1, yr: 2018 }],
+      [[214, 226], { id: 'pg2', nm: 'Sample Playground', ag: 2 }],
     ],
   ],
   [
@@ -99,6 +134,10 @@ export const AMENITY_SOURCES = {
   ppr_spraygrounds: [114, null],
   ppr_hydration_stations: [147, null],
   philly311_conditions: [6496, '2026-10-02'],
+  // M4.7: the warming and cooling sites (their newest record is the day the City last changed
+  // the list) and the playgrounds.
+  warming_cooling_sites: [87, '2026-10-02'],
+  ppr_playgrounds: [462, null],
 };
 export const AMENITY_LAYERS = {
   benches: { file: 'tiles/amenities.pmtiles', source_layer: 'benches', sources: ['osm_philadelphia'] },
@@ -110,6 +149,8 @@ export const AMENITY_LAYERS = {
   libraries: { file: 'tiles/places.pmtiles', source_layer: 'libraries', sources: ['library_locations'] },
   recreation_centers: { file: 'tiles/places.pmtiles', source_layer: 'recreation', sources: ['ppr_program_sites'] },
   pools: { file: 'tiles/places.pmtiles', source_layer: 'pools', sources: ['ppr_swimming_pools', 'ppr_spraygrounds'] },
+  cooling_centers: { file: 'tiles/places.pmtiles', source_layer: 'cooling', sources: ['warming_cooling_sites'] },
+  playgrounds: { file: 'tiles/places.pmtiles', source_layer: 'playgrounds', sources: ['ppr_playgrounds'] },
   dumping: { file: 'tiles/conditions.pmtiles', source_layer: 'dumping', sources: ['philly311_conditions', 'street_centerlines'] },
   dark_lights: { file: 'tiles/conditions.pmtiles', source_layer: 'lights', sources: ['philly311_conditions', 'street_centerlines'] },
   graffiti: { file: 'tiles/conditions.pmtiles', source_layer: 'graffiti', sources: ['philly311_conditions', 'street_centerlines'] },

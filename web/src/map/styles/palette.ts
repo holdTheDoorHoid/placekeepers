@@ -111,6 +111,11 @@ export const PLACE_COLORS: Record<string, string> = {
   park_water: '#1b8ac2',
   libraries: '#3d3f7a',
   recreation_centers: '#1f7a6d',
+  // Warming and cooling sites (M4.7): a deep purple, clear of the pools' blues and the libraries'
+  // indigo beside them; one listed as closed is a hollow ring of the same color.
+  cooling_centers: '#5e3c99',
+  // Playgrounds (M4.7): the Okabe and Ito orange, clear of public art's colors beside them.
+  playgrounds: '#e69f00',
 };
 export const POOL_COLORS: Record<number, string> = { 1: '#0096b8', 2: '#4cc3dc', 3: '#97dcea' };
 /** Pools draw a dark outline, so the pale sprinkler blue still shows on a pale base map. */

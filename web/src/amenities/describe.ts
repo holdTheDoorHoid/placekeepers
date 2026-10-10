@@ -3,6 +3,7 @@
 // docs/CONTRACTS.md section 4, kept apart from the components so the wording can be tested.
 // Unknown is never worded as no; 311 blocks never name an address or anyone who reported.
 
+import type { Manifest } from '../data/manifest.ts';
 import { formatDate, strings } from '../strings.ts';
 import { titleStreet } from '../streets/describe.ts';
 import { osmUrl } from '../transit/amenities.ts';
@@ -63,13 +64,82 @@ export interface PlaceView {
 /** Only the Free Library's own pages are linked (the pipeline keeps no other). */
 const LIBRARY_PAGE = /^https:\/\/(libwww|www)\.freelibrary\.org\//;
 
-export function describePlace(layerId: string, properties: Record<string, unknown>): PlaceView {
+/** The source of the warming and cooling sites (M4.7). */
+export const COOLING_SOURCE = 'warming_cooling_sites';
+
+/**
+ * The day this map last copied the City's list of warming and cooling sites, and the day the
+ * City last changed it, in words; null where the manifest does not say (M4.7).
+ */
+export function listedOn(manifest: Manifest | null): { copied: string | null; changed: string | null } {
+  const source = manifest?.sources[COOLING_SOURCE];
+  return { copied: formatDate(source?.last_success ?? null), changed: formatDate(source?.newest_record ?? null) };
+}
+
+/** What a site says about the place of ours it also is: its layer, its id and its name. */
+export function sitePlace(properties: Record<string, unknown>): { layerId: string; id: string; name: string | null } | null {
+  const id = text(properties.pl);
+  if (!id) return null;
+  const layerId = id.startsWith('lib') ? 'libraries' : id.startsWith('rec') ? 'recreation_centers' : null;
+  return layerId ? { layerId, id, name: text(properties.pn) } : null;
+}
+
+function describeSite(properties: Record<string, unknown>, manifest: Manifest | null): PlaceView {
+  const t = strings.places.cooling;
+  const facts: string[] = [];
+  const address = text(properties.ad);
+  if (address) facts.push(address);
+  const status = int(properties.st);
+  facts.push(status === 1 || status === 0 ? t.status[status]! : t.statusUnknown);
+  const cooling = int(properties.c) === 1;
+  const warming = int(properties.w) === 1;
+  facts.push(cooling && warming ? t.both : cooling ? t.cooling : warming ? t.warming : t.neither);
+  const hours = text(properties.hr);
+  if (hours) facts.push(t.hours(hours));
+  const services = text(properties.sv);
+  if (services) facts.push(t.services(services));
+  const capacity = int(properties.cap);
+  if (capacity !== null && capacity > 0) facts.push(t.capacity(capacity));
+  const access = int(properties.ada);
+  if (access === 1 || access === 0) facts.push(strings.places.accessible[access]!);
+  if (int(properties.ws) === 1) facts.push(t.water);
+  if (int(properties.rr) === 1) facts.push(t.restroom);
+  const place = sitePlace(properties);
+  if (place?.name) facts.push(t.also[place.id.slice(0, 3)]!(place.name));
+  const k = int(properties.k);
+  const name = text(properties.nm);
+  const { copied, changed } = listedOn(manifest);
+  return {
+    title: name ?? t.title,
+    kind: name ? ((k !== null && t.kinds[k]) || t.title) : null,
+    facts,
+    link: null,
+    // No credit line (owner, 2026-10-09): the date the list was copied, and that it is not live.
+    source: t.asListed(copied, changed),
+  };
+}
+
+export function describePlace(layerId: string, properties: Record<string, unknown>, manifest: Manifest | null = null): PlaceView {
   const t = strings.places;
   const facts: string[] = [];
   const name = text(properties.nm) ?? '';
   const k = int(properties.k);
   let kind: string | null = null;
   let link: PlaceView['link'] = null;
+  if (layerId === 'cooling_centers') return describeSite(properties, manifest);
+  if (layerId === 'playgrounds') {
+    const ages = int(properties.ag);
+    if (ages !== null && t.playgrounds.ages[ages]) facts.push(t.playgrounds.ages[ages]!);
+    const year = int(properties.yr);
+    if (year !== null) facts.push(t.playgrounds.installed(year));
+    return {
+      title: name || t.playgrounds.kind,
+      kind: name ? t.playgrounds.kind : null,
+      facts,
+      link: null,
+      source: t.source.parks!,
+    };
+  }
   if (layerId === 'libraries') {
     kind = strings.places.legend.libraries ?? null;
     const address = [text(properties.ad), text(properties.zip)].filter(Boolean).join(', Philadelphia, PA ');
@@ -94,7 +164,10 @@ export function describePlace(layerId: string, properties: Record<string, unknow
     if (access === 1 || access === 0) facts.push(t.accessible[access]!);
     const address = text(properties.ad);
     if (address) facts.unshift(titleStreet(address));
-  } else if (layerId === 'park_water') {
+  }
+  // A library or recreation center that the City also lists as a warming or cooling site (M4.7).
+  if ((layerId === 'libraries' || layerId === 'recreation_centers') && text(properties.cc)) facts.push(t.cooling.alsoSite);
+  if (layerId === 'park_water') {
     kind = (k !== null && t.waterKinds[k]) || t.waterKinds[1]!;
     const park = text(properties.pk);
     if (park) facts.push(t.inPark(park));

@@ -209,7 +209,11 @@
         "s12": 4,
         "s36": 11,
         "landcare_within_500ft": 2,
-        "gardens_within_500ft": 1
+        "gardens_within_500ft": 1,
+        "playground": {
+          "nm": "Sample Playground",
+          "m": 220
+        }
       },
       "lens": {
         "f_vacant": 88,
@@ -351,7 +355,11 @@
         "s12": 4,
         "s36": 10,
         "landcare_within_500ft": 3,
-        "gardens_within_500ft": 0
+        "gardens_within_500ft": 0,
+        "playground": {
+          "nm": "Sample Playground",
+          "m": 260
+        }
       },
       "lens": {
         "f_vacant": 36,
