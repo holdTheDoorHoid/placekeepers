@@ -1,1 +1,1 @@
-{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"id":9011,"name":"N BROAD ST","n":2,"o":2,"d":"2026-09-30","a":1},"geometry":{"type":"Point","coordinates":[-75.156124,39.985]}}]}
+{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"id":9011,"name":"N BROAD ST","n":2,"o":2,"d":"2026-09-30","a":1,"pl":4,"lp":3,"le":2},"geometry":{"type":"Point","coordinates":[-75.156124,39.985]}}]}

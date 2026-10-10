@@ -57,9 +57,12 @@
     {#if view.tunnel}<p class="muted small">{t.tunnelStation}</p>{/if}
     {#if comfort}
       <h4>{t.findTitle}</h4>
+      <p data-city-shelter>{comfort.cityShelter}</p>
+      {#if comfort.disagree}<p class="disagree" role="note">{comfort.disagree}</p>{/if}
       {#if view.waiting}
         <p class="muted" role="status">{store.stopTableStatus === 'unavailable' ? t.answersUnavailable : t.answersLoading}</p>
       {:else}
+        {#if comfort.inOsm}<p class="small muted">{s.factsTitle}</p>{/if}
         <p>{comfort.summary}</p>
         <ul class="facts">
           {#each comfort.answers as answer (answer.key)}
@@ -68,6 +71,7 @@
         </ul>
         {#if comfort.anyUnknown}<p class="muted small">{s.unknownNote}</p>{/if}
       {/if}
+      {#if comfort.lamps}<p class="small">{comfort.lamps}</p>{/if}
       {#if comfort.facts.length}
         <ul class="facts">
           {#each comfort.facts as fact (fact)}<li>{fact}</li>{/each}
@@ -139,7 +143,7 @@
   </section>
 {/each}
 <p class="muted small">{t.source}</p>
-{#if anyComfort}<p class="muted small">{t.osmSource}</p>{/if}
+{#if anyComfort}<p class="muted small">{t.osmSource} {strings.streetsStops.shelterSource}</p>{/if}
 
 <style>
   .stop {
@@ -162,6 +166,10 @@
   }
   .unknown {
     color: var(--pk-muted);
+  }
+  .disagree {
+    border-left: 3px solid var(--pk-surface-2);
+    padding-left: 6px;
   }
   .suggestions li {
     margin-bottom: 8px;

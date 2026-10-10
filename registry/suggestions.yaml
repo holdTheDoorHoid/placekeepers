@@ -202,9 +202,9 @@
   label: Survey this stop with StreetComplete
   applies_to: stop
   summary: >-
-    No one has recorded yet whether this stop has a shelter or a bench. Anyone can find out in a
-    few minutes with the free StreetComplete phone app, and the answers reach this map within about
-    a week. If the app has no question here, the stop is not in OpenStreetMap yet: add it with the
+    No one has recorded yet whether this stop has a shelter or a bench, or OpenStreetMap and the
+    City's list of bus shelters disagree about its shelter. Anyone can find out in a few minutes
+    with the free StreetComplete phone app, and the answers reach this map within about a week. If the app has no question here, the stop is not in OpenStreetMap yet: add it with the
     app's Things overlay, or leave a note.
   evidence: context
   cost: Free; about three minutes a stop
@@ -216,10 +216,11 @@
   label: Ask the City for a shelter at this stop
   applies_to: stop
   summary: >-
-    A survey found no shelter here. The City's bus shelter program, run by its transportation
-    office (OTIS), builds shelters paid for by the advertising on them and aims to put them at the
-    busiest 15 percent of bus stops. There is no public request form, so write to OTIS with the
-    stop's number and how many people get on here.
+    A survey found no shelter here, and the City's list of bus shelters has none here either. The
+    City's bus shelter program, run by its transportation office (OTIS), builds shelters paid for
+    by the advertising on them and aims to put them at the busiest 15 percent of bus stops. There
+    is no public request form, so write to OTIS with the stop's number and how many people get on
+    here.
   evidence: weak
   cost: Free to ask
   routes: [bus_shelter_request]

@@ -44,6 +44,12 @@ from placekeepers.adapters.schools import Schools
 from placekeepers.adapters.septa import SeptaGtfs, SeptaRidershipBus, SeptaRidershipTrolley
 from placekeepers.adapters.shootings import Shootings
 from placekeepers.adapters.street_centerlines import StreetCenterlines
+from placekeepers.adapters.streets_stops import (
+    BusShelters,
+    CrossingGuards,
+    StreetPoles,
+    TrafficCalming,
+)
 from placekeepers.adapters.tiles import ArcgisTilesAdapter
 from placekeepers.adapters.url import UrlAdapter
 from placekeepers.adapters.vacant_indicators import VacantIndicatorsBldg, VacantIndicatorsLand
@@ -125,6 +131,12 @@ ADAPTERS: dict[str, type[Adapter]] = {
     "ppr_spraygrounds": PprSpraygrounds,
     "ppr_hydration_stations": PprHydrationStations,
     "philly311_conditions": Philly311Conditions,
+    # Streets and stops (M4.5): the City's bus shelters, street poles, traffic calming devices and
+    # school crossing guard locations
+    "bus_shelters": BusShelters,
+    "street_poles": StreetPoles,
+    "traffic_calming": TrafficCalming,
+    "crossing_guards": CrossingGuards,
     # Public art (M3.2); OpenStreetMap's artworks come with osm_philadelphia
     "percent_for_art": PercentForArt,
     "wikidata_art": WikidataArt,

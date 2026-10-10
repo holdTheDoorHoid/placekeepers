@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"id":1,"pl":"Sample 3 & Sample 4","sn":"Sample Elementary School"},"geometry":{"type":"Point","coordinates":[-75.154248,39.984461]}},{"type":"Feature","properties":{"id":2,"pl":"Sample 3 & Sample 5"},"geometry":{"type":"Point","coordinates":[-75.152372,39.986617]}}]}

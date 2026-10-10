@@ -113,7 +113,7 @@ the site. No keys, no third party tile service.
 | SEPTA stop ridership, trolley: `Spring_2026_Stop_Summary_Trolley` (same folder) | As for buses, for T1 to T5, G1, D1 and D2: 719 rows. Health: at least 500 rows | Used (M2.1): source `septa_ridership_trolley` |
 | SEPTA Metro and Regional Rail ridership | No count per platform is published; `Regional_Rail_Station_Summary` (2025) has stations and the M1 (Norristown High Speed Line) has its own stop summaries, outside the city | Not used |
 | SEPTA New Bus Network | Phase 1 began 2026-08-23; phases 2 to 4 run to August 2027, so stop numbers change. Between the last schedules before phase 1 (v202608091) and v202609270, 358 stop numbers disappeared and 185 appeared; 4 were renumbered in place. Placekeepers keeps a stable key per stop and links renumbered stops (docs/TRANSIT_METHOD.md). SEPTA's folder also holds `Stops_Eliminated_with_NBN_Phase_1_(Single_Points)` (486 stops) and `NBN_Stops_updated_data` (stop signage work), not used yet | Handled (M2.1) |
-| Bus shelters | **No public inventory exists.** OpenStreetMap is the source (`osm_philadelphia`, below): on 2026-10-04 it had 829 bus and trolley stops in the city, about 1 in 10 of SEPTA's 7,927 bus and trolley stops in Philadelphia (docs/TRANSIT_METHOD.md). 97 show a shelter or roof, 12 a bench but no shelter, 236 neither, and 484 are not yet surveyed. On 2026-10-05, M2.3 matched 660 of SEPTA's stops to them within 15 meters (181 where the stop numbers agree, 479 by place), as the route survey sheets do. The City's shelter program is run by OTIS and paid for by the advertising on the shelters; its May 2024 request for information sets the goal of 40 percent of bus boardings at stops with a shelter and names the busiest 15 percent of stops as candidates (docs/ROUTES.md) | Used (M2.2): layer `stop_amenities` ("Shelters and benches at stops", in `tiles/amenities.pmtiles`); M2.3 links SEPTA's stops to them by id, and the browser joins the answers for the transit comfort lens (`tables/stop_amenities.json`). Gap: neighbor survey (StreetComplete, the "Survey bus stops" page) plus a Right to Know request to OTIS for the advertising contractor's shelter list |
+| Bus shelters | **The City publishes its own list** (corrected 2026-10-09 by M4.5: this row used to say no public inventory exists, which was wrong). OpenDataPhilly's "Bus Shelters" (City ArcGIS `bus_transit_shelters`) lists the 487 shelters the City installs and maintains with its advertising partner, Intersection Media, each with SEPTA's stop number as the City recorded it; last edited 2025-01-15 ("Streets and stops", below). OpenStreetMap (`osm_philadelphia`, below) adds what the City's list cannot say: benches, lights, and shelters that are not the City's. On 2026-10-04 it had 829 bus and trolley stops in the city, about 1 in 10 of SEPTA's 7,927 bus and trolley stops in Philadelphia (docs/TRANSIT_METHOD.md): 97 with a shelter or roof, 12 a bench but no shelter, 236 neither, and 484 not yet surveyed. On 2026-10-05, M2.3 matched 660 of SEPTA's stops to them within 15 meters (181 where the stop numbers agree, 479 by place), as the route survey sheets do. The City's shelter program is run by OTIS and paid for by the advertising on the shelters; its May 2024 request for information sets the goal of 40 percent of bus boardings at stops with a shelter and names the busiest 15 percent of stops as candidates (docs/ROUTES.md). On 2026-10-09 the stops with a City shelter hold 19.7 percent of weekday boardings at the bus and trolley stops the lens scores | Used: the City's list from M4.5 (source `bus_shelters`, layer `city_shelters`, and `cs` on SEPTA's stops, which the transit comfort lens counts as a shelter); OpenStreetMap from M2.2 (layer `stop_amenities`, "Shelters and benches at stops", in `tiles/amenities.pmtiles`; M2.3 links SEPTA's stops to them by id, and the browser joins the answers, `tables/stop_amenities.json`). The two stay in separate records (decision D1 of docs/VERIFICATION_V0_2.md). Gap: benches and lights, and shelters put in or taken out since January 2025, through the neighbor survey (StreetComplete, the "Survey bus stops" page). The Right to Know request once planned for the advertising contractor's list is no longer needed |
 | Heat vulnerability by census tract (City ArcGIS `heat_vulnerability_ct`, layer 0; OpenDataPhilly's "Heat Vulnerability by Census Tract") | By the Department of Public Health and the Office of Sustainability: heat exposure (from satellite surface temperatures, vegetation, built up land and how much sunlight surfaces reflect), heat sensitivity and heat vulnerability scores for each 2010 census tract, from data of 2017 to 2019 (the layer was last edited on 2025-04-03). 384 tracts, downloaded in 2.6 seconds without a login on 2026-10-04. License: the City's open data terms. Health: at least 350 rows, no more than 5 percent fewer | Used (M2.3): source `heat_vulnerability`, the heat exposure score at each stop for the transit comfort lens; and from M3.1 the heat vulnerability score of each lot's tract for the heat and shade lens, and the tract layer (Heat and shade, below) |
 | Indego GBFS `https://gbfs.bcycle.com/bcycle_indego/gbfs.json`, trips, stations | Bike share context | Live |
 | City bike network (City ArcGIS `Bike_Network`) | No stress rating field | Live |
@@ -240,7 +240,7 @@ mural to a private person, but the rule stands ready for them.
 | TPL ParkServe 10 minute walk areas | | Terms unreachable (403) | Ask before use |
 | Amenities from OpenStreetMap | benches about 2,822; drinking water 46; toilets 116; public bookcases 192; community fridges 0 (Overpass, a box around the city) | ODbL | Used (M3.5): layers `benches`, `picnic_tables`, `drinking_water`, `toilets` and `bookcases` in `tiles/amenities.pmtiles`, from the weekly extract (`osm_philadelphia`). Inside the city limits on 2026-10-05: 2,069 benches, 306 picnic tables, 30 drinking water points, 73 public toilets (one more closed to the public is left out) and 150 public bookcases. Fridges need a community list |
 | 311 requests (Carto, since 2014-12-08) | Illegal dumping, street and alley light outages, graffiti, dangerous sidewalk, street trees | City terms | Use for conditions only, never for people. Used (M3.5): source `philly311_conditions`, below |
-| Street poles, schools | | City terms | Use |
+| Street poles, schools | 203,096 poles (2026-10-09); 490 schools | City terms | **Used**: schools from M1.5 (`schools`), street poles from M4.5 (`street_poles`, "Streets and stops" below) |
 | Commercial corridors (City ArcGIS `Commercial_Corridors`) | 279 | City terms | **Used (M3.4)**: source `commercial_corridors`, see Placemaking lens below |
 | Free Library branches | 54 | City terms | Used (M3.5): the City publishes them as `library_locations` (below). The Free Library's own website refuses automated requests (403) and is never read |
 
@@ -263,6 +263,61 @@ The map shows the 311 requests from the 90 days up to the newest one, counted on
 block within 50 meters, never at an address: on 2026-10-05 the median request lay 9 meters from its
 block and 99 percent within 50 meters. Requests about people, such as "Homeless Encampment
 Request", are never asked for (docs/ETHICS.md).
+
+### Streets and stops (M4.5)
+
+Checked against the live services on 2026-10-09 (issue #41). All four are City layers in the City's
+ArcGIS Online organization, listed on OpenDataPhilly under the "City of Philadelphia License" (the
+City's open data terms, registry license `city_terms`), credited to the City, and fetched with an
+explicit list of fields (`pipeline/src/placekeepers/adapters/streets_stops.py`). They come from the
+City's own services, never from another site's map built on them. Published by `pk publish` into
+`tiles/transit.pmtiles` (the shelters), `tiles/poles.pmtiles` and `tiles/streets.pmtiles`
+(docs/CONTRACTS.md section 4).
+
+| Source id | Endpoint | What we keep | Count and date | Health |
+|---|---|---|---|---|
+| `bus_shelters` | City ArcGIS `bus_transit_shelters` (OpenDataPhilly "Bus Shelters", Office of Transportation and Infrastructure Systems) | The site's name (`site`), the advertising partner's site id (`siteid`, such as "pa-002294"), SEPTA's stop number as the City recorded it (`stopid`), the kind of advertising panel (`productgroup`: Static or Digital) and the point. The `lat` and `long` columns repeat the point and are not kept | 487 shelters, last edited 2025-01-15; 1 page, 2.6 seconds | At least 400 rows, no more than 15 percent fewer than the last good copy, and at least 80 percent naming a plain stop number (463 on 2026-10-09) |
+| `street_poles` | City ArcGIS `Street_Poles` (OpenDataPhilly "Street Poles", Streets Department, Street Lighting Division) | The pole number (`pole_num`, the number Philly311 asks for when a light is out), the kind of pole (`type`, the division's own codes), the lamps on it (`nlumin`), the owner (`owner`), the kind of lamp (`bulb_type`: LED, HPS or UNKNOWN), the day the light was last worked on (`light_date`), whether the City's LED program reached it (`psip_status`) and the point, to 6 decimals (`geometryPrecision`). Not the block, plate, height, tap or other fields | 203,096 poles, edited daily (last 2026-10-09); 102 pages of 2,000 at one request a second, 104 seconds; a 3.8 MB snapshot; 380 MB peak while reading | At least 180,000 rows, no more than 5 percent fewer, at least 90 percent numbered and at least 40 percent listing their kind of lamp (124,751 on 2026-10-09) |
+| `traffic_calming` | City ArcGIS `traffic_calming_devices` (OpenDataPhilly "Traffic Calming", Streets Department) | The project id (`id`, such as "SC-1040", shared by the devices of one project), the street block (`seg_id`, the City's centerline id), the day it went in (`install_dt`) and the point | 1,780 devices from 2009 to September 2026, in 852 projects, on 1,382 street blocks; edited as devices go in (last 2026-10-09) | At least 1,500 rows, no more than 10 percent fewer, and at least 80 percent naming their block (1,704 on 2026-10-09) |
+| `crossing_guards` | City ArcGIS `School_Crossing_Guards` (OpenDataPhilly "School Crossing Guard Locations", the service named on its catalog page) | The intersection (`address`, such as "BYBERRY & PROCTOR"), the City's street node (`node_id`) and the point | 758 posts, last edited 2026-10-06 | At least 600 rows, no more than 20 percent fewer |
+
+**What the numbers say on 2026-10-09.**
+
+* **Shelters.** 476 of the 487 shelters name a SEPTA stop number the pipeline can read ("419",
+  "22513-a" for one of a pair on Roosevelt Boulevard, "SEPTA357"); the rest are blank or another
+  agency's ("NJT4"). 462 match one of SEPTA's bus and trolley stops on the map, at 451 stops: 437
+  by the stop number (the named stop within 30 meters, with no other stop more than 3 meters
+  closer) and 25 by place (the nearest stop within 15 meters). Where the numbers agree the shelter
+  stands a median 4 meters from SEPTA's point, and nine in ten within 15 meters. 25 match no stop:
+  12 name a stop more than 30 meters away (one, numbered 24989, names a stop 17 kilometers off,
+  likely a slip for 24898, the stop beside it), 7 name a number no stop on the map has today, 4
+  have no SEPTA number and stand more than 15 meters from every stop, and 2 name a stop with
+  another stop clearly closer and stand more than 15 meters from that one. 60 have a digital
+  advertising screen.
+* **Poles.** 130,241 poles list a lamp: 123,749 LED (95 percent), 1,002 high pressure sodium and
+  5,490 a lamp of a kind not named. 72,855 list no lamp: 44,962 of the Streets Department's own
+  (most of them of the kinds the division codes `SNP`, `C20` and `C13`, which almost never list
+  a lamp), 23,332 PECO's and 4,257 with no owner. PECO's poles gather in the Northeast and North Philadelphia, so in Council Districts 6,
+  9 and 10 only 55 to 60 percent of poles list a lamp, against 66 to 70 percent in Districts 1, 2, 3
+  and 5. 197,496 poles stand within 30 meters of a street that carries traffic and count for its
+  nearest block; the rest stand along paths, in parks and in parking lots.
+* **Traffic calming.** All but a few project ids begin "SC" (speed cushion), but the layer has no
+  field for the kind, so the map says "speed cushions, humps or tables". 1,700 devices name a block
+  the street network has; 79 count for the nearest block within 30 meters; 1 stands farther from
+  any street. The City's install days are midnight in Philadelphia stored as 04:00 or 05:00 UTC
+  (and 283 as 00:00 UTC), so the UTC calendar day is the day.
+* **Crossing guards.** 727 of the 758 posts stand within 400 meters of a school on the City's list.
+  Seven corners are listed twice.
+
+**What they cannot tell.** The shelter list was last changed in January 2025, so a shelter put in
+or taken out since may be missing, and it holds only the City's advertising shelters, not SEPTA's
+own or private ones. The pole list says what is installed, not whether a lamp works tonight: 311
+requests about lights out are the working signal, and the map shows the two side by side. A block
+or stop with no lamp listed may have lamps the City does not track (on PECO's poles). Traffic
+calming lists the devices, not where neighbors asked for them and were turned down.
+
+**Not used.** Build Philly Now's map, tiles and API, which show some of the same City layers: the
+map reads the City's own services (CLAUDE.md).
 
 ### Walkability and people (M3.3)
 
