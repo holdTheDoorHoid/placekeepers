@@ -497,8 +497,8 @@ On 2026-10-08 the three new factors and the longer lists of suggestions made til
 percent larger (8.8 to 9.6 MB): the two distances about 5 percent once rounded (10 before), the
 corridor 1 percent and the suggestions 2 percent.
 
-**Proposed to the owner, not built (M4.7): "no playground within a short walk" as a factor.**
-Measured on 2026-10-09 in a straight line from each parcel's point to Parks and Recreation's 462
+**Declined by the owner (2026-10-09): "no playground within a short walk" as a factor.** It was
+proposed with M4.7 and is not part of the lens. What was measured on 2026-10-09 in a straight line from each parcel's point to Parks and Recreation's 462
 playgrounds: 15,032 of the map's 40,416 vacant lots (37%) have none within 400 meters (a 5
 minute walk as section 5.9 counts it), and 1,381 none within 800 meters; the middle lot is 331
 meters from one. The factor would mostly repeat "far from a park", because playgrounds stand on
@@ -507,9 +507,8 @@ than half the places. Ranked like the park distance and added at weight 1 to the
 preset, 1,609 lots' scores would move 5 points or more and about 770 lots would enter the top
 fifth (as many would leave it); at weight 2, 11,635 would move 5 points or more and about 1,380
 would swap. 13,920 of the 15,032 lots have at least 1,000 people within a 5 minute walk. The
-recommendation is not to add it as a factor, since it is close to "far from a park", and to let
-the lot page's nearest playground and the playgrounds layer carry it; if the owner wants it,
-weight 1 changes the order least. It is the owner's call.
+recommendation was not to add it as a factor, since it is close to "far from a park", and to let
+the lot page's nearest playground and the playgrounds layer carry it; the owner agreed.
 
 **Displacement watch** is not a priority lens. It is a caution overlay, shown wherever a suggestion
 could raise property values. It changes no score and no order, and it ranks no neighborhood.
@@ -554,8 +553,8 @@ published only by tract, a tract holds enough home sales for a middle price to m
 (most have well over 100 in three years, where a two block hexagon has a handful), and tracts
 follow the City's standard boundary that the parcels follow.
 
-**The five signs**, each measured against the whole city, so the watch follows the city's own
-market rather than a fixed price:
+**The six signs**, each measured against the whole city, so the watch follows the city's own
+market rather than a fixed price (rent burden added by the owner on 2026-10-09):
 
 | Sign | What is measured | It holds when | Too few to tell |
 |---|---|---|---|
@@ -564,6 +563,7 @@ market rather than a fixed price:
 | The City's assessed values | The middle change in the City's market value of the tract's homes, each home against itself, from the tax year five years before the newest to the newest (2022 to 2027), the span the City's LOOP looks at | At least 30 points above the city's middle change (69%, so 99% or more) | Fewer than 50 homes |
 | Renters | The share of occupied homes that are rented (Census Bureau, 2020 to 2024) | 60% or more (the city: 48%) | Fewer than 100 occupied homes |
 | The City's Market Value Analysis | Reinvestment Fund's 2026 analysis for the City, by block group | At least one of the tract's block groups is one where it finds rising pressure: home prices climbing out of reach of what longtime residents earn | Not in the analysis |
+| Rent burden (from 2026-10-09) | The share of renter households paying half their income or more on rent and utilities, among those whose share could be computed (Census Bureau, 2020 to 2024, table B25070), with its margin of error | At least 10 points above the city's share (29.5%, so 39.5% or more) | Fewer than 100 such renter households |
 
 A sale counts when it is a deed for more than a token price that is not a sheriff, condemnation or
 adverse possession deed (the lot pages' rule), not a Land Bank deed (a public sale at a set price),
@@ -574,9 +574,9 @@ For the assessed values a home counts when it stood at least two years before th
 and was valued at $10,000 or more then, so a new house is never counted as a rise.
 
 **The rule**: an area is in the watch when at least two signs hold and at least one of them is
-about prices rising (sale prices, assessed values or the Market Value Analysis). Company buyers and
-renters say who is exposed to rising prices, not that prices are rising, so together they are not
-enough: without this, a few Center City tracts where most homes are rented and many condominiums
+about prices rising (sale prices, assessed values or the Market Value Analysis). Company buyers,
+renters and rent burden say who is exposed to rising prices, not that prices are rising, so
+together they are not enough: without this, a few Center City tracts where most homes are rented and many condominiums
 are bought by companies would be watch areas while their prices are flat.
 
 **What it found on 2026-10-08.** 96 of 408 tracts, holding 157,139 of 679,428 occupied homes (23%),
@@ -594,6 +594,21 @@ slowly than the city's (from a 1% fall to a 6% rise in the other five tracts). S
 Somerton, Fox Chase, Mayfair and Bustleton have at most one sign. Signs by count: sale prices 76
 tracts, company buyers 66, assessed values 78, renters 110, the Market Value Analysis 41; 93 tracts
 had too few home sales to judge prices.
+
+**Rent burden, as built (owner, 2026-10-09).** The sixth sign holds where at least 10 points more
+of a tract's renter households pay half their income or more on rent than across the city
+(29.5%), among at least 100 renter households whose share the Census could compute. Like renters
+and company buyers it says who is exposed, so it makes a watch area only beside a sign about
+prices. Its bit is 32 in `w` (bits never change meaning), its numbers are in the manifest's
+`thresholds` (`rent_burden_points`, `min_renters`), and the tapped area lists it with the other
+signs, with what was measured, its margin of error ("give or take 13 points") and the city's
+share; lot pages, the list of nearby places and downloads name it in their sign lists as "many
+renters paying half their income or more on rent". Measured on 2026-10-09 with the snapshots of
+that day: it holds in 105 tracts, 46 of them already watch areas, and the watch grows from 96 to
+104 areas (Paschall, a tract of Cobbs Creek, two of Upper Kensington, Harrowgate, Frankford,
+Hunting Park and Crescentville), from 157,139 to 171,554 occupied homes (14,415 more) and from
+26,227 to 27,281 of the map's vacant lots (1,054 more). The method in code is
+`pipeline/src/placekeepers/derive/displacement.py` with `tract_context.rent_burden`.
 
 **What it cannot tell**, said on every tapped area: these are signs in public records, not a
 forecast. They cannot tell who has moved away or why, what rents are today (no public record of
@@ -644,23 +659,16 @@ shares are give or take 14 points or more.
 
 These numbers are **context, never a sign**: they change no watch area, no score and no order,
 and like every number on the map they are published only for watch areas (ETHICS.md); the other
-tracts' numbers stay in the pipeline (`derived/tract_context.parquet`) for proposals like the one
-below. The wording never frames a number as a reason to buy or invest: the rent burden line says
+tracts' numbers stay in the pipeline (`derived/tract_context.parquet`). The one exception came
+later the same day: the owner made rent burden a sign (above), so the card lists it with the
+signs, not in this context section. The wording never frames a number as a reason to buy or invest: the rent burden line says
 that rising rents fall hardest on the renters it counts. The method in code is
 `pipeline/src/placekeepers/derive/tract_context.py`; the files are in docs/CONTRACTS.md (sections
 3 and 4).
 
-**Proposed to the owner, not built (M4.7): rent burden as a sign.** A sixth sign, "many renters
-already pay half their income on rent", would hold where that share is at least 10 points above
-the city's (29.5%, so 39.5% or more) with at least 100 renter households. Measured on 2026-10-09
-it holds in 105 tracts, 46 of them already watch areas. Counted like the renters and company
-buyers signs (who is exposed, so a watch area still needs a sign about prices), it would add 8
-watch areas, holding 14,415 occupied homes and 1,054 of the map's 40,416 vacant lots (the watch
-has 96 areas and 26,227 of those lots now). Counted as a sign about prices, it would add 21
-areas (33,501 homes, 1,697 lots); at 15 points above the city, 6 or 15; at 5 points, 10 or 29.
-The margins argue for care: requiring the whole margin above the line leaves 11 tracts and 1 new
-area. The recommendation is the first form (10 points, a sign of exposure), and it is the owner's
-call.
+**Rent burden as a sign** was proposed here with M4.7 and the owner added it on 2026-10-09, in
+the recommended form (10 points above the city, a sign of exposure); the rule as built is above,
+under "Rent burden, as built".
 
 **Population density** never multiplies a violence score. It appears only as "people this would
 reach".

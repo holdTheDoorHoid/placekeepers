@@ -216,6 +216,24 @@ def measure(
     return [of(key) for key in keys], city
 
 
+def rent_burden(
+    path: Path,
+) -> tuple[dict[str, tuple[int, float | None, float | None]], float | None]:
+    """For the displacement watch's rent burden sign (owner, 2026-10-09): each tract's renter
+    households whose share of income on rent could be computed, the share of them paying half
+    their income or more (percent) and its margin (points), by the tract's 11 digit id, and the
+    city's share from the Census's row for the whole city."""
+    tracts: dict[str, tuple[int, float | None, float | None]] = {}
+    city: float | None = None
+    for geoid, row in _rows(path).items():
+        c = context_of(geoid, row, None, None, None, None)
+        if geoid == CITY:
+            city = c.rent_burden_50_pct
+        elif len(geoid) == 11:
+            tracts[geoid] = (c.renters_counted or 0, c.rent_burden_50_pct, c.rent_burden_50_pct_moe)
+    return tracts, city
+
+
 # The run
 
 

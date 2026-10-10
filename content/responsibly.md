@@ -109,7 +109,8 @@ of them is about prices:
 - the City's assessed values rising much faster than across the city;
 - the City's Market Value Analysis finding home prices climbing out of reach of longtime residents;
 - companies buying many of the homes sold;
-- at least three in five homes rented.
+- at least three in five homes rented;
+- many renters paying half their income or more on rent (added on 2026-10-09).
 
 Inside a watch area, the map also lists the area's signs and links to the protections to pair
 with them. It shows them once per page: once at the top of "What you can do" on a lot page and its

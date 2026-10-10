@@ -1089,8 +1089,8 @@
       "sha256": "1d746dd64887fc690edb3dbd6c056b1630ce99ec1cec269ad1ea21b9890d3717"
     },
     "tiles/lots.pmtiles": {
-      "bytes": 18382,
-      "sha256": "df34ae112313af27e9be32530fd6c0cfa0eddcdffd7ee4afab430f0eb029e00e"
+      "bytes": 18379,
+      "sha256": "2a1ef95820ee73abd3854fd55c4b8337d1203947078b28cb8200ae4be8705f4b"
     },
     "tiles/streets.crashes.geojson": {
       "bytes": 23183,
@@ -1209,8 +1209,8 @@
       "sha256": "03a7f20a36dc66d63c4e5449e4f4d802e731c8560e39293608681d6ea2079eb6"
     },
     "tiles/displacement.watch.geojson": {
-      "bytes": 975,
-      "sha256": "c72a4ae33288fb85b0eb46bf9e2b9a114571e0edbd35b3354d8ed8499613ad05"
+      "bytes": 976,
+      "sha256": "a04bf59a1708fd4d559d67b507f20f84c514fbe1e04f1e2eeb402e1d1b10156e"
     },
     "tiles/rules.historic_districts.geojson": {
       "bytes": 323,
@@ -1280,7 +1280,7 @@
       "9900"
     ],
     "files": 1,
-    "bytes": 28850,
+    "bytes": 28851,
     "history": {
       "files": 1,
       "bytes": 1949,
@@ -1326,6 +1326,8 @@
       "min_sales": 50,
       "min_assessed": 50,
       "min_occupied": 100,
+      "rent_burden_points": 10,
+      "min_renters": 100,
       "min_signs": 2,
       "recent_years": 3,
       "gap_years": 5

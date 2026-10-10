@@ -22,6 +22,7 @@ from placekeepers.derive.displacement import (
     counts_for_assessment,
     is_market_home_sale,
     is_watch,
+    measure,
     periods_ending,
     signs_of,
 )
@@ -33,6 +34,8 @@ from .conftest import install_snapshot
 WHEN = "2026-10-05T10:00:00Z"
 AS_OF = date(2026, 10, 5)
 P, C, A, R, M = (SIGNS[k] for k in ("prices", "companies", "assessments", "renters", "mva"))
+#: Rent burden (owner, 2026-10-09).
+B = SIGNS["rent_burden"]
 
 
 def test_periods_are_three_years_each_five_years_apart() -> None:
@@ -91,7 +94,9 @@ def test_which_homes_count_for_assessed_values() -> None:
     assert not counts_for_assessment("1", 1925, None, 2022)
 
 
-CITY = CityMeasures(price_change_pct=28.0, company_pct=27.0, assessment_change_pct=69.0)
+CITY = CityMeasures(
+    price_change_pct=28.0, company_pct=27.0, assessment_change_pct=69.0, rent_burden_pct=29.5
+)
 
 
 def tract(**kwargs) -> TractMeasures:
@@ -112,6 +117,11 @@ def tract(**kwargs) -> TractMeasures:
         ({"renter_pct": 60.0}, R),
         ({"renter_pct": 95.0, "occupied": 99}, 0),
         ({"mva_rising": 1, "mva_block_groups": 3}, M),
+        # Rent burden: 10 points above the city's 29.5%, with at least 100 renter households.
+        ({"rent_burden_pct": 39.5, "renters_counted": 100}, B),
+        ({"rent_burden_pct": 39.4, "renters_counted": 500}, 0),
+        ({"rent_burden_pct": 80.0, "renters_counted": 99}, 0),  # too few renters to tell
+        ({"rent_burden_pct": None, "renters_counted": 500}, 0),
         (
             {"price_change_pct": 60.0, "company_pct": 50.0, "assessment_change_pct": 100.0},
             P | C | A,
@@ -120,6 +130,26 @@ def tract(**kwargs) -> TractMeasures:
 )
 def test_signs_against_the_city(measures, signs) -> None:
     assert signs_of(tract(**measures), CITY) == signs
+
+
+def test_without_the_citys_rent_burden_the_sign_cannot_hold() -> None:
+    no_city = CityMeasures(price_change_pct=28.0)
+    assert signs_of(tract(rent_burden_pct=90.0, renters_counted=900), no_city) == 0
+
+
+def test_rent_burden_alone_never_makes_a_watch_area() -> None:
+    """A tract with many renters paying half their income on rent is in the watch only with a
+    sign about prices: here the first has the Market Value Analysis's rising pressure, the second
+    only renters, the third nothing else."""
+    burden = {"t1": (500, 55.0, 9.0), "t2": (500, 55.0, 9.0), "t3": (500, 55.0, 9.0)}
+    renters = {"t2": (900, 700, 77.8)}
+    measures, city = measure(["t1", "t2", "t3"], [], {}, renters, {"t1": (2, 1)}, {}, burden, 29.5)
+    one, two, three = measures
+    assert city.rent_burden_pct == 29.5
+    assert (one.signs, one.watch) == (M | B, True)
+    assert (two.signs, two.watch) == (R | B, False)
+    assert (three.signs, three.watch) == (B, False)
+    assert (one.renters_counted, one.rent_burden_pct, one.rent_burden_moe) == (500, 55.0, 9.0)
 
 
 @pytest.mark.parametrize(
@@ -132,9 +162,15 @@ def test_signs_against_the_city(measures, signs) -> None:
         (P | R, True),
         (A | C, True),
         (M | R, True),
-        # Company buyers and renters say who is exposed, not that prices are rising.
+        # Company buyers, renters and rent burden say who is exposed, not that prices are rising.
         (C | R, False),
-        (P | C | A | R | M, True),
+        (B, False),
+        (R | B, False),
+        (C | R | B, False),
+        (M | B, True),
+        (P | B, True),
+        (A | B, True),
+        (P | C | A | R | M | B, True),
     ],
 )
 def test_the_watch_needs_two_signs_one_about_prices(signs, watch) -> None:
@@ -247,6 +283,25 @@ def install_city(ctx) -> None:
             }
         ),
     )
+    # Rent burden (owner, 2026-10-09): the city's 29.5%; tract 1 with too few renter households
+    # to tell, tract 2 with half its renters paying half their income or more, tract 3 with 20%.
+    install(
+        "acs_rent_burden",
+        pa.table(
+            {
+                "geoid": ["42101", *TRACTS],
+                "tract": [None, *(g[-6:] for g in TRACTS)],
+                "renter_households": [327523, 90, 400, 300],
+                "renter_households_moe": [4547, 30, 60, 50],
+                "not_computed": [22281, 5, 20, 0],
+                "not_computed_moe": [1775, 5, 10, 11],
+                "rent_50_plus": [90159, 60, 190, 60],
+                "rent_50_plus_moe": [3348, 20, 45, 30],
+                "survey_start_year": [2020] * 4,
+                "survey_end_year": [2024] * 4,
+            }
+        ),
+    )
     install(
         "market_value_analysis",
         pa.table(
@@ -283,14 +338,30 @@ def test_the_measures_of_a_small_city(context_factory) -> None:
     assert one["company_pct"] == pytest.approx(66.7)
     assert one["assessment_change_pct"] == 100.0
     assert one["signs"] == P | C | A and one["watch"]
-    assert two["signs"] == R and not two["watch"]
+    assert two["signs"] == R | B and not two["watch"]
     # Too few sales and homes to tell; renters and the Market Value Analysis make the watch.
     assert three["sales_recent"] == 10 and three["mva_rising"] == 1
     assert three["signs"] == R | M and three["watch"]
+    # Many renters pay half their income on rent in tract 2, but without a sign about prices it
+    # stays out of the watch; tract 1 has too few renter households to tell (owner, 2026-10-09).
+    assert two["rent_burden_pct"] == 50.0 and two["renters_counted"] == 380
+    assert one["renters_counted"] == 85
+    assert result.city["rent_burden_pct"] == 29.5
     assert result.counts["watch"] == 2
+    assert result.counts["signs"] == {
+        "prices": 1,
+        "companies": 1,
+        "assessments": 1,
+        "renters": 2,
+        "mva": 1,
+        "rent_burden": 1,
+    }
+    assert result.counts["measured"]["rent_burden"] == 2
     assert result.counts["sales_left_out"]["not_in_opa"] == 1
     summary = json.loads(result.path.with_suffix(".json").read_text())
     assert summary["thresholds"]["price_points"] == 25
+    assert summary["thresholds"]["rent_burden_points"] == 10
+    assert summary["thresholds"]["min_renters"] == 100
 
 
 def test_a_missing_sign_is_left_out_and_said(context_factory) -> None:
@@ -336,6 +407,37 @@ def test_published_areas_hold_only_measures_that_mean_something() -> None:
         "mb": 2,
         "mr": 1,
     }
+
+
+def test_a_watch_area_carries_its_rent_burden_with_its_margin() -> None:
+    row = {
+        "tract": "42101000300",
+        "place": None,
+        "signs": M | B,
+        "sales_earlier": 0,
+        "sales_recent": 0,
+        "median_earlier": None,
+        "median_recent": None,
+        "price_change_pct": None,
+        "company_pct": None,
+        "homes_assessed": 0,
+        "assessment_change_pct": None,
+        "occupied": 300,
+        "renter_pct": 40.0,
+        "mva_block_groups": 1,
+        "mva_rising": 1,
+        "renters_counted": 380,
+        "rent_burden_pct": 50.0,
+        "rent_burden_moe": 8.5,
+    }
+    properties = watch_properties(row)
+    assert (properties["w"], properties["rh"], properties["rb"], properties["rbm"]) == (
+        M | B,
+        380,
+        50,
+        9,
+    )
+    assert "rb" not in watch_properties({**row, "renters_counted": 99})
 
 
 def lens_factors(ctx, tracts: dict[str, str]) -> None:
@@ -397,8 +499,9 @@ def test_publish_marks_lots_dossiers_and_the_manifest(context_factory, tmp_path:
         "cb": 35,
         "ac": 30,
         "rp": 55,
-        # No neighborhood context was measured here (M4.7, tests/test_neighborhood_context.py).
-        "rb": None,
+        # No neighborhood context was measured here (M4.7, tests/test_neighborhood_context.py),
+        # but the rent burden sign's own baseline is the city's rent burden (owner, 2026-10-09).
+        "rb": 30,
         "gr": None,
         "hi": None,
         "vp": None,
@@ -423,7 +526,7 @@ def test_the_web_app_reads_the_same_signs_and_rule() -> None:
     )
     assert parity["signs"] == SIGNS
     assert parity["price_signs"] == dw.PRICE_SIGNS
-    assert len(parity["cases"]) == 32
+    assert len(parity["cases"]) == 64
     for case in parity["cases"]:
         assert is_watch(case["signs"]) is case["watch"], case
 

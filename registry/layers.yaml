@@ -1111,14 +1111,15 @@
     themselves (the first three): homes selling for much more than five years before, faster than
     across the city; the City's assessed values rising much faster than the city's; the City's
     Market Value Analysis finding prices climbing out of reach of longtime residents; companies
-    buying many of the homes sold; or at least three in five homes rented. Greening and other
+    buying many of the homes sold; at least three in five homes rented; or many renters paying
+    half their income or more on rent (added by the owner on 2026-10-09). Greening and other
     improvements can raise prices further, so where a suggestion to green a lot, plant trees, make
     a place to sit, start a garden or ask for art, or a lot the City lists as available, sits in
     one of these areas, its card adds ways to protect neighbors. This shows signs in public
     records, not a forecast, and it says nothing about who lives here. Tap an area to see its
-    signs, and, as context, how many renters there pay half their income or more on rent, the
-    middle rent and household income, and how many homes stand empty, from the Census Bureau's
-    survey, each with its margin of error.
+    signs and what was measured for each, and, as context, the middle rent and household income
+    and how many homes stand empty, from the Census Bureau's survey; every survey number comes
+    with its margin of error.
   sources: [real_estate_sales, assessment_values, acs_tenure, market_value_analysis, opa_properties, census_tracts_2020, acs_rent_burden, acs_rent, acs_income, acs_occupancy, acs_vacancy]
   file: tiles/displacement.pmtiles
   source_layer: watch

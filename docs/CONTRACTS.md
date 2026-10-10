@@ -556,9 +556,10 @@ watch (section 4, `watch`), or `null` when the watch was not measured:
   "city": {"p0": 180000, "p1": 230000, "pc": 28, "cb": 27, "ac": 69, "rp": 48,
            "rb": 30, "gr": 1397, "hi": 61953, "vp": 9},
   "thresholds": {"price_points": 25, "company_points": 15, "assessment_points": 30,
-                 "renter_pct": 60, "min_sales": 50, "min_assessed": 50, "min_occupied": 100,
+                 "renter_pct": 60, "rent_burden_points": 10, "min_renters": 100,
+                 "min_sales": 50, "min_assessed": 50, "min_occupied": 100,
                  "min_signs": 2, "recent_years": 3, "gap_years": 5},
-  "areas": {"tracts": 408, "watch": 96},
+  "areas": {"tracts": 408, "watch": 104},
   "context": {"survey_years": [2020, 2024], "min_renters": 100, "min_homes": 100}
 }
 ```
@@ -572,6 +573,9 @@ dollars) and its change (`pc`, percent), the share of recent buyers that are com
 middle change in assessed value (`ac`) and the share of homes rented (`rp`), each a whole number or
 `null`. `thresholds` are the rule's numbers (`pipeline/src/placekeepers/derive/displacement.py`):
 a sign about sale prices holds `price_points` percentage points above the city's change, and so on.
+From 2026-10-09 (owner) the rent burden sign holds `rent_burden_points` points above the city's
+share of renters paying half their income or more on rent (`city.rb`, below), with at least
+`min_renters` renter households whose share could be computed.
 
 Added 2026-10-09 by M4.7: `city` also holds the city's neighborhood context, from the Census's row
 for the whole city: `rb` the share of renter households paying half their income or more on rent
@@ -912,14 +916,14 @@ households to mean something (the `min_*` thresholds of the manifest's `displace
 |---|---|---|
 | `id` | string | the tract's 11 digit census id (`geoid`, such as 42101016000 for tract 160) |
 | `nm` | string | the neighborhood at the tract's center (a point inside it), from `neighborhoods`; absent when none |
-| `w` | int | the signs that hold, as bits: 1 home sale prices, 2 buyers that are companies, 4 assessed values, 8 renters, 16 the Market Value Analysis. Bits never change meaning. Every feature has at least two, one of them 1, 4 or 16 |
+| `w` | int | the signs that hold, as bits: 1 home sale prices, 2 buyers that are companies, 4 assessed values, 8 renters, 16 the Market Value Analysis, 32 rent burden (added by the owner on 2026-10-09). Bits never change meaning. Every feature has at least two, one of them 1, 4 or 16 |
 | `n0`, `n1` | int | home sales counted in the earlier and the recent period |
 | `p0`, `p1`, `pc` | int | the middle sale price in each period (dollars) and its change (percent); only with at least `min_sales` sales in each period |
 | `cb` | int | the share of the recent sales whose buyers are a company (percent); only with at least `min_sales` recent sales |
 | `ah`, `ac` | int | homes compared and the middle change in their assessed value (percent); only with at least `min_assessed` homes |
 | `oc`, `rp` | int | occupied homes and the share rented (percent, Census Bureau); only with at least `min_occupied` |
 | `mb`, `mr` | int | the tract's block groups in the Market Value Analysis and how many show rising pressure; absent when the analysis does not cover it |
-| `rh`, `rb`, `rbm` | int | the neighborhood context (added 2026-10-09 by M4.7, from the Census Bureau's survey): renter households whose share of income on rent could be computed, the share of them paying half their income or more on rent and utilities (percent), and its margin of error (percentage points); only with at least `min_renters` households |
+| `rh`, `rb`, `rbm` | int | rent burden (added 2026-10-09 by M4.7 as context, and a sign, bit 32, from the owner's decision the same day; from the Census Bureau's survey): renter households whose share of income on rent could be computed, the share of them paying half their income or more on rent and utilities (percent), and its margin of error (percentage points); only with at least `min_renters` households |
 | `gr`, `grm` | int | the middle gross rent (dollars a month) and its margin of error; absent when the Census computed none |
 | `hi`, `him` | int | the middle household income (dollars a year) and its margin of error; absent when the Census computed none |
 | `hu`, `vh`, `vhm`, `vp`, `vpm` | int | homes, empty homes and its margin, and the empty share (percent) and its margin (points); only with at least `min_homes` homes |
@@ -927,7 +931,9 @@ households to mean something (the `min_*` thresholds of the manifest's `displace
 
 Every margin is the Census Bureau's at 90 percent confidence, worked out for shares and sums by its
 own formulas, rounded half up and never 0. The context is published only on watch areas, like
-every number on the map (docs/ETHICS.md), and is never a sign: it changes no bit of `w`.
+every number on the map (docs/ETHICS.md), and is never a sign: it changes no bit of `w`. The one
+exception is rent burden (`rh`, `rb`, `rbm`), which the owner made a sign on 2026-10-09 (bit 32);
+the pipeline publishes it with the watch's own measures as well as with the context.
 
 `web/src/displacement/watch.ts` reads the same bits and rule as the pipeline:
 `pipeline/tests/fixtures/watch_parity.json` holds every combination of signs and whether it is a

@@ -33,12 +33,18 @@ parcels follow. Five signs are measured for each tract:
    at least one of the tract's block groups is one where Reinvestment Fund found rising
    displacement pressure: home prices climbing out of reach of what longtime residents earn
    (placekeepers.adapters.displacement.mva_pressure).
+6. **Rent burden** (`acs_rent_burden`; added by the owner on 2026-10-09): the share of renter
+   households paying half their income or more on rent and utilities, among those whose share
+   could be computed (American Community Survey five year estimates,
+   placekeepers.derive.tract_context.rent_burden). The sign holds at least `RENT_BURDEN_POINTS`
+   points above the city's share, with at least `MIN_RENTERS` such households. Like renters and
+   company buyers it says who is exposed to rising prices, not that prices are rising.
 
 **The rule**: a tract is a displacement watch area when at least two signs hold and at least one
 of them is about prices rising (sale prices, assessed values, or the Market Value Analysis).
-Company buyers and renters say who is exposed, not that prices are rising, so together they are
-not enough. Thresholds are measured against the whole city, so the watch follows the city's own
-market rather than a fixed price.
+Company buyers, renters and rent burden say who is exposed, not that prices are rising, so
+together they are not enough. Thresholds are measured against the whole city, so the watch
+follows the city's own market rather than a fixed price.
 
 Where a measure has too few sales, homes or households, it is left out (null) and its sign cannot
 hold; the other signs still count.
@@ -64,6 +70,7 @@ from placekeepers.cache import atomic_output, atomic_write_json
 from placekeepers.config import iso_z
 from placekeepers.context import Context
 from placekeepers.derive.lenses import current_snapshot, load_tracts, tracts_of
+from placekeepers.derive.tract_context import rent_burden
 from placekeepers.derive.transfers import NOMINAL_MAX, NOT_SALES, SHERIFF_TYPES, is_deed
 
 log = logging.getLogger(__name__)
@@ -75,6 +82,7 @@ FEEDS = {
     "assessment_values": "assessed values",
     "acs_tenure": "renters",
     "market_value_analysis": "the Market Value Analysis",
+    "acs_rent_burden": "rent burden",
 }
 #: Where homes are: OPA's category and year built, and its point for the tract.
 HOMES = "opa_properties"
@@ -104,9 +112,21 @@ PRICE_POINTS = 25
 COMPANY_POINTS = 15
 ASSESSMENT_POINTS = 30
 RENTER_PCT = 60
+#: Rent burden (owner, 2026-10-09): at least this many points above the city's share of renter
+#: households paying half their income or more on rent, with at least MIN_RENTERS households
+#: whose share could be computed (the floor of the card's context, tract_context.MIN_RENTERS).
+RENT_BURDEN_POINTS = 10
+MIN_RENTERS = 100
 
 #: Signs, as bits (docs/CONTRACTS.md section 4, `w` and `dw`). Bits never change meaning.
-SIGNS = {"prices": 1, "companies": 2, "assessments": 4, "renters": 8, "mva": 16}
+SIGNS = {
+    "prices": 1,
+    "companies": 2,
+    "assessments": 4,
+    "renters": 8,
+    "mva": 16,
+    "rent_burden": 32,
+}
 #: The signs that say prices are rising; a watch area needs at least one of them.
 PRICE_SIGNS = SIGNS["prices"] | SIGNS["assessments"] | SIGNS["mva"]
 MIN_SIGNS = 2
@@ -223,6 +243,9 @@ class TractMeasures:
     renter_pct: float | None = None
     mva_block_groups: int = 0
     mva_rising: int = 0
+    renters_counted: int = 0
+    rent_burden_pct: float | None = None
+    rent_burden_moe: float | None = None
     signs: int = 0
     watch: bool = False
 
@@ -238,6 +261,7 @@ class CityMeasures:
     homes_assessed: int = 0
     assessment_change_pct: float | None = None
     renter_pct: float | None = None
+    rent_burden_pct: float | None = None
 
 
 def signs_of(m: TractMeasures, city: CityMeasures) -> int:
@@ -272,6 +296,13 @@ def signs_of(m: TractMeasures, city: CityMeasures) -> int:
         bits |= SIGNS["renters"]
     if m.mva_rising > 0:
         bits |= SIGNS["mva"]
+    if (
+        m.rent_burden_pct is not None
+        and city.rent_burden_pct is not None
+        and m.renters_counted >= MIN_RENTERS
+        and m.rent_burden_pct >= city.rent_burden_pct + RENT_BURDEN_POINTS
+    ):
+        bits |= SIGNS["rent_burden"]
     return bits
 
 
@@ -461,8 +492,11 @@ def measure(
     renters: dict[str, tuple[int | None, int | None, float | None]],
     mva: dict[str, tuple[int, int]],
     places: dict[str, str],
+    burden: dict[str, tuple[int, float | None, float | None]] | None = None,
+    city_burden: float | None = None,
 ) -> tuple[list[TractMeasures], CityMeasures]:
-    """Every tract's measures, signs and watch call, and the city's measures."""
+    """Every tract's measures, signs and watch call, and the city's measures. `burden` and
+    `city_burden` are the rent burden of each tract and of the city (tract_context.rent_burden)."""
     by_tract: dict[str, dict[str, list[Sale]]] = {}
     for sale in sales:
         by_tract.setdefault(sale.tract, {"earlier": [], "recent": []})[sale.period].append(sale)
@@ -481,6 +515,8 @@ def measure(
     occupied = sum(o for o, r, _ in renters.values() if o is not None and r is not None)
     rented = sum(r for o, r, _ in renters.values() if o is not None and r is not None)
     city.renter_pct = pct(rented, occupied)
+    city.rent_burden_pct = city_burden
+    burden = burden or {}
 
     measures = []
     for tract in sorted(set(tract_ids)):
@@ -498,6 +534,7 @@ def measure(
         if tract in renters:
             m.occupied, _, m.renter_pct = renters[tract]
         m.mva_block_groups, m.mva_rising = mva.get(tract, (0, 0))
+        m.renters_counted, m.rent_burden_pct, m.rent_burden_moe = burden.get(tract, (0, None, None))
         m.signs = signs_of(m, city)
         m.watch = is_watch(m.signs)
         measures.append(m)
@@ -533,6 +570,8 @@ THRESHOLDS = {
     "company_points": COMPANY_POINTS,
     "assessment_points": ASSESSMENT_POINTS,
     "renter_pct": RENTER_PCT,
+    "rent_burden_points": RENT_BURDEN_POINTS,
+    "min_renters": MIN_RENTERS,
     "min_sales": MIN_SALES,
     "min_assessed": MIN_ASSESSED,
     "min_occupied": MIN_OCCUPIED,
@@ -585,10 +624,14 @@ def run(ctx: Context, as_of: date | None = None, out: Path | None = None) -> Dis
         ratios, years = assessed_changes(paths["assessment_values"], homes)
     renters = tenure(paths["acs_tenure"]) if paths["acs_tenure"] is not None else {}
     mva = mva_by_tract(paths["market_value_analysis"]) if paths["market_value_analysis"] else {}
+    burden: dict[str, tuple[int, float | None, float | None]] = {}
+    city_burden: float | None = None
+    if paths["acs_rent_burden"] is not None:
+        burden, city_burden = rent_burden(paths["acs_rent_burden"])
     places = places_of(tracts_path, paths["neighborhoods"])
 
     geoids, _ = load_tracts(tracts_path)
-    measures, city = measure(geoids, sales, ratios, renters, mva, places)
+    measures, city = measure(geoids, sales, ratios, renters, mva, places, burden, city_burden)
 
     rows = [asdict(m) for m in measures]
     table = pa.Table.from_pylist(
@@ -609,6 +652,9 @@ def run(ctx: Context, as_of: date | None = None, out: Path | None = None) -> Dis
                 ("renter_pct", pa.float64()),
                 ("mva_block_groups", pa.int16()),
                 ("mva_rising", pa.int16()),
+                ("renters_counted", pa.int32()),
+                ("rent_burden_pct", pa.float64()),
+                ("rent_burden_moe", pa.float64()),
                 ("signs", pa.int16()),
                 ("watch", pa.bool_()),
             ]
@@ -635,6 +681,7 @@ def run(ctx: Context, as_of: date | None = None, out: Path | None = None) -> Dis
             "companies": sum(1 for m in measures if m.sales_recent >= MIN_SALES),
             "assessments": sum(1 for m in measures if m.homes_assessed >= MIN_ASSESSED),
             "renters": sum(1 for m in measures if (m.occupied or 0) >= MIN_OCCUPIED),
+            "rent_burden": sum(1 for m in measures if m.renters_counted >= MIN_RENTERS),
         },
         "sales_left_out": left_out,
     }

@@ -1,11 +1,12 @@
 {
- "_about": "The displacement watch's signs and rule (M4.1), checked by the pipeline (tests/test_displacement.py against placekeepers.derive.displacement) and the web app (web/tests/displacement.test.ts against src/displacement/watch.ts), so the two cannot drift apart. Every combination of the five signs, and whether it makes a watch area.",
+ "_about": "The displacement watch's signs and rule (M4.1), checked by the pipeline (tests/test_displacement.py against placekeepers.derive.displacement) and the web app (web/tests/displacement.test.ts against src/displacement/watch.ts), so the two cannot drift apart. Every combination of the six signs (rent burden, bit 32, added by the owner on 2026-10-09), and whether it makes a watch area.",
  "signs": {
   "prices": 1,
   "companies": 2,
   "assessments": 4,
   "renters": 8,
-  "mva": 16
+  "mva": 16,
+  "rent_burden": 32
  },
  "price_signs": 21,
  "cases": [
@@ -135,6 +136,134 @@
   },
   {
    "signs": 31,
+   "watch": true
+  },
+  {
+   "signs": 32,
+   "watch": false
+  },
+  {
+   "signs": 33,
+   "watch": true
+  },
+  {
+   "signs": 34,
+   "watch": false
+  },
+  {
+   "signs": 35,
+   "watch": true
+  },
+  {
+   "signs": 36,
+   "watch": true
+  },
+  {
+   "signs": 37,
+   "watch": true
+  },
+  {
+   "signs": 38,
+   "watch": true
+  },
+  {
+   "signs": 39,
+   "watch": true
+  },
+  {
+   "signs": 40,
+   "watch": false
+  },
+  {
+   "signs": 41,
+   "watch": true
+  },
+  {
+   "signs": 42,
+   "watch": false
+  },
+  {
+   "signs": 43,
+   "watch": true
+  },
+  {
+   "signs": 44,
+   "watch": true
+  },
+  {
+   "signs": 45,
+   "watch": true
+  },
+  {
+   "signs": 46,
+   "watch": true
+  },
+  {
+   "signs": 47,
+   "watch": true
+  },
+  {
+   "signs": 48,
+   "watch": true
+  },
+  {
+   "signs": 49,
+   "watch": true
+  },
+  {
+   "signs": 50,
+   "watch": true
+  },
+  {
+   "signs": 51,
+   "watch": true
+  },
+  {
+   "signs": 52,
+   "watch": true
+  },
+  {
+   "signs": 53,
+   "watch": true
+  },
+  {
+   "signs": 54,
+   "watch": true
+  },
+  {
+   "signs": 55,
+   "watch": true
+  },
+  {
+   "signs": 56,
+   "watch": true
+  },
+  {
+   "signs": 57,
+   "watch": true
+  },
+  {
+   "signs": 58,
+   "watch": true
+  },
+  {
+   "signs": 59,
+   "watch": true
+  },
+  {
+   "signs": 60,
+   "watch": true
+  },
+  {
+   "signs": 61,
+   "watch": true
+  },
+  {
+   "signs": 62,
+   "watch": true
+  },
+  {
+   "signs": 63,
    "watch": true
   }
  ]

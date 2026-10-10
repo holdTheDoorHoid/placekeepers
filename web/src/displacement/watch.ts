@@ -15,9 +15,12 @@ import type { Registry, Route } from '../registry/types.ts';
 import { formatNumber, strings } from '../strings.ts';
 
 /** The signs, as bits. They never change meaning (placekeepers.derive.displacement.SIGNS). */
-export const SIGNS = { prices: 1, companies: 2, assessments: 4, renters: 8, mva: 16 } as const;
+// Rent burden (32) was added by the owner on 2026-10-09.
+export const SIGNS = { prices: 1, companies: 2, assessments: 4, renters: 8, mva: 16, rent_burden: 32 } as const;
 export type SignId = keyof typeof SIGNS;
-export const SIGN_ORDER: readonly SignId[] = ['prices', 'assessments', 'mva', 'companies', 'renters'];
+export const SIGN_ORDER: readonly SignId[] = ['prices', 'assessments', 'mva', 'companies', 'renters', 'rent_burden'];
+/** Every sign's bit: a value with any other bit is not a set of signs. */
+const ALL_SIGNS = Object.values(SIGNS).reduce((all, bit) => all | bit, 0);
 /** The signs that say prices are rising; a watch area has at least one of them. */
 export const PRICE_SIGNS = SIGNS.prices | SIGNS.assessments | SIGNS.mva;
 
@@ -39,7 +42,7 @@ export function isWatch(bits: number): boolean {
 
 function bitsOf(value: unknown): number | null {
   const n = typeof value === 'number' ? value : typeof value === 'string' && value.trim() !== '' ? Number(value) : NaN;
-  if (!Number.isInteger(n) || n <= 0 || n > 31) return null;
+  if (!Number.isInteger(n) || n <= 0 || (n & ~ALL_SIGNS) !== 0) return null;
   return isWatch(n) ? n : null;
 }
 
@@ -161,6 +164,10 @@ export interface WatchThresholds {
   company_points: number;
   assessment_points: number;
   renter_pct: number;
+  /** Rent burden (owner, 2026-10-09): points above the city's share, and the renter households
+   * a tract needs. */
+  rent_burden_points: number;
+  min_renters: number;
   min_sales: number;
   min_assessed: number;
   min_occupied: number;
@@ -182,6 +189,8 @@ const DEFAULT_THRESHOLDS: WatchThresholds = {
   company_points: 15,
   assessment_points: 30,
   renter_pct: 60,
+  rent_burden_points: 10,
+  min_renters: 100,
   min_sales: 50,
   min_assessed: 50,
   min_occupied: 100,
@@ -258,7 +267,7 @@ export interface SignRow {
 
 /** One number of a watch area's neighborhood context (M4.7), with its margin in its words. */
 export interface ContextRow {
-  id: 'burden' | 'rent' | 'income' | 'vacant';
+  id: 'rent' | 'income' | 'vacant';
   title: string;
   text: string;
   /** Why the empty homes are empty, each with its margin (empty homes only). */
@@ -285,17 +294,10 @@ const WHY_EMPTY = ['vr', 'vs', 'vn', 'vz', 'vo'] as const;
 export function describeContext(properties: Record<string, unknown>, summary: WatchSummary | null): ContextRow[] {
   const d = strings.displacement;
   const city = summary?.city;
-  const has = ['rh', 'gr', 'hi', 'hu'].some((k) => num(properties[k]) !== null);
+  const has = ['gr', 'hi', 'hu'].some((k) => num(properties[k]) !== null);
   if (!has && !summary?.context) return [];
+  // Rent burden is a sign since 2026-10-09 (owner), listed with the signs above, not here.
   const rows: ContextRow[] = [];
-  const rb = num(properties.rb);
-  const rh = num(properties.rh);
-  rows.push({
-    id: 'burden',
-    title: d.contextTitles.burden!,
-    text: rb !== null && rh !== null ? d.burdenText(rb, num(properties.rbm), rh, city?.rb ?? null) : d.burdenTooFew,
-    parts: [],
-  });
   const gr = num(properties.gr);
   const grm = num(properties.grm);
   rows.push({
@@ -401,6 +403,18 @@ export function describeArea(properties: Record<string, unknown>, summary: Watch
     holds: (bits & SIGNS.mva) !== 0,
     title: d.signTitle.mva,
     text: mb > 0 ? d.mvaText(mr, mb, summary?.mva ?? null) : d.mvaNone,
+  });
+  // Rent burden (owner, 2026-10-09), with its margin of error beside it.
+  const rb = num(properties.rb);
+  const rh = num(properties.rh);
+  rows.push({
+    id: 'rent_burden',
+    holds: (bits & SIGNS.rent_burden) !== 0,
+    title: d.signTitle.rent_burden,
+    text:
+      rb !== null && rh !== null
+        ? d.burdenText(rb, num(properties.rbm), rh, city.rb, summary?.context?.survey_years ?? summary?.survey_years ?? null)
+        : d.burdenTooFew,
   });
   const order = (row: SignRow) => SIGN_ORDER.indexOf(row.id);
   return {
