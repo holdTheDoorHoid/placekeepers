@@ -171,32 +171,47 @@ Two additions that were not on the roadmap, both done on 2026-10-08 and in v0.3:
 
 ## Phase 4: v0.4 History and displacement
 
+Done and released as v0.4 on 2026-10-10 (issue #18). M4.1 shipped early, in v0.3. M4.5, M4.6 and
+M4.7 were added by the owner on 2026-10-09 after a review of Build Philly Now's map. That map is
+not a source: its map, tiles and API are never read, and everything comes from the City, the Census
+Bureau, the EPA and others directly.
+
 - **M4.1 Displacement watch** (done, 2026-10-08, early, in v0.3): sale price trends and company
   buyer share from transfers, the City's Market Value Analysis (the 2026 edition), renter share,
-  assessment changes; the overlay and "pair with protections" cards.
-- **M4.2 Full history in the dossier**: every transfer since 1974, an assessment chart, a timeline of
-  permits, violations and demolition.
-- **M4.3 Historic maps**: City orthophotos 1996 to 2023 with a year slider, the 1860 atlas the City
-  hosts, redlining maps if the license allows, PhilaGeoHistory layers with the Athenaeum's
-  permission.
-- **M4.4 Land Bank statistics**: conveyances by program and year, for the Land Steward Union's
-  campaign.
-- **M4.5 Streets and stops** (issue #41, added by the owner on 2026-10-09 after the Build Philly
-  Now review): the City's own bus shelters, counted as shelters in the transit comfort lens, with
-  the stop's page saying where the City and OpenStreetMap disagree; the City's street poles and
-  the lamps it lists, by block and beside 311 reports of lights out; its traffic calming devices
-  by block; and its school crossing guard posts. A street light lens factor is proposed with
-  numbers, not built (DESIGN.md section 5.7).
-- **M4.6 Lot rules and records** (issue #42, added by the owner on 2026-10-09): historic districts
-  and the Philadelphia Register, zoning overlays, EPA brownfield records, and appeals and hearings
-  on the lot page, in its timeline and on the map, with names from appeals on the lot's own page
-  only (DESIGN.md section 5.6).
-- **M4.7 Neighborhood context** (done, 2026-10-09, issue #43; added by the owner after the Build
-  Philly Now review): rent burden, middle rent and income, and empty homes with their margins on
-  the watch areas' cards; the City's warming and cooling sites (shown without a credit line, as
-  the owner decided) beside the pools; playgrounds, and the nearest one on each lot page. Rent
-  burden as a watch sign and "no playground within a short walk" as a placemaking factor are
-  proposals with numbers for the owner (DESIGN.md section 5.3), not built.
+  assessment changes; the overlay and "pair with protections" cards. In v0.4 it gains a sixth sign,
+  rent burden (M4.7, below).
+- **M4.2 Full history in the dossier** (done, 2026-10-09, issue #38): "The story of this lot" and
+  one timeline of every deed since 1974, violations, permits, demolitions, clean and seal, unsafe
+  notices, appeals and the dated vacancy records, with a switch for each kind, the same with live
+  City data on or off; every assessment year in the chart and the table.
+- **M4.3 Historic maps** (done, 2026-10-09, issue #39): a "Then and now" group with the City's
+  aerial photos on a year slider (23 years from 1959 to 2025, the 1959, 1975 and 1999 photos from
+  DVRPC and the USGS), the 1860 atlas, and the 1937 redlining map under Mapping Inequality's non
+  commercial license, kept in a file of its own. PhilaGeoHistory's layers and the other maps the
+  City hosts for the GeoHistory Network wait for the Athenaeum of Philadelphia's permission.
+- **M4.4 Land Bank statistics** (done, 2026-10-09, issue #40): the page "The Land Bank in
+  numbers": conveyances by agency, year, kind of buyer and council district from the City's deed
+  records since 2014, side yards as our labeled inference, and a weekly count of listed lots that
+  starts in October 2026. Aggregates only.
+- **M4.5 Streets and stops** (done, 2026-10-09, issue #41): the City's own bus shelters, counted as
+  shelters in the transit comfort lens, with the stop's page saying where the City and
+  OpenStreetMap disagree; the City's street poles and the lamps it lists, by block and beside 311
+  reports of lights out; its traffic calming devices by block; and its school crossing guard
+  posts. A street light lens factor was proposed with numbers and left out (DESIGN.md section
+  5.7).
+- **M4.6 Lot rules and records** (done, 2026-10-09, issue #42): "Rules for this lot" with historic
+  districts and the Philadelphia Register, zoning overlays and EPA brownfield records, every appeal
+  and upcoming hearing on the lot page and in its timeline (names on the lot's own page only), and
+  the "Land rules and hearings" layers (DESIGN.md section 5.6). Corner lot and who represents you
+  were not done.
+- **M4.7 Neighborhood context** (done, 2026-10-09, issue #43): rent burden, middle rent and
+  income, and empty homes with their margins on the watch areas' cards; the City's warming and
+  cooling sites (shown without a credit line, as the owner decided) beside the pools; playgrounds,
+  and the nearest one on each lot page. Two proposals with numbers (DESIGN.md section 5.3) went to
+  the owner, who decided on 2026-10-09: rent burden becomes a sixth sign of the displacement watch
+  (an exposure sign, so an area still needs a sign about prices; built on branch `agent/rentsign`,
+  in v0.4), and "no playground within a short walk" is not added to the placemaking score
+  (playgrounds stay on lot pages and as a layer).
 
 ## Phase 5: v0.5 Organizing tools
 
@@ -246,6 +261,23 @@ None of these block Phase 0.
 10. Send, edit or skip the permission request to Transit Forward Philadelphia for its bus stop
    audits (DATA_SOURCES.md, "Sources checked 2026-10-08"). Nothing from the audits is used until
    there is a trimmed copy and a license.
+11. Optional (issue #20, 2026-10-08): ask Philly Bike Action (info@bikeaction.org) whether it can
+    share a count of distinct reporters per cell or per week for the Laser Vision heat map, so the
+    map can also require at least 3 different reporters before an area shows. Today only the 5
+    report threshold applies.
+12. Optional (issue #20, 2026-10-09, "The Land Bank in numbers"; the page works without any of
+    these, and each would replace an inference with the City's own record):
+    - Ask the Clerk of City Council for a Legistar API token (the API answers "Token is
+      required"). Council's resolutions would add each disposition's program and approval date.
+    - Ask PHDC for permission to reuse its board agendas and packages (its terms forbid
+      republishing without written permission), or for a list of dispositions by program.
+    - Ask the City's Department of Planning and Development whether its Land Management dashboard
+      table (fiscal years 2017 to 2023, ArcGIS item `db4dcb37071c4cdfb6ca4df82a1de1b3`) may be
+      reused; its item states no license. The page shows it with credit meanwhile.
+13. Send, edit or skip the permission request to the Athenaeum of Philadelphia for the Greater
+    Philadelphia GeoHistory Network's other maps (the 1875, 1895 and 1910 atlases, the 1942 and
+    1962 land use maps, the 1928 photos) and PhilaGeoHistory's layers (issue #39, 2026-10-09).
+    Nothing from them is used until it says yes.
 
 ## Waves
 
