@@ -27,6 +27,7 @@
   import StreetStopDetails from './StreetStopDetails.svelte';
   import { blockCalming, blockPolesLine, memorialCalmingLine } from '../../streets/streets-stops.ts';
   import WatchDetails from '../displacement/WatchDetails.svelte';
+  import RedliningDetails from '../history/RedliningDetails.svelte';
   import { watchSummaryOf } from '../../displacement/watch.ts';
 
   let {
@@ -176,6 +177,8 @@
     <StreetStopDetails kind="calming" features={target.features} />
   {:else if style === STYLES.crossing_guards}
     <StreetStopDetails kind="guard" features={target.features} />
+  {:else if style === STYLES.redlining}
+    <RedliningDetails features={target.features} />
   {:else if style === STYLES.traffic_stress}
     <StressDetails features={target.features} />
   {:else if style === STYLES.parking_reports}

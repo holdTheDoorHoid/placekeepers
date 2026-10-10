@@ -35,3 +35,10 @@
   label: DVRPC data license (free to use and share without an agreement; credit DVRPC; provided as is)
   url: https://catalog.dvrpc.org/dvrpc_data_license.html
   share_alike: false
+# The 1937 redlining map (owner, 2026-10-09): non commercial, credit required. Its data is
+# published apart from everything else, in its own file, and never in a download (CONTRACTS.md).
+- id: cc_by_nc_2_5
+  label: Creative Commons Attribution NonCommercial 2.5 (credit the authors; non commercial use only)
+  url: https://creativecommons.org/licenses/by-nc/2.5/
+  share_alike: false
+  non_commercial: true

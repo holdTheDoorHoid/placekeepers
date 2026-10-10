@@ -39,6 +39,7 @@ from placekeepers.adapters.pba_laser import PbaLaser
 from placekeepers.adapters.philly311 import Philly311Conditions
 from placekeepers.adapters.property_records import AssessmentHistory, RealEstateTransfers
 from placekeepers.adapters.pwd_parcels import PwdParcels
+from placekeepers.adapters.redlining import MappingInequality1937
 from placekeepers.adapters.schools import Schools
 from placekeepers.adapters.septa import SeptaGtfs, SeptaRidershipBus, SeptaRidershipTrolley
 from placekeepers.adapters.shootings import Shootings
@@ -161,6 +162,11 @@ ADAPTERS: dict[str, type[Adapter]] = {
     # checks that each one still answers
     "city_aerial_photos": ArcgisTilesAdapter,
     "city_atlas_1860": ArcgisTilesAdapter,
+    # older photos the City hosts for DVRPC and the USGS (owner, 2026-10-09)
+    "dvrpc_aerial_photos": ArcgisTilesAdapter,
+    "usgs_aerial_photos_1999": ArcgisTilesAdapter,
+    # The 1937 redlining map, under its non commercial license (owner, 2026-10-09)
+    "mapping_inequality_1937": MappingInequality1937,
 }
 
 

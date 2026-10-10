@@ -198,3 +198,17 @@ export const CALMING_FILL = '#3d3d3d';
 export const CALMING_RING = '#f2c94c';
 export const GUARD_FILL = '#c51b7d';
 export const GUARD_RING = '#ffffff';
+
+/**
+ * The 1937 redlining map (owner, 2026-10-09): the HOLC map's own four colors, muted so they sit
+ * quietly under the lots, with each area's letter on it so the grade never rests on color alone.
+ * A light gray for the one area the map left ungraded.
+ */
+export const HOLC_COLORS: Record<string, string> = {
+  A: '#5d9a6a',
+  B: '#4d82ad',
+  C: '#c9a43a',
+  D: '#b8574c',
+};
+export const HOLC_UNGRADED = '#9b9b9b';
+export const HOLC_FILL_OPACITY = 0.3;

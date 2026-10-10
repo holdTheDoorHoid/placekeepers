@@ -103,7 +103,10 @@ square down to zoom 19, and one tile in the middle of `bounds` at zoom 15 comes 
 The snapshot holds one row per service (`key`, `service`, `ok`, `deepest_zoom`, `detail`); a
 service that does not answer fails the snapshot's checks, so the source turns `stale` with a
 message naming the service, and the weekly refresh opens the usual issue after two runs in a row.
-`city_aerial_photos` (20 years, 1996 to 2025) and `city_atlas_1860` are the first two.
+`city_aerial_photos` (20 years, 1996 to 2025) and `city_atlas_1860` are the first two; from
+2026-10-09 (owner's decision) `dvrpc_aerial_photos` (1959 and 1975) and `usgs_aerial_photos_1999`,
+the older photos the City hosts for DVRPC and the U.S. Geological Survey on the same server, with
+their terms recorded as not stated (`unstated`).
 
 ### `registry/licenses.yaml`
 
@@ -113,6 +116,15 @@ message naming the service, and the weekly refresh opens the usual issue after t
   url: https://metadata.phila.gov/#help/help-faqs/what-are-the-terms-of-use/
   share_alike: false
 ```
+
+`non_commercial` (optional, default false; added 2026-10-09 for the 1937 redlining map) marks a
+license that allows non commercial use only, such as `cc_by_nc_2_5` (Creative Commons Attribution
+NonCommercial 2.5, Mapping Inequality's). Data under such a license never mixes with data under the
+site's own terms, which allow commercial reuse: a layer that draws such a source draws no other
+kind of source, no other layer shares its file (both registry checks enforce it), its file is
+listed in the manifest with its `license` (section 3), nothing from it goes into any other
+published file or any download, and the Data status page says "Non commercial use only" beside
+the source.
 
 ### `registry/layers.yaml`
 
@@ -153,11 +165,14 @@ the setting ids it puts into effect; a web test fails if a registry setting has 
 option values appear in shared links, so they never change once published.
 
 **Raster layers** (added 2026-10-09 by M4.3): a layer with `geometry: raster` draws pictures from
-exactly one source of kind `arcgis_tiles`, loaded by the visitor's browser from that source's own
-server. It has no `file` and no `source_layer` (the web app's validator gives it empty text for
-both), and a layer of any other geometry never names an `arcgis_tiles` source. When the source has
-more than one service, the layer has a choice setting `year` whose option values are the services'
-keys in the same order, and it shows that service; with one service it has none. Each service is
+sources of kind `arcgis_tiles` only (one or more; several from 2026-10-09, so the photos the City
+hosts for other publishers keep their own credit and terms), loaded by the visitor's browser from
+those sources' own server. It has no `file` and no `source_layer` (the web app's validator gives it
+empty text for both), and a layer of any other geometry never names an `arcgis_tiles` source. A
+service key is used once across the layer's sources. When they hold more than one service
+together, the layer has a choice setting `year` whose option values are exactly all those keys,
+each once, in the order the slider shows them, and it shows the chosen service, credited to its
+own source; with one service it has none. Each service is
 its own map source in the browser (`pk-raster:<source id>:<key>`, `web/src/map/raster.ts`), so
 changing the year swaps the source. A raster layer is drawn only while the app option
 `live_city_data` is on (section 1, options): with it off, the web app takes such layers out of the
@@ -387,6 +402,8 @@ data/
     parking.pmtiles       layer "parking"   (parking problems reported with Laser Vision, counts per
                           block sized cell; issue #37)
     displacement.pmtiles  layer "watch"     (displacement watch areas, census tracts; M4.1)
+    redlining.pmtiles     layer "holc"      (the 1937 redlining map, Mapping Inequality's areas and grades;
+                          its own file under CC BY-NC 2.5, non commercial only, never in a download; 2026-10-09)
   tables/
     parcels.json          compact columnar table for ranking and lists
     owners.json           organizations holding many vacant parcels, with their parcels (section 6)
@@ -464,7 +481,11 @@ header's freshness badge.
 means every service answered, `stale` that at least one did not (the `message` names it, and
 `stale_since` is the day every one last answered), and `rows` is how many services were checked.
 A raster layer's entry in `layers` has `file` and `source_layer` set to `null` (added 2026-10-09 by
-M4.3), and `files` never lists anything for it.
+M4.3), and `files` never lists anything for it. A file whose data is under a non commercial license
+(section 1, licenses) carries `license`, that license's id, beside `bytes` and `sha256` (added
+2026-10-09): `"tiles/redlining.pmtiles": {"bytes": ..., "sha256": "...", "license": "cc_by_nc_2_5"}`,
+and the same for its GeoJSON when tiles are skipped. Every file without `license` is under the
+site's own published data terms.
 `sources` lists every source in the registry and `layers` every layer, whether or not it was built.
 `files` lists every file under the data root except `manifest.json` itself, the dossier shards,
 which `dossiers` summarizes, and the route survey sheets (`tables/routes/<route id>.json`), which
@@ -1295,6 +1316,22 @@ even stored: no vehicle, plate, photo, time of day or reporter, and never a poin
 keeps each report as its cell). On 2026-10-08: 1,112 cells (23,254 of the 26,060 reports in the 12
 months to 2026-10-07); 1,497 cells with fewer than 5 reports, holding 2,806, left out. The tile
 file is 152 kB, its largest tile 28 kB (zoom 13).
+
+### `holc` in tiles/redlining.pmtiles (the 1937 redlining map)
+
+Added 2026-10-09 (owner's decision). One polygon per area of the Home Owners' Loan Corporation's
+1937 map of Philadelphia as Mapping Inequality traced it (`mapping_inequality_1937`, 83 areas: 10
+graded A, 28 B, 18 C, 26 D and one left ungraded), under CC BY-NC 2.5. The file holds this layer
+alone and is marked with its license in the manifest; no other published file and no download
+carries any of it (a pipeline test and a web test check both). The 1937 area descriptions are never
+copied: the map links to each at Mapping Inequality by its label.
+
+| Property | Type | Meaning |
+|---|---|---|
+| `l` | string | the area's label on the 1937 map, such as `C12` (the ungraded area's is its name) |
+| `g` | string | its grade, `A`, `B`, `C` or `D`; absent for the ungraded area |
+
+Coordinates are rounded to five decimals (about a meter): the 1937 map was drawn by hand on paper.
 
 ## 5. Hand curated memorial files (`data/curated/`)
 

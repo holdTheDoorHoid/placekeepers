@@ -34,7 +34,7 @@ import {
   blockPoles,
   streetsStopsFixtures,
 } from './streetstops-fixtures.mjs';
-import { HISTORIC_LAYERS, HISTORIC_SOURCES } from './historic-fixtures.mjs';
+import { HISTORIC_LAYERS, HISTORIC_SOURCES, REDLINING_FILE, REDLINING_LICENSE, redliningFixture } from './historic-fixtures.mjs';
 
 const FIXTURES = new URL('../fixtures/', import.meta.url);
 const ROOT = new URL('data/', FIXTURES);
@@ -625,6 +625,9 @@ for (const [name, text] of parkingFixtures(toLngLat)) writeFileSync(path(`data/$
 // The displacement watch (M4.1, scripts/displacement-fixtures.mjs).
 const [watchFile, watchText] = watchFixtures(box);
 writeFileSync(path(`data/${watchFile}`), watchText);
+// The 1937 redlining map, a file of its own under a non commercial license (scripts/historic-fixtures.mjs).
+const [redliningFile, redliningText] = redliningFixture();
+writeFileSync(path(`data/${redliningFile}`), redliningText);
 // The route survey sheets (scripts/route-fixtures.mjs): the index is listed in files, each route's
 // sheet is not (docs/CONTRACTS.md section 7).
 mkdirSync(path('data/tables/routes'), { recursive: true });
@@ -839,12 +842,13 @@ const manifest = {
       ...parkingFixtures(toLngLat).map(([name]) => name),
       watchFile,
       ...streetsStopsFixtures(toLngLat).map(([name]) => name),
+      redliningFile,
       'tables/routes/index.json',
       'tables/stop_amenities.json',
       ...handWritten
         .map(([name]) => name)
         .filter((name) => ![...shardFiles, ...historyFiles].some(([shard]) => shard === name)),
-    ].map((p) => [p, fileInfo(p)]),
+    ].map((p) => [p, p === REDLINING_FILE ? { ...fileInfo(p), license: REDLINING_LICENSE } : fileInfo(p)]),
   ),
   dossiers: shardFiles.length
     ? {

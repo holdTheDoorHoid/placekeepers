@@ -589,3 +589,8 @@ BUILDERS = (*BUILDERS, *DISPLACEMENT_BUILDERS)
 from placekeepers.publish.streets_stops import STREETS_STOPS_BUILDERS  # noqa: E402
 
 BUILDERS = (*BUILDERS, *STREETS_STOPS_BUILDERS)
+
+# The 1937 redlining map (owner, 2026-10-09): its own file, under its non commercial license.
+from placekeepers.publish.redlining import REDLINING_BUILDERS  # noqa: E402
+
+BUILDERS = (*BUILDERS, *REDLINING_BUILDERS)

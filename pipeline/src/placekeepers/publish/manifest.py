@@ -6,7 +6,7 @@ import os
 import re
 import subprocess
 from datetime import datetime
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 from placekeepers.cache import sha256_file
@@ -60,6 +60,23 @@ def file_index(data_root: Path) -> dict[str, dict[str, Any]]:
     return files
 
 
+def non_commercial_files(registry: Registry) -> dict[str, str]:
+    """The published files whose data is under a non commercial license, each with that license's
+    id (added 2026-10-09 for the 1937 redlining map): a layer's tile file and the GeoJSON written
+    in its place when tiles are skipped. The registry check keeps such a layer alone in its file."""
+    out: dict[str, str] = {}
+    for layer in registry.layers.values():
+        if layer.file is None or layer.source_layer is None:
+            continue
+        for source_id in layer.sources:
+            license_ = registry.licenses.get(registry.sources[source_id].license)
+            if license_ is not None and license_.non_commercial:
+                stem = PurePosixPath(layer.file)
+                out[layer.file] = license_.id
+                out[str(stem.with_name(f"{stem.stem}.{layer.source_layer}.geojson"))] = license_.id
+    return out
+
+
 def build_manifest(
     *,
     registry: Registry,
@@ -72,6 +89,7 @@ def build_manifest(
     vacancy: dict[str, Any] | None = None,
     displacement: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    licensed = non_commercial_files(registry)
     return {
         "schema": SCHEMA,
         "build_id": build_id(generated_at, commit),
@@ -85,7 +103,10 @@ def build_manifest(
             }
             for layer in registry.layers.values()
         },
-        "files": file_index(data_root),
+        "files": {
+            name: {**entry, "license": licensed[name]} if name in licensed else entry
+            for name, entry in file_index(data_root).items()
+        },
         "dossiers": dossiers,
         "vacancy": vacancy,
         "displacement": displacement,
