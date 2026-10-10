@@ -44,6 +44,9 @@ from .conftest import REPO_ROOT, install_snapshot
 
 NOW = datetime(2026, 10, 4, 15, 0, tzinfo=UTC)
 FETCHED = "2026-10-04T14:00:00Z"
+#: The parts built from citywide sources (M4.6), named in `partial` when the build has none of
+#: their sources, as these fixtures do (tests/test_lot_rules.py installs them).
+RULE_PARTS = ["historic", "overlays", "brownfields", "appeals"]
 LNG0, LAT0 = -75.140, 39.995
 
 # account: (x, y) cell on a small grid, about 30 meters apart
@@ -648,6 +651,8 @@ def test_shards_hold_parcels_and_common_holds_the_shared_flag_notes(built) -> No
     assert body["schema"] == 1
     assert body["generated_at"] == "2026-10-04T15:00:00Z"
     record = body["parcels"]["371000001"]
+    # This build has none of the rules' sources (M4.6), so every dossier says so in `partial`.
+    assert record["partial"] == RULE_PARTS
     assert list(record) == [
         "address",
         "vacancy",
@@ -655,6 +660,7 @@ def test_shards_hold_parcels_and_common_holds_the_shared_flag_notes(built) -> No
         "transfers",
         "assessments",
         "li",
+        "partial",
         "routes",
         "suggestions",
         "nearby",
@@ -1319,12 +1325,13 @@ def test_the_dossier_and_the_map_follow_the_vacancy_model(context_factory, tmp_p
     # claiming there are none (docs/VERIFICATION.md D9).
     outside = parcel(out, "372000006")
     assert outside["vacancy"]["confidence"] == "medium"
-    assert outside["partial"] == ["transfers", "assessments", "li"]
+    assert outside["partial"] == ["transfers", "assessments", "li", *RULE_PARTS]
     assert outside["transfers"] is None and outside["assessments"] is None
     assert outside["li"]["open_violations"] is None and outside["li"]["violations"] is None
     assert outside["li"]["last_violation"] is None and outside["li"]["unsafe"] is False
     assert "years_since_sale" in {f["id"] for f in outside["owner"]["flags"]}  # OPA's last sale
-    assert "partial" not in parcel(out, "372000001")
+    # A candidate has its own records: only the rules' citywide parts are missing here.
+    assert parcel(out, "372000001")["partial"] == RULE_PARTS
     # Its timeline says the same of its L&I records: never "no violations" (issue #38).
     assert history(out, "372000006") == {"partial": ["li"]}
     assert "partial" not in (history(out, "372000001") or {})
@@ -1442,7 +1449,7 @@ def test_no_claim_of_no_sale_from_deeds_never_downloaded(context_factory, tmp_pa
     out = tmp_path / "data"
     publish(ctx, out)
     outside = parcel(out, "372000006")
-    assert outside["partial"] == ["transfers", "assessments", "li"]
+    assert outside["partial"] == ["transfers", "assessments", "li", *RULE_PARTS]
     assert "years_since_sale" not in {flag["id"] for flag in outside["owner"]["flags"]}
 
 

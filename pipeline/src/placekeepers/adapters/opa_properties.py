@@ -1,6 +1,6 @@
 """OPA properties: one row per property in the city (Carto table opa_properties_public).
 
-We keep a chosen set of 35 columns rather than all 80. They feed the lot dossier (address, owner,
+We keep a chosen set of 37 columns rather than all 80. They feed the lot dossier (address, owner,
 mailing address, last sale, value, codes, zoning, exemptions, size, age) and the vacancy model
 (category and building codes, with the newer building code pair the City added in 2025):
 
@@ -17,6 +17,9 @@ mailing address, last sale, value, codes, zoning, exemptions, size, age) and the
     zoning
     exempt_building, exempt_land, homestead_exemption   exemption amounts in dollars
     total_area                         lot area in square feet
+    frontage, depth                    the lot's width on the street and its depth, in feet, as the
+                                       assessor records them (added 2026-10-09 by M4.6 for the lot
+                                       page's size line; about 99 percent of vacant land has both)
     year_built                         as published (text; a few hundred are not plain years)
     census_tract, zip_code
     lat, lng                           the City's point for the parcel
@@ -64,6 +67,8 @@ class OpaProperties(CartoAdapter):
         Column("exempt_land", "exempt_land", "BIGINT"),
         Column("homestead_exemption", "homestead_exemption", "BIGINT"),
         Column("total_area", "total_area", "DOUBLE"),
+        Column("frontage", "frontage", "DOUBLE"),
+        Column("depth", "depth", "DOUBLE"),
         _text("year_built"),
         _text("census_tract"),
         _text("zip_code"),

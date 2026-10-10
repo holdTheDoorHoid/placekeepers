@@ -204,6 +204,8 @@ As built (M1.10, interface review, 2026-10-04; details in
 | Amenity: bench, picnic table, drinking water, toilet, little free library | OpenStreetMap element id | v0.3 (M3.5) |
 | Public place: library, recreation center, pool or sprayground, park drinking fountain | The City's object id, prefixed by its layer | v0.3 (M3.5) |
 | Conditions reported to 311 on a block: dumping, lights out, graffiti | Street centerline segment (`seg_id`), the same block as the street safety layer | v0.3 (M3.5) |
+| Historic district, property on the Register, zoning overlay | A short id of the district's name; the Register's parcel shape; the overlay's key (a hash of its name, symbol, type and Code section) | v0.4 (M4.6) |
+| Hearing still to come, EPA brownfield site | The parcel's OPA account (never the appeal's number); the EPA's registry id | v0.4 (M4.6) |
 | Bus shelter on the City's list | The advertising partner's site id (`pa-` and a number), linked to the SEPTA stop it serves | v0.4 (M4.5) |
 | Street pole and the lamps the City lists on it | The Streets Department's pole number | v0.4 (M4.5) |
 | Traffic calming device (speed cushion, hump or table) | The City's object id, and its street block (`seg_id`) | v0.4 (M4.5) |
@@ -242,6 +244,15 @@ As built (M3.2, 2026-10-05): a work of public art is known by the City's Percent
 when the City lists it (`pa` and the number), else by its Wikidata item, else by its OpenStreetMap
 element; the same work in two or three sources is one dot on the map (section 5.8).
 
+As built (M4.6, 2026-10-09): a new group, **Land rules and hearings**, holds five layers, all off
+until someone turns them on: the Historical Commission's historic districts, the properties on the
+Philadelphia Register of Historic Places (from close in), the Planning Commission's zoning overlays
+(a setting shows the overlay districts only, since a few special rules cover most of the city), the
+hearings still to come before the City's boards (a setting shows the Zoning Board's only), and the
+EPA's brownfield sites. Tapping one says what it is in plain words, who to ask, and for a hearing
+how to take part and a button to the lot's page; a hearing never names who filed the appeal. The
+historic layers stay in this group rather than M4.3's "Then and now": historic designation is a
+rule for the lot today, not its history (orchestrator, 2026-10-09).
 As built (M4.7, issue #43, 2026-10-09): **Cooling and warming centers**, a layer in "Libraries,
 recreation centers and pools", beside the pools, spraygrounds and park water, off by default in
 both views. It draws the 86 places the City's Office of Emergency Management lists as warming or
@@ -709,21 +720,23 @@ Sections, in order:
    reasons ("no building footprint; City records list it as vacant land; two vacant lot violations
    in 2025"). Links to street level imagery on the City's and Google's sites (we never copy imagery).
 2. **What you can do**: suggestions, legal route first.
-3. **Who owns it**: owner names and mailing address as the City publishes them, owner type, and the
+3. **Rules for this lot** (added 2026-10-09, M4.6): historic designation, zoning and its overlays,
+   federal brownfield records, and appeals and hearings, leading with the lawful step.
+4. **Who owns it**: owner names and mailing address as the City publishes them, owner type, and the
    computed flags, each with "what this means" and "be careful" notes (section 9). Parcel level tax
    data is no longer public: the dossier shows the original project's July 2025 snapshot, always
    labeled with its date, and links to the City's Tax Center for today's balance.
-4. **History**: every recorded sale and transfer with date, document type and price; assessments
+5. **History**: every recorded sale and transfer with date, document type and price; assessments
    over time; permits, violations, demolitions; later, what stood here in old maps. As built
    (M4.3, 2026-10-09): under the story of the lot (M4.2), "See this lot in old aerial photos"
    turns on the aerial photos at the oldest year (1959 from 2026-10-09) and shows the lot on the
    map (on a phone the lot page closes first, as for "Show on map"); with live City data off the
    button is off and says why (section 5.11).
-5. **Nearby**: shooting counts, crashes, memorials, LandCare lots, gardens, schools. As built
+6. **Nearby**: shooting counts, crashes, memorials, LandCare lots, gardens, schools. As built
    (M4.7, 2026-10-09): also the nearest playground, with its park's name and how far it is in a
    straight line from the lot's point, rounded to 10 meters, and whether that is within a 5 or a
    10 minute walk as section 5.9 counts them, with a button that turns on the playgrounds layer.
-6. **Sources and freshness**, and "report a correction".
+7. **Sources and freshness**, and "report a correction".
 
 The dossier is built from the weekly snapshot and, when the setting "fetch live City data" is on
 (default on), refreshed from the City's public APIs when opened. Any parcel can be opened by clicking
@@ -834,6 +847,89 @@ History, top to bottom:
   evaluated and not used: it is a search page over the same City tables we read (permits,
   violations, case investigations, appeals, business licenses), not a dataset, and it holds no
   deeds, demolitions, clean and seal, unsafe notices or vacancy records (docs/DATA_SOURCES.md).
+
+**Rules for this lot, as built (M4.6, issue #42, 2026-10-09).** What the owner will see, between
+"What you can do" and "Who owns it":
+
+- **A hearing still to come goes at the top of the page**, above its contents: "A zoning hearing
+  about this lot is set for November 6, 2030, at 9:30 AM.", with the City's page on how to take
+  part (the Zoning Board's page for anyone to testify in person, online, by phone or in writing;
+  the L&I Review Board's and the Board of Building Standards' own pages) and a button to the appeal.
+  A hearing is still to come when its day is today or later, the appeal is not closed, withdrawn or
+  dismissed, and no decision has ended it (a continued hearing still counts).
+- **Historic designation**: "This lot is in the Society Hill historic district, designated on March
+  10, 1999." and "This property is listed on its own on the Philadelphia Register of Historic
+  Places, since June 24, 1958." (or "as part of" its district), then the lawful step in bold:
+  "Changes here may need the Historical Commission's review; ask them first. For a mural or a
+  garden, ask the Commission before you start.", the Commission's phone (215 686 7660) and email,
+  the City's note that everyone should confirm a property's status with the Commission, and links
+  to the Commission, its project review and the City's "find a historic property" page. A district
+  whose date the City's layer holds only as a placeholder (1/1/3000) is named without a date.
+- **Zoning**: the base district ("Base zoning: RSA-5, a residential district.") and each overlay by
+  name, overlay districts first, each with one plain sentence about what kind of rule it is (never
+  what it allows), a link to its section of the Zoning Code, any sunset day and any bill pending in
+  City Council, then "Zoning and overlays can change what is allowed on a lot... check with the
+  City's zoning office before you plan." and links to Atlas's zoning page for the lot and the City's
+  zoning help. An overlay applies when it covers the lot's point on its shape, or at least a tenth
+  of the lot (a lot split by an overlay's edge). The /NIS overlay covers about 87 percent of the
+  lots on the map; it is listed like any other.
+- **Brownfield records**: the owner's sentence word for word, the nearest three EPA brownfield
+  records within 100 meters of the lot's shape with their distance in feet and a link to each in the
+  EPA's registry, a soil test and the EPA's guide to gardening in city soil, and "The EPA's records
+  show where a federal brownfield grant paid for work. They do not say what is in the ground
+  today." The garden suggestion of such a lot carries the same soil note, on the lot page and on the
+  map's nearby cards (the lots layer's `bf`).
+- **Appeals and hearings**: every appeal as the City publishes it, a hearing still to come first,
+  then newest first: the board and the kind of appeal in plain words ("Zoning Board of Adjustment:
+  Permit denial, variance"), the filing, hearing and decision days, its decision and status, the
+  registered community organization the City notified, who filed it and the owner named (this lot's page
+  only; the limits below), a link to the City's L&I property history for the
+  grounds, and a note that names appear on this lot's page only. Live from the City when "Fetch live
+  City data" is on, from the weekly copy otherwise, labeled either way; when neither has them, the
+  page says it cannot tell and offers live data, never "no appeals".
+- **In the timeline** each appeal appears on the day it was filed ("Zoning Board of Adjustment:
+  Permit denial, variance, hearing November 6, 2030", with its decision), with an eighth switch,
+  "Appeals". The timeline never shows names. The browser reads the City's live answer exactly as the
+  pipeline reads the weekly copy (days and times in Philadelphia, each appeal once, newest first),
+  checked by both test suites on the shared cases in `pipeline/tests/fixtures/timeline_parity.json`.
+- **Nearby** adds "1 hearing still to come about other properties" within 500 feet, with a button to
+  show the hearings layer. **Print** adds the hearing, the historic note, the base zoning, the
+  overlays by name and the brownfield sentence, and no names.
+- A parcel without a dossier says its rules are worked out weekly for the lots on our list and
+  links to Atlas's zoning page and the Commission's "find a historic property" page; its appeals
+  still come live from the City. The rules are not looked up live: the City's map services and the
+  EPA's would be new servers for the visitor's browser to ask (docs/ETHICS.md, "Privacy").
+- When the weekly build lacks a rule's source, the page says it could not check that rule, never
+  that it does not apply.
+- The Summary adds the lot's size as the City's assessor records it ("about 16 feet wide on the
+  street and 80 feet deep"), live or from the weekly copy, an optional extra of the issue. Whether a
+  lot is on a corner is not in the City's records we read, so the page does not say it.
+
+**Limits on appeals and on rule wording (orchestrator, 2026-10-09, carried over from decision D3;
+the owner can undo them).** The owner's decision to show appeals in full is in docs/ETHICS.md
+("Appeals and hearings"); these limits are how the site carries it out.
+
+- Names from an appeal appear only on the lot's own page: in that lot's own dossier record (its
+  shard, like the owner names and deed parties already there) and in the City's live answer for
+  that one parcel. Never in a map layer, a citywide table, a search, a list of places, a printed
+  sheet, the timeline or a download. The map's hearings carry the day, the time, the board, the
+  kind of appeal, the address and the community organization, and never a name. Tests prove it:
+  every published file but the lot's own shard is searched for an appellant's name
+  (`pipeline/tests/test_lot_rules.py`), and the site's downloads and map taps are checked too
+  (`web/tests/rules.test.ts`, `web/e2e/privacy.spec.ts`).
+- The risk this guards against: someone gathering who filed zoning appeals across the city to
+  pressure them. With names only on each lot's own page, there is no citywide list of appellants to
+  copy from the site.
+- The appeal's free text grounds and provisos are never copied: the lot page links to the City's
+  L&I property history for them. The appeal's own number is never shown or published: for a zoning
+  appeal it is the zoning permit's number, and permit numbers are never published.
+- The hearing notice is framed for taking part, as the City invites any neighbor to do, never as a
+  way to find or contact the person who filed.
+- Historic and zoning text names the rule and the office to ask, and leads with the lawful step:
+  "Changes here may need the Historical Commission's review; ask them first.", with the
+  Commission's phone (215 686 7660). For a mural or a garden on a historic property, the page says
+  to ask the Commission before starting. Nothing on the site says a lot is or is not buildable, or
+  that something is allowed there.
 
 **Owner information as built (M1.3, 2026-10-04).** What the owner will see, and the choices behind it:
 

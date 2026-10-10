@@ -25,6 +25,7 @@ import { WATCH_BLOCK, WATCH_LAYER, WATCH_SOURCES, watchFixtures, watchFor } from
 import { routeOsmStops, routeSheetFixtures } from './route-fixtures.mjs';
 import { WALK_LAYERS, WALK_SOURCES, walkFixtures } from './walk-fixtures.mjs';
 import { PARKING_LAYERS, PARKING_SOURCES, parkingFixtures } from './parking-fixtures.mjs';
+import { RULES_FILES, RULES_LAYERS, RULES_SOURCES, rulesFixtures } from './rules-fixtures.mjs';
 import {
   BLOCK_CALMING,
   LIGHTS_POLES,
@@ -212,6 +213,9 @@ RUNS.forEach((length, run) => {
     properties.rt = firstStepFor(properties, n);
     if (LISTED.has(n)) properties.la = 1;
     if (SIDE_YARD.has(n)) properties.ly = 1;
+    // The first run lies within 100 meters of the sample EPA brownfield site (M4.6,
+    // scripts/rules-fixtures.mjs), so its garden suggestions carry the soil note.
+    if (run === 0) properties.bf = 1;
     Object.assign(properties, reasonsFor(properties, n));
     // Some parcels have no tree canopy rank yet, as happens while data arrives.
     if (random() > 0.2) properties.f_canopy = between(0, 100);
@@ -625,6 +629,8 @@ for (const [name, text] of parkingFixtures(toLngLat)) writeFileSync(path(`data/$
 // The displacement watch (M4.1, scripts/displacement-fixtures.mjs).
 const [watchFile, watchText] = watchFixtures(box);
 writeFileSync(path(`data/${watchFile}`), watchText);
+// The rules and records of each lot (M4.6, scripts/rules-fixtures.mjs).
+for (const [name, text] of rulesFixtures(toLngLat, box)) writeFileSync(path(`data/${name}`), text);
 // The 1937 redlining map, a file of its own under a non commercial license (scripts/historic-fixtures.mjs).
 const [redliningFile, redliningText] = redliningFixture();
 writeFileSync(path(`data/${redliningFile}`), redliningText);
@@ -757,6 +763,8 @@ const manifest = {
     ...Object.fromEntries(Object.entries(PARKING_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
     // The displacement watch (M4.1), and from M4.7 the Census tables of its neighborhood context
     ...Object.fromEntries(Object.entries(WATCH_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
+    // The rules and records of each lot (M4.6)
+    ...Object.fromEntries(Object.entries(RULES_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
     // The Land Bank in numbers (M4.4): the deeds and the City's own counts by program
     land_conveyances: ok(21424, '2026-08-10'),
     land_conveyed_by_fy: ok(7, null),
@@ -815,6 +823,7 @@ const manifest = {
     ...WALK_LAYERS,
     ...PARKING_LAYERS,
     ...WATCH_LAYER,
+    ...RULES_LAYERS,
     ...HISTORIC_LAYERS,
     ...STREETS_STOPS_LAYERS,
   },
@@ -841,6 +850,7 @@ const manifest = {
       ...walkFixtures(toLngLat).map(([name]) => name),
       ...parkingFixtures(toLngLat).map(([name]) => name),
       watchFile,
+      ...RULES_FILES,
       ...streetsStopsFixtures(toLngLat).map(([name]) => name),
       redliningFile,
       'tables/routes/index.json',
@@ -869,6 +879,7 @@ const manifest = {
     'Walking tiles were skipped for this sample too, so those layers are published as GeoJSON.',
     'Parking report tiles were skipped for this sample too, so that layer is published as GeoJSON.',
     'Displacement watch tiles were skipped for this sample too, so its layer is published as GeoJSON.',
+    'The rules and records tiles were skipped for this sample too, so those layers are published as GeoJSON.',
     'Street pole, shelter, traffic calming and crossing guard tiles were skipped for this sample too, so those layers are published as GeoJSON.',
   ],
 };

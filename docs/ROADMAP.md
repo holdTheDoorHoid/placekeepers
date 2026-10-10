@@ -187,6 +187,10 @@ Two additions that were not on the roadmap, both done on 2026-10-08 and in v0.3:
   the lamps it lists, by block and beside 311 reports of lights out; its traffic calming devices
   by block; and its school crossing guard posts. A street light lens factor is proposed with
   numbers, not built (DESIGN.md section 5.7).
+- **M4.6 Lot rules and records** (issue #42, added by the owner on 2026-10-09): historic districts
+  and the Philadelphia Register, zoning overlays, EPA brownfield records, and appeals and hearings
+  on the lot page, in its timeline and on the map, with names from appeals on the lot's own page
+  only (DESIGN.md section 5.6).
 - **M4.7 Neighborhood context** (done, 2026-10-09, issue #43; added by the owner after the Build
   Philly Now review): rent burden, middle rent and income, and empty homes with their margins on
   the watch areas' cards; the City's warming and cooling sites (shown without a credit line, as

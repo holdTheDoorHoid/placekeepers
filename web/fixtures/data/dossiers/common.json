@@ -132,5 +132,27 @@
         }
       ]
     }
+  },
+  "overlays": {
+    "o878f2af2": {
+      "name": "/NIS Narcotics Injection Sites Overlay District",
+      "symbol": "/NIS",
+      "type": 1,
+      "section": "14-540",
+      "link": "https://codelibrary.amlegal.com/codes/philadelphia/latest/philadelphia_pa/0-0-0-305352"
+    },
+    "oe0618f38": {
+      "name": "/NCO Neighborhood Conservation Overlay District - Sample Area",
+      "symbol": "/NCO",
+      "type": 1,
+      "section": "14-504(5)",
+      "link": "https://codelibrary.amlegal.com/codes/philadelphia/latest/philadelphia_pa/0-0-0-290619"
+    },
+    "of938179f": {
+      "name": "Open Space and Natural Resources - Flood Protection - Within the Special Flood Hazard Area",
+      "type": 2,
+      "section": "14-704(4)(c)(.2)",
+      "link": "https://codelibrary.amlegal.com/codes/philadelphia/latest/philadelphia_pa/0-0-0-293399"
+    }
   }
 }

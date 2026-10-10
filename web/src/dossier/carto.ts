@@ -13,10 +13,11 @@
 
 import type { Geometry } from 'geojson';
 import { PHILLY_BOUNDS } from '../state/defaults.ts';
+import { APPEAL_COLUMNS, readAppeals } from './appeals.ts';
 import { cityDate } from './dates.ts';
 import { fetchJson, type FailReason, type FetchOptions } from './http.ts';
 import { isOpaAccount, normalizeAccount } from './opa.ts';
-import type { Assessment, LiEvent, LiKind, LiveLi, LiveProperty, ParcelAtPoint, ParcelShape, Transfer } from './types.ts';
+import type { Appeal, Assessment, LiEvent, LiKind, LiveLi, LiveProperty, ParcelAtPoint, ParcelShape, Transfer } from './types.ts';
 import { LI_KINDS } from './types.ts';
 
 export const CARTO_SQL_URL = 'https://phl.carto.com/api/v2/sql';
@@ -62,7 +63,7 @@ export function propertySql(opa: string): string {
   return (
     'SELECT parcel_number, location, owner_1, owner_2, mailing_care_of, mailing_address_1, mailing_address_2, ' +
     'mailing_street, mailing_city_state, mailing_zip, category_code_description, building_code_description, ' +
-    'sale_date, sale_price, market_value, homestead_exemption, ST_Y(the_geom) AS lat, ST_X(the_geom) AS lng ' +
+    'sale_date, sale_price, market_value, homestead_exemption, frontage, depth, ST_Y(the_geom) AS lat, ST_X(the_geom) AS lng ' +
     `FROM opa_properties_public WHERE parcel_number = ${accountLiteral(opa)} LIMIT 1`
   );
 }
@@ -127,6 +128,18 @@ export function liSql(opa: string): string {
       `SELECT '${part.kind}' AS kind, ${part.date} AS date, ${part.title} AS title, ${part.status} AS status, ${part.detail} AS detail FROM ${part.table} WHERE opa_account_num = ${a}`,
   );
   return `SELECT kind, date, title, status, detail FROM (${parts.join(' UNION ALL ')}) AS events ORDER BY date DESC NULLS LAST LIMIT ${MAX_LI_EVENTS}`;
+}
+
+/** At most this many appeals per lookup (the busiest parcel has a few dozen). */
+export const MAX_APPEALS = 200;
+
+/**
+ * A parcel's appeals (M4.6), newest first: the same columns the pipeline reads for the weekly copy
+ * (./appeals.ts, APPEAL_COLUMNS). Never the free text grounds, the proviso or the numbers of
+ * related permits and cases.
+ */
+export function appealsSql(opa: string): string {
+  return `SELECT ${APPEAL_COLUMNS.join(', ')} FROM appeals WHERE opa_account_num = ${accountLiteral(opa)} ORDER BY createddate DESC NULLS LAST LIMIT ${MAX_APPEALS}`;
 }
 
 /**
@@ -209,6 +222,12 @@ export function mailingText(parts: (string | null | undefined)[]): string | null
   return lines.length ? lines.join(', ') : null;
 }
 
+/** A length in feet the assessor records, to a tenth, or null when missing or not plausible. */
+function feet(value: unknown): number | null {
+  const n = num(value);
+  return n !== null && n > 0 && n < 5280 ? Math.round(n * 10) / 10 : null;
+}
+
 export function readProperty(opa: string, rows: Row[]): LiveProperty | null {
   const row = rows.find((r) => normalizeAccount(r.parcel_number) === opa) ?? null;
   if (!row) return null;
@@ -231,6 +250,8 @@ export function readProperty(opa: string, rows: Row[]): LiveProperty | null {
     salePrice: wholeDollars(row.sale_price),
     marketValue: wholeDollars(row.market_value),
     homestead: (num(row.homestead_exemption) ?? 0) > 0,
+    frontage: feet(row.frontage),
+    depth: feet(row.depth),
     lng: lng !== null && lat !== null ? lng : null,
     lat: lng !== null && lat !== null ? lat : null,
   };
@@ -364,6 +385,10 @@ export function fetchAssessments(opa: string, options: FetchOptions = {}): Promi
 
 export function fetchLi(opa: string, options: FetchOptions = {}): Promise<LiveResult<LiveLi>> {
   return query(liSql(opa), readLi, options);
+}
+
+export function fetchAppeals(opa: string, options: FetchOptions = {}): Promise<LiveResult<Appeal[]>> {
+  return query(appealsSql(opa), readAppeals, options);
 }
 
 export function fetchNearby(lng: number, lat: number, options: FetchOptions = {}) {

@@ -828,6 +828,69 @@
   cadence: frozen
   health: {min_rows: 9500, max_drop_pct: 0}
   release: v0.4
+# Milestone M4.6 (issue #42): the rules and records of each lot. The Historical Commission's
+# districts and the properties on the Philadelphia Register (the live ArcGIS layers: OpenDataPhilly's
+# Carto copies are older and disagree), the Planning Commission's zoning overlays, every appeal to
+# the City's boards, and the EPA's brownfield properties in Philadelphia
+# (pipeline/src/placekeepers/adapters/rules.py).
+- id: historic_districts
+  name: Local historic districts
+  publisher: Philadelphia Historical Commission
+  homepage: https://opendataphilly.org/datasets/philadelphia-registered-historic-districts/
+  endpoint: {kind: arcgis, service: HistoricDistricts_Local, layer: 0}
+  license: city_terms
+  attribution: "Historic districts: Philadelphia Historical Commission"
+  cadence: weekly
+  health: {min_rows: 40, max_drop_pct: 10}
+  release: v0.4
+- id: historic_sites
+  name: Philadelphia Register of Historic Places, properties
+  publisher: Philadelphia Historical Commission
+  homepage: https://opendataphilly.org/datasets/philadelphia-registered-historic-properties/
+  # One parcel shape per property on the Register, with its own designation date and the district
+  # it belongs to. It names no owner and has no parcel number, so it is joined to parcels by shape.
+  endpoint: {kind: arcgis, service: Historic_sites_PhilReg, layer: 0}
+  license: city_terms
+  attribution: "Philadelphia Register of Historic Places: Philadelphia Historical Commission"
+  cadence: weekly
+  health: {min_rows: 14000, max_drop_pct: 5}
+  release: v0.4
+- id: zoning_overlays
+  name: Zoning overlays
+  publisher: Philadelphia City Planning Commission
+  homepage: https://opendataphilly.org/datasets/zoning-overlays/
+  endpoint: {kind: arcgis, service: Zoning_Overlays, layer: 0}
+  license: city_terms
+  attribution: "Zoning overlays: Philadelphia City Planning Commission"
+  cadence: weekly
+  health: {min_rows: 180, max_drop_pct: 10}
+  release: v0.4
+- id: appeals
+  name: Appeals to the Zoning Board, the L&I Review Board and other boards
+  publisher: City of Philadelphia, Department of Licenses and Inspections
+  homepage: https://opendataphilly.org/datasets/licenses-and-inspections-appeals-of-code-violations-and-permit-refusals/
+  # Every appeal, 2007 on, with who filed it and the owner the City names (shown only on that
+  # lot's own page, docs/ETHICS.md "Appeals and hearings"). The free text grounds and provisos
+  # are never downloaded: the lot page links to the City for them.
+  endpoint: {kind: carto, table: appeals}
+  license: city_terms
+  attribution: "Appeals and hearings: City of Philadelphia, Department of Licenses and Inspections"
+  cadence: weekly
+  health: {min_rows: 40000, max_drop_pct: 5, newest_field: filed_day, max_age_days: 30}
+  release: v0.4
+- id: epa_brownfields
+  name: EPA brownfield properties (ACRES), Philadelphia
+  publisher: United States Environmental Protection Agency
+  homepage: https://www.epa.gov/brownfields
+  # Properties where an EPA brownfield grant paid for an assessment or a cleanup, from the EPA's
+  # facility registry service (a map service; it sometimes answers "Service not found" and works
+  # a moment later). Only Philadelphia's are downloaded.
+  endpoint: {kind: arcgis, url: "https://geodata.epa.gov/arcgis/rest/services", service: OEI/FRS_INTERESTS, server: MapServer, layer: 0}
+  license: public_domain
+  attribution: "Brownfield properties: United States Environmental Protection Agency (ACRES)"
+  cadence: monthly
+  health: {min_rows: 300, max_drop_pct: 10}
+  release: v0.4
 - id: land_conveyances
   name: Deeds from the City's land agencies since 2014
   publisher: City of Philadelphia, Department of Records

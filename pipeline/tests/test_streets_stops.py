@@ -338,7 +338,10 @@ def test_two_shelters_can_serve_one_stop() -> None:
         ("19th & JFK-PN52", ("19th & JFK", None)),
         ("Market East Headhouse - 01", ("Market East Headhouse", None)),
         ("Roosevelt Blvd & Broad St - FS SE", ("Roosevelt Blvd & Broad St - FS", "southeast")),
-        ("Olney Av & 20th St - FS SE (Remove Onley & 18th MBNS)", ("Olney Av & 20th St - FS", "southeast")),  # noqa: E501
+        (
+            "Olney Av & 20th St - FS SE (Remove Onley & 18th MBNS)",
+            ("Olney Av & 20th St - FS", "southeast"),
+        ),  # noqa: E501
     ],
 )
 def test_the_site_name_loses_its_internal_codes(site, expected) -> None:
@@ -563,8 +566,9 @@ def test_the_poles_layer_keeps_the_number_the_lamp_and_the_owner(context_factory
     out = tmp_path / "poles.poles.geojson"
     built = build_poles(ctx, paths, out, AS_OF)
     assert props(out) == [{"k": 0, "id": 2001, "o": 2}, {"k": 1, "id": 2002, "o": 1}, {"k": 2}]
-    assert "3 street poles the City lists; 2 with a lamp the City lists, 1 of them LED" in (
-        built.notes[0]
+    assert (
+        "3 street poles the City lists; 2 with a lamp the City lists, 1 of them LED"
+        in (built.notes[0])
     )
     assert "1 without a usable point left out" in built.notes[0]
 
@@ -606,9 +610,7 @@ def street_paths(ctx, tmp_path: Path, *, calming: bool = True, poles: bool = Tru
         ("fatal_crashes", fx.fatal_table(), ["Point"]),
         ("schools", fx.schools(), ["Point"]),
     ):
-        install_snapshot(
-            ctx, source, table, geometry=True, fetched_at=FETCHED, geometry_types=kind
-        )
+        install_snapshot(ctx, source, table, geometry=True, fetched_at=FETCHED, geometry_types=kind)
     from placekeepers.snapshots import SnapshotStore
 
     paths = {}

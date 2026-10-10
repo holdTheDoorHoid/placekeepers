@@ -228,7 +228,50 @@
         "f_park": 85,
         "f_art": 90,
         "f_corr": 0
-      }
+      },
+      "rules": {
+        "historic": {
+          "districts": [
+            {
+              "name": "Sample Square Historic District",
+              "date": "1999-03-10"
+            }
+          ],
+          "register": {
+            "address": "1201 N SAMPLE ST",
+            "district": "Sample Square Historic District",
+            "district_date": "1999-03-10"
+          }
+        },
+        "zoning": {
+          "code": "RM-1",
+          "group": "Residential/Multi-Family/Residential Mixed-Use"
+        },
+        "overlays": [
+          "o878f2af2",
+          "oe0618f38"
+        ],
+        "brownfields": [
+          {
+            "id": "110000000001",
+            "name": "FORMER SAMPLE WORKS",
+            "address": "1200 N SAMPLE ST",
+            "m": 35
+          }
+        ]
+      },
+      "appeals": [
+        {
+          "board": "li_review",
+          "application": "RB_LIRB",
+          "status": "CLOSED",
+          "decision": "AFFIRMED",
+          "filed": "2012-07-09",
+          "hearing": "2012-08-21",
+          "appellant": "EXAMPLE DARNELL",
+          "owner": "EXAMPLE DARNELL"
+        }
+      ]
     },
     "990000002": {
       "address": "1203 N SAMPLE ST",
@@ -345,7 +388,8 @@
         "land_bank_garden_agreement"
       ],
       "suggestions": [
-        "clean_and_green"
+        "clean_and_green",
+        "community_garden"
       ],
       "landcare": {
         "program": "landcare",
@@ -375,6 +419,32 @@
         "f_park": 85,
         "f_art": 90,
         "f_corr": 0
+      },
+      "rules": {
+        "historic": {
+          "districts": [
+            {
+              "name": "Sample Square Historic District",
+              "date": "1999-03-10"
+            }
+          ]
+        },
+        "zoning": {
+          "code": "RM-1",
+          "group": "Residential/Multi-Family/Residential Mixed-Use"
+        },
+        "overlays": [
+          "o878f2af2",
+          "oe0618f38"
+        ],
+        "brownfields": [
+          {
+            "id": "110000000001",
+            "name": "FORMER SAMPLE WORKS",
+            "address": "1200 N SAMPLE ST",
+            "m": 38
+          }
+        ]
       }
     },
     "990000004": {
@@ -526,6 +596,15 @@
         "f_park": 45,
         "f_art": 75,
         "f_corr": 0
+      },
+      "rules": {
+        "zoning": {
+          "code": "RSA-5",
+          "group": "Residential/Multi-Family/Residential Mixed-Use"
+        },
+        "overlays": [
+          "o878f2af2"
+        ]
       }
     },
     "990000005": {
@@ -664,7 +743,8 @@
         "s12": 2,
         "s36": 7,
         "landcare_within_500ft": 3,
-        "gardens_within_500ft": 1
+        "gardens_within_500ft": 1,
+        "hearings_within_500ft": 1
       },
       "lens": {
         "f_vacant": 82,
@@ -680,7 +760,31 @@
         "f_park": 45,
         "f_art": 75,
         "f_corr": 0
-      }
+      },
+      "rules": {
+        "zoning": {
+          "code": "CMX-2",
+          "group": "Commercial/Commercial Mixed-Use"
+        },
+        "overlays": [
+          "o878f2af2",
+          "oe0618f38"
+        ]
+      },
+      "appeals": [
+        {
+          "board": "zoning",
+          "application": "Zoning Board of Adjustment",
+          "type": "ZBA Permit Denial - Variance",
+          "status": "Scheduled",
+          "filed": "2026-08-03",
+          "hearing": "2030-11-06",
+          "hearing_time": "09:30",
+          "rco": "Sample Neighbors Association",
+          "appellant": "QUINN SAMPLE; SAMPLE HOLDINGS LLC",
+          "owner": "SAMPLE HOLDINGS LLC"
+        }
+      ]
     },
     "990000009": {
       "address": "1313 N EXAMPLE AVE",
@@ -830,6 +934,15 @@
         "f_park": 45,
         "f_art": 75,
         "f_corr": 0
+      },
+      "rules": {
+        "zoning": {
+          "code": "RSA-5",
+          "group": "Residential/Multi-Family/Residential Mixed-Use"
+        },
+        "overlays": [
+          "o878f2af2"
+        ]
       }
     },
     "990000013": {
@@ -879,6 +992,15 @@
       "displacement": {
         "tract": "42101900200",
         "signs": 7
+      },
+      "rules": {
+        "zoning": {
+          "code": "RSA-5",
+          "group": "Residential/Multi-Family/Residential Mixed-Use"
+        },
+        "overlays": [
+          "o878f2af2"
+        ]
       }
     },
     "990000029": {
@@ -1004,6 +1126,15 @@
         "f_park": 75,
         "f_art": 90,
         "f_corr": 0
+      },
+      "rules": {
+        "zoning": {
+          "code": "RSA-5",
+          "group": "Residential/Multi-Family/Residential Mixed-Use"
+        },
+        "overlays": [
+          "o878f2af2"
+        ]
       }
     },
     "990000033": {
@@ -1129,6 +1260,15 @@
         "f_park": 35,
         "f_art": 75,
         "f_corr": 0
+      },
+      "rules": {
+        "zoning": {
+          "code": "RSA-5",
+          "group": "Residential/Multi-Family/Residential Mixed-Use"
+        },
+        "overlays": [
+          "o878f2af2"
+        ]
       }
     },
     "990000098": {
@@ -1162,6 +1302,15 @@
       "suggestions": [],
       "nearby": {
         "landcare_within_500ft": 1
+      },
+      "rules": {
+        "zoning": {
+          "code": "RSA-5",
+          "group": "Residential/Multi-Family/Residential Mixed-Use"
+        },
+        "overlays": [
+          "o878f2af2"
+        ]
       }
     },
     "990000099": {
@@ -1196,6 +1345,15 @@
       "suggestions": [],
       "nearby": {
         "landcare_within_500ft": 1
+      },
+      "rules": {
+        "zoning": {
+          "code": "RSA-5",
+          "group": "Residential/Multi-Family/Residential Mixed-Use"
+        },
+        "overlays": [
+          "o878f2af2"
+        ]
       }
     }
   }

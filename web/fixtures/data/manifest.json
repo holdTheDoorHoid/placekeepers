@@ -507,6 +507,60 @@
       "newest_record": null,
       "message": null
     },
+    "historic_districts": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 45,
+      "newest_record": null,
+      "message": null
+    },
+    "historic_sites": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 14980,
+      "newest_record": null,
+      "message": null
+    },
+    "zoning_overlays": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 196,
+      "newest_record": null,
+      "message": null
+    },
+    "zoning_base_districts": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 27706,
+      "newest_record": null,
+      "message": null
+    },
+    "appeals": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 44739,
+      "newest_record": "2026-10-06",
+      "message": null
+    },
+    "epa_brownfields": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 351,
+      "newest_record": null,
+      "message": null
+    },
     "land_conveyances": {
       "status": "ok",
       "last_attempt": "2026-10-04T10:00:05Z",
@@ -923,6 +977,41 @@
         "acs_vacancy"
       ]
     },
+    "historic_districts": {
+      "file": "tiles/rules.pmtiles",
+      "source_layer": "historic_districts",
+      "sources": [
+        "historic_districts"
+      ]
+    },
+    "historic_properties": {
+      "file": "tiles/rules.pmtiles",
+      "source_layer": "historic_sites",
+      "sources": [
+        "historic_sites"
+      ]
+    },
+    "zoning_overlays": {
+      "file": "tiles/rules.pmtiles",
+      "source_layer": "overlays",
+      "sources": [
+        "zoning_overlays"
+      ]
+    },
+    "hearings": {
+      "file": "tiles/rules.pmtiles",
+      "source_layer": "hearings",
+      "sources": [
+        "appeals"
+      ]
+    },
+    "brownfields": {
+      "file": "tiles/rules.pmtiles",
+      "source_layer": "brownfields",
+      "sources": [
+        "epa_brownfields"
+      ]
+    },
     "aerial_photos": {
       "file": null,
       "source_layer": null,
@@ -1000,8 +1089,8 @@
       "sha256": "1d746dd64887fc690edb3dbd6c056b1630ce99ec1cec269ad1ea21b9890d3717"
     },
     "tiles/lots.pmtiles": {
-      "bytes": 18313,
-      "sha256": "8c21f52ae95502c646461b176a279ba556a1adbfb1e1bf22ca19f8e2bd08ea63"
+      "bytes": 18382,
+      "sha256": "df34ae112313af27e9be32530fd6c0cfa0eddcdffd7ee4afab430f0eb029e00e"
     },
     "tiles/streets.crashes.geojson": {
       "bytes": 23183,
@@ -1123,6 +1212,26 @@
       "bytes": 975,
       "sha256": "c72a4ae33288fb85b0eb46bf9e2b9a114571e0edbd35b3354d8ed8499613ad05"
     },
+    "tiles/rules.historic_districts.geojson": {
+      "bytes": 323,
+      "sha256": "6607cd0073aeea929de3a29cf17e5b5ead8c32bfb12d1e698156cf89ca07dc2b"
+    },
+    "tiles/rules.historic_sites.geojson": {
+      "bytes": 320,
+      "sha256": "a533870d72d7dcaa3253a125d8c7e7a38a6448f5a7ea51178b5e2b96baf3b81d"
+    },
+    "tiles/rules.overlays.geojson": {
+      "bytes": 1283,
+      "sha256": "9c6fe2a6622184a8eae20151a2e63792ee80ee3820437724cc2e203e57ef481b"
+    },
+    "tiles/rules.hearings.geojson": {
+      "bytes": 481,
+      "sha256": "e7b9776f02cd6bf097e5dd591fd7c232330a1c25147cf856d3f1302368f3eefa"
+    },
+    "tiles/rules.brownfields.geojson": {
+      "bytes": 212,
+      "sha256": "0d7e4f24465306a63bd21a7cea77cd26c59aab8471656038c3942f2397171c00"
+    },
     "tiles/transit.shelters.geojson": {
       "bytes": 797,
       "sha256": "fda34f53a89b723cfcf740a62ed5b4da97266f14b66569d47938d307e481433a"
@@ -1153,8 +1262,8 @@
       "sha256": "38c390974adf3da957434dee853b0339f873238d406295ce2685963d7572ced4"
     },
     "dossiers/common.json": {
-      "bytes": 6273,
-      "sha256": "0d67d9dff15bd839a6a612255281d43b1267e03d123f7a77540d26503ff5537e"
+      "bytes": 7125,
+      "sha256": "5cdd68a449a9aacd5852138d209cd07605f8ad3324e20d4ad86a30dc87dc7b99"
     },
     "tables/land_bank.json": {
       "bytes": 22765,
@@ -1171,7 +1280,7 @@
       "9900"
     ],
     "files": 1,
-    "bytes": 24918,
+    "bytes": 28850,
     "history": {
       "files": 1,
       "bytes": 1949,
@@ -1241,6 +1350,7 @@
     "Walking tiles were skipped for this sample too, so those layers are published as GeoJSON.",
     "Parking report tiles were skipped for this sample too, so that layer is published as GeoJSON.",
     "Displacement watch tiles were skipped for this sample too, so its layer is published as GeoJSON.",
+    "The rules and records tiles were skipped for this sample too, so those layers are published as GeoJSON.",
     "Street pole, shelter, traffic calming and crossing guard tiles were skipped for this sample too, so those layers are published as GeoJSON."
   ]
 }

@@ -100,7 +100,8 @@ class ArcgisAdapter(Adapter):
     @property
     def layer_url(self) -> str:
         root = self.endpoint.url or self.root
-        return f"{root}/{quote(self.endpoint.service)}/FeatureServer/{self.endpoint.layer}"
+        server = self.endpoint.server or "FeatureServer"
+        return f"{root}/{quote(self.endpoint.service)}/{server}/{self.endpoint.layer}"
 
     def count(self) -> int:
         data = self.ctx.http.get_json(

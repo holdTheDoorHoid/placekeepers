@@ -162,7 +162,7 @@ describe('reading a shard', () => {
     });
     expect(parcel.routes).toEqual(['ask_the_owner', 'conservatorship']);
     expect(parcel.suggestions).toEqual(['clean_and_green']);
-    expect(parcel.nearby).toEqual({ s12: 1, s36: 2, killed: null, landcare: 4, gardens: 0, playground: null });
+    expect(parcel.nearby).toEqual({ s12: 1, s36: 2, killed: null, landcare: 4, gardens: 0, hearings: null, playground: null });
   });
 
   it('reads the committed fixture without a single problem', () => {

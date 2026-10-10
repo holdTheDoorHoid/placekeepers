@@ -27,6 +27,7 @@
   import StreetStopDetails from './StreetStopDetails.svelte';
   import { blockCalming, blockPolesLine, memorialCalmingLine } from '../../streets/streets-stops.ts';
   import WatchDetails from '../displacement/WatchDetails.svelte';
+  import RulesDetails from '../rules/RulesDetails.svelte';
   import RedliningDetails from '../history/RedliningDetails.svelte';
   import { watchSummaryOf } from '../../displacement/watch.ts';
   import { sitePlace } from '../../amenities/describe.ts';
@@ -178,6 +179,12 @@
       lngLat={target.lngLat}
       registry={store.registry}
       related={(g) => store.controller?.featuresWith(target.layerId, 'g', g) ?? []}
+    />
+  {:else if style === STYLES.historic_districts || style === STYLES.historic_properties || style === STYLES.zoning_overlays || style === STYLES.hearings || style === STYLES.brownfields}
+    <RulesDetails
+      style={layer!.style as 'historic_districts' | 'historic_properties' | 'zoning_overlays' | 'hearings' | 'brownfields'}
+      features={target.features}
+      onOpenLot={(opa) => store.select(opa, null, { center: target.lngLat })}
     />
   {:else if style === STYLES.city_shelters}
     <StreetStopDetails kind="shelter" features={target.features} />

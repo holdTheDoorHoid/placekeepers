@@ -435,5 +435,303 @@
       "rows": [],
       "li": {}
     }
+  ],
+  "appeal_columns": [
+    "appealnumber",
+    "applicationtype",
+    "appealtype",
+    "appealstatus",
+    "decision",
+    "createddate",
+    "scheduleddate",
+    "decisiondate",
+    "coordinatingrco",
+    "primaryappellant",
+    "opa_owner"
+  ],
+  "appeal_today": "2026-10-09",
+  "appeal_cases": [
+    {
+      "name": "a zoning appeal set for a hearing, in the afternoon in winter",
+      "rows": [
+        {
+          "appealnumber": "ZP-2026-008500",
+          "applicationtype": "Zoning Board of Adjustment",
+          "appealtype": "ZBA Permit Denial - Variance",
+          "appealstatus": "Prepare Meeting",
+          "decision": null,
+          "createddate": "2026-10-06T19:31:35Z",
+          "scheduleddate": "2027-02-24T20:30:00Z",
+          "decisiondate": null,
+          "coordinatingrco": "Example Neighbors Association",
+          "primaryappellant": "ROSA EXAMPLE; EXAMPLE ROSA",
+          "opa_owner": "EXAMPLE ROSA"
+        }
+      ],
+      "appeals": [
+        {
+          "board": "zoning",
+          "application": "Zoning Board of Adjustment",
+          "type": "ZBA Permit Denial - Variance",
+          "status": "Prepare Meeting",
+          "filed": "2026-10-06",
+          "hearing": "2027-02-24",
+          "hearing_time": "15:30",
+          "rco": "Example Neighbors Association",
+          "appellant": "ROSA EXAMPLE; EXAMPLE ROSA",
+          "owner": "EXAMPLE ROSA"
+        }
+      ],
+      "upcoming": [
+        0
+      ]
+    },
+    {
+      "name": "the older system's codes, a decision, and a filing in the evening",
+      "rows": [
+        {
+          "appealnumber": "57281",
+          "applicationtype": "RB_ZBA",
+          "appealtype": null,
+          "appealstatus": "CLOSED",
+          "decision": "GRANTED/PROV",
+          "createddate": "2015-03-03T01:39:00Z",
+          "scheduleddate": "2015-04-15T13:30:00Z",
+          "decisiondate": "2015-04-15T04:00:00Z",
+          "coordinatingrco": null,
+          "primaryappellant": "  SAMPLE   BUILDERS  LLC ",
+          "opa_owner": "SAMPLE BUILDERS LLC"
+        },
+        {
+          "appealnumber": "40125",
+          "applicationtype": "RB_LIRB",
+          "appealtype": null,
+          "appealstatus": "CLOSED",
+          "decision": "AFFIRMED",
+          "createddate": "2012-07-09T15:12:00Z",
+          "scheduleddate": "2012-08-21T04:00:00Z",
+          "decisiondate": null,
+          "coordinatingrco": null,
+          "primaryappellant": "JORDAN SAMPLE",
+          "opa_owner": null
+        },
+        {
+          "appealnumber": "12001",
+          "applicationtype": "RB_BBS",
+          "appealtype": null,
+          "appealstatus": "CLOSED",
+          "decision": "",
+          "createddate": "2009-01-05",
+          "scheduleddate": null,
+          "decisiondate": null,
+          "coordinatingrco": null,
+          "primaryappellant": null,
+          "opa_owner": null
+        }
+      ],
+      "appeals": [
+        {
+          "board": "zoning",
+          "application": "RB_ZBA",
+          "status": "CLOSED",
+          "decision": "GRANTED/PROV",
+          "filed": "2015-03-02",
+          "hearing": "2015-04-15",
+          "hearing_time": "09:30",
+          "decided": "2015-04-15",
+          "appellant": "SAMPLE BUILDERS LLC",
+          "owner": "SAMPLE BUILDERS LLC"
+        },
+        {
+          "board": "li_review",
+          "application": "RB_LIRB",
+          "status": "CLOSED",
+          "decision": "AFFIRMED",
+          "filed": "2012-07-09",
+          "hearing": "2012-08-21",
+          "appellant": "JORDAN SAMPLE"
+        },
+        {
+          "board": "building",
+          "application": "RB_BBS",
+          "status": "CLOSED",
+          "filed": "2009-01-05"
+        }
+      ],
+      "upcoming": []
+    },
+    {
+      "name": "the same appeal twice, a continued hearing, a withdrawn one and other boards",
+      "rows": [
+        {
+          "appealnumber": "LIRB-2026-000123",
+          "applicationtype": "L&I Review Board Codes",
+          "appealtype": "LIRB Violation Appeal",
+          "appealstatus": "In Process",
+          "decision": "Continued",
+          "createddate": "2026-06-01T14:00:00Z",
+          "scheduleddate": "2026-10-09T16:30:00Z",
+          "decisiondate": null,
+          "coordinatingrco": null,
+          "primaryappellant": "CASEY SAMPLE",
+          "opa_owner": null
+        },
+        {
+          "appealnumber": "LIRB-2026-000123",
+          "applicationtype": "L&I Review Board Codes",
+          "appealtype": null,
+          "appealstatus": "In Process",
+          "decision": null,
+          "createddate": "2026-06-01T14:00:00Z",
+          "scheduleddate": null,
+          "decisiondate": null,
+          "coordinatingrco": null,
+          "primaryappellant": null,
+          "opa_owner": null
+        },
+        {
+          "appealnumber": "LIRB-2026-000124",
+          "applicationtype": "L&I Review Board Codes",
+          "appealtype": null,
+          "appealstatus": "Closed",
+          "decision": "Withdrawn",
+          "createddate": "2026-06-01T14:00:00Z",
+          "scheduleddate": "2026-11-12T17:00:00Z",
+          "decisiondate": null,
+          "coordinatingrco": null,
+          "primaryappellant": null,
+          "opa_owner": null
+        },
+        {
+          "appealnumber": "TRB-2025-000009",
+          "applicationtype": "Tax Review Board",
+          "appealtype": "TRB - Case Review ",
+          "appealstatus": "Completed",
+          "decision": null,
+          "createddate": "2025-07-22T20:02:46Z",
+          "scheduleddate": null,
+          "decisiondate": null,
+          "coordinatingrco": null,
+          "primaryappellant": null,
+          "opa_owner": null
+        },
+        {
+          "appealnumber": "BBS-2026-000077",
+          "applicationtype": "Board of Building Standards",
+          "appealtype": "BBS Permit Denial",
+          "appealstatus": "In Process",
+          "decision": null,
+          "createddate": "2026-03-08T07:30:00Z",
+          "scheduleddate": "2026-10-08T17:00:00Z",
+          "decisiondate": null,
+          "coordinatingrco": null,
+          "primaryappellant": null,
+          "opa_owner": null
+        }
+      ],
+      "appeals": [
+        {
+          "board": "li_review",
+          "application": "L&I Review Board Codes",
+          "status": "Closed",
+          "decision": "Withdrawn",
+          "filed": "2026-06-01",
+          "hearing": "2026-11-12",
+          "hearing_time": "12:00"
+        },
+        {
+          "board": "li_review",
+          "application": "L&I Review Board Codes",
+          "type": "LIRB Violation Appeal",
+          "status": "In Process",
+          "decision": "Continued",
+          "filed": "2026-06-01",
+          "hearing": "2026-10-09",
+          "hearing_time": "12:30",
+          "appellant": "CASEY SAMPLE"
+        },
+        {
+          "board": "building",
+          "application": "Board of Building Standards",
+          "type": "BBS Permit Denial",
+          "status": "In Process",
+          "filed": "2026-03-08",
+          "hearing": "2026-10-08",
+          "hearing_time": "13:00"
+        },
+        {
+          "board": "other",
+          "application": "Tax Review Board",
+          "type": "TRB - Case Review",
+          "status": "Completed",
+          "filed": "2025-07-22"
+        }
+      ],
+      "upcoming": [
+        1
+      ]
+    },
+    {
+      "name": "a hearing at midnight says only its day, and a row with no number says nothing",
+      "rows": [
+        {
+          "appealnumber": "ZP-2025-001000",
+          "applicationtype": "Zoning Board of Adjustment",
+          "appealtype": null,
+          "appealstatus": "Scheduled",
+          "decision": null,
+          "createddate": "2025-11-02T05:30:00Z",
+          "scheduleddate": "2026-11-04T05:00:00Z",
+          "decisiondate": null,
+          "coordinatingrco": null,
+          "primaryappellant": null,
+          "opa_owner": null
+        },
+        {
+          "appealnumber": null,
+          "applicationtype": "Zoning Board of Adjustment",
+          "appealtype": null,
+          "appealstatus": null,
+          "decision": null,
+          "createddate": "2025-01-01",
+          "scheduleddate": null,
+          "decisiondate": null,
+          "coordinatingrco": null,
+          "primaryappellant": null,
+          "opa_owner": null
+        },
+        {
+          "appealnumber": "   ",
+          "applicationtype": "Zoning Board of Adjustment",
+          "appealtype": null,
+          "appealstatus": null,
+          "decision": null,
+          "createddate": null,
+          "scheduleddate": null,
+          "decisiondate": null,
+          "coordinatingrco": null,
+          "primaryappellant": null,
+          "opa_owner": null
+        }
+      ],
+      "appeals": [
+        {
+          "board": "zoning",
+          "application": "Zoning Board of Adjustment",
+          "status": "Scheduled",
+          "filed": "2025-11-02",
+          "hearing": "2026-11-04"
+        }
+      ],
+      "upcoming": [
+        0
+      ]
+    },
+    {
+      "name": "no appeals at all",
+      "rows": [],
+      "appeals": [],
+      "upcoming": []
+    }
   ]
 }

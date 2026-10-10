@@ -52,3 +52,15 @@ export const LENS_SUGGESTIONS: Readonly<Record<string, readonly string[]>> = {
   // Philly311 keep their place after the lot's first suggestions.
   placemaking: ['seating_and_shade', 'community_garden', 'art_request'],
 };
+
+/**
+ * Suggestions to grow food (M4.6, issue #42). On a lot at or near a federal brownfield record (its
+ * dossier's `rules.brownfields`, or the map's `bf`), their card carries the owner's soil note word
+ * for word: "A federal brownfield assessment or cleanup was recorded at or near this address. Test
+ * the soil before growing food." It never calls a place clean or safe.
+ */
+export const GARDEN_SUGGESTIONS: ReadonlySet<string> = new Set(['community_garden']);
+
+export function isGarden(suggestionId: string): boolean {
+  return GARDEN_SUGGESTIONS.has(suggestionId);
+}

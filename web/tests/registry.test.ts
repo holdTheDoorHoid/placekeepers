@@ -27,7 +27,7 @@ describe('the real registry', () => {
 
   it('loads the files the web app depends on', () => {
     const reg = loadRegistry();
-    expect(reg.groups.map((g) => g.id)).toEqual(['lots', 'care', 'displacement', 'streets', 'transit', 'heat', 'amenities', 'public_places', 'conditions', 'placemaking', 'walking', 'then_and_now', 'safety_context', 'boundaries', 'basemap']);
+    expect(reg.groups.map((g) => g.id)).toEqual(['lots', 'care', 'displacement', 'rules', 'streets', 'transit', 'heat', 'amenities', 'public_places', 'conditions', 'placemaking', 'walking', 'then_and_now', 'safety_context', 'boundaries', 'basemap']);
     expect(reg.layers.map((l) => l.id)).toEqual(expect.arrayContaining(['vacant_parcels', 'hin_2025', 'shootings_hex']));
     expect(reg.lenses.find((l) => l.id === 'violence')?.factors.length).toBeGreaterThan(0);
   });

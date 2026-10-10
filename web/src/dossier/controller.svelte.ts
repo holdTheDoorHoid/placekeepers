@@ -8,6 +8,7 @@
 import type { Geometry } from 'geojson';
 import type { Manifest } from '../data/manifest.ts';
 import {
+  fetchAppeals,
   fetchAssessments,
   fetchLi,
   fetchNearby,
@@ -274,6 +275,8 @@ export class DossierController {
     ask('transfers', () => fetchTransfers(opa, options));
     ask('assessments', () => fetchAssessments(opa, options));
     ask('li', () => fetchLi(opa, options));
+    // Appeals to the City's boards (M4.6), with any hearing still to come.
+    ask('appeals', () => fetchAppeals(opa, options));
 
     // Nearby counts: only for parcels the snapshot does not cover, once a point is known.
     void Promise.all([shardDone, point]).then(([, at]) => {

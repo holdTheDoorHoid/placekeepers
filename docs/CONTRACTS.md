@@ -54,6 +54,11 @@ https://arcgis.dvrpc.org/portal/rest/services`. Each part holds no `/ ? # &` and
 a space. A `csv` file may use another delimiter (the Census Bureau's tables use `|`); the source's
 adapter reads it.
 
+An `arcgis` endpoint may add `server` (added 2026-10-09 by M4.6): `FeatureServer` (the default when
+left out) or `MapServer`, for a layer of a map service. The EPA's brownfield properties are
+`url: https://geodata.epa.gov/arcgis/rest/services`, `service: OEI/FRS_INTERESTS`, `server:
+MapServer`, `layer: 0`; their adapter asks only for Philadelphia's and tries again when the EPA's
+server answers "Service not found" (`adapters/rules.py`).
 The Census Bureau's tables of the neighborhood context (added 2026-10-09 by M4.7: `acs_rent_burden`,
 `acs_rent`, `acs_income`, `acs_occupancy`, `acs_vacancy`) are read like `acs_tenure`, but their
 snapshots keep one row more: Philadelphia County (`geoid` "42101", `tract` null), the Census's own
@@ -217,7 +222,9 @@ lens's id. Its options must name every lens that applies to `parcel` and nothing
 checks it).
 
 `registry/groups.yaml` lists groups in display order: `lots`, `care`, `displacement` (added
-2026-10-08 by M4.1 for the displacement watch, "Prices and protections"), `streets`, `transit` (added
+2026-10-08 by M4.1 for the displacement watch, "Prices and protections"), `rules` (added 2026-10-09
+by M4.6, "Land rules and hearings": historic districts and properties, zoning overlays, hearings
+still to come and EPA brownfield sites), `streets`, `transit` (added
 2026-10-04 by M2.1 for SEPTA's layers; M2.2 adds the shelters and benches at stops to it), `heat`
 (added 2026-10-05 by M3.1 for heat vulnerability, the City's trees and the floodplain), `amenities`,
 `public_places` and `conditions` (added 2026-10-05 by M3.5), `placemaking` (added 2026-10-05 by
@@ -420,6 +427,8 @@ data/
     parking.pmtiles       layer "parking"   (parking problems reported with Laser Vision, counts per
                           block sized cell; issue #37)
     displacement.pmtiles  layer "watch"     (displacement watch areas, census tracts; M4.1)
+    rules.pmtiles         layers "historic_districts", "historic_sites", "overlays", "hearings",
+                          "brownfields"   (the rules and records of each lot; M4.6)
     redlining.pmtiles     layer "holc"      (the 1937 redlining map, Mapping Inequality's areas and grades;
                           its own file under CC BY-NC 2.5, non commercial only, never in a download; 2026-10-09)
   tables/
@@ -595,6 +604,7 @@ Short property names keep tiles small. Integers are preferred to strings.
 | `rt` | int | the first lawful step to get permission, as a category (codes below) |
 | `la` | int | 1 when the City's land agencies list the parcel as available (below); absent otherwise. Added 2026-10-08, issue #36 |
 | `ly` | int | 1 when such a listed parcel may go to the owner of the house next door as a side yard (below); absent otherwise. Added 2026-10-08 |
+| `bf` | int | 1 when an EPA brownfield property lies within 100 meters of the parcel's shape (its dossier's `rules.brownfields`, section 6); absent otherwise. Kept below zoom 13, so the nearby cards' soil note works at every zoom. Added 2026-10-09 by M4.6 |
 | `rs` | int | the reasons, as bits (below); added 2026-10-04 by M1.2 |
 | `n` | int | how many independent records agree that it is vacant, for its kind (lot or building) |
 | `dy`, `sy`, `ny` | int | year of the demolition (bit 4), the City's clean and seal (bit 7), or the new construction permit (bits 12 and 13); present only with those bits |
@@ -922,6 +932,47 @@ every number on the map (docs/ETHICS.md), and is never a sign: it changes no bit
 `web/src/displacement/watch.ts` reads the same bits and rule as the pipeline:
 `pipeline/tests/fixtures/watch_parity.json` holds every combination of signs and whether it is a
 watch area, and both test suites check it.
+
+Added 2026-10-09 by M4.6 (the rules and records of each lot, issue #42; the code is in
+`pipeline/src/placekeepers/publish/rules.py`, the rules in `derive/lot_rules.py` and
+`derive/appeals.py`). Five layers in `rules.pmtiles` (6.1 MB on 2026-10-09), kept at every zoom
+from 10 to 16 except the Register's parcels, from zoom 13:
+
+**`historic_districts` (rules.pmtiles, polygons)**: the Historical Commission's local historic
+districts (`historic_districts`). `id` (the district's name, lower case with underscores), `nm`
+(the name as the Commission writes it) and `dd` (the designation day, YYYY-MM-DD; from the
+Commission's text, else the stored date; absent when neither is a real day up to the build, as for
+the placeholder 1/1/3000).
+
+**`historic_sites` (rules.pmtiles, polygons, zoom 13 on)**: the properties on the Philadelphia
+Register of Historic Places, one parcel shape each (`historic_sites`). `ad` (the address as the
+Commission writes it), `d` (the day it was listed on its own), `i` (1 when it was listed on its own
+on a day the layer does not give plainly), `dn` and `dd` (the district it belongs to and that
+district's day); each absent when not known.
+
+**`overlays` (rules.pmtiles, polygons)**: the Planning Commission's zoning overlays and the Zoning
+Code's other special rules (`zoning_overlays`). `id` (the overlay's key: `o` and 8 hexadecimal
+digits of a hash of its name, symbol, type and Code section, the key of `dossiers/common.json`'s
+`overlays`), `nm` (its name), `sy` (its symbol, such as `/CTR`; absent where the City writes
+`[N/A]`), `t` (1 overlay district, 2 supplemental control, 3 Wissahickon Watershed impervious
+coverage limit, 0 other), `cs` and `cl` (the Zoning Code section and its link), `su` (a sunset day),
+`pb` and `pu` (a bill pending in City Council, and its link).
+
+**`hearings` (rules.pmtiles, points)**: every hearing still to come before one of the City's boards
+(`appeals`), on the point the City gives the appeal: its day is the build day or later, the appeal
+is not closed, withdrawn or dismissed, and no decision ended it (`is_upcoming` in
+`derive/appeals.py`). `id` (the parcel's OPA account, to open its lot page; absent when the City
+names none), `d` and `tm` (the day and the time in Philadelphia, HH:MM; no `tm` when the City gives
+the day only), `b` (1 Zoning Board of Adjustment, 2 L&I Review Board, 3 Board of Building
+Standards, 0 another board), `ty` (the kind of appeal in the City's words, else its application
+type), `ad` (the address) and `rco` (the registered community organization the City notified). **It
+never carries who filed the appeal, the owner's name or the appeal's number** (DESIGN.md section
+5.6, the limits on appeals); a test fails if any published file but the lot's own dossier shard holds
+an appellant's name.
+
+**`brownfields` (rules.pmtiles, points)**: the EPA's brownfield properties in Philadelphia
+(`epa_brownfields`, ACRES). `id` (the EPA's registry id, which links to its record in the EPA's
+facility registry), `nm` and `ad` (the site's name and address as the EPA writes them).
 
 **`hin` (streets.pmtiles)**: `id`, `name` (street name), `len` (feet).
 
@@ -1500,6 +1551,13 @@ A shard, `dossiers/3710.json`:
 }
 ```
 
+**`overlays` (in `common.json`, added 2026-10-09 by M4.6)**: every zoning overlay by its key, as
+the lots' `rules.overlays` name them: `name`, `symbol` (absent for `[N/A]`), `type` (1 overlay
+district, 2 supplemental control, 3 Wissahickon Watershed impervious coverage limit, 0 other),
+`section` and `link` (the Zoning Code section and its link), `sunset` (a day), `pending_bill` and
+`pending_url` (a bill pending in City Council). On 2026-10-09: 196 overlays, and `common.json` grew
+from about 5 kB to 50 kB (7.8 kB compressed), which every lot page fetches once with the flags.
+
 **`flags` and `notices` (in `common.json`).** Every flag has three parts (docs/ETHICS.md): what it
 means, why to be careful, and a protective next step. The careful note and the next step are the
 same for every parcel with that flag, so `common.json` holds them once, by flag id, with the flag's
@@ -1627,9 +1685,85 @@ the full greening card as one opened from the map does.
 
 **`nearby`**: `s12` and `s36` (shooting victims in the parcel's hexagon in the last 12 and 36
 months, as in the `h3` layer), `landcare_within_500ft` and `gardens_within_500ft`. Keys are left
-out when the parcel has no point. Added 2026-10-09 by M4.7: `playground`, the nearest of Parks and
+out when the parcel has no point. `hearings_within_500ft` (added 2026-10-09 by M4.6): the hearings
+still to come (the `hearings` layer, section 4) within 500 feet of the parcel's point, its own left
+out; present when the build has the `appeals` source. Added 2026-10-09 by M4.7: `playground`, the nearest of Parks and
 Recreation's playgrounds (`ppr_playgrounds`), `{"nm": "<the park>", "m": <meters>}`, in a straight
 line from the parcel's point, rounded to 10 meters; absent without the playgrounds' snapshot.
+
+**`lot_size`** (added 2026-10-09 by M4.6; only when known): the lot's `frontage` and `depth` in
+feet, to a tenth, as the assessor records them (OPA's `frontage` and `depth`, both above 0 and
+under a mile). The lot page says them as a measure, never as a judgment of what fits there. The
+live lookup of the owner asks for the same two columns. (OPA's weekly copy holds them from the
+first refresh after 2026-10-09.)
+
+**`rules`** (added 2026-10-09 by M4.6, issue #42; only when a rule applies): what City and federal
+records say applies to the lot, joined by its shape (the vacancy model's shape, else the Water
+Department's, else its OPA point; `derive/lot_rules.py`):
+
+```json
+"rules": {
+  "historic": {
+    "districts": [{"name": "Spring Garden", "date": "2000-10-11"}],
+    "register": {"address": "1731 BRANDYWINE ST", "date": "1975-05-01",
+                 "district": "Spring Garden", "district_date": "2000-10-11"}
+  },
+  "zoning": {"code": "RSA-5", "group": "Residential/Multi-Family/Residential Mixed-Use"},
+  "overlays": ["o878f2af2", "oe0618f38"],
+  "brownfields": [{"id": "110071983149", "name": "LIFE DO GROW",
+                   "address": "2316-2350 N. 11TH STREET", "m": 35}],
+  "brownfields_more": 2
+}
+```
+
+`historic.districts`: each historic district covering the lot's point on its shape or at least a
+tenth of its shape, with its designation `date` when known; `historic.register`: the lot's entry on
+the Philadelphia Register (a Register shape covers the lot's point), with the `address` the
+Commission writes, the `date` it was listed on its own (or `individual: true` when the layer gives
+no plain day), and the `district` it belongs to with `district_date`. `zoning`: the base district
+at the lot's point (`code`, the City's `long_code`; `group`, its zoning group; `pending_url`, a
+pending bill's link when the City marks one). `overlays`: the keys of every overlay covering the
+lot's point or a tenth of its shape, in `dossiers/common.json`'s `overlays`. `brownfields`: the
+nearest three EPA brownfield properties within 100 meters of the lot's shape, nearest first, with
+the distance in whole meters (`m`); `brownfields_more`, how many more lie within 100 meters. Keys
+with nothing in them are left out. Never a statement that a lot is or is not buildable.
+
+On 2026-10-09, `rules`, `appeals` and `hearings_within_500ft` added 16.8 MB to the shards on disk
+(13 percent, to 147.6 MB) and 1.6 MB as served compressed (9 percent, to 18.9 MB): 81,787 lots have
+rules (nearly all a base zoning district), 7,422 have appeals (260 with a hearing still to come),
+1,655 are in a historic district or on the Register, 3,739 lie within 100 meters of an EPA
+brownfield property, and 24,762 have a hearing still to come within 500 feet.
+
+**`appeals`** (added 2026-10-09 by M4.6; only when the parcel has any): every appeal the City's
+`appeals` table holds for the parcel, newest filing first, then the later hearing, each appeal once:
+
+```json
+"appeals": [{"board": "zoning", "application": "Zoning Board of Adjustment",
+             "type": "ZBA Permit Denial - Variance", "status": "Scheduled",
+             "filed": "2026-08-03", "hearing": "2027-03-03", "hearing_time": "09:30",
+             "rco": "Example Neighbors Association",
+             "appellant": "ROSA EXAMPLE; EXAMPLE ROSA", "owner": "EXAMPLE ROSA"}]
+```
+
+`board`: `zoning`, `li_review`, `building` or `other`, from the City's application type (both its
+older codes, such as `RB_ZBA`, and its newer words); `application`, `type`, `status` and
+`decision`: the City's words, white space evened out; `filed`, `hearing` and `decided`: days in
+Philadelphia; `hearing_time`: HH:MM in Philadelphia, left out when the City writes midnight (a day
+alone); `rco`: the registered community organization the City notified; `appellant` and `owner`:
+who filed it and the owner the City names, as the City writes them. Keys with no value are left
+out. **Names appear in the lot's own dossier record only** (DESIGN.md section 5.6, the limits on appeals):
+never in a map layer, `tables/`, the manifest, `dossiers/common.json`, the history shards or a
+download. Never the appeal's number (a zoning appeal's is the zoning permit's number), its free
+text grounds or its proviso. The pipeline reads the City's columns and makes these records with
+`derive/appeals.py`; the browser reads the same columns live and makes the same records
+(`web/src/dossier/appeals.ts`); both test suites check the `appeal_cases` of
+`pipeline/tests/fixtures/timeline_parity.json`, written by `pipeline/tests/timeline_cases.py`.
+
+`partial` (above) may also name, after the candidate parts and in this order, `historic`,
+`overlays`, `brownfields` and `appeals` (added 2026-10-09 by M4.6): a citywide source of that
+part had no snapshot in this build (`historic_districts` or `historic_sites`; `zoning_overlays`;
+`epa_brownfields`; `appeals`). Every dossier then names it, and the lot page says it could not check
+that rule, never that it does not apply; `appeals` is then left out, and the page offers live data.
 
 Never in a dossier (docs/ETHICS.md, checked by `tests/test_dossiers.py`): an acquisition price
 estimate, any score or order of how easy a parcel would be to take, letters to owners, and personal
@@ -1637,7 +1771,7 @@ details beyond the names of owners past and present and the current mailing addr
 buyer names on deeds (`from` and `to` in `transfers`) are published: they are owners of record over
 time, as the City shows them (decided 2026-10-04, docs/VERIFICATION.md D4).
 
-The live refresh in the browser may update `owner`, `transfers`, `assessments` and `li` from the
+The live refresh in the browser may update `owner`, `transfers`, `assessments`, `li` and `appeals` (M4.6) from the
 City's Carto API; anything it cannot refresh stays as in the shard, labeled with the shard's date.
 
 How the web app does it (added 2026-10-04 by M1.6, `web/src/dossier/`). Each part is one request to
@@ -1646,6 +1780,10 @@ under a tap, a point inside the city), never from typed text, with a 10 second l
 `opa_properties_public` for the owner names, mailing address, the City's description and whether
 the owner has a homestead exemption (with one, the page drops conservatorship from the shard's
 routes);
+`appeals` for the parcel's appeals (added 2026-10-09 by M4.6; `appealsSql` in
+`web/src/dossier/carto.ts`, the same columns as the weekly copy, never the grounds, the proviso or
+the numbers of related permits and cases, read by `readAppeals` as above; they replace the shard's
+`appeals` and are labeled live);
 `rtt_summary` for every deed with the same fields as `transfers` (the date on the deed and the
 adjusted total, with the same fallbacks); `assessments`; and one query over `violations`, `permits`, `demolitions`, `unsafe`,
 `imm_dang` and `clean_seal` for the L&I timeline, with the same expressions as the history shards'

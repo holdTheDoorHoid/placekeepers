@@ -1132,6 +1132,103 @@
       type: toggle
       default: true
   release: v0.3
+# Milestone M4.6 (issue #42): the rules and records of each lot.
+- id: historic_districts
+  label: Historic districts
+  group: rules
+  description: >-
+    The Philadelphia Historical Commission's local historic districts. Changes to buildings and
+    lots in a district may need the Commission's review, even a mural, a fence or a garden: ask the
+    Commission first (215 686 7660). The City asks everyone to confirm a property's historic status
+    with the Commission. Tap a district for its name and the day it was designated.
+  sources: [historic_districts]
+  file: tiles/rules.pmtiles
+  source_layer: historic_districts
+  geometry: polygon
+  style: historic_districts
+  evidence: context
+  default: {field: false, analysis: false}
+  release: v0.4
+- id: historic_properties
+  label: Properties on the historic register
+  group: rules
+  description: >-
+    Properties on the Philadelphia Register of Historic Places, each its own parcel, listed on
+    their own or as part of a historic district (shown from close in). Changes here may need the
+    Historical Commission's review: ask them first (215 686 7660).
+  sources: [historic_sites]
+  file: tiles/rules.pmtiles
+  source_layer: historic_sites
+  geometry: polygon
+  style: historic_properties
+  evidence: context
+  default: {field: false, analysis: false}
+  release: v0.4
+- id: zoning_overlays
+  label: Zoning overlays
+  group: rules
+  description: >-
+    Areas where the Zoning Code adds its own rules on top of the base zoning: neighborhood
+    conservation, commercial streets, flood and steep slope protection, limits on paving near the
+    Wissahickon, heights near the airport, signs and more. Many overlap, and a few cover most of
+    the city. Tap a spot to see every overlay there, with its section of the Zoning Code. Overlays
+    may change what is allowed; check with the City before you plan.
+  sources: [zoning_overlays]
+  file: tiles/rules.pmtiles
+  source_layer: overlays
+  geometry: polygon
+  style: zoning_overlays
+  evidence: context
+  default: {field: false, analysis: false}
+  settings:
+    - id: show
+      label: Show
+      type: choice
+      options:
+        - {value: all, label: Overlay districts and other special rules}
+        - {value: districts, label: Overlay districts only}
+      default: all
+  release: v0.4
+- id: hearings
+  label: Hearings still to come
+  group: rules
+  description: >-
+    Hearings set before the Zoning Board of Adjustment, the L&I Review Board, the Board of Building
+    Standards and the City's other boards about a property, from the City's appeals records, with
+    the day, the time and the kind of appeal. Anyone can take part in a zoning hearing; tap one to
+    see how, and to open the lot's page. Who filed an appeal is shown only on that lot's own page,
+    never on the map.
+  sources: [appeals]
+  file: tiles/rules.pmtiles
+  source_layer: hearings
+  geometry: point
+  style: hearings
+  evidence: context
+  default: {field: false, analysis: false}
+  settings:
+    - id: boards
+      label: Show
+      type: choice
+      options:
+        - {value: all, label: Every board}
+        - {value: zoning, label: The Zoning Board of Adjustment only}
+      default: all
+  release: v0.4
+- id: brownfields
+  label: Brownfield sites (EPA)
+  group: rules
+  description: >-
+    Properties where a federal brownfield grant paid for an assessment or a cleanup, from the
+    EPA's records. It is not a map of all contaminated ground, and it does not say whether a site
+    is contaminated today. Test the soil before growing food on or near one.
+  sources: [epa_brownfields]
+  file: tiles/rules.pmtiles
+  source_layer: brownfields
+  geometry: point
+  style: brownfields
+  evidence: context
+  default: {field: false, analysis: false}
+  release: v0.4
 # Then and now (M4.3): pictures loaded straight from the City's map services in the visitor's
 # browser (`geometry: raster`, docs/CONTRACTS.md section 1). Off by default in both views; they can
 # be turned on only while "Fetch live City data" is on, and a shared link never turns them on past

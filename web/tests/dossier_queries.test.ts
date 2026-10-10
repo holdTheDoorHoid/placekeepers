@@ -61,9 +61,11 @@ describe('queries are built only from a nine digit account', () => {
 
   it('asks only for the columns the lot page shows', () => {
     const all = Object.values(ACCOUNT_BUILDERS).map((build) => build('372106400')).join(' ');
-    for (const column of ['casenumber', 'contractor', 'applicant', 'opa_owner', 'race', 'age', 'sex', 'SELECT *']) {
+    for (const column of ['casenumber', 'contractor', 'applicant', 'opa_owner', 'SELECT *']) {
       expect(all.toLowerCase()).not.toContain(column.toLowerCase());
     }
+    // Whole words, so the lot's frontage (M4.6) is not taken for an age.
+    for (const word of ['race', 'age', 'sex']) expect(all.toLowerCase()).not.toMatch(new RegExp(`\\b${word}\\b`));
     expect(propertySql('372106400')).toContain("FROM opa_properties_public WHERE parcel_number = '372106400'");
     expect(transfersSql('372106400')).toContain("FROM rtt_summary WHERE opa_account_num = '372106400'");
     // The date and price the City's property page shows, with the older fields to fall back on.
