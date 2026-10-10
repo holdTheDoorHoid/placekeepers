@@ -39,8 +39,8 @@ What changes for the owner, most important first:
    file (the 933 history shards, the tables, the manifest) and in the decoded hearings tiles: none
    is there. The map's hearings carry the day, the board, the address and the community
    organization only; the printed lot page has the hearing and no name; downloads have no appeal
-   field. One question for the owner (Q1): five lot pages show an email address the City typed
-   into "who filed it".
+   field. Five lot pages show an email address the City typed into "who filed it"; the owner
+   decided to show the field as the City publishes it (Q1).
 2. **No picture is asked for until someone asks, and never with live data off.** A first visit
    asks no server but the site's own. With live data off, neither a link nor saved settings can
    turn the photos or the atlas on (checked at both sizes), and turning live data off while the
@@ -72,7 +72,8 @@ What changes for the owner, most important first:
 8. **Docs agree with the code after a round of fixes**, listed in section 5, including two
    sentences of the release documents.
 
-Commits on `agent/verify4`: 557fabc, af9cdbb, 9792ed4, b0002a9, 7855ad7 and this report (plus two
+Commits on `agent/verify4`: 557fabc, af9cdbb, 9792ed4, b0002a9, 7855ad7, the report (1eb21c1)
+and, after the owner's answers of 2026-10-10, the F2 fix with the decisions recorded (plus two
 merges of main). Test results are in section 8. No contract changed.
 
 ## 1. Four lots, end to end
@@ -140,7 +141,7 @@ has no other sign, so the watch does not change (finding F9).
 | Redlining kept apart | The manifest, every published file, the downloads' code, the built JavaScript | Only `tiles/redlining.pmtiles`, marked `cc_by_nc_2_5` in the manifest; the bundle holds the registry's source address only |
 | Every new source has a license and an attribution | The registry, `pk registry check`, the Data status page | Yes (the cooling sites' attribution is kept for the Data status page only); the Data status page marks the redlining source "Non commercial use only" and lists the picture services' weekly check |
 | Cooling sites without a credit line | The legend, the tile file's attribution, the Data status page | No publisher in the legend or in `places.pmtiles`' attribution; the source stays on the Data status page. The layer's closed "About this layer" fold names the Office of Emergency Management as the source's publisher, as DESIGN describes (Q3) |
-| Brownfield wording | Every string, layer and content page | Never "clean" or "safe"; the owner's sentence word for word on the lot page and on every garden card near one. The CSV and GeoJSON downloads carry no soil note (F2) |
+| Brownfield wording | Every string, layer and content page | Never "clean" or "safe"; the owner's sentence word for word on the lot page and on every garden card near one, and since F2 in the downloads and the printed sheet |
 | No enforcement wording | The new strings, layers and suggestions | None; crossing guards are a safety service |
 | Build Philly Now | The registry, the code, the docs | Never a source; named only as the review that started M4.5 to M4.7 |
 
@@ -217,7 +218,7 @@ First visit, before tiles: 2.0 MB (0.53 MB compressed), mostly the map code (1.0
 | # | Severity | Finding | Evidence | Fix |
 |---|---|---|---|---|
 | F1 | Must fix before v0.4 | The story of a lot said the City sealed "the building" after the same page said it was demolished (2,854 lots have a seal after a demolition), or where no record shows a building | 4465 Frankford Ave, 5419 Lena St | **Fixed** af9cdbb, 7855ad7, with tests |
-| F2 | Should fix | The CSV and GeoJSON downloads give "Start a community garden" for a lot near a brownfield without the soil note; ETHICS names the lot page and the nearby cards only | `web/src/places/export.ts`; 828 dossiers have both | Add the owner's sentence to the suggestion cell when `bf` is 1 |
+| F2 | Should fix | The CSV and GeoJSON downloads gave "Start a community garden" for a lot near a brownfield without the soil note, and the printed sheet left it to the rules part; ETHICS names the lot page and the nearby cards only | `web/src/places/export.ts`, `web/src/dossier/print.ts`; 828 dossiers have both | **Fixed** (orchestrator's request, 2026-10-10): a `soil_note` column beside `suggestion` in both downloads, and the note under the garden suggestion on the printed sheet, with tests |
 | F3 | Should fix | The Land Bank count missed deeds whose agency name is misspelled (3 conveyances, 1 move by our count) | Section 2 | **Fixed** af9cdbb, from the next download |
 | F4 | Should fix | Stale docs and pages, section 5 | | **Fixed** |
 | F5 | Later | A timeline switch counts rows, not records: "Violations (8)" where the City lists 13 violations on 8 days, beside "7 violations recorded since 2016" | 4465 Frankford Ave | Say "(8 days)" or count records |
@@ -227,40 +228,27 @@ First visit, before tiles: 2.0 MB (0.53 MB compressed), mostly the map code (1.0
 | F9 | Info | The rent burden sign compares shares rounded to a tenth: tract 220 holds it at 39.46% | Section 2 | None needed now; it changes no watch area |
 | F10 | Info | A deed whose only agency seller is misspelled in a way the source's filter misses ("CITY OF PHIADELPHIA") is never downloaded; all 481 such rows today belong to one condemnation | registry `land_conveyances` | None |
 
-## Questions for the owner
+## Questions for the owner, decided
 
-**Q1. Email addresses in "who filed it".** Five lot pages show an appeal whose "filed by" field,
-as the City typed it, holds an email address beside the names (twelve in the City's whole table).
-"Show it all" covers who filed; an email address is more than a name, and ETHICS.md publishes no
-personal details of owners beyond names and the mailing address. Options: (a) keep, as the City
-publishes it; (b) remove email addresses and phone numbers from that field, keeping the names.
-Recommendation: (b).
+The owner answered on 2026-10-10.
 
-**Q2. ETHICS.md lines added on 2026-10-09.** ETHICS.md should hold only the owner's decisions.
-Three passages read as descriptions or reasoning: the risk row "False comfort about soil"; the
-clause after "Never 'clean' or 'safe':" explaining why; and, under Privacy, "A lot page's live
-appeals (M4.6) come from the same City server as its other lookups; the historic, zoning and
-brownfield rules come only from the weekly copy, so no new server is asked." If they are not the
-owner's words, they belong in DESIGN.md 5.6, which already says the same.
-
-**Q3. The cooling sites' "About this layer".** The legend and the tile file name no publisher,
-and nor does a tapped site (its code has no credit line). The layer's closed "About" fold lists the source as "Warming and cooling sites, City
-of Philadelphia, Office of Emergency Management", with its "no license stated" note, and its
-description says "Places the City's Office of Emergency Management lists". Is naming the
-publisher there within "show without credit"? Recommendation: keep it; it says where the list
-comes from, as the Data status page must.
+| # | Question | Decision | Where it now lives |
+|---|---|---|---|
+| Q1 | Five lot pages show an appeal whose "filed by" field, as the City typed it, holds an email address beside the names (twelve in the City's whole table). Keep, or remove emails and phone numbers? | Show the field as the City publishes it, email addresses and phone numbers included. No code change | ETHICS.md, "Appeals and hearings": "This includes any email address or phone number the City typed into that field (owner, 2026-10-10)." |
+| Q2 | Three passages added to ETHICS.md on 2026-10-09 read as description or reasoning: the risk row "False comfort about soil", the clause explaining why the wording is never "clean" or "safe", and the Privacy line about live appeals | Keep the Privacy line, a privacy promise like the rest of that list. Move the risk row and the explanation to DESIGN.md 5.6, leaving the owner's decided wording in ETHICS.md | DESIGN.md 5.6, "Rules for this lot, as built"; ETHICS.md points to it |
+| Q3 | The cooling sites' closed "About this layer" fold names the Office of Emergency Management as the source's publisher; the legend, a tapped site and the tile file name none | Keep the publisher named there, with no credit line anywhere else | DATA_SOURCES.md, the warming and cooling sites |
 
 ## 8. Tests run
 
 | Suite | Result |
 |---|---|
-| Pipeline (`pytest`, not live), at e4f87dd plus these fixes | 1,190 passed, 7 live tests deselected |
+| Pipeline (`pytest`, not live), at e4f87dd plus these fixes | 1,190 passed, 7 live tests deselected (twice: before and after the F2 fix) |
 | ruff check and format | pass |
 | `pk registry check` | valid: 11 licenses, 16 groups, 89 sources, 50 layers, 5 lenses, 19 suggestions, 24 routes, 8 partners, 1 options |
-| Web unit tests (vitest) | 994 passed |
+| Web unit tests (vitest) | 994 passed; 998 after the F2 fix |
 | svelte-check | 0 errors, 0 warnings |
 | Site build (`vite build`) | built |
-| End to end (Playwright, phone and desktop) | 143 passed, 7 skipped by design (a test meant for one screen size only), in 11.4 minutes, on port 4419 |
+| End to end (Playwright, phone and desktop) | 143 passed, 7 skipped by design (a test meant for one screen size only), in 11.4 minutes, on port 4419; after the F2 fix, the lot page, analysis (downloads) and privacy specs again: 46 passed |
 
 ## How these checks were made
 

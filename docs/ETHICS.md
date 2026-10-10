@@ -15,7 +15,6 @@ easy, obvious one. Builders must follow this page; changes need the owner's agre
 | Over policing | Map used to direct enforcement at people | No police suggestions, ever; 311 suggestions cover physical conditions only |
 | Displacement | Greening raises values and rents | Displacement watch overlay and "pair with protections" cards |
 | Harm to grieving families | A name shown where a family did not want it | Names only from public memorial lists, quiet design, removal on request |
-| False comfort about soil | A garden planted on a former industrial lot because the map showed no warning | Brownfield records named "at or near this address", with "Test the soil before growing food" on every garden suggestion near one, and never "clean" or "safe" |
 
 ## Owner information
 
@@ -90,7 +89,8 @@ the Zoning Board of Adjustment, the L&I Review Board, the Board of Building Stan
 the City's boards, appears on that lot's own page as the City publishes it: the board and the kind
 of appeal, its status and decision, the days it was filed, heard and decided, the registered
 community organization the City notified, who filed it and the owner the City names. A hearing
-still to come goes at the top of the page, with the City's page on how to take part.
+still to come goes at the top of the page, with the City's page on how to take part. This includes
+any email address or phone number the City typed into that field (owner, 2026-10-10).
 
 How the site carries this out, with the limits the orchestrator set on where names appear, is in
 DESIGN.md section 5.6 ("Rules for this lot, as built").
@@ -102,8 +102,10 @@ DESIGN.md section 5.6 ("Rules for this lot, as built").
 - Brownfield records read, word for word: *"A federal brownfield assessment or cleanup was recorded
   at or near this address. Test the soil before growing food."* The same note goes on every garden
   suggestion for a lot near one, on the lot page and on the map's nearby cards. Never "clean" or
-  "safe": the EPA's records say a federal grant paid for work, not what is in the ground today, and
-  the map says it is not a map of all contaminated ground.
+  "safe".
+
+How the site carries this out, and why the wording never says "clean" or "safe", is in DESIGN.md
+section 5.6 ("Rules for this lot, as built").
 
 ## People killed in traffic crashes
 

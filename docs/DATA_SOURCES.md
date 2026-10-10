@@ -588,6 +588,10 @@ no license and no description.
   `credit: false`), so the Data status page lists it and the weekly health check runs. The legend,
   a tapped site and the layer's "About" section name no publisher as a credit, and the places
   tile file's attribution leaves it out.
+- **Owner decision (2026-10-10): the publisher stays named in "About this layer".** Inside the
+  layer's closed "About this layer" note the source is still listed as the Office of Emergency
+  Management's, with "no license stated", and the layer's description says whose list it is. That
+  says where the list comes from; there is no credit line anywhere else on the map.
 - Never live: the map says the status and hours are as the City listed them on the day it copied
   the list, and to call the site or 311 before going.
 - Health: at least 40 rows, no more than 40 percent fewer than the last good copy (sites come and

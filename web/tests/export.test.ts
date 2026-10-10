@@ -124,6 +124,36 @@ describe('gathering an export', () => {
   });
 });
 
+describe('the soil note in downloads', () => {
+  const SOIL = 'A federal brownfield assessment or cleanup was recorded at or near this address. Test the soil before growing food.';
+  const GARDEN_LOT: ExportPlace = { id: '990000002', center: [-75.03, 40.06], properties: { ...tileOf('990000002'), sg: 'community_garden' } };
+
+  it('sits beside a garden suggestion for a lot near a brownfield record, word for word, in both files', async () => {
+    const result = await gatherExport(input([GARDEN_LOT, LOT]));
+    expect(result.rows[0]).toMatchObject({ suggestion: 'Start a community garden', soil_note: SOIL });
+    // Not near a brownfield record: nothing.
+    expect(result.rows[1]!.soil_note).toBe('');
+    const rows = parseCsv(toCsv(result).replace(/^\uFEFF/, ''));
+    const header = rows.find((r) => r[0] === 'opa_account')!;
+    expect(header.indexOf('soil_note')).toBe(header.indexOf('suggestion') + 1);
+    expect(rows[rows.indexOf(header) + 1]![header.indexOf('soil_note')]).toBe(SOIL);
+    const geo = JSON.parse(toGeoJson(result));
+    expect(geo.features[0].properties.soil_note).toBe(SOIL);
+  });
+
+  it('follows the dossier alone, for a place from a list file', async () => {
+    const state = defaultState(reg, 'analysis');
+    state.suggestions.clean_and_green = false;
+    const result = await gatherExport({ ...input([{ id: '990000002', center: null, properties: null }]), state });
+    expect(result.rows[0]).toMatchObject({ suggestion: 'Start a community garden', soil_note: SOIL });
+  });
+
+  it('never sits beside another suggestion, even near a brownfield record', async () => {
+    const result = await gatherExport(input([{ ...GARDEN_LOT, properties: { ...tileOf('990000002'), sg: 'clean_and_green' } }]));
+    expect(result.rows[0]).toMatchObject({ suggestion: 'Clean and green this lot', soil_note: '' });
+  });
+});
+
 describe('the files', () => {
   it('starts the CSV with the terms of use, keeps the notes on one line each, then the header', async () => {
     const csv = toCsv(await gatherExport(input([LOT])));

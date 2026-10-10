@@ -45,6 +45,7 @@
     {#each m.actions as action (action.label)}
       <h3>{action.label}</h3>
       {#if action.caution}<p class="note">{[action.caution, m.watchPointer].filter(Boolean).join(' ')}</p>{/if}
+      {#if action.soil}<p class="note">{action.soil}</p>{/if}
       {#if action.route}<p>{s.actions.route}: {action.route}</p>{/if}
       {#if action.warning}<p class="warning">{action.warning}</p>{/if}
       {#if action.steps.length}<ol>{#each action.steps as step (step)}<li>{step}</li>{/each}</ol>{/if}

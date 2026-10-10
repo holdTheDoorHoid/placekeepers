@@ -888,7 +888,14 @@ History, top to bottom:
   EPA's registry, a soil test and the EPA's guide to gardening in city soil, and "The EPA's records
   show where a federal brownfield grant paid for work. They do not say what is in the ground
   today." The garden suggestion of such a lot carries the same soil note, on the lot page and on the
-  map's nearby cards (the lots layer's `bf`).
+  map's nearby cards (the lots layer's `bf`), and, after the v0.4 review, in its printed sheet and
+  beside the suggestion in the CSV and GeoJSON downloads (column `soil_note`).
+- The risk this guards against (moved here from ETHICS.md's table of risks, 2026-10-10): false
+  comfort about soil, a garden planted on a former industrial lot because the map showed no
+  warning. Hence the records are named "at or near this address", every garden suggestion near one
+  says to test the soil, and the wording is never "clean" or "safe": the EPA's records say a federal
+  grant paid for work, not what is in the ground today, and the map says it is not a map of all
+  contaminated ground.
 - **Appeals and hearings**: every appeal as the City publishes it, a hearing still to come first,
   then newest first: the board and the kind of appeal in plain words ("Zoning Board of Adjustment:
   Permit denial, variance"), the filing, hearing and decision days, its decision and status, the

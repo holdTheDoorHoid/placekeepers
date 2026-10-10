@@ -2,7 +2,7 @@
 // history and sources, ending with "not legal advice". It keeps the most important lines only,
 // so it fits one page; the full page is online.
 
-import { displacementCaution } from '../config/suggestions.ts';
+import { displacementCaution, isGarden } from '../config/suggestions.ts';
 import { formatDate, strings } from '../strings.ts';
 import type { DossierView } from './build.ts';
 
@@ -15,7 +15,11 @@ export interface PrintModel {
   summary: { kind: string; confidence: string | null; reasons: string[]; cityCalls: string | null; care: string[]; flood: string | null };
   /** Listed as available by the City's land agencies (issue #36): its lines, in order, or null. */
   listing: { title: string; lines: string[] } | null;
-  actions: { label: string; route: string | null; warning: string | null; steps: string[]; cost: string; caution: string | null }[];
+  /**
+   * Each suggestion printed; `soil` is the owner's soil note beside a garden suggestion for a lot at
+   * or near a federal brownfield record (M4.6), as the lot page shows it.
+   */
+  actions: { label: string; route: string | null; warning: string | null; steps: string[]; cost: string; caution: string | null; soil: string | null }[];
   /**
    * In a displacement watch area with a greening or placemaking suggestion or the box of a listed
    * lot (M4.1): the area's signs and each protection with its address, printed once at the top of
@@ -138,6 +142,7 @@ export function printModel(view: DossierView, now: Date = new Date()): PrintMode
         steps: route ? route.route.steps.slice(0, PRINT_LIMITS.steps) : [],
         cost: item.suggestion.cost,
         caution: displacementCaution(item.suggestion.id),
+        soil: view.actions.brownfield && isGarden(item.suggestion.id) ? strings.dossier.rules.brownfield : null,
       };
     }),
     watch,

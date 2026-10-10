@@ -11,7 +11,7 @@
 // files; the page says so, and exports the places with the highest scores first.
 
 import { permissionFromRoutes, permissionText, type PermissionCode } from '../config/permission.ts';
-import { isGreening, isPlacemaking } from '../config/suggestions.ts';
+import { isGarden, isGreening, isPlacemaking } from '../config/suggestions.ts';
 import { protectionLinks, signsText, watchSigns } from '../displacement/watch.ts';
 import type { Manifest } from '../data/manifest.ts';
 import { completeFlag, sortFlags } from '../dossier/flags.ts';
@@ -53,6 +53,12 @@ export interface ExportRow {
   lens_score: number | null;
   main_reason: string;
   suggestion: string;
+  /**
+   * Beside a garden suggestion for a lot at or near a federal brownfield record (M4.6), the owner's
+   * soil note word for word, as the lot page and the map's cards show it (docs/ETHICS.md,
+   * "Brownfield records"); empty otherwise.
+   */
+  soil_note: string;
   /** The displacement watch area the place lies in, with its signs in words (M4.1); empty outside. */
   displacement_watch: string;
   first_step_to_get_permission: string;
@@ -168,6 +174,9 @@ export function exportRow(input: Pick<ExportInput, 'registry' | 'state' | 'siteU
   else if (described?.noRoute) firstStep = strings.permission.noRoute;
 
   const watch = watchSigns(tile, parcel?.displacement?.signs);
+  // Near a brownfield record by the map's `bf` or the dossier's own rules, as on the lot page.
+  const nearBrownfield = Number(tile?.bf) === 1 || (parcel?.rules?.brownfields.length ?? 0) > 0;
+  const soilNote = suggestion && isGarden(suggestion.id) && nearBrownfield ? strings.dossier.rules.brownfield : '';
 
   const flags = sortFlags(owner?.flags ?? []).map((flag) => {
     const whole = completeFlag(flag, notes?.flags[flag.id] ?? null);
@@ -190,6 +199,7 @@ export function exportRow(input: Pick<ExportInput, 'registry' | 'state' | 'siteU
     lens_score: described?.score ?? null,
     main_reason: described?.why?.main?.label ?? '',
     suggestion: suggestion?.label ?? '',
+    soil_note: soilNote,
     displacement_watch: watch === null ? '' : strings.displacement.exportColumn(signsText(watch)),
     first_step_to_get_permission: permission === null ? '' : permissionText(permission),
     first_lawful_step: firstStep,
@@ -255,6 +265,7 @@ export const CSV_COLUMNS = [
   'lens_score',
   'main_reason',
   'suggestion',
+  'soil_note',
   'displacement_watch',
   'first_step_to_get_permission',
   'first_lawful_step',
