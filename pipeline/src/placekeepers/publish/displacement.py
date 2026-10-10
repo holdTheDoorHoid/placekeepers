@@ -22,6 +22,7 @@ number on the map, it is published only for watch areas.
 from __future__ import annotations
 
 import logging
+import math
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -73,10 +74,11 @@ def watch_properties(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def _margin(value: float | None) -> int | None:
-    """A margin of error as a whole number, never shown as 0 when there is one."""
+    """A margin of error as a whole number, a half rounded up (a margin errs wide), never shown
+    as 0 when there is one."""
     if value is None:
         return None
-    return max(1, int(round(value)))
+    return max(1, math.floor(value + 0.5))
 
 
 def context_properties(row: dict[str, Any] | None) -> dict[str, Any]:

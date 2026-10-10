@@ -54,6 +54,14 @@ https://arcgis.dvrpc.org/portal/rest/services`. Each part holds no `/ ? # &` and
 a space. A `csv` file may use another delimiter (the Census Bureau's tables use `|`); the source's
 adapter reads it.
 
+The Census Bureau's tables of the neighborhood context (added 2026-10-09 by M4.7: `acs_rent_burden`,
+`acs_rent`, `acs_income`, `acs_occupancy`, `acs_vacancy`) are read like `acs_tenure`, but their
+snapshots keep one row more: Philadelphia County (`geoid` "42101", `tract` null), the Census's own
+figure for the whole city, since a median cannot be added up from tracts. Each named line keeps
+its estimate and its margin of error (`<name>` and `<name>_moe`); a negative code ("could not be
+computed") becomes null, and a file missing a line the adapter reads fails the download
+(`pipeline/src/placekeepers/adapters/bulk_files.py`, `AcsTable`).
+
 Added 2026-10-04 by M2.1: a `zip` file needs a source specific adapter that knows what is inside
 (`septa_gtfs` holds two GTFS feeds). SEPTA publishes its stop ridership counts as one ArcGIS layer
 per schedule period, so for `septa_ridership_bus` and `septa_ridership_trolley` the `service` names
@@ -125,6 +133,15 @@ kind of source, no other layer shares its file (both registry checks enforce it)
 listed in the manifest with its `license` (section 3), nothing from it goes into any other
 published file or any download, and the Data status page says "Non commercial use only" beside
 the source.
+
+`credit` (optional, default true; added 2026-10-09 by M4.7) is false for a license under which the
+map shows no credit line: the owner decided on 2026-10-09 to show the Office of Emergency
+Management's warming and cooling sites, whose item states no license, without one
+(`unstated_uncredited`). For a source under such a license the layer's legend and the tapped
+place's details name no publisher, the layer's "About" section lists the source without its
+`attribution` line, and the pipeline leaves the source out of its tile file's attribution
+(`placekeepers.publish.credited`). The registry entry still records the source, its address and
+its license, so the Data status page lists it and the weekly health check runs.
 
 ### `registry/layers.yaml`
 
@@ -374,7 +391,8 @@ data/
     transit.pmtiles       layers "stops", "routes"   (SEPTA, added 2026-10-04 by M2.1; the transit comfort lens on "stops", M2.3; never OpenStreetMap's answers)
     amenities.pmtiles     layers "stops" (shelters and benches at stops, M2.2), "benches",
                           "picnic_tables", "water", "toilets", "bookcases" (M3.5): from OpenStreetMap
-    places.pmtiles        layers "park_water", "libraries", "recreation", "pools" (the City's; M3.5)
+    places.pmtiles        layers "park_water", "libraries", "recreation", "pools" (the City's; M3.5),
+                          "cooling" and "playgrounds" (M4.7)
     conditions.pmtiles    layers "dumping", "lights", "graffiti" (311 requests by block; M3.5)
     environment.pmtiles   layers "heat_tracts", "floodplain"   (heat vulnerability and FEMA's floodplain; M3.1)
     trees.pmtiles         layer "trees"     (the City's street and park trees, zoom 14 only; M3.1)
@@ -509,11 +527,13 @@ watch (section 4, `watch`), or `null` when the watch was not measured:
   "assessment_years": [2022, 2027],
   "survey_years": [2020, 2024],
   "mva": "Market Value Analysis 2026",
-  "city": {"p0": 180000, "p1": 230000, "pc": 28, "cb": 27, "ac": 69, "rp": 48},
+  "city": {"p0": 180000, "p1": 230000, "pc": 28, "cb": 27, "ac": 69, "rp": 48,
+           "rb": 30, "gr": 1397, "hi": 61953, "vp": 9},
   "thresholds": {"price_points": 25, "company_points": 15, "assessment_points": 30,
                  "renter_pct": 60, "min_sales": 50, "min_assessed": 50, "min_occupied": 100,
                  "min_signs": 2, "recent_years": 3, "gap_years": 5},
-  "areas": {"tracts": 408, "watch": 96}
+  "areas": {"tracts": 408, "watch": 96},
+  "context": {"survey_years": [2020, 2024], "min_renters": 100, "min_homes": 100}
 }
 ```
 
@@ -526,6 +546,14 @@ dollars) and its change (`pc`, percent), the share of recent buyers that are com
 middle change in assessed value (`ac`) and the share of homes rented (`rp`), each a whole number or
 `null`. `thresholds` are the rule's numbers (`pipeline/src/placekeepers/derive/displacement.py`):
 a sign about sale prices holds `price_points` percentage points above the city's change, and so on.
+
+Added 2026-10-09 by M4.7: `city` also holds the city's neighborhood context, from the Census's row
+for the whole city: `rb` the share of renter households paying half their income or more on rent
+(percent), `gr` the middle gross rent (dollars a month), `hi` the middle household income (dollars
+a year) and `vp` the share of homes empty (percent), each a whole number or `null`. `context` says
+the survey behind them (`survey_years`) and the floors below which a tract's share is not shown
+(`min_renters` renter households, `min_homes` homes), or is `null` when the context was not
+measured (`pipeline/src/placekeepers/derive/tract_context.py`). Older manifests have neither.
 
 `notes` (added 2026-10-04 by M0.2) is a list of plain sentences about the build, possibly empty:
 data quality remarks, a layer with no usable data yet, or `tiles skipped: tippecanoe not installed`.
@@ -864,6 +892,15 @@ households to mean something (the `min_*` thresholds of the manifest's `displace
 | `ah`, `ac` | int | homes compared and the middle change in their assessed value (percent); only with at least `min_assessed` homes |
 | `oc`, `rp` | int | occupied homes and the share rented (percent, Census Bureau); only with at least `min_occupied` |
 | `mb`, `mr` | int | the tract's block groups in the Market Value Analysis and how many show rising pressure; absent when the analysis does not cover it |
+| `rh`, `rb`, `rbm` | int | the neighborhood context (added 2026-10-09 by M4.7, from the Census Bureau's survey): renter households whose share of income on rent could be computed, the share of them paying half their income or more on rent and utilities (percent), and its margin of error (percentage points); only with at least `min_renters` households |
+| `gr`, `grm` | int | the middle gross rent (dollars a month) and its margin of error; absent when the Census computed none |
+| `hi`, `him` | int | the middle household income (dollars a year) and its margin of error; absent when the Census computed none |
+| `hu`, `vh`, `vhm`, `vp`, `vpm` | int | homes, empty homes and its margin, and the empty share (percent) and its margin (points); only with at least `min_homes` homes |
+| `vr`, `vs`, `vn`, `vz`, `vo` (each with a margin, `vrm` and so on) | int | why the empty homes are empty, as the Census sorts them: for rent; for sale; rented or sold, not yet moved into; seasonal, occasional or migrant workers' use; and "other vacant" (held off the market). Present with `vh` |
+
+Every margin is the Census Bureau's at 90 percent confidence, worked out for shares and sums by its
+own formulas, rounded half up and never 0. The context is published only on watch areas, like
+every number on the map (docs/ETHICS.md), and is never a sign: it changes no bit of `w`.
 
 `web/src/displacement/watch.ts` reads the same bits and rule as the pipeline:
 `pipeline/tests/fixtures/watch_parity.json` holds every combination of signs and whether it is a
@@ -1098,8 +1135,21 @@ Points outside a box around the city are left out and counted in the notes.
 | `libraries` | `library_locations` | `nm` the branch, `ad` street address, `zip` five digit ZIP code, `ph` phone, `url` the branch's page on freelibrary.org (only links to `https://libwww.freelibrary.org/` or `https://www.freelibrary.org/` are kept) |
 | `recreation` | `ppr_program_sites` | `nm`, `k` 1 recreation center, 2 older adult center, 3 environmental education center (the program sites that are pools are left to `pools`), `bd` 1 a building, 0 a site without one, `gym` 1 has a gym, 0 none |
 | `pools` | `ppr_swimming_pools`, `ppr_spraygrounds` | `k` 1 pool, 2 sprayground, 3 sprinkler, `st` 1 in service this year, 0 not (the City's `pool_status` or `spray_status`, ACTIVE or INACTIVE; absent when the City says UNKNOWN), and for pools `in` 1 indoor, 0 outdoor, `ada` 1 listed as accessible, 0 not, `ad` street address, `op` the day it opened this season, only when in service |
+| `cooling` (added 2026-10-09 by M4.7) | `warming_cooling_sites` (and `library_locations`, `ppr_program_sites` for `pl`) | ids `cool<objectid>`; `nm` as listed, `k` 1 library, 2 Parks and Recreation site, 3 community partner, 4 Philadelphia Housing Authority community center (the City's `site_type`), `ad` address as listed, `hr` hours as listed, `c` 1 a cooling site, 0 not, `w` 1 a warming site, 0 not, `st` 1 listed as open, 0 as closed, `cap` room for this many people, `sv` what it offers as listed (a cut short "please call" phone number left out), `ada` 1 listed as accessible, 0 not, `ws` 1 a water station, `rr` 1 a public restroom, and `pl` and `pn`, the id and name of our library or recreation center that is the same place |
+| `playgrounds` (added 2026-10-09 by M4.7) | `ppr_playgrounds` | ids `pg<objectid>`; `nm` the park, `ag` the ages it is meant for (1 two to five, 2 five to twelve, 3 two to twelve; absent when unknown), `yr` the year it was installed (absent when the City has no day, or a day in the future) |
 
-Each property is absent when the City leaves it empty.
+Each property is absent when the City leaves it empty. From M4.7, a feature of `libraries` or
+`recreation` that is the same place as a warming or cooling site carries `cc`, that site's id.
+**One place, one marker**: a site is the same place as one of ours when it is of the same kind
+(`k` 1 with a library, 2 with a recreation center) and stands within 5 meters of it, or within 150
+meters with a word of its name in common (words such as "library", "recreation" or "center" left
+out); a site listed twice (the same place of ours, or within 25 meters with a word in common) is
+published once, the fuller record kept. While the `cooling_centers` layer is on, the map leaves a
+library or recreation center with `cc` to the site's marker, and the site's details show that
+place's own details beneath (`web/src/map/styles/public_place.ts`). The status, hours and services
+of a site are as the City listed them on the day of the build (the manifest's `last_success` of
+`warming_cooling_sites`, with its `newest_record`, the day the City last edited the list), never
+live, and the map shows no credit line for them (section 1, `credit`).
 
 **`dumping`, `lights` and `graffiti` (conditions.pmtiles, points)**, added 2026-10-05 by M3.5, from
 `philly311_conditions` (311 requests about physical conditions only, never people;
@@ -1330,7 +1380,8 @@ A shard, `dossiers/3710.json`:
       "li": {"open_violations": 1, "last_violation": "2025-08-01", "unsafe": false, "imminently_dangerous": false, "violations": 2},
       "routes": ["ask_the_owner", "conservatorship"],
       "suggestions": ["clean_and_green"],
-      "nearby": {"s12": 1, "s36": 2, "landcare_within_500ft": 4, "gardens_within_500ft": 0}
+      "nearby": {"s12": 1, "s36": 2, "landcare_within_500ft": 4, "gardens_within_500ft": 0,
+                 "playground": {"nm": "Joseph F Vogt Playground", "m": 240}}
     }
   }
 }
@@ -1483,7 +1534,9 @@ the full greening card as one opened from the map does.
 
 **`nearby`**: `s12` and `s36` (shooting victims in the parcel's hexagon in the last 12 and 36
 months, as in the `h3` layer), `landcare_within_500ft` and `gardens_within_500ft`. Keys are left
-out when the parcel has no point.
+out when the parcel has no point. Added 2026-10-09 by M4.7: `playground`, the nearest of Parks and
+Recreation's playgrounds (`ppr_playgrounds`), `{"nm": "<the park>", "m": <meters>}`, in a straight
+line from the parcel's point, rounded to 10 meters; absent without the playgrounds' snapshot.
 
 Never in a dossier (docs/ETHICS.md, checked by `tests/test_dossiers.py`): an acquisition price
 estimate, any score or order of how easy a parcel would be to take, letters to owners, and personal

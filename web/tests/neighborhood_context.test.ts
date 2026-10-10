@@ -8,6 +8,7 @@ import type { FilterSpecification, LayerSpecification } from 'maplibre-gl';
 import { describe, expect, it } from 'vitest';
 import { loadRegistry } from '../plugins/registry.ts';
 import { describePlace, listedOn, sitePlace } from '../src/amenities/describe.ts';
+import LayerItem from '../src/components/layers/LayerItem.svelte';
 import FeatureDetails from '../src/components/streets/FeatureDetails.svelte';
 import { parseManifest, type Manifest } from '../src/data/manifest.ts';
 import { describeArea, describeContext, parseWatchSummary } from '../src/displacement/watch.ts';
@@ -15,7 +16,7 @@ import { STYLES, styleFor } from '../src/map/styles/index.ts';
 import { PLACE_COLORS } from '../src/map/styles/palette.ts';
 import type { StyleContext } from '../src/map/styles/types.ts';
 import { defaultLayers, defaultState } from '../src/state/defaults.ts';
-import type { AppStore } from '../src/state/store.svelte.ts';
+import { AppStore } from '../src/state/store.svelte.ts';
 import { distanceWords, strings } from '../src/strings.ts';
 
 const reg = loadRegistry();
@@ -83,6 +84,17 @@ describe('warming and cooling sites', () => {
     expect(text).toContain(strings.places.cooling.oneMarker);
     expect(listedOn(null)).toEqual({ copied: null, changed: null });
     expect(strings.places.cooling.asListed(null, null)).toMatch(/^As the City listed them when this map last copied the list\. Not live/);
+  });
+
+  it('list their source in "About this layer" without a credit line', () => {
+    const store = new AppStore(reg, { state: defaultState(reg, 'analysis'), viewPinned: true, from: 'link' }, { listStorage: null });
+    const sites = render(LayerItem, { props: { store, layer: layer('cooling_centers'), idPrefix: 't' } }).body;
+    const source = reg.sources.find((s) => s.id === 'warming_cooling_sites')!;
+    expect(sites).toContain(source.name);
+    expect(sites).toContain('No license stated by the publisher');
+    expect(sites).not.toContain(source.attribution);
+    const libraries = render(LayerItem, { props: { store, layer: layer('libraries'), idPrefix: 't' } }).body;
+    expect(libraries).toContain(reg.sources.find((s) => s.id === 'library_locations')!.attribution);
   });
 
   it('describe a site in the City\'s words, as listed, with the place of ours it also is', () => {

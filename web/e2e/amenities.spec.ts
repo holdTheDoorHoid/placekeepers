@@ -77,4 +77,31 @@ test.describe('amenities and conditions', () => {
     await expect(details).toContainText('On this block of Sample 3 St.');
     await expect(details.getByRole('link', { name: 'Report it to Philly311' })).toBeVisible();
   });
+
+  test('a warming or cooling site shows as listed, never live and with no credit line, and a library that is one shows once', async ({ page }) => {
+    // The sample site cool1 is the sample library lib1, at the same point (amenity-fixtures.mjs).
+    const library = sample(300, 205);
+    await openMap(page, `v=f&m=17.5/${library.lat}/${library.lng}&l=libraries,cooling_centers`);
+    // One place, one marker: the library's marker is left to the site's while both are on.
+    await expect
+      .poll(() =>
+        page.evaluate(() => {
+          const map = (window as unknown as { pkMap: { getLayer(id: string): unknown; queryRenderedFeatures(o: { layers: string[] }): unknown[] } }).pkMap;
+          if (!map.getLayer('pk:libraries:dot') || !map.getLayer('pk:cooling_centers:dot')) return null;
+          return [map.queryRenderedFeatures({ layers: ['pk:libraries:dot'] }).length, map.queryRenderedFeatures({ layers: ['pk:cooling_centers:dot'] }).length];
+        }),
+      )
+      .toEqual([0, 1]);
+    await tapFeature(page, 'pk:cooling_centers:dot');
+    const details = page.getByRole('dialog').filter({ hasText: 'Listed as open' });
+    await expect(details).toBeVisible();
+    await expect(details).toContainText('Hours as listed: 9a-7p');
+    await expect(details).toContainText('As the City listed them on October 4, 2026');
+    await expect(details).toContainText('Not live');
+    await expect(details).toContainText('Also on the map as a Free Library branch: Sample Library.');
+    // The library it also is, from the libraries layer, in the same panel.
+    await expect(details).toContainText("From the City's list of Free Library of Philadelphia locations.");
+    await expect(details).not.toContainText('Emergency Management');
+    await expectAccessible(page, 'a tapped warming or cooling site');
+  });
 });
