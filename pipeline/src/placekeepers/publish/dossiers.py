@@ -122,6 +122,8 @@ OPTIONAL = (
     "li_history",
     "cagp_vacant_land_2024",
     "cagp_vacant_buildings_2024",
+    # The nearest playground in Nearby (M4.7, issue #43)
+    "ppr_playgrounds",
 )
 #: The parts of a dossier whose records are downloaded only for the candidate parcels
 #: (placekeepers.candidates), with the source each comes from. A dossier lists in `partial` the
@@ -673,6 +675,40 @@ class PointGrid:
         return total
 
 
+class Nearest:
+    """The nearest of a set of named points to a place, in a straight line on the flat grid."""
+
+    #: distances are rounded to this many meters: a straight line says nothing finer
+    STEP_M = 10
+
+    def __init__(self, names: list[str], points: Any):
+        xs, ys = to_xy(shapely.get_x(points), shapely.get_y(points))
+        self.names = names
+        self.points = shapely.points(xs, ys)
+        self.tree = STRtree(self.points)
+
+    def of(self, x: float, y: float) -> dict[str, Any]:
+        here = shapely.Point(x, y)
+        index = int(self.tree.nearest(here))
+        meters = shapely.distance(here, self.points[index])
+        return {"nm": self.names[index], "m": int(round(meters / self.STEP_M) * self.STEP_M)}
+
+
+def read_playgrounds(path: Path) -> Nearest | None:
+    """Parks and Recreation's playgrounds, by park name, for "the nearest playground" (M4.7)."""
+    table = read_columns(path, ["park_name", "geometry"])
+    shapes = wkb_column(table)
+    names = [" ".join(str(n or "").split()) for n in table.column("park_name").to_pylist()]
+    keep = [
+        i
+        for i, shape in enumerate(shapes)
+        if shape is not None and not shapely.is_empty(shape) and names[i]
+    ]
+    if not keep:
+        return None
+    return Nearest([names[i] for i in keep], shapely.centroid(shapes[keep]))
+
+
 def point_grid(points: Any) -> PointGrid | None:
     if points is None or not len(points):
         return None
@@ -919,6 +955,7 @@ def build_dossiers(
     )
     landcare_grid = point_grid(landcare_points)
     garden_grid = point_grid(garden_points)
+    playgrounds = read_playgrounds(paths["ppr_playgrounds"]) if "ppr_playgrounds" in paths else None
 
     # Owners with many vacant parcels: counted over the parcels we call vacant with high or
     # medium confidence.
@@ -1083,7 +1120,7 @@ def build_dossiers(
         if account in gardened:
             dossier["garden"] = True
         dossier["nearby"] = nearby_counts(
-            points.get(account), shootings, landcare_grid, garden_grid
+            points.get(account), shootings, landcare_grid, garden_grid, playgrounds
         )
         if account in lot_lens:
             dossier["lens"] = lot_lens[account]
@@ -1212,13 +1249,14 @@ def nearby_counts(
     shootings: dict[str, list[int]] | None,
     landcare_grid: PointGrid | None,
     garden_grid: PointGrid | None,
-) -> dict[str, int]:
-    """Shooting victims in the parcel's hexagon (12 and 36 months), and LandCare lots and gardens
-    within 500 feet. Empty when the parcel has no point."""
+    playgrounds: Nearest | None = None,
+) -> dict[str, Any]:
+    """Shooting victims in the parcel's hexagon (12 and 36 months), LandCare lots and gardens
+    within 500 feet, and the nearest playground (M4.7). Empty when the parcel has no point."""
     if point is None:
         return {}
     lng, lat = point
-    out: dict[str, int] = {}
+    out: dict[str, Any] = {}
     if shootings is not None:
         s12, s36 = shootings.get(h3.latlng_to_cell(lat, lng, H3_RESOLUTION), [0, 0])
         out["s12"], out["s36"] = s12, s36
@@ -1227,6 +1265,8 @@ def nearby_counts(
         out["landcare_within_500ft"] = landcare_grid.count(x, y)
     if garden_grid is not None:
         out["gardens_within_500ft"] = garden_grid.count(x, y)
+    if playgrounds is not None:
+        out["playground"] = playgrounds.of(x, y)
     return out
 
 

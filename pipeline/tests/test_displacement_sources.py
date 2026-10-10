@@ -153,8 +153,13 @@ def test_rent_burden_keeps_estimates_and_margins_and_drops_missing_codes(context
     )
     store = run(ctx, relaxed(ctx.registry.sources["acs_rent_burden"]))
     rows = pq.read_table(store.path_for(store.current())).to_pylist()
-    assert [r["geoid"] for r in rows] == ["42101000101", "42101000102"]
-    first, second = rows
+    assert [(r["geoid"], r["tract"]) for r in rows] == [
+        ("42101", None),
+        ("42101000101", "000101"),
+        ("42101000102", "000102"),
+    ]
+    city, first, second = rows
+    assert (city["rent_50_plus"], city["not_computed"]) == (90159, 22281)
     assert (first["renter_households"], first["renter_households_moe"]) == (1000, 90)
     assert (first["rent_50_plus"], first["rent_50_plus_moe"]) == (300, 60)
     assert (first["not_computed"], first["rent_40_50"]) == (50, 100)
@@ -165,13 +170,17 @@ def test_rent_burden_keeps_estimates_and_margins_and_drops_missing_codes(context
 
 
 @pytest.mark.parametrize("source_id", sorted(ACS_CONTEXT_ROWS))
-def test_context_tables_keep_only_philadelphia(source_id: str, context_factory) -> None:
+def test_context_tables_keep_philadelphia_and_its_county_row(
+    source_id: str, context_factory
+) -> None:
     body = ACS_CONTEXT_ROWS[source_id]
     ctx = context_factory(handler=lambda request: httpx.Response(200, text=body), now=NOW)
     store = run(ctx, relaxed(ctx.registry.sources[source_id]))
     rows = pq.read_table(store.path_for(store.current())).to_pylist()
-    assert rows and all(r["geoid"].startswith("42101") for r in rows)
-    assert all(len(r["geoid"]) == 11 and r["tract"] == r["geoid"][-6:] for r in rows)
+    assert rows[0]["geoid"] == "42101" and rows[0]["tract"] is None
+    tracts = rows[1:]
+    assert tracts and all(r["geoid"].startswith("42101") for r in tracts)
+    assert all(len(r["geoid"]) == 11 and r["tract"] == r["geoid"][-6:] for r in tracts)
 
 
 def test_context_table_with_a_missing_line_is_refused(context_factory) -> None:

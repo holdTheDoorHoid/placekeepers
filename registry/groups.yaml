@@ -22,13 +22,13 @@
   description: Places to sit, drink water, use a toilet or borrow a book, as mapped in OpenStreetMap, and drinking fountains in parks.
 - id: public_places
   label: Libraries, recreation centers and pools
-  description: Free Library branches and Parks and Recreation's recreation centers, pools and spraygrounds, as the City lists them.
+  description: Free Library branches, Parks and Recreation's recreation centers, pools and spraygrounds, and the City's warming and cooling sites, as the City lists them.
 - id: conditions
   label: Conditions reported to 311
   description: Illegal dumping, lights out and graffiti that people reported to Philly311 in the last 90 days, counted by block.
 - id: placemaking
   label: Art and placemaking
-  description: Murals, sculptures, mosaics and other public art, from the City, OpenStreetMap and Wikidata.
+  description: Murals, sculptures, mosaics and other public art, from the City, OpenStreetMap and Wikidata, and the City's playgrounds.
 - id: walking
   label: Walking, cycling and people
   description: How walkable each area is, how many people and everyday places are within a short walk, and how stressful each street is for people on bikes.

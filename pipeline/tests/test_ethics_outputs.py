@@ -84,6 +84,8 @@ CONTRACT_PROPERTIES = {
     "neighborhoods": {"id", "nm"},
     # Parking problems reported with Laser Vision, counts per cell only (issue #37)
     "parking": {"id", "n", "sw", "bl", "cw", "co", "rp"},
+    # Playgrounds (M4.7, issue #43)
+    "playgrounds": {"id", "nm", "ag", "yr"},
 }
 
 #: Keys that would mean a published file says something about a person it must not.

@@ -390,7 +390,20 @@ def test_publish_marks_lots_dossiers_and_the_manifest(context_factory, tmp_path:
     assert manifest["layers"]["displacement_watch"]["file"] == "tiles/displacement.pmtiles"
 
     block = manifest["displacement"]
-    assert block["city"] == {"p0": 150_000, "p1": 220_000, "pc": 47, "cb": 35, "ac": 30, "rp": 55}
+    assert block["city"] == {
+        "p0": 150_000,
+        "p1": 220_000,
+        "pc": 47,
+        "cb": 35,
+        "ac": 30,
+        "rp": 55,
+        # No neighborhood context was measured here (M4.7, tests/test_neighborhood_context.py).
+        "rb": None,
+        "gr": None,
+        "hi": None,
+        "vp": None,
+    }
+    assert block["context"] is None
     assert block["areas"] == {"tracts": 3, "watch": 2}
     assert block["periods"]["recent_to"] == "2026-09-02"
     assert any(note.startswith("Displacement watch: 2 of 3") for note in manifest["notes"])

@@ -119,7 +119,13 @@ class AcsTable(AcsPoverty):
     comes from: `<name>` holds the estimate (`_E`) and `<name>_moe` its margin of error (`_M`), at
     the Census Bureau's 90 percent confidence. A negative code (the Census's mark for "could not
     be computed", for example a median of too few homes) becomes null, so a missing number is never
-    shown as a number. Only Philadelphia's tracts are kept, as for the poverty table."""
+    shown as a number. Philadelphia's tracts are kept, as for the poverty table, and one row for
+    the whole city (the county, `geoid` "42101" with no `tract`): a city's median cannot be added
+    up from its tracts, so the card compares each tract with the Census's own figure for the
+    city."""
+
+    #: the county row of the summary file: Philadelphia County, the same as the city
+    county = "0500000US42101"
 
     #: the Census table, as it is named in the file's columns (such as "B25070")
     table: ClassVar[str] = ""
@@ -147,13 +153,14 @@ class AcsTable(AcsPoverty):
             con.execute(
                 f"""COPY (
                     SELECT substr(GEO_ID, 10) AS geoid,
-                           right(GEO_ID, 6) AS tract,
+                           CASE WHEN GEO_ID LIKE '{self.tract_prefix}%'
+                                THEN right(GEO_ID, 6) END AS tract,
                            {", ".join(selects)},
                            {end - 4} AS survey_start_year,
                            {end} AS survey_end_year
                     FROM read_csv({quote_literal(str(path))}, delim = '|', header = true,
                                   all_varchar = true)
-                    WHERE GEO_ID LIKE '{self.tract_prefix}%'
+                    WHERE GEO_ID LIKE '{self.tract_prefix}%' OR GEO_ID = '{self.county}'
                     ORDER BY geoid
                 ) TO {quote_literal(str(out))} (FORMAT parquet, COMPRESSION zstd)"""
             )

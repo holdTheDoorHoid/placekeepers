@@ -11,6 +11,12 @@
   the lot's `dw`.
 * `displacement` in manifest.json: the periods, the city's own measures and the thresholds, so
   the map can say what each sign compares.
+
+From M4.7 (issue #43) each watch area also carries its neighborhood context from the Census
+Bureau's survey (placekeepers.derive.tract_context): the share of renters paying half their
+income or more on rent, the middle rent and household income, and how many homes are empty and
+why, each with its margin of error. Context only: it changes no sign and no area, and, like every
+number on the map, it is published only for watch areas.
 """
 
 from __future__ import annotations
@@ -26,6 +32,7 @@ import shapely
 
 from placekeepers.context import Context
 from placekeepers.derive import displacement as dw
+from placekeepers.derive import tract_context as tc
 from placekeepers.derive.lenses import load_tracts, tracts_of
 from placekeepers.geo import GeoJSONWriter, geometry_json
 from placekeepers.publish.layers import WATCH_SOURCES, BuildResult, LayerBuilder
@@ -65,6 +72,50 @@ def watch_properties(row: dict[str, Any]) -> dict[str, Any]:
     return properties
 
 
+def _margin(value: float | None) -> int | None:
+    """A margin of error as a whole number, never shown as 0 when there is one."""
+    if value is None:
+        return None
+    return max(1, int(round(value)))
+
+
+def context_properties(row: dict[str, Any] | None) -> dict[str, Any]:
+    """A watch area's neighborhood context (docs/CONTRACTS.md section 4, `watch`, M4.7): only
+    numbers with enough households or homes behind them, each with its margin of error."""
+    if not row:
+        return {}
+    out: dict[str, Any] = {}
+    counted = row.get("renters_counted") or 0
+    if counted >= tc.MIN_RENTERS and row.get("rent_burden_50_pct") is not None:
+        out["rh"] = int(counted)
+        out["rb"] = _whole(row["rent_burden_50_pct"])
+        out["rbm"] = _margin(row.get("rent_burden_50_pct_moe"))
+    if row.get("median_rent"):
+        out["gr"] = int(row["median_rent"])
+        out["grm"] = _margin(row.get("median_rent_moe"))
+    if row.get("median_income"):
+        out["hi"] = int(row["median_income"])
+        out["him"] = _margin(row.get("median_income_moe"))
+    homes = row.get("homes") or 0
+    if homes >= tc.MIN_HOMES and row.get("vacant") is not None:
+        out["hu"] = int(homes)
+        out["vh"] = int(row["vacant"])
+        out["vhm"] = _margin(row.get("vacant_moe"))
+        out["vp"] = _whole(row.get("vacant_pct"))
+        out["vpm"] = _margin(row.get("vacant_pct_moe"))
+        for key, name in (
+            ("vr", "for_rent"),
+            ("vs", "for_sale"),
+            ("vn", "not_yet_moved_in"),
+            ("vz", "seasonal"),
+            ("vo", "other_vacant"),
+        ):
+            if row.get(name) is not None:
+                out[key] = int(row[name])
+                out[f"{key}m"] = _margin(row.get(f"{name}_moe"))
+    return {k: v for k, v in out.items() if v is not None}
+
+
 def build_watch(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) -> BuildResult:
     derived = dw.output_path(ctx)
     if not derived.is_file():
@@ -76,13 +127,18 @@ def build_watch(ctx: Context, paths: dict[str, Path], out: Path, as_of: date) ->
     shapes = dict(
         zip(table.column("geoid").to_pylist(), table.column("geometry").to_pylist(), strict=True)
     )
+    context = tc.load_context(tc.output_path(ctx))
+    notes = []
+    if not context:
+        notes.append("The watch areas have no neighborhood context yet (pk derive)")
     with GeoJSONWriter(out) as writer:
         for row in sorted(rows, key=lambda r: r["tract"]):
             shape = shapes.get(row["tract"])
             if shape is None:
                 continue
-            writer.write(watch_properties(row), geometry_json(shape, 6))
-    return BuildResult(writer.count, [])
+            properties = watch_properties(row) | context_properties(context.get(row["tract"]))
+            writer.write(properties, geometry_json(shape, 6))
+    return BuildResult(writer.count, notes)
 
 
 def parcel_watch(derived: Path) -> dict[str, tuple[str, int]]:
@@ -123,6 +179,8 @@ def manifest_block(ctx: Context) -> dict[str, Any] | None:
         return None
     city = summary.get("city") or {}
     counts = summary.get("counts") or {}
+    context = tc.load_summary(tc.output_path(ctx)) if tc.output_path(ctx).is_file() else None
+    around = (context or {}).get("city") or {}
     return {
         "as_of": summary.get("as_of"),
         "periods": summary.get("periods"),
@@ -136,12 +194,31 @@ def manifest_block(ctx: Context) -> dict[str, Any] | None:
             "cb": _whole(city.get("company_pct")),
             "ac": _whole(city.get("assessment_change_pct")),
             "rp": _whole(city.get("renter_pct")),
+            # The city's neighborhood context (M4.7), from the Census's own row for the city.
+            "rb": _whole(around.get("rent_burden_50_pct")),
+            "gr": around.get("median_rent"),
+            "hi": around.get("median_income"),
+            "vp": _whole(around.get("vacant_pct")),
         },
         "thresholds": summary.get("thresholds"),
         "areas": {"tracts": counts.get("tracts"), "watch": counts.get("watch")},
+        "context": None
+        if context is None
+        else {
+            "survey_years": context.get("survey_years"),
+            "min_renters": tc.MIN_RENTERS,
+            "min_homes": tc.MIN_HOMES,
+        },
     }
 
 
 DISPLACEMENT_BUILDERS: tuple[LayerBuilder, ...] = (
-    LayerBuilder(WATCH_FILE, "watch", ("census_tracts_2020",), build_watch, extras=WATCH_SOURCES),
+    LayerBuilder(
+        WATCH_FILE,
+        "watch",
+        ("census_tracts_2020",),
+        build_watch,
+        # The watch's sources, and the Census tables of its neighborhood context (M4.7).
+        extras=(*WATCH_SOURCES, *tc.SOURCES),
+    ),
 )

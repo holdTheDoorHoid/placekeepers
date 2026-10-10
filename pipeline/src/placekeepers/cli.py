@@ -6,7 +6,7 @@
     pk derive [--as-of DATE]     run the vacancy model, then the lens factors, on the snapshots
                                  (the violence lens, then the heat and shade lens, then the
                                  walking measures, then the placemaking lens), and the
-                                 displacement watch
+                                 displacement watch and the neighborhood context of each tract
     pk publish [--out DIR]       write manifest.json and the map layers
     pk health [ids...]           show each source's status
     pk all                       fetch, validate, derive, publish, then show health
@@ -33,6 +33,7 @@ from placekeepers.runner import (
     StepResult,
     UsageError,
     all_statuses,
+    derive_context,
     derive_displacement,
     derive_heat,
     derive_lenses,
@@ -140,6 +141,8 @@ def cmd_derive(args: argparse.Namespace) -> int:
         steps.append(derive_placemaking(ctx, _as_of(args)))
     # The displacement watch measures census tracts and needs no vacancy model (M4.1).
     steps.append(derive_displacement(ctx, _as_of(args)))
+    # The neighborhood context of each tract, for the watch areas' cards (M4.7).
+    steps.append(derive_context(ctx, _as_of(args)))
     _print_steps(steps)
     return 0 if all(step.outcome == "ok" for step in steps) else 1
 
@@ -214,6 +217,7 @@ def cmd_all(args: argparse.Namespace) -> int:
             steps.append(derive_walk(ctx, _as_of(args)))
             steps.append(derive_placemaking(ctx, _as_of(args)))
         steps.append(derive_displacement(ctx, _as_of(args)))
+        steps.append(derive_context(ctx, _as_of(args)))
         print("Steps:")
         _print_steps(steps)
         _publish(ctx, args)
