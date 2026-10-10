@@ -178,6 +178,12 @@ def displacement_block(ctx: Context) -> dict[str, Any] | None:
     return manifest_block(ctx)
 
 
+def credited(registry: Any, source_id: str) -> bool:
+    """Whether the map credits a source: false only under a license with `credit: false`."""
+    license_ = registry.licenses.get(registry.sources[source_id].license)
+    return license_ is None or license_.credit
+
+
 def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> PublishResult:
     started = time.monotonic()
     registry = ctx.registry
@@ -239,11 +245,13 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
                 f"{built.features:,}",
             )
             layers_by_file.setdefault(layer.file, []).append((layer.source_layer, target))
-            # Sources read only to link by id store nothing here, so they are not credited here.
+            # Sources read only to link by id store nothing here, so they are not credited here,
+            # and nor are sources under a license the map shows no credit for (M4.7: the warming
+            # and cooling sites, as the owner decided).
             attributions.setdefault(layer.file, []).extend(
                 registry.sources[source_id].attribution
                 for source_id in paths
-                if source_id not in builder.links
+                if source_id not in builder.links and credited(registry, source_id)
             )
 
         notes.extend(vacancy_notes(ctx))

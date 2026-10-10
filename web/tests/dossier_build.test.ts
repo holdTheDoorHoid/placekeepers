@@ -173,6 +173,20 @@ describe('the weekly snapshot alone (live City data off)', () => {
   });
 });
 
+describe('the nearest playground (M4.7)', () => {
+  it('shows in Nearby with its straight line distance, a button for the layer and its source', () => {
+    const view = buildDossier(input('990000002', { liveOn: false }));
+    expect(view.nearby.groups.at(-1)).toEqual({
+      heading: 'Nearest playground',
+      rows: ['Sample Playground, about 260 meters away in a straight line, within a 5 minute walk.'],
+    });
+    expect(view.nearby.layers.map((l) => l.id)).toContain('playgrounds');
+    expect(view.sources.rows.map((r) => r.id)).toContain('ppr_playgrounds');
+    const other = buildDossier(input('990000005', { liveOn: false }));
+    expect(other.nearby.layers.map((l) => l.id)).not.toContain('playgrounds');
+  });
+});
+
 describe('live City data', () => {
   it('says it is checking while the City answers, and keeps showing the snapshot meanwhile', () => {
     const view = buildDossier(input('990000005', { live: { ...IDLE_PARTS, property: loading, transfers: loading, assessments: loading, li: loading } }));

@@ -23,6 +23,13 @@
   label: No license stated by the publisher (shared publicly; credited, and removed if the publisher asks)
   url: https://github.com/holdTheDoorHoid/placekeepers/blob/main/docs/DATA_SOURCES.md
   share_alike: false
+# Warming and cooling sites (owner, 2026-10-09): no license stated, and shown with no credit line
+# on the map (`credit: false`), as the owner decided.
+- id: unstated_uncredited
+  label: No license stated by the publisher (shared publicly; shown without a credit line, as the owner decided, and removed if the publisher asks)
+  url: https://github.com/holdTheDoorHoid/placekeepers/blob/main/docs/DATA_SOURCES.md
+  share_alike: false
+  credit: false
 - id: pba_permission
   label: Used with permission from Philly Bike Action (confirmed by the owner 2026-10-08), for a heat map of counts only
   url: https://github.com/holdTheDoorHoid/placekeepers/blob/main/docs/DATA_SOURCES.md#sources-checked-2026-10-08

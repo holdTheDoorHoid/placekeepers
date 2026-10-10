@@ -57,6 +57,18 @@ function plural(n: number, one: string, many: string): string {
   return `${formatNumber(n)} ${n === 1 ? one : many}`;
 }
 
+/** " (give or take 6 points)", or nothing when there is no margin: a survey's margin of error. */
+function giveOrTake(margin: number | null, unit: 'points' | 'homes'): string {
+  if (margin === null) return '';
+  return ` (give or take ${unit === 'points' ? plural(margin, 'point', 'points') : formatNumber(margin)})`;
+}
+
+/** A straight line distance in words: "220 meters", "1.2 kilometers". */
+export function distanceWords(meters: number): string {
+  if (meters < 1000) return `${formatNumber(Math.round(meters / 10) * 10)} meters`;
+  return `${(Math.round(meters / 100) / 10).toFixed(1)} kilometers`;
+}
+
 /** A change in percent in words: "up 61%", "down 3%", "unchanged". */
 function changeWords(n: number): string {
   if (n > 0) return `up ${formatNumber(n)}%`;
@@ -579,7 +591,41 @@ export const strings = {
     rule: 'An area is in the watch when at least two of these signs hold, and at least one of them is about prices: sale prices, assessed values or the Market Value Analysis.',
     meaning: 'Greening and other improvements here can raise prices further. Pair them with protections for the neighbors who live here now.',
     cannotTell:
-      'These are signs in public records, not a forecast. They cannot tell who has moved away or why, what rents are, or who lives here, and an area outside the watch can still feel rising prices.',
+      "These are signs in public records, not a forecast. They cannot tell who has moved away or why, or who lives here; the Census survey's numbers average five years, so they cannot tell what rents are today. An area outside the watch can still feel rising prices.",
+    // Neighborhood context on a tapped watch area (M4.7): from the Census Bureau's survey, each
+    // number with its margin of error. Context only, never a sign, and never a reason to buy.
+    contextTitle: 'Rents, incomes and empty homes here',
+    contextIntro: (years: readonly [number, number] | null) =>
+      `From the Census Bureau's survey${years ? `, ${years[0]} to ${years[1]}` : ''}. Context for neighbors, not a sign: these numbers change no area.`,
+    contextNoisy:
+      "These are estimates from a survey of some homes over five years, so in a small area they are rough: the true number is likely within the margin shown (the Census Bureau's margin of error, at 90 percent confidence).",
+    contextTitles: {
+      burden: 'Renters paying half their income or more on rent',
+      rent: 'Middle rent',
+      income: 'Middle household income',
+      vacant: 'Empty homes',
+    } as Record<string, string>,
+    burdenText: (share: number, margin: number | null, households: number, city: number | null) =>
+      `${share}% of the ${formatNumber(households)} renter households here${giveOrTake(margin, 'points')}${city === null ? '' : `, against ${city}% across the city`}. Rising rents fall hardest on them.`,
+    burdenTooFew: 'Too few renter households in the Census survey to tell.',
+    rentText: (rent: string, margin: string | null, city: string | null) =>
+      `${rent} a month, with the utilities the renter pays${margin ? ` (give or take ${margin})` : ''}${city ? `, against ${city} across the city` : ''}.`,
+    rentNone: 'The Census survey has too few answers here for a middle rent.',
+    incomeText: (income: string, margin: string | null, city: string | null) =>
+      `${income} a year${margin ? ` (give or take ${margin})` : ''}${city ? `, against ${city} across the city` : ''}.`,
+    incomeNone: 'The Census survey has too few answers here for a middle income.',
+    vacantText: (vacant: number, homes: number, share: number, margin: number | null, city: number | null) =>
+      `${formatNumber(vacant)} of the ${formatNumber(homes)} homes here, ${share}%${giveOrTake(margin, 'points')}${city === null ? '' : `, against ${city}% across the city`}.`,
+    vacantTooFew: 'Too few homes in the Census survey to tell.',
+    whyEmpty: 'Why they are empty',
+    whyRows: {
+      vr: 'For rent',
+      vs: 'For sale',
+      vn: 'Rented or sold, not yet moved into',
+      vz: 'For seasonal or occasional use',
+      vo: "Held off the market for other reasons, such as repairs, a family's legal trouble or abandonment",
+    } as Record<string, string>,
+    whyRow: (label: string, n: number, margin: number | null) => `${label}: ${formatNumber(n)}${giveOrTake(margin, 'homes')}`,
     legendArea: 'An area with signs that prices are rising',
     legendTap: 'Tap inside an area, or its edge close in, to see its signs.',
     legendNote: 'Signs in public records, not a forecast. Greening, garden, seating and art cards in these areas add ways to protect neighbors.',
@@ -1299,6 +1345,7 @@ export const strings = {
       park_water: 'A drinking fountain in a park',
       libraries: 'A Free Library branch',
       recreation_centers: 'A recreation center',
+      playgrounds: 'A playground',
     } as Record<string, string>,
     poolLegend: { 1: 'A pool', 2: 'A sprayground', 3: 'A sprinkler' } as Record<number, string>,
     notInService: 'Not in service this year',
@@ -1326,6 +1373,50 @@ export const strings = {
       libraries: "From the City's list of Free Library of Philadelphia locations.",
       parks: 'From Philadelphia Parks and Recreation, as the City publishes it.',
     } as Record<string, string>,
+    // Warming and cooling sites (M4.7). No credit line: the City states no license for the list
+    // and the owner decided to show it without one (2026-10-09). Never live: the status and hours
+    // are as listed on the day the map copied them.
+    cooling: {
+      legendOpen: 'A warming or cooling site listed as open',
+      legendClosed: 'Listed as closed, or with no status',
+      kindShown: {
+        any: 'Sites for hot and for cold weather.',
+        cooling: 'Only cooling sites, for hot weather.',
+        warming: 'Only warming sites, for cold weather.',
+      } as Record<string, string>,
+      asListed: (copied: string | null, changed: string | null) =>
+        `${copied ? `As the City listed them on ${copied}` : 'As the City listed them when this map last copied the list'}${changed ? ` (the list was last changed on ${changed})` : ''}. Not live: sites open and close with the weather, so call the site or 311 before you go.`,
+      oneMarker: 'A library or recreation center that is also a site shows once, as a site.',
+      kinds: {
+        1: 'Free Library branch',
+        2: 'Parks and Recreation site',
+        3: 'Community partner',
+        4: 'Philadelphia Housing Authority community center',
+      } as Record<number, string>,
+      title: 'Warming or cooling site',
+      status: { 1: 'Listed as open', 0: 'Listed as closed' } as Record<number, string>,
+      statusUnknown: 'No status listed',
+      both: 'Listed as a warming and a cooling site',
+      cooling: 'Listed as a cooling site',
+      warming: 'Listed as a warming site',
+      neither: 'Not listed as a warming or a cooling site',
+      hours: (hours: string) => `Hours as listed: ${hours}`,
+      services: (services: string) => `What it offers, as listed: ${services}`,
+      capacity: (n: number) => `Room for ${formatNumber(n)} people, as listed`,
+      water: 'Has a water station',
+      restroom: 'Has a public restroom',
+      also: {
+        lib: (name: string) => `Also on the map as a Free Library branch: ${name}.`,
+        rec: (name: string) => `Also on the map as a Parks and Recreation site: ${name}.`,
+      } as Record<string, (name: string) => string>,
+      alsoSite: 'The City also lists it as a warming or cooling site.',
+    },
+    // Playgrounds (M4.7).
+    playgrounds: {
+      kind: 'Playground',
+      ages: { 1: 'For ages 2 to 5', 2: 'For ages 5 to 12', 3: 'For ages 2 to 12' } as Record<number, string>,
+      installed: (year: number) => `Installed in ${year}`,
+    },
   },
 
   // Conditions reported to 311, counted by block (M3.5, src/map/styles/condition.ts,
@@ -2326,6 +2417,10 @@ export const strings = {
       gardens: (n: number) => `${plural(n, 'community garden', 'community gardens')}`,
       /** Hearings still to come about other properties within 500 feet (M4.6). */
       hearings: (n: number) => `${plural(n, 'hearing', 'hearings')} still to come about other properties`,
+      // The nearest playground (M4.7), in a straight line from the lot's point.
+      playgroundHeading: 'Nearest playground',
+      playground: (name: string, meters: number) =>
+        `${name}, about ${distanceWords(meters)} away in a straight line${meters <= 400 ? ', within a 5 minute walk' : meters <= 800 ? ', within a 10 minute walk' : ''}.`,
       none: 'No nearby counts for this place yet.',
       showLayer: (label: string) => `Show ${label} on the map`,
     },

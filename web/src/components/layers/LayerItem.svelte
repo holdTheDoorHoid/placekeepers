@@ -95,7 +95,9 @@
           {#if license}
             {strings.layers.license}: <a href={license.url} target="_blank" rel="noopener noreferrer">{license.label}</a>.
           {/if}
-          <span class="credit">{source.attribution}</span>
+          <!-- No credit line for a source whose license says so (the warming and cooling sites,
+               owner 2026-10-09). -->
+          {#if license?.credit !== false}<span class="credit">{source.attribution}</span>{/if}
         </li>
       {/each}
     </ul>

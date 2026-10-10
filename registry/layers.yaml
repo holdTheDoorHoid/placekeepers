@@ -826,6 +826,42 @@
         - {value: all, label: "All of them, also those not in service"}
       default: in_service
   release: v0.3
+# Warming and cooling sites (M4.7): beside the pools, spraygrounds and water. The City states no
+# license for the list, and the owner decided to show it with no credit line (2026-10-09). A site
+# that is one of the libraries or recreation centers above is one marker, never two.
+- id: cooling_centers
+  label: Cooling and warming centers
+  group: public_places
+  description: >-
+    Places the City's Office of Emergency Management lists as warming or cooling sites: libraries,
+    recreation centers, community partners and Philadelphia Housing Authority community centers,
+    with whether each was listed as open, its hours and what it offers, as listed on the day this
+    map last copied the list. Not live: sites open and close with the weather, so call the site or
+    Philly311 before you go. A library or recreation center that is also a site shows once.
+  sources: [warming_cooling_sites]
+  file: tiles/places.pmtiles
+  source_layer: cooling
+  geometry: point
+  style: public_place
+  evidence: not_violence
+  default: {field: false, analysis: false}
+  settings:
+    - id: kind
+      label: Sites for
+      type: choice
+      options:
+        - {value: any, label: Heat or cold}
+        - {value: cooling, label: Cooling in hot weather}
+        - {value: warming, label: Warming in cold weather}
+      default: any
+    - id: show
+      label: Show
+      type: choice
+      options:
+        - {value: all, label: "All of them, open or closed as listed"}
+        - {value: open, label: Only those listed as open}
+      default: all
+  release: v0.4
 # Conditions reported to 311 (M3.5): physical conditions only, never people (docs/ETHICS.md).
 # Counted by block, so the map never points at the door a request came from.
 - id: dumping
@@ -940,6 +976,24 @@
       type: toggle
       default: true
   release: v0.3
+# Playgrounds (M4.7): Parks and Recreation's playgrounds, beside the art. The lot page's Nearby
+# names the nearest one.
+- id: playgrounds
+  label: Playgrounds
+  group: placemaking
+  description: >-
+    Playgrounds Philadelphia Parks and Recreation lists, with the ages each is meant for and the
+    year it was installed when the City says. A park often has two, one for younger and one for
+    older children. A lot's page names the nearest playground and how far it is in a straight
+    line.
+  sources: [ppr_playgrounds]
+  file: tiles/places.pmtiles
+  source_layer: playgrounds
+  geometry: point
+  style: public_place
+  evidence: not_violence
+  default: {field: false, analysis: false}
+  release: v0.4
 # Walking, cycling and people (M3.3). Off by default in both views: their fills would compete with
 # the lots' lens colors, and the placemaking lens (M3.4) will use their measures on the lots.
 - id: walkability
@@ -1062,8 +1116,10 @@
     a place to sit, start a garden or ask for art, or a lot the City lists as available, sits in
     one of these areas, its card adds ways to protect neighbors. This shows signs in public
     records, not a forecast, and it says nothing about who lives here. Tap an area to see its
-    signs.
-  sources: [real_estate_sales, assessment_values, acs_tenure, market_value_analysis, opa_properties, census_tracts_2020]
+    signs, and, as context, how many renters there pay half their income or more on rent, the
+    middle rent and household income, and how many homes stand empty, from the Census Bureau's
+    survey, each with its margin of error.
+  sources: [real_estate_sales, assessment_values, acs_tenure, market_value_analysis, opa_properties, census_tracts_2020, acs_rent_burden, acs_rent, acs_income, acs_occupancy, acs_vacancy]
   file: tiles/displacement.pmtiles
   source_layer: watch
   geometry: polygon

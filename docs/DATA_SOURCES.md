@@ -93,6 +93,7 @@ Both allow browser requests without a key.
 | Census tracts 2020 (City ArcGIS `Census_Tracts_2020`, 408, adjusted to the City's standard boundary) | Each parcel's tract, for the poverty rate | City terms (from the Census Bureau, public domain) | Used (M1.4): source `census_tracts_2020` |
 | ACS 5 year 2020 to 2024, table B17001 from the Census Bureau's table based summary file (`www2.census.gov`, 119 MB, no key) | Poverty rate (violence lens) | CC0 | Live. The Census API now refuses requests without a key (checked 2026-10-04); a free key is an owner action if the API is wanted |
 | ACS 5 year 2020 to 2024, table B25003 (tenure) from the same summary file (27 MB, no key) | Renter share (displacement watch) | CC0 | Used (M4.1): source `acs_tenure`, 408 tracts |
+| ACS 5 year 2020 to 2024, tables B25070, B25064, B19013, B25002 and B25004 from the same summary file (17 to 47 MB each, no key) | Rent burden, middle rent and income, and empty homes on a watch area's card (context, never a sign) | CC0 | Used (M4.7): sources `acs_rent_burden`, `acs_rent`, `acs_income`, `acs_occupancy`, `acs_vacancy`, 408 tracts and the city (see "Neighborhood context") |
 | Tree canopy change 2008 to 2018 (City ArcGIS `TreeCanopyChange_2008_2018`, 665,748 polygons marked gain, loss or no change; University of Vermont Spatial Analysis Laboratory for Parks and Recreation) | Canopy deficit (violence lens) | City terms | Used (M1.4): source `tree_canopy_2018`, kept as canopy per H3 cell. The newest canopy the City publishes. The City's `hex_tree_canopy` (2,833 hexagons, PhillyStat 360) has no description, and its hexagon areas are in square feet while its canopy totals are in an unstated unit, so it is not used |
 | Tree Equity Score (American Forests) | Canopy gap per block group | Not stated | Stale since 2021 |
 | Market Value Analysis (Reinvestment Fund for the City): 2023 (City ArcGIS `mva_2023`, on OpenDataPhilly as "Market Value Assessment (MVA)") and 2026 (City ArcGIS `mva_2026`, on the City's open data hub since 2026-07-16, not yet listed on OpenDataPhilly) | Displacement watch | City terms (both items carry the City's standard license text; OpenDataPhilly lists the 2023 one under the "City of Philadelphia License") | Used (M4.1): source `market_value_analysis`, the 2026 edition (1,338 block groups); the adapter reads the 2023 one too |
@@ -546,6 +547,63 @@ Not used, and why:
   before reuse, and the roadmap keeps its layers, such as the 1942 land use map, waiting for the
   Athenaeum of Philadelphia's permission. A request is drafted for the owner.
 - **PhilaGeoHistory itself** (`philageohistory.org`): permission required, never fetched.
+
+### Neighborhood context (M4.7, issue #43, sources checked 2026-10-09)
+
+Added to Phase 4 by the owner on 2026-10-09 after the Build Philly Now review. Build Philly Now's
+map, tiles and API are never read: these are the City's and the Census Bureau's own sources.
+
+**Census tables** for the context on the card of a displacement watch area (DESIGN.md section
+5.3), from the same table based summary file as `acs_tenure` (2020 to 2024 five year estimates,
+one pipe delimited file per table for the whole country, no key, public domain). Each run streams
+the file, keeps Philadelphia's 408 tracts and its county row (the Census's figure for the whole
+city), and deletes the download; each snapshot is 4 to 13 kB.
+
+| Source id | Table and file | What we keep | Measured on 2026-10-09 | Health |
+|---|---|---|---|---|
+| `acs_rent_burden` | B25070, gross rent as a percentage of household income, `acsdt5y2024-b25070.dat` (47 MB) | Renter households; those whose share could not be computed; those paying 30 to 35, 35 to 40, 40 to 50 and 50 percent or more; each with its margin of error | 409 rows in about 5 seconds; the city: 90,159 of 305,242 renter households (29.5%) pay half their income or more | At least 380 rows, no more than 5 percent fewer |
+| `acs_rent` | B25064, median gross rent, `acsdt5y2024-b25064.dat` | The median and its margin | The city: $1,397 a month (give or take $14); 25 tracts without one (too few renters to compute it, or no homes, such as parks and the airport) | The same |
+| `acs_income` | B19013, median household income, `acsdt5y2024-b19013.dat` | The median and its margin | The city: $61,953 (give or take $919); 33 tracts without one | The same |
+| `acs_occupancy` | B25002, occupancy status, `acsdt5y2024-b25002.dat` | Homes, homes lived in and homes empty, with margins | The city: 68,842 of 748,270 homes empty (9.2%) | The same |
+| `acs_vacancy` | B25004, vacancy status, `acsdt5y2024-b25004.dat` | Empty homes by reason: for rent, rented and not yet moved into, for sale, sold and not yet moved into, seasonal, for migrant workers, and other, with margins | The city: 18,918 for rent, 3,774 for sale, 10,817 rented or sold and not yet moved into, 2,667 seasonal or for migrant workers, 32,666 other | The same |
+
+The Census codes a number it could not compute as a large negative value; the snapshots keep it
+as missing, never as a number. Margins of error are the Census Bureau's, at 90 percent
+confidence; shares and sums follow its formulas (`pipeline/src/placekeepers/derive/tract_context.py`).
+
+**Warming and cooling sites** (`warming_cooling_sites`), City ArcGIS
+`Warming_Cooling_Sites_PUBLICVIEW`, layer 0 (item `c09633f01d3b439c9488f7551a16175c`, owner
+`maps.phl.data`, the Office of Emergency Management's list). 87 points on 2026-10-09, last edited
+2026-10-07: 32 Parks and Recreation sites, 28 libraries, 16 community partners and 11
+Philadelphia Housing Authority community centers; 61 listed as open and 25 as closed; 49 marked
+as warming sites and 41 as cooling sites. We keep the name, type, address, hours, whether it is a
+warming or a cooling site, its status, capacity, services, access for people with disabilities,
+water station and facilities, and the day the City last edited the list (`source_date`). The item
+is a public "view" copy the City made on 2026-07-01, so its address could change; the item states
+no license and no description.
+
+- **Owner decision (2026-10-09): "show without credit".** The map shows the sites with no credit
+  line, and nothing is asked of the Office of Emergency Management. The registry still records
+  the source, its address and "no license stated" (license `unstated_uncredited`, which carries
+  `credit: false`), so the Data status page lists it and the weekly health check runs. The legend,
+  a tapped site and the layer's "About" section name no publisher as a credit, and the places
+  tile file's attribution leaves it out.
+- Never live: the map says the status and hours are as the City listed them on the day it copied
+  the list, and to call the site or 311 before going.
+- Health: at least 40 rows, no more than 40 percent fewer than the last good copy (sites come and
+  go with the seasons), and the list edited within the last 400 days. A failed download (for
+  example a new address) keeps the last good copy, marked stale, and the weekly refresh opens the
+  usual issue after two runs in a row.
+- 55 of the sites are places the map already shows (27 libraries, 28 Parks and Recreation sites),
+  drawn once; one library is listed twice and kept once (DESIGN.md section 5.1).
+
+**Playgrounds** (`ppr_playgrounds`), City ArcGIS `PPR_Playgrounds`, layer 0 (item
+`899c807e205244278b3f39421be8489c`, Parks and Recreation, the City's standard terms). 462 points,
+last edited 2026-08-21: the park's name, the ages it is meant for (207 for 2 to 5, 209 for 5 to
+12, 17 for 2 to 12, 29 unknown) and the day it was installed (234 have one). The comments and the
+data source note are not downloaded. Health: at least 400 rows, no more than 10 percent fewer.
+`PPR_Playground_Equipment` (2016) is not used: older, and the playgrounds layer is the current
+list.
 
 ### The Land Bank in numbers (M4.4, sources checked 2026-10-09)
 

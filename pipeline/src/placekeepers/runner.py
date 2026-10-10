@@ -423,3 +423,22 @@ def derive_displacement(ctx: Context, as_of: date | None = None) -> StepResult:
         f"; without {missing}" if missing else ""
     )
     return StepResult("displacement", "derive", "ok", detail, time.monotonic() - started)
+
+
+def derive_context(ctx: Context, as_of: date | None = None) -> StepResult:
+    """Measure the neighborhood context of every census tract (M4.7): rent burden, the middle
+    rent and income, and empty homes, for the card of a displacement watch area. A failure is
+    reported, never raised: the cards then show the signs alone, as before."""
+    from placekeepers.derive import tract_context
+
+    started = time.monotonic()
+    try:
+        result = tract_context.run(ctx, as_of)
+    except Exception as exc:  # the map must still publish
+        message = f"The neighborhood context could not be measured: {plain_error(exc)}"
+        log.error("derive: %s", message)
+        log.debug("derive: details", exc_info=True)
+        return StepResult("context", "derive", "failed", message, time.monotonic() - started)
+    missing = ", ".join(result.missing_sources)
+    detail = f"{result.counts['tracts']} tracts" + (f"; without {missing}" if missing else "")
+    return StepResult("context", "derive", "ok", detail, time.monotonic() - started)

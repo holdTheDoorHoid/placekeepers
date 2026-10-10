@@ -761,7 +761,7 @@ const manifest = {
     commercial_corridors: ok(279, null),
     ...Object.fromEntries(Object.entries(WALK_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
     ...Object.fromEntries(Object.entries(PARKING_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
-    // The displacement watch (M4.1)
+    // The displacement watch (M4.1), and from M4.7 the Census tables of its neighborhood context
     ...Object.fromEntries(Object.entries(WATCH_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
     // The rules and records of each lot (M4.6)
     ...Object.fromEntries(Object.entries(RULES_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),

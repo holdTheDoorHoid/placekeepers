@@ -335,8 +335,17 @@ function nearby(v: unknown): Nearby | null {
     landcare: count(v.landcare_within_500ft),
     gardens: count(v.gardens_within_500ft),
     hearings: count(v.hearings_within_500ft),
+    playground: playground(v.playground),
   };
   return Object.values(out).some((n) => n !== null) ? out : null;
+}
+
+/** The nearest playground (M4.7): a name and a distance in meters, or null. */
+function playground(v: unknown): { name: string; meters: number } | null {
+  if (!isObj(v)) return null;
+  const name = text(v.nm);
+  const meters = count(v.m);
+  return name && meters !== null ? { name, meters } : null;
 }
 
 function landcare(v: unknown): LandCare | null {

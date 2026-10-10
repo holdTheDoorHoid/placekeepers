@@ -38,6 +38,28 @@
         </ul>
       </details>
     {/if}
+    {#if area.context.length}
+      <!-- Neighborhood context from the Census Bureau's survey (M4.7): never a sign, each number
+           with its margin of error. -->
+      <h4>{d.contextTitle}</h4>
+      <p class="small muted">{d.contextIntro(summary?.context?.survey_years ?? summary?.survey_years ?? null)}</p>
+      <ul class="signs context">
+        {#each area.context as row (row.id)}
+          <li data-context={row.id}>
+            <strong>{row.title}.</strong> {row.text}
+            {#if row.parts.length}
+              <details>
+                <summary>{d.whyEmpty}</summary>
+                <ul class="parts">
+                  {#each row.parts as part (part)}<li>{part}</li>{/each}
+                </ul>
+              </details>
+            {/if}
+          </li>
+        {/each}
+      </ul>
+      <p class="small muted">{d.contextNoisy}</p>
+    {/if}
   </section>
 {/each}
 <p class="small">{d.rule}</p>
@@ -74,5 +96,9 @@
   }
   .other {
     margin-top: 4px;
+  }
+  .parts {
+    margin: 2px 0 0;
+    padding-left: 18px;
   }
 </style>

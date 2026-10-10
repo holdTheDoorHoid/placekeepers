@@ -22,7 +22,14 @@ from placekeepers.runner import fetch_source, validate_source
 from placekeepers.snapshots import SnapshotStore
 
 from .conftest import FakeArcgis, FakeCarto
-from .test_sources import TENURE_ROWS, carto_rows, relaxed, run
+from .test_sources import (
+    ACS_CONTEXT_ROWS,
+    RENT_BURDEN_ROWS,
+    TENURE_ROWS,
+    carto_rows,
+    relaxed,
+    run,
+)
 
 NOW = datetime(2026, 10, 5, 15, 0, tzinfo=UTC)
 
@@ -138,6 +145,54 @@ def test_tenure_keeps_philadelphia_tracts_and_the_renter_share(context_factory) 
     ]
     assert rows[2]["owner_occupied"] is None
     assert (rows[0]["survey_start_year"], rows[0]["survey_end_year"]) == (2020, 2024)
+
+
+def test_rent_burden_keeps_estimates_and_margins_and_drops_missing_codes(context_factory) -> None:
+    ctx = context_factory(
+        handler=lambda request: httpx.Response(200, text=RENT_BURDEN_ROWS), now=NOW
+    )
+    store = run(ctx, relaxed(ctx.registry.sources["acs_rent_burden"]))
+    rows = pq.read_table(store.path_for(store.current())).to_pylist()
+    assert [(r["geoid"], r["tract"]) for r in rows] == [
+        ("42101", None),
+        ("42101000101", "000101"),
+        ("42101000102", "000102"),
+    ]
+    city, first, second = rows
+    assert (city["rent_50_plus"], city["not_computed"]) == (90159, 22281)
+    assert (first["renter_households"], first["renter_households_moe"]) == (1000, 90)
+    assert (first["rent_50_plus"], first["rent_50_plus_moe"]) == (300, 60)
+    assert (first["not_computed"], first["rent_40_50"]) == (50, 100)
+    # The Census's codes for "could not be computed" never become numbers.
+    assert second["renter_households"] == 0 and second["rent_50_plus"] is None
+    assert second["rent_50_plus_moe"] is None
+    assert (first["survey_start_year"], first["survey_end_year"]) == (2020, 2024)
+
+
+@pytest.mark.parametrize("source_id", sorted(ACS_CONTEXT_ROWS))
+def test_context_tables_keep_philadelphia_and_its_county_row(
+    source_id: str, context_factory
+) -> None:
+    body = ACS_CONTEXT_ROWS[source_id]
+    ctx = context_factory(handler=lambda request: httpx.Response(200, text=body), now=NOW)
+    store = run(ctx, relaxed(ctx.registry.sources[source_id]))
+    rows = pq.read_table(store.path_for(store.current())).to_pylist()
+    assert rows[0]["geoid"] == "42101" and rows[0]["tract"] is None
+    tracts = rows[1:]
+    assert tracts and all(r["geoid"].startswith("42101") for r in tracts)
+    assert all(len(r["geoid"]) == 11 and r["tract"] == r["geoid"][-6:] for r in tracts)
+
+
+def test_context_table_with_a_missing_line_is_refused(context_factory) -> None:
+    """A table whose file no longer has a line the adapter reads fails its download, so the last
+    good copy stays (a renamed line must never become a silent null)."""
+    body = "GEO_ID|B19013_E001\n1400000US42101000101|41250\n"
+    ctx = context_factory(handler=lambda request: httpx.Response(200, text=body), now=NOW)
+    source = relaxed(ctx.registry.sources["acs_income"])
+    assert fetch_source(ctx, source).outcome == "downloaded"
+    checked = validate_source(ctx, source)
+    assert checked.outcome != "ok"
+    assert "B19013_M001" in checked.detail
 
 
 @pytest.mark.parametrize(
