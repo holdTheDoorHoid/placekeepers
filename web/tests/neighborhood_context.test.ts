@@ -135,6 +135,8 @@ describe('warming and cooling sites', () => {
     expect(html).toContain('Listed as open');
     expect(html).toContain(strings.places.source.libraries);
     expect(html).toContain('1 Sample Street, Philadelphia, PA 19133');
+    // Said once, by the site's own details, not again under the library.
+    expect(html).not.toContain(strings.places.cooling.alsoSite);
     expect(html).not.toMatch(/Emergency Management/);
   });
 });

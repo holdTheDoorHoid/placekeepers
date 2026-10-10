@@ -163,7 +163,8 @@
         <!-- One place, one marker (M4.7): the library or recreation center this site is, whose own
              marker the site's marker stands for while both layers are on. -->
         {#each (store.controller?.featuresWith(place.layerId, 'id', place.id) ?? []).slice(0, 1) as related, j (j)}
-          <PlaceDetails layerId={place.layerId} properties={related} />
+          <!-- Without its `cc`: the site's own details above already say it is a site. -->
+          <PlaceDetails layerId={place.layerId} properties={{ ...related, cc: undefined }} />
         {/each}
       {/if}
     {/each}

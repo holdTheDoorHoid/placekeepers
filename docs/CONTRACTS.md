@@ -1689,7 +1689,8 @@ out when the parcel has no point. `hearings_within_500ft` (added 2026-10-09 by M
 still to come (the `hearings` layer, section 4) within 500 feet of the parcel's point, its own left
 out; present when the build has the `appeals` source. Added 2026-10-09 by M4.7: `playground`, the nearest of Parks and
 Recreation's playgrounds (`ppr_playgrounds`), `{"nm": "<the park>", "m": <meters>}`, in a straight
-line from the parcel's point, rounded to 10 meters; absent without the playgrounds' snapshot.
+line from the parcel's point, rounded to 10 meters; absent without the playgrounds' snapshot. On
+2026-10-09 it added 4.8 MB to the shards on disk (3 percent) and 0.5 MB as served compressed.
 
 **`lot_size`** (added 2026-10-09 by M4.6; only when known): the lot's `frontage` and `depth` in
 feet, to a tenth, as the assessor records them (OPA's `frontage` and `depth`, both above 0 and
