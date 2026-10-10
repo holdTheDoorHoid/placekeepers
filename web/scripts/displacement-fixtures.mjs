@@ -6,7 +6,7 @@
 // hand written dossier shard carries the same as `displacement`.
 //
 // Signs, as bits: 1 sale prices, 2 company buyers, 4 assessed values, 8 renters, 16 the Market
-// Value Analysis.
+// Value Analysis, 32 rent burden (added by the owner on 2026-10-09).
 
 /** [west, east] in meters from the sample origin, the area's tile properties. */
 export const WATCH_AREAS = [
@@ -14,7 +14,9 @@ export const WATCH_AREAS = [
     [300, 650],
     {
       id: '42101900200',
-      w: 7,
+      // Sale prices, company buyers, assessed values and rent burden (41% of renters against the
+      // city's 29.5%; the sign added by the owner on 2026-10-09).
+      w: 39,
       nm: 'Sample Heights',
       n0: 212,
       n1: 158,
@@ -122,6 +124,8 @@ export const WATCH_BLOCK = {
     min_sales: 50,
     min_assessed: 50,
     min_occupied: 100,
+    rent_burden_points: 10,
+    min_renters: 100,
     min_signs: 2,
     recent_years: 3,
     gap_years: 5,

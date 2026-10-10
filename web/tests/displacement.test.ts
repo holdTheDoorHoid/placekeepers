@@ -96,8 +96,21 @@ describe("the signs and the rule are the pipeline's", () => {
     expect(watchSigns({ dw: '28' })).toBe(28);
     expect(watchSigns(null, 7)).toBe(7);
     expect(watchSigns({ dw: 7 }, 28)).toBe(7);
-    // Companies and renters alone are not a watch area; nor are a single sign or nonsense.
-    for (const bad of [SIGNS.companies | SIGNS.renters, SIGNS.prices, 0, 32, -1, 'x', null]) expect(watchSigns({ dw: bad })).toBeNull();
+    // Companies, renters and rent burden alone are not a watch area; nor are a single sign or
+    // nonsense, such as a bit no sign has.
+    for (const bad of [SIGNS.companies | SIGNS.renters, SIGNS.rent_burden, SIGNS.renters | SIGNS.rent_burden, SIGNS.prices, 0, 64, 64 | 7, -1, 'x', null]) {
+      expect(watchSigns({ dw: bad })).toBeNull();
+    }
+    // Rent burden with a sign about prices is (owner, 2026-10-09).
+    expect(watchSigns({ dw: SIGNS.mva | SIGNS.rent_burden })).toBe(48);
+    expect(watchSigns(null, 39)).toBe(39);
+  });
+
+  it('never makes a watch area of rent burden without a sign about prices', () => {
+    expect(isWatch(SIGNS.rent_burden)).toBe(false);
+    expect(isWatch(SIGNS.rent_burden | SIGNS.renters | SIGNS.companies)).toBe(false);
+    for (const price of [SIGNS.prices, SIGNS.assessments, SIGNS.mva]) expect(isWatch(price | SIGNS.rent_burden)).toBe(true);
+    expect(parity.cases).toHaveLength(64);
   });
 
   it('says the signs in plain words, prices first', () => {
@@ -105,6 +118,9 @@ describe("the signs and the rule are the pipeline's", () => {
       "home prices rising faster than across the city; the City's assessed values rising faster than across the city; and companies buying many of the homes sold",
     );
     expect(signsText(SIGNS.renters | SIGNS.mva)).toBe("the City's Market Value Analysis finding home prices climbing out of reach of longtime residents; and at least three in five homes rented");
+    expect(signsText(SIGNS.assessments | SIGNS.rent_burden)).toBe(
+      "the City's assessed values rising faster than across the city; and many renters paying half their income or more on rent",
+    );
   });
 
   it('names a census tract as people write it', () => {
@@ -144,7 +160,7 @@ describe('greening cards in and out of watch areas', () => {
   const card = (place: (typeof nearby)[number]) => textOf(render(PlaceCard, { props: { store: fakeStore, place, lensLabel: 'Violence reduction', fromYou: false } }).body);
 
   it('adds the area, its signs and every protection inside a watch area', () => {
-    const inside = nearby.find((p) => p.suggestions[0]?.id === 'clean_and_green' && p.properties.dw === 7)!;
+    const inside = nearby.find((p) => p.suggestions[0]?.id === 'clean_and_green' && p.properties.dw === 39)!;
     const text = card(inside);
     expect(text).toContain(CAUTION);
     expect(text).toContain('This place is in a displacement watch area, with signs that prices are rising here: home prices rising faster than across the city');
@@ -234,8 +250,12 @@ describe('greening cards in and out of watch areas', () => {
 
 describe('the lot page, its print and downloads follow the same rule', () => {
   it('shows the full card on a lot page in a watch area, opened from a link (the dossier) or the map (the tile)', () => {
-    for (const view of [lotView('990000013'), lotView('990000005', { dw: 7, k: 1, vc: 3, sg: 'clean_and_green' })]) {
-      expect(view.actions.watch?.signs).toBe(7);
+    // Sample Heights holds rent burden too since 2026-10-09 (39 = 1, 2, 4 and 32).
+    for (const [view, signs] of [
+      [lotView('990000013'), 39],
+      [lotView('990000005', { dw: 7, k: 1, vc: 3, sg: 'clean_and_green' }), 7],
+    ] as const) {
+      expect(view.actions.watch?.signs).toBe(signs);
       const page = textOf(render(Dossier, { props: { view, manifest, showTitle: true, idPrefix: 'test' } }).body);
       expect(page).toContain(CAUTION);
       expect(page).toContain('displacement watch area');
@@ -385,13 +405,19 @@ describe('a tapped watch area', () => {
     expect(summary.city).toEqual({ p0: 180000, p1: 230000, pc: 28, cb: 27, ac: 69, rp: 48, rb: 30, gr: 1397, hi: 61953, vp: 9 });
     expect(summary.periods?.recent_to).toBe('2026-09-02');
     expect(summary.thresholds.price_points).toBe(25);
+    expect(summary.thresholds.rent_burden_points).toBe(10);
+    expect(summary.thresholds.min_renters).toBe(100);
   });
 
   it('lists the signs that hold, with what was measured against the city, then the others', () => {
     const area = describeArea(AREAS[0]!.properties, summary);
     expect(area.title).toBe('Census tract 9002');
     expect(area.place).toBe('Sample Heights');
-    expect(area.holding.map((r) => r.id)).toEqual(['prices', 'assessments', 'companies']);
+    expect(area.holding.map((r) => r.id)).toEqual(['prices', 'assessments', 'companies', 'rent_burden']);
+    // The rent burden sign with its margin of error beside it (owner, 2026-10-09).
+    expect(area.holding[3]!.text).toBe(
+      '41% of the 880 renter households here pay half their income or more on rent and utilities (give or take 9 points), against 30% across the city (Census Bureau survey, 2020 to 2024). Rising rents fall hardest on them.',
+    );
     expect(area.holding[0]!.text).toBe(
       'The middle price of the homes sold went from $61,000 to $112,000, up 84%, against up 28% across the city (sales of 2018 to 2021 and of 2023 to 2026).',
     );
@@ -400,6 +426,7 @@ describe('a tapped watch area', () => {
     const sparse = describeArea(AREAS[1]!.properties, summary);
     expect(sparse.other.find((r) => r.id === 'prices')!.text).toBe('Too few home sales to tell (31 and 24; at least 50 in each period are needed).');
     expect(sparse.holding.find((r) => r.id === 'mva')!.text).toContain('In 1 of the 2 block groups here');
+    expect(sparse.other.find((r) => r.id === 'rent_burden')!.text).toBe(strings.displacement.burdenTooFew);
   });
 
   it('renders in care words, with the protections and what it cannot tell', () => {

@@ -105,8 +105,11 @@ test.describe('displacement watch', () => {
     await expect(details).toContainText('The middle price of the homes sold went from $61,000 to $112,000, up 84%, against up 28% across the city');
     await expect(details).toContainText('not a forecast');
     // The neighborhood context (M4.7): each number with its margin, and the note that it is rough.
+    // Rent burden is a sign here (owner, 2026-10-09), with its margin of error beside it.
+    await expect(details.locator('li[data-sign="rent_burden"]')).toContainText(
+      'Renters paying half their income or more on rent. 41% of the 880 renter households here pay half their income or more on rent and utilities (give or take 9 points), against 30% across the city',
+    );
     await expect(details).toContainText('Rents, incomes and empty homes here');
-    await expect(details).toContainText('41% of the 880 renter households here (give or take 9 points), against 30% across the city.');
     await expect(details).toContainText('so in a small area they are rough');
     await details.getByText('Why they are empty').click();
     await expect(details).toContainText('For rent: 60 (give or take 35)');

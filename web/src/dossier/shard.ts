@@ -359,7 +359,8 @@ function displacement(v: unknown): { tract: string; signs: number } | null {
   if (!isObj(v)) return null;
   const signs = int(v.signs);
   const tract = text(v.tract);
-  if (signs === null || signs <= 0 || signs > 31 || !tract || !/^\d{11}$/.test(tract)) return null;
+  // Six signs, bits 1 to 32 (rent burden, 32, added by the owner on 2026-10-09).
+  if (signs === null || signs <= 0 || signs > 63 || !tract || !/^\d{11}$/.test(tract)) return null;
   return { tract, signs };
 }
 
