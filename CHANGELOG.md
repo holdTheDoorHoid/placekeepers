@@ -149,7 +149,7 @@ these comes from the City, the Census Bureau or the EPA directly.
   rent, in a tract where that share is at least 10 points above the city's (29.5%, so 39.5% or
   more) and at least 100 renter households live. Like the renters and company buyers signs, it
   says who is exposed to rising prices, not that prices are rising, so an area still needs a sign
-  about prices. With it, [N watch areas] of the city's 408 census tracts are in the watch.
+  about prices. With it, 104 of the city's 408 census tracts are in the watch, up from 96 (as of October 9, 2026).
 - Tapping a watch area now also shows "Rents, incomes and empty homes here," from the Census
   Bureau's survey for 2020 to 2024: the share of renters paying half their income or more on rent,
   the middle rent, the middle household income, and how many homes are empty (and, folded away, why
