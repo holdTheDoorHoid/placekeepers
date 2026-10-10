@@ -809,7 +809,8 @@ History, top to bottom:
   where it comes from ("From L&I's demolition records."). In order of preference: a completed
   demolition ("A building stood here until 2011, when the City demolished it.", or "when it was
   demolished under a private permit.") and a permit for new construction from that year on; an unsafe or
-  imminently dangerous notice still open; the City's clean and seal work; a sheriff sale; the
+  imminently dangerous notice still open; the City's clean and seal work (only where no
+  demolition is recorded: after one, that work was on the empty lot, not a building); a sheriff sale; the
   vacancy lists ("The City's list of vacant land of October 4, 2026 includes it, as a list of June
   2024 did."); PHS LandCare's care since its year. Never a guess: a record dated in the future, a
   demolition not marked completed, or a tank removal tells no story. A lot with none of these says

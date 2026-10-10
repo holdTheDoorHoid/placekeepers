@@ -125,6 +125,25 @@ describe('the story of the lot', () => {
     ]);
   });
 
+  it('never says the City sealed a building after the same page says it was demolished', () => {
+    // 4465 Frankford Ave (232487100), v0.4 review: the City demolished the building in 2014 and
+    // its Community Life Improvement Program cleaned the empty lot in 2019, a "CLIP C&S" record.
+    const li: LiGroups = {
+      demolition: [{ date: '2014-10-15', title: 'CASE', status: 'COMPLETED', detail: 'YES', count: 1 }],
+      clean_seal: [{ date: '2019-05-31', title: 'CLIP C&S', status: 'APPROVED', detail: null, count: 1 }],
+    };
+    const lists = [{ list: 'city_land' as const, date: '2026-10-04' }];
+    expect(storyOf({ transfers: [], li, lists, landcare: null, today: '2026-10-09' }).map((s) => s.text)).toEqual([
+      'A building stood here until 2014, when the City demolished it.',
+      "The City's list of vacant land of October 4, 2026 includes it.",
+    ]);
+    // A seal before the demolition says nothing about today either.
+    const before: LiGroups = { ...li, clean_seal: [{ date: '2012-05-31', title: 'C&S', status: 'APPROVED', detail: null, count: 1 }] };
+    expect(storyOf({ transfers: [], li: before, lists: [], landcare: null, today: '2026-10-09' }).map((s) => s.text)).toEqual([
+      'A building stood here until 2014, when the City demolished it.',
+    ]);
+  });
+
   it('never tells a story from a record dated in the future, or a demolition not completed', () => {
     const li: LiGroups = {
       demolition: [

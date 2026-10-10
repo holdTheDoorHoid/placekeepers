@@ -73,12 +73,14 @@ log = logging.getLogger(__name__)
 AGENCIES = ("PLB", "PRA", "PHDC", "PUB")
 AGENCY_PATTERNS: dict[str, re.Pattern[str]] = {
     "PLB": re.compile(r"\bLAND BANK\b"),
-    # Also the misspellings and cut names the records carry ("PHILADELPHIA REDEVELOPMENT AUTHORIT").
-    "PRA": re.compile(r"\bREDEV\w* AUTH|\bPHILA(DELPHIA)? REDEVELOP"),
-    "PHDC": re.compile(r"\bPHDC\b|\bPHILA(DELPHIA)? HOUSING DEV"),
+    # Also the misspellings and cut names the records carry ("PHILADELPHIA REDEVELOPMENT AUTHORIT",
+    # "REDEVELOPMENT AUTORITY", "REDEVELOPMENTAUTHORITY", "PHILADLEPHIA HOUSING DEVELOPMENT",
+    # "CITY OF PHILDELPHIA"; found in the deeds of 2014 to 2023 by the v0.4 review).
+    "PRA": re.compile(r"\bREDEV\w* ?AUT|\bPHILA\w* REDEVELOP"),
+    "PHDC": re.compile(r"\bPHDC\b|\bPHILA\w* HOUSING DEV"),
     "PUB": re.compile(
-        r"\bCITY OF PHI?LA|\bPHILA(DELPHIA)? CITY OF\b|\bDEP(AR)?T(MENT)? OF PUBLIC PROP"
-        r"|\bPUBLIC PROPERTY\b"
+        r"\bCITY OF ?PHI?LA|\bCITY OF PHILD|\bPHILA(DELPHIA)? CITY OF\b"
+        r"|\bDEP(AR)?T(MENT)? OF PUBLIC PROP|\bPUBLIC PROPERTY\b"
     ),
 }
 PUBLIC_PROPERTY = re.compile(r"\bPUBLIC PROP")

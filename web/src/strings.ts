@@ -1819,7 +1819,7 @@ export const strings = {
     lotTitle: 'Old aerial photos',
     lotButton: 'See this lot in old aerial photos',
     lotHelp: (year: string) =>
-      `Opens the map at this lot with the aerial photo of ${year}, the oldest the City hosts. Slide through the years since then under "Then and now" in the layers.`,
+      `Opens the map at this lot with the aerial photo of ${year}, the oldest on this map. Slide through the years since then under "Then and now" in the layers.`,
     lotLiveOff: 'The photos come straight from the City\'s servers, so they need live City data, which is off.',
     shown: (year: string) => `Aerial photos of ${year} are on. Slide through the years under "Then and now" in the layers.`,
     // The Data status page, for a source of pictures the site never copies
