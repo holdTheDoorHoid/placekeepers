@@ -174,20 +174,24 @@ Two additions that were not on the roadmap, both done on 2026-10-08 and in v0.3:
 - **M4.1 Displacement watch** (done, 2026-10-08, early, in v0.3): sale price trends and company
   buyer share from transfers, the City's Market Value Analysis (the 2026 edition), renter share,
   assessment changes; the overlay and "pair with protections" cards.
-- **M4.2 Full history in the dossier**: every transfer since 1974, an assessment chart, a timeline of
-  permits, violations and demolition.
-- **M4.3 Historic maps**: City orthophotos 1996 to 2023 with a year slider, the 1860 atlas the City
-  hosts, redlining maps if the license allows, PhilaGeoHistory layers with the Athenaeum's
-  permission.
-- **M4.4 Land Bank statistics**: conveyances by program and year, for the Land Steward Union's
-  campaign.
-- **M4.5 Streets and stops** (issue #41, added by the owner on 2026-10-09 after the Build Philly
+- **M4.2 Full history in the dossier** (done, 2026-10-09, issue #38): every transfer since 1974, an
+  assessment chart, and one timeline of deeds, violations, permits, demolitions and the dated
+  vacancy lists, the same with live City data on or off (DESIGN.md section 5.6).
+- **M4.3 Historic maps** (done, 2026-10-09, issue #39): aerial photos from 1959 to 2025 (the City's,
+  and the 1959, 1975 and 1999 photos it hosts for DVRPC and the USGS) with a year slider, the 1860
+  atlas the City hosts, and the 1937 redlining map under Mapping Inequality's non commercial
+  license (DESIGN.md section 5.11). PhilaGeoHistory layers wait for the Athenaeum's permission.
+- **M4.4 Land Bank statistics** (done, 2026-10-09, issue #40): the page "The Land Bank in numbers",
+  conveyances by agency, year, buyer type and council district from the City's deed records, for
+  the Land Steward Union's campaign and anyone else (DESIGN.md section 5.10). The program is our
+  inference where the records do not name it.
+- **M4.5 Streets and stops** (done, 2026-10-09, issue #41, added by the owner on 2026-10-09 after the Build Philly
   Now review): the City's own bus shelters, counted as shelters in the transit comfort lens, with
   the stop's page saying where the City and OpenStreetMap disagree; the City's street poles and
   the lamps it lists, by block and beside 311 reports of lights out; its traffic calming devices
   by block; and its school crossing guard posts. A street light lens factor is proposed with
   numbers, not built (DESIGN.md section 5.7).
-- **M4.6 Lot rules and records** (issue #42, added by the owner on 2026-10-09): historic districts
+- **M4.6 Lot rules and records** (done, 2026-10-09, issue #42, added by the owner on 2026-10-09): historic districts
   and the Philadelphia Register, zoning overlays, EPA brownfield records, and appeals and hearings
   on the lot page, in its timeline and on the map, with names from appeals on the lot's own page
   only (DESIGN.md section 5.6).
@@ -240,6 +244,13 @@ None of these block Phase 0.
 10. Send, edit or skip the permission request to Transit Forward Philadelphia for its bus stop
    audits (DATA_SOURCES.md, "Sources checked 2026-10-08"). Nothing from the audits is used until
    there is a trimmed copy and a license.
+11. Optional, for The Land Bank in numbers (DESIGN.md section 5.10 and section 12, item 7): ask the
+   Clerk of City Council for a Legistar API token, ask PHDC for the Land Bank's dispositions by
+   program, and ask the City whether its Land Management dashboard table may be reused.
+12. Send, edit or skip the permission request to the Athenaeum of Philadelphia for the GeoHistory
+   Network's other maps (DESIGN.md section 5.11).
+13. Decide whether street lights become a transit comfort lens factor (DESIGN.md section 5.7); the
+   recommendation is to keep them as context only.
 
 ## Waves
 

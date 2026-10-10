@@ -920,11 +920,11 @@
   attribution: "Conveyances by program, fiscal years 2017 to 2023: City of Philadelphia, Department of Planning and Development (Land Management dashboard)"
   cadence: frozen
   health: {min_rows: 5, max_drop_pct: 0}
+  release: v0.4
 # Then and now (M4.3): pictures the visitor's browser loads straight from the City's own map
 # services, only once someone turns their layer on and only while "Fetch live City data" is on.
 # Placekeepers never copies or hosts them; each week the pipeline only checks that every service
 # still answers with its picture tiles (docs/CONTRACTS.md section 1, `arcgis_tiles`).
-  release: v0.4
 - id: city_aerial_photos
   name: Aerial photographs by year (orthophotos)
   publisher: City of Philadelphia, Office of Innovation and Technology

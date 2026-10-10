@@ -254,9 +254,9 @@ how to take part and a button to the lot's page; a hearing never names who filed
 historic layers stay in this group rather than M4.3's "Then and now": historic designation is a
 rule for the lot today, not its history (orchestrator, 2026-10-09).
 
-As built (M4.3, 2026-10-09): two layers draw pictures rather than things, the City's aerial photos
-by year and its copy of the 1860 atlas (section 5.11). A picture is known by its source and its
-year (`aerial_photos` and `1996`), which is what a link keeps.
+As built (M4.3, 2026-10-09): two layers draw pictures rather than things, the aerial photos by
+year and the City's copy of the 1860 atlas (section 5.11). A picture is known by its layer and its
+year (the layer `aerial_photos` with its `year` setting at `1996`), which is what a link keeps.
 
 ### 5.2 The registry: one source of truth for every toggle
 
@@ -282,7 +282,8 @@ is always available.
 As built (M4.3, 2026-10-09): **pictures from another server** have their own registry form.
 A source of kind `arcgis_tiles` lists picture services on an ArcGIS server, such as the City's
 aerial photos of each year, with where their pictures are; a layer with `geometry: raster` draws
-one such source, with a "Year" setting shown as a slider when there are several. The visitor's
+one or more such sources, with a "Year" setting shown as a slider when they hold several services
+(the aerial photos draw three: the City's own years, DVRPC's and the USGS's). The visitor's
 browser loads the pictures from the City's server; nothing is copied, built or hosted here, and the
 pipeline only checks each week that every service answers (section 8.4). Details in CONTRACTS.md
 section 1.
@@ -967,8 +968,8 @@ all of it in the close in tiles that carry every block.
 **Street lights as a lens factor: proposed, not built** (the owner decides). Measured on
 2026-10-09:
 
-- The City's list barely varies where it could matter. 95 percent of the 130,241 lamps it lists
-  are LED, and only 3,186 of the 36,309 blocks with a lamp have any that is not. Lamps per 100
+- The City's list barely varies where it could matter. 95 percent of the 130,241 poles that list
+  a lamp list an LED one, and only 3,186 of the 36,309 blocks with a lamp have any that is not. Lamps per 100
   meters of block have a median of 2.6 to 2.8 in every street class. Only 162 of the 7,912 stops
   the transit lens scores (2 percent, with 25,927 weekday boardings) and 474 of the 30,322 vacant
   lots of high or medium confidence (1.6 percent) have no lamp listed within 30 and 50 meters.
@@ -1169,15 +1170,17 @@ speaks for neither the Land Steward Union nor the Land Bank.
 ### 5.11 Then and now: old aerial photos and the 1860 atlas
 
 As built (M4.3, 2026-10-09). **What the owner sees:** a new group in the layer panel, **Then and
-now**, with two layers, off by default in both views:
+now**, with three layers, off by default in both views (the third, the 1937 redlining map, was
+added the same day and is described below):
 
 - **Aerial photos by year**: the City's own aerial photographs of the whole city, one for each year
-  it has them: 1996, 2000, 2004, 2005, 2008 to 2012, 2014 to 2020, and 2022 to 2025, twenty in
-  all. A slider moves through the years (2025 by default; 1996 and 2000 are black and white), and
+  it has them: 1996, 2000, 2004, 2005, 2008 to 2012, 2014 to 2020, and 2022 to 2025, twenty of
+  the City's own (23 years in all with the older photos below). A slider moves through the years
+  (2025 by default; the photos of 2000 and earlier are black and white), and
   a second setting sets how strongly the photo shows, so today's streets and labels can show
   through. The photo lies under every other layer and under the base map's labels,
-  so lots, streets and memorials stay on top. The legend says the year, that the photos were taken
-  from a plane in spring, and credits the City.
+  so lots, streets and memorials stay on top. The legend says the year and that the photo was
+  taken from a plane, and credits the year's own publisher.
 - **1860 atlas (Hexamer and Locher)**: the atlas the City hosts, fitted to today's map by the
   Greater Philadelphia GeoHistory Network. It covers Center City and Northern Liberties only, which
   the legend says, and starts at 80 percent strength so today's streets show through; the map asks
@@ -1518,3 +1521,8 @@ docs/            design, roadmap, research
    permission to use the Land Bank's board documents or for a list of dispositions by program, and
    ask the City whether its Land Management dashboard table, which states no license, may be
    reused. The page works without any of them and labels the program as our inference.
+8. Street lights (section 5.7): decide whether the City's list of lamps becomes a transit comfort
+   lens factor at a low weight; the recommendation is to keep it as context only.
+9. Then and now (section 5.11): send the Athenaeum of Philadelphia the permission request for the
+   GeoHistory Network's other maps the City hosts (the 1875, 1895 and 1910 atlases, the 1942 and
+   1962 land use maps, the 1928 aerial photos); the draft is with the owner's outreach drafts.
