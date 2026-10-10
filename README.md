@@ -19,7 +19,7 @@ We combine many City records on purpose, so no single broken source can take the
 Read [Why this works](https://holdthedoorhoid.github.io/placekeepers/why/) for the Philadelphia
 research behind it.
 
-## What you can do with v0.3
+## What you can do with v0.4
 
 **On your phone, on the block.** Search an address or tap "Near me" to see "What you can do
 nearby": the closest lots and streets that could use care, each with why it matters, how sure we
@@ -31,9 +31,12 @@ permission for, download the results as CSV or GeoJSON, and save lists that stay
 browser.
 
 **Every lot's own page.** Who owns it and their mailing address, as the City publishes them;
-every sale on record; flags such as an absentee owner or a possible estate, each written with what
-it means, why to be careful, and a protective next step; and the first lawful step to get
-permission.
+flags such as an absentee owner or a possible estate, each written with what it means, why to be
+careful, and a protective next step; and the first lawful step to get permission. Under History,
+"The story of this lot": a plain sentence or two built only from records, then one timeline of
+every sale back to 1974, violations, permits, demolitions and the dated lists that called the lot
+vacant. Under "Rules for this lot": whether it is in a historic district, its zoning and overlays,
+federal brownfield records, and every appeal and hearing still to come.
 
 **Street safety and memorials.** The High Injury Network, years of crash records, and a quiet
 marker for each person the Police record as killed while walking, cycling or riding a scooter.
@@ -54,9 +57,25 @@ dumping, a dark street light or graffiti to Philly311. It is about use and welco
 crime. Walkability, people and places within walking distance, and traffic stress for people on
 bikes are layers of their own, and so is public art from the City, OpenStreetMap and Wikidata.
 
-**Displacement watch.** Census tracts where public records show signs that prices are rising. It
-changes no score. Inside one, greening and placemaking suggestions add ways to protect the
-neighbors who live there now.
+**Displacement watch.** Census tracts where public records show signs that prices are rising,
+including home sale prices, companies buying homes and rent burden. It changes no score. Inside
+one, greening and placemaking suggestions add ways to protect the neighbors who live there now, and
+tapping the area shows rents, incomes and empty homes from the Census Bureau's survey, each with
+its margin of error.
+
+**Then and now.** The City's aerial photos from 1959 to 2025 on a year slider, the 1860 atlas, and
+the 1937 redlining map. They load from the City's servers only when you turn them on. Each lot page
+has a button, "See this lot in old aerial photos."
+
+**The Land Bank in numbers.** A page counting the properties the Land Bank, the Redevelopment
+Authority, PHDC and the City have sold or transferred since 2014, by year, by agency and by kind of
+buyer. Neutral, aggregates only, with a download for each section.
+
+**Streets and stops.** The City's bus shelters, which the transit comfort lens now counts; the
+street poles and lamps the City lists; its traffic calming; and school crossing guard posts.
+Hearings still to come, historic districts, zoning overlays and brownfield sites are layers of
+their own under "Land rules and hearings." Cooling and warming centers and playgrounds join the
+places around you.
 
 **Lots listed as available, and parking problems.** Show only the lots the City's land agencies
 list as available, with the side yard program first where the lot is eligible and no prices. A
@@ -73,10 +92,10 @@ Names of people killed are not shown. We want the Bicycle Coalition and Families
 to weigh in first. Removal requests go through a public GitHub issue for now; a private email
 address is planned.
 
-A fuller lot history, historic maps, Land Bank statistics and organizing tools are planned for
-later releases. Transit Forward Philadelphia's stop audits wait on permission, and
-philart.net, the Association for Public Art and Philadelphia's Magic Gardens wait on theirs. See the
-[roadmap](docs/ROADMAP.md).
+Organizing tools, such as printable packets and a notice for neighbors, are planned for the next
+release. Transit Forward Philadelphia's stop audits wait on permission, philart.net, the
+Association for Public Art and Philadelphia's Magic Gardens wait on theirs, and the Athenaeum of
+Philadelphia's old maps wait on its own. See the [roadmap](docs/ROADMAP.md).
 
 ## How the data stays fresh
 
@@ -104,9 +123,14 @@ NOTICE file is needed until then.
 Map data comes from the City of Philadelphia and other public sources. Transit schedules and
 ridership come from SEPTA, under its open data license agreement. Shelters, benches and much of the
 public art come from OpenStreetMap and its contributors, under the Open Database License, the same
-source behind the base map. Walkability comes from the EPA, traffic stress from the Delaware Valley
-Regional Planning Commission, and parking problems from Philly Bike Action's Laser Vision app, with
-its permission. Every source, with its publisher and license, is listed on the
+source behind the base map. Walkability and brownfield records come from the EPA, traffic stress
+from the Delaware Valley Regional Planning Commission, and parking problems from Philly Bike
+Action's Laser Vision app, with its permission. Rents, incomes and empty homes come from the Census
+Bureau. The aerial photos of 1959 and 1975 are the Delaware Valley Regional Planning Commission's
+and those of 1999 the U.S. Geological Survey's, hosted by the City. The 1937 redlining map is
+Mapping Inequality: Redlining in New Deal America, by Robert K. Nelson, LaDale Winling, et al.,
+University of Richmond Digital Scholarship Lab, under a Creative Commons Attribution
+NonCommercial 2.5 license. Non commercial use only. Every source, with its publisher and license, is listed on the
 [Data status page](https://holdthedoorhoid.github.io/placekeepers/status/) and in
 [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md).
 
@@ -147,6 +171,11 @@ A lot page under the placemaking lens on a phone, with the six factors behind it
 evidence each one has:
 
 ![A lot page on a phone showing the placemaking lens's score of 56 for a vacant lot, with a table of six factors, the weight of each, and a badge saying whether each is context or mixed evidence](docs/images/placemaking-phone.png)
+
+The "Then and now" layers on a desktop, with the City's 1959 aerial photo under today's vacant lots
+in North Philadelphia:
+
+![The analysis view on a desktop, with the Then and now group open on the left showing a year slider set to 1959, and the map showing a black and white aerial photo of 1959 with today's vacant lots drawn in green on top](docs/images/then-and-now-desktop.png)
 
 ## For developers
 
