@@ -7,8 +7,10 @@
 
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { LI_PARTS, liSql, readLi } from '../src/dossier/carto.ts';
+import { APPEAL_COLUMNS, encodeAppeal, isUpcoming, localMoment, readAppeals } from '../src/dossier/appeals.ts';
+import { LI_PARTS, appealsSql, liSql, readLi } from '../src/dossier/carto.ts';
 import { parseHistoryShard } from '../src/dossier/history.ts';
+import { parseAppeal } from '../src/dossier/shard.ts';
 import { encodeGroups, groupLi } from '../src/dossier/timeline.ts';
 
 interface Fixture {
@@ -40,5 +42,45 @@ describe('the timeline parity fixture', () => {
     expect(names).toMatch(/evening/);
     expect(names).toMatch(/repeated/);
     expect(fixture.cases.some((c) => Object.keys(c.li).length === 6)).toBe(true);
+  });
+});
+
+// Appeals (M4.6, issue #42): the same parity file holds the City's appeals rows and the appeals a
+// lot page lists from them, as the pipeline wrote them for the weekly copy.
+interface AppealFixture {
+  appeal_columns: string[];
+  appeal_today: string;
+  appeal_cases: { name: string; rows: Record<string, string | null>[]; appeals: Record<string, string>[]; upcoming: number[] }[];
+}
+
+const appealFixture = fixture as unknown as AppealFixture;
+
+describe('the appeals in the parity fixture', () => {
+  it('reads the same columns of the same table as the pipeline, never the grounds', () => {
+    expect([...APPEAL_COLUMNS]).toEqual(appealFixture.appeal_columns);
+    const sql = appealsSql('372106400');
+    expect(sql).toContain(`SELECT ${appealFixture.appeal_columns.join(', ')} FROM appeals WHERE opa_account_num = '372106400'`);
+    expect(sql).not.toMatch(/appealgrounds|proviso|relatedpermit|relatedcasefile/);
+  });
+
+  it.each(appealFixture.appeal_cases.map((c) => [c.name, c] as const))('lists the City\'s answer as the pipeline does: %s', (_name, c) => {
+    const appeals = readAppeals(c.rows);
+    expect(appeals.map(encodeAppeal)).toEqual(c.appeals);
+    expect(appeals.flatMap((a, i) => (isUpcoming(a, appealFixture.appeal_today) ? [i] : []))).toEqual(c.upcoming);
+  });
+
+  it.each(appealFixture.appeal_cases.map((c) => [c.name, c] as const))('reads the weekly copy back to the same appeals: %s', (_name, c) => {
+    const parsed = c.appeals.map((a) => parseAppeal(a)!);
+    expect(parsed.map(encodeAppeal)).toEqual(c.appeals);
+  });
+
+  it('turns times into days and times in Philadelphia, as the pipeline does', () => {
+    expect(localMoment('2027-02-24 20:30:00+00')).toEqual(localMoment('2027-02-24T20:30:00Z'));
+    expect(localMoment('2027-02-24T20:30:00Z')).toEqual(['2027-02-24', '15:30']);
+    expect(localMoment('2026-07-01T13:30:00-04:00')).toEqual(['2026-07-01', '13:30']);
+    expect(localMoment('2026-07-01')).toEqual(['2026-07-01', null]);
+    expect(localMoment('2026-11-04T05:00:00Z')).toEqual(['2026-11-04', null]);
+    expect(localMoment('2026-02-30T10:00:00Z')).toEqual([null, null]);
+    expect(localMoment('not a date')).toEqual([null, null]);
   });
 });

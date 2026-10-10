@@ -52,6 +52,13 @@
     {/each}
   </section>
 
+  {#if m.rules.length}
+    <section>
+      <h2>{s.sections.rules}</h2>
+      {#each m.rules as line (line)}<p>{line}</p>{/each}
+    </section>
+  {/if}
+
   <section>
     <h2>{s.sections.owner}</h2>
     <p>{m.owner.names.join('; ') || s.owner.noNames}</p>

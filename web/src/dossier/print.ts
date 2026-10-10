@@ -25,6 +25,12 @@ export interface PrintModel {
   watch: { text: string; links: string[] } | null;
   /** Said after each caution when `watch` is printed: where to find the signs and protections. */
   watchPointer: string | null;
+  /**
+   * Rules for this lot (M4.6): a hearing still to come, the historic designation with "ask them
+   * first", the base zoning and the overlays by name, and the brownfield sentence. Who filed an
+   * appeal is on the lot page online, not on the sheet.
+   */
+  rules: string[];
   owner: {
     names: string[];
     mailing: string | null;
@@ -76,6 +82,18 @@ function listingLines(listing: DossierView['actions']['listing'], watchPointer: 
   };
 }
 
+function rulesLines(view: DossierView): string[] {
+  const r = view.rules;
+  const lines: string[] = [];
+  if (r.hearing) lines.push(r.hearing.text);
+  if (r.historic) lines.push(...r.historic.lines, r.historic.askFirst, r.historic.contact);
+  if (r.zoning?.base) lines.push(r.zoning.base);
+  if (r.zoning?.overlays.length) lines.push(`${r.zoning.overlaysIntro} ${r.zoning.overlays.map((o) => o.name).join('; ')}.`);
+  if (r.brownfield) lines.push(r.brownfield.text);
+  if (r.notOnList) lines.push(r.notOnList);
+  return lines;
+}
+
 export function printModel(view: DossierView, now: Date = new Date()): PrintModel {
   const reasons = view.summary.reasons ? view.summary.reasons.agree : [];
   const timeline = view.history.timeline;
@@ -124,6 +142,7 @@ export function printModel(view: DossierView, now: Date = new Date()): PrintMode
     }),
     watch,
     watchPointer,
+    rules: rulesLines(view),
     owner: {
       names: view.owner.names,
       mailing: view.owner.mailing,

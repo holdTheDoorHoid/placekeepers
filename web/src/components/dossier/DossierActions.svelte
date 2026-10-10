@@ -16,6 +16,8 @@
   import WatchCard from '../displacement/WatchCard.svelte';
   import DisplacementNote from '../places/DisplacementNote.svelte';
   import BlessingNote from '../streets/BlessingNote.svelte';
+  import SoilNote from '../rules/SoilNote.svelte';
+  import { isGarden } from '../../config/suggestions.ts';
   import ListingBox from './ListingBox.svelte';
   import RouteDetails from './RouteDetails.svelte';
 
@@ -55,6 +57,7 @@
     <h4>{item.suggestion.label} <EvidenceBadge level={item.suggestion.evidence} /></h4>
     <BlessingNote suggestionId={item.suggestion.id} />
     <DisplacementNote suggestionId={item.suggestion.id} watch={actions.watch} {jumpTo} />
+    {#if actions.brownfield && isGarden(item.suggestion.id)}<SoilNote />{/if}
     {#each item.routes as route (route.route.id)}
       <RouteDetails view={route} level={5} />
     {/each}

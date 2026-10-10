@@ -12,6 +12,7 @@
   import DossierHistory from './DossierHistory.svelte';
   import DossierNearby from './DossierNearby.svelte';
   import DossierOwner from './DossierOwner.svelte';
+  import DossierRules from './DossierRules.svelte';
   import DossierSources from './DossierSources.svelte';
   import DossierSummary from './DossierSummary.svelte';
 
@@ -52,6 +53,7 @@
   const sections = [
     { key: 'summary', label: s.sections.summary },
     { key: 'actions', label: s.sections.actions },
+    { key: 'rules', label: s.sections.rules },
     { key: 'owner', label: s.sections.owner },
     { key: 'history', label: s.sections.history },
     { key: 'nearby', label: s.sections.nearby },
@@ -100,6 +102,14 @@
   {:else if view.empty}
     <p class="notice">{view.empty}</p>
   {:else}
+    {#if view.rules.hearing}
+      <!-- A hearing still to come goes at the top of the page (M4.6). -->
+      <p class="hearing" data-testid="hearing-notice">
+        <strong>{view.rules.hearing.text}</strong>
+        <a href={view.rules.hearing.takePart.url} target="_blank" rel="noopener noreferrer">{view.rules.hearing.takePart.label}</a>
+        <button class="link" type="button" onclick={() => jump('rules')}>{s.rules.seeAppeal}</button>
+      </p>
+    {/if}
     <nav class="contents" aria-label={s.contents}>
       {#each sections as section (section.key)}
         <button class="link" type="button" onclick={() => jump(section.key)}>{section.label}</button>
@@ -113,6 +123,10 @@
     <section aria-labelledby="{idPrefix}-actions-title">
       <h3 id="{idPrefix}-actions-title" tabindex="-1">{s.sections.actions}</h3>
       <DossierActions actions={view.actions} {idPrefix} />
+    </section>
+    <section aria-labelledby="{idPrefix}-rules-title">
+      <h3 id="{idPrefix}-rules-title" tabindex="-1">{s.sections.rules}</h3>
+      <DossierRules rules={view.rules} {idPrefix} onTurnOnLive={actions.onTurnOnLive} onRetry={actions.onRetry} />
     </section>
     <section aria-labelledby="{idPrefix}-owner-title">
       <h3 id="{idPrefix}-owner-title" tabindex="-1">{s.sections.owner}</h3>
@@ -177,6 +191,18 @@
     flex-wrap: wrap;
     gap: 6px;
     margin-bottom: 8px;
+  }
+  .hearing {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 12px;
+    margin: 0 0 8px;
+    padding: 8px 10px;
+    border-left: 4px solid var(--pk-accent);
+    border-radius: var(--pk-radius);
+    background: var(--pk-accent-soft);
+    font-size: 0.9rem;
   }
   .contents {
     display: flex;

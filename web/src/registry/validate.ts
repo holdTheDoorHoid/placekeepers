@@ -79,6 +79,7 @@ const SCHEMAS: Record<keyof Registry, Fields> = {
         table: str({ optional: true }),
         where: str({ optional: true }),
         service: str({ optional: true }),
+        server: str({ optional: true, oneOf: ['FeatureServer', 'MapServer'] }),
         layer: { t: 'number', optional: true, integer: true, min: 0 },
         url: str({ optional: true, pattern: URL_PATTERN }),
         format: str({ optional: true, oneOf: URL_FORMATS }),

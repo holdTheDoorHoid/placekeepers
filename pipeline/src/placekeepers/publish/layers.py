@@ -261,6 +261,8 @@ def build_parcels_from_model(
     from placekeepers.publish.displacement import parcel_watch
 
     watch = parcel_watch(model.parent)
+    # Lots at or near a brownfield property (M4.6), by the lot page's own rule, as `bf`.
+    brownfield = brownfield_parcels(table, paths or {})
     rows = zip(*(table.column(name).to_pylist() for name in columns), strict=True)
     with GeoJSONWriter(out) as writer:
         for opa, kind, k, vc, lc, rs, n, dy, sy, ny, wkb in rows:
@@ -292,8 +294,29 @@ def build_parcels_from_model(
                 properties["sg"] = ",".join(with_more(first, place.suggestions, known_suggestions))
             if opa in watch:
                 properties["dw"] = watch[opa][1]
+            if opa in brownfield:
+                properties["bf"] = 1
             writer.write(properties, geometry_json(wkb))
     return BuildResult(writer.count, [])
+
+
+def brownfield_parcels(table: object, paths: dict[str, Path]) -> set[str]:
+    """The parcels of the vacancy model's table within 100 meters of a brownfield property
+    (placekeepers.publish.rules.brownfield_lots), or none without the EPA's list."""
+    if "epa_brownfields" not in paths:
+        return set()
+    import shapely
+
+    from placekeepers.publish.rules import brownfield_lots
+
+    shapes = {
+        opa: shapely.from_wkb(wkb)
+        for opa, wkb in zip(
+            table.column("opa").to_pylist(), table.column("geometry").to_pylist(), strict=True
+        )
+        if wkb is not None
+    }
+    return brownfield_lots(paths, shapes)
 
 
 def build_parcels_from_city_lists(
@@ -336,6 +359,16 @@ def build_parcels_from_city_lists(
     listed = listed_available_accounts(paths, set(kinds))
     side_yard = side_yard_accounts(paths, set(kinds))
     routes = route_codes(paths, set(kinds), set(ctx.registry.routes))
+    # Lots at or near a brownfield property (M4.6), as `bf`.
+    brownfield: set[str] = set()
+    if "epa_brownfields" in paths:
+        import shapely
+
+        from placekeepers.publish.rules import brownfield_lots
+
+        brownfield = brownfield_lots(
+            paths, {account: shapely.from_wkb(wkb) for account, wkb in shapes.items()}
+        )
     notes = []
     if no_account:
         notes.append(
@@ -364,6 +397,8 @@ def build_parcels_from_city_lists(
             if account in side_yard:
                 properties["ly"] = 1
             properties["sg"] = suggestion_ids(kind, set(ctx.registry.suggestions))
+            if account in brownfield:
+                properties["bf"] = 1
             writer.write(properties, geometry_json(shapes[account]))
     return BuildResult(writer.count, notes)
 
@@ -517,6 +552,8 @@ BUILDERS: tuple[LayerBuilder, ...] = (
             "city_owned_property",
             # The displacement watch's sources (M4.1), for `dw`.
             *WATCH_SOURCES,
+            # The EPA's brownfield properties (M4.6), for `bf`.
+            "epa_brownfields",
         ),
     ),
     LayerBuilder("tiles/streets.pmtiles", "hin", ("high_injury_network",), build_hin),
@@ -583,6 +620,12 @@ BUILDERS = (*BUILDERS, *PARKING_BUILDERS)
 from placekeepers.publish.displacement import DISPLACEMENT_BUILDERS  # noqa: E402
 
 BUILDERS = (*BUILDERS, *DISPLACEMENT_BUILDERS)
+
+# The rules and records of each lot (M4.6): historic districts and properties, zoning overlays,
+# hearings still to come and brownfield properties.
+from placekeepers.publish.rules import RULES_BUILDERS  # noqa: E402
+
+BUILDERS = (*BUILDERS, *RULES_BUILDERS)
 
 # Streets and stops (M4.5): the City's bus shelters, street poles, traffic calming devices and
 # school crossing guard posts.

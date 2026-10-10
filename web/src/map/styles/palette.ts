@@ -182,6 +182,24 @@ export const WATCH_FILL_OPACITY = 0.32;
 export const WATCH_LINE = '#3a4a5c';
 
 /**
+ * The rules and records of each lot (M4.6): historic districts and the Register's properties in
+ * sepia browns, zoning overlays in a quiet olive (an almost clear fill, since many overlap), the
+ * hearings still to come in violet (deep for the Zoning Board, pale for the other boards) and the
+ * EPA's brownfield sites in rust. None is an alarm red, and none is a lot green.
+ */
+export const HISTORIC_COLORS = {
+  district: '#c9a66b',
+  districtOpacity: 0.2,
+  districtLine: '#7a5320',
+  property: '#a8763e',
+  propertyOpacity: 0.45,
+  propertyLine: '#5c3a12',
+} as const;
+export const OVERLAY_COLORS = { fill: '#8f8a3c', fillOpacity: 0.06, line: '#5f5a12', supplemental: '#9c975a' } as const;
+export const HEARING_COLORS = { zoning: '#6a3d9a', zoningRing: '#ffffff', other: '#e3d7f0', otherRing: '#6a3d9a' } as const;
+export const BROWNFIELD_COLORS = { fill: '#9a4f2c', ring: '#ffffff' } as const;
+
+/**
  * Streets and stops (M4.5). The City's bus shelters are a deep blue ring around the stop they
  * serve, so the stop's own color still shows inside it. The street poles the City lists are small
  * dots, close in only: a warm yellow for an LED lamp, a deep orange for the older high pressure

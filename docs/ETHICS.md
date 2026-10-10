@@ -15,6 +15,7 @@ easy, obvious one. Builders must follow this page; changes need the owner's agre
 | Over policing | Map used to direct enforcement at people | No police suggestions, ever; 311 suggestions cover physical conditions only |
 | Displacement | Greening raises values and rents | Displacement watch overlay and "pair with protections" cards |
 | Harm to grieving families | A name shown where a family did not want it | Names only from public memorial lists, quiet design, removal on request |
+| False comfort about soil | A garden planted on a former industrial lot because the map showed no warning | Brownfield records named "at or near this address", with "Test the soil before growing food" on every garden suggestion near one, and never "clean" or "safe" |
 
 ## Owner information
 
@@ -81,6 +82,28 @@ that sends letters to owners automatically.
 
 **Bulk export.** The owner chose not to restrict exports. CSV and GeoJSON exports include the flags,
 with a first line pointing to the terms of use.
+
+## Appeals and hearings
+
+**Decision (owner, 2026-10-09): show it all.** Every appeal the City publishes about a property, to
+the Zoning Board of Adjustment, the L&I Review Board, the Board of Building Standards or another of
+the City's boards, appears on that lot's own page as the City publishes it: the board and the kind
+of appeal, its status and decision, the days it was filed, heard and decided, the registered
+community organization the City notified, who filed it and the owner the City names. A hearing
+still to come goes at the top of the page, with the City's page on how to take part.
+
+How the site carries this out, with the limits the orchestrator set on where names appear, is in
+DESIGN.md section 5.6 ("Rules for this lot, as built").
+
+## Brownfield records
+
+**Decision (owner, 2026-10-09), chosen with the EPA's brownfield source (M4.6, issue #42).**
+
+- Brownfield records read, word for word: *"A federal brownfield assessment or cleanup was recorded
+  at or near this address. Test the soil before growing food."* The same note goes on every garden
+  suggestion for a lot near one, on the lot page and on the map's nearby cards. Never "clean" or
+  "safe": the EPA's records say a federal grant paid for work, not what is in the ground today, and
+  the map says it is not a map of all contaminated ground.
 
 ## People killed in traffic crashes
 
@@ -171,7 +194,9 @@ section 5.3):
 - No analytics, no cookies, no accounts, no tracking pixels.
 - Saved lists stay in the browser, with export and import.
 - The setting "fetch live City data" (on by default) sends lookups from the visitor's browser to City
-  servers; the About page says so, and the setting turns it off.
+  servers; the About page says so, and the setting turns it off. A lot page's live appeals (M4.6)
+  come from the same City server as its other lookups; the historic, zoning and brownfield rules
+  come only from the weekly copy, so no new server is asked.
 
 ## Accuracy and corrections
 

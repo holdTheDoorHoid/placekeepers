@@ -11,9 +11,10 @@
 // Everything here is a plain function of its inputs.
 
 import { formatDate, formatMoney, sentenceCase, strings } from '../strings.ts';
-import { plain } from './plain.ts';
+import { cityWords, plain } from './plain.ts';
 import { FULL_RECORDS_FROM, isSheriff } from './transfers.ts';
-import type { LandCare, LiEvent, LiKind, Transfer } from './types.ts';
+import { appealKind, decisionWords } from './rules.ts';
+import type { Appeal, LandCare, LiEvent, LiKind, Transfer } from './types.ts';
 import { LI_KINDS } from './types.ts';
 
 // The records -------------------------------------------------------------------------------------
@@ -132,8 +133,12 @@ export function withOlder(live: LiGroups, copy: LiGroups | null): LiGroups {
 
 // The view ----------------------------------------------------------------------------------------
 
-/** The kinds a reader can switch on and off: the two L&I notices go together, as do the vacancy records. */
-export const TIMELINE_KINDS = ['deed', 'violation', 'permit', 'demolition', 'clean_seal', 'notice', 'vacancy'] as const;
+/**
+ * The kinds a reader can switch on and off: the two L&I notices go together, as do the vacancy
+ * records. Appeals (M4.6) appear on the day they were filed, with their hearing day; who filed
+ * them is shown in "Rules for this lot", not here.
+ */
+export const TIMELINE_KINDS = ['deed', 'violation', 'permit', 'demolition', 'clean_seal', 'notice', 'appeal', 'vacancy'] as const;
 export type TimelineKind = (typeof TIMELINE_KINDS)[number];
 
 export function isTimelineKind(value: unknown): value is TimelineKind {
@@ -186,6 +191,8 @@ export interface StorySentence {
 export interface TimelineInput {
   transfers: Transfer[] | null;
   li: LiGroups | null;
+  /** The parcel's appeals (M4.6), live or from the weekly copy; null or absent when not known. */
+  appeals?: Appeal[] | null;
   lists: ListRecord[];
   landcare: LandCare | null;
   /** Today in Philadelphia, YYYY-MM-DD. */
@@ -226,18 +233,7 @@ function deedItem(d: Transfer): TimelineItem {
   return { text: parts.join(', '), status: null, open: false, early: d.date !== null && d.date < FULL_RECORDS_FROM };
 }
 
-/** Abbreviations L&I writes in its titles, kept in capitals ("ID STRUCTURE" is imminently dangerous). */
-const ABBREVIATIONS = new Set(['ID', 'L&I', 'HVAC', 'CLIP', 'CO', 'LO']);
-
-/** An L&I title in sentence case, abbreviations kept, dashes as commas. */
-export function cityWords(text: string): string {
-  return plain(
-    sentenceCase(text)
-      .split(' ')
-      .map((word) => (ABBREVIATIONS.has(word.toUpperCase()) ? word.toUpperCase() : word))
-      .join(' '),
-  );
-}
+export { cityWords };
 
 /** Words for the codes L&I's older permit system wrote as the kind of work; others show the permit type alone. */
 const PERMIT_CODES: Record<string, string> = {
@@ -363,6 +359,14 @@ export function buildTimeline(input: TimelineInput): Timeline {
   for (const deed of input.transfers ?? []) add('deed', t().kinds.deed!, deed.date, deedItem(deed));
   for (const kind of LI_KINDS) {
     for (const r of input.li?.[kind] ?? []) add(KIND_OF[kind], liLabel(kind), r.date, liItem(kind, r), kind === 'violation');
+  }
+  for (const appeal of input.appeals ?? []) {
+    if (!appeal.filed) continue;
+    const board = strings.dossier.rules.boards[appeal.board] ?? strings.dossier.rules.boards.other!;
+    const parts = [t().appeal(board, appealKind(appeal))];
+    if (appeal.hearing) parts.push(t().appealHearing(formatDate(appeal.hearing) ?? appeal.hearing));
+    const status = decisionWords(appeal.decision) ?? (appeal.status ? cityWords(appeal.status) : null);
+    add('appeal', t().kinds.appeal!, appeal.filed, { text: parts.join(', '), status, open: false, early: false });
   }
   for (const record of input.lists) add('vacancy', t().kinds.vacancy!, record.date, { text: t().lists[record.list]!, status: null, open: false, early: false });
   const yearOnly: TimelineRow[] = [];

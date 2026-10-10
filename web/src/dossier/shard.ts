@@ -30,7 +30,19 @@ import type {
   Vacancy,
   VacancyKind,
 } from './types.ts';
-import { OWNER_TYPES, PARTIAL_PARTS, type PartialPart } from './types.ts';
+import {
+  APPEAL_BOARDS,
+  OWNER_TYPES,
+  PARTIAL_PARTS,
+  RULE_PARTS,
+  type Appeal,
+  type AppealBoard,
+  type Brownfield,
+  type LotRules,
+  type Overlay,
+  type PartialPart,
+  type RulePart,
+} from './types.ts';
 
 export const SHARD_SCHEMA = 1;
 
@@ -196,6 +208,100 @@ function noticeNote(v: unknown): NoticeNote | null {
   return body ? { text: body, routes: ids(v.routes), links: links(v.links) } : null;
 }
 
+const DAY = /^\d{4}-\d{2}-\d{2}$/;
+const CLOCK = /^([01]\d|2[0-3]):[0-5]\d$/;
+const OVERLAY_KEY = /^o[0-9a-f]{8}$/;
+
+function day(v: unknown): string | null {
+  return typeof v === 'string' && DAY.test(v) ? v : null;
+}
+
+function safeUrl(v: unknown): string | null {
+  return typeof v === 'string' && SAFE_URL.test(v) ? v : null;
+}
+
+/** A zoning overlay of dossiers/common.json (M4.6). */
+function overlay(id: string, v: unknown): Overlay | null {
+  if (!isObj(v) || !OVERLAY_KEY.test(id)) return null;
+  const name = text(v.name);
+  if (!name) return null;
+  const kind = int(v.type);
+  return {
+    id,
+    name,
+    symbol: text(v.symbol),
+    type: kind !== null && kind >= 0 && kind <= 3 ? kind : 0,
+    section: text(v.section),
+    link: safeUrl(v.link),
+    sunset: day(v.sunset),
+    pendingBill: text(v.pending_bill),
+    pendingUrl: safeUrl(v.pending_url),
+  };
+}
+
+/** One appeal (M4.6), keeping only the contract's fields: never its number, never its grounds. */
+export function parseAppeal(v: unknown): Appeal | null {
+  if (!isObj(v)) return null;
+  const board = (APPEAL_BOARDS as readonly string[]).includes(v.board as string) ? (v.board as AppealBoard) : 'other';
+  const hearing = day(v.hearing);
+  return {
+    board,
+    application: text(v.application),
+    type: text(v.type),
+    status: text(v.status),
+    decision: text(v.decision),
+    filed: day(v.filed),
+    hearing,
+    hearingTime: hearing && typeof v.hearing_time === 'string' && CLOCK.test(v.hearing_time) ? v.hearing_time : null,
+    decided: day(v.decided),
+    rco: text(v.rco),
+    appellant: text(v.appellant),
+    owner: text(v.owner),
+  };
+}
+
+function brownfield(v: unknown): Brownfield | null {
+  if (!isObj(v)) return null;
+  const id = text(v.id);
+  if (!id) return null;
+  const meters = count(v.m);
+  return { id, name: text(v.name), address: text(v.address), meters: meters !== null && meters <= 1000 ? meters : null };
+}
+
+/** The rules block of a dossier (M4.6), or null when no rule applies. */
+export function parseRules(v: unknown): LotRules | null {
+  if (!isObj(v)) return null;
+  const historic = isObj(v.historic) ? v.historic : {};
+  const districts = Array.isArray(historic.districts)
+    ? historic.districts
+        .filter(isObj)
+        .map((d) => ({ name: text(d.name), date: day(d.date) }))
+        .filter((d): d is { name: string; date: string | null } => d.name !== null)
+    : [];
+  const reg = isObj(historic.register) ? historic.register : null;
+  const register = reg
+    ? {
+        address: text(reg.address),
+        date: day(reg.date),
+        individual: reg.individual === true || day(reg.date) !== null,
+        district: text(reg.district),
+        districtDate: day(reg.district_date),
+      }
+    : null;
+  const zone = isObj(v.zoning) ? v.zoning : null;
+  const code = zone ? text(zone.code) : null;
+  const rules: LotRules = {
+    districts,
+    register,
+    zoning: zone && code ? { code, group: text(zone.group), pendingUrl: safeUrl(zone.pending_url) } : null,
+    overlays: texts(v.overlays).filter((key) => OVERLAY_KEY.test(key)),
+    brownfields: Array.isArray(v.brownfields) ? v.brownfields.map(brownfield).filter((b): b is Brownfield => b !== null) : [],
+    brownfieldsMore: count(v.brownfields_more) ?? 0,
+  };
+  const empty = !rules.districts.length && !rules.register && !rules.zoning && !rules.overlays.length && !rules.brownfields.length;
+  return empty ? null : rules;
+}
+
 /** The shared wording in a file's `flags` and `notices`, or null when it has none. */
 export function parseNotes(json: unknown): DossierNotes | null {
   if (!isObj(json)) return null;
@@ -208,7 +314,16 @@ export function parseNotes(json: unknown): DossierNotes | null {
     const note = noticeNote(raw);
     if (note && ID.test(id)) notes.notices[id] = note;
   }
-  return Object.keys(notes.flags).length || Object.keys(notes.notices).length ? notes : null;
+  // Every zoning overlay by its key (M4.6).
+  if (isObj(json.overlays)) {
+    const overlays: Record<string, Overlay> = {};
+    for (const [id, raw] of Object.entries(json.overlays)) {
+      const found = overlay(id, raw);
+      if (found) overlays[id] = found;
+    }
+    if (Object.keys(overlays).length) notes.overlays = overlays;
+  }
+  return Object.keys(notes.flags).length || Object.keys(notes.notices).length || notes.overlays ? notes : null;
 }
 
 function nearby(v: unknown): Nearby | null {
@@ -219,6 +334,7 @@ function nearby(v: unknown): Nearby | null {
     killed: null,
     landcare: count(v.landcare_within_500ft),
     gardens: count(v.gardens_within_500ft),
+    hearings: count(v.hearings_within_500ft),
   };
   return Object.values(out).some((n) => n !== null) ? out : null;
 }
@@ -274,6 +390,7 @@ export function parseShardParcel(raw: unknown, where = 'parcel', problems: strin
     problems.push(`${where} should be an object`);
     return null;
   }
+  const missing: RulePart[] = RULE_PARTS.filter((part) => texts(raw.partial).includes(part));
   return {
     address: text(raw.address),
     vacancy: vacancy(raw.vacancy),
@@ -289,7 +406,19 @@ export function parseShardParcel(raw: unknown, where = 'parcel', problems: strin
     garden: raw.garden === true,
     lens: lensValues(raw.lens),
     displacement: displacement(raw.displacement),
+    rules: parseRules(raw.rules),
+    appeals: missing.includes('appeals') ? null : (list(raw.appeals, parseAppeal, `${where}.appeals`, problems) ?? []),
+    missing,
+    lotSize: lotSize(raw.lot_size),
   };
+}
+
+/** The lot's frontage and depth in feet (M4.6), or null. */
+function lotSize(v: unknown): { frontage: number; depth: number } | null {
+  if (!isObj(v)) return null;
+  const frontage = typeof v.frontage === 'number' && Number.isFinite(v.frontage) ? v.frontage : null;
+  const depth = typeof v.depth === 'number' && Number.isFinite(v.depth) ? v.depth : null;
+  return frontage !== null && depth !== null && frontage > 0 && depth > 0 ? { frontage, depth } : null;
 }
 
 export function parseShard(json: unknown): ShardParseResult {

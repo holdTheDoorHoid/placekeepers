@@ -40,6 +40,13 @@ from placekeepers.adapters.philly311 import Philly311Conditions
 from placekeepers.adapters.property_records import AssessmentHistory, RealEstateTransfers
 from placekeepers.adapters.pwd_parcels import PwdParcels
 from placekeepers.adapters.redlining import MappingInequality1937
+from placekeepers.adapters.rules import (
+    Appeals,
+    EpaBrownfields,
+    HistoricDistricts,
+    HistoricSites,
+    ZoningOverlays,
+)
 from placekeepers.adapters.schools import Schools
 from placekeepers.adapters.septa import SeptaGtfs, SeptaRidershipBus, SeptaRidershipTrolley
 from placekeepers.adapters.shootings import Shootings
@@ -154,6 +161,12 @@ ADAPTERS: dict[str, type[Adapter]] = {
     # The lot timeline (M4.2): Clean & Green Philly's copies of the June 2024 vacancy lists
     "cagp_vacant_land_2024": CagpVacancyList2024,
     "cagp_vacant_buildings_2024": CagpVacancyList2024,
+    # The rules and records of each lot (M4.6, issue #42)
+    "historic_districts": HistoricDistricts,
+    "historic_sites": HistoricSites,
+    "zoning_overlays": ZoningOverlays,
+    "appeals": Appeals,
+    "epa_brownfields": EpaBrownfields,
     # The Land Bank in numbers (M4.4): deeds from the City's land agencies and the City's own counts
     # by program.
     "land_conveyances": LandConveyances,
