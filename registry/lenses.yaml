@@ -282,8 +282,9 @@
       evidence: weak
       default_weight: 3
       explain: >-
-        100 where a survey found no shelter, 0 where there is a shelter or the whole stop is under a
-        roof. Where no one has surveyed the stop yet it counts as 50, halfway, so a stop is never
+        100 where a survey found no shelter, 0 where there is a shelter, the whole stop is under a
+        roof, or the City's own list of bus shelters has one there (whatever OpenStreetMap says).
+        Where no one has surveyed the stop yet it counts as 50, halfway, so a stop is never
         scored as missing a shelter it may have; survey it to find out. In a study in Minneapolis
         and Saint Paul, riders at stops without a bench or a shelter felt their waits were longer
         than they were.

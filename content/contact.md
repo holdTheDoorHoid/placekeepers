@@ -17,8 +17,10 @@ here.
 
 ## A bus stop, shelter or bench is missing or wrong
 
-Bus stops, shelters and benches on our map come from OpenStreetMap, the free map anyone can
-improve, so the fastest fix is to correct OpenStreetMap itself. Our guide to
+What our map says about benches, and about shelters the City's own list does not have, comes from
+OpenStreetMap, the free map anyone can improve, so the fastest fix is to correct OpenStreetMap
+itself. The City's list of bus shelters was last changed in January 2025; where it and
+OpenStreetMap disagree, the stop's page says so, and a survey settles it. Our guide to
 [surveying bus stops](../streetcomplete/) shows how, with a free phone app. Your change reaches our
 map within about a week.
 

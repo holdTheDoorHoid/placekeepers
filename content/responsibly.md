@@ -30,6 +30,13 @@ themselves. The page also points to the City's free Fraud Guard alerts, and expl
 November 2025 the City automatically blocks a deed if the seller was already dead when they
 supposedly signed it.
 
+**Appeals and hearings.** A lot's page lists every appeal to the City's boards about it, as the
+City publishes it, including who filed it and the owner the City names. Those names appear on
+that lot's own page only: never on the map, in a list of places, in a printout or in a download, so
+the site holds no citywide list of the people who appeal. A hearing still to come is shown so that
+neighbors can take part, as the City invites anyone to do, never as a way to find or contact the
+person who filed.
+
 **Things we chose not to build.** We do not show an estimated price for buying a property. We do
 not offer a way to sort or filter lots by how easy they would be to take from their owner. We have
 no "buy" button, other than links to the Land Bank's own programs for neighbors. Nothing on the

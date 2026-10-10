@@ -37,7 +37,9 @@ cache, `--as-of YYYY-MM-DD` sets the build date for time windows, and `-v` shows
 `pk all` finishes each source (download, then check) before starting the next, in an order where
 a source comes after the ones its download needs: transfers, assessments and violations wait for
 the sources that define the vacancy candidate parcels. A source whose registry cadence is `frozen`
-is downloaded once; a `yearly` one at most every 30 days; the OpenStreetMap extract at most every
+is downloaded once (picture services, endpoint kind `arcgis_tiles`, download nothing: every run
+only checks that each service still answers, whatever its cadence); a `yearly` one at most every
+30 days; the OpenStreetMap extract at most every
 six days, as Geofabrik asks (its adapter's `min_refetch`; `--force` overrides all three). A
 snapshot made with other registry settings than today's (its sidecar's `recipe`, such as the
 extract's tag list, missing in snapshots made before 2026-10-05) is downloaded again on the next
@@ -102,6 +104,15 @@ the City's public places and 311 conditions (`adapters/city_places.py`, `adapter
 | `zoning_overlays` | City ArcGIS `Zoning_Overlays` (M4.6) | Each overlay's name, symbol, type, Zoning Code section and link, sunset date, pending bill and shape |
 | `appeals` | Carto `appeals`, the whole table (M4.6) | Each appeal's number (to list it once; never published), board, kind, status, decision, filing, hearing and decision times, the community organization notified, who filed it and the owner named, the OPA account, address and point. Never the grounds, the proviso or related permit and case numbers. Names reach only the lot's own dossier record (docs/ETHICS.md) |
 | `epa_brownfields` | The EPA's facility registry map service `OEI/FRS_INTERESTS`, layer 0 (ACRES), Philadelphia only (M4.6; endpoint `server: MapServer`, asked again when the EPA's server says "Service not found") | Registry id, site name and address, post code, how precise the point is, the last report day, the point |
+| `li_history` | Carto, six L&I tables (violations, permits, demolitions, unsafe, imminently dangerous, clean and seal), every record of the candidate parcels, all years (M4.2) | Each record's kind, day, the City's title, status and one plain detail; never a case, permit or violation number, an inspector, an applicant or a contractor |
+| `cagp_vacant_land_2024`, `cagp_vacant_buildings_2024` | Clean & Green Philly's copies of the June 2024 vacancy lists (frozen, M4.2) | Parcel numbers and the list's date only |
+| `land_conveyances` | Carto `rtt_summary`, deeds since 2014 naming a City land agency among the sellers, and each named property's own deeds (M4.4) | Each deed's kind of conveyance, agency, the buyers' type, whether a buyer owns the parcel next door, follow ups, price and point; the names are read to decide these and never kept |
+| `land_conveyed_by_fy` | City ArcGIS `LMDashboard_PropertiesConveyedbyFY` (frozen, M4.4) | The City's own counts by program and fiscal year, 2017 to 2023 |
+| `bus_shelters`, `street_poles`, `traffic_calming`, `crossing_guards` | City ArcGIS `bus_transit_shelters`, `Street_Poles`, `traffic_calming_devices`, `School_Crossing_Guards` (M4.5) | Each shelter's site id, SEPTA stop number and screen kind; each pole's number, owner and the lamp the City lists; each device's kind, street block and day installed; each guard post's point |
+| `city_aerial_photos`, `dvrpc_aerial_photos`, `usgs_aerial_photos_1999`, `city_atlas_1860` | Picture services on the City's ArcGIS tile server (`arcgis_tiles`, M4.3) | Nothing: the visitor's browser loads the pictures; the pipeline only checks that each service answers |
+| `mapping_inequality_1937` | Mapping Inequality's GeoJSON of the 1937 map of Philadelphia (frozen, M4.3) | Each area's label, grade and shape, under CC BY-NC 2.5, published in a file of its own; never the area descriptions |
+| `acs_rent_burden`, `acs_rent`, `acs_income`, `acs_occupancy`, `acs_vacancy` | Census Bureau bulk tables B25070, B25064, B19013, B25002 and B25004, 2020 to 2024 (M4.7) | Counts and medians per tract and for the city, with margins of error |
+| `warming_cooling_sites`, `ppr_playgrounds` | City ArcGIS `Warming_Cooling_Sites_PUBLICVIEW` and `PPR_Playgrounds` (M4.7) | Each site as listed (status, hours, services, access), credited nowhere on the map as the owner decided; each playground's park, ages and year installed |
 | `pba_laser` | Philly Bike Action's Laser Vision map data (`bikeaction.org/tools/laser/map_data/`), once a week, one request per kind of report for the trailing 12 months, with Philly Bike Action's permission (issue #37) | Each report's H3 cell at resolution 10 and its kind, never its point, with the window's first and last day. 26,060 reports on 2026-10-08, in 33 seconds |
 
 **Candidate parcels.** Transfers, assessments and violations are too large to download for the
@@ -271,22 +282,27 @@ DuckDB: `SELECT * FROM '~/.cache/placekeepers/snapshots/opa_properties/current.p
 ## Published files
 
 `pk publish` follows `docs/CONTRACTS.md`: `manifest.json`, `tiles/lots.pmtiles` (layer `parcels`),
-`tiles/streets.pmtiles` (layers `hin`, `segments`, `crashes` and `memorials`),
+`tiles/streets.pmtiles` (layers `hin`, `segments`, `crashes`, `memorials`, `calming` and `guards`),
 `tiles/context.pmtiles` (layer `h3`), `tiles/care.pmtiles` (layers `landcare` and `gardens`),
 `tiles/boundaries.pmtiles` (layers `council_districts`, `rcos` and `neighborhoods`),
-`tiles/transit.pmtiles` (layers `stops` and `routes`), `tiles/amenities.pmtiles` (layers `stops`,
+`tiles/transit.pmtiles` (layers `stops`, `routes` and `shelters`), `tiles/amenities.pmtiles` (layers `stops`,
 `benches`, `picnic_tables`, `water`, `toilets` and `bookcases`), `tiles/environment.pmtiles` (layers
 `heat_tracts` and `floodplain`), `tiles/trees.pmtiles` (layer `trees`, zoom 14 only),
-`tiles/places.pmtiles` (layers `park_water`, `libraries`, `recreation` and `pools`),
+`tiles/places.pmtiles` (layers `park_water`, `libraries`, `recreation`, `pools`, `cooling` and
+`playgrounds`),
 `tiles/conditions.pmtiles` (layers `dumping`, `lights` and `graffiti`), `tiles/art.pmtiles` (layer
 `art`), `tiles/walk.pmtiles` (layers `block_groups` and `cells`), `tiles/cycling.pmtiles` (layer
-`stress`), `tiles/displacement.pmtiles` (layer `watch`) and `tiles/parking.pmtiles` (layer
-`parking`). It builds in a
+`stress`), `tiles/displacement.pmtiles` (layer `watch`), `tiles/parking.pmtiles` (layer
+`parking`), `tiles/poles.pmtiles` (layer `poles`, zoom 15 only), `tiles/rules.pmtiles` (layers
+`historic_districts`, `historic_sites`, `overlays`, `hearings` and `brownfields`) and
+`tiles/redlining.pmtiles` (layer `holc`, under its own non commercial license, named in the
+manifest). It builds in a
 hidden folder and swaps it into place at the end, and it refuses to replace a folder that is not an
 earlier data root. A layer with nothing to show is left out with a note, so it never breaks the rest
 of its tile file. It also writes the lot dossiers, `dossiers/<first four digits>.json` with
-`dossiers/common.json`, and `tables/owners.json` (see "Lot dossiers and owner flags" below), and
-the route survey sheets, `tables/routes/<route id>.json` with `tables/routes/index.json` (see "Route
+`dossiers/common.json`, the lot timeline's history shards, `dossiers/history/<first four
+digits>.json` (M4.2), `tables/owners.json` (see "Lot dossiers and owner flags" below),
+`tables/land_bank.json` for the page "The Land Bank in numbers" (M4.4), and the route survey sheets, `tables/routes/<route id>.json` with `tables/routes/index.json` (see "Route
 survey sheets" below).
 
 ### Street safety and memorials
