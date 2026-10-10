@@ -92,7 +92,7 @@ describe('the story of the lot', () => {
   it('names a notice still open, then the City\'s clean and seal work', () => {
     expect(buildDossier(input('990000001')).history.timeline.story.map((s) => s.text)).toEqual([
       'L&I has listed the building as unsafe since May 2, 2023.',
-      'The City last cleaned and sealed the building here in 2024; it has done so 2 times.',
+      'The City last sent its clean and seal crews here in 2024; it has done so 2 times.',
     ]);
     expect(buildDossier(input('990000029')).history.timeline.story[0]!.text).toBe('L&I has listed the building as imminently dangerous since December 3, 2025.');
   });
@@ -142,6 +142,20 @@ describe('the story of the lot', () => {
     expect(storyOf({ transfers: [], li: before, lists: [], landcare: null, today: '2026-10-09' }).map((s) => s.text)).toEqual([
       'A building stood here until 2014, when the City demolished it.',
     ]);
+  });
+
+  it('never says a building was sealed where the records show none: the crews also clean empty lots', () => {
+    // 5419 Lena St (122138300), v0.4 review: vacant land with two "CLIP C&S" records and no
+    // building in any record.
+    const li: LiGroups = {
+      clean_seal: [
+        { date: '2016-11-16', title: 'CLIP C&S', status: 'Approved', detail: null, count: 1 },
+        { date: '2011-12-27', title: 'CLIP C&S', status: 'Approved', detail: null, count: 1 },
+      ],
+    };
+    const story = storyOf({ transfers: [], li, lists: [], landcare: null, today: '2026-10-09' }).map((s) => s.text);
+    expect(story).toEqual(['The City last sent its clean and seal crews here in 2016; it has done so 2 times.']);
+    expect(story.join(' ')).not.toMatch(/building/);
   });
 
   it('never tells a story from a record dated in the future, or a demolition not completed', () => {
