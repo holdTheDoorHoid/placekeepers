@@ -66,7 +66,7 @@ const ids = (extra: { nonEmpty?: boolean } = {}): Spec => ({ t: 'strings', patte
 
 const SCHEMAS: Record<keyof Registry, Fields> = {
   groups: { id: id(), label: text(), description: text() },
-  licenses: { id: id(), label: text(), url: url(), share_alike: { t: 'boolean' }, non_commercial: { t: 'boolean', optional: true } },
+  licenses: { id: id(), label: text(), url: url(), share_alike: { t: 'boolean' }, non_commercial: { t: 'boolean', optional: true }, credit: { t: 'boolean', optional: true } },
   sources: {
     id: id(),
     name: text(),

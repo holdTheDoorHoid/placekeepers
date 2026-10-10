@@ -18,11 +18,35 @@ names and counts verified against the live services on 2026-10-05:
   recreation centers, last edited 2026-09-29.
 
 All are under the City's open data terms (registry license `city_terms`).
+
+Added 2026-10-09 by M4.7 (issue #43), checked against the live services that day:
+
+* `Warming_Cooling_Sites_PUBLICVIEW`: the Office of Emergency Management's warming and cooling
+  sites, 87 points last edited 2026-10-07: 32 Parks and Recreation sites, 28 libraries, 16
+  community partners and 11 Philadelphia Housing Authority community centers, each with its name,
+  address, hours, whether it is a warming site, a cooling site or both, whether it is open, and
+  sometimes its capacity, services, access for people with disabilities, water and restrooms. The
+  item is a public "view" copy the City made on 2026-07-01 and states no license; the owner
+  decided on 2026-10-09 to show it with no credit line on the map and without asking the Office of
+  Emergency Management (docs/DATA_SOURCES.md). The layer's last edit day is kept as
+  `source_date`, so a list no one has edited for over a year turns the source stale.
+* `PPR_Playgrounds`: Parks and Recreation's 462 playgrounds, last edited 2026-08-21, with the park
+  name, the ages each is meant for and the day it was installed. The older
+  `PPR_Playground_Equipment` (2016) is not used.
 """
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
+from pathlib import Path
+
+import pyarrow as pa
+import pyarrow.parquet as pq
+
 from placekeepers.adapters.arcgis import ArcgisAdapter
+from placekeepers.adapters.base import FetchError
+from placekeepers.cache import RawFetch
+from placekeepers.config import local_date
 
 
 class LibraryLocations(ArcgisAdapter):
@@ -70,3 +94,55 @@ class PprHydrationStations(ArcgisAdapter):
 
     out_fields = ("objectid", "amenity_name", "park_name", "station_type", "location")
     required_columns = ("objectid", "park_name", "station_type", "geometry")
+
+
+class WarmingCoolingSites(ArcgisAdapter):
+    """The Office of Emergency Management's warming and cooling sites (module docstring), with
+    the day the City last edited the list as `source_date`."""
+
+    out_fields = (
+        "OBJECTID",
+        "site_name",
+        "site_type",
+        "site_address",
+        "site_hours",
+        "warming_site",
+        "cooling_site",
+        "site_status",
+        "capacity",
+        "services_offered",
+        "handicap_accessible",
+        "water_station",
+        "facilities_include",
+    )
+    required_columns = (
+        "objectid",
+        "site_name",
+        "site_type",
+        "site_status",
+        "warming_site",
+        "cooling_site",
+        "source_date",
+        "geometry",
+    )
+
+    def normalize(self, raw: RawFetch, out: Path) -> None:
+        super().normalize(raw, out)
+        edited = raw.info.get("data_last_edit")
+        if edited is None:
+            raise FetchError("The layer does not say when its data was last edited")
+        day = local_date(datetime.fromtimestamp(edited / 1000, UTC))
+        table = pq.read_table(out)
+        metadata = (pq.read_schema(out).metadata or {}).get(b"geo")
+        table = table.append_column(
+            "source_date", pa.array([day] * table.num_rows, pa.date32())
+        ).replace_schema_metadata({b"geo": metadata} if metadata else None)
+        pq.write_table(table, out, compression="zstd")
+
+
+class PprPlaygrounds(ArcgisAdapter):
+    """Parks and Recreation's playgrounds: the park, the ages it is meant for and the day it was
+    installed. Not the free text comments or the data source note."""
+
+    out_fields = ("objectid", "park_name", "age_range", "date_installed")
+    required_columns = ("objectid", "park_name", "geometry")

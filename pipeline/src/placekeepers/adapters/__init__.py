@@ -7,8 +7,13 @@ from placekeepers.adapters.arcgis import ArcgisAdapter
 from placekeepers.adapters.art import PercentForArt, WikidataArt
 from placekeepers.adapters.base import Adapter, AdapterMismatch, FetchError, Validation
 from placekeepers.adapters.bulk_files import (
+    AcsIncome,
+    AcsOccupancy,
     AcsPoverty,
+    AcsRent,
+    AcsRentBurden,
     AcsTenure,
+    AcsVacancy,
     CagpTax2025,
     CagpVacancyList2024,
 )
@@ -16,9 +21,11 @@ from placekeepers.adapters.carto import CartoAccountsAdapter, CartoAdapter, Colu
 from placekeepers.adapters.city_places import (
     LibraryLocations,
     PprHydrationStations,
+    PprPlaygrounds,
     PprProgramSites,
     PprSpraygrounds,
     PprSwimmingPools,
+    WarmingCoolingSites,
 )
 from placekeepers.adapters.crashes import Crashes20072017, Crashes20162020, Crashes20202024
 from placekeepers.adapters.curated import MemorialNames
@@ -155,6 +162,15 @@ ADAPTERS: dict[str, type[Adapter]] = {
     "usgs_aerial_photos_1999": ArcgisTilesAdapter,
     # The 1937 redlining map, under its non commercial license (owner, 2026-10-09)
     "mapping_inequality_1937": MappingInequality1937,
+    # Neighborhood context (M4.7, issue #43): rent burden, homes lived in and empty and why,
+    # income and rent by census tract; the warming and cooling sites; and the playgrounds
+    "acs_rent_burden": AcsRentBurden,
+    "acs_occupancy": AcsOccupancy,
+    "acs_vacancy": AcsVacancy,
+    "acs_income": AcsIncome,
+    "acs_rent": AcsRent,
+    "warming_cooling_sites": WarmingCoolingSites,
+    "ppr_playgrounds": PprPlaygrounds,
 }
 
 

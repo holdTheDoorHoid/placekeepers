@@ -73,6 +73,11 @@ class License(Strict):
     #: allows non commercial use only (added 2026-10-09 for the 1937 redlining map): data under
     #: such a license is published in its own file, never in a download (docs/CONTRACTS.md)
     non_commercial: bool = False
+    #: false when the map shows no credit line for sources under it (added 2026-10-09 by M4.7
+    #: for the warming and cooling sites, as the owner decided): no credit in a legend, a tapped
+    #: place's details, the layer's "About" section or a tile file's attribution. The registry
+    #: still records the source, so the Data status page lists it.
+    credit: bool = True
 
 
 class Group(Strict):

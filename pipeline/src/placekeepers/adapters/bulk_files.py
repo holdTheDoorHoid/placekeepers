@@ -1,5 +1,5 @@
-"""Bulk files read their own way: the Census Bureau's poverty and tenure tables and Clean & Green
-Philly's last snapshot of tax debt.
+"""Bulk files read their own way: the Census Bureau's tables (poverty, tenure, and from M4.7 rent
+burden, occupancy, vacancy, income and rent) and Clean & Green Philly's last snapshot of tax debt.
 """
 
 from __future__ import annotations
@@ -7,6 +7,7 @@ from __future__ import annotations
 import re
 from datetime import date
 from pathlib import Path
+from typing import ClassVar
 
 from placekeepers.adapters.base import FetchError, quote_literal
 from placekeepers.adapters.url import UrlAdapter
@@ -109,6 +110,127 @@ class AcsTenure(AcsPoverty):
             )
         finally:
             con.close()
+
+
+class AcsTable(AcsPoverty):
+    """One table of the same table based summary file, by census tract, keeping the named
+    estimates and their margins of error (added 2026-10-09 for the neighborhood context on the
+    displacement watch, M4.7). Each `fields` entry names an output column and the Census line it
+    comes from: `<name>` holds the estimate (`_E`) and `<name>_moe` its margin of error (`_M`), at
+    the Census Bureau's 90 percent confidence. A negative code (the Census's mark for "could not
+    be computed", for example a median of too few homes) becomes null, so a missing number is never
+    shown as a number. Only Philadelphia's tracts are kept, as for the poverty table."""
+
+    #: the Census table, as it is named in the file's columns (such as "B25070")
+    table: ClassVar[str] = ""
+    #: output name -> line number of the table, such as {"renter_households": "001"}
+    fields: ClassVar[dict[str, str]] = {}
+
+    def normalize(self, raw: RawFetch, out: Path) -> None:
+        path = self.data_file(raw)
+        end = self.survey_end_year()
+        selects = []
+        for name, line in self.fields.items():
+            selects.append(f"{_estimate(f'{self.table}_E{line}')} AS {name}")
+            selects.append(f"{_estimate(f'{self.table}_M{line}')} AS {name}_moe")
+        con = self.ctx.duckdb()
+        try:
+            header = con.execute(
+                f"SELECT * FROM read_csv({quote_literal(str(path))}, delim = '|', header = true, "
+                "all_varchar = true) LIMIT 0"
+            ).description
+            known = {column[0] for column in header}
+            wanted = {f"{self.table}_{k}{line}" for line in self.fields.values() for k in "EM"}
+            missing = sorted(wanted - known)
+            if missing:
+                raise FetchError(f"The table has no {', '.join(missing)} column")
+            con.execute(
+                f"""COPY (
+                    SELECT substr(GEO_ID, 10) AS geoid,
+                           right(GEO_ID, 6) AS tract,
+                           {", ".join(selects)},
+                           {end - 4} AS survey_start_year,
+                           {end} AS survey_end_year
+                    FROM read_csv({quote_literal(str(path))}, delim = '|', header = true,
+                                  all_varchar = true)
+                    WHERE GEO_ID LIKE '{self.tract_prefix}%'
+                    ORDER BY geoid
+                ) TO {quote_literal(str(out))} (FORMAT parquet, COMPRESSION zstd)"""
+            )
+        finally:
+            con.close()
+
+
+class AcsRentBurden(AcsTable):
+    """Gross rent as a share of household income (table B25070): renter households, those whose
+    share could not be computed (no cash rent or no income), and those paying 30 to 35, 35 to 40,
+    40 to 50 and 50 percent or more of their income on rent and utilities."""
+
+    table = "B25070"
+    fields = {
+        "renter_households": "001",
+        "rent_30_35": "007",
+        "rent_35_40": "008",
+        "rent_40_50": "009",
+        "rent_50_plus": "010",
+        "not_computed": "011",
+    }
+    required_columns = (
+        "geoid",
+        "tract",
+        "renter_households",
+        "renter_households_moe",
+        "rent_50_plus",
+        "rent_50_plus_moe",
+        "not_computed",
+        "not_computed_moe",
+    )
+
+
+class AcsOccupancy(AcsTable):
+    """Homes lived in and homes empty (table B25002, occupancy status)."""
+
+    table = "B25002"
+    fields = {"homes": "001", "occupied": "002", "vacant": "003"}
+    required_columns = ("geoid", "tract", "homes", "occupied", "vacant", "vacant_moe")
+
+
+class AcsVacancy(AcsTable):
+    """Why homes are empty (table B25004, vacancy status): for rent, rented and not yet moved
+    into, for sale, sold and not yet moved into, for seasonal or occasional use, for migrant
+    workers, and the Census's "other vacant" (homes held off the market: waiting for repairs, in
+    a family's legal limbo, abandoned, and so on)."""
+
+    table = "B25004"
+    fields = {
+        "vacant": "001",
+        "for_rent": "002",
+        "rented_not_occupied": "003",
+        "for_sale": "004",
+        "sold_not_occupied": "005",
+        "seasonal": "006",
+        "migrant_workers": "007",
+        "other_vacant": "008",
+    }
+    required_columns = ("geoid", "tract", "vacant", "for_rent", "for_sale", "other_vacant")
+
+
+class AcsIncome(AcsTable):
+    """Median household income in the last 12 months, in dollars of the survey's last year
+    (table B19013)."""
+
+    table = "B19013"
+    fields = {"median_income": "001"}
+    required_columns = ("geoid", "tract", "median_income", "median_income_moe")
+
+
+class AcsRent(AcsTable):
+    """Median gross rent, contract rent plus utilities the renter pays, in dollars a month
+    (table B25064)."""
+
+    table = "B25064"
+    fields = {"median_rent": "001"}
+    required_columns = ("geoid", "tract", "median_rent", "median_rent_moe")
 
 
 class CagpTax2025(UrlAdapter):
