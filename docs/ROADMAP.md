@@ -215,15 +215,33 @@ Bureau, the EPA and others directly.
 
 ## Phase 5: v0.5 Organizing tools
 
-- **M5.1 Lists and packets**: printable packets with each lot's one page summary, the registered
-  community organization and council office contacts, and letter templates reviewed by legal aid.
-- **M5.2 Neighbor notice**: a printable flyer with a QR code so neighbors who care about the same lot
-  can find each other (the 596 Acres idea), with guidance on where posting is allowed.
-- **M5.3 Intervention log**: an issue form feeding `data/curated/interventions.yaml` and a map layer
-  of completed projects.
-- **M5.4 "Did it work?"**: honest before and after comparisons against matched untreated lots, with
-  uncertainty and the warnings from EVIDENCE.md.
-- **M5.5 Spanish translation**, then other languages.
+Started 2026-10-21 (issue #19). Owner decisions that day: the letter templates ship now, low stakes
+only, each marked as not yet reviewed by a lawyer, with a review request to the Garden Justice Legal
+Initiative in the owner's outreach drafts; translation covers Spanish plus the City's top eight
+languages; the owner approves each finished project report with one click (a label on its GitHub
+issue) before it appears; and the orchestrator tags and releases v0.5 when it is built, reviewed and
+green.
+
+- **M5.1 Lists and packets** (issue #45): printable packets with each lot's one page summary, the
+  registered community organization and council office contacts, who represents each lot (ward,
+  state House and Senate, Congress; left over from #44), and letter templates marked as not yet
+  reviewed by a lawyer.
+- **M5.2 Neighbor notice** (issue #46): a printable flyer with a QR code so neighbors who care about
+  the same lot can find each other (the 596 Acres idea), with guidance on where posting is allowed.
+- **M5.3 Projects neighbors finished** (issue #47): an issue form the owner approves with one click,
+  `data/curated/interventions.yaml` for hand entries and corrections, and a map layer of completed
+  projects.
+- **M5.4 "Did it work?"** (issue #48): honest before and after comparisons against matched untreated
+  lots, with uncertainty and the warnings from EVIDENCE.md.
+- **M5.5 Translation** (issue #49): Spanish, Chinese (simplified), Vietnamese, Russian, Portuguese,
+  Haitian Creole, Khmer, French and Arabic, the single languages at the top of the City's own count
+  of residents who speak English less than very well (its CDBG-DR Language Access Plan, 2023).
+  Plumbing first, then one translator per language or two, then a back translation check of the
+  safety and legal wording.
+- **M5.6 Verification** and **M5.7 Release v0.5**, as in earlier phases.
+
+Waves: M5.1 (then M5.2, same agent), M5.3 and M5.5's plumbing in parallel; M5.4 after M5.3; the
+translators after the plumbing merges; a catch up translation pass, verification and release last.
 
 ## Ongoing
 
