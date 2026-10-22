@@ -281,7 +281,7 @@
               </tbody>
             </table>
             {#if packet.contacts.unknown.length}<p class="meta">{t.contactsUnknown(lotList(packet.contacts.unknown))}</p>{/if}
-            <p class="meta">{strings.represent.officialOnly}</p>
+            <p class="meta">{strings.represent.officialOnly} {strings.represent.officesMove}</p>
           {/if}
         </section>
 

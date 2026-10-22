@@ -485,9 +485,12 @@ def test_community_organizations_keep_what_the_city_publishes_for_reaching_them(
          "primary_email": "hello@example.org", "websites": "example.org extra", "effective_date": 1},
         {"lni_id": 203, "organization_name": "Example Neighbors (old)", "effective_date": 0},
         {"lni_id": 54, "organization_name": "Plain Civic", "primary_email": "not an address"},
+        {"lni_id": 77, "organization_name": "Old Site Civic", "websites": "http://old.example.org"},
     ]  # fmt: skip
     found = rco_contacts(rows, "2026-10-21")
-    assert list(found) == ["54", "203"]
+    assert list(found) == ["54", "77", "203"]
+    # An organization's link stays as the City publishes it: not every one answers on https.
+    assert found["77"]["website"] == "http://old.example.org"
     assert found["203"] == {
         "name": "Example Neighbors",
         "address": "1 Example St",

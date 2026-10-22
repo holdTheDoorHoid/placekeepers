@@ -81,9 +81,9 @@ function districtId(v: unknown): string | null {
   return null;
 }
 
-function safeUrl(v: unknown): string | null {
+function safeUrl(v: unknown, allowHttp = false): string | null {
   const t = text(v, 500);
-  return t && /^https:\/\/[^\s"<>]+$/.test(t) ? t : null;
+  return t && (allowHttp ? /^https?:\/\/[^\s"<>]+$/ : /^https:\/\/[^\s"<>]+$/).test(t) ? t : null;
 }
 
 function day(v: unknown): string | null {
@@ -124,7 +124,8 @@ function readRco(id: string, v: unknown): RcoContact | null {
     meeting: text(v.meeting),
     preferred: text(v.preferred, 60),
     contact: contact && (contact.name || contact.phone || contact.email) ? contact : null,
-    website: safeUrl(v.website),
+    // As the City publishes it: some organizations' sites answer only on http.
+    website: safeUrl(v.website, true),
     source: text(v.source, 60) ?? '',
     checked: day(v.checked),
   };

@@ -239,13 +239,17 @@ def phone_text(value: Any) -> str | None:
     return text
 
 
-def website(value: Any) -> str | None:
-    """An https link: the City writes some without a scheme ("phlcouncil.com/MarkSquilla")."""
+def website(value: Any, keep_http: bool = False) -> str | None:
+    """A web link: the City writes some without a scheme ("phlcouncil.com/MarkSquilla"), which get
+    https. An officeholder's http link becomes https (their official sites all answer on it); a
+    community organization's is kept as the City publishes it (`keep_http`), since not every one
+    answers on https."""
     text = _text(value)
     if not text:
         return None
     if text.startswith("http://"):
-        text = "https://" + text[len("http://") :]
+        if not keep_http:
+            text = "https://" + text[len("http://") :]
     elif not text.startswith("https://"):
         text = "https://" + text
     return text
@@ -475,7 +479,7 @@ def rco_contacts(rows: Iterable[dict[str, Any]], checked: str) -> dict[str, dict
             entry["contact"] = contact
         site = _text(row.get("websites"))
         if site:
-            entry["website"] = website(site.split()[0].rstrip(",;"))
+            entry["website"] = website(site.split()[0].rstrip(",;"), keep_http=True)
         entry |= {"source": RCO_SOURCE, "checked": checked}
         registered = row.get("effective_date")
         if key not in found or (

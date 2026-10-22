@@ -43,7 +43,7 @@
   {/if}
   {#if represent.rcoNote}<p class="muted small">{represent.rcoNote}</p>{/if}
   {#if represent.rcosUnknown}<p class="muted small">{r.rcoUnknown(represent.rcosUnknown)}</p>{/if}
-  <p class="muted small">{r.officialOnly}</p>
+  <p class="muted small">{r.officialOnly} {r.officesMove}</p>
 {:else}
   <p class="muted small">{represent.status === 'loading' ? r.loading : represent.status === 'unlisted' ? r.unlisted : r.missing}</p>
 {/if}

@@ -578,6 +578,7 @@ export const strings = {
     missing: 'This week\'s copy does not say who represents this lot. Atlas, the City\'s map, shows the elected officials for any address.',
     atlas: 'Elected officials for this address on Atlas, the City\'s map',
     officialOnly: 'For elected officials, only official offices are listed: no personal phone numbers or email addresses.',
+    officesMove: 'Offices sometimes move before the lists catch up: each member\'s website has the newest address and phone.',
   },
 
   // Packets (M5.1, issue #45; src/packet/): a cover page, the displacement card once, a contacts

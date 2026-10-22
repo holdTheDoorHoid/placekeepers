@@ -758,6 +758,16 @@ districts are worked out by its point (`derive/represent.py`) and the people are
   a second reading of the same layer with the fields the City publishes for reaching each
   organization, the same ones Atlas shows. The contacts' own addresses and the alternate contacts
   are left out on purpose.
+- **Checked by hand on 2026-10-21.** For ten lots, one in each Council district, the ward,
+  division, Council, House, Senate and Congressional districts matched the City's address service
+  (the one Atlas reads) for all ten, and Atlas's own "Voting" view showed the same ward, division and
+  Council member with the same City Hall room and phone for the three checked there; Atlas's zoning
+  view listed the same community organizations with the same contacts for the two checked there.
+  Every Philadelphia House and Senate member's name and district matched their page on palegis.us;
+  Open States' office address and phone matched those pages for 30 of the 33 seats, and lagged for
+  three (House 177, 190 and 202, whose members list a newer office there), so the lot page says
+  that each member's website has the newest office. The City's own table matched 23 of the 33.
+  Every phone of the three members of Congress appears on their house.gov sites.
 - **Terms.** Open States' data and the congress-legislators project are CC0 (their repositories'
   licenses, checked 2026-10-21); TIGER/Line files are U.S. government works; the City's layers and
   table are under the City's open data terms. All are credited on the Data status page.
