@@ -168,7 +168,7 @@ const es: Catalog = {
         feet < 1000
           ? `${formatNumber(Math.max(10, Math.round(feet / 10) * 10))} pies`
           : `${formatDecimal(feet / 5280, 1)} millas`;
-      return `A unos ${far} ${fromYou ? 'de usted' : 'del centro del mapa'}`;
+      return `A ${feet < 1000 ? 'unos' : 'unas'} ${far} ${fromYou ? 'de usted' : 'del centro del mapa'}`;
     },
   },
 
@@ -2140,7 +2140,7 @@ const es: Catalog = {
       },
       sheriff_sales: {
         one: (sale) => `Vendido en una venta del sheriff el ${sale}.`,
-        many: (n, sales) => `Vendido en ventas del sheriff ${n} veces: ${sales}.`,
+        many: (n, sales) => `Vendido ${n} veces en ventas del sheriff: ${sales}.`,
         sale: (date, price) => (price ? `${date}, por ${price}` : date),
         andLast: (others, last) => `${others}; y ${last}`,
         careful:
