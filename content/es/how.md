@@ -60,9 +60,10 @@ específica.
 ### Lotes de propiedad privada
 
 - **Pregunte al dueño.** A muchos dueños se les puede escribir a la dirección postal que aparece en
-  la página del lote. Está planeada una carta modelo para pedir permiso, pero **todavía no está
-  escrita**. Pida a la Garden Justice Legal Initiative que revise cualquier acuerdo antes de
-  firmarlo.
+  la página del lote. Desde la página de un lote, "Escribir una carta" abre
+  [una carta para pedirle permiso al dueño](../letters/) para cuidar el lote por un tiempo.
+  **Un abogado todavía no la ha revisado, y no es asesoría legal.** Pida a la Garden Justice Legal
+  Initiative que revise cualquier acuerdo antes de firmarlo.
 - **Cómprelo.** Una compra normal, aunque muchas propiedades vacías tienen un título entrecruzado
   (el dueño murió y la sucesión nunca se resolvió legalmente), lo que puede dificultar una venta.
 - **Posesión adversa de un jardín.** Una ley de Pensilvania de 2024 permite que un residente, un
@@ -146,6 +147,44 @@ vea las maneras de proteger a los vecinos en [Úselo con responsabilidad](../res
 - Desde el 10 de noviembre de 2025, la Ciudad bloquea automáticamente cualquier escritura en que el
   vendedor ya había muerto en la fecha en que supuestamente la firmó.
 
+## Cómo organizarse con sus vecinos
+
+- **Quiénes lo representan.** La página de cada lote de nuestra lista termina con quién representa
+  el lote: su ward (distrito electoral) y su división, el miembro del Concejo Municipal, el
+  representante estatal, el senador estatal y el miembro del Congreso, cada uno con su oficina
+  oficial y su teléfono, y las organizaciones comunitarias registradas cuya área lo cubre, con el
+  contacto que publica la Ciudad. Cada uno muestra de dónde viene y el día en que se revisó por
+  última vez. Atlas, el mapa de la Ciudad, muestra lo mismo para cualquier dirección en su vista
+  "Voting" (votación).
+- **Paquetes.** Guarde en una lista los lugares que le importan, y luego elija "Hacer un paquete"
+  junto a la lista (o "Hacer un paquete con estos lugares" encima de la lista ordenada en la vista
+  de análisis). El paquete se abre en su propia pestaña, listo para imprimir en papel tamaño Carta:
+  una portada con un mapa pequeño, a quién contactar, y una página para cada lugar con lo que dice
+  la página de su lote. Se hace en su navegador a partir de nuestra copia semanal de los registros
+  de la Ciudad; no se envía nada a ningún lado.
+- **Cartas.** [La página de cartas](../letters/) tiene cuatro cartas cortas para llenar e imprimir:
+  al dueño de un lote, para pedir permiso para cuidarlo; a la oficina de su Concejo Municipal, para
+  pedir apoyo para un patio lateral, un lote del Land Bank o una limpieza; a una organización
+  comunitaria registrada, para pedir presentar su proyecto en una reunión; y un seguimiento de un
+  reporte a Philly311 que sigue abierto. **Un abogado todavía no ha revisado estas cartas. No son
+  asesoría legal.** Para ayuda legal, use el
+  [formulario de solicitud de Grounded in Philly](https://groundedinphilly.org/request-representation/)
+  (la Garden Justice Legal Initiative). El sitio nunca envía una carta, y lo que usted escribe se
+  queda en su navegador hasta que lo borre.
+- La carta a un dueño se ofrece para una empresa o una organización sin fines de lucro, y para una
+  persona solo donde el mapa está bastante seguro de que el lote está vacío: un lote del que no
+  estamos seguros puede ser la casa de alguien. Los lotes de la Ciudad y del Land Bank pasan por
+  los programas del Land Bank.
+- **Un volante para los vecinos.** Desde la página de un lote, "Hacer un volante para los vecinos"
+  hace un letrero para la cerca del lote: un título grande, la dirección y un mapa pequeño, lo que
+  espera hacer, cómo pueden comunicarse con usted los vecinos, y un código QR que abre la página
+  del lote en Placekeepers. Se imprime en una página tamaño Carta o como dos medias páginas por
+  hoja. Lo que imprime es público, así que use un enlace a un chat de grupo o un correo electrónico
+  hecho para el proyecto en lugar de su dirección de casa o su teléfono personal. Antes de ponerlo,
+  lea [dónde puede ponerlo](../posting/): nunca en postes de servicios públicos, luces de calle,
+  señales de tránsito ni árboles de la calle, donde el código de la Ciudad fija multas desde $300
+  por letrero.
+
 ## Permisos para la calle y el espacio público
 
 | Lo que quiere hacer | A quién preguntar | Lo que necesita | Costo | Cuánto tarda |
@@ -212,6 +251,28 @@ for Art de la Ciudad, de OpenStreetMap y de Wikidata. Cualquiera puede agregar u
 OpenStreetMap, como obra de arte con su tipo, y con su nombre y su artista cuando los sepa; llega
 al mapa en más o menos una semana. Mural Arts Philadelphia tiene la lista más grande de los
 murales de la ciudad en [su propio sitio](https://muralarts.org/artworks/).
+
+## Cuéntenos sobre un proyecto que terminó
+
+¿Los vecinos limpiaron un lote, plantaron un jardín o árboles, construyeron un lugar para sentarse,
+pintaron un mural, consiguieron un banco o un refugio de la Ciudad, o lograron que se arreglara un
+problema del 311? Cuéntenoslo con este formulario corto, y puede aparecer en el mapa en "Proyectos
+que terminaron los vecinos", donde otros vecinos pueden ver qué se hizo cerca y qué hizo falta.
+
+[Cuéntenos sobre un proyecto que terminó](https://github.com/holdTheDoorHoid/placekeepers/issues/new?template=project.yml)
+
+- Una persona que maneja Placekeepers lee cada reporte antes de que aparezca. Una vez aprobado, por
+  lo general llega al mapa en una hora, y siempre para la próxima actualización semanal.
+- El mapa muestra lo que se hizo, dónde, el mes en que se terminó y, si usted quiere, el nombre de
+  su grupo y unas pocas palabras sobre lo que hizo falta. Nunca muestra su nombre de usuario de
+  GitHub, y no muestra si usted tenía permiso. El formulario pregunta por el permiso para que
+  podamos ver qué vías legales funcionan; nunca juzgamos la respuesta.
+- El formulario está en GitHub, donde cualquiera puede leerlo, y para enviarlo hace falta una
+  cuenta gratuita de GitHub.
+- Las fotos son bienvenidas en el reporte mismo, pero nunca con la cara de un niño ni de nadie que
+  no haya estado de acuerdo, y nunca con una placa de vehículo. El mapa no muestra fotos: enlaza al
+  reporte.
+- En la página de un lote en el mapa, el formulario se abre con ese lote ya llenado.
 
 ## Dinero para ayudar a pagarlo
 

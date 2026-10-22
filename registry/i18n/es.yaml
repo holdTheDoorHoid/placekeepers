@@ -340,6 +340,39 @@ sources:
   ppr_playgrounds:
     name: "Parques infantiles"
     publisher: "Ciudad de Filadelfia, Parques y Recreación"
+  project_reports:
+    name: "Proyectos que terminaron los vecinos, reportados en el formulario de GitHub del sitio"
+    publisher: "Vecinos, por medio del formulario \"Cuéntenos sobre un proyecto que terminó\" de Placekeepers"
+  project_corrections:
+    name: "Proyectos que terminaron los vecinos, entradas hechas a mano y correcciones"
+    publisher: "Placekeepers"
+  political_divisions:
+    name: "Wards y divisiones políticas"
+    publisher: "Ciudad de Filadelfia"
+  pa_house_districts:
+    name: "Distritos de la Cámara de Representantes de Pensilvania"
+    publisher: "Oficina del Censo de EE. UU., TIGER/Line Shapefiles"
+  pa_senate_districts:
+    name: "Distritos del Senado de Pensilvania"
+    publisher: "Oficina del Censo de EE. UU., TIGER/Line Shapefiles"
+  us_house_districts:
+    name: "Distritos del Congreso en Pensilvania"
+    publisher: "Oficina del Censo de EE. UU., TIGER/Line Shapefiles"
+  pa_legislators:
+    name: "Miembros de la Asamblea General de Pensilvania"
+    publisher: "Open States (Plural Policy)"
+  us_legislators:
+    name: "Miembros del Congreso"
+    publisher: "El proyecto unitedstates/congress-legislators"
+  us_legislator_offices:
+    name: "Oficinas de distrito de los miembros del Congreso"
+    publisher: "El proyecto unitedstates/congress-legislators"
+  city_elected_officials:
+    name: "Funcionarios electos de la Ciudad"
+    publisher: "Ciudad de Filadelfia"
+  rco_contacts:
+    name: "Contactos de las organizaciones comunitarias registradas"
+    publisher: "Comisión de Planificación Urbana de Filadelfia"
 
 
 layers:
@@ -875,7 +908,9 @@ layers:
     settings:
       shade:
         label: "Sombrear las áreas (apagado muestra solo sus contornos y calificaciones)"
-
+  projects:
+    label: "Proyectos que terminaron los vecinos"
+    description: "Limpiezas, jardines, lugares para sentarse, murales, árboles, bancos y refugios de la Ciudad, y arreglos del 311 que los vecinos terminaron y nos contaron. Placekeepers lee y aprueba cada reporte antes de que aparezca. Toque uno para ver qué se hizo, cuándo y qué hizo falta, con un enlace al reporte y sus fotos en GitHub. El mapa nunca muestra quién envió un reporte, solo un nombre de grupo que esa persona eligió."
 
 lenses:
   violence:
