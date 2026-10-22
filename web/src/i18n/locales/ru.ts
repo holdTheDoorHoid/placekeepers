@@ -557,8 +557,8 @@ const ru: Catalog = {
       `${share}% жилья, в котором здесь живут люди, сдаётся в аренду${city === null ? '' : `, по всему городу ${city}%`}${years ? ` (опрос Бюро переписи населения, с ${years[0]} по ${years[1]} год)` : ''}.`,
     mvaText: (rising, groups, edition) =>
       rising > 0
-        ? `В ${formatNumber(rising)} из ${plural(groups, blockGroupsOf)} здесь «${edition ?? 'Market Value Analysis'}», подготовленный Reinvestment Fund для города, находит растущее давление: цены на дома растут и становятся недоступными для давних жителей по их доходам.`
-        : `Ни в одной из ${plural(groups, blockGroupsOf)} здесь «${edition ?? 'Market Value Analysis'}» не находит растущего давления.`,
+        ? `В ${formatNumber(rising)} из ${plural(groups, blockGroupsOf)} здесь анализ «${edition ?? 'Market Value Analysis'}» от Reinvestment Fund, подготовленный для города, находит растущее давление: цены на дома растут и становятся недоступными для давних жителей по их доходам.`
+        : `Ни в одной из ${plural(groups, blockGroupsOf)} здесь анализ «${edition ?? 'Market Value Analysis'}» не находит растущего давления.`,
     mvaNone: 'Анализ рыночной стоимости (Market Value Analysis) не охватывает этот район.',
     tooFewSales: (earlier, recent, needed) =>
       `Слишком мало продаж домов, чтобы судить (${formatNumber(earlier)} и ${formatNumber(recent)}; нужно не меньше ${formatNumber(needed)} за каждый период).`,
@@ -981,7 +981,7 @@ const ru: Catalog = {
     every: (vehicle, minutes) =>
       minutes <= 1
         ? `${vehicle} примерно каждую минуту`
-        : `${vehicle} примерно ${plural(minutes, { one: 'каждую # минуту', few: 'каждые # минуты', many: 'каждые # минут', other: 'каждые # минуты' })}`,
+        : `${vehicle} примерно ${plural(minutes, { one: 'каждые # минуту', few: 'каждые # минуты', many: 'каждые # минут', other: 'каждые # минуты' })}`,
     only: (one, many, n) => (n === 1 ? `только один ${one}` : `только ${formatNumber(n)} ${many}`),
     peak: (text) => `По будням утром с 7:00 до 9:00: ${text}.`,
     midday: (day, text) => `${day} с 10:00 до 14:00: ${text}.`,
