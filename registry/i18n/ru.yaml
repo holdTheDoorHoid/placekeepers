@@ -1,0 +1,326 @@
+# Russian (ru) translations of the visitor facing words in registry/*.yaml, by id. English in
+# registry/*.yaml is the source; anything left out here shows the English. Which fields may be
+# translated, and the shape of this file, are in docs/TRANSLATING.md and
+# web/src/i18n/registry-text.ts. The key terms are fixed in docs/i18n/glossary-ru.md and are the
+# same here as in web/src/i18n/locales/ru.ts and content/ru/.
+
+groups:
+  lots:
+    label: "Участки и здания"
+    description: "Пустующие участки и заброшенные здания, и что с ними можно сделать."
+  care:
+    label: "Забота, которая уже есть"
+    description: "Участки, за которыми уже ухаживают, сады, парки и другие места, о которых люди уже заботятся."
+  displacement:
+    label: "Цены и защита"
+    description: "Где растут цены, чтобы озеленение и другие улучшения можно было сочетать с защитой для соседей, которые живут там сейчас."
+  rules:
+    label: "Правила для земли и слушания"
+    description: "Исторические районы и объекты, зоны overlay зонирования, предстоящие слушания об участках и зданиях и федеральные участки brownfield."
+  streets:
+    label: "Улицы и мемориалы"
+    description: "Сеть с высоким уровнем травматизма (High Injury Network), аварии, люди, погибшие на наших улицах, а также уличные столбы, меры успокоения движения и дежурные на школьных переходах, которых указывает город."
+  transit:
+    label: "Автобусы и поезда"
+    description: "Остановки и маршруты SEPTA, как часто ходит транспорт, сколько людей садится и на каких остановках есть навес или скамейка, по городскому списку навесов и OpenStreetMap."
+  heat:
+    label: "Жара, деревья и наводнения"
+    description: "Насколько сильно летняя жара бьёт по каждому району, деревья, о которых город заботится на улицах и в парках, и где FEMA ожидает наводнений."
+  amenities:
+    label: "Скамейки, вода, туалеты и другое"
+    description: "Места, где можно сесть, попить воды, воспользоваться туалетом или взять книгу, по данным OpenStreetMap, и питьевые фонтанчики в парках."
+  public_places:
+    label: "Библиотеки, центры отдыха и бассейны"
+    description: "Филиалы Free Library, центры отдыха, бассейны и водные игровые площадки «Парков и зон отдыха», а также городские пункты обогрева и охлаждения, как их указывает город."
+  conditions:
+    label: "Проблемы, о которых сообщили в 311"
+    description: "Незаконный сброс мусора, неработающие фонари и граффити, о которых люди сообщили в Philly311 за последние 90 дней, с подсчётом по отрезкам улиц."
+  placemaking:
+    label: "Искусство и обустройство общественных мест"
+    description: "Муралы, скульптуры, мозаики и другое публичное искусство, по данным города, OpenStreetMap и Wikidata, а также городские игровые площадки."
+  walking:
+    label: "Ходьба, велосипед и люди"
+    description: "Насколько удобно ходить пешком в каждом районе, сколько людей и повседневных мест находится в пределах короткой прогулки и насколько напряжённой для велосипедистов бывает каждая улица."
+  then_and_now:
+    label: "Раньше и теперь"
+    description: "Что стояло на этом месте раньше и что осталось от прошлого. Аэрофотоснимки с 1959 года и атлас 1860 года загружаются с серверов города, только когда их включают; карта редлайнинга 1937 года находится на этом сайте."
+  safety_context:
+    label: "Где больше всего нужна забота"
+    description: "Контекст, который показывает, где улучшения, вероятно, помогут больше всего."
+  boundaries:
+    label: "Границы"
+    description: "Округа городского совета, общественные организации и районы."
+  basemap:
+    label: "Базовая карта"
+    description: "Улицы, здания и названия мест под всем остальным."
+
+sources:
+  opa_properties:
+    name: "Объекты недвижимости OPA"
+    publisher: "Город Филадельфия, Управление оценки имущества (Office of Property Assessment, OPA)"
+  pwd_parcels:
+    name: "Земельные участки Департамента водоснабжения"
+    publisher: "Департамент водоснабжения Филадельфии (Philadelphia Water Department)"
+  vacant_indicators_land:
+    name: "Признаки пустующей недвижимости, земля"
+    publisher: "Город Филадельфия"
+  vacant_indicators_bldg:
+    name: "Признаки пустующей недвижимости, здания"
+    publisher: "Город Филадельфия"
+  shootings:
+    name: "Пострадавшие от стрельбы"
+    publisher: "Полицейское управление Филадельфии (Philadelphia Police Department)"
+  high_injury_network:
+    name: "Сеть с высоким уровнем травматизма Vision Zero, 2025 (High Injury Network)"
+    publisher: "Город Филадельфия, Управление транспорта и инфраструктурных систем (Office of Transportation and Infrastructure Systems)"
+  real_estate_transfers:
+    name: "Передачи недвижимости"
+    publisher: "Город Филадельфия, Департамент записей (Department of Records)"
+  assessment_history:
+    name: "История оценок"
+    publisher: "Город Филадельфия, Управление оценки имущества (Office of Property Assessment, OPA)"
+  li_violations:
+    name: "Нарушения строительных норм по данным L&I"
+    publisher: "Город Филадельфия, Департамент лицензий и инспекций (L&I)"
+  li_complaints:
+    name: "Жалобы в L&I"
+    publisher: "Город Филадельфия, Департамент лицензий и инспекций (L&I)"
+  li_permits:
+    name: "Разрешения L&I на строительство и по зонированию"
+    publisher: "Город Филадельфия, Департамент лицензий и инспекций (L&I)"
+  li_unsafe:
+    name: "Небезопасные здания"
+    publisher: "Город Филадельфия, Департамент лицензий и инспекций (L&I)"
+  li_imminently_dangerous:
+    name: "Здания, представляющие непосредственную опасность"
+    publisher: "Город Филадельфия, Департамент лицензий и инспекций (L&I)"
+  li_clean_and_seal:
+    name: "Наряды на очистку и закрытие"
+    publisher: "Город Филадельфия, Департамент лицензий и инспекций (L&I)"
+  li_demolitions:
+    name: "Сносы зданий"
+    publisher: "Город Филадельфия, Департамент лицензий и инспекций (L&I)"
+  building_footprints:
+    name: "Контуры зданий"
+    publisher: "Город Филадельфия, Департамент лицензий и инспекций (L&I)"
+  land_use:
+    name: "Землепользование"
+    publisher: "Градостроительная комиссия Филадельфии (Philadelphia City Planning Commission)"
+  city_owned_property:
+    name: "Недвижимость, принадлежащая городу"
+    publisher: "Город Филадельфия, Департамент планирования и развития (Department of Planning and Development)"
+  phs_landcare:
+    name: "Участки PHS LandCare"
+    publisher: "Pennsylvania Horticultural Society, через город Филадельфия"
+  gardens_phs_ngt:
+    name: "Сады, которые поддерживают PHS и Neighborhood Gardens Trust"
+    publisher: "Pennsylvania Horticultural Society и Neighborhood Gardens Trust"
+  gardens_registered:
+    name: "Зарегистрированные общественные сады"
+    publisher: "Парки и зоны отдыха Филадельфии (Philadelphia Parks and Recreation)"
+  ppr_properties:
+    name: "Объекты «Парков и зон отдыха»"
+    publisher: "Парки и зоны отдыха Филадельфии (Philadelphia Parks and Recreation)"
+  zoning_base_districts:
+    name: "Базовые зоны зонирования"
+    publisher: "Градостроительная комиссия Филадельфии (Philadelphia City Planning Commission)"
+  council_districts:
+    name: "Округа городского совета, 2024"
+    publisher: "Город Филадельфия"
+  community_organizations:
+    name: "Зарегистрированные общественные организации (Registered Community Organizations, RCO)"
+    publisher: "Градостроительная комиссия Филадельфии (Philadelphia City Planning Commission)"
+  neighborhoods:
+    name: "Районы Филадельфии"
+    publisher: "Abaca Labs, через OpenDataPhilly"
+  acs_poverty:
+    name: "Уровень бедности по переписным участкам (ACS, с 2020 по 2024 год)"
+    publisher: "Бюро переписи населения США, Обследование американских сообществ (American Community Survey)"
+  cagp_tax_2025:
+    name: "Налоговый долг на июль 2025 года (Clean & Green Philly)"
+    publisher: "Clean & Green Philly, Code for Philly"
+  crashes_2020_2024:
+    name: "Аварии, с 2020 по 2024 год (данные PennDOT, копия города)"
+    publisher: "Город Филадельфия, по записям Министерства транспорта Пенсильвании (PennDOT) об авариях"
+  crashes_2016_2020:
+    name: "Аварии, с 2016 по 2020 год (данные PennDOT, копия города)"
+    publisher: "Город Филадельфия, по записям Министерства транспорта Пенсильвании (PennDOT) об авариях"
+  crashes_2007_2017:
+    name: "Аварии, 2015 год (данные PennDOT, копия города за период с 2007 по 2017 год)"
+    publisher: "Город Филадельфия, по записям Министерства транспорта Пенсильвании (PennDOT) об авариях"
+  fatal_crashes:
+    name: "Аварии со смертельным исходом"
+    publisher: "Полицейское управление Филадельфии, подразделение расследования аварий (Accident Investigation Unit)"
+  schools:
+    name: "Школы"
+    publisher: "Город Филадельфия, Градостроительная комиссия (Planning Commission)"
+  street_centerlines:
+    name: "Осевые линии улиц"
+    publisher: "Город Филадельфия, Департамент улиц (Streets Department)"
+  memorial_names:
+    name: "Имена на мемориалах, отобранные вручную"
+    publisher: "Placekeepers, по открытым спискам памяти, например TrafficVictimsPHL от Bicycle Coalition"
+  pba_laser:
+    name: "Проблемы с парковкой, о которых сообщили через Laser Vision"
+    publisher: "Philly Bike Action"
+  census_tracts_2020:
+    name: "Переписные участки, 2020 год"
+    publisher: "Город Филадельфия, Градостроительная комиссия (Planning Commission), по данным Бюро переписи населения США"
+  tree_canopy_2018:
+    name: "Кроны деревьев, с 2008 по 2018 год"
+    publisher: "Город Филадельфия, «Парки и зоны отдыха», вместе с Лабораторией пространственного анализа Университета Вермонта (University of Vermont Spatial Analysis Laboratory)"
+  street_trees:
+    name: "Перечень уличных деревьев"
+    publisher: "Город Филадельфия, «Парки и зоны отдыха» (Parks and Recreation)"
+  fema_floodplain:
+    name: "Пойма по данным FEMA (2023)"
+    publisher: "Федеральное агентство по управлению в чрезвычайных ситуациях (FEMA), опубликовано городом Филадельфия"
+  basemap_openstreetmap:
+    name: "Базовая карта из OpenStreetMap"
+    publisher: "Участники OpenStreetMap, в файле карты, собранном Protomaps"
+  septa_gtfs:
+    name: "Расписания SEPTA (GTFS)"
+    publisher: "Southeastern Pennsylvania Transportation Authority (SEPTA)"
+  septa_ridership_bus:
+    name: "Число пассажиров на автобусных остановках SEPTA"
+    publisher: "Southeastern Pennsylvania Transportation Authority (SEPTA)"
+  septa_ridership_trolley:
+    name: "Число пассажиров на трамвайных остановках SEPTA"
+    publisher: "Southeastern Pennsylvania Transportation Authority (SEPTA)"
+  osm_philadelphia:
+    name: "OpenStreetMap в Филадельфии (автобусные остановки, навесы, скамейки, вода, туалеты и другое)"
+    publisher: "Участники OpenStreetMap, из выгрузки Geofabrik по Пенсильвании"
+  heat_vulnerability:
+    name: "Уязвимость к жаре по переписным участкам"
+    publisher: "Город Филадельфия, Департамент общественного здравоохранения и Управление устойчивого развития (Department of Public Health, Office of Sustainability)"
+  library_locations:
+    name: "Адреса Free Library"
+    publisher: "Город Филадельфия, для Free Library of Philadelphia"
+  ppr_program_sites:
+    name: "Площадки программ «Парков и зон отдыха»"
+    publisher: "Город Филадельфия, «Парки и зоны отдыха» (Parks and Recreation)"
+  ppr_swimming_pools:
+    name: "Бассейны «Парков и зон отдыха»"
+    publisher: "Город Филадельфия, «Парки и зоны отдыха» (Parks and Recreation)"
+  ppr_spraygrounds:
+    name: "Водные игровые площадки «Парков и зон отдыха» (spraygrounds)"
+    publisher: "Город Филадельфия, «Парки и зоны отдыха» (Parks and Recreation)"
+  ppr_hydration_stations:
+    name: "Пункты питьевой воды «Парков и зон отдыха»"
+    publisher: "Город Филадельфия, «Парки и зоны отдыха» (Parks and Recreation)"
+  philly311_conditions:
+    name: "Обращения в Philly311 о сбросе мусора, неработающих фонарях и граффити"
+    publisher: "Город Филадельфия, Philly311"
+  bus_shelters:
+    name: "Автобусные навесы"
+    publisher: "Город Филадельфия, Управление транспорта и инфраструктурных систем (Office of Transportation and Infrastructure Systems)"
+  street_poles:
+    name: "Уличные столбы"
+    publisher: "Город Филадельфия, Департамент улиц (Streets Department), отдел уличного освещения (Street Lighting Division)"
+  traffic_calming:
+    name: "Устройства для успокоения движения"
+    publisher: "Город Филадельфия, Департамент улиц (Streets Department)"
+  crossing_guards:
+    name: "Места дежурных на школьных переходах"
+    publisher: "Город Филадельфия, Департамент улиц (Streets Department)"
+  percent_for_art:
+    name: "Коллекция Percent for Art"
+    publisher: "Город Филадельфия, Департамент планирования и развития (Department of Planning and Development)"
+  wikidata_art:
+    name: "Публичное искусство в Wikidata"
+    publisher: "Участники Wikidata (Wikimedia Foundation)"
+  commercial_corridors:
+    name: "Торговые коридоры Филадельфии"
+    publisher: "Город Филадельфия, Департамент планирования и развития (Department of Planning and Development)"
+  epa_walkability:
+    name: "Национальный индекс пешей доступности (Smart Location Database, EPA)"
+    publisher: "Агентство по охране окружающей среды США (EPA), Office of Community Revitalization"
+  census_blocks_2020:
+    name: "Население по переписным блокам (перепись 2020 года)"
+    publisher: "Бюро переписи населения США, данные переписи 2020 года для пересмотра округов (P.L. 94-171)"
+  dvrpc_lts:
+    name: "Нагрузка от движения для велосипедистов (Level of Traffic Stress, DVRPC)"
+    publisher: "Региональная комиссия по планированию долины Делавэр (Delaware Valley Regional Planning Commission, DVRPC)"
+  snap_retailers:
+    name: "Продуктовые магазины, принимающие SNAP (USDA)"
+    publisher: "Министерство сельского хозяйства США (USDA), данные о торговых точках SNAP"
+  real_estate_sales:
+    name: "Продажи недвижимости по всему городу"
+    publisher: "Город Филадельфия, Департамент записей (Department of Records)"
+  assessment_values:
+    name: "Оценочная рыночная стоимость по всему городу, за два налоговых года"
+    publisher: "Город Филадельфия, Управление оценки имущества (Office of Property Assessment, OPA)"
+  acs_tenure:
+    name: "Арендаторы и собственники по переписным участкам (ACS, с 2020 по 2024 год)"
+    publisher: "Бюро переписи населения США, Обследование американских сообществ (American Community Survey)"
+  market_value_analysis:
+    name: "Анализ рыночной стоимости 2026 (Market Value Analysis)"
+    publisher: "Reinvestment Fund, для Департамента планирования и развития города Филадельфия (Department of Planning and Development)"
+  li_history:
+    name: "Записи L&I для хронологии участка"
+    publisher: "Город Филадельфия, Департамент лицензий и инспекций (L&I)"
+  cagp_vacant_land_2024:
+    name: "Список пустующей земли, июнь 2024 года (L&I, ведёт Clean & Green Philly)"
+    publisher: "Город Филадельфия, Департамент лицензий и инспекций (L&I), в том виде, в каком его ведёт Clean & Green Philly (Code for Philly)"
+  cagp_vacant_buildings_2024:
+    name: "Список пустующих зданий, июнь 2024 года (Clean & Green Philly)"
+    publisher: "Clean & Green Philly, Code for Philly"
+  historic_districts:
+    name: "Местные исторические районы"
+    publisher: "Историческая комиссия Филадельфии (Philadelphia Historical Commission)"
+  historic_sites:
+    name: "Philadelphia Register of Historic Places, объекты"
+    publisher: "Историческая комиссия Филадельфии (Philadelphia Historical Commission)"
+  zoning_overlays:
+    name: "Зоны overlay зонирования"
+    publisher: "Градостроительная комиссия Филадельфии (Philadelphia City Planning Commission)"
+  appeals:
+    name: "Апелляции в Zoning Board, L&I Review Board и другие советы"
+    publisher: "Город Филадельфия, Департамент лицензий и инспекций (L&I)"
+  epa_brownfields:
+    name: "Объекты brownfield по данным EPA (ACRES), Филадельфия"
+    publisher: "Агентство по охране окружающей среды США (EPA)"
+  land_conveyances:
+    name: "Документы о передаче права собственности от земельных ведомств города с 2014 года"
+    publisher: "Город Филадельфия, Департамент записей (Department of Records)"
+  land_conveyed_by_fy:
+    name: "Объекты, переданные по программам и финансовым годам, с 2017 по 2023 год (панель Land Management)"
+    publisher: "Город Филадельфия, Департамент планирования и развития (Land Management)"
+  city_aerial_photos:
+    name: "Аэрофотоснимки по годам (орфофотопланы)"
+    publisher: "Город Филадельфия, Управление инноваций и технологий (Office of Innovation and Technology)"
+  dvrpc_aerial_photos:
+    name: "Аэрофотоснимки 1959 и 1975 годов"
+    publisher: "Региональная комиссия по планированию долины Делавэр (DVRPC), размещены городом Филадельфия"
+  usgs_aerial_photos_1999:
+    name: "Аэрофотоснимки 1999 года"
+    publisher: "Геологическая служба США (USGS), размещены городом Филадельфия"
+  city_atlas_1860:
+    name: "Атлас Hexamer и Locher 1860 года"
+    publisher: "Greater Philadelphia GeoHistory Network, размещён городом Филадельфия"
+  mapping_inequality_1937:
+    name: "Mapping Inequality: карта HOLC 1937 года для Филадельфии"
+    publisher: "Ричмондский университет, Digital Scholarship Lab"
+  acs_rent_burden:
+    name: "Доля дохода, которая уходит на аренду, по переписным участкам (ACS, с 2020 по 2024 год)"
+    publisher: "Бюро переписи населения США, Обследование американских сообществ (American Community Survey)"
+  acs_occupancy:
+    name: "Жилые и пустующие дома по переписным участкам (ACS, с 2020 по 2024 год)"
+    publisher: "Бюро переписи населения США, Обследование американских сообществ (American Community Survey)"
+  acs_vacancy:
+    name: "Почему дома пустуют, по переписным участкам (ACS, с 2020 по 2024 год)"
+    publisher: "Бюро переписи населения США, Обследование американских сообществ (American Community Survey)"
+  acs_income:
+    name: "Медианный доход домохозяйства по переписным участкам (ACS, с 2020 по 2024 год)"
+    publisher: "Бюро переписи населения США, Обследование американских сообществ (American Community Survey)"
+  acs_rent:
+    name: "Медианная арендная плата по переписным участкам (ACS, с 2020 по 2024 год)"
+    publisher: "Бюро переписи населения США, Обследование американских сообществ (American Community Survey)"
+  warming_cooling_sites:
+    name: "Пункты обогрева и охлаждения"
+    publisher: "Город Филадельфия, Управление по чрезвычайным ситуациям (Office of Emergency Management)"
+  ppr_playgrounds:
+    name: "Игровые площадки"
+    publisher: "Город Филадельфия, «Парки и зоны отдыха» (Parks and Recreation)"
+
+# @@NEXT@@
