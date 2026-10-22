@@ -1805,7 +1805,7 @@ and the projects wait for the next weekly refresh.
   Projects neighbors finished: none to compare yet; a comparison needs at least 100, each with two
   years of records after.
 - **A lot page that had care** says when, among its summary's care lines (LandCare since its year,
-  as before, and now "The City cleaned and sealed it on" its day), then: "One lot cannot show
+  as before, and now "The City last cleaned and sealed it on" its day), then: "One lot cannot show
   whether care worked: shootings, dumping and complaints rise and fall on every block for many
   reasons.", with a link to the page. "Projects here" carries the same link, and the printed lot
   page the same line with the page's address. A demolition's date stays in the lot's story, which

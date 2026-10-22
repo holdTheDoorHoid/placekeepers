@@ -1924,7 +1924,7 @@ export const strings = {
     // The lot page
     lotNote: 'One lot cannot show whether care worked: shootings, dumping and complaints rise and fall on every block for many reasons.',
     lotLink: 'See what the City\'s records show for all of Philadelphia',
-    sealedOn: (date: string) => `The City cleaned and sealed it on ${date}.`,
+    sealedOn: (date: string) => `The City last cleaned and sealed it on ${date}.`,
   },
 
   // Projects neighbors finished (M5.3, issue #47): the map layer's legend and a tapped project

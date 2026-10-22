@@ -27,7 +27,7 @@ test.describe('Did it work?', () => {
     if (isPhone(info)) await page.setViewportSize({ width: 320, height: 640 });
     await page.goto('./did-it-work/');
     await expect(page.getByRole('heading', { level: 1, name: 'Did it work?' })).toBeVisible();
-    await expect(page).toHaveTitle('Did it work?, Placekeepers');
+    await expect(page).toHaveTitle('Did it work? Placekeepers');
 
     // The short answer, then the trials as the real evidence.
     const short = page.locator('section.short');
@@ -99,7 +99,7 @@ test.describe('Did it work?', () => {
   test('a building the City cleaned and sealed says on what day', async ({ page }) => {
     await openMap(page, 'v=a&m=16/40.06/-75.03&p=990000001');
     const details = page.locator('#pk-right');
-    await expect(details.getByText('The City cleaned and sealed it on February 14, 2024.')).toBeVisible();
+    await expect(details.getByText('The City last cleaned and sealed it on February 14, 2024.')).toBeVisible();
     await expect(details.locator('.care-note')).toContainText('One lot cannot show whether care worked');
   });
 });

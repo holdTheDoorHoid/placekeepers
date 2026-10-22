@@ -59,7 +59,8 @@
   }
 
   $effect(() => {
-    document.title = `${t.pageTitle}, Placekeepers`;
+    // A title that ends in a question mark takes no comma before the site's name.
+    document.title = /[?!？]$/.test(t.pageTitle) ? `${t.pageTitle} Placekeepers` : `${t.pageTitle}, Placekeepers`;
   });
 </script>
 

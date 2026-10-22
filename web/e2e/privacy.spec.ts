@@ -371,9 +371,15 @@ test.describe('privacy', () => {
     await expect(projects).toContainText('By Example Avenue Growers');
     await expect(projects.locator('img')).toHaveCount(0);
     for (const link of await projects.locator('a').all()) {
+      // The one link that stays on the site is the citywide "Did it work?" page (M5.4).
+      if ((await link.getAttribute('href'))?.startsWith('/placekeepers/')) continue;
       await expect(link).toHaveAttribute('target', '_blank');
       await expect(link).toHaveAttribute('rel', 'noopener noreferrer');
     }
+    await expect(projects.getByRole('link', { name: "See what the City's records show for all of Philadelphia" })).toHaveAttribute(
+      'href',
+      '/placekeepers/did-it-work/',
+    );
     if (isPhone(info)) await page.locator('#pk-right').getByRole('button', { name: 'Close panel' }).click();
     const local = new URL(page.url()).origin;
     expect([...seen.origins].filter((origin) => origin !== local)).toEqual([]);

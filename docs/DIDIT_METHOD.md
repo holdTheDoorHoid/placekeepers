@@ -23,7 +23,7 @@ of them. This page is the source for the site's "Did it work?" page.
   were finished long enough ago to compare, and that a comparison needs at least 100. Today there
   are none: no report has been approved yet.
 - **On a lot page that had care**, under the summary: when the care happened ("Already maintained
-  by PHS LandCare since 2016." or "The City cleaned and sealed it on February 14, 2024.") and the
+  by PHS LandCare since 2016." or "The City last cleaned and sealed it on February 14, 2024.") and the
   line "One lot cannot show whether care worked: shootings, dumping and complaints rise and fall on
   every block for many reasons.", with a link to the citywide page. "Projects here" carries the
   same link. The printed lot page carries the line too.
