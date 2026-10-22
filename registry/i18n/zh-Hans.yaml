@@ -553,3 +553,314 @@ suggestions:
     label: "在这个车站旁种遮阴树"
     summary: "这个车站的树荫很少。住宅或商家的业主提出请求时，市政府会在它前面的人行道上免费种行道树，并在第一年浇水。请车站旁边建筑的业主去申请；之后，邻居可以帮忙浇水。"
     cost: "为房产业主提供免费的行道树"
+
+routes:
+  land_bank_garden_agreement:
+    label: "土地银行的菜园协议或许可"
+    who: "任何人都可以申请 1 美元的 Urban Garden Agreement（城市菜园协议）；有非营利组织担保的团体，可以申请 Community Garden License（社区菜园许可）"
+    cost: "1 美元（Urban Garden Agreement），每年 25 美元（Individual Garden Agreement，个人菜园协议），或需要保险和一位担保人（Community Garden License）"
+    timeline: "短期协议需要几周；许可需要几个月"
+    steps:
+      - "请先确认这个地块归土地银行或市政府所有。"
+      - "请阅读 Grounded in Philly 关于获得许可使用市政府土地的指南。"
+      - "向土地银行申请，或者先参加它的免费网络研讨会。"
+    links:
+      https://phillylandbank.org/:
+        label: "费城土地银行"
+      https://groundedinphilly.org/get-permission-to-use-land-city/:
+        label: "Grounded in Philly：获得许可使用市政府土地"
+  ask_the_owner:
+    label: "向业主征求许可"
+    who: "任何人"
+    cost: "免费"
+    timeline: "取决于业主"
+    steps:
+      - "在地块页面上找到业主的邮寄地址。"
+      - "写信征求许可，允许您清理并绿化这个地块，并提出一份简单的书面协议。"
+      - "在您签署任何协议之前，请 Garden Justice Legal Initiative 审阅。"
+    links:
+      https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/:
+        label: "Garden Justice Legal Initiative"
+  community_landcare:
+    label: "通过 PHS Community LandCare 管理一个地块"
+    who: "居民团体"
+    cost: "待向 PHS 确认"
+    timeline: "待向 PHS 确认"
+    steps:
+      - "就 Community LandCare 联系 PHS。"
+    links:
+      https://phsonline.org/:
+        label: "宾夕法尼亚园艺协会（Pennsylvania Horticultural Society）"
+  report_to_311:
+    label: "向 Philly311 报告"
+    who: "任何人"
+    cost: "免费"
+    timeline: "几天到几周"
+    steps:
+      - "通过网上、手机应用或拨打 311，向 Philly311 报告敞开的建筑、非法倾倒垃圾、涂鸦，或不亮的街灯或小巷灯。"
+      - "保留服务请求编号，并过一阵子回来查看。"
+    links:
+      https://www.phila.gov/services/property-lots-housing/submit-a-service-request-with-311/:
+        label: "Philly311"
+  ghost_bike_request:
+    label: "向 Bicycle Coalition 询问幽灵单车或纪念物"
+    who: "家属，或得到家属同意的朋友"
+    cost: "申请免费"
+    timeline: "没有说明"
+    steps:
+      - "请先和家属谈。只有得到他们的同意，才能设置纪念物。"
+      - "对于骑车时遇难的人，请填写 Bicycle Coalition 的幽灵单车申请表。同一份表格也可以用来申请修复或更换幽灵单车。"
+      - "Families for Safe Streets 由 Bicycle Coalition 运作，在事故发生后支持家属，并提供一份事故后的资源指南。"
+      - "请计划好今后由谁来照看这个纪念物。"
+    links:
+      https://bicyclecoalition.org/what-is-a-ghost-bike/:
+        label: "Bicycle Coalition：什么是幽灵单车"
+      https://forms.gle/HBtY1hG4xcdVJKNb8:
+        label: "幽灵单车申请表"
+      https://bicyclecoalition.org/programs/families-for-safe-streets/:
+        label: "Families for Safe Streets Greater Philadelphia"
+  traffic_calming_request:
+    label: "请求在住宅街道上设置交通减速措施"
+    who: "这个街区的居民，主要是为他们居住的那条街"
+    cost: "请求免费"
+    timeline: "市政府每年三次给请求打分，通常在 5 月到 10 月安装减速垫"
+    steps:
+      - "在市政府的交通减速地图上，或拨打 311，查看这条街是否符合条件。"
+      - "提交市政府的网上交通减速请求。"
+      - "如果市政府选中了这个请求，就要收集这个街区 60% 的住户的签名，每户一个。"
+    links:
+      https://www.phila.gov/services/streets-sidewalks-alleys/request-traffic-calming-for-a-residential-street/:
+        label: "费城市政府：请求交通减速措施"
+  otis_contact:
+    label: "询问市政府的交通办公室（OTIS）"
+    who: "任何人"
+    cost: "免费"
+    timeline: "没有说明"
+    steps:
+      - "写信给交通与基础设施系统办公室（otis@phila.gov），说明是哪个路口，以及您在那里看到了什么。"
+      - "询问市政府在这个路口允许做什么，以及如何申请。"
+    links:
+      https://visionzerophl.com/:
+        label: "Vision Zero Philadelphia"
+  treephilly_yard_trees:
+    label: "通过 TreePhilly 的赠树活动获得免费的树"
+    who: "费城居民，用于种在私人土地的地里，例如您拥有的地块，或业主书面同意的私人地块"
+    cost: "免费"
+    timeline: "下一次春季或秋季的赠树活动"
+    steps:
+      - "订阅 TreePhilly 的电子通讯，了解什么时候开放登记。赠树活动在春季（3 月到 5 月）和秋季（9 月到 12 月）举行，面向优先邮政编码地区。"
+      - "向您附近举办赠树活动的社区团体登记。登记在赠树活动前大约两周到一个月开放，树发完就截止。"
+      - "领取装在 5 加仑桶里、2 到 10 英尺高的树，附一袋免费的覆盖物（mulch），并把它种在地里。赠送的树不能放在容器里，不能种在人行道上，也不能种在公共路权范围内的任何其他地方。"
+    links:
+      https://treephilly.org/yard-trees/:
+        label: "TreePhilly：院子里的树"
+  mural_arts_wall_request:
+    label: "请 Mural Arts 在一面墙上画壁画"
+    who: "墙的业主，以及支持这件事的邻居。任何人都可以先从询问业主开始"
+    cost: "申请免费"
+    timeline: "几个月"
+    steps:
+      - "找一面面对地块、从街上容易看到的墙，问问它的业主是否欢迎一幅壁画。"
+      - "得到业主同意后，填写 Mural Arts Philadelphia 联系页面上的墙面申请表。表格会问到墙壁的情况、邻居的支持，以及为什么在那里画壁画很重要。"
+      - "街道上或人行道上的任何东西，也就是公共路权范围内的，还要提交给市政府的艺术委员会（Art Commission）。"
+    links:
+      https://muralarts.org/contact/:
+        label: "Mural Arts Philadelphia：联系页面，上面有在您的墙上画壁画的申请表"
+  public_space_mini_grant:
+    label: "申请 Feet First Philly 的公共空间小额资助"
+    who: "邻居和社区团体。这个计划优先考虑街道和市政服务得到的投入较少的社区"
+    cost: "500 到 2,500 美元的资助，部分由公共卫生部出资"
+    timeline: "每年 8 月开放申请，10 月截止"
+    steps:
+      - "请阅读 Feet First Philly 小额资助页面上的征求方案书。项目必须让社区更安全，更便于步行和轮椅通行；请询问 Feet First Philly，在地块上设置座位是否符合条件。"
+      - "趁这一轮开放时申请。每年 8 月开放申请，10 月截止。"
+      - "要准备在中途提交一份简短报告，结束时再提交一份。"
+    links:
+      https://feetfirstphilly.org/public-space-enhancement-mini-grant-2/:
+        label: "Feet First Philly：公共空间改善小额资助"
+  land_bank_side_yard:
+    label: "作为侧院或后院取得（仅限隔壁的业主）"
+    who: "隔壁房屋的业主，并且只有市政府名单标明这个地块符合侧院条件时才可以"
+    cost: "象征性的价格。地块必须永远作为侧院，依据按评估价值计算的 30 年抵押贷款，只要遵守规则就会免除；如果不遵守，市政府可以收回"
+    timeline: "工作人员的目标是在 120 天内答复，然后由土地银行的董事会和市议会决定。2020 年到 2023 年，全市只有 67 个地块通过这种方式转让"
+    steps:
+      - "请确认您拥有隔壁的房子，并且这个地块被标为符合侧院条件。"
+      - "请阅读土地银行的侧院和后院页面，并提出申请。"
+      - "请预期会等很久。工作人员审查之后，土地银行的董事会和市议会还必须批准。"
+    links:
+      https://phillylandbank.org/side-or-rear-yards/:
+        label: "费城土地银行：侧院或后院"
+  contact_phdc:
+    label: "就这个地块询问 PHDC"
+    who: "任何人"
+    cost: "询问免费"
+    timeline: "不清楚。重建管理局的地块，目前还没有公布给邻居的途径"
+    steps:
+      - "联系 PHDC，说明这个地块的地址和它的 OPA 账号。"
+      - "询问谁管理这个地块、它是否可用，以及邻居可以怎样照看它。"
+      - "如果您不确定该问谁，请先从土地银行开始（land@phdc.phila.gov，215 448 3034）。"
+    links:
+      https://phdcphila.org/:
+        label: "PHDC"
+      https://phillylandbank.org/:
+        label: "费城土地银行"
+  garden_adverse_possession:
+    label: "菜园逆权占有（2024 年的法律）"
+    who: "在私人拥有的地块上种过菜园的费城居民、团体或非营利组织"
+    cost: "律师和法庭费用。土地上的任何留置权会跟着土地走"
+    timeline: "至少 10 年的使用，然后提起诉讼"
+    steps:
+      - "请核对 2024 年法律的条件（53 Pa.C.S. 第 1143 条，自 2024 年 9 月 6 日起生效）：半英亩或更小的私人土地，使用满 10 年，其中至少 5 年作为菜园，并且没有永久性建筑（围栏和棚屋允许）。"
+      - "请阅读 Grounded in Philly 关于逆权占有的指南。"
+      - "请向 Garden Justice Legal Initiative 询问律师。这条途径需要提起确认产权（quiet title）的诉讼。"
+    links:
+      https://groundedinphilly.org/how-to-obtain-land-adverse-possession/:
+        label: "Grounded in Philly：逆权占有"
+      https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/:
+        label: "Garden Justice Legal Initiative"
+  conservatorship:
+    label: "财产托管（Act 135）"
+    who: "向法院提出申请的非营利组织或个人"
+    warning: "财产托管（conservatorship）可能让业主失去自己的房产。研究人员发现，它在面临绅士化的社区中被不成比例地使用。在您考虑这条途径之前，请先与 Garden Justice Legal Initiative 谈一谈。"
+    cost: "法庭和修缮费用。自 2014 年起，申请人可以获得 2,500 美元、费用的 20% 或出售价格的 20% 三者中最高的一项作为报酬"
+    timeline: "这是一场诉讼；请向法律援助机构询问大约需要多久"
+    steps:
+      - "在做任何其他事情之前，请先和 Garden Justice Legal Initiative 谈一谈。"
+      - "请先问问：写信给业主，或者帮助一个家庭保住房产，能不能满足同样的需要。"
+      - "请了解这部法律的条件：只有对满足这些条件的房产，法院才能指定托管人：已有 12 个月没有合法居住、没有在对外出售、没有在被止赎，并且最近 6 个月内没有被买下。"
+    links:
+      https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/:
+        label: "Garden Justice Legal Initiative"
+  tangled_title_help:
+    label: "帮助一个家庭保住继承的房子（Tangled Title Fund）"
+    who: "房子仍登记在已故亲属名下的家庭，家庭收入不超过地区收入中位数的 80%；这处房产必须是申请人的住所"
+    cost: "在基金的限额内，对家庭免费；超出限额的部分由家庭承担"
+    timeline: "先到先得"
+    steps:
+      - "请联系 Philadelphia VIP 的 Tangled Title Fund（tangledtitlefund@gmail.com，215 523 9553）。"
+      - "基金最多支付 6,500 美元，用于理清产权的法律费用，另外视个案最多再支付 3,500 美元，用于转让税。"
+    links:
+      https://phillyvip.org/tangled-title-fund/:
+        label: "Philadelphia VIP：Tangled Title Fund"
+  fraud_guard:
+    label: "注册市政府免费的 Fraud Guard 提醒"
+    who: "房产业主及其家人"
+    cost: "免费"
+    timeline: "文件登记后大约 30 天，会收到提醒"
+    steps:
+      - "用姓名和电子邮件地址注册 Fraud Guard。"
+      - "每当有文件登记了您的姓名，市政府就会发一封电子邮件，这样伪造的契据就能及早被发现。"
+      - "有问题请联系记录部（215 686 2290，records.info@phila.gov）。"
+    links:
+      https://www.phila.gov/2022-09-06-own-property-in-philadelphia-get-free-deed-fraud-protection-with-fraud-guard/:
+        label: "费城市政府：Fraud Guard"
+  bus_shelter_request:
+    label: "请市政府设置公交候车亭"
+    who: "任何人"
+    cost: "询问免费"
+    timeline: "没有说明。OTIS 会把新候车亭的位置提交给市政府的艺术委员会审查（2025 年 12 月提交了八个）"
+    steps:
+      - "记下车站的 SEPTA 编号（在站牌上，也在这张地图上）、路口，以及每个工作日有多少人在那里上车。"
+      - "写信给市政府的交通与基础设施系统办公室（OTIS），邮箱 otis@phila.gov，或拨打 215-686-9003。OTIS 负责市政府的公交候车亭计划；没有公开的申请表。"
+      - "把邮件抄送给您所在的市议会选区办公室，并通过 SEPTA 的网上意见表或拨打 215-580-7800，也告诉 SEPTA。"
+    links:
+      https://www.phila.gov/media/20240521160603/RFI-OTIS-street-furniture-20240521.pdf:
+        label: "OTIS 街道设施信息征询书（2024 年 5 月），其中有市政府的候车亭目标"
+      https://www.phila.gov/media/20251205094032/Bus-Shelter-Upgrades-submission.pdf:
+        label: "提交给艺术委员会的八个新公交候车亭（2025 年 12 月）"
+      https://wwww.septa.org/customer-service/comment-form/:
+        label: "SEPTA 意见表"
+      https://phlcouncil.com/council-members/:
+        label: "费城市议会：各选区的议员和办公室"
+  stop_bench_request:
+    label: "请市政府在车站设置长椅"
+    who: "任何人"
+    cost: "询问免费"
+    timeline: "没有说明"
+    steps:
+      - "记下车站的 SEPTA 编号（在站牌上，也在这张地图上）和路口。"
+      - "写信给 OTIS（otis@phila.gov），或拨打 215-686-9003，请求在这个车站设置长椅。车站的长椅属于市政府的街道设施计划；我们没有找到公开的申请表。"
+      - "把邮件抄送给您所在的市议会选区办公室。"
+    links:
+      https://www.phila.gov/media/20240521160603/RFI-OTIS-street-furniture-20240521.pdf:
+        label: "OTIS 街道设施信息征询书（2024 年 5 月）"
+      https://phlcouncil.com/council-members/:
+        label: "费城市议会：各选区的议员和办公室"
+  street_tree_request:
+    label: "申请免费的行道树"
+    who: "树要种在其前面的住宅、商家、地块或其他房产的业主；邻居可以请业主去申请"
+    cost: "免费"
+    timeline: "树木医生来访之后的下一个种植季"
+    steps:
+      - "行道树是在业主提出请求时，种在房产前面的人行道上。请和这个位置旁边建筑的业主谈谈。如果是空地，请问地块页面上列出的业主，或者对于市政府或土地银行拥有的地块，请问土地银行。"
+      - "业主向公园与休闲部的行道树管理处（Street Tree Management Division）申请免费的行道树，可以在网上申请，也可以发邮件到 StreetTree.Info@phila.gov，或打电话 215-685-4363。"
+      - "市政府的树木医生（arborist）会来看，决定适合种哪种树。市政府在种植季（4 月中旬到 6 月中旬，或 10 月中旬到 11 月中旬）免费种植，并在第一年浇水和覆盖。之后，TreePhilly 要求从 3 月到 12 月，每周大约浇 20 加仑水。"
+    links:
+      https://www.phila.gov/services/trees-parks-the-environment/tree-related-services/get-a-street-tree/:
+        label: "费城市政府：申请行道树"
+      https://treephilly.org/street-trees/:
+        label: "TreePhilly：行道树"
+  streetcomplete_survey:
+    label: "用 StreetComplete 调查这个车站"
+    who: "任何有 Android 手机的人（2026 年 9 月出现了第一个 iPhone 测试版）"
+    cost: "免费"
+    timeline: "答案大约一周内会出现在这张地图上"
+    steps:
+      - "安装免费的 StreetComplete 应用，并注册一个免费的 OpenStreetMap 账户，这样您的答案才会发布。"
+      - "在车站，点按应用里的标记，回答它关于候车亭、长椅、照明和车站编号的问题。"
+      - "如果应用在车站没有问题，请用它的 Things 图层添加这个车站，或留一条备注，让别的地图编辑者去添加。"
+    links:
+      https://holdthedoorhoid.github.io/placekeepers/streetcomplete/:
+        label: "Placekeepers：调查公交站"
+      https://streetcomplete.app/:
+        label: "StreetComplete"
+  neighborhood_gardens_trust:
+    label: "让社区菜园永久保留（Neighborhood Gardens Trust）"
+    who: "社区菜园已经运转至少三个种植季的园丁"
+    cost: "申请免费"
+    timeline: "大约两周内答复；取得土地需要更长时间"
+    steps:
+      - "请核对信托的标准：菜园已活跃至少三个种植季、有能够维持它的园丁、与社区发展公司、教会或学校等团体有联系，并得到邻居和选区市议员的支持。"
+      - "用信托的网上菜园申请表或可打印的表格申请。信托大约两周内答复，然后会去菜园看看，并提交给它的董事会。"
+      - "一旦获批，信托会与市政府合作取得这块土地并持有它，让邻居可以继续种菜，并提供责任保险，以及浇水和维护方面的帮助。有问题请联系 215 988 1630 或 ngtrust@pennhort.org。"
+    links:
+      https://ngtrust.org/preservation/:
+        label: "Neighborhood Gardens Trust：菜园保护"
+  community_land_trust:
+    label: "让住房和土地永久保持平价（社区土地信托）"
+    who: "邻居、社区团体和非营利组织"
+    cost: "询问免费"
+    timeline: "很长；土地信托的项目需要好几年"
+    steps:
+      - "了解社区土地信托是怎么运作的：由一个非营利组织永久拥有土地，家庭购买或租用土地上的房屋，一份长期的土地租约让每一套房屋再次出售时仍然保持平价。"
+      - "请与已经在费城开展工作的土地信托谈谈，例如 Women’s Community Revitalization Project 的 Community Justice Land Trust，它在 Point Breeze、Grays Ferry、Mantua、Germantown、Port Richmond 和 Haddington 持有住房。"
+      - "请向 Garden Justice Legal Initiative 询问，土地信托如何能持有您的团体已经在照看的菜园或地块。"
+    links:
+      https://groundedsolutions.org/strengthening-neighborhoods/community-land-trusts:
+        label: "Grounded Solutions Network：社区土地信托"
+      https://www.wcrpphila.org/cjlt:
+        label: "Women’s Community Revitalization Project：Community Justice Land Trust"
+  homestead_exemption:
+    label: "降低房主的税单（市政府的宅基地豁免，Homestead Exemption）"
+    who: "拥有自己在费城的住房，并把它作为主要住所居住的人，即使有抵押贷款或欠税也可以；享受 10 年税收减免（abatement）的住房除外"
+    cost: "免费"
+    timeline: "每年 12 月 1 日截止"
+    steps:
+      - "在 Philadelphia Tax Center（tax-services.phila.gov）上申请，一份合并的申请表涵盖市政府的各项税收减免计划；也可以拨打 Homestead 热线 215 686 9200，或把表格邮寄到税务局（Department of Revenue），P.O. Box 52817, Philadelphia, PA 19115。"
+      - "这项豁免会从税单用的房屋评估价值中扣除 100,000 美元，每年最多可节省 1,399 美元。"
+      - "请在 12 月 1 日之前申请（10 月 1 日之前申请，才能在下一张税单上看到）。一旦获批，除非契据发生变化，就不需要再申请。"
+    links:
+      https://www.phila.gov/services/payments-assistance-taxes/taxes/property-and-real-estate-taxes/get-real-estate-tax-relief/get-the-homestead-exemption/:
+        label: "费城市政府：获得宅基地豁免"
+  longtime_owner_occupants:
+    label: "为长期居住的业主限定评估价值上限（市政府的长期业主居住者计划，LOOP）"
+    who: "在自己的住房里已经居住至少 10 年、评估价值在一年内上涨至少 50% 或五年内上涨至少 75%、家庭收入低于市政府规定的上限（例如 2026 年一人 103,050 美元或四人 147,200 美元）、税款已缴清或有付款协议的房主"
+    cost: "免费"
+    timeline: "每年有截止日期，近几年是 9 月 30 日"
+    steps:
+      - "在 Philadelphia Tax Center（tax-services.phila.gov）上用市政府的合并申请表申请，或拨打 215 686 9200，发邮件到 revenue@phila.gov，或把表格邮寄到税务局，P.O. Box 53190, Philadelphia, PA 19105。"
+      - "LOOP 为税单使用的评估价值设定上限：只要业主继续符合条件，上限就是上一年的 1.5 倍，或最近五年最低值的 1.75 倍。"
+      - "请在市政府每年的截止日期之前申请（近几年是 9 月 30 日）；市政府的页面上有当前的日期。"
+    links:
+      https://www.phila.gov/services/payments-assistance-taxes/payment-plans-and-assistance-programs/income-based-programs-for-residents/apply-for-the-longtime-owner-occupants-program-loop/:
+        label: "费城市政府：申请 LOOP"
