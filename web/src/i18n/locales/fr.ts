@@ -69,6 +69,16 @@ const fr: Catalog = {
   units: {
     meters: (n) => `${formatNumber(n)} mètres`,
     kilometers: (km) => `${formatDecimal(km, 1)} kilomètres`,
+    miles: (miles) => `${formatDecimal(miles, 1)} ${miles < 2 ? 'mile' : 'miles'}`,
+    lessThanMiles: (miles) => `moins de ${formatDecimal(miles, 1)} mile`,
+  },
+
+  join: {
+    labelled: (label, value) => `${label}\u202F: ${value}`,
+    colon: (label) => `${label}\u202F:`,
+    and: (items) => (items.length <= 1 ? items.join('') : `${items.slice(0, -1).join(', ')} et ${items.at(-1)}`),
+    long: (items) => (items.length <= 1 ? items.join('') : `${items.slice(0, -1).join('\u202F; ')}\u202F; et ${items.at(-1)}`),
+    names: (names) => names.join(' et '),
   },
 
   header: {
@@ -1145,6 +1155,8 @@ const fr: Catalog = {
       missing: 'introuvable dans OpenStreetMap',
     },
     estimateTitle: 'Combien de temps cela prend',
+    duration: (hours, minutes) =>
+      `environ ${[hours ? plural(hours, { one: '# heure', other: '# heures' }) : '', minutes || !hours ? `${formatNumber(minutes)} minutes` : ''].filter(Boolean).join(' ')}`,
     estimate: (time) => `Notre estimation : ${time} pour une personne ou un duo.`,
     estimateBasis:
       "C'est notre propre estimation, pas une mesure : en marchant à environ 3 miles à l'heure d'un arrêt à l'autre, et environ une minute à chaque arrêt. Pour aller au premier arrêt et rentrer chez vous, il faut compter en plus.",
@@ -2681,6 +2693,9 @@ const fr: Catalog = {
       mural: 'Peindre une fresque, avec la permission du propriétaire du mur',
       ask_city: 'Demander à la Ville ce qui peut se passer ici',
     },
+    language: "Langue de l'affiche",
+    languageHelp: "Imprimez l'affiche dans la langue que lisent vos voisins. Ce que vous saisissez est imprimé tel que vous l'avez saisi.",
+    withEnglish: "Ajouter l'anglais à côté, dans une deuxième colonne",
     ownWords: 'Ou avec vos propres mots',
     contact: 'Comment les voisins peuvent vous joindre',
     contactHelp: "Un lien de groupe de discussion, un e-mail, un téléphone, ou une heure et un lieu de réunion.",
@@ -2720,6 +2735,12 @@ const fr: Catalog = {
     pageTitle: 'Écrire une lettre',
     intro:
       "Des lettres que vous remplissez ici et imprimez. Le site n'envoie jamais rien : vous postez, envoyez par e-mail ou remettez la lettre en main propre vous-même. Ce que vous saisissez reste dans ce navigateur seulement.",
+    yourName: '[votre nom]',
+    language: 'Langue de la lettre',
+    languageHelp:
+      "Les bureaux, les organisations communautaires et les propriétaires à qui ces lettres sont adressées lisent surtout l'anglais, donc la lettre est imprimée en anglais, sauf si vous choisissez votre langue.",
+    translationTitle: 'Votre lettre dans votre langue',
+    translationNote: 'Pour que vous sachiez ce que vous signez. Seule la lettre ci-dessus est imprimée ; cette traduction reste sur votre écran.',
     unreviewed: "Un avocat n'a pas encore relu cette lettre. Ce n'est pas un avis juridique.",
     legalHelp: "Pour une aide juridique, demandez à Grounded in Philly, un projet du Garden Justice Legal Initiative",
     legalHelpShort: 'Aide juridique gratuite : Grounded in Philly (Garden Justice Legal Initiative)',
