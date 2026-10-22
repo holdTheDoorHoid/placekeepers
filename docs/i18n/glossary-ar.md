@@ -142,3 +142,15 @@ always named "عدسة" plus its name (عدسة خفض العنف).
 Never softened: the brownfield note says "أعمال تنظيف" (cleanup work) and "أرض يُحتمل تلوثها"
 (land that may be contaminated), never "نظيفة" or "آمنة"; the possible estate passage says "قد
 يكون المالك المسجّل قد توفي" (may have died), never that the owner died.
+
+## Back translation check (2026-10-21)
+
+No glossary choice above was changed. Two phrases were fixed so the safety wording matches the
+English, and the glossary keeps them for the next pass:
+
+- "We are not very sure it is vacant" is لسنا متأكدين كثيرًا من أنها فارغة, never "تمامًا", which
+  reads as nearly sure.
+- "Look up before you cross" is ارفع نظرك قبل أن تعبر.
+
+Terms a native speaker should look at (التهجير السكني, الحراسة القضائية, مباركة العائلة, بيع الشريف)
+are listed in `docs/i18n/check-ar.md`.
