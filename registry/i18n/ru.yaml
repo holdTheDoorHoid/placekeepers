@@ -322,6 +322,39 @@ sources:
   ppr_playgrounds:
     name: "Игровые площадки"
     publisher: "Город Филадельфия, «Парки и зоны отдыха» (Parks and Recreation)"
+  project_reports:
+    name: "Проекты, завершённые соседями, о которых сообщено через форму сайта на GitHub"
+    publisher: "Соседи, через форму Placekeepers «Расскажите нам о проекте, который вы завершили»"
+  project_corrections:
+    name: "Проекты, завершённые соседями: записи, внесённые вручную, и исправления"
+    publisher: "Placekeepers"
+  political_divisions:
+    name: "Избирательные округа (wards) и участки (divisions)"
+    publisher: "Город Филадельфия"
+  pa_house_districts:
+    name: "Округа Палаты представителей Пенсильвании"
+    publisher: "Бюро переписи населения США, TIGER/Line Shapefiles"
+  pa_senate_districts:
+    name: "Округа Сената Пенсильвании"
+    publisher: "Бюро переписи населения США, TIGER/Line Shapefiles"
+  us_house_districts:
+    name: "Округа Палаты представителей США в Пенсильвании"
+    publisher: "Бюро переписи населения США, TIGER/Line Shapefiles"
+  pa_legislators:
+    name: "Члены Генеральной ассамблеи Пенсильвании"
+    publisher: "Open States (Plural Policy)"
+  us_legislators:
+    name: "Члены Конгресса"
+    publisher: "Проект unitedstates/congress-legislators"
+  us_legislator_offices:
+    name: "Окружные офисы членов Конгресса"
+    publisher: "Проект unitedstates/congress-legislators"
+  city_elected_officials:
+    name: "Избранные должностные лица города"
+    publisher: "Город Филадельфия"
+  rco_contacts:
+    name: "Контакты зарегистрированных общественных организаций"
+    publisher: "Градостроительная комиссия Филадельфии (Philadelphia City Planning Commission)"
 
 layers:
   vacant_parcels:
@@ -856,6 +889,10 @@ layers:
     settings:
       shade:
         label: "Закрашивать области (если выключено, видны только их контуры и оценки)"
+
+  projects:
+    label: "Проекты, завершённые соседями"
+    description: "Уборки, сады, места для сидения, муралы, деревья, городские скамейки и навесы и исправления по обращениям в 311, которые соседи завершили и о которых нам рассказали. Placekeepers читает и одобряет каждый отчёт, прежде чем он появится. Нажмите на проект, чтобы увидеть, что было сделано, когда и что для этого потребовалось, со ссылкой на отчёт и его фотографии на GitHub. Карта никогда не показывает, кто прислал отчёт, только название группы, которое отправитель выбрал."
 
 lenses:
   violence:
