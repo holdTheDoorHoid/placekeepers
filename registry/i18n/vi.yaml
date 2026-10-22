@@ -1,0 +1,337 @@
+# Vietnamese (vi) translations of the visitor facing words in registry/*.yaml, by id. English in
+# registry/*.yaml is the source; anything left out here shows the English. Which fields may be
+# translated, and the shape of this file, are in docs/TRANSLATING.md and
+# web/src/i18n/registry-text.ts. The key terms are in docs/i18n/glossary-vi.md.
+
+groups:
+  lots:
+    label: Lô đất và tòa nhà
+    description: Các lô đất trống và tòa nhà bỏ hoang, và những gì có thể làm với chúng.
+  care:
+    label: Sự chăm sóc đang diễn ra
+    description: Các lô đất đã có người chăm sóc, vườn, công viên và những nơi khác mà người dân đã trông nom.
+  displacement:
+    label: Giá cả và biện pháp bảo vệ
+    description: Nơi giá cả đang tăng, để việc xanh hóa và các cải thiện khác có thể đi cùng các biện pháp bảo vệ cho những hàng xóm đang sống ở đó hiện nay.
+  rules:
+    label: Quy định về đất và các phiên điều trần
+    description: Các khu và bất động sản lịch sử, các lớp phủ quy hoạch, các phiên điều trần sắp diễn ra về các lô đất và tòa nhà, và các địa điểm brownfield của liên bang.
+  streets:
+    label: Đường phố và nơi tưởng niệm
+    description: High Injury Network, các vụ tai nạn, những người đã thiệt mạng trên đường phố của chúng ta, và các cột trên đường phố, biện pháp làm chậm xe và nhân viên hướng dẫn học sinh qua đường mà Thành phố liệt kê.
+  transit:
+    label: Xe buýt và tàu
+    description: Các trạm và tuyến của SEPTA, xe chạy thường xuyên đến đâu, bao nhiêu người lên xe, và trạm nào có mái che hoặc ghế ngồi, theo danh sách mái che của Thành phố và OpenStreetMap.
+  heat:
+    label: Nóng, cây xanh và ngập lụt
+    description: Cái nóng mùa hè tác động mạnh thế nào lên từng khu phố, các cây mà Thành phố trông coi trên đường phố và trong công viên, và nơi FEMA dự kiến có ngập lụt.
+  amenities:
+    label: Ghế ngồi, nước, nhà vệ sinh và hơn nữa
+    description: Chỗ để ngồi, uống nước, dùng nhà vệ sinh hoặc mượn một cuốn sách, theo OpenStreetMap, và các vòi uống nước trong công viên.
+  public_places:
+    label: Thư viện, trung tâm sinh hoạt và hồ bơi
+    description: Các chi nhánh Free Library, trung tâm sinh hoạt, hồ bơi và khu vòi phun nước của Parks and Recreation, và các điểm sưởi ấm và tránh nóng của Thành phố, như Thành phố liệt kê.
+  conditions:
+    label: Vấn đề đã báo cho 311
+    description: Đổ rác trái phép, đèn bị tắt và vẽ bậy lên tường mà người dân đã báo cho Philly311 trong 90 ngày qua, đếm theo đoạn phố.
+  placemaking:
+    label: Nghệ thuật và tạo không gian cộng đồng
+    description: Tranh tường, tượng điêu khắc, tranh ghép mảnh và nghệ thuật công cộng khác, từ Thành phố, OpenStreetMap và Wikidata, và các sân chơi của Thành phố.
+  walking:
+    label: Đi bộ, đi xe đạp và con người
+    description: Mỗi khu vực dễ đi bộ đến đâu, có bao nhiêu người và địa điểm hằng ngày trong một quãng đi bộ ngắn, và mỗi con đường căng thẳng đến đâu đối với người đi xe đạp.
+  then_and_now:
+    label: Trước đây và bây giờ
+    description: Trước đây một dãy phố có gì, và quá khứ còn lại gì. Các ảnh chụp từ trên không từ năm 1959 và bản đồ atlas năm 1860 chỉ tải từ máy chủ của Thành phố khi được bật; bản đồ redlining năm 1937 đến từ trang web này.
+  safety_context:
+    label: Nơi cần được chăm sóc nhiều nhất
+    description: Bối cảnh cho thấy nơi các cải thiện nhiều khả năng giúp được nhiều nhất.
+  boundaries:
+    label: Ranh giới
+    description: Các khu vực của Hội đồng Thành phố, các tổ chức cộng đồng và các khu phố.
+  basemap:
+    label: Bản đồ nền
+    description: Đường phố, tòa nhà và địa danh nằm bên dưới mọi thứ khác.
+
+options:
+  live_city_data:
+    label: Lấy dữ liệu trực tiếp của Thành phố
+    description: >-
+      Khi bạn mở một trang lô đất hoặc tìm một địa chỉ, trình duyệt của bạn hỏi các máy chủ
+      công khai của Thành phố Philadelphia để lấy các hồ sơ mới nhất: chủ sở hữu, các vụ bán,
+      các lần định giá, các lần kiểm tra và các kháng cáo. Các yêu cầu này đi thẳng từ thiết bị
+      của bạn đến Thành phố, không bao giờ qua Placekeepers, và các máy chủ của Thành phố thấy
+      chúng giống như thấy một lượt truy cập vào trang web bất động sản của chính Thành phố.
+      Các ảnh chụp từ trên không của Thành phố và bản đồ atlas năm 1860 của nó, trong mục
+      "Trước đây và bây giờ", cũng đến thẳng từ máy chủ của Thành phố, nhưng chỉ khi bạn bật một
+      trong số chúng. Hãy tắt tùy chọn này để chỉ dùng bản sao hằng tuần của dữ liệu mà
+      Placekeepers công bố. Việc tìm địa chỉ, mở một thửa đất không có trong danh sách của chúng
+      tôi, và các ảnh cũ cùng bản đồ atlas cần tùy chọn này được bật.
+
+partners:
+  phs:
+    one_line: LandCare, Community LandCare và Philly Spring Cleanup.
+  gjli:
+    one_line: Giúp đỡ pháp lý miễn phí và các hướng dẫn về việc sử dụng đất trống.
+  ngt:
+    one_line: Bảo tồn các vườn cộng đồng vĩnh viễn.
+  land_bank:
+    one_line: Các chương trình của Thành phố cho lô đất trống, kể cả sân hông và vườn.
+  bike_coalition:
+    one_line: Vận động Vision Zero, xe đạp trắng tưởng niệm (ghost bike) và Families for Safe Streets.
+  feet_first:
+    one_line: Vận động cho người đi bộ, khảo sát đường đi bộ và các khoản tài trợ nhỏ cho không gian công cộng.
+  treephilly:
+    one_line: 'Chương trình trồng cây của Parks and Recreation: cây trồng ven đường và cây trong sân nhà miễn phí.'
+  mural_arts:
+    one_line: 'Tranh tường khắp thành phố; chủ tường có thể xin một bức.'
+
+lenses:
+  violence:
+    label: Giảm bạo lực
+    description: >-
+      Nơi việc dọn dẹp, xanh hóa hoặc bịt kín nhiều khả năng nhất sẽ làm giảm bạo lực súng đạn ở
+      gần đó, dựa trên các thử nghiệm ngẫu nhiên ở Philadelphia.
+    factors:
+      untreated_vacancy:
+        label: Lô đất trống hoặc tòa nhà bỏ hoang để ngỏ chưa được xử lý
+        explain: >-
+          Các thử nghiệm ngẫu nhiên ở Philadelphia thấy rằng xanh hóa các lô đất trống và lắp cửa ra
+          vào, cửa sổ còn dùng được cho các ngôi nhà bỏ hoang đã làm giảm bạo lực súng đạn ở gần
+          đó. Những nơi đã được xử lý như vậy được 0 điểm: các lô đất do PHS LandCare chăm sóc, và
+          các tòa nhà mà chủ sở hữu đã sửa cửa ra vào và cửa sổ sau một thông báo vi phạm của L&I.
+          Mọi lô đất trống hay tòa nhà khác được 100 điểm.
+      shootings_nearby:
+        label: Các vụ nổ súng gần đó trong ba năm qua
+        explain: >-
+          Số người bị bắn trong ba năm qua trong phạm vi khoảng một phần tư dặm (ô lục giác của nơi
+          đó và sáu ô quanh nó), từ hồ sơ nạn nhân bị bắn của Police Department. Thứ hạng là tỷ lệ
+          các địa điểm trên bản đồ có ít hơn. Các thử nghiệm đo được ít vụ nổ súng hơn quanh những
+          nơi được xử lý, nên sự chăm sóc giúp ích nhiều nhất ở nơi có xảy ra nổ súng.
+      poverty:
+        label: Tỷ lệ nghèo của khu phố
+        explain: >-
+          Tỷ lệ người sống dưới mức nghèo trong khu điều tra dân số (census tract) của nơi đó (khảo
+          sát của Cục Điều tra Dân số Hoa Kỳ, 2020 đến 2024). Thứ hạng là tỷ lệ các địa điểm trên
+          bản đồ nằm trong các khu có tỷ lệ thấp hơn. Trong thử nghiệm trên toàn thành phố, mức
+          giảm bạo lực súng đạn được thấy ở các khu phố dưới mức nghèo.
+      canopy_gap:
+        label: Ít cây xanh ở gần
+        explain: >-
+          Tán cây phủ trên đất trong phạm vi khoảng một phần tư dặm, từ khảo sát tán cây năm 2018
+          của Thành phố. Thứ hạng là tỷ lệ các địa điểm trên bản đồ có nhiều cây hơn xung quanh,
+          nên càng ít cây thì xếp càng cao. Cây ven đường được liên hệ với ít tội phạm hơn, nhưng
+          bằng chứng không thống nhất và tùy thuộc vào vị trí trồng.
+    presets:
+      research:
+        label: Dựa trên nghiên cứu
+      vacancy_only:
+        label: Chỉ xét việc bỏ trống
+  heat:
+    label: Nóng và bóng mát
+    description: >-
+      Nơi trồng cây hoặc xanh hóa một lô đất trống sẽ làm mát cho nhiều người nhất: các lô đất ở
+      những khu phố nơi cái nóng mùa hè tác động mạnh nhất đến người dân, ít bóng mát xung quanh,
+      và có nhiều người cảm nhận được sự khác biệt.
+    factors:
+      heat_vulnerability:
+        label: Mức dễ bị tổn thương do nóng của khu phố
+        explain: >-
+          Cái nóng mùa hè tác động mạnh đến mức nào lên người dân trong khu điều tra dân số của lô
+          đất, từ Chỉ số Dễ bị Tổn thương do Nóng (Heat Vulnerability Index) của Thành phố (Sở Y tế
+          Công cộng và Văn phòng Phát triển Bền vững, dữ liệu 2017 đến 2019): khu đó nóng đến đâu
+          vào những ngày hè, theo đo đạc của vệ tinh, cùng với số người sống ở đó có nguy cơ cao
+          hơn khi trời nóng, theo tuổi, sức khỏe, thu nhập và nhiều yếu tố khác. Thứ hạng là tỷ lệ
+          các địa điểm trên bản đồ nằm trong các khu có điểm thấp hơn.
+      few_trees:
+        label: Ít cây xanh ở gần
+        explain: >-
+          Tán cây phủ trên đất trong phạm vi khoảng một phần tư dặm, từ khảo sát tán cây năm 2018
+          của Thành phố, cùng cách đo mà góc nhìn giảm bạo lực dùng. Thứ hạng là tỷ lệ các địa
+          điểm trên bản đồ có nhiều cây hơn xung quanh, nên càng ít cây thì xếp càng cao. Cây làm
+          mát đường phố bằng bóng của chúng và lượng nước lá cây thải ra. Các nghiên cứu đều cho
+          thấy chúng làm mát vào ban ngày, nhiều nhất ở nơi tán cây phủ hơn khoảng 40 phần trăm một
+          dãy phố, và ít hơn vào ban đêm.
+      few_street_trees:
+        label: Ít cây của Thành phố trên dãy phố
+        explain: >-
+          Cây trong phạm vi 100 mét quanh lô đất theo danh mục cây năm 2025 của Parks and
+          Recreation, tức là các cây mà Thành phố trông coi trên đường phố và trong công viên,
+          không phải cây trong sân nhà riêng. Thứ hạng là tỷ lệ các địa điểm trên bản đồ có nhiều
+          cây loại này hơn xung quanh, nên càng ít cây thì xếp càng cao. Cây ven đường che bóng cho
+          vỉa hè nơi người ta đi bộ và đứng chờ.
+      people_nearby:
+        label: Số người sẽ được hưởng lợi
+        explain: >-
+          Số cư dân trên mỗi km vuông đất trong khu điều tra dân số của lô đất (khảo sát của Cục
+          Điều tra Dân số Hoa Kỳ, 2020 đến 2024). Thứ hạng là tỷ lệ các địa điểm trên bản đồ nằm
+          trong các khu có ít người hơn. Nhiều người hơn sẽ cảm nhận được sự mát mẻ. Dân số chỉ cho
+          biết một cải thiện sẽ đến được với ai; tự nó không bao giờ là thước đo nhu cầu.
+    presets:
+      balanced:
+        label: Cân bằng
+      people_at_risk:
+        label: Những người có nguy cơ cao nhất
+      fewest_trees:
+        label: Ít cây nhất
+  placemaking:
+    label: Tạo không gian cộng đồng
+    description: >-
+      Nơi một lô đất trống nhiều khả năng nhất sẽ trở thành một nơi công cộng mà người ta dùng
+      mỗi ngày, như một khu vườn, một công viên nhỏ, một chỗ ngồi dưới bóng mát hoặc một chỗ cho
+      nghệ thuật: các lô đất có nhiều hàng xóm và địa điểm sinh hoạt hằng ngày trong một quãng đi
+      bộ ngắn, ở xa công viên và xa nghệ thuật công cộng. Đây là về việc sử dụng và sự chào đón,
+      không phải về tội phạm.
+    factors:
+      neighbors:
+        label: Số người trong vòng 5 phút đi bộ
+        explain: >-
+          Có bao nhiêu người sống trong vòng 5 phút đi bộ của lô đất, tính là 400 mét theo đường
+          thẳng, từ điều tra dân số 2020. Thứ hạng là tỷ lệ các địa điểm trên bản đồ có ít người
+          hơn xung quanh. Nhiều hàng xóm hơn nghĩa là có nhiều người hơn để một khu vườn, một chiếc
+          ghế hay một bức tranh tường phục vụ. Dân số chỉ cho biết một dự án sẽ đến được với ai.
+      everyday_places:
+        label: Các địa điểm hằng ngày trong vòng 10 phút đi bộ
+        explain: >-
+          Có bao nhiêu trong bảy loại địa điểm hằng ngày nằm trong vòng 10 phút đi bộ, tính là 800
+          mét theo đường thẳng: một thư viện, một trung tâm sinh hoạt, một hồ bơi hoặc khu vòi phun
+          nước, một vòi uống nước trong công viên, một trường học, một cửa hàng tạp hóa hoặc chợ
+          nhận SNAP, và một trạm xe buýt, xe điện hoặc tàu. Thứ hạng là tỷ lệ các địa điểm trên bản
+          đồ có ít hơn. Những người trên đường đến các nơi này đi ngang qua lô đất. Việc người đi
+          đường giúp ích cho một nơi công cộng mới đến đâu tùy thuộc vào con đường và nơi đó, nên
+          bằng chứng không thống nhất.
+      walkability:
+        label: Mức dễ đi bộ
+        explain: >-
+          Chỉ số Dễ đi bộ Quốc gia (National Walkability Index) của EPA cho nhóm khối của lô đất:
+          góc phố, trạm xe công cộng gần đến đâu, và nhà ở, việc làm và cửa hàng được hòa trộn tốt
+          đến đâu (dữ liệu khoảng 2017 đến 2019). Thứ hạng là tỷ lệ các địa điểm trên bản đồ nằm
+          trong các khu kém dễ đi bộ hơn. Nơi nào người ta đi bộ nhiều, sẽ có nhiều người hơn dùng
+          một nơi trên lô đất. Các nghiên cứu về những nơi dễ đi bộ thấy các mối tương quan có ý
+          nghĩa tùy theo nơi đó, nên bằng chứng không thống nhất.
+      far_from_park:
+        label: Xa công viên
+        explain: >-
+          Khoảng cách theo đường thẳng từ lô đất đến rìa của đất công viên gần nhất của Parks and
+          Recreation: công viên, sân chơi, trung tâm sinh hoạt, quảng trường, đường xanh và khu
+          thiên nhiên, nhưng không tính bãi làm việc, sân gôn hay dải phân cách có trồng cây. Thứ
+          hạng là tỷ lệ các địa điểm trên bản đồ gần một công viên hơn, nên càng xa càng xếp cao.
+          Một lô đất xa công viên có thể mang đến cho hàng xóm không gian mở mà họ đang thiếu.
+      no_art_nearby:
+        label: Không có nghệ thuật công cộng ở gần
+        explain: >-
+          Khoảng cách theo đường thẳng từ lô đất đến tác phẩm nghệ thuật công cộng gần nhất trong
+          danh sách Percent for Art của Thành phố hoặc trong Wikidata, không tính các tác phẩm bên
+          trong tòa nhà. Thứ hạng là tỷ lệ các địa điểm trên bản đồ gần một tác phẩm hơn, nên càng
+          xa càng xếp cao. Hai danh sách này chỉ có một phần nghệ thuật của thành phố: các bức
+          tranh tường của Mural Arts và các tác phẩm chỉ có trên OpenStreetMap không có trong đó,
+          nên hãy xem cả lớp Nghệ thuật công cộng. Nghệ thuật được chào đón vì vẻ đẹp và niềm tự
+          hào; không có nghiên cứu nào liên hệ nó với việc giảm bạo lực.
+      commercial_corridor:
+        label: Trên hoặc gần một trục thương mại
+        explain: >-
+          Điểm tối đa, 100, khi lô đất nằm trên một trong các trục thương mại của Thành phố, tức
+          các con phố và khu mua sắm mà Planning Commission đã khảo sát từ 2011 đến 2017, hoặc
+          trong vòng 50 mét từ một trục, và 0 trong các trường hợp còn lại. Các cửa hàng đưa người
+          qua lại lô đất mỗi ngày. Những con phố mua sắm đông đúc cũng có thể kéo theo vấn đề, nên
+          bằng chứng không thống nhất.
+    presets:
+      balanced:
+        label: Cân bằng
+      most_neighbors:
+        label: Nhiều hàng xóm nhất
+      where_people_walk:
+        label: Nơi người ta đã đi bộ nhiều
+      far_from_a_park:
+        label: Xa công viên
+  street_safety:
+    label: An toàn đường phố
+    description: >-
+      Các đoạn phố nơi người đi bộ và đi xe đạp có nhiều nguy cơ nhất, dựa trên hồ sơ tai nạn,
+      High Injury Network của Thành phố và các trường học ở gần.
+    factors:
+      high_injury_network:
+        label: Nằm trong High Injury Network
+        explain: Thành phố nhận thấy phần lớn số ca tử vong và bị thương nặng do giao thông xảy ra trên các con đường này, chiếm khoảng 12 phần trăm mọi đường phố ở Philadelphia.
+      walking_cycling_harm:
+        label: Người thiệt mạng hoặc bị thương nặng khi đi bộ hoặc đi xe đạp, 5 năm qua
+        explain: Đếm số người thiệt mạng hoặc bị thương nặng khi đi bộ hoặc đi xe đạp trên đoạn phố này hoặc ở các góc của nó, trong năm năm gần nhất của hồ sơ tai nạn của PennDOT. Thứ hạng là tỷ lệ các đoạn phố trên toàn thành phố có ít hơn.
+      recent_death:
+        label: Có người thiệt mạng ở đây trong 2 năm qua
+        explain: Một ca tử vong trên đoạn phố này hoặc ở các góc của nó trong hai năm qua, từ hồ sơ tai nạn chết người của Police Department, được cập nhật hằng đêm.
+      school_nearby:
+        label: Có trường học trong vòng 400 mét
+        explain: Trẻ em đi bộ đến và từ trường học ở đây. 400 mét là khoảng năm phút đi bộ.
+    presets:
+      research:
+        label: Dựa trên nghiên cứu
+      recorded_harm:
+        label: Chỉ xét thiệt hại đã ghi nhận
+  transit_comfort:
+    label: Thoải mái khi đi xe công cộng
+    description: >-
+      Các trạm xe buýt và xe điện nơi một mái che, một ghế ngồi hoặc bóng mát sẽ giúp hành khách
+      nhiều nhất: các trạm đông khách, các trạm mà khảo sát thấy không có chỗ che hay chỗ ngồi,
+      các trạm ít bóng mát ở những khu phố nóng, các trạm nằm trên High Injury Network, và các
+      trạm phải chờ lâu. Nơi nào chưa có ai khảo sát một trạm, mái che và ghế ngồi của trạm được
+      tính nửa điểm.
+    factors:
+      riders:
+        label: Số người lên xe mỗi ngày trong tuần
+        explain: >-
+          Có bao nhiêu người lên xe ở đây vào một ngày trong tuần trung bình, từ số đếm riêng của
+          SEPTA. Thứ hạng là tỷ lệ các trạm có ít hành khách hơn. Nhiều hành khách hơn nghĩa là có
+          nhiều người hơn được giúp bởi một mái che hay một ghế ngồi; Thành phố đặt mục tiêu lắp
+          mái che ở 15 phần trăm trạm xe buýt đông khách nhất. Các trạm mà SEPTA chưa đếm thì được
+          bỏ ra khỏi yếu tố này.
+      no_shelter:
+        label: Không có mái che
+        explain: >-
+          100 nơi một cuộc khảo sát thấy không có mái che, 0 nơi có mái che, cả trạm nằm dưới mái,
+          hoặc danh sách mái che trạm xe buýt riêng của Thành phố có một mái che ở đó (bất kể
+          OpenStreetMap nói gì). Nơi nào chưa có ai khảo sát trạm thì được tính là 50, nửa điểm, để
+          một trạm không bao giờ bị chấm là thiếu một mái che mà nó có thể có; hãy khảo sát để
+          biết. Trong một nghiên cứu ở Minneapolis và Saint Paul, hành khách ở các trạm không có
+          ghế hay mái che cảm thấy thời gian chờ của họ dài hơn thực tế.
+      no_bench:
+        label: Không có ghế ngồi
+        explain: >-
+          100 nơi một cuộc khảo sát thấy không có ghế, 0 nơi có ghế, và 50, nửa điểm, nơi chưa có
+          ai khảo sát trạm. Cũng nghiên cứu đó thấy một chiếc ghế làm thời gian chờ có cảm giác
+          ngắn hơn.
+      little_shade:
+        label: Ít bóng mát ở gần
+        explain: >-
+          Tán cây phủ trên đất quanh trạm, trong một khu vực rộng cỡ hai dãy phố, từ khảo sát tán
+          cây năm 2018 của Thành phố. Thứ hạng là tỷ lệ các trạm có nhiều cây hơn xung quanh, nên
+          càng ít cây thì xếp càng cao. Bóng mát làm mát những người chờ dưới nắng, nhưng nó giúp
+          được đến đâu tùy thuộc vào khí hậu và vào thứ tạo ra bóng mát.
+      heat:
+        label: Khu phố nóng vào mùa hè
+        explain: >-
+          Khu điều tra dân số của trạm nóng đến đâu vào những ngày hè, từ phần mức chịu nóng của
+          Heat Vulnerability Index của Thành phố (nhiệt độ bề mặt đo bằng vệ tinh và phần khu đó
+          được lát nền, xây dựng hoặc có cây xanh). Thứ hạng là tỷ lệ các trạm nằm trong các khu
+          mát hơn.
+      high_injury_network:
+        label: Nằm trên High Injury Network
+        explain: >-
+          Trạm nằm trên hoặc ở một trong các con đường nơi xảy ra phần lớn số ca tử vong và bị
+          thương nặng do giao thông ở Philadelphia, nên nhiều hành khách phải băng qua đường đó để
+          đến trạm hoặc rời trạm. Các nghiên cứu ở nơi khác thấy các vụ tai nạn liên quan đến
+          người đi bộ tập trung ở các trạm xe buýt đông khách trên những con đường rộng, nơi một
+          lối băng qua đường an toàn quan trọng nhất.
+      long_wait:
+        label: Chờ lâu vào buổi trưa
+        explain: >-
+          Thời gian điển hình giữa các chuyến xe buýt hoặc xe điện từ 10 giờ sáng đến 2 giờ chiều
+          các ngày trong tuần, từ lịch chạy của SEPTA. Thứ hạng là tỷ lệ các trạm có thời gian chờ
+          ngắn hơn. Chờ lâu là lúc một chỗ ngồi và một mái che quan trọng nhất. Các trạm không có
+          xe chạy vào buổi trưa được bỏ ra khỏi yếu tố này.
+    presets:
+      balanced:
+        label: Cân bằng
+      busiest_first:
+        label: Các trạm đông khách nhất trước
+      heat_and_shade:
+        label: Nóng và bóng mát

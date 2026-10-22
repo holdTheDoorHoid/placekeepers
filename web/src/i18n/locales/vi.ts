@@ -248,7 +248,7 @@ const vi: Catalog = {
     land_use_shows_use: 'Bản đồ sử dụng đất của Thành phố cho thấy nơi này đang được sử dụng',
     recent_permit: 'Một giấy phép xây dựng hoặc phân vùng đã được cấp trong hai năm qua',
     building_stands: 'Có dấu vết một tòa nhà trên thửa đất, dù hồ sơ ghi là đất trống',
-    homestead: 'Chủ sở hữu có Homestead Exemption (giảm thuế cho nhà ở chính): hồ sơ của Thành phố cho biết có người ở đây, hoặc từng ở',
+    homestead: 'Chủ sở hữu có Miễn Thuế Nhà cửa vườn tược (Homestead Exemption): hồ sơ của Thành phố cho biết có người ở đây, hoặc từng ở',
   },
 
   lens: {
@@ -493,7 +493,7 @@ const vi: Catalog = {
     protectionLabels: {
       neighborhood_gardens_trust: 'Neighborhood Gardens Trust',
       community_land_trust: 'Quỹ đất cộng đồng (community land trust)',
-      homestead_exemption: 'Homestead Exemption của Thành phố (giảm thuế cho nhà ở chính)',
+      homestead_exemption: 'Miễn Thuế Nhà cửa vườn tược (Homestead Exemption) của Thành phố',
       longtime_owner_occupants: 'Chương trình Longtime Owner Occupants (LOOP) của Thành phố, giảm thuế cho chủ nhà ở lâu năm',
       tangled_title_help: 'Giúp khi giấy tờ nhà đất bị rối (tangled title)',
     },
