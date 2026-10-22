@@ -18,7 +18,7 @@ groups:
     description: Dónde suben los precios, para que el reverdecimiento y otras mejoras vayan de la mano con protecciones para los vecinos que viven allí ahora.
   rules:
     label: Reglas del terreno y audiencias
-    description: Distritos y propiedades históricas, zonificación superpuesta, audiencias por venir sobre lotes y edificios, y sitios brownfield federales (terrenos que pudieron haber tenido contaminación).
+    description: Distritos y propiedades históricas, zonificación superpuesta, audiencias por venir sobre lotes y edificios, y sitios brownfield federales (terrenos donde puede haber contaminación).
   streets:
     label: Calles y memoriales
     description: La Red de Lesiones Graves, los choques, las personas que murieron en nuestras calles, y los postes, las medidas para calmar el tránsito y los guardias de cruce escolar que registra la Ciudad.
@@ -807,7 +807,7 @@ layers:
             label: "Solo la Junta de Ajuste de Zonificación"
   brownfields:
     label: "Sitios brownfield (EPA)"
-    description: "Un brownfield es un terreno que pudo haber tenido contaminación. Aquí se muestran propiedades donde una subvención federal para brownfields pagó una evaluación o una limpieza, según los registros de la EPA. No es un mapa de todo el suelo contaminado, y no dice si un sitio está contaminado hoy. Haga analizar el suelo antes de cultivar alimentos en uno de estos sitios o cerca de él."
+    description: "Un brownfield es un terreno donde puede haber contaminación. Aquí se muestran propiedades donde una subvención federal para brownfields pagó una evaluación o una limpieza, según los registros de la EPA. No es un mapa de todo el suelo contaminado, y no dice si un sitio está contaminado hoy. Haga analizar el suelo antes de cultivar alimentos en uno de estos sitios o cerca de él."
   aerial_photos:
     label: "Fotos aéreas por año"
     description: "Fotografías aéreas de toda la ciudad, tomadas desde un avión: las de la propia Ciudad de cada año del que las tiene desde 1996 (cada primavera, casi todos los años de marzo a mayo), y otras más antiguas que aloja la Ciudad, de la Comisión Regional de Planificación del Valle del Delaware (1959 y 1975) y del Servicio Geológico de EE. UU. (1999). Pase por los años para ver qué había antes en una cuadra: casas que se derribaron, lotes que se despejaron, jardines que crecieron. Las fotos vienen directo de los servidores de la Ciudad cuando esta capa está activada, y se dibujan debajo de todo lo demás en el mapa. Los años más antiguos son menos nítidos, y las fotos hasta 2000 son en blanco y negro."
@@ -1136,7 +1136,7 @@ routes:
       "https://www.phila.gov/services/property-lots-housing/submit-a-service-request-with-311/":
         label: "Philly311"
   ghost_bike_request:
-    label: "Pedir a la Bicycle Coalition una bicicleta blanca (ghost bike) o un memorial"
+    label: "Preguntar a la Bicycle Coalition por una bicicleta blanca (ghost bike) o un memorial"
     who: "La familia, o amigos con la bendición de la familia"
     steps:
       - "Hable primero con la familia. Un memorial se coloca solo con su bendición."

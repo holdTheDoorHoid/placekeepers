@@ -58,7 +58,7 @@ The choices every Spanish text on the site follows: the interface catalog
 | people shot / shootings | personas baleadas / tiroteos | never "dangerous", "high crime" or "hot spot" |
 | memorial | memorial | plural memoriales |
 | warming or cooling site | sitio para calentarse o refrescarse | |
-| brownfield | brownfield (un terreno que pudo haber tenido contaminación) | explained once per passage; never "limpio" or "seguro" |
+| brownfield | brownfield (un terreno donde puede haber contaminación) | explained once per passage, in the present tense so it never reads as "it was contaminated once"; never "limpio" or "seguro" |
 | community garden | jardín comunitario | "jardín" for a garden of any kind; "huerto" is not used, so one word covers food and flowers. Garden agreement: acuerdo de jardín |
 | ghost bike | bicicleta blanca (ghost bike) | the English name stays in parentheses so families can find the Bicycle Coalition's form |
 | Block Captain, Playstreet, parklet | Capitán de Cuadra (Block Captain), Playstreet (calle de juego), parklet | program names stay, with a short gloss the first time |
@@ -91,9 +91,12 @@ page worth following, see above).
 ## Choices a reviewer should know about
 
 - **Brownfield.** The word has no Spanish equivalent that neighbors know, so the soil note says
-  `"brownfield" (un terreno que pudo haber tenido contaminación)` and the layer description opens
+  `"brownfield" (un terreno donde puede haber contaminación)` and the layer description opens
   with a one sentence meaning. The gloss never says the ground is clean or safe; it is the only
-  addition to a word for word passage.
+  addition to a word for word passage. The back translation check (docs/i18n/check-es.md) changed
+  it from "pudo haber tenido contaminación" (may have been contaminated, which can read as a
+  problem that is over) to the present tense "puede haber contaminación" (there may be
+  contamination).
 - **Conservatorship.** "administración judicial (conservatorship)": the English word stays so a
   neighbor can search for it. The warning keeps ETHICS.md's three sentences in order.
 - **Possible estate.** "La persona que figura como dueña en los registros puede haber fallecido":
