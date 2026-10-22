@@ -69,6 +69,15 @@ the genitive singular: "1,5 мили").
 | the City (as an actor) | город, городские власти | lower case; "Город Филадельфия" is the official name; at the start of a sentence it is capitalized by the rule of the sentence |
 | "report to 311" | сообщить в Philly311 | "обращение" is a GitHub issue or a 311 request |
 | GitHub issue | обращение на GitHub | |
+| projects neighbors finished | проекты, завершённые соседями | the layer, the lot page's "Projects here" and the report form |
+| packet (printable set for a meeting) | пакет материалов | "Составить пакет материалов" |
+| flyer (neighbor flyer) | листовка (для соседей) | "Составить листовку для соседей"; the page about where to post it is "Где вывесить листовку" |
+| letter (the letters page) | письмо | the four letters; "Юрист пока не проверял это письмо. Это не юридическая консультация." |
+| who represents you | кто вас представляет | |
+| Council member | член городского совета | the letters greet with "Здравствуйте, <имя>!" to stay neutral about gender |
+| ward, division | избирательный округ (ward), избирательный участок (division) | the English word stays in brackets; "division" is never plain "участок" so it is not mixed up with a lot |
+| committee people | уполномоченные партийных комитетов (committee people) | |
+| at large (Council) | от всего города (at large) | |
 
 ## Names of City offices and programs
 
