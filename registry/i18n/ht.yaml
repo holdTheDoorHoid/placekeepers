@@ -1,0 +1,861 @@
+# Haitian Creole (ht) translations of the visitor facing words in registry/*.yaml, by id. English
+# in registry/*.yaml is the source; anything left out here shows the English. Which fields may be
+# translated, and the shape of this file, are in docs/TRANSLATING.md and
+# web/src/i18n/registry-text.ts. The key terms are in docs/i18n/glossary-ht.md.
+#
+# Spelling follows the Akademi Kreyol Ayisyen. The reader is addressed as "ou". No dashes as
+# punctuation. Names of offices have the Creole words first, with the English name in
+# parentheses where a neighbor may need it to find the office.
+
+groups:
+  lots:
+    label: Teren ak bilding
+    description: Teren vid ak bilding abandone, ak sa yo ta ka fè ak yo.
+  care:
+    label: Swen ki deja ap fèt
+    description: Teren ki deja antretni, jaden, pak ak lòt kote moun deja ap pran swen.
+  displacement:
+    label: Pri ak pwoteksyon
+    description: Kote pri yo ap monte, pou amenajman vèt ak lòt amelyorasyon ka ale ansanm ak pwoteksyon pou vwazen ki rete la kounye a.
+  rules:
+    label: Règ tè yo ak odyans
+    description: Distri ak pwopriyete istorik, zonaj siperpoze, odyans ki poko fèt sou teren ak bilding, ak sit brownfield federal.
+  streets:
+    label: Ri ak memoryal
+    description: High Injury Network, aksidan, moun ki mouri sou ri nou yo, ak poto ri, ralanti trafik ak gad travèse lekòl Vil la mete sou lis.
+  transit:
+    label: Bis ak tren
+    description: Estasyon ak liy SEPTA, chak konbyen tan sèvis la pase, konbyen moun ki monte, epi ki estasyon ki gen yon abri oswa yon ban, selon lis abri Vil la ak OpenStreetMap.
+  heat:
+    label: Chalè, pyebwa ak inondasyon
+    description: Ki jan chalè ete a frape chak katye, pyebwa Vil la kenbe sou ri li yo ak nan pak li yo, ak kote FEMA espere inondasyon.
+  amenities:
+    label: Ban, dlo, twalèt ak plis ankò
+    description: Kote pou chita, pou bwè dlo, pou itilize yon twalèt oswa pou prete yon liv, jan yo make nan OpenStreetMap, ak fontèn pou bwè nan pak yo.
+  public_places:
+    label: Bibliyotèk, sant rekreyasyon ak pisin
+    description: Branch Free Library, sant rekreyasyon Pak ak Rekreyasyon, pisin ak zòn jwèt dlo, ak sit Vil la pou chofe ak pou rafrechi, jan Vil la mete yo sou lis.
+  conditions:
+    label: Kondisyon yo rapòte bay 311
+    description: Fatra jete ilegalman, limyè etenn ak grafiti moun te rapòte bay Philly311 nan dènye 90 jou yo, konte pa blòk.
+  placemaking:
+    label: Atizay ak kreyasyon kote
+    description: Miral, eskilti, mozayik ak lòt atizay piblik, ki soti nan Vil la, OpenStreetMap ak Wikidata, ak teren jwèt Vil la.
+  walking:
+    label: Mache, monte bisiklèt ak moun
+    description: Ki jan chak zòn bon pou mache, konbyen moun ak kote chak jou ki nan yon ti mache, ak ki jan chak ri estresan pou moun sou bisiklèt.
+  then_and_now:
+    label: Avan ak kounye a
+    description: Sa ki te sou yon blòk avan, ak sa ki rete nan sa ki pase a. Foto ayeryen depi 1959 yo ak atlas 1860 la chaje soti nan sèvè Vil la sèlman lè yo limen; kat redlining 1937 la soti nan sit sa a.
+  safety_context:
+    label: Kote swen pi nesesè
+    description: Kontèks ki montre kote amelyorasyon yo gen plis chans pou ede.
+  boundaries:
+    label: Limit
+    description: Distri Konsèy, òganizasyon kominotè ak katye.
+  basemap:
+    label: Kat debaz
+    description: Ri, bilding ak non kote anba tout rès la.
+
+sources:
+  opa_properties:
+    name: Pwopriyete OPA
+    publisher: Vil Filadèlfi, Biwo Evalyasyon Pwopriyete (Office of Property Assessment)
+  pwd_parcels:
+    name: Pasèl Depatman Dlo
+    publisher: Depatman Dlo Filadèlfi
+  vacant_indicators_land:
+    name: Endikatè pwopriyete vid, tè
+    publisher: Vil Filadèlfi
+  vacant_indicators_bldg:
+    name: Endikatè pwopriyete vid, bilding
+    publisher: Vil Filadèlfi
+  shootings:
+    name: Moun ki pran bal
+    publisher: Depatman Polis Filadèlfi
+  high_injury_network:
+    name: Vision Zero High Injury Network 2025
+    publisher: Vil Filadèlfi, Biwo Transpò ak Sistèm Enfrastrikti (Office of Transportation and Infrastructure Systems)
+  real_estate_transfers:
+    name: Transfè byen imobilye
+    publisher: Vil Filadèlfi, Depatman Dosye (Department of Records)
+  assessment_history:
+    name: Istwa evalyasyon
+    publisher: Vil Filadèlfi, Biwo Evalyasyon Pwopriyete
+  li_violations:
+    name: Vyolasyon kòd L&I
+    publisher: Vil Filadèlfi, Depatman Lisans ak Enspeksyon (Department of Licenses and Inspections)
+  li_complaints:
+    name: Plent bay L&I
+    publisher: Vil Filadèlfi, Depatman Lisans ak Enspeksyon
+  li_permits:
+    name: Pèmi konstriksyon ak zonaj L&I
+    publisher: Vil Filadèlfi, Depatman Lisans ak Enspeksyon
+  li_unsafe:
+    name: Bilding ki pa an sekirite
+    publisher: Vil Filadèlfi, Depatman Lisans ak Enspeksyon
+  li_imminently_dangerous:
+    name: Bilding ki se yon danje imedya
+    publisher: Vil Filadèlfi, Depatman Lisans ak Enspeksyon
+  li_clean_and_seal:
+    name: Lòd travay pou netwaye ak sele
+    publisher: Vil Filadèlfi, Depatman Lisans ak Enspeksyon
+  li_demolitions:
+    name: Demolisyon bilding
+    publisher: Vil Filadèlfi, Depatman Lisans ak Enspeksyon
+  building_footprints:
+    name: Anprent bilding yo
+    publisher: Vil Filadèlfi, Depatman Lisans ak Enspeksyon
+  land_use:
+    name: Itilizasyon tè
+    publisher: Komisyon Planifikasyon Vil Filadèlfi (Philadelphia City Planning Commission)
+  city_owned_property:
+    name: Pwopriyete Vil la posede
+    publisher: Vil Filadèlfi, Depatman Planifikasyon ak Devlopman (Department of Planning and Development)
+  phs_landcare:
+    name: Teren PHS LandCare
+    publisher: Pennsylvania Horticultural Society, atravè Vil Filadèlfi
+  gardens_phs_ngt:
+    name: Jaden PHS ak Neighborhood Gardens Trust sipòte
+    publisher: Pennsylvania Horticultural Society ak Neighborhood Gardens Trust
+  gardens_registered:
+    name: Jaden kominotè anrejistre
+    publisher: Pak ak Rekreyasyon Filadèlfi (Philadelphia Parks and Recreation)
+  ppr_properties:
+    name: Pwopriyete Pak ak Rekreyasyon
+    publisher: Pak ak Rekreyasyon Filadèlfi
+  zoning_base_districts:
+    name: Distri zonaj debaz
+    publisher: Komisyon Planifikasyon Vil Filadèlfi
+  council_districts:
+    name: Distri Konsèy Vil la 2024
+    publisher: Vil Filadèlfi
+  community_organizations:
+    name: Òganizasyon Kominotè Anrejistre (Registered Community Organizations)
+    publisher: Komisyon Planifikasyon Vil Filadèlfi
+  neighborhoods:
+    name: Katye Filadèlfi
+    publisher: Abaca Labs, atravè OpenDataPhilly
+  acs_poverty:
+    name: To povrete pa sektè resansman (ACS 2020 a 2024)
+    publisher: Biwo Resansman Etazini (U.S. Census Bureau), American Community Survey
+  cagp_tax_2025:
+    name: Dèt taks depi jiyè 2025 (Clean & Green Philly)
+    publisher: Clean & Green Philly, Code for Philly
+  crashes_2020_2024:
+    name: Aksidan, 2020 a 2024 (done PennDOT, kopi Vil la)
+    publisher: Vil Filadèlfi, apati dosye aksidan Depatman Transpò Pennsylvanie (PennDOT)
+  crashes_2016_2020:
+    name: Aksidan, 2016 a 2020 (done PennDOT, kopi Vil la)
+    publisher: Vil Filadèlfi, apati dosye aksidan Depatman Transpò Pennsylvanie (PennDOT)
+  crashes_2007_2017:
+    name: Aksidan, 2015 (done PennDOT, kopi Vil la pou 2007 a 2017)
+    publisher: Vil Filadèlfi, apati dosye aksidan Depatman Transpò Pennsylvanie (PennDOT)
+  fatal_crashes:
+    name: Aksidan ki lakòz lanmò
+    publisher: Depatman Polis Filadèlfi, Inite Ankèt Aksidan
+  schools:
+    name: Lekòl
+    publisher: Vil Filadèlfi, Komisyon Planifikasyon
+  street_centerlines:
+    name: Liy mitan ri yo
+    publisher: Vil Filadèlfi, Depatman Ri (Streets Department)
+  memorial_names:
+    name: Non memoryal yo, chwazi alamen
+    publisher: Placekeepers, apati lis memoryal piblik tankou TrafficVictimsPHL Bicycle Coalition lan
+  pba_laser:
+    name: Pwoblèm estasyonman yo rapòte ak Laser Vision
+    publisher: Philly Bike Action
+  census_tracts_2020:
+    name: Sektè resansman 2020
+    publisher: Vil Filadèlfi, Komisyon Planifikasyon, apati Biwo Resansman Etazini
+  tree_canopy_2018:
+    name: Kouvèti pyebwa 2008 a 2018
+    publisher: Vil Filadèlfi, Pak ak Rekreyasyon, ak University of Vermont Spatial Analysis Laboratory
+  street_trees:
+    name: Envantè pyebwa ri yo
+    publisher: Vil Filadèlfi, Pak ak Rekreyasyon
+  fema_floodplain:
+    name: Plenn inondasyon FEMA (2023)
+    publisher: Federal Emergency Management Agency (FEMA), pibliye pa Vil Filadèlfi
+  basemap_openstreetmap:
+    name: Kat debaz ki soti nan OpenStreetMap
+    publisher: Kontribitè OpenStreetMap, nan yon fichye kat Protomaps bati
+  septa_gtfs:
+    name: Orè SEPTA (GTFS)
+    publisher: Southeastern Pennsylvania Transportation Authority (SEPTA)
+  septa_ridership_bus:
+    name: Kantite moun ki monte nan estasyon bis SEPTA
+    publisher: Southeastern Pennsylvania Transportation Authority (SEPTA)
+  septa_ridership_trolley:
+    name: Kantite moun ki monte nan estasyon tramway SEPTA
+    publisher: Southeastern Pennsylvania Transportation Authority (SEPTA)
+  osm_philadelphia:
+    name: OpenStreetMap nan Filadèlfi (estasyon bis, abri, ban, dlo, twalèt ak plis ankò)
+    publisher: Kontribitè OpenStreetMap, soti nan ekstrè Pennsylvanie Geofabrik la
+  heat_vulnerability:
+    name: Vilnerabilite chalè pa sektè resansman
+    publisher: Vil Filadèlfi, Depatman Sante Piblik ak Biwo Dirabilite
+  library_locations:
+    name: Kote Free Library yo
+    publisher: Vil Filadèlfi, pou Free Library of Philadelphia
+  ppr_program_sites:
+    name: Sit pwogram Pak ak Rekreyasyon
+    publisher: Vil Filadèlfi, Pak ak Rekreyasyon
+  ppr_swimming_pools:
+    name: Pisin Pak ak Rekreyasyon
+    publisher: Vil Filadèlfi, Pak ak Rekreyasyon
+  ppr_spraygrounds:
+    name: Zòn jwèt dlo Pak ak Rekreyasyon
+    publisher: Vil Filadèlfi, Pak ak Rekreyasyon
+  ppr_hydration_stations:
+    name: Estasyon dlo Pak ak Rekreyasyon
+    publisher: Vil Filadèlfi, Pak ak Rekreyasyon
+  philly311_conditions:
+    name: Demann Philly311 sou fatra jete, limyè etenn ak grafiti
+    publisher: Vil Filadèlfi, Philly311
+  bus_shelters:
+    name: Abri bis
+    publisher: Vil Filadèlfi, Biwo Transpò ak Sistèm Enfrastrikti
+  street_poles:
+    name: Poto ri
+    publisher: Vil Filadèlfi, Depatman Ri (Divizyon Limyè Ri)
+  traffic_calming:
+    name: Aparèy pou ralanti trafik
+    publisher: Vil Filadèlfi, Depatman Ri
+  crossing_guards:
+    name: Kote gad travèse lekòl yo
+    publisher: Vil Filadèlfi, Depatman Ri
+  percent_for_art:
+    name: Koleksyon Percent for Art
+    publisher: Vil Filadèlfi, Depatman Planifikasyon ak Devlopman
+  wikidata_art:
+    name: Atizay piblik nan Wikidata
+    publisher: Kontribitè Wikidata (Wikimedia Foundation)
+  commercial_corridors:
+    name: Koridò komèsyal Filadèlfi
+    publisher: Vil Filadèlfi, Depatman Planifikasyon ak Devlopman
+  epa_walkability:
+    name: Endèks Nasyonal Mache (Smart Location Database EPA)
+    publisher: Ajans Pwoteksyon Anviwònman Etazini (EPA), Biwo Revitalizasyon Kominotè
+  census_blocks_2020:
+    name: Moun pa blòk resansman (resansman 2020)
+    publisher: Biwo Resansman Etazini, done redistrikting Resansman 2020 (P.L. 94-171)
+  dvrpc_lts:
+    name: Estrès trafik pou bisiklèt (Level of Traffic Stress DVRPC)
+    publisher: Delaware Valley Regional Planning Commission (DVRPC)
+  snap_retailers:
+    name: Magazen manje ki aksepte SNAP (USDA)
+    publisher: Depatman Agrikilti Etazini (USDA), done detayan SNAP
+  real_estate_sales:
+    name: Vant byen imobilye, nan tout vil la
+    publisher: Vil Filadèlfi, Depatman Dosye
+  assessment_values:
+    name: Valè mache evalye, nan tout vil la, de ane taks
+    publisher: Vil Filadèlfi, Biwo Evalyasyon Pwopriyete
+  acs_tenure:
+    name: Lokatè ak pwopriyetè pa sektè resansman (ACS 2020 a 2024)
+    publisher: Biwo Resansman Etazini, American Community Survey
+  market_value_analysis:
+    name: Analiz Valè Mache 2026
+    publisher: Reinvestment Fund, pou Depatman Planifikasyon ak Devlopman Vil Filadèlfi
+  li_history:
+    name: Dosye L&I pou kronoloji teren an
+    publisher: Vil Filadèlfi, Depatman Lisans ak Enspeksyon
+  cagp_vacant_land_2024:
+    name: Lis tè vid, jen 2024 (L&I, kenbe pa Clean & Green Philly)
+    publisher: Vil Filadèlfi, Depatman Lisans ak Enspeksyon, jan Clean & Green Philly (Code for Philly) kenbe l
+  cagp_vacant_buildings_2024:
+    name: Lis bilding vid, jen 2024 (Clean & Green Philly)
+    publisher: Clean & Green Philly, Code for Philly
+  historic_districts:
+    name: Distri istorik lokal
+    publisher: Komisyon Istorik Filadèlfi (Philadelphia Historical Commission)
+  historic_sites:
+    name: Philadelphia Register of Historic Places (Rejis Istorik Filadèlfi), pwopriyete
+    publisher: Komisyon Istorik Filadèlfi
+  zoning_overlays:
+    name: Zonaj siperpoze
+    publisher: Komisyon Planifikasyon Vil Filadèlfi
+  appeals:
+    name: Apèl bay Zoning Board, L&I Review Board ak lòt komisyon
+    publisher: Vil Filadèlfi, Depatman Lisans ak Enspeksyon
+  epa_brownfields:
+    name: Pwopriyete brownfield EPA (ACRES), Filadèlfi
+    publisher: Ajans Pwoteksyon Anviwònman Etazini (United States Environmental Protection Agency)
+  land_conveyances:
+    name: Akt ajans tè Vil la depi 2014
+    publisher: Vil Filadèlfi, Depatman Dosye
+  land_conveyed_by_fy:
+    name: Pwopriyete transfere pa pwogram ak ane fiskal, 2017 a 2023 (tablo Land Management)
+    publisher: Vil Filadèlfi, Depatman Planifikasyon ak Devlopman (Land Management)
+  city_aerial_photos:
+    name: Foto ayeryen pa ane (ortofoto)
+    publisher: Vil Filadèlfi, Biwo Inovasyon ak Teknoloji (Office of Innovation and Technology)
+  dvrpc_aerial_photos:
+    name: Foto ayeryen 1959 ak 1975
+    publisher: Delaware Valley Regional Planning Commission, ki sou sèvè Vil Filadèlfi
+  usgs_aerial_photos_1999:
+    name: Foto ayeryen 1999
+    publisher: Sèvis Jeyolojik Etazini (U.S. Geological Survey), ki sou sèvè Vil Filadèlfi
+  city_atlas_1860:
+    name: Atlas Hexamer ak Locher 1860
+    publisher: Greater Philadelphia GeoHistory Network, ki sou sèvè Vil Filadèlfi
+  mapping_inequality_1937:
+    name: Mapping Inequality, kat HOLC 1937 Filadèlfi
+    publisher: University of Richmond, Digital Scholarship Lab
+  acs_rent_burden:
+    name: Lwaye kòm pati nan revni pa sektè resansman (ACS 2020 a 2024)
+    publisher: Biwo Resansman Etazini, American Community Survey
+  acs_occupancy:
+    name: Kay moun ap viv ladan yo ak kay vid pa sektè resansman (ACS 2020 a 2024)
+    publisher: Biwo Resansman Etazini, American Community Survey
+  acs_vacancy:
+    name: Poukisa kay yo vid pa sektè resansman (ACS 2020 a 2024)
+    publisher: Biwo Resansman Etazini, American Community Survey
+  acs_income:
+    name: Revni mitan yon fanmi pa sektè resansman (ACS 2020 a 2024)
+    publisher: Biwo Resansman Etazini, American Community Survey
+  acs_rent:
+    name: Lwaye mitan pa sektè resansman (ACS 2020 a 2024)
+    publisher: Biwo Resansman Etazini, American Community Survey
+  warming_cooling_sites:
+    name: Sit pou chofe ak pou rafrechi
+    publisher: Vil Filadèlfi, Biwo Jesyon Ijans (Office of Emergency Management)
+  ppr_playgrounds:
+    name: Teren jwèt
+    publisher: Vil Filadèlfi, Pak ak Rekreyasyon
+
+layers:
+  vacant_parcels:
+    label: Teren ak bilding vid
+    description: 'Pasèl ki pwobableman vid, ak konbyen nou sèten ak poukisa. Li konbine endikatè vid Vil la ak dosye evalyatè a, anprent bilding yo, demolisyon, ka L&I ak kat itilizasyon tè a, pou yon sèl sous pa ka fè l tonbe.'
+    settings:
+      min_confidence:
+        label: Montre pasèl nou omwen sa a sèten sou yo
+        options:
+          '1':
+            label: Nenpòt siy vid
+          '2':
+            label: Pwobableman oswa gen anpil chans vid
+          '3':
+            label: Sèlman sa ki gen anpil chans vid
+      kinds:
+        label: Montre
+        options:
+          both:
+            label: Teren ak bilding
+          lots:
+            label: Sèlman teren
+          buildings:
+            label: Sèlman bilding
+      listed:
+        label: Ajans tè Vil la mete l sou lis kòm disponib
+        options:
+          any:
+            label: Nenpòt pasèl
+          available:
+            label: Sèlman sa ki sou lis kòm disponib
+      lens:
+        label: Kolore teren yo selon
+        options:
+          violence:
+            label: Lantiy rediksyon vyolans
+          heat:
+            label: Lantiy chalè ak lonbraj
+          placemaking:
+            label: Lantiy kreyasyon kote
+  hin_2025:
+    label: High Injury Network
+    description: Ri kote pi fò moun ki mouri ak ki blese grav nan trafik Filadèlfi pase, jan pwogram Vision Zero Vil la te kat yo an 2025.
+  shootings_hex:
+    label: Tire ak zam, konte pa zòn
+    description: Moun ki pran bal nan peryòd ou chwazi a, konte pa egzagòn ki gen apeprè de blòk lajè. Nou montre sa pou dirije swen kote li ede pi plis, se pa pou make kote yo kòm danjere.
+    settings:
+      window:
+        label: Peryòd
+        options:
+          m12:
+            label: Dènye 12 mwa
+          m36:
+            label: Dènye 3 lane
+  landcare_lots:
+    label: Teren PHS LandCare antretni
+    description: Teren vid Pennsylvania Horticultural Society te netwaye, plante, epi ki kontinye koupe zèb, atravè LandCare ak Community LandCare. Se swen sa a esè ki fèt nan Filadèlfi yo te teste.
+  gardens:
+    label: Jaden kominotè
+    description: Jaden ak fèm kominotè PHS oswa Neighborhood Gardens Trust sipòte, ak jaden ki anrejistre nan Pak ak Rekreyasyon. Moun deja pran swen kote sa yo, kidonk yo pa janm parèt kòm vid.
+  council_districts:
+    label: Distri Konsèy Vil la
+    description: Dis distri Konsèy Vil la jan yo te trase an 2024, pou ou ka wè ki biwo pou kontakte.
+    settings:
+      names:
+        label: Montre non yo
+  community_organizations:
+    label: Òganizasyon Kominotè Anrejistre (RCO)
+    description: Gwoup katye ki anrejistre nan Vil la, ki tande pale de chanjman zonaj nan zòn yo. Zòn yo souvan chevoche.
+    settings:
+      names:
+        label: Montre non yo
+  neighborhoods:
+    label: Katye
+    description: Non ak limit katye yo, soti nan kat katye OpenDataPhilly pa Abaca Labs.
+    settings:
+      names:
+        label: Montre non yo
+  segments:
+    label: Sekirite ri, blòk pa blòk
+    description: 'Chak blòk ri kolore selon lantiy sekirite ri a: si li sou High Injury Network, konbyen moun ki te mouri oswa ki te blese grav la pandan yo t ap mache oswa ap monte bisiklèt nan senk dènye ane dosye PennDOT yo, si yon moun te mouri la nan dènye de lane yo, ak si gen yon lekòl nan 400 mèt. Deplase glisè lantiy yo pou chanje melanj lan. Yon blòk di tou konbyen poto Vil la mete sou lis ak long li ak konbyen nan lanp yo se LED, ak ralanti trafik Vil la mete sou lis la.'
+    settings:
+      min_score:
+        label: Montre blòk ki gen omwen nòt sa a
+        options:
+          '1':
+            label: Nenpòt nòt pi wo pase zewo
+          '20':
+            label: 20 sou 100
+          '40':
+            label: 40 sou 100
+          '60':
+            label: 60 sou 100
+  crashes:
+    label: Aksidan
+    description: Aksidan yo rapòte bay PennDOT nan Filadèlfi depi 2015 jiska 2024, kolore selon ki jan moun te blese. Chwazi ane yo, ki jan moun te blese ak ki moun ki te enplike. Dosye PennDOT yo rive apeprè yon ane apre aksidan yo, kidonk dènye lanmò yo parèt kòm memoryal olye de sa.
+    settings:
+      years:
+        label: Ane yo
+        options:
+          latest:
+            label: Dènye ane dosye yo
+          recent:
+            label: Dènye senk ane yo
+          all:
+            label: Chak ane depi 2015
+      severity:
+        label: Ki jan moun te blese
+        options:
+          '3':
+            label: Yon moun te mouri
+          '2':
+            label: Yon moun te mouri oswa te blese grav
+          '1':
+            label: Yon moun te blese
+          '0':
+            label: Chak aksidan
+      mode:
+        label: Ki moun ki te enplike
+        options:
+          all:
+            label: Tout moun
+          walk_cycle:
+            label: Moun k ap mache oswa ap monte bisiklèt
+          walk:
+            label: Moun k ap mache
+          cycle:
+            label: Moun k ap monte bisiklèt
+          motorcycle:
+            label: Moun sou motosiklèt
+  memorials:
+    label: Memoryal
+    description: Moun ki mouri sou ri nou yo pandan yo t ap mache, ap monte bisiklèt oswa ap monte eskouteur, selon dosye Depatman Polis yo sou lanmò nan aksidan sikilasyon depi 2019, chak make an silans kote sa te rive. Yon non parèt sèlman lè yon lis memoryal piblik deja pataje l, epi nenpòt moun ka mande pou yon non oswa yon makè retire.
+    settings:
+      show_names:
+        label: Montre non yo
+      all_fatal:
+        label: Sonje tou moun ki mouri nan machin ak sou motosiklèt
+  parking_reports:
+    label: Pwoblèm estasyonman yo rapòte (Laser Vision)
+    description: 'Kote moun k ap itilize aplikasyon Laser Vision Philly Bike Action te rapòte veyikil ki bloke twotwa, pasaj pyeton, kwen, ranp twotwa ak liy bisiklèt pandan 12 mwa jiska dat ki nan lejand la, konte pa zòn ki gen apeprè yon blòk lajè. Li montre kote moun k ap itilize yon sèl aplikasyon te rapòte pwoblèm, se pa chak pwoblèm. Yon zòn ki gen mwens pase 5 rapò pa parèt, pou pa gen yon sèl rapò ki parèt. Anpil rapò nan yon sèl kote se prèv pou amelyorasyon fizik: pwolonjman twotwa, poto pwoteksyon, kwen ki pi vizib, liy bisiklèt ki pwoteje ak zòn chajman.'
+    settings:
+      kind:
+        label: Montre rapò sou veyikil
+        options:
+          all:
+            label: Ki bloke wout la nan nenpòt nan fason sa yo
+          sidewalk:
+            label: Sou yon twotwa
+          bike_lane:
+            label: Nan yon liy bisiklèt
+          crosswalk:
+            label: Sou yon pasaj pyeton
+          corner:
+            label: Sou yon kwen
+          ramp:
+            label: Ki bloke yon ranp twotwa
+  street_poles:
+    label: Poto ri ak lanp Vil la mete sou lis
+    description: 'Chak poto ri Depatman Ri a mete sou lis, ak lanp li mete sou lis sou yo: LED, ansyen sodyòm presyon wo a, oswa yon lanp ki gen yon kalite li pa bay non. Anpil poto, tankou poto PECO ak poto siyal trafik yo, pa gen okenn lanp sou lis. Sa a se sa Vil la enstale, se pa si yon lanp mache aswè a: rapòte yon limyè ki etenn bay Philly311 ak nimewo poto a. Montre lè ou zoum antre, sou kèk blòk lajè.'
+    settings:
+      show:
+        label: Montre
+        options:
+          all:
+            label: Chak poto
+          lamps:
+            label: Poto ki gen yon lanp Vil la mete sou lis
+          not_led:
+            label: Lanp Vil la pa mete sou lis kòm LED
+  traffic_calming:
+    label: Ralanti trafik Vil la mete sou lis
+    description: Kousen vitès, dòdàn ak tab Depatman Ri a mete pou ralanti chofè sou ri rezidansyèl, ak jou chak te enstale. Vwazen yo ka mande Vil la pou yo sou yon ri rezidansyèl; gwo ri prensipal ak wout eta pa kalifye. Yon blòk ri montre konbyen li genyen ak depi ki lè, epi yon blòk High Injury Network kote moun te blese di lè poko gen okenn ki anrejistre.
+  crossing_guards:
+    label: Pòs gad travèse lekòl
+    description: Kwen kote Vil la mete yon gad travèse lekòl, yon sèvis sekirite ki ede timoun ak tout lòt moun travèse toupre lekòl yo nan kòmansman ak nan fen jounen lekòl la. Chak pòs bay non kwen li ak lekòl ki pi pre nan 400 mèt.
+  basemap:
+    label: Kat debaz
+    description: Ri, bilding, pak, dlo ak non kote ki soti nan OpenStreetMap, anba tout rès la. Chwazi aparans gri a pou fè done yo parèt pi byen, oswa fèmen kat debaz la.
+    settings:
+      look:
+        label: Aparans
+        options:
+          light:
+            label: Klè, an koulè
+          muted:
+            label: Gri, pou done yo parèt pi byen
+  transit_stops:
+    label: Estasyon bis ak tramway
+    description: 'Chak estasyon bis ak tramway SEPTA nan Filadèlfi, selon orè SEPTA kounye a: liy ki sispann la, chak konbyen tan yon bis oswa yon tramway pase nan yon jou lasemèn òdinè, Samdi ak Dimanch, kilè sèvis la kòmanse epi fini, ak konbyen moun ki monte la nan yon jou lasemèn mwayen, selon pwòp konte SEPTA. Chak estasyon montre sa pasaje yo jwenn la kote OpenStreetMap konnen l, yon abri kote pwòp lis Vil la gen youn, priyorite li selon lantiy konfò transpò a, ak sa vwazen yo ka fè sou sa. Estasyon metwo, El ak Regional Rail yo ka ajoute nan paramèt yo.'
+    settings:
+      service:
+        label: Montre estasyon ki gen
+        options:
+          all:
+            label: Nenpòt sèvis
+          frequent:
+            label: 'Sèvis souvan: chak 15 minit oswa pi byen a midi'
+          long_wait:
+            label: 'Long tan datant: mwens souvan pase chak 30 minit a midi'
+      color:
+        label: Kolore estasyon yo selon
+        options:
+          lens:
+            label: Priyorite selon lantiy konfò transpò a
+          wait:
+            label: Chak konbyen tan yon bis oswa yon tren pase a midi
+          boardings:
+            label: Konbyen moun ki monte chak jou lasemèn
+      stations:
+        label: Montre tou estasyon metwo, El ak Regional Rail
+  transit_routes:
+    label: Liy bis, tramway ak tren
+    description: Ri ak ray chak liy SEPTA swiv nan Filadèlfi, selon orè SEPTA kounye a, kolore selon kalite veyikil la. Chwazi liy ki souvan pou wè kote yon bis oswa yon tren pase omwen chak 15 minit a midi.
+    settings:
+      service:
+        label: Montre liy yo
+        options:
+          all:
+            label: Chak liy
+          frequent:
+            label: 'Liy ki souvan: chak 15 minit oswa pi byen a midi'
+  stop_amenities:
+    label: Abri ak ban nan estasyon yo
+    description: 'Sa pasaje yo jwenn nan estasyon bis ak tramway OpenStreetMap konnen yo: yon abri oswa yon twati, yon ban men pa gen abri, okenn nan de a, oswa poko verifye. Poko verifye vle di pèsonn poko anrejistre l; sa pa vle di estasyon an pa gen anyen. OpenStreetMap gen sèlman apeprè yon estasyon sou dis pou kounye a (lis konplè estasyon SEPTA se pwòp kouch li). Vwazen yo ka verifye estasyon yo ak aplikasyon telefòn StreetComplete, epi repons yo parèt isit la nan apeprè yon semèn.'
+    settings:
+      show:
+        label: Montre
+        options:
+          all:
+            label: Chak estasyon
+          surveyed:
+            label: Estasyon yon moun te verifye
+          unsurveyed:
+            label: Estasyon ki poko verifye
+  city_shelters:
+    label: Abri bis Vil la mete sou lis
+    description: Abri bis ki sou pwòp lis Vil la, ke li enstale ak antretni ak patnè piblisite li, ak estasyon SEPTA chak youn sèvi. Yon estasyon ki gen yon abri Vil la konte kòm gen abri nan lantiy konfò transpò a. Kote OpenStreetMap di yon estasyon pa gen abri men Vil la mete youn sou lis, paj estasyon an di de sous yo pa dakò, epi yon verifikasyon regle sa. Lis la te chanje pou dènye fwa an janvye 2025, kidonk yon abri yo mete oswa yo retire depi lè sa a kapab manke.
+  heat_tracts:
+    label: Vilnerabilite chalè pa katye
+    description: 'Ki jan chalè ete a frape moun nan chak sektè resansman, selon Endèks Vilnerabilite Chalè Vil la (Depatman Sante Piblik ak Biwo Dirabilite, done 2017 a 2019). Li mete ansanm ekspozisyon chalè, ki jan sektè a vin cho nan jou ete jan satelit mezire l, ak sansiblite chalè, konbyen nan moun ki rete la ki pi an risk nan chalè a (douz mezi sou laj, sante, revni, edikasyon, lang ak ras, jan Vil la te konstwi endèks la). Sektè yo ombraje pa senkyèm nan vil la, senkyèm ki pi fonse a se sa ki pi an risk. Ou ka montre ekspozisyon ak sansiblite poukont yo nan paramèt yo.'
+    settings:
+      measure:
+        label: Ombraje sektè yo selon
+        options:
+          vulnerability:
+            label: 'Vilnerabilite chalè: chalè a ak moun ki an risk ansanm'
+          exposure:
+            label: 'Ekspozisyon chalè: ki jan li vin cho'
+          sensitivity:
+            label: 'Sansiblite chalè: konbyen moun ki an risk nan chalè a'
+      priority:
+        label: Make kontou sektè Vil la evalye kòm trè wo yo
+  city_trees:
+    label: Pyebwa nan ri ak nan pak
+    description: 'Chak pyebwa nan envantè pyebwa Pak ak Rekreyasyon (2025): pyebwa Vil la kenbe sou twotwa li yo ak nan pak li yo, se pa pyebwa nan lakou prive, ak kalite chak pyebwa ak gwosè tij li. Montre lè ou zoum antre, sou kèk blòk lajè. Ti pyebwa, ki gen yon tij ki pa rive 4 pous lajè, souvan se jenn pyebwa, epi TreePhilly mande pou jenn pyebwa jwenn apeprè 20 galon dlo chak semèn depi mas jiska desanm.'
+    settings:
+      show:
+        label: Montre
+        options:
+          all:
+            label: Chak pyebwa
+          big:
+            label: 'Gwo pyebwa lonbraj: yon tij omwen 12 pous lajè'
+          small:
+            label: 'Ti pyebwa: yon tij ki pa rive 4 pous lajè, souvan jenn'
+  floodplain:
+    label: Plenn inondasyon
+    description: 'Kote kat inondasyon FEMA espere inondasyon, jan Vil la pibliye yo (2023): plenn inondasyon ki gen 1 pousan chans chak ane, kote yon inondasyon gen omwen 1 chans sou 100 chak ane, ak zòn ki gen 0.2 pousan chans chak ane bò kote l (souvan yo rele yo plenn inondasyon 100 an ak 500 an). Tout sa yo bati la dwe swiv règ Vil la pou plenn inondasyon. Amenajman vèt ki absòbe lapli ede la, ak plant ki ka sipòte tè mouye.'
+    settings:
+      zones:
+        label: Montre
+        options:
+          both:
+            label: Zòn 1 pousan ak 0.2 pousan chans chak ane yo
+          high:
+            label: Sèlman plenn inondasyon 1 pousan chans chak ane a
+  benches:
+    label: Ban, jan yo make nan OpenStreetMap
+    description: 'Kote pou chita: ban moun te ajoute nan OpenStreetMap, kat gratis nenpòt moun ka amelyore, ak si chak gen yon apiye do kote kat la di sa. OpenStreetMap manke anpil ban, kidonk yon ri ki pa gen okenn ki montre ka toujou genyen kèk. Nenpòt moun ka ajoute yon ban ak aplikasyon telefòn StreetComplete, epi li parèt isit la nan apeprè yon semèn.'
+  picnic_tables:
+    label: Tab pikonik, jan yo make nan OpenStreetMap
+    description: Tab pikonik moun te ajoute nan OpenStreetMap, sitou nan pak, ak si chak anba yon twati kote kat la di sa. OpenStreetMap manke anpil ladan yo. Nenpòt moun ka ajoute youn ak aplikasyon telefòn StreetComplete, epi li parèt isit la nan apeprè yon semèn.
+  drinking_water:
+    label: Dlo pou bwè, jan yo make nan OpenStreetMap
+    description: Fontèn pou bwè ak wobinè dlo moun te ajoute nan OpenStreetMap, ak si yo ka ranpli yon boutèy kote kat la di sa. OpenStreetMap konnen sèlman kèk douzèn nan vil la, kidonk fontèn pou bwè Pak ak Rekreyasyon mete sou lis yo se pwòp kouch yo. Nenpòt moun ka ajoute yon fontèn ak aplikasyon telefòn StreetComplete, epi li parèt isit la nan apeprè yon semèn.
+  toilets:
+    label: Twalèt piblik, jan yo make nan OpenStreetMap
+    description: Twalèt moun te ajoute nan OpenStreetMap, ak ki moun ki ka itilize yo, si gen yon frè ak aksè pou chèz woulant kote kat la di sa. Twalèt ki fèmen pou piblik la yo kite deyò. OpenStreetMap konnen mwens pase san nan vil la. Nenpòt moun ka ajoute youn ak aplikasyon telefòn StreetComplete, epi li parèt isit la nan apeprè yon semèn.
+  bookcases:
+    label: Ti bibliyotèk gratis, jan yo make nan OpenStreetMap
+    description: Etajè piblik, ke yo souvan rele ti bibliyotèk gratis, kote nenpòt moun ka pran oswa kite yon liv, jan moun te ajoute yo nan OpenStreetMap. Anpil manke. Nenpòt moun ka ajoute youn ak aplikasyon telefòn StreetComplete, epi li parèt isit la nan apeprè yon semèn.
+  park_water:
+    label: Fontèn pou bwè nan pak
+    description: Fontèn pou bwè ak estasyon pou ranpli boutèy nan pak ak sant rekreyasyon, jan Pak ak Rekreyasyon Filadèlfi mete yo sou lis. Yon fontèn andedan yon sant rekreyasyon ka itilize lè sant lan louvri.
+  libraries:
+    label: Branch Free Library
+    description: Chak kote Free Library of Philadelphia Vil la mete sou lis, ak adrès li, nimewo telefòn li ak yon lyen nan paj li pou orè louvèti. Bibliyotèk yo gratis epi louvri pou tout moun.
+  recreation_centers:
+    label: Sant rekreyasyon
+    description: 'Kote Pak ak Rekreyasyon Filadèlfi fè pwogram: sant rekreyasyon, sant pou granmoun aje ak sant edikasyon sou anviwònman, ak si chak gen yon jimnazyòm, jan Vil la mete yo sou lis.'
+  pools:
+    label: Pisin ak zòn jwèt dlo
+    description: Pisin, zòn jwèt dlo ak awozwa Vil la, kote pou rafrechi nan jou cho, ak si chak an sèvis ane sa a jan Pak ak Rekreyasyon Filadèlfi mete l sou lis. Pisin yo louvri pou sezon ete a sèlman; verifye ak Pak ak Rekreyasyon pou orè semèn sa a.
+    settings:
+      show:
+        label: Montre
+        options:
+          in_service:
+            label: Sèlman sa ki an sèvis ane sa a
+          all:
+            label: Tout yo, menm sa ki pa an sèvis
+  cooling_centers:
+    label: Sant pou rafrechi ak pou chofe
+    description: 'Kote Biwo Jesyon Ijans Vil la mete sou lis kòm sit pou chofe oswa pou rafrechi: bibliyotèk, sant rekreyasyon, patnè kominotè ak sant kominotè Philadelphia Housing Authority, ak si chak te make kòm louvri, orè li ak sa li ofri, jan yo te make l jou kat sa a te kopye lis la pou dènye fwa. Se pa an dirèk: sit yo louvri epi fèmen selon move tan an, kidonk rele sit la oswa Philly311 anvan ou ale. Yon bibliyotèk oswa yon sant rekreyasyon ki se yon sit tou parèt yon sèl fwa.'
+    settings:
+      kind:
+        label: Sit pou
+        options:
+          any:
+            label: Chalè oswa fredi
+          cooling:
+            label: Rafrechi nan tan cho
+          warming:
+            label: Chofe nan tan fwa
+      show:
+        label: Montre
+        options:
+          all:
+            label: Tout yo, louvri oswa fèmen jan yo make l
+          open:
+            label: Sèlman sa ki make kòm louvri
+  dumping:
+    label: Fatra jete ilegalman rapòte bay 311
+    description: Blòk kote yon moun te mande Philly311 sou fatra jete ilegalman nan dènye 90 jou yo, ak konbyen demann ak si gen youn ki toujou louvri. Konte pa blòk, pa janm pa adrès, e san okenn enfòmasyon sou ki moun ki te fè rapò a. Yon demann montre yon moun te remake epi te mande èd; gen kèk blòk ki mande pi souvan pase lòt, kidonk si gen kèk demann sa pa vle di blòk la pwòp.
+    settings:
+      show:
+        label: Montre blòk ki gen
+        options:
+          any:
+            label: Nenpòt demann nan dènye 90 jou yo
+          open:
+            label: Yon demann ki toujou louvri
+  dark_lights:
+    label: Limyè ri ak koridò ki rapòte etenn
+    description: Blòk kote yon moun te mande Philly311 repare yon limyè ri oswa yon limyè koridò ki te etenn nan dènye 90 jou yo, ak konbyen demann ak si gen youn ki toujou louvri, bò kote poto ak lanp Vil la mete sou lis ak long blòk la. Konte pa blòk, pa janm pa adrès, e san okenn enfòmasyon sou ki moun ki te fè rapò a.
+    settings:
+      show:
+        label: Montre blòk ki gen
+        options:
+          any:
+            label: Nenpòt demann nan dènye 90 jou yo
+          open:
+            label: Yon demann ki toujou louvri
+  graffiti:
+    label: Grafiti rapòte bay 311
+    description: Blòk kote yon moun te mande Philly311 retire grafiti nan dènye 90 jou yo, ak konbyen demann ak si gen youn ki toujou louvri. Konte pa blòk, pa janm pa adrès, e san okenn enfòmasyon sou ki moun ki te fè rapò a.
+    settings:
+      show:
+        label: Montre blòk ki gen
+        options:
+          any:
+            label: Nenpòt demann nan dènye 90 jou yo
+          open:
+            label: Yon demann ki toujou louvri
+  public_art:
+    label: Atizay piblik
+    description: Miral, eskilti ak estati, mozayik ak lòt atizay piblik, soti nan lis Percent for Art Vil la, OpenStreetMap ak Wikidata. Lè de oswa twa nan yo mete menm zèv la sou lis, kat la montre l yon sèl fwa epi li mete yon lyen pou chak. Zèv atizay ki onore yon moun parèt sèlman kòm zèv atizay memoryal, san non. Mural Arts Philadelphia kenbe pi gwo lis miral vil la sou pwòp sit li; kondisyon li yo pa pèmèt kopye l, kidonk kat la mete yon lyen nan li olye de sa. Si yon zèv manke, ajoute l nan OpenStreetMap epi li parèt isit la nan apeprè yon semèn.
+    settings:
+      murals:
+        label: Miral ak penti sou mi
+      sculptures:
+        label: Eskilti ak estati
+      mosaics:
+        label: Mozayik
+      other:
+        label: Lòt kalite atizay
+      inside:
+        label: Zèv andedan bilding
+  playgrounds:
+    label: Teren jwèt
+    description: Teren jwèt Pak ak Rekreyasyon Filadèlfi mete sou lis, ak laj chak youn fèt pou yo ak ane li te enstale lè Vil la di sa. Yon pak souvan gen de, youn pou timoun ki pi piti ak youn pou timoun ki pi gran. Paj yon teren bay non teren jwèt ki pi pre a ak ki distans li ye an liy dwat.
+  walkability:
+    label: Ki jan chak zòn bon pou mache (EPA)
+    description: 'Endèks Nasyonal Mache Ajans Pwoteksyon Anviwònman Etazini an pou chak gwoup blòk resansman, yon zòn ki gen kèk blòk, soti nan Smart Location Database li (2021, apati done apeprè 2017 a 2019). Li bay yon nòt de 1 a 20 sou ki jan yon zòn sipòte mache, selon kat mezi: konbyen kwen ri gen, ki jan estasyon transpò ki pi pre a toupre, ak de mezi sou ki jan kay, travay ak magazen melanje byen. Zòn yo ombraje pa senkyèm gwoup blòk Filadèlfi, oswa selon pwòp klas EPA, ki konpare tout peyi a. Ou ka montre chak mezi poukont li nan paramèt yo. Gwoup blòk yo koupe pou tè vil la sèlman, kidonk rivyè yo rete klè.'
+    settings:
+      measure:
+        label: Ombraje zòn yo selon
+        options:
+          index:
+            label: 'Endèks mache a: kat mezi yo ansanm'
+          corners:
+            label: 'Kwen ri: ki jan ri yo konekte'
+          transit:
+            label: 'Transpò: ki jan estasyon ki pi pre a toupre'
+          mix:
+            label: Yon melanj kay, travay ak magazen
+      compare:
+        label: Konpare ak
+        options:
+          city:
+            label: 'Filadèlfi: senkyèm gwoup blòk vil la'
+          nation:
+            label: 'Tout peyi a: pwòp klas EPA'
+  walking_distance:
+    label: Moun ak kote nan distans mache
+    description: 'Pou chak egzagòn ki gen apeprè de blòk lajè: konbyen moun ki rete nan 5 minit mache de mitan li, selon resansman 2020; konbyen nan sèt kalite kote chak jou ki nan 10 minit mache (yon bibliyotèk, yon sant rekreyasyon, yon pisin oswa yon zòn jwèt dlo, yon fontèn pou bwè nan yon pak, yon lekòl, yon makèt oswa yon mache ki aksepte SNAP, ak yon estasyon bis, tramway oswa tren); oswa konbyen kwen ri ki nan 5 minit mache. Yon mache 5 minit konte pou 400 mèt epi yon mache 10 minit pou 800 mèt an liy dwat, sa ki rive yon ti jan pi lwen pase yon mache ak long ri yo epi li travèse liy tren, otowout ak rivyè moun k ap mache pa ka travèse.'
+    settings:
+      measure:
+        label: Ombraje egzagòn yo selon
+        options:
+          people:
+            label: Moun ki rete nan 5 minit mache
+          places:
+            label: Kalite kote chak jou nan 10 minit mache
+          corners:
+            label: Kwen ri nan 5 minit mache
+  traffic_stress:
+    label: Estrès trafik pou moun sou bisiklèt (DVRPC)
+    description: 'Ki jan chak ri estresan pou monte bisiklèt, jan Delaware Valley Regional Planning Commission evalye l selon kantite bann, ki vitès trafik la ale ak kalite liy bisiklèt la, si genyen: nivo 1 bon pou pifò moun de tout laj, nivo 2 pou pifò granmoun, nivo 3 sèlman pou moun ki konfyan, epi nivo 4 sèlman pou moun ki pi brav. Kote de direksyon yon ri diferan, se sa ki pi estresan an ki montre. Evalyasyon yo soti nan modèl DVRPC ak limit vitès yo afiche, se pa nan monte bisiklèt sou chak ri.'
+    settings:
+      show:
+        label: Montre
+        options:
+          all:
+            label: Chak ri DVRPC evalye
+          stressful:
+            label: 'Sèlman ri ki estresan: nivo 3 ak 4'
+          calm:
+            label: 'Sèlman ri ki kalm: nivo 1 ak 2'
+  displacement_watch:
+    label: 'Veye deplasman: siy ki montre pri yo ap monte'
+    description: 'Zòn (sektè resansman) ki gen omwen de nan siy sa yo, omwen youn ladan yo sou pri yo menm (twa premye yo): kay yo vann pou anpil plis pase senk lane avan, pi vit pase nan rès vil la; valè Vil la evalye yo ap monte pi vit pase sa vil la an jeneral; Analiz Valè Mache Vil la ki jwenn pri yo ap monte pi wo pase sa moun ki rete la depi lontan ka peye; konpayi ki achte anpil nan kay yo vann; omwen twa sou senk kay gen lokatè ladan yo; oswa anpil lokatè ap peye mwatye revni yo oswa plis pou lwaye (mèt pwojè a te ajoute sa nan 9 oktòb 2026). Amenajman vèt ak lòt amelyorasyon ka fè pri yo monte plis, kidonk kote yon sijesyon pou vèdi yon teren, plante pyebwa, fè yon kote pou chita, kòmanse yon jaden oswa mande atizay, oswa yon teren Vil la mete sou lis kòm disponib, nan youn nan zòn sa yo, fich li ajoute fason pou pwoteje vwazen yo. Sa a montre siy nan dosye piblik, se pa yon prevwa, epi li pa di anyen sou ki moun ki rete isit la. Tape yon zòn pou wè siy li yo ak sa yo te mezire pou chak, epi, kòm kontèks, lwaye ak revni fanmi mitan ak konbyen kay ki vid, selon sondaj Biwo Resansman an; chak chif sondaj vini ak maj erè li.'
+    settings:
+      shade:
+        label: Ombraje zòn yo (si ou fèmen l, se sèlman kontou yo ki parèt)
+  historic_districts:
+    label: Distri istorik
+    description: 'Distri istorik lokal Komisyon Istorik Filadèlfi a. Chanjman nan bilding ak teren yon distri ka bezwen revizyon Komisyon an, menm yon miral, yon kloti oswa yon jaden: mande Komisyon an an premye (215 686 7660). Vil la mande tout moun konfime estati istorik yon pwopriyete ak Komisyon an. Tape yon distri pou wè non li ak jou yo te deziyen l.'
+  historic_properties:
+    label: Pwopriyete sou rejis istorik la
+    description: 'Pwopriyete sou Philadelphia Register of Historic Places, chak youn pasèl pa l, ki enskri poukont yo oswa kòm pati yon distri istorik (montre lè ou zoum antre). Chanjman isit la ka bezwen revizyon Komisyon Istorik la: mande yo an premye (215 686 7660).'
+  zoning_overlays:
+    label: Zonaj siperpoze
+    description: 'Zòn kote Kòd Zonaj la ajoute pwòp règ li anwo zonaj debaz la: konsèvasyon katye, ri komèsyal, pwoteksyon kont inondasyon ak pant apik, limit sou pavaj toupre Wissahickon, wotè toupre ayewopò a, panno ak plis ankò. Anpil chevoche, epi kèk kouvri pifò vil la. Tape yon kote pou wè chak zonaj siperpoze ki la, ak seksyon li nan Kòd Zonaj la. Zonaj siperpoze yo ka chanje sa ki otorize; verifye ak Vil la anvan ou planifye.'
+    settings:
+      show:
+        label: Montre
+        options:
+          all:
+            label: Distri zonaj siperpoze ak lòt règ espesyal
+          districts:
+            label: Sèlman distri zonaj siperpoze
+  hearings:
+    label: Odyans ki poko fèt
+    description: Odyans fikse devan Komisyon Ajisteman Zonaj (Zoning Board of Adjustment), Komisyon Revizyon L&I (L&I Review Board), Komisyon Estanda Bilding (Board of Building Standards) ak lòt komisyon Vil la sou yon pwopriyete, selon dosye apèl Vil la, ak jou a, lè a ak kalite apèl la. Nenpòt moun ka patisipe nan yon odyans zonaj; tape youn pou wè kijan, epi pou louvri paj teren an. Ki moun ki depoze yon apèl parèt sèlman sou paj pwòp teren sa a, pa janm sou kat la.
+    settings:
+      boards:
+        label: Montre
+        options:
+          all:
+            label: Chak komisyon
+          zoning:
+            label: Sèlman Komisyon Ajisteman Zonaj la
+  brownfields:
+    label: Sit brownfield (EPA)
+    description: Pwopriyete kote yon sibvansyon brownfield federal te peye pou yon evalyasyon oswa yon netwayaj, selon dosye EPA. Se pa yon kat tout tè ki kontamine, epi li pa di si yon sit kontamine jodi a. Teste tè a anvan ou plante manje sou yon sit oswa toupre youn.
+  aerial_photos:
+    label: Foto ayeryen pa ane
+    description: 'Foto ayeryen tout vil la, pran depi yon avyon: pwòp foto Vil la pou chak ane li genyen depi 1996 (chak prentan, pifò ane soti mas rive me), ak ansyen foto Vil la mete sou sèvè li, soti nan Delaware Valley Regional Planning Commission (1959 ak 1975) ak U.S. Geological Survey (1999). Glise nan ane yo pou wè sa ki te sou yon blòk avan: kay ki te tonbe, teren yo te netwaye, jaden ki te grandi. Foto yo soti dirèkteman nan sèvè Vil la lè kouch sa a limen, epi yo trase anba tout rès kat la. Ane ki pi ansyen yo mwens klè, epi foto jiska 2000 yo an nwa ak blan.'
+    settings:
+      year:
+        label: Ane
+        options:
+          '1959':
+            label: '1959'
+          '1975':
+            label: '1975'
+          '1996':
+            label: '1996'
+          '1999':
+            label: '1999'
+          '2000':
+            label: '2000'
+          '2004':
+            label: '2004'
+          '2005':
+            label: '2005'
+          '2008':
+            label: '2008'
+          '2009':
+            label: '2009'
+          '2010':
+            label: '2010'
+          '2011':
+            label: '2011'
+          '2012':
+            label: '2012'
+          '2014':
+            label: '2014'
+          '2015':
+            label: '2015'
+          '2016':
+            label: '2016'
+          '2017':
+            label: '2017'
+          '2018':
+            label: '2018'
+          '2019':
+            label: '2019'
+          '2020':
+            label: '2020'
+          '2022':
+            label: '2022'
+          '2023':
+            label: '2023'
+          '2024':
+            label: '2024'
+          '2025':
+            label: '2025'
+      opacity:
+        label: Ki jan foto a parèt fò, an pousan
+  atlas_1860:
+    label: Atlas 1860 (Hexamer ak Locher)
+    description: Atlas 1860 Hexamer ak Locher pou Filadèlfi, trase blòk pa blòk ak bilding ak teren li yo, ajiste sou kat jodi a pa Greater Philadelphia GeoHistory Network epi Vil la mete l sou sèvè li. Li kouvri sèlman Center City ak Northern Liberties. Bese fòs li pou wè ri jodi a atravè li. Li soti dirèkteman nan sèvè Vil la lè kouch sa a limen.
+    settings:
+      opacity:
+        label: Ki jan atlas la parèt fò, an pousan
+  redlining_1937:
+    label: Kat redlining 1937 (nòt HOLC)
+    description: 'An 1937 yon ajans federal, Home Owners Loan Corporation (HOLC), te bay katye Filadèlfi nòt de A a D selon jan li te jije prè ipotekè yo te an sekirite la. Nòt yo te depann de ki moun ki te rete nan chak zòn: zòn kote fanmi nwa ak anpil fanmi imigran te rete yo te anjeneral resevwa D epi yo te antoure an wouj, se la mo redlining soti. Kouch sa a montre zòn 1937 yo ak nòt yo jan Mapping Inequality te trase yo. Nòt yo se yon dosye sou jan ajans lan te jije kote yo an 1937; yo pa di anyen sou moun ki rete la jodi a. Tape yon zòn pou wè nòt li ak yon lyen nan deskripsyon li an 1937 nan Mapping Inequality. Itilizasyon ki pa komèsyal sèlman.'
+    settings:
+      shade:
+        label: Ombraje zòn yo (si ou fèmen l, se sèlman kontou yo ak nòt yo ki parèt)
