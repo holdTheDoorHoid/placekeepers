@@ -587,6 +587,9 @@ layers:
     settings:
       shade:
         label: "ដាក់​ស្រមោល​តំបន់ (បិទ បង្ហាញ​តែ​គែម និង​ថ្នាក់​របស់​វា)"
+  projects:
+    label: "គម្រោង​ដែល​អ្នកជិតខាង​បាន​បញ្ចប់"
+    description: "ការ​សម្អាត សួនច្បារ កន្លែង​អង្គុយ គំនូរ​ជញ្ជាំង ដើមឈើ កៅអីវែង និង​ជម្រក​របស់​ទីក្រុង និង​ការ​ជួសជុល 311 ដែល​អ្នកជិតខាង​បាន​បញ្ចប់ ហើយ​ប្រាប់​យើងខ្ញុំ។ Placekeepers អាន និង​អនុម័ត​របាយការណ៍​នី​មួយៗ​មុន​ពេល​វា​លេចឡើង។ សូម​ប៉ះ​មួយ ដើម្បី​មើល​អ្វី​ដែល​បាន​ធ្វើ នៅពេល​ណា និង​អ្វី​ដែល​វា​ត្រូវការ ជាមួយ​តំណ​ភ្ជាប់​ទៅ​របាយការណ៍ និង​រូបថត​របស់​វា​នៅ​លើ GitHub។ ផែនទី​មិនដែល​បង្ហាញថា​អ្នកណា​បាន​ផ្ញើរ​បាយ​ការណ៍​ទេ មានតែ​ឈ្មោះ​ក្រុម​ដែល​ពួកគេ​ជ្រើសរើស​ប៉ុណ្ណោះ។"
 lenses:
   violence:
     label: "ការកាត់បន្ថយ​អំពើ​ហិង្សា"
@@ -1315,6 +1318,39 @@ sources:
   ppr_playgrounds:
     name: "ទីលាន​លេង"
     publisher: "ទីក្រុង Philadelphia, Parks and Recreation"
+  project_reports:
+    name: "គម្រោង​ដែល​អ្នកជិតខាង​បាន​បញ្ចប់ ដែល​បាន​រាយការណ៍​តាម​ទម្រង់​បែបបទ GitHub របស់​គេហទំព័រ"
+    publisher: "អ្នកជិតខាង តាមរយៈ​ទម្រង់​បែបបទ \"ប្រាប់​យើងខ្ញុំ​អំពី​គម្រោង​ដែល​អ្នក​បាន​បញ្ចប់\" របស់ Placekeepers"
+  project_corrections:
+    name: "គម្រោង​ដែល​អ្នកជិតខាង​បាន​បញ្ចប់ ការ​បញ្ចូល​ដោយដៃ និង​ការ​កែតម្រូវ"
+    publisher: "Placekeepers"
+  political_divisions:
+    name: "វួដ (ward) និង​ផ្នែក (division) នយោបាយ"
+    publisher: "ទីក្រុង Philadelphia"
+  pa_house_districts:
+    name: "ស្រុក Pennsylvania House"
+    publisher: "U.S. Census Bureau, TIGER/Line Shapefiles"
+  pa_senate_districts:
+    name: "ស្រុក Pennsylvania Senate"
+    publisher: "U.S. Census Bureau, TIGER/Line Shapefiles"
+  us_house_districts:
+    name: "ស្រុក Congress នៅ Pennsylvania"
+    publisher: "U.S. Census Bureau, TIGER/Line Shapefiles"
+  pa_legislators:
+    name: "សមាជិកសភា​ទូទៅ​របស់ Pennsylvania (Pennsylvania General Assembly)"
+    publisher: "Open States (Plural Policy)"
+  us_legislators:
+    name: "សមាជិក Congress"
+    publisher: "គម្រោង unitedstates/congress-legislators"
+  us_legislator_offices:
+    name: "ការិយាល័យ​ស្រុក​របស់​សមាជិក Congress"
+    publisher: "គម្រោង unitedstates/congress-legislators"
+  city_elected_officials:
+    name: "មន្ត្រី​ជាប់ឆ្នោត​របស់​ទីក្រុង"
+    publisher: "ទីក្រុង Philadelphia"
+  rco_contacts:
+    name: "ទំនាក់ទំនង​របស់​អង្គការ​សហគមន៍​ដែល​បាន​ចុះបញ្ជី (Registered Community Organizations)"
+    publisher: "Philadelphia City Planning Commission"
 suggestions:
   clean_and_green:
     label: "សម្អាត និង​ធ្វើ​ឱ្យ​ដី​ឡូត៍​នេះ​បៃតង"
