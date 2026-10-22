@@ -9,7 +9,9 @@ from __future__ import annotations
 import io
 import json
 import re
+import tempfile
 from datetime import UTC, date, datetime
+from pathlib import Path
 
 import httpx
 import pyarrow as pa
@@ -307,6 +309,18 @@ def test_arcgis_sources_from_fixtures(source_id: str, context_factory) -> None:
             },
         ),
         ("gardens_registered", {"contact_email", "comments", "hours_monday"}),
+        # The community organizations' contacts as the City publishes them (M5.1): never the
+        # primary contact's own address or the alternate contact.
+        (
+            "rco_contacts",
+            {
+                "primary_address",
+                "alternate_name",
+                "alternate_email",
+                "alternate_phone",
+                "alternate_address",
+            },
+        ),
     ],
 )
 def test_contact_details_are_never_downloaded(source_id, never, context_factory) -> None:
@@ -592,6 +606,24 @@ def file_for(source_id: str) -> tuple[bytes, dict[str, str]]:
         from .test_redlining import holc_file
 
         return json.dumps(holc_file()).encode(), {}
+    if source_id in ("pa_house_districts", "pa_senate_districts", "us_house_districts"):
+        # The Census Bureau's district shapefiles (M5.1), as tests/test_represent.py builds them.
+        from .test_represent import tiger_zip
+
+        field = {"pa_house_districts": "SLDLST", "pa_senate_districts": "SLDUST"}.get(
+            source_id, "CD119FP"
+        )
+        return tiger_zip(field, {"195": box(-75.20, 39.97, -75.17, 39.99).bounds}), modified
+    if source_id == "pa_legislators":
+        from .test_represent import legislator, open_states_csv
+
+        return open_states_csv([legislator("Rosa Example", "lower", "195")]).encode(), modified
+    if source_id in ("us_legislators", "us_legislator_offices"):
+        from .test_represent import congress_files
+
+        folder = Path(tempfile.mkdtemp())
+        people, offices = congress_files(folder)
+        return (people if source_id == "us_legislators" else offices).read_bytes(), modified
     if source_id == "pba_laser":
         # Philly Bike Action's map: the same pin for every day and every kind asked for.
         return json.dumps({"pins": [[39.9526, -75.1652, 1]], "unique_users_count": 1}).encode(), {}

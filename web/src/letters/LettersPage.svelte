@@ -197,11 +197,11 @@
           <div class="grid">
             <label class="field">{f.senderName}<input id={id('sender')} type="text" autocomplete="name" value={values.senderName} oninput={(e) => set('senderName', e.currentTarget.value)} /></label>
             <label class="field">{f.group}<input type="text" value={values.group} oninput={(e) => set('group', e.currentTarget.value)} /></label>
-            <label class="field wide">
-              {f.contact}
-              <input type="text" value={values.contact} aria-describedby={id('contact-help')} oninput={(e) => set('contact', e.currentTarget.value)} />
+            <div class="field wide">
+              <label for={id('contact')}>{f.contact}</label>
+              <input id={id('contact')} type="text" value={values.contact} aria-describedby={id('contact-help')} oninput={(e) => set('contact', e.currentTarget.value)} />
               <span id={id('contact-help')} class="muted small">{f.contactHelp}</span>
-            </label>
+            </div>
             <label class="field">{f.date}<input type="text" value={values.date} oninput={(e) => set('date', e.currentTarget.value)} /></label>
             {#if template === 'rco' && rcos.length > 1}
               <label class="field">
@@ -377,6 +377,9 @@
     background: var(--pk-bg);
     color: var(--pk-text);
     box-sizing: border-box;
+  }
+  .field .muted {
+    font-weight: 400;
   }
   .check {
     display: flex;

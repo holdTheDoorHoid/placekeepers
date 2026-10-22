@@ -108,11 +108,11 @@
           <span id="pk-flyer-contact-help" class="muted small">{t.contactHelp}</span>
           {#if caution}<p class="notice small" role="status">{t.publicCaution}</p>{/if}
         </div>
-        <label class="field">
-          {t.ownLink}
-          <input type="url" inputmode="url" value={fields.ownLink} placeholder="https://" aria-describedby="pk-flyer-link-help" oninput={(e) => ((fields.ownLink = e.currentTarget.value), keep())} />
+        <div class="field">
+          <label for="pk-flyer-link">{t.ownLink}</label>
+          <input id="pk-flyer-link" type="url" inputmode="url" value={fields.ownLink} placeholder="https://" aria-describedby="pk-flyer-link-help" oninput={(e) => ((fields.ownLink = e.currentTarget.value), keep())} />
           <span id="pk-flyer-link-help" class="muted small">{t.ownLinkHelp}</span>
-        </label>
+        </div>
         {#if fields.ownLink.trim() && !link}<p class="notice small" role="status">{t.ownLinkBad}</p>{/if}
         {#if link}
           <label class="field">{t.ownLinkLabel}<input type="text" maxlength="60" placeholder={t.ownLinkLabelPlaceholder} value={fields.ownLinkLabel} oninput={(e) => ((fields.ownLinkLabel = e.currentTarget.value), keep())} /></label>
@@ -249,6 +249,9 @@
     background: var(--pk-bg);
     color: var(--pk-text);
     box-sizing: border-box;
+  }
+  .field .muted {
+    font-weight: 400;
   }
   .check {
     display: flex;

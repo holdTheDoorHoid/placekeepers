@@ -14,8 +14,9 @@ async function offline(page: Page): Promise<void> {
 
 test.describe('the neighbor flyer', () => {
   test('opens from the lot page with the lot and its point after "#"', async ({ page, context }, info) => {
-    await openMap(page, `v=a&m=17/${LOT.lat}/${LOT.lng}&p=${LOT.id}`);
-    const link = (isPhone(info) ? page.getByRole('dialog', { name: LOT.address }) : page.locator('#pk-right')).getByRole('link', { name: 'Make a flyer for neighbors' });
+    const phone = isPhone(info);
+    await openMap(page, `v=${phone ? 'f' : 'a'}&m=17/${LOT.lat}/${LOT.lng}&p=${LOT.id}`);
+    const link = (phone ? page.getByRole('dialog', { name: LOT.address }) : page.locator('#pk-right')).getByRole('link', { name: 'Make a flyer for neighbors' });
     const href = await link.getAttribute('href');
     expect(href).toMatch(new RegExp(`flyer/#opa=${LOT.id}(&at=-75\\.\\d+,39\\.\\d+)?$`));
     await context.route(/^https?:\/\/(?!localhost[:/])/, (route) => route.abort());
@@ -37,7 +38,7 @@ test.describe('the neighbor flyer', () => {
     await page.getByLabel('A garden').check();
     await page.getByLabel('Or in your own words').fill('Zq9 keep it open for kids');
     await page.getByLabel('How neighbors can reach you').fill('Zq9 group chat at chat.example.org');
-    await page.getByLabel('Your own link for a second QR code (optional)').fill('https://chat.example.org/invite/Zq9');
+    await page.getByLabel('Your own link for a second QR code (optional)', { exact: true }).fill('https://chat.example.org/invite/Zq9');
     await expect(flyer).toContainText('Plant a garden');
     await expect(flyer).toContainText('Zq9 keep it open for kids');
     await expect(flyer).toContainText('Zq9 group chat at chat.example.org');
