@@ -47,6 +47,7 @@ export default defineConfig({
         letters: 'letters/index.html',
         flyer: 'flyer/index.html',
         posting: 'posting/index.html',
+        didItWork: 'did-it-work/index.html',
       },
     },
   },

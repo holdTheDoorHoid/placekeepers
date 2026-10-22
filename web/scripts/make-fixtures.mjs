@@ -38,6 +38,7 @@ import {
 import { HISTORIC_LAYERS, HISTORIC_SOURCES, REDLINING_FILE, REDLINING_LICENSE, redliningFixture } from './historic-fixtures.mjs';
 import { PROJECTS_FILES, PROJECTS_LAYERS, PROJECTS_NOTES, PROJECTS_SOURCES, projectsFixtures } from './projects-fixtures.mjs';
 import { REPRESENT_SOURCES } from './represent-fixtures.mjs';
+import { DIDIT_FILES, DIDIT_SOURCES, diditFixtures } from './didit-fixtures.mjs';
 
 const FIXTURES = new URL('../fixtures/', import.meta.url);
 const ROOT = new URL('data/', FIXTURES);
@@ -643,6 +644,8 @@ for (const [name, text] of routeSheetFixtures(toLngLat)) writeFileSync(path(`dat
 writeFileSync(path('data/tables/stop_amenities.json'), JSON.stringify(stopTable) + '\n');
 // Projects neighbors finished (M5.3): the table and the layer (scripts/projects-fixtures.mjs).
 for (const [name, text] of projectsFixtures()) writeFileSync(path(`data/${name}`), text);
+// Did it work? (M5.4): the real study's results (scripts/didit-fixtures.mjs).
+for (const [name, text] of diditFixtures()) writeFileSync(path(`data/${name}`), text);
 
 // Run from the fixtures folder with relative paths, because tippecanoe records its command
 // line in the file's metadata and local folder names do not belong in committed files.
@@ -780,6 +783,8 @@ const manifest = {
     ...Object.fromEntries(Object.entries(PROJECTS_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
     // Who represents each lot (M5.1)
     ...Object.fromEntries(Object.entries(REPRESENT_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
+    // Did it work? (M5.4)
+    ...Object.fromEntries(Object.entries(DIDIT_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
   },
   layers: {
     vacant_parcels: {
@@ -868,6 +873,7 @@ const manifest = {
         .map(([name]) => name)
         .filter((name) => ![...shardFiles, ...historyFiles].some(([shard]) => shard === name)),
       ...PROJECTS_FILES,
+      ...DIDIT_FILES,
     ].map((p) => [p, p === REDLINING_FILE ? { ...fileInfo(p), license: REDLINING_LICENSE } : fileInfo(p)]),
   ),
   dossiers: shardFiles.length

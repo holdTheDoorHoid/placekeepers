@@ -8,6 +8,8 @@ here.
 Companion documents:
 [EVIDENCE.md](EVIDENCE.md) (what the research supports),
 [TRANSIT_METHOD.md](TRANSIT_METHOD.md) (how service and riders at SEPTA stops are measured),
+[DIDIT_METHOD.md](DIDIT_METHOD.md) (how "Did it work?" compares places that got care with places
+that did not),
 [ETHICS.md](ETHICS.md) (safeguards),
 [DATA_SOURCES.md](DATA_SOURCES.md) (every source, its status and license),
 [ROUTES.md](ROUTES.md) (legal routes and the intervention playbook),
@@ -1917,3 +1919,66 @@ else changes; and deploys it. A run takes a few minutes, never the full refresh.
 every approved report with "Yes" or "No" and the reason. When no weekly copy is at hand, it says so
 and the projects wait for the next weekly refresh.
 
+
+### 13.4 Did it work? (M5.4, issue #48, 2026-10-21)
+
+**What the owner will see.**
+
+- **A page, "Did it work?"** (`/did-it-work/`, in the site menu after The Land Bank in numbers):
+  when a lot or building got care, did the blocks around it change compared with similar places
+  that did not? It opens with a short answer counted from the verdicts, then the randomized trials
+  in Philadelphia as the real evidence (docs/EVIDENCE.md) and the three ways a comparison of
+  records can mislead (selection, regression to the mean, trouble moving elsewhere). Then a card
+  for each kind of care and outcome: a verdict in bold ("Fewer after care", "More after care", "No
+  clear change", "We could not tell" or "Too few to tell"), one plain sentence, the 90 percent
+  interval in words, how many places and areas it rests on, the counts before and after, and its
+  checks. "What this cannot tell", "How we compared" (with a link to docs/DIDIT_METHOD.md), and the
+  sources close the page. It reads at 320 pixels wide and prints without its buttons and menu, with
+  each link's address written out.
+- **Kinds of care**: PHS LandCare greening (the season each lot was cleaned and greened), the
+  City's clean and seal work orders, demolitions the City carried out itself, and projects
+  neighbors finished (section 13.3). **Outcomes**: shootings within 200 meters; illegal dumping
+  reported to Philly311 and L&I complaints about vacant lots and buildings within 200 meters, not
+  counting the place's own square. Whether a place still looks vacant later is not measured, and
+  the page says why.
+- **The first results (records through June 30, 2026)**: nine comparisons; four found slightly
+  more after care (clean and seal: dumping and complaints; City demolitions: shootings and
+  complaints), three no clear change, and two could not be trusted (LandCare and shootings, clean
+  and seal and shootings), because the places were already changing differently before care.
+  None found fewer. The page says the likeliest reason for "more" is that care goes where trouble
+  is growing, not that care causes it, and never calls the comparison a verdict on any lot.
+  Projects neighbors finished: none to compare yet; a comparison needs at least 100, each with two
+  years of records after.
+- **A lot page that had care** says when, among its summary's care lines (LandCare since its year,
+  as before, and now "The City last cleaned and sealed it on" its day), then: "One lot cannot show
+  whether care worked: shootings, dumping and complaints rise and fall on every block for many
+  reasons.", with a link to the page. "Projects here" carries the same link, and the printed lot
+  page the same line with the page's address. A demolition's date stays in the lot's story, which
+  already says whether the City did it.
+
+**How it is built.** `pk didit` (yearly or on demand, never in the weekly refresh) builds places
+100 meters across, compares each place that got care with up to five matched places by a
+difference in differences, and decides each verdict by rules fixed before the real comparisons
+ran (docs/DIDIT_METHOD.md). It writes `data/didit/results.json` and the per area totals
+`data/didit/totals.csv`, which are committed and reviewed like code; a pipeline test reproduces
+every published number, intervals included, from the totals. The weekly publish copies the results
+to `tables/didit.json` and adds that week's count of projects neighbors finished
+(`projects_now`; docs/CONTRACTS.md section 13). Two new yearly sources, `philly311_dumping_history`
+and `li_complaints_history`, keep the outcome histories the weekly map does not need (only the day,
+the kind and the point). The method is plain numpy, proved on synthetic cities in the tests and in
+`research/didit/`. The page writes every sentence from codes and numbers with templates in
+`web/src/strings.ts`, so it reads in every language once translated.
+
+**Decided by this milestone** (the owner can change them):
+
+- **Results are committed, not computed weekly.** The study's words change only when someone runs
+  it and the change is reviewed, so a data glitch can never put a new claim about care on the site
+  unseen.
+- **The placebo check decides "We could not tell".** When pretending care came four and a half years
+  earlier finds a change, the page withholds the verdict and says why, while still showing the
+  numbers. The synthetic cities show the check is cautious: it also fails where care merely goes
+  where trouble is, which is what "could not tell" means.
+- **Citywide only.** The issue allows large areas, but 26 to 78 areas stand behind each comparison;
+  split further, nothing could be told.
+- **The trials lead.** The page puts the randomized trials before its own numbers, as the real
+  evidence, on every visit.

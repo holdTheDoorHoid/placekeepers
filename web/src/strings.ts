@@ -211,6 +211,8 @@ export const strings = {
     map: 'Map',
     /** Not a content page: its own app page (M4.4), listed after the content pages. */
     landBank: 'The Land Bank in numbers',
+    /** Not a content page either: "Did it work?" (M5.4). */
+    didIt: 'Did it work?',
     pages: [
       { slug: 'about', label: 'About' },
       { slug: 'why', label: 'Why this works' },
@@ -2178,6 +2180,179 @@ export const strings = {
       dates: (fetched: string, last: string) => `Deeds read ${fetched}; the newest deed is dated ${last}.`,
       file: (part: string, day: string) => `placekeepers-land-bank-${part}-${day}.csv`,
     },
+  },
+
+  // "Did it work?" (M5.4, issue #48): the page web/did-it-work/ (src/didit/DidItPage.svelte), which
+  // reads tables/didit.json (docs/CONTRACTS.md section 13), and the line on a lot page that had
+  // care. Citywide results only, never a verdict on one lot; the warnings of docs/EVIDENCE.md; care
+  // framing (docs/ETHICS.md).
+  didit: {
+    pageTitle: 'Did it work?',
+    back: 'Back to the map',
+    intro:
+      'When a lot or a building got care, did the blocks around it change, compared with similar places that did not get care? We compared the City\'s own records for thousands of places across Philadelphia. Here is what they can tell, and what they cannot.',
+    loading: 'Loading the results',
+    loadFailed: 'The results could not be loaded. Check your connection and try again.',
+    retry: 'Try again',
+    missing: 'The results are not published yet. They appear after the next weekly data refresh.',
+    print: 'Print this page',
+    runOn: (generated: string, through: string) =>
+      `This comparison was run on ${generated}, with the City's records through ${through}. It is run again about once a year.`,
+    // The short answer
+    shortTitle: 'The short answer',
+    tallyIntro: (n: number) => `We made ${plural(n, 'comparison', 'comparisons')}.`,
+    tallyParts: {
+      fewer: (n: number) => `${formatNumber(n)} found fewer problems nearby after care`,
+      more: (n: number) => `${formatNumber(n)} found more`,
+      no_clear_change: (n: number) => `${formatNumber(n)} found no clear change`,
+      check_failed: (n: number) =>
+        `${formatNumber(n)} could not be trusted, because the places that got care were already changing differently before it`,
+      too_few: (n: number) => `${formatNumber(n)} had too few places to tell`,
+    } as Record<string, (n: number) => string>,
+    tallyJoin: (parts: string[]) =>
+      parts.length <= 1 ? `${parts.join('')}.` : `${parts.slice(0, -1).join(', ')}, and ${parts[parts.length - 1]}.`,
+    noneFewer:
+      'The City\'s records do not show care lowering shootings, dumping or complaints nearby. Where they show more afterwards, the likeliest reason is that care went where trouble was already growing, not that care caused it.',
+    someFewer: 'Where the records show fewer problems after care, read the checks under each result before trusting it.',
+    notOneLot: 'None of this is a verdict on any one lot.',
+    // The real evidence (docs/EVIDENCE.md)
+    trialsTitle: 'The real evidence: trials in Philadelphia',
+    trialsIntro:
+      'A comparison of records like this one can mislead. Randomized trials cannot be fooled in the same ways, and two were done here:',
+    trials: [
+      'Greening vacant lots: in a citywide trial of 541 lots, gun violence fell 29% near greened lots in neighborhoods below the poverty line (Branas and colleagues, 2018).',
+      'In the same trial, shootings fell 6.8% near greened lots and 9.2% near lots that were only cleaned and mowed (Moyer and colleagues, 2019).',
+      'Fixing abandoned houses: working doors and windows cut gun assaults by 13% nearby; cleanup alone made no measurable difference (South and colleagues, 2023).',
+    ],
+    trialLinks: ['Read the greening trial', 'Read the shootings study', 'Read the house repair trial'],
+    whyLink: 'More on why this works',
+    warningsTitle: 'Why a comparison of records can mislead',
+    warnings: [
+      'Care often goes where trouble is already growing, so the places that got it may differ from the places compared with them in ways no record shows.',
+      'A bad year is often followed by a better one anyway. Places chosen right after a bad stretch can look improved when nothing changed.',
+      'Trouble can move down the street instead of ending. We check the ring around each place for that.',
+    ],
+    // One kind of care
+    kinds: {
+      landcare: 'Lots PHS LandCare cleaned and greened',
+      clean_seal: 'Properties the City cleaned and sealed',
+      demolition: 'Buildings the City demolished',
+      projects: 'Projects neighbors finished',
+    } as Record<string, string>,
+    kindNotes: {
+      landcare: (records: number, dated: number) =>
+        `PHS LandCare's list gives the season each lot was cleaned and greened for ${formatNumber(dated)} of its ${formatNumber(records)} lots. Lots without a season, most of them cared for by neighbors through Community LandCare, are left out.`,
+      clean_seal: (records: number) =>
+        `The City's clean and seal work orders that were done, by the day the work was finished: ${formatNumber(records)} since 2007. The City's records hold far fewer of them from 2020 on, so most of these comparisons are from 2017 to 2019.`,
+      demolition: (records: number) =>
+        `Demolitions the City carried out itself, by the day each was finished: ${formatNumber(records)} since 2007. Demolitions under a private permit are left out.`,
+    } as Record<string, (records: number, dated: number) => string>,
+    outcomes: {
+      shootings: 'Shootings within about two blocks (200 meters)',
+      dumping: 'Illegal dumping reported to Philly311 within about two blocks, not counting the place itself',
+      complaints: 'Complaints to L&I about vacant lots and buildings within about two blocks, not counting the place itself',
+    } as Record<string, string>,
+    outcomeNouns: {
+      shootings: 'shootings',
+      dumping: 'dumping reports',
+      complaints: 'complaints about vacant property',
+    } as Record<string, string>,
+    verdictLabels: {
+      fewer: 'Fewer after care',
+      more: 'More after care',
+      no_clear_change: 'No clear change',
+      check_failed: 'We could not tell',
+      too_few: 'Too few to tell',
+    } as Record<string, string>,
+    verdicts: {
+      fewer: (noun: string, percent: number, range: string) =>
+        `In the two years after care there were ${formatDecimal(percent, 1)}% fewer ${noun} nearby than expected from similar places without care (90 percent interval: ${range}).`,
+      more: (noun: string, percent: number, range: string) =>
+        `In the two years after care there were ${formatDecimal(percent, 1)}% more ${noun} nearby than expected from similar places without care (90 percent interval: ${range}).`,
+      notCaused: 'This does not show that care caused them.',
+      moreReports: 'More reports can also mean more neighbors reporting once the City has paid attention.',
+      noClearChange: (change: string, range: string) =>
+        `No clear change. The comparison found ${change} (90 percent interval: ${range}), and that range includes no change at all.`,
+      checkFailed: (noun: string) =>
+        `In the years before care, ${noun} near these places were already changing differently from ${noun} near the comparison places, so this comparison cannot separate care from what was already happening.`,
+      tooFew: (places: number, min: number) =>
+        `Only ${plural(places, 'place', 'places')} could be compared. A comparison needs at least ${formatNumber(min)}.`,
+    },
+    whyMore: {
+      landcare: 'PHS and the City choose lots where neighbors ask for help, often where problems are growing.',
+      clean_seal:
+        'The City cleans and seals a property after complaints about it, often when a block is going downhill or after trouble at the property itself.',
+      demolition: 'The City demolishes a building once it has become unsafe, often on blocks that are declining in ways the records do not show.',
+      projects: 'Neighbors often start projects where problems are growing.',
+    } as Record<string, string>,
+    half: (year: number, half: 1 | 2) => `the ${half === 1 ? 'first' : 'second'} half of ${year}`,
+    noChange: 'no change',
+    fewerBy: (percent: number) => `${formatDecimal(percent, 1)}% fewer`,
+    moreBy: (percent: number) => `${formatDecimal(percent, 1)}% more`,
+    range: (low: string, high: string) => `${low} to ${high}`,
+    compared: (places: number, from: string, to: string, areas: number) =>
+      `Compared: ${plural(places, 'place', 'places')} that got care from ${from} to ${to}, in ${plural(areas, 'area', 'areas')} of the city, each with up to five similar places that did not.`,
+    counts: (before: number, after: number, expected: number) =>
+      `Near the places that got care: ${formatNumber(before)} in the two years before, ${formatNumber(after)} in the two years after, where ${formatNumber(expected)} were expected from the comparison places.`,
+    checksTitle: 'Checks',
+    checks: {
+      passed: (change: string, range: string, places: number) =>
+        `Check passed: pretending care came four and a half years earlier, the comparison should find no change, and it found ${change} (${range}; ${plural(places, 'place', 'places')} with records that far back).`,
+      failed: (change: string, range: string, places: number) =>
+        `Check failed: pretending care came four and a half years earlier, the comparison found ${change} (${range}; ${plural(places, 'place', 'places')} with records that far back) when it should find none. The places that got care were already on a different path.`,
+      tooFew: 'The check could not be run: too few of these places have records far enough back.',
+      around: (change: string, range: string) => `Farther out, 200 to 400 meters away: ${change} (${range}).`,
+      moved: 'Some of the problem may have moved there.',
+      later: (change: string, range: string, places: number) =>
+        `Compared only with places that got the same care later: ${change} (${range}; ${plural(places, 'place', 'places')}).`,
+      naive: (change: string, noun: string) =>
+        `A simple before and after would say ${change}, because it leaves out how ${noun} changed everywhere else.`,
+    },
+    // Projects neighbors finished
+    projectsNow: (shown: number, ready: number, before: string) =>
+      `The map shows ${plural(shown, 'project', 'projects')} neighbors finished. ${formatNumber(ready)} of them were finished by ${before}, long enough ago to have two years of records after.`,
+    projectsNotRead: 'This copy of the map has no list of projects neighbors finished yet.',
+    projectsNeed: (min: number) =>
+      `A comparison needs at least ${formatNumber(min)}. Every project reported brings it closer, and shows neighbors what others have done.`,
+    projectsLink: 'Tell us about a project you finished',
+    // What we cannot tell
+    cannotTitle: 'What this cannot tell',
+    cannot: [
+      'Whether a place still looks vacant later. The City\'s lists of vacant property exist only for 2024 and 2026, and LandCare and clean and seal are meant to keep a place cared for while it stays empty, so "still vacant" cannot tell success from failure.',
+      'Anything about one lot. Shootings, dumping and complaints rise and fall on every block for many reasons. Only many places together can show a pattern, and even then not for certain.',
+      'Why something changed. A comparison shows what changed, not what caused it.',
+      'Anything about lots that left LandCare. Its list holds only the lots it cares for now.',
+      'Changes in the records themselves: the City\'s clean and seal records hold far fewer orders from 2020 on, its dumping reports start in January 2016, and L&I renamed its kinds of complaint in 2020. Every comparison sets places against others in the same years, which takes care of most of this.',
+    ],
+    chance: (n: number) =>
+      `Chance: at 90 percent, about one comparison in ten can look like a change when there is none, so among ${formatNumber(n)} comparisons one or two may be chance alone.`,
+    // How we compared
+    methodTitle: 'How we compared',
+    method: [
+      'A place is a square of the city 100 meters across where care happened in some half year, from 2017 on.',
+      'For each one we found up to five places within about 2 miles (3 kilometers), but not on the same block, that did not get the same care in the two years before or after, with a similar count in each of the two years before and a similar share of neighbors in poverty.',
+      'We compared the change at the place that got care, from the two years before to the two years after, with the average change at its comparison places, skipping the half year of the work itself.',
+      'The 90 percent interval comes from redrawing whole areas of the city 2,000 times. The true change most likely lies inside it.',
+      'We tested the method first on made up cities where we knew the answer. It found the change we put in, and found none when we put none in.',
+    ],
+    methodLink: 'The full method, every number and the code',
+    // Sources
+    sourcesTitle: 'Sources',
+    sources: {
+      landcare: 'PHS LandCare lots, from the Pennsylvania Horticultural Society via the City of Philadelphia.',
+      clean_seal: 'Clean and seal work orders, from the City\'s Department of Licenses and Inspections.',
+      demolition: 'Building demolitions, from the City\'s Department of Licenses and Inspections.',
+      shootings: (first: string, last: string) => `Shooting victims, from the Philadelphia Police Department, ${first} to ${last}. Counts only.`,
+      dumping: (first: string, last: string) => `Illegal dumping requests to Philly311, ${first} to ${last}.`,
+      complaints: (first: string, last: string) =>
+        `Complaints about vacant lots and buildings, from the City's Department of Licenses and Inspections, ${first} to ${last}.`,
+      poverty: 'The share of neighbors in poverty by census tract, from the Census Bureau\'s American Community Survey, 2020 to 2024.',
+      projects: 'Projects neighbors finished, as reported to Placekeepers and approved by its maintainer.',
+    },
+    // The lot page
+    lotNote: 'One lot cannot show whether care worked: shootings, dumping and complaints rise and fall on every block for many reasons.',
+    lotLink: 'See what the City\'s records show for all of Philadelphia',
+    sealedOn: (date: string) => `The City last cleaned and sealed it on ${date}.`,
   },
 
   // Projects neighbors finished (M5.3, issue #47): the map layer's legend and a tapped project

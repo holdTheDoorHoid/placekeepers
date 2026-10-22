@@ -1,7 +1,7 @@
 <script lang="ts">
-  // The site menu: a link to the map, to every content page (strings.nav.pages), and to the two
-  // pages that are apps of their own, The Land Bank in numbers and the Data status page. Used
-  // from the map's header and from every page, so it is the one place that lists them.
+  // The site menu: a link to the map, to every content page (strings.nav.pages), and to the pages
+  // that are apps of their own: The Land Bank in numbers, Did it work? and the Data status page.
+  // Used from the map's header and from every page, so it is the one place that lists them.
   import { config } from '../../config/index.ts';
   import { strings } from '../../strings.ts';
 
@@ -18,6 +18,9 @@
     {/each}
     <li>
       <a href="{config.siteBase}land-bank/" aria-current={current === 'land-bank' ? 'page' : undefined}>{strings.nav.landBank}</a>
+    </li>
+    <li>
+      <a href="{config.siteBase}did-it-work/" aria-current={current === 'did-it-work' ? 'page' : undefined}>{strings.nav.didIt}</a>
     </li>
     <li><a href="{config.siteBase}status/" aria-current={current === 'status' ? 'page' : undefined}>{strings.header.dataStatus}</a></li>
   </ul>

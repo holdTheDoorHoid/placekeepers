@@ -180,7 +180,9 @@ def test_without_tippecanoe_the_layers_stay_geojson(ctx, tmp_path: Path) -> None
     out = tmp_path / "data"
     result = publish(ctx, out)
     assert "tiles skipped: tippecanoe not installed" in result.manifest["notes"]
+    # The repository's committed results of "Did it work?" (M5.4) are copied by every publish.
     assert sorted(result.manifest["files"]) == [
+        "tables/didit.json",
         "tiles/context.h3.geojson",
         "tiles/lots.parcels.geojson",
         "tiles/streets.hin.geojson",
@@ -234,7 +236,8 @@ def test_with_tippecanoe_each_tile_file_has_its_contract_layer(ctx, tmp_path, mo
         "tiles/lots.pmtiles",
         "tiles/streets.pmtiles",
     ]
-    assert sorted(result.manifest["files"]) == sorted(result.tiles_built)
+    # Beside the tiles, only the committed results of "Did it work?" (M5.4).
+    assert sorted(result.manifest["files"]) == sorted([*result.tiles_built, "tables/didit.json"])
     assert pmtiles_layer_names(out / "tiles" / "lots.pmtiles") == ["parcels"]
     assert pmtiles_layer_names(out / "tiles" / "streets.pmtiles") == ["hin"]
     assert pmtiles_layer_names(out / "tiles" / "context.pmtiles") == ["h3"]

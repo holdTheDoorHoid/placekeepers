@@ -328,6 +328,20 @@ test.describe('privacy', () => {
     for (const link of await page.locator('a[target="_blank"]').all()) await expect(link).toHaveAttribute('rel', 'noopener noreferrer');
   });
 
+  test('Did it work? asks no other server and keeps nothing', async ({ page, context }) => {
+    // Added by M5.4 (issue #48): the page reads one file of the site's own and only links out.
+    const seen = watchOrigins(context);
+    await page.route(/^https?:\/\/(?!localhost[:/])/, (route) => route.abort());
+    await page.goto('./did-it-work/');
+    await expect(page.getByRole('heading', { name: 'The short answer' })).toBeVisible();
+    const local = new URL(page.url()).origin;
+    expect([...seen.origins].filter((origin) => origin !== local)).toEqual([]);
+    expect(seen.urls.filter((url) => url.startsWith(local) && url.includes('/data/'))).toEqual([expect.stringMatching(/\/data\/tables\/didit\.json$/)]);
+    const kept = await page.evaluate(() => ({ local: Object.keys(localStorage), session: Object.keys(sessionStorage), cookie: document.cookie }));
+    expect(kept).toEqual({ local: [], session: [], cookie: '' });
+    for (const link of await page.locator('a[target="_blank"]').all()) await expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+  });
+
   test('links that open a new tab carry no opener and no referrer', async ({ page }, info) => {
     await open(page, `v=a&m=18/${LOT.lat}/${LOT.lng}&p=${LOT.id}`);
     await expect(page.locator('#pk-right')).toContainText('Who owns it');
@@ -357,9 +371,15 @@ test.describe('privacy', () => {
     await expect(projects).toContainText('By Example Avenue Growers');
     await expect(projects.locator('img')).toHaveCount(0);
     for (const link of await projects.locator('a').all()) {
+      // The one link that stays on the site is the citywide "Did it work?" page (M5.4).
+      if ((await link.getAttribute('href'))?.startsWith('/placekeepers/')) continue;
       await expect(link).toHaveAttribute('target', '_blank');
       await expect(link).toHaveAttribute('rel', 'noopener noreferrer');
     }
+    await expect(projects.getByRole('link', { name: "See what the City's records show for all of Philadelphia" })).toHaveAttribute(
+      'href',
+      '/placekeepers/did-it-work/',
+    );
     if (isPhone(info)) await page.locator('#pk-right').getByRole('button', { name: 'Close panel' }).click();
     const local = new URL(page.url()).origin;
     expect([...seen.origins].filter((origin) => origin !== local)).toEqual([]);

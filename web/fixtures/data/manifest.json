@@ -758,6 +758,24 @@
       "rows": 240,
       "newest_record": null,
       "message": null
+    },
+    "philly311_dumping_history": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 243619,
+      "newest_record": "2026-10-02",
+      "message": null
+    },
+    "li_complaints_history": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 148209,
+      "newest_record": "2026-10-03",
+      "message": null
     }
   },
   "layers": {
@@ -1375,6 +1393,10 @@
     "tables/contacts.json": {
       "bytes": 5143,
       "sha256": "631722a6deb09190805b033d7a329d2777ef86bb8d2aac6d5c36efcf04ef4fdd"
+    },
+    "tables/didit.json": {
+      "bytes": 13029,
+      "sha256": "632e39028a2537203ca8deb26db21d21b78899c2db2704e066bb757820c09e59"
     },
     "tables/land_bank.json": {
       "bytes": 22765,

@@ -59,3 +59,18 @@ class Philly311Conditions(CartoAdapter):
         "agency_responsible",
         "zipcode",
     )
+
+
+class Philly311DumpingHistory(CartoAdapter):
+    """Illegal dumping requests (SR-ST02) since 2016, for "Did it work?" (M5.4,
+    docs/DIDIT_METHOD.md). The City's table holds no dumping requests dated 2015 at all (checked
+    2026-10-21: 6,735 in December 2014, none in 2015, 17,114 in 2016), so the history starts in
+    January 2016. Only the day and the point are downloaded, as for the conditions above."""
+
+    columns = (
+        Column("requested", "requested_datetime", "LOCAL_DATE"),
+        Column("lat", "ST_Y(the_geom)", "DOUBLE"),
+        Column("lng", "ST_X(the_geom)", "DOUBLE"),
+    )
+    required_columns = ("requested", "lat", "lng")
+    never_fetch = Philly311Conditions.never_fetch

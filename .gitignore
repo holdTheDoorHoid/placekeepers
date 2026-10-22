@@ -17,6 +17,7 @@ web/playwright-report/
 # Pipeline outputs and caches (raw data lives in ~/.cache/placekeepers)
 build/
 research/vacancy/out/
+research/didit/out/
 *.pmtiles
 !web/fixtures/**/*.pmtiles
 

@@ -30,6 +30,7 @@ install it ahead (CI does), run
 | `pk health [ids...]` | Shows each source's status (`--json` for machines, `--strict` to fail when any source is not ok) |
 | `pk all` | Fetch and validate each source in turn, run the vacancy model, publish, then show health |
 | `pk projects --data DIR` | Reads the approved project reports from GitHub again and replaces only the projects layer, `tables/projects.json` and their lines in `manifest.json` in a data root a weekly publish wrote (M5.3; `--inputs DIR` for the project inputs, `--issues-file FILE` to read saved reports instead of GitHub, `--summary FILE` to append what became of each report) |
+| `pk didit` | Runs the "Did it work?" study (M5.4, yearly or on demand; docs/DIDIT_METHOD.md) and writes `data/didit/results.json` and `data/didit/totals.csv` in the repository, which are committed; the weekly publish copies the results to `tables/didit.json` (`--projects FILE` for the projects table, default `build/data/tables/projects.json`; `--root DIR` to write elsewhere; `--draws N` for a quick try) |
 
 Options: `--sources a,b` limits a command to some sources, `--offline` uses only the cache,
 `--force` downloads frozen and recently fetched yearly sources again, `--cache DIR` uses another

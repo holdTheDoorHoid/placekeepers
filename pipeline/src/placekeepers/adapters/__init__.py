@@ -43,7 +43,7 @@ from placekeepers.adapters.lens_context import CensusTracts2020, TreeCanopy2018
 from placekeepers.adapters.opa_properties import OpaProperties
 from placekeepers.adapters.osm import OsmExtract
 from placekeepers.adapters.pba_laser import PbaLaser
-from placekeepers.adapters.philly311 import Philly311Conditions
+from placekeepers.adapters.philly311 import Philly311Conditions, Philly311DumpingHistory
 from placekeepers.adapters.projects import ProjectCorrections, ProjectReports
 from placekeepers.adapters.property_records import AssessmentHistory, RealEstateTransfers
 from placekeepers.adapters.pwd_parcels import PwdParcels
@@ -102,6 +102,7 @@ ADAPTERS: dict[str, type[Adapter]] = {
     # M1.1 Licenses and Inspections
     "li_violations": li.LiViolations,
     "li_complaints": li.LiComplaints,
+    "li_complaints_history": li.LiComplaintsHistory,
     "li_permits": li.LiPermits,
     "li_unsafe": li.LiUnsafe,
     "li_imminently_dangerous": li.LiImminentlyDangerous,
@@ -157,6 +158,7 @@ ADAPTERS: dict[str, type[Adapter]] = {
     "ppr_spraygrounds": PprSpraygrounds,
     "ppr_hydration_stations": PprHydrationStations,
     "philly311_conditions": Philly311Conditions,
+    "philly311_dumping_history": Philly311DumpingHistory,
     # Streets and stops (M4.5): the City's bus shelters, street poles, traffic calming devices and
     # school crossing guard locations
     "bus_shelters": BusShelters,

@@ -159,6 +159,24 @@ class LiComplaints(CartoAdapter):
     required_columns = ("complaintnumber", "complaintcode", "complaintdate", "lat", "lng")
 
 
+class LiComplaintsHistory(CartoAdapter):
+    """Complaints about vacant lots and vacant buildings since 2015, for "Did it work?" (M5.4,
+    docs/DIDIT_METHOD.md). The registry's `where` keeps only those kinds; only the day, the kind
+    and the point are downloaded: no complaint or case number, no address and no parcel."""
+
+    columns = (*_text("complaintcodename"), *_dates("complaintdate"), *POINT)
+    required_columns = ("complaintcodename", "complaintdate", "lat", "lng")
+    #: Fields this adapter must never download (checked by the tests).
+    never_fetch = (
+        "complaintnumber",
+        "casenumber",
+        "address",
+        "opa_account_num",
+        "parcel_id_num",
+        "ticket_num_311",
+    )
+
+
 class LiPermits(CartoAdapter):
     columns = (
         *_text("permitnumber", "opa_account_num", "address"),

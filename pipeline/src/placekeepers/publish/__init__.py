@@ -21,6 +21,7 @@ from typing import Any
 from placekeepers.cache import atomic_write_json
 from placekeepers.context import Context
 from placekeepers.publish.contacts import ContactsResult, build_contacts
+from placekeepers.publish.didit import DiditResult, build_didit
 from placekeepers.publish.dossiers import DossierResult, build_dossiers
 from placekeepers.publish.land_bank import LandBankResult, build_land_bank
 from placekeepers.publish.layers import builder_for
@@ -70,6 +71,8 @@ class PublishResult:
     projects: ProjectsResult | None = None
     #: who represents each lot: tables/contacts.json (publish/contacts.py, M5.1)
     contacts: ContactsResult | None = None
+    #: the numbers of "Did it work?", copied from data/didit/results.json (publish/didit.py, M5.4)
+    didit: DiditResult | None = None
 
 
 def geojson_name(file: str, source_layer: str) -> str:
@@ -277,6 +280,9 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
         notes.extend(result.land_bank.notes)
         result.projects = build_projects_files(ctx, statuses, staging, as_of)
         notes.extend(result.projects.notes)
+        # After the projects table: it counts this week's projects beside the study's results.
+        result.didit = build_didit(ctx, staging, as_of)
+        notes.extend(result.didit.notes)
 
         exe = find_tippecanoe()
         if exe is None:

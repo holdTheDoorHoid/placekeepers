@@ -785,6 +785,21 @@ districts are worked out by its point (`derive/represent.py`) and the people are
   licenses, checked 2026-10-21); TIGER/Line files are U.S. government works; the City's layers and
   table are under the City's open data terms. All are credited on the Data status page.
 
+### Did it work? (M5.4, issue #48, sources checked 2026-10-21)
+
+Two outcome histories the weekly map does not need, read only by `pk didit` (yearly or on demand;
+docs/DIDIT_METHOD.md). Cadence `yearly`, so the weekly refresh fetches them at most once a month.
+
+| Source | Endpoint | Fields kept | Rows on 2026-10-21 | Health |
+|---|---|---|---|---|
+| `philly311_dumping_history` | Carto `public_cases_fc` (OpenDataPhilly "311 Service and Information Requests"), `service_code` SR-ST02 (Illegal Dumping) made since 2016-01-01, with a point | the day the request was made (in Philadelphia) and the point. Never the request number, address, subject, notes, photo link or agency, as for `philly311_conditions` | 243,619, January 10, 2016 to October 20, 2026. The table holds 6,735 dumping requests from December 2014 and none dated 2015; January 2016 is partial (548 against about 1,300 a month after), so the study starts this outcome in July 2016. Requests fell in 2026 (about 1,100 a month against about 1,900 in 2025) | At least 200,000 rows, no more than 5 percent fewer, the newest no older than 60 days |
+| `li_complaints_history` | Carto `complaints` (OpenDataPhilly "Licenses and Inspections Complaints"), filed since 2015-01-01 whose kind names vacant property (`complaintcodename ILIKE '%VACANT%'`), with a point | the day, the kind and the point. Never the complaint or case number, address, parcel or 311 ticket | 148,209 from January 2, 2015 (the table goes back to 2007). The kinds were renamed with the City's new system in 2020: "VACANT LOTS (CLIP)", "VACANT HOUSE" and "VACANT COMMERCIAL" before, "VACANT LOT", "VACANT PROPERTY COMPLAINT" and "VACANT & OPEN TO TRESPASS" after, about 12,000 to 13,000 a year either way; the study leaves out the inspection program "VACANT STRATEGY INSPECTIONS" (1,533) and 219 without a point | At least 120,000 rows, no more than 5 percent fewer, the newest no older than 60 days |
+
+The study also reads `phs_landcare` (its `year` and `season`: the season each lot was cleaned and
+greened, given for 8,568 of 12,459 lots), `li_clean_and_seal`, `li_demolitions`, `shootings`,
+`census_tracts_2020`, `acs_poverty` and the vacancy model, as docs/DIDIT_METHOD.md describes. We
+found no other source of LandCare dates on the City's or PHS's open data.
+
 ## Sources checked 2026-10-08
 
 The owner asked to bring four community and City sources onto the map. A check of each one's
