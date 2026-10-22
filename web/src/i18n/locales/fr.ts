@@ -619,7 +619,7 @@ const fr: Catalog = {
     selected: 'Lieu sélectionné',
     landcare: 'Terrain entretenu par PHS LandCare : déjà pris en charge',
     garden: 'Jardin ou ferme communautaire',
-    hin: 'Rue du réseau des rues à blessures graves (High Injury Network)',
+    hin: 'Rue du réseau High Injury Network',
     hexIntro: (window) => `Personnes blessées par balle, par hexagone, ${window.toLowerCase()}`,
     hexNone: 'Les hexagones sans aucune fusillade restent vides.',
     countBin: (lo, hi) =>
@@ -649,6 +649,804 @@ const fr: Catalog = {
     stopSurvey: 'Comment relever un arrêt avec StreetComplete',
     stopsCoverage: "Seuls les arrêts que quelqu'un a ajoutés à OpenStreetMap apparaissent ici, donc beaucoup d'arrêts ne sont pas encore affichés.",
     stopSurveyRoute: 'Imprimer une feuille de relevé pour toute une ligne',
+  },
+
+  streets: {
+    popupLabel: 'À propos de ce lieu sur la carte',
+    detailsTitle: (style) =>
+      style === 'memorials'
+        ? 'Mémorial'
+        : style === 'crashes'
+          ? 'Accident'
+          : style === 'street_segments'
+            ? 'Tronçon de rue'
+            : style === 'transit_stops'
+              ? 'Arrêt'
+              : style === 'transit_routes'
+                ? 'Ligne'
+                : style === 'stop_amenities'
+                  ? 'Abribus et banc'
+                  : style === 'city_trees'
+                    ? 'Arbre'
+                    : style === 'amenity'
+                      ? 'Tel que cartographié dans OpenStreetMap'
+                      : style === 'public_place'
+                        ? 'Lieu'
+                        : style === 'condition'
+                          ? 'Signalé au 311'
+                          : style === 'public_art'
+                            ? 'Art public'
+                            : style === 'traffic_stress'
+                              ? 'Stress de la circulation pour les vélos'
+                              : style === 'parking_reports'
+                                ? 'Problèmes de stationnement signalés'
+                                : style === 'city_shelters'
+                                  ? 'Abribus'
+                                  : style === 'street_poles'
+                                    ? 'Poteau de rue'
+                                    : style === 'traffic_calming'
+                                      ? 'Modération de la circulation'
+                                      : style === 'crossing_guards'
+                                        ? 'Brigadier scolaire'
+                                        : style === 'redlining'
+                                          ? 'Carte du redlining de 1937'
+                                          : 'Détails',
+    memorialTitle: 'En mémoire',
+    peopleHere: (n) => `${plural(n, { one: '# personne est commémorée', other: '# personnes sont commémorées' })} ici`,
+    killed: {
+      walk: 'Personne tuée à pied',
+      bike: 'Personne tuée à vélo',
+      scooter: 'Personne tuée en trottinette',
+      motorcycle: 'Personne tuée à moto',
+      other: 'Personne tuée dans un accident de la route',
+    },
+    killedOn: (what, date) => `${what} le ${date}.`,
+    memorialSource: 'Lire le mémorial public',
+    blessing: "Seulement avec la bénédiction de la famille.",
+    families: 'Families for Safe Streets soutient les familles après un accident.',
+    canDo: 'Ce que les voisins peuvent faire ici',
+    firstStep: 'Première démarche',
+    cost: (cost) => `Coût : ${cost}`,
+    memorialsNearby: 'Mémoriaux à proximité',
+    memorialsInView: "Mémoriaux à l'écran",
+    memorialsIntro: "Chacun rend hommage à une personne tuée dans un accident de la route. Ouvrez-en un pour en savoir plus.",
+    memorialCount: (n) => plural(n, { one: '# mémorial', other: '# mémoriaux' }),
+    memorialsMore: (n) =>
+      `${plural(n, { one: '# autre mémorial est', other: '# autres mémoriaux sont' })} à l'écran. Zoomez pour les lister ici.`,
+    memorialsLayerOff: "Activez la couche Mémoriaux pour lister les mémoriaux à l'écran.",
+    memorialsNone: 'Aucun mémorial dans cette partie de la carte.',
+    blocksNearby: 'Tronçons de rue à proximité',
+    blocksInView: "Tronçons de rue à l'écran",
+    blocksIntro:
+      "Chaque tronçon dessiné sur la carte, avec sa priorité de sécurité de la rue et sa raison principale. Ouvrez-en un pour lire pourquoi.",
+    blockCount: (n) => plural(n, { one: '# tronçon', other: '# tronçons' }),
+    blockNoScore: 'Pas de score de sécurité de la rue.',
+    blocksMore: (n) =>
+      `${plural(n, { one: '# autre tronçon est', other: '# autres tronçons sont' })} à l'écran. Zoomez pour les lister ici.`,
+    blocksLayerOff: (layer) => `Activez la couche « ${layer} » pour lister les tronçons de rue à l'écran.`,
+    blocksNone: "Aucun tronçon de rue n'est dessiné dans cette partie de la carte.",
+    crashesNearby: 'Accidents à proximité',
+    crashesInView: "Accidents à l'écran",
+    crashesIntro: "D'après les registres d'accidents de PennDOT, tels que les paramètres de la couche des accidents les choisissent. Ouvrez-en un pour en savoir plus.",
+    crashCount: (n) => plural(n, { one: '# accident', other: '# accidents' }),
+    crashesMore: (n) =>
+      `${plural(n, { one: '# autre accident est', other: '# autres accidents sont' })} à l'écran. Zoomez pour les lister ici.`,
+    crashNear: (street) => `Près de ${street}`,
+    crashesNone: "Aucun accident n'est dessiné dans cette partie de la carte.",
+    removal: 'Demander le retrait',
+    removalNote: (hasEmail) =>
+      hasEmail
+        ? "Toute personne peut nous demander de retirer ce mémorial, par e-mail privé. Nous le faisons sans demander pourquoi."
+        : "Toute personne peut nous demander de retirer ce mémorial, sans donner de raison. Une adresse e-mail privée pour cela arrive bientôt ; en attendant, la page Contact explique comment faire la demande dans une issue GitHub, que tout le monde peut lire.",
+    crashTitle: (year) => `Accident en ${year}`,
+    crashesHere: (n) => `${plural(n, { one: '# accident', other: '# accidents' })} à cet endroit`,
+    involved: 'Qui était impliqué',
+    involvedModes: {
+      walk: 'une personne à pied',
+      bike: 'une personne à vélo',
+      motorcycle: 'une personne à moto',
+      scooter: 'une personne en trottinette',
+    },
+    involvedOthers: "des personnes dans des voitures ou d'autres véhicules",
+    crashSource: "D'après les registres d'accidents de PennDOT.",
+    segmentScore: (score, lens) => `${lens} : ${score} sur 100 selon votre mélange d'angles`,
+    segmentNoScore: 'Pas de score de sécurité de la rue pour ce tronçon.',
+    onHin: 'Sur le réseau High Injury Network',
+    ksi: (n) =>
+      `${plural(n, { one: '# personne tuée ou grièvement blessée', other: '# personnes tuées ou grièvement blessées' })} à pied ou à vélo sur ce tronçon ou à ses coins, dans les cinq dernières années des registres de PennDOT`,
+    noKsi: "Aucune personne enregistrée comme tuée ou grièvement blessée à pied ou à vélo ici dans les cinq dernières années des registres de PennDOT",
+    killed2: (n) => `${plural(n, { one: '# personne tuée', other: '# personnes tuées' })} ici dans les deux dernières années`,
+    school: 'Une école à moins de 400 mètres',
+  },
+
+  streetsStops: {
+    shelterLegend: "Un abribus de la liste de la Ville, en anneau autour de son arrêt",
+    shelterLegendLens: "Un arrêt avec un abribus de la Ville compte comme abrité dans l'angle « confort aux arrêts ».",
+    shelterLegendDate: "La Ville a modifié sa liste pour la dernière fois en janvier 2025, donc un abribus installé ou retiré depuis peut manquer.",
+    shelterTitle: "Un abribus de la liste de la Ville",
+    shelterAt: (stop) => `Il dessert l'arrêt SEPTA ${stop}.`,
+    shelterListed: (number) => `La Ville le répertorie avec le numéro d'arrêt ${number}.`,
+    shelterByNumber: "Associé à l'arrêt SEPTA grâce au numéro d'arrêt de la liste de la Ville.",
+    shelterByPlace: "Associé à l'arrêt SEPTA le plus proche, à moins de 15 mètres : la liste de la Ville ne donne aucun numéro d'arrêt qui convienne.",
+    shelterNoStop: "Nous n'avons trouvé aucun arrêt SEPTA qu'il dessert : il se trouve à plus de 15 mètres de chaque arrêt, ou son arrêt est fermé.",
+    shelterDigital: 'Son panneau publicitaire est un écran numérique.',
+    shelterLens: "L'arrêt qu'il dessert compte comme abrité dans l'angle « confort aux arrêts ».",
+    shelterPartner: "La Ville installe et entretient ces abribus avec son partenaire publicitaire, et c'est la publicité qui les finance.",
+    shelterSource: "D'après la liste des abribus de la Ville (Office of Transportation and Infrastructure Systems).",
+    sheltersHere: (n) => `${plural(n, { one: '# abribus', other: '# abribus' })} à cet endroit`,
+
+    poleLed: 'Une lampe LED répertoriée par la Ville',
+    poleOther: 'Une ancienne lampe au sodium haute pression',
+    poleUnknown: "Une lampe d'un type que la Ville ne précise pas",
+    poleNone: 'Un poteau sans lampe répertoriée, comme un poteau de feux de circulation ou de service public',
+    polesNote: "Les lampes que la Ville répertorie, pas si une lampe fonctionne ce soir. Signalez une lumière éteinte à Philly311.",
+    polesZoom: 'Zoomez sur quelques rues pour voir les poteaux.',
+    poleTitle: (number) => (number ? `Poteau de rue ${number}` : 'Un poteau de rue sans numéro répertorié'),
+    poleKind: {
+      0: 'La Ville ne répertorie aucune lampe sur ce poteau.',
+      1: 'La Ville répertorie une lampe LED sur ce poteau.',
+      2: 'La Ville répertorie une ancienne lampe au sodium haute pression sur ce poteau.',
+      3: 'La Ville répertorie une lampe sur ce poteau, mais pas son type.',
+    },
+    poleOwner: {
+      1: 'Le Streets Department de la Ville est propriétaire du poteau.',
+      2: 'PECO est propriétaire du poteau.',
+      3: 'PennDOT est propriétaire du poteau.',
+      4: "Quelqu'un d'autre que la Ville, PECO ou PennDOT est propriétaire du poteau.",
+    },
+    poleReport: (number) => `Si une lumière est éteinte ici, indiquez à Philly311 le numéro du poteau : ${number}.`,
+    poleReportNoNumber: 'Si une lumière est éteinte ici, dites à Philly311 où elle se trouve.',
+    polesHere: (n) => `${plural(n, { one: '# poteau', other: '# poteaux' })} à cet endroit`,
+    poleSource: "D'après la liste des poteaux de rue du Streets Department (le service des rues de la Ville), actualisée chaque semaine.",
+
+    calmingLegend: "Un coussin ralentisseur, un dos d'âne ou un plateau",
+    calmingLegendNote: 'Les voisins peuvent demander à la Ville des aménagements de modération de la circulation dans une rue résidentielle.',
+    zoomStreets: 'Zoomez sur quelques quartiers pour les voir.',
+    calmingTitle: 'Modération de la circulation',
+    calmingWhat: "Un coussin ralentisseur, un dos d'âne ou un plateau que le Streets Department répertorie, pour ralentir les conducteurs.",
+    calmingOn: (street) => `Sur ${street}`,
+    calmingSince: (date) => `Il a été installé le ${date}.`,
+    calmingHere: (n) => `${plural(n, { one: '# dispositif', other: '# dispositifs' })} à cet endroit`,
+    calmingSource: "D'après la liste des dispositifs de modération de la circulation du Streets Department.",
+
+    guardLegend: 'Un coin de rue où la Ville place un brigadier scolaire',
+    guardLegendNote: "Les brigadiers scolaires aident les enfants et tout le monde à traverser près des écoles au début et à la fin de la journée d'école.",
+    guardTitle: 'Brigadier scolaire',
+    guardHere: 'La Ville place un brigadier scolaire à ce coin de rue.',
+    guardSchool: (school) => `L'école la plus proche de la liste de la Ville, à moins de 400 mètres : ${school}.`,
+    guardWhat: "Les brigadiers scolaires aident les enfants et tout le monde à traverser en sécurité près des écoles au début et à la fin de la journée d'école.",
+    guardsHere: (n) => `${plural(n, { one: '# poste', other: '# postes' })} à cet endroit`,
+    guardSource: "D'après la liste des emplacements de brigadiers scolaires de la Ville.",
+
+    blockPoles: (poles, lamps, led) =>
+      lamps === 0
+        ? `La Ville répertorie ${plural(poles, { one: '# poteau', other: '# poteaux' })} le long de ce tronçon, sans aucune lampe répertoriée sur ${poles === 1 ? 'lui' : 'eux'}.`
+        : `La Ville répertorie ${plural(poles, { one: '# poteau', other: '# poteaux' })} le long de ce tronçon, dont ${formatNumber(lamps)} avec une lampe, ${led === lamps ? (lamps === 1 ? 'de type LED' : 'toutes de type LED') : `${formatNumber(led)} de type LED`}.`,
+    blockNoPoles: 'La Ville ne répertorie aucun poteau de rue le long de ce tronçon.',
+    blockCalming: (n, year) =>
+      year
+        ? `Modération de la circulation ici depuis ${year} : la Ville répertorie ${plural(n, { one: "# coussin ralentisseur, dos d'âne ou plateau", other: "# coussins ralentisseurs, dos d'âne ou plateaux" })} sur ce tronçon.`
+        : `La Ville répertorie ${plural(n, { one: "# coussin ralentisseur, dos d'âne ou plateau", other: "# coussins ralentisseurs, dos d'âne ou plateaux" })} sur ce tronçon.`,
+    blockNoCalming: 'Aucune modération de la circulation enregistrée ici pour le moment.',
+    blockArterial:
+      "Les coussins ralentisseurs de la Ville sont pour les rues résidentielles. Dans une rue comme celle-ci, interrogez l'Office of Transportation and Infrastructure Systems de la Ville sur d'autres changements.",
+    memorialCalming: (n, year) =>
+      year
+        ? `Modération de la circulation sur ce tronçon depuis ${year} : la Ville répertorie ${plural(n, { one: '# dispositif', other: '# dispositifs' })}.`
+        : `La Ville répertorie ${plural(n, { one: '# dispositif de modération de la circulation', other: '# dispositifs de modération de la circulation' })} sur ce tronçon.`,
+    memorialNoCalming: 'Aucune modération de la circulation enregistrée sur ce tronçon pour le moment.',
+    lightsPoles: (poles, lamps, led) =>
+      lamps === 0
+        ? `La Ville répertorie ${plural(poles, { one: '# poteau', other: '# poteaux' })} le long de ce tronçon, sans aucune lampe répertoriée.`
+        : `Le long de ce tronçon, la Ville répertorie ${plural(lamps, { one: '# poteau', other: '# poteaux' })} avec une lampe, ${led === lamps ? (lamps === 1 ? 'de type LED' : 'tous de type LED') : `${formatNumber(led)} de type LED`}. Activez « Poteaux de rue et lampes répertoriées par la Ville » et zoomez pour trouver le numéro de chaque poteau.`,
+    stopLamps: (lamps, led) =>
+      lamps === 0
+        ? 'La Ville ne répertorie aucun poteau avec une lampe à moins de 30 mètres de cet arrêt.'
+        : `La Ville répertorie ${plural(lamps, { one: '# poteau', other: '# poteaux' })} avec une lampe à moins de 30 mètres de cet arrêt, ${led === lamps ? (lamps === 1 ? 'de type LED' : 'tous de type LED') : `${formatNumber(led)} de type LED`}.`,
+    cityShelter: (n) => (n === 1 ? "La liste des abribus de la Ville indique un abribus ici." : `La liste des abribus de la Ville indique ${formatNumber(n)} abribus ici.`),
+    noCityShelter: "Pas d'abribus ici dans la liste des abribus de la Ville, qui contient les abribus qu'elle gère avec son partenaire publicitaire.",
+    disagree:
+      "La liste de la Ville indique un abribus ici, mais OpenStreetMap dit qu'il n'y en a pas. L'une des deux peut être périmée : un relevé sur place tranche. D'ici là, la priorité compte l'abribus de la Ville.",
+    cityShelterLens: "La priorité compte l'abribus de la Ville.",
+    answerCityShelter: "Pas encore relevé dans OpenStreetMap, mais dans la liste de la Ville",
+  },
+
+  parking: {
+    kinds: {
+      all: 'Véhicules qui bloquent le passage',
+      sidewalk: 'Sur un trottoir',
+      bike_lane: 'Dans une piste cyclable',
+      crosswalk: 'Sur un passage piéton',
+      corner: 'Sur un coin de rue',
+      ramp: 'Bloquant une rampe de trottoir',
+    },
+    window: (start, end) => `De ${start} à ${end}`,
+    windowUnknown: 'Sur 12 mois',
+    heatTitle: (window) => `En dézoomant : où les signalements se regroupent. ${window}.`,
+    fewer: 'Moins de signalements',
+    more: 'Plus de signalements',
+    binsTitle: "De près : les signalements dans chaque zone d'environ une rue de large",
+    bins: (low, high) => (high === null ? `${formatNumber(low)} ou plus` : `${formatNumber(low)} à ${formatNumber(high)}`),
+    threshold: (min) => `Les zones avec moins de ${min} signalements sont laissées de côté, afin qu'aucun signalement isolé n'apparaisse. Zoomez et touchez une zone pour voir ses chiffres.`,
+    oneApp: "Là où des personnes qui utilisent une seule application, Laser Vision de Philly Bike Action, ont signalé des véhicules qui gênaient le passage. Tous les problèmes ne sont pas signalés.",
+    title: "Cette zone, d'environ une rue de large",
+    summary: (n, window) => `${plural(n, { one: '# signalement', other: '# signalements' })} de véhicules qui bloquent le passage. ${window}.`,
+    count: (n) => formatNumber(n),
+    fewerThan: (min) => `moins de ${min}`,
+    byKind: 'Par type',
+    meaning:
+      "Ce sont des signalements de personnes qui utilisent une seule application ; ils montrent donc où ces personnes ont remarqué des véhicules qui gênaient, pas tous les problèmes. Un type avec moins de 5 signalements ici n'est pas donné en chiffre, afin qu'aucun signalement isolé n'apparaisse.",
+    fixes:
+      "Beaucoup de signalements au même endroit sont une preuve en faveur d'aménagements physiques : avancées de trottoir, bornes, angles dégagés, pistes cyclables protégées et zones de livraison.",
+    askCity: 'Interroger la Ville sur un aménagement',
+    source: "D'après la carte Laser Vision de Philly Bike Action",
+    refreshed: 'Recomptés chaque semaine, avec la permission de Philly Bike Action.',
+  },
+
+  transit: {
+    waitTitle: 'Fréquence des bus ou des trains en milieu de journée en semaine',
+    waitBins: [
+      'Toutes les 10 minutes ou mieux',
+      'Toutes les 11 à 15 minutes',
+      'Toutes les 16 à 30 minutes',
+      'Toutes les 31 à 60 minutes',
+      "Moins d'une fois par heure",
+    ],
+    noMidday: 'Aucun service de 10 h à 14 h en semaine',
+    boardingsTitle: 'Personnes qui montent ici un jour de semaine moyen',
+    boardingBins: ['1 000 ou plus', '200 à 999', '50 à 199', '10 à 49', 'Moins de 10'],
+    noCount: 'Pas de comptage de la SEPTA pour cet arrêt',
+    boardingsNote: "D'après les comptages de la SEPTA elle-même, qui ont une saison ou deux de retard sur les horaires.",
+    station: "Station de métro, d'El (métro aérien) ou de Regional Rail (train régional)",
+    zoomNote: 'Zoomez sur quelques quartiers pour voir les arrêts.',
+    lensTitle: "Priorité selon l'angle « confort aux arrêts »",
+    lensUnsurveyed: "Là où personne n'a encore relevé un arrêt, son abribus et son banc comptent à moitié.",
+    lensCityShelter: "Un arrêt avec un abribus de la liste de la Ville compte comme abrité.",
+    lensStations: "L'angle ne note que les arrêts de bus et de tramway, donc les stations sont creuses.",
+    lensTunnel: "Les arrêts de tramway du tunnel sous Center City et University City sont creux aussi : l'angle les laisse de côté, comme les stations.",
+    findTitle: 'Ce que trouvent les usagers ici',
+    notInOsm: "Nous n'avons pas encore trouvé d'arrêt correspondant dans OpenStreetMap, donc personne n'a noté s'il a un abribus ou un banc.",
+    matchedByNumber: "Associé à l'arrêt OpenStreetMap qui a le même numéro d'arrêt, au même endroit.",
+    matchedByPlace: "Associé à l'arrêt OpenStreetMap au même endroit, à moins de 15 mètres.",
+    halfway: 'Les réponses « pas encore relevé » comptent à moitié (50 sur 100) dans le score jusqu\'à ce que quelqu\'un les note.',
+    canopy: (percent) =>
+      `Les arbres couvrent environ ${formatNumber(percent)} % du terrain autour de l'arrêt, dans une zone d'environ deux rues de large (relevé du couvert arboré de la Ville, 2018).`,
+    onHin: "L'arrêt se trouve sur le réseau High Injury Network, les rues où se produisent la plupart des décès et des blessures graves de la circulation à Philadelphie.",
+    noScore: "L'angle « confort aux arrêts » ne note que les arrêts de bus et de tramway.",
+    tunnelStation: "Cet arrêt de tramway est souterrain, dans le tunnel, donc l'angle « confort aux arrêts » le laisse de côté, comme les stations de métro et de train.",
+    answersLoading: 'Chargement de ce que dit OpenStreetMap à cet arrêt.',
+    answersUnavailable: "Ce que dit OpenStreetMap à cet arrêt n'a pas pu être chargé pour le moment, donc son abribus et son banc comptent comme pas encore relevés.",
+    canDo: 'Ce que les voisins peuvent faire ici',
+    routeDetails: 'Étapes, contacts et liens',
+    surveyGuide: 'Comment relever un arrêt avec StreetComplete',
+    osmSource: "Abribus, banc et éclairage d'après OpenStreetMap, © OpenStreetMap contributors, mis à jour chaque semaine.",
+    routeBus: 'Ligne de bus',
+    routeTrolley: 'Ligne de tramway',
+    routeMetro: 'Métro ou El',
+    routeRail: 'Regional Rail',
+    allRoutes: 'Là où plusieurs lignes partagent une rue, leurs tracés se superposent.',
+    frequentRoutes: 'Seulement les lignes avec un bus ou un train toutes les 15 minutes ou mieux en milieu de journée en semaine.',
+    detailsTitle: 'Arrêt',
+    stationName: (name) => `Station ${name}`,
+    stopsHere: (n) => `${plural(n, { one: '# arrêt', other: '# arrêts' })} à cet endroit`,
+    kinds: {
+      bus: 'Arrêt de bus',
+      trolley: 'Arrêt de tramway',
+      busTrolley: 'Arrêt de bus et de tramway',
+      metro: "Station de métro ou d'El",
+      rail: 'Station de Regional Rail',
+    },
+    vehicles: { bus: 'bus', trolley: 'tramway', busTrolley: 'bus ou tramway', train: 'train' },
+    vehiclesMany: { bus: 'bus', trolley: 'tramways', busTrolley: 'bus ou tramways', train: 'trains' },
+    routes: (list) => `Lignes : ${list}.`,
+    route: (name) => `Ligne ${name}.`,
+    howOften: 'Fréquence',
+    every: (vehicle, minutes) =>
+      minutes <= 1 ? `un ${vehicle} environ chaque minute` : `un ${vehicle} environ toutes les ${formatNumber(minutes)} minutes`,
+    only: (one, many, n) => (n === 1 ? `un seul ${one}` : `seulement ${formatNumber(n)} ${many}`),
+    peak: (text) => `En semaine, le matin de 7 h à 9 h : ${text}.`,
+    midday: (day, text) => `${day} de 10 h à 14 h : ${text}.`,
+    noService: (day) => `${day} de 10 h à 14 h : aucun.`,
+    days: { wk: 'En semaine', sa: 'Le samedi', su: 'Le dimanche' },
+    trips: (wk, sa, su) =>
+      `${plural(wk, { one: '# départ', other: '# départs' })} un jour de semaine typique, ${formatNumber(sa)} le samedi et ${formatNumber(su)} le dimanche.`,
+    busiest: (n) => `Heure la plus chargée en semaine : ${plural(n, { one: '# départ', other: '# départs' })}.`,
+    firstLast: (first, last) => `En semaine, le premier part à ${first} et le dernier à ${last}.`,
+    afterMidnight: (time) => `${time} après minuit`,
+    allNight: 'Le service fonctionne toute la nuit en semaine.',
+    evening: (n) =>
+      n === 0 ? 'Aucun départ après 20 h en semaine.' : `Après 20 h en semaine : ${plural(n, { one: '# départ', other: '# départs' })}.`,
+    noWeekday: 'Pas de service en semaine.',
+    riders: 'Usagers',
+    boardings: (n, period) =>
+      n === 0
+        ? `Presque personne ne monte ici un jour de semaine moyen (comptage de la SEPTA, ${period}).`
+        : `Environ ${plural(n, { one: '# personne monte', other: '# personnes montent' })} ici un jour de semaine moyen (comptage de la SEPTA, ${period}).`,
+    countedAt: (id) => `Compté à l'arrêt SEPTA ${id}, que cet arrêt a remplacé.`,
+    noBoardings: "La SEPTA n'a pas encore de comptage pour cet arrêt. Les arrêts nouveaux ou renumérotés en reçoivent un quand la SEPTA publie son prochain comptage.",
+    noStationCounts: "La SEPTA ne publie pas de comptage pour chaque quai de métro ou d'El.",
+    noRailCounts: "La SEPTA compte les usagers de Regional Rail par station une fois par an ; cette carte n'affiche pas encore ces comptages.",
+    stopNumber: (id) => `Numéro d'arrêt SEPTA ${id}.`,
+    formerNumbers: (ids) => `Avant cela, c'était l'arrêt SEPTA ${ids}.`,
+    wheelchair: {
+      1: 'La SEPTA indique que cet arrêt est accessible en fauteuil roulant.',
+      2: "La SEPTA indique que cet arrêt n'est pas accessible en fauteuil roulant.",
+    },
+    source: "D'après les horaires de la SEPTA pour une semaine typique. Les attentes sont des moyennes : les bus se regroupent et les écarts s'allongent.",
+  },
+
+  stopAmenities: {
+    unnamed: 'Un arrêt sans nom dans OpenStreetMap',
+    number: (ref) => `Arrêt numéro ${ref}`,
+    served: { 1: 'Arrêt de bus', 2: 'Arrêt de tramway', 3: 'Arrêt de bus et de tramway' },
+    comfort: {
+      3: "Un abribus, ou l'arrêt entier est sous un toit",
+      2: 'Un banc, mais aucun abribus sur la carte',
+      1: 'Ni abribus ni banc',
+      0: 'Pas encore relevé',
+    },
+    factsTitle: 'Ce que dit OpenStreetMap',
+    answers: {
+      sh: 'Abribus',
+      bn: 'Banc',
+      bi: 'Poubelle',
+      lt: 'Éclairé la nuit',
+      tp: 'Dalles podotactiles pour les personnes aveugles',
+      wc: 'Accès en fauteuil roulant',
+      db: 'Panneau des départs',
+      cv: "Arrêt entier sous un toit",
+    },
+    yes: 'Oui',
+    no: 'Non',
+    limited: 'Limité',
+    unknown: 'Pas encore relevé',
+    nearby: "cartographié à part à côté de l'arrêt",
+    unknownNote: "Pas encore relevé veut dire que personne ne l'a encore noté. Cela ne veut pas dire que l'arrêt n'a rien.",
+    survey: 'Comment relever cet arrêt avec StreetComplete',
+    openOsm: 'Voir cet arrêt sur OpenStreetMap',
+    surveyRoute: 'Relever toute une ligne avec une feuille imprimable',
+    source: "D'après OpenStreetMap, © OpenStreetMap contributors, mis à jour chaque semaine.",
+  },
+
+  heat: {
+    tractsTitle: {
+      vulnerability: 'Vulnérabilité à la chaleur : la chaleur et les personnes à risque, par secteur de recensement',
+      exposure: "Exposition à la chaleur : à quel point chaque secteur de recensement devient chaud l'été",
+      sensitivity: 'Sensibilité à la chaleur : combien de personnes de chaque secteur de recensement sont à risque par forte chaleur',
+    },
+    fifths: {
+      vulnerability: ['Cinquième de secteurs le moins vulnérable', 'Moins vulnérable', 'Cinquième du milieu', 'Plus vulnérable', 'Cinquième le plus vulnérable'],
+      exposure: ['Cinquième de secteurs le plus frais', 'Plus frais', 'Cinquième du milieu', 'Plus chaud', 'Cinquième le plus chaud'],
+      sensitivity: ['Cinquième avec le moins de personnes à risque', 'Moins', 'Cinquième du milieu', 'Plus', 'Cinquième avec le plus de personnes à risque'],
+    },
+    priority: 'Contour : secteurs que la Ville classe très haut en vulnérabilité à la chaleur',
+    tractsNone: "Les secteurs que l'indice ne couvre pas, comme les grands parcs et l'aéroport, restent vides.",
+    tractsSource:
+      "D'après l'indice de vulnérabilité à la chaleur de la Ville (Heat Vulnerability Index, Department of Public Health et Office of Sustainability), données de 2017 à 2019.",
+    treeBig: 'Un arbre de la Ville : plus le point est gros, plus son tronc est large',
+    treeSmall: "Un petit arbre, souvent un jeune arbre qu'il faut arroser",
+    treesZoom: 'Zoomez sur quelques rues pour voir les arbres.',
+    treesYards: "Les arbres des cours privées ne sont pas dans l'inventaire de la Ville, donc une rue peut être plus ombragée qu'elle ne le paraît ici.",
+    floodHigh: 'La zone inondable à 1 pour cent de chance par an : une inondation a au moins 1 chance sur 100 chaque année',
+    floodway: "Le lit d'écoulement (floodway) : le chenal gardé libre pour que les crues puissent passer",
+    floodModerate: 'La zone à 0,2 pour cent de chance par an : 1 chance sur 500 chaque année',
+    floodCare:
+      "Une raison de faire attention, jamais une part d'un score : les plantes y doivent supporter un sol détrempé, et tout ce qui est construit suit les règles de la Ville sur les zones inondables.",
+    treeUnnamed: "Un arbre que l'inventaire ne nomme pas",
+    treeTrunk: (inches) => `Son tronc fait environ ${formatNumber(inches)} pouces de diamètre à hauteur de poitrine.`,
+    treeNoTrunk: "L'inventaire ne donne pas la taille de son tronc.",
+    treeYoung: "Un jeune arbre a besoin d'environ 20 gallons d'eau (environ 75 litres) par semaine de mars à décembre, selon TreePhilly.",
+    treesHere: (n) => `${plural(n, { one: '# arbre', other: '# arbres' })} à cet endroit`,
+    treeSource: "D'après l'inventaire des arbres de Parks and Recreation, les arbres que la Ville entretient dans ses rues et ses parcs.",
+  },
+
+  art: {
+    legend: {
+      mural: 'Fresques et peintures murales',
+      sculpture: 'Sculptures et statues',
+      mosaic: 'Mosaïques',
+      other: 'Autres types : installations, fontaines, monuments et plus',
+    },
+    allOff: "Tous les types d'art sont désactivés dans les paramètres de cette couche.",
+    insideHidden: "Les œuvres à l'intérieur des bâtiments sont masquées.",
+    memorialNote: "Les œuvres qui rendent hommage à quelqu'un sont montrées sans noms.",
+    coverage:
+      "D'après la liste Percent for Art de la Ville, OpenStreetMap et Wikidata. Beaucoup de fresques n'y figurent pas encore ; Mural Arts Philadelphia tient la plus grande liste sur son propre site.",
+    kinds: {
+      0: "Une œuvre d'art public",
+      1: 'Une fresque',
+      2: 'Une peinture',
+      3: "Un art de rue",
+      4: 'Une mosaïque',
+      5: 'Une sculpture',
+      6: 'Une statue',
+      7: 'Un buste',
+      8: 'Un relief',
+      9: 'Une installation',
+      10: 'Une fontaine',
+      11: 'Un monument',
+      12: 'Un mémorial',
+      13: 'Un vitrail',
+      14: 'Une plaque',
+    },
+    untitled: "Aucun titre n'est enregistré.",
+    by: (artist) => `Par ${artist}.`,
+    made: (year) => `Année de création : ${year}.`,
+    medium: (medium) => `Matériau : ${medium}.`,
+    where: (place) => `Emplacement : ${place}.`,
+    inside: "À l'intérieur d'un bâtiment, donc visible seulement quand le bâtiment est ouvert.",
+    memorialTitle: 'Œuvre commémorative',
+    memorialText:
+      "Cette œuvre rend hommage à quelqu'un. Placekeepers n'affiche aucun nom sur les mémoriaux ; les sources ci-dessous en disent plus.",
+    worksHere: (n) => `${plural(n, { one: "# œuvre d'art", other: "# œuvres d'art" })} à cet endroit`,
+    sourcesTitle: 'Sources',
+    cityRecord: 'La fiche de la Ville sur cette œuvre (PDF)',
+    cityList: 'La liste Percent for Art de la Ville',
+    openOsm: 'Voir sur OpenStreetMap',
+    openWikidata: 'Voir sur Wikidata',
+    openWikipedia: 'En lire plus sur Wikipédia',
+    website: (site) => `En savoir plus sur ${site}`,
+    siteNames: {
+      'associationforpublicart.org': "le site de l'Association for Public Art",
+      'muralarts.org': 'le site de Mural Arts Philadelphia',
+      'philart.net': 'philart.net',
+    },
+    muralArts: 'Chercher dans la propre liste de fresques de Mural Arts Philadelphia',
+    fix: 'Quelque chose manque ou est faux ? Ajoutez-le ou corrigez-le sur OpenStreetMap ; les changements arrivent sur cette carte en environ une semaine.',
+    fixLink: 'Modifier sur OpenStreetMap',
+    credit: "Art public de la Ville de Philadelphie, d'OpenStreetMap (© OpenStreetMap contributors) et de Wikidata.",
+  },
+
+  survey: {
+    pageTitle: 'Relever une ligne',
+    intro:
+      "Choisissez une ligne de bus ou de tramway de la SEPTA et une direction pour obtenir une feuille de relevé : ses arrêts à Philadelphie dans l'ordre, ce qu'OpenStreetMap montre à chacun maintenant, et des cases à remplir. Imprimez-la, ou cochez les cases sur votre téléphone au fur et à mesure.",
+    guideLink: 'Comment relever les arrêts de bus',
+    loading: 'Chargement des lignes…',
+    loadFailed: "La liste des lignes n'a pas pu être chargée. Vérifiez votre connexion et réessayez.",
+    notPublished: 'Les feuilles de relevé ne sont pas encore publiées. Elles apparaissent après la prochaine mise à jour hebdomadaire.',
+    sheetFailed: "La feuille de cette ligne n'a pas pu être chargée. Vérifiez votre connexion et réessayez.",
+    retry: 'Réessayer',
+    routeLabel: 'Ligne',
+    routePlaceholder: 'Choisissez une ligne',
+    buses: 'Lignes de bus',
+    trolleys: 'Lignes de tramway',
+    directionLabel: 'Direction',
+    partsLabel: 'À partager entre',
+    partsChoice: (n) => (n === 1 ? 'une personne ou un duo' : `${n} personnes ou duos`),
+    directionTo: (dir, to) => `${dir} vers ${to}`,
+    towards: (to) => `Vers ${to}`,
+    directionNumber: (n) => `Direction ${n}`,
+    stopCount: (n) => plural(n, { one: '# arrêt', other: '# arrêts' }),
+    title: (route, direction) => `Ligne ${route}, ${direction}`,
+    summary: (stops, miles) =>
+      `${plural(stops, { one: '# arrêt', other: '# arrêts' })} à Philadelphie, ${miles} du premier au dernier en ligne droite.`,
+    outside: (n) =>
+      `${plural(n, { one: "# autre arrêt est en dehors de Philadelphie et n'est pas sur cette feuille", other: "# autres arrêts sont en dehors de Philadelphie et ne sont pas sur cette feuille" })}.`,
+    answersMissing:
+      "Ce que dit OpenStreetMap à ces arrêts n'a pas pu être chargé pour le moment, donc les arrêts qu'il connaît apparaissent comme pas encore relevés.",
+    statusTitle: "Ce qu'OpenStreetMap montre maintenant",
+    status: {
+      shelter: 'Abribus',
+      bench: 'Banc seulement',
+      neither: "Ni l'un ni l'autre",
+      unsurveyed: 'Pas encore relevé',
+      missing: 'Introuvable dans OpenStreetMap',
+    },
+    statusLong: {
+      shelter: 'avec un abribus ou un toit',
+      bench: 'avec un banc mais aucun abribus sur la carte',
+      neither: "avec ni l'un ni l'autre",
+      unsurveyed: 'dans OpenStreetMap mais pas encore relevé',
+      missing: 'introuvable dans OpenStreetMap',
+    },
+    estimateTitle: 'Combien de temps cela prend',
+    estimate: (time) => `Notre estimation : ${time} pour une personne ou un duo.`,
+    estimateBasis:
+      "C'est notre propre estimation, pas une mesure : en marchant à environ 3 miles à l'heure d'un arrêt à l'autre, et environ une minute à chaque arrêt. Pour aller au premier arrêt et rentrer chez vous, il faut compter en plus.",
+    trolleyTunnel:
+      "Les lignes de tramway T1 à T5 passent sous terre à leur extrémité de Center City, dans un tunnel avec des stations de la 13th Street à la 37th Street. Laissez ces stations de côté : ce relevé concerne les arrêts dans la rue.",
+    asOf: (osm, schedules) =>
+      [osm ? `Ce que montre OpenStreetMap date du ${osm}.` : null, schedules ? `Arrêts d'après les horaires de la SEPTA (${schedules}).` : null]
+        .filter(Boolean)
+        .join(' '),
+    print: 'Imprimer la feuille',
+    printAll: 'Imprimer toutes les parties',
+    printPart: (n) => `Imprimer seulement la partie ${n}`,
+    part: (n, of) => `Partie ${n} sur ${of}`,
+    partStops: (first, last) => (first === last ? `arrêt ${first}` : `arrêts ${first} à ${last}`),
+    partEstimate: (time, miles) => `Notre estimation : ${time} (${miles} de marche).`,
+    sheetFor: (route, direction) => `Feuille de relevé : ligne ${route}, ${direction}`,
+    howToFill:
+      "Cochez O (oui) ou N (non) pour chaque chose que vous trouvez à l'arrêt. « Éclairé » veut dire qu'une lumière éclaire l'arrêt la nuit : une lampe dans l'abribus ou un lampadaire juste à côté. « À réparer » veut dire un abribus, un banc, un panneau ou une poubelle cassé. Si vous ne pouvez pas savoir, laissez la case vide : ne devinez jamais, s'il vous plaît.",
+    nameLine: 'Nom :',
+    dateLine: 'Date :',
+    columns: {
+      number: '#',
+      stop: 'Arrêt',
+      now: 'OpenStreetMap maintenant',
+      sh: 'Abribus',
+      bn: 'Banc',
+      bi: 'Poubelle',
+      lt: 'Éclairé',
+      rp: 'À réparer',
+      nt: 'Notes',
+    },
+    yes: 'Oui',
+    no: 'Non',
+    yesShort: 'O',
+    noShort: 'N',
+    stopNumber: (sid) => `Arrêt SEPTA ${sid}`,
+    answerLabel: (n, name, question, answer) => `Arrêt ${n}, ${name} : ${question}, ${answer}`,
+    repairLabel: (n, name) => `Arrêt ${n}, ${name} : à réparer`,
+    notesLabel: (n, name) => `Arrêt ${n}, ${name} : notes`,
+    openOsm: 'Voir sur OpenStreetMap',
+    editOsm: 'Modifier',
+    answered: (n, of) => `Sur cet appareil, vous avez rempli ${plural(n, { one: '# arrêt', other: '# arrêts' })} sur ${formatNumber(of)}.`,
+    kept: "Ce que vous cochez et saisissez ici reste dans ce navigateur, sur cet appareil seulement. Rien n'est envoyé nulle part.",
+    notKept: "Ce navigateur ne conserve pas ce que vous cochez, donc cela sera perdu si vous quittez la page. Imprimez la feuille ou notez-le.",
+    clear: "Effacer ce que j'ai rempli",
+    clearConfirm: 'Effacer chaque case et chaque note que vous avez remplies pour cette direction ?',
+    safetyTitle: 'Avant de partir : restez en sécurité',
+    safety: [
+      "Restez sur le trottoir. Ne vous tenez jamais dans la rue et n'entrez jamais dans une voie de bus pour regarder un arrêt.",
+      'Allez-y de jour, et avec une autre personne.',
+      'Arrêtez-vous de marcher avant de regarder cette feuille ou votre téléphone, et levez les yeux avant de traverser.',
+      'Écartez-vous pour que les usagers puissent attendre et monter. Ne photographiez pas les gens.',
+    ],
+    answersTitle: 'Envoyer vos réponses dans OpenStreetMap',
+    withApp:
+      "Avec l'application StreetComplete : répondez à ses questions sur chaque arrêt pendant que vous y êtes. Vos réponses vont directement dans OpenStreetMap.",
+    withoutApp: "Sans application sur téléphone, sur un ordinateur une fois rentré chez vous, utilisez l'éditeur d'OpenStreetMap :",
+    editorSteps: [
+      'Connectez-vous sur openstreetmap.org. Un compte est gratuit.',
+      "Rouvrez cette page et utilisez le lien Modifier à côté de chaque arrêt. L'éditeur s'ouvre avec l'arrêt sélectionné.",
+      "Dans le panneau de gauche, cliquez sur la case Shelter (abribus). Sous « Add field: », ajoutez Bench (banc), Waste Bin (la poubelle) et Lit (éclairé), et cliquez aussi sur leurs cases. Chaque case change à chaque clic : Yes (oui), puis No (non), puis retour à Unknown (inconnu). L'éditeur peut afficher ces mots en français.",
+      "Cliquez sur Save, écrivez une courte note sur ce que vous avez fait, par exemple « Relevé des abribus et des bancs d'arrêts de bus », puis cliquez sur Upload.",
+    ],
+    notFound:
+      "Là où la feuille dit « Introuvable dans OpenStreetMap », regardez d'abord de près autour de l'arrêt dans l'éditeur : il peut être dessiné à quelques pas. S'il manque vraiment, cliquez sur Point, placez le point sur le trottoir à côté du panneau de l'arrêt, et choisissez Bus Stop (arrêt de bus).",
+    repairNote:
+      "OpenStreetMap n'enregistre pas les dégâts, donc « À réparer » et vos notes restent avec votre groupe. Elles aident quand vous parlez d'un arrêt avec la SEPTA ou la Ville.",
+    updates: 'Placekeepers lit OpenStreetMap chaque lundi, donc vos réponses arrivent sur notre carte et ces feuilles en environ une semaine.',
+    printedFrom: 'Imprimé depuis Placekeepers, une carte gratuite pour les voisins de Philadelphie. Arrêts de la SEPTA ; données de la carte © OpenStreetMap contributors.',
+    routeTitle: (route) => `Ligne ${route}`,
+    routesHere: (n) => `${plural(n, { one: '# ligne', other: '# lignes' })} ici`,
+    surveyThisRoute: 'Relever les arrêts de cette ligne pour les abribus et les bancs',
+  },
+
+  amenities: {
+    legend: {
+      benches: 'Un banc',
+      picnic_tables: 'Une table de pique-nique',
+      drinking_water: "De l'eau potable",
+      toilets: 'Des toilettes publiques',
+      bookcases: 'Une boîte à livres (Little Free Library)',
+    },
+    mappedNote: "Seul ce que des personnes ont ajouté à OpenStreetMap apparaît ici, donc beaucoup manquent.",
+    addMissing: 'Comment ajouter ce qui manque',
+    titles: {
+      benches: 'Banc',
+      picnic_tables: 'Table de pique-nique',
+      drinking_water: 'Eau potable',
+      toilets: 'Toilettes publiques',
+      bookcases: 'Boîte à livres (Little Free Library)',
+    },
+    facts: {
+      br: ['A un dossier', 'Pas de dossier'],
+      cv: ['Sous un toit', 'Pas sous un toit'],
+      bt: ['On peut y remplir une bouteille', 'Pas pour remplir une bouteille'],
+      sn: ["Seulement une partie de l'année", "Toute l'année"],
+      in: ["À l'intérieur", "À l'extérieur"],
+      fee: ['Payant', 'Gratuit'],
+      ct: ['A une table à langer', 'Pas de table à langer'],
+    },
+    access: { 1: "Ouvert à tout le monde", 2: 'Réservé aux clients' },
+    wheelchair: {
+      1: 'Accessible en fauteuil roulant',
+      0: 'Non accessible en fauteuil roulant',
+      2: 'Accès limité en fauteuil roulant',
+    },
+    hours: (text) => `Horaires d'ouverture tels que cartographiés : ${text}`,
+    nothingMore: "OpenStreetMap n'en dit pas plus pour le moment.",
+    unknownNote: "Ce qui n'est pas indiqué n'est pas encore connu. Cela ne veut pas dire que la réponse est non.",
+    openOsm: 'Voir sur OpenStreetMap',
+    fix: 'Manquant ou faux ? Comment le corriger',
+    source: 'Tel que cartographié dans OpenStreetMap, © OpenStreetMap contributors, mis à jour chaque semaine.',
+  },
+
+  places: {
+    legend: {
+      park_water: 'Une fontaine à boire dans un parc',
+      libraries: 'Une bibliothèque de la Free Library',
+      recreation_centers: 'Un centre de loisirs',
+      playgrounds: 'Une aire de jeux',
+    },
+    poolLegend: { 1: 'Une piscine', 2: "Une aire de jeux d'eau", 3: "Un jet d'eau" },
+    notInService: 'Hors service cette année',
+    poolsShown: { in_service: 'Seules celles en service cette année sont affichées.', all: 'Les cercles creux sont hors service cette année.' },
+    recreationKinds: {
+      1: 'Centre de loisirs',
+      2: 'Centre pour personnes âgées',
+      3: "Centre d'éducation à l'environnement",
+    },
+    poolKinds: { 1: 'Piscine', 2: "Aire de jeux d'eau", 3: "Jet d'eau" },
+    waterKinds: { 1: 'Fontaine à boire', 2: 'Point de remplissage de bouteilles' },
+    status: { 1: 'En service cette année', 0: 'Hors service cette année' },
+    statusUnknown: "Parks and Recreation ne dit pas si c'est en service cette année.",
+    indoor: { 1: "À l'intérieur", 0: "À l'extérieur" },
+    waterIndoor: "À l'intérieur d'un bâtiment : ouvert quand le bâtiment l'est.",
+    accessible: { 1: 'Indiqué comme accessible aux personnes handicapées', 0: 'Non indiqué comme accessible' },
+    opened: (date) => `Ouvert pour la saison le ${date}.`,
+    gym: 'A une salle de sport.',
+    noBuilding: 'Un site de programme sans bâtiment propre.',
+    inPark: (park) => `Dans ${park}.`,
+    phone: (number) => `Téléphone : ${number}`,
+    libraryPage: 'Horaires et événements sur le site de la Free Library',
+    seasonNote: "Les piscines ouvrent seulement pour l'été. Vérifiez auprès de Parks and Recreation les horaires de cette semaine.",
+    source: {
+      libraries: "D'après la liste de la Ville des sites de la Free Library of Philadelphia.",
+      parks: "D'après Philadelphia Parks and Recreation, tel que la Ville le publie.",
+    },
+    cooling: {
+      legendOpen: 'Un refuge contre le froid ou la chaleur indiqué comme ouvert',
+      legendClosed: 'Indiqué comme fermé, ou sans statut',
+      kindShown: {
+        any: 'Refuges contre la chaleur et contre le froid.',
+        cooling: 'Seulement les refuges contre la chaleur, pour le temps chaud.',
+        warming: 'Seulement les refuges contre le froid, pour le temps froid.',
+      },
+      asListed: (copied, changed) =>
+        `${copied ? `Tels que la Ville les a répertoriés le ${copied}` : 'Tels que la Ville les a répertoriés lors de la dernière copie de la liste par cette carte'}${changed ? ` (la liste a été modifiée pour la dernière fois le ${changed})` : ''}. Pas en direct : les sites ouvrent et ferment selon la météo, appelez donc le site ou le 311 avant de vous déplacer.`,
+      oneMarker: "Une bibliothèque ou un centre de loisirs qui est aussi un refuge n'apparaît qu'une fois, comme refuge.",
+      kinds: {
+        1: 'Bibliothèque de la Free Library',
+        2: 'Site de Parks and Recreation',
+        3: 'Partenaire communautaire',
+        4: 'Centre communautaire de la Philadelphia Housing Authority',
+      },
+      title: 'Refuge contre le froid ou la chaleur',
+      status: { 1: 'Indiqué comme ouvert', 0: 'Indiqué comme fermé' },
+      statusUnknown: 'Aucun statut indiqué',
+      both: 'Indiqué comme refuge contre le froid et contre la chaleur',
+      cooling: 'Indiqué comme refuge contre la chaleur',
+      warming: 'Indiqué comme refuge contre le froid',
+      neither: 'Pas indiqué comme refuge contre le froid ni contre la chaleur',
+      hours: (hours) => `Horaires indiqués : ${hours}`,
+      services: (services) => `Ce qu'il offre, tel qu'indiqué : ${services}`,
+      capacity: (n) => `Place pour ${formatNumber(n)} personnes, telle qu'indiquée`,
+      water: "A un point d'eau",
+      restroom: 'A des toilettes publiques',
+      also: {
+        lib: (name) => `Aussi sur la carte comme bibliothèque de la Free Library : ${name}.`,
+        rec: (name) => `Aussi sur la carte comme site de Parks and Recreation : ${name}.`,
+      },
+      alsoSite: "La Ville l'indique aussi comme refuge contre le froid ou la chaleur.",
+    },
+    playgrounds: {
+      kind: 'Aire de jeux',
+      ages: { 1: 'Pour les 2 à 5 ans', 2: 'Pour les 5 à 12 ans', 3: 'Pour les 2 à 12 ans' },
+      installed: (year) => `Installée en ${year}`,
+    },
+  },
+
+  conditions: {
+    legend: {
+      dumping: 'Dépôt sauvage',
+      dark_lights: 'Un lampadaire de rue ou de ruelle éteint',
+      graffiti: 'Graffitis',
+    },
+    legendOpen: (what) => `${what} : une demande encore ouverte`,
+    legendClosed: (what) => `${what} : toutes les demandes sont closes`,
+    legendSize: 'Un cercle plus grand veut dire plus de demandes sur ce tronçon de rue.',
+    legendWindow: 'Demandes à Philly311 au cours des 90 derniers jours, comptées par tronçon de rue, jamais par adresse.',
+    openOnly: "Seuls les tronçons avec une demande encore ouverte sont affichés.",
+    titles: {
+      dumping: 'Dépôt sauvage signalé',
+      dark_lights: 'Lumières éteintes signalées',
+      graffiti: 'Graffitis signalés',
+    },
+    summary: (n, open) =>
+      `${plural(n, { one: '# demande', other: '# demandes' })} à Philly311 au cours des 90 derniers jours, ${open === 0 ? 'aucune' : formatNumber(open)} encore ouverte${open > 1 ? 's' : ''}.`,
+    newest: (date) => `La plus récente date du ${date}.`,
+    alley: (n, total) =>
+      n === total
+        ? n === 1
+          ? "Elle concernait un éclairage de ruelle."
+          : 'Toutes concernaient des éclairages de ruelle.'
+        : `${formatNumber(n)} d'entre elles concernaient un éclairage de ruelle.`,
+    block: (street) => `Sur ce tronçon de ${street}.`,
+    byBlock: "Compté par tronçon de rue, jamais par adresse, et rien n'est montré sur la personne qui a signalé.",
+    meaning: "Une demande montre que quelqu'un a remarqué quelque chose et a demandé de l'aide à la Ville. Certains tronçons demandent plus souvent que d'autres.",
+    report: 'Le signaler à Philly311',
+    source: "D'après les registres 311 de la Ville (Philly311), actualisés chaque semaine.",
+  },
+
+  walk: {
+    walkTitle: {
+      index: "Dans quelle mesure chaque zone est praticable à pied (l'indice de marchabilité de l'EPA)",
+      corners: "Coins de rue : à quel point les rues sont reliées entre elles (EPA)",
+      transit: "À quelle distance se trouve l'arrêt de transport en commun le plus proche (EPA)",
+      mix: 'À quel point logements, emplois et commerces sont mélangés (EPA)',
+    },
+    walkCompared: {
+      city: "Comparé au sein de Philadelphie : chaque teinte contient environ un cinquième des groupes d'îlots de la ville.",
+      nation: "Comparé à l'ensemble du pays, comme l'EPA classe chaque groupe d'îlots des États-Unis.",
+    },
+    walkFifths: {
+      index: ['Cinquième le moins praticable à pied', 'Moins praticable', 'Cinquième du milieu', 'Plus praticable', 'Cinquième le plus praticable'],
+      corners: ['Le moins de coins', 'Moins', 'Cinquième du milieu', 'Plus', 'Le plus de coins'],
+      transit: ['Le plus loin des transports', 'Plus loin', 'Cinquième du milieu', 'Plus près', 'Le plus près des transports'],
+      mix: ['Le moins mélangé', 'Moins mélangé', 'Cinquième du milieu', 'Plus mélangé', 'Le plus mélangé'],
+    },
+    walkNationFifths: ['Cinquième inférieur du pays', 'Sous le milieu', 'Cinquième du milieu', 'Au-dessus du milieu', 'Cinquième supérieur du pays'],
+    walkClasses: [
+      'Le moins praticable à pied : indice de 1 à 5,75',
+      'Sous la moyenne : 5,76 à 10,5',
+      'Au-dessus de la moyenne : 10,51 à 15,25',
+      'Le plus praticable à pied : 15,26 à 20',
+    ],
+    walkNationNote:
+      "Comparée à l'ensemble du pays, presque toute Philadelphie est au-dessus de la moyenne ou parmi les zones les plus praticables à pied, donc comparer au sein de la ville montre mieux ses différences.",
+    walkParts:
+      "L'indice va de 1 à 20. Les coins de rue et les transports comptent chacun pour un tiers, et deux mesures du mélange de logements, d'emplois et de commerces pour un sixième chacune.",
+    walkSource: "D'après la Smart Location Database de l'EPA, l'agence américaine de protection de l'environnement (2021), construite à partir de données d'environ 2017 à 2019.",
+
+    reachTitle: {
+      people: 'Personnes qui habitent à moins de 5 minutes à pied (recensement de 2020)',
+      places: 'Types de lieux du quotidien à moins de 10 minutes à pied',
+      corners: 'Coins de rue à moins de 5 minutes à pied',
+    },
+    reachBins: {
+      people: ['Moins de 1 000 personnes', '1 000 à 2 499', '2 500 à 3 999', '4 000 à 5 999', '6 000 ou plus'],
+      places: ['2 types ou moins sur 7', '3 ou 4 types', '5 types', '6 types', 'Les 7 types'],
+      corners: ['Moins de 10 coins', '10 à 24', '25 à 49', '50 à 74', '75 ou plus'],
+    },
+    reachKinds:
+      "Les sept types : une bibliothèque, un centre de loisirs, une piscine ou une aire de jeux d'eau en service, une fontaine à boire dans un parc, une école, une épicerie ou un marché qui accepte le SNAP (aide alimentaire), et un arrêt de bus, de tramway ou de train.",
+    reachCorners: "Un coin est l'endroit où se rejoignent trois rues ou plus où l'on peut marcher. Plus de coins veut dire des pâtés de maisons plus courts et plus de façons d'aller quelque part à pied.",
+    reachMeasured:
+      "Compté depuis le milieu de chaque hexagone en ligne droite : 400 mètres pour 5 minutes de marche, 800 pour 10 minutes de marche. Cela va un peu plus loin qu'une marche le long des rues, et cela traverse les voies ferrées, les autoroutes et les rivières.",
+    reachSource: {
+      people: "Personnes d'après le recensement de 2020, comptées par îlot.",
+      places: "Lieux de la Ville, de Parks and Recreation, de l'USDA et de la SEPTA. Les lieux juste de l'autre côté de la limite de la ville ne sont pas comptés.",
+      corners: "Coins d'après les axes de rues de la Ville.",
+    },
+
+    stressLevels: {
+      1: 'Niveau 1 : assez calme pour la plupart des personnes de tout âge',
+      2: 'Niveau 2 : acceptable pour la plupart des adultes',
+      3: "Niveau 3 : seulement pour les cyclistes sûrs d'eux",
+      4: 'Niveau 4 : seulement pour les cyclistes les plus intrépides',
+    },
+    stressShown: {
+      stressful: 'Seules les rues stressantes, niveaux 3 et 4, sont affichées.',
+      calm: 'Seules les rues calmes, niveaux 1 et 2, sont affichées.',
+    },
+    stressZoom: 'En dézoomant, la carte montre les rues stressantes et les rues avec une piste cyclable ou un sentier. Zoomez pour voir chaque rue.',
+    stressSource:
+      "D'après le réseau Level of Traffic Stress de la Delaware Valley Regional Planning Commission (DVRPC) : noté d'après les voies, la vitesse de la circulation et le type de piste cyclable, pas en roulant dans chaque rue.",
+    stressTitle: (level) => `Niveau ${level} sur 4`,
+    stressMeaning: {
+      1: 'Assez calme pour la plupart des personnes de tout âge, les enfants aussi.',
+      2: 'Acceptable pour la plupart des adultes : un peu de stress de circulation.',
+      3: "Seuls les cyclistes sûrs d'eux s'y sentent à l'aise.",
+      4: 'Circulation dense et rapide : seulement les cyclistes les plus intrépides.',
+    },
+    stressOtherWay: (level) => `Rouler dans l'autre sens est plus calme : niveau ${level}.`,
+    facilities: {
+      0: 'Pas de piste cyclable',
+      1: 'Un itinéraire cyclable signalé',
+      2: 'Marquages de voie partagée (sharrows)',
+      3: 'Une piste cyclable',
+      4: 'Une piste cyclable avec zone tampon',
+      5: 'Une piste cyclable protégée',
+      6: "Un sentier ou un chemin à l'écart de la circulation",
+    },
+    stressSpeed: (mph) => `La circulation va à environ ${formatNumber(mph)} miles à l'heure, selon la limite de vitesse ou l'estimation de la DVRPC.`,
+    stressLanes: (n) => `${plural(n, { one: '# voie', other: '# voies' })} en tout.`,
+    streetsHere: (n) => `${plural(n, { one: '# rue', other: '# rues' })} ici`,
+    stressDetailsSource: "D'après le réseau Level of Traffic Stress de la DVRPC, noté d'après les voies, les vitesses et les pistes cyclables.",
   },
 
   // @@NEXT@@
