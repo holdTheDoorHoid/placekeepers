@@ -181,3 +181,28 @@ About the zero width spaces: the segmenter left some words split (a bare consona
 word, as in ប៉ូលីស, ហ្វីត, ចំណត, អ្នកជិះ, and ម៉ែល). The script now joins a bare consonant to the word
 before it and keeps ម៉ែល whole, so no line break falls inside those words. Only the places of the
 spaces changed in that clean up, not any word.
+
+## "Did it work?" page (M5.4, 2026-10-22)
+
+New terms for the page that compares places that got care with places that did not
+(`didit.*` in the catalog, and the two yearly sources in the registry text). Proposals for the
+native reviewer, like every row above.
+
+| English | Khmer | Note |
+|---|---|---|
+| Did it work? | តើវាមានប្រសិទ្ធភាពឬទេ? | "មានប្រសិទ្ធភាព" is the word of the Why this works page; "ជោគជ័យ" (success) is not used as the title |
+| care (work done at a place: "got care", "after care") | ការថែរក្សា (បានទទួលការថែរក្សា) | the same word as the rest of the site; greening, cleaning and sealing, and demolition are all ការថែរក្សា on this page, as the English calls them all "care" |
+| we could not tell (the check failed) | យើងខ្ញុំមិនអាចសន្និដ្ឋានបានទេ | a plain admission, never "គ្មានឥទ្ធិពល" (no effect) and never "មានប្រសិទ្ធភាព" (it worked); "too few to tell" is មិនអាចសន្និដ្ឋានបាន, as in the sales and homes lines |
+| does not show that care caused it | មិនបង្ហាញថាការថែរក្សាបានបង្កឱ្យមាន | "មិនបង្ហាញ" is as strong as "does not show"; never "បញ្ជាក់" (confirm) |
+| the real evidence | ភស្តុតាងពិតប្រាកដ | the two randomized trials (ការសាកល្បងដោយចៃដន្យ); observational comparisons "អាចធ្វើឱ្យយល់ច្រឡំបាន" (can mislead, not will) |
+| 90 percent interval | ចន្លោះ 90 ភាគរយ | written "ពី ការថយចុះ 1.1% ដល់ ការកើនឡើង 6.8%" |
+| 2.7% more, 6.2% fewer (a change) | ការកើនឡើង 2.7%, ការថយចុះ 6.2% | a plain "ច្រើនជាង 2.7%" reads "more than 2.7%", a threshold, so the change is a noun ("an increase of"); a count against what was expected is ច្រើនជាងចំនួនដែលរំពឹងទុក ... ដោយ 2.7% |
+| comparison places | កន្លែងប្រៀបធៀប | the similar places that did not get care |
+| the ring (200 to 400 meters out) | រង្វង់នៅជុំវិញកន្លែងនីមួយៗ | |
+| check (placebo, ring, later care) | ការត្រួតពិនិត្យ | "បានជាប់", "មិនបានជាប់" for passed and failed |
+| half year | ពាក់កណ្តាលដំបូងនៃឆ្នាំ, ពាក់កណ្តាលក្រោយនៃឆ្នាំ | |
+| complaints (to L&I) | បណ្តឹង | as the registry name of the L&I complaints source |
+
+Zero width spaces in the new text come from the same segmenter script, with these words kept
+whole because the segmenter splits them badly: បណ្តឹង, ប្រៀបធៀប, បញ្ជាការងារ, រកឃើញ, កំណត់ត្រា,
+ជ្រើសរើស, នីមួយៗ (and ម៉ែល, as before). No zero width space goes before a Khmer punctuation sign.
