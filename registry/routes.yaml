@@ -228,7 +228,10 @@
   links:
     - {label: "OTIS street furniture request for information (May 2024), with the City's shelter goal", url: "https://www.phila.gov/media/20240521160603/RFI-OTIS-street-furniture-20240521.pdf"}
     - {label: "Eight new bus shelters sent to the Art Commission (December 2025)", url: "https://www.phila.gov/media/20251205094032/Bus-Shelter-Upgrades-submission.pdf"}
-    # wwww is SEPTA's own spelling of its host: its Customer Service page links the form this way.
+    # wwww is SEPTA's own spelling of its host, not a typo (checked again 2026-10-22): the form is
+    # served at this address with it as its canonical address, SEPTA's Customer Service page links
+    # it this way, and www.septa.org/customer-service/comment-form/ only sends a browser on to it.
+    # Leave it as it is: every registry/i18n/<code>.yaml keys this link's words on the address.
     - {label: SEPTA comment form, url: "https://wwww.septa.org/customer-service/comment-form/"}
     # Each Councilmember's page gives the district office's address and phone (checked 2026-10-05).
     - {label: "Philadelphia City Council: each district's Councilmember and office", url: "https://phlcouncil.com/council-members/"}
