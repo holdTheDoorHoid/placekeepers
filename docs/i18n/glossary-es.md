@@ -61,7 +61,8 @@ The choices every Spanish text on the site follows: the interface catalog
 | brownfield | brownfield (un terreno donde puede haber contaminación) | explained once per passage, in the present tense so it never reads as "it was contaminated once"; never "limpio" or "seguro" |
 | community garden | jardín comunitario | "jardín" for a garden of any kind; "huerto" is not used, so one word covers food and flowers. Garden agreement: acuerdo de jardín |
 | ghost bike | bicicleta blanca (ghost bike) | the English name stays in parentheses so families can find the Bicycle Coalition's form |
-| Block Captain, Playstreet, parklet | Capitán de Cuadra (Block Captain), Playstreet (calle de juego), parklet | program names stay, with a short gloss the first time |
+| Block Captain, Playstreet, parklet | capitán de la cuadra (Block Captain), Playstreet (calle de juego), parklet | phila.gov Spanish says "capitán de la cuadra"; program names stay, with a short gloss the first time |
+| Department of Sanitation (Philadelphia More Beautiful Committee) | Departamento de Saneamiento (Comité Más Bella de Filadelfia) | phila.gov Spanish; runs the Block Captain program, no longer the Streets Department |
 | rank (of a place under a lens) | posición | "La posición es la parte de los lugares del mapa con menos" |
 | priority / need | prioridad / necesidad | |
 | the owner (of the project) | el responsable del proyecto | never "dueño", which is the owner of a property |

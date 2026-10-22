@@ -19,6 +19,11 @@ function variacion(n: number): string {
   return 'no cambió';
 }
 
+/** "y", or "e" before a word that starts with the sound i: "casas e iglesias". */
+function conector(next: string): string {
+  return /^(i|hi(?!e))/i.test(next.trim()) ? 'e' : 'y';
+}
+
 /** " (más o menos 6 puntos)", or nothing when there is no margin: a survey's margin of error. */
 function masOMenos(margin: number | null, unit: 'points' | 'homes'): string {
   if (margin === null) return '';
@@ -68,6 +73,16 @@ const es: Catalog = {
   units: {
     meters: (n) => `${formatNumber(n)} metros`,
     kilometers: (km) => `${formatDecimal(km, 1)} kilómetros`,
+    miles: (miles) => `${formatDecimal(miles, 1)} millas`,
+    lessThanMiles: (miles) => `menos de ${formatDecimal(miles, 1)} millas`,
+  },
+
+  join: {
+    labelled: (label, value) => `${label}: ${value}`,
+    colon: (label) => `${label}:`,
+    and: (items) => (items.length <= 1 ? items.join('') : `${items.slice(0, -1).join(', ')} ${conector(items.at(-1)!)} ${items.at(-1)}`),
+    long: (items) => (items.length <= 1 ? items.join('') : `${items.slice(0, -1).join('; ')}; ${conector(items.at(-1)!)} ${items.at(-1)}`),
+    names: (names) => names.reduce((all, name, i) => (i === 0 ? name : `${all} ${conector(name)} ${name}`), ''),
   },
 
   header: {
@@ -660,6 +675,9 @@ const es: Catalog = {
 
   flyer: {
     pageTitle: 'Hacer un volante para los vecinos',
+    language: 'Idioma del volante',
+    languageHelp: 'Imprima el volante en el idioma que leen sus vecinos. Lo que usted escribe se imprime tal como lo escribió.',
+    withEnglish: 'Agregar el inglés al lado, en una segunda columna',
     make: 'Hacer un volante para los vecinos',
     intro:
       'Un letrero para la cerca de un lote vacío: les dice a los que pasan que a los vecinos les importa este lugar y cómo encontrarse. Usted elige lo que dice y lo imprime aquí. No se envía nada a ningún lado.',
@@ -721,6 +739,12 @@ const es: Catalog = {
 
   letters: {
     pageTitle: 'Escribir una carta',
+    language: 'Idioma de la carta',
+    languageHelp:
+      'Las oficinas, las organizaciones comunitarias y los dueños a quienes van estas cartas leen sobre todo en inglés, así que la carta se imprime en inglés a menos que usted elija su idioma.',
+    translationTitle: 'Su carta en su idioma',
+    translationNote: 'Para que sepa lo que firma. Solo se imprime la carta de arriba; esta traducción se queda en su pantalla.',
+    yourName: '[su nombre]',
     intro:
       'Cartas que usted llena aquí e imprime. El sitio nunca envía nada: usted mismo envía por correo, por correo electrónico o entrega en mano la carta. Lo que escribe se queda solo en este navegador.',
     // Safety line: a lawyer has not reviewed the letters.
@@ -1491,6 +1515,8 @@ const es: Catalog = {
 
   survey: {
     pageTitle: 'Revisar una ruta',
+    duration: (hours, minutes) =>
+      `alrededor de ${[hours ? plural(hours, { one: '# hora', other: '# horas' }) : '', minutes || !hours ? `${formatNumber(minutes)} minutos` : ''].filter(Boolean).join(' y ')}`,
     intro:
       'Elija una ruta de autobús o tranvía de SEPTA y una dirección para obtener una hoja de revisión: sus paradas en Filadelfia en orden, lo que OpenStreetMap muestra ahora en cada una y casillas para llenar. Imprímala, o marque las casillas en su teléfono mientras camina.',
     guideLink: 'Cómo revisar paradas de autobús',
