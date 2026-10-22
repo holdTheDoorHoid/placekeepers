@@ -864,3 +864,537 @@ routes:
     links:
       https://www.phila.gov/services/payments-assistance-taxes/payment-plans-and-assistance-programs/income-based-programs-for-residents/apply-for-the-longtime-owner-occupants-program-loop/:
         label: "费城市政府：申请 LOOP"
+
+layers:
+  vacant_parcels:
+    label: "空地和空置建筑"
+    description: "很可能是空置的地块，附有我们有多确定以及为什么。它结合了市政府的空置指标、评估办公室的记录、建筑轮廓、拆除记录、L&I 的案件和土地用途地图，所以不会因为某一个来源出问题而失效。"
+    settings:
+      min_confidence:
+        label: "显示我们至少有这样把握的地块"
+        options:
+          "1":
+            label: "只要有任何空置迹象"
+          "2":
+            label: "大概或很有可能是空置的"
+          "3":
+            label: "只显示很有可能是空置的"
+      kinds:
+        label: "显示"
+        options:
+          both:
+            label: "空地和建筑"
+          lots:
+            label: "只显示空地"
+          buildings:
+            label: "只显示建筑"
+      listed:
+        label: "被市政府的土地机构列为“可用”"
+        options:
+          any:
+            label: "任何地块"
+          available:
+            label: "只显示列为可用的"
+      lens:
+        label: "给地块着色的依据"
+        options:
+          violence:
+            label: "“减少暴力”视角"
+          heat:
+            label: "“高温和树荫”视角"
+          placemaking:
+            label: "“场所营造”视角"
+  hin_2025:
+    label: "高伤害路网"
+    description: "费城大多数交通死亡和重伤事故发生的街道，由市政府的 Vision Zero 计划在 2025 年绘制。"
+  shootings_hex:
+    label: "枪击事件，按区域统计"
+    description: "所选时间范围内的枪击受害者，按每个约两个街区宽的六边形统计。显示它是为了把关怀引向最有帮助的地方，而不是给某些地方贴上危险的标签。"
+    settings:
+      window:
+        label: "时间范围"
+        options:
+          m12:
+            label: "最近 12 个月"
+          m36:
+            label: "最近 3 年"
+  landcare_lots:
+    label: "PHS LandCare 维护的地块"
+    description: "宾夕法尼亚园艺协会通过 LandCare 和 Community LandCare 清理、绿化并持续割草的空地。这就是费城的试验所检验的那种照看。"
+  gardens:
+    label: "社区菜园"
+    description: "由 PHS 或 Neighborhood Gardens Trust 支持的社区菜园和农场，以及在公园与休闲部登记的菜园。人们已经在照看这些地方，所以它们绝不会显示为空置。"
+  council_districts:
+    label: "市议会选区"
+    description: "2024 年划定的十个市议会选区，这样您就能看出该联系哪位议员的办公室。"
+    settings:
+      names:
+        label: "显示名称"
+  community_organizations:
+    label: "注册社区组织"
+    description: "在市政府注册的社区团体，它们会得知所在地区的分区变更。它们的辖区常常相互重叠。"
+    settings:
+      names:
+        label: "显示名称"
+  neighborhoods:
+    label: "社区"
+    description: "社区的名称和边界，来自 Abaca Labs 制作的 OpenDataPhilly 社区地图。"
+    settings:
+      names:
+        label: "显示名称"
+  segments:
+    label: "街道安全，逐个路段"
+    description: "每个街道路段按“街道安全”视角着色：它是否位于高伤害路网上、在 PennDOT 记录最近的五年里，有多少人在那里步行或骑车时遇难或受重伤、最近两年里那里是否有人遇难，以及 400 米内是否有学校。移动视角滑块，可以改变组合方式。路段还会说明市政府列出沿线有多少根灯杆、其中多少根灯是 LED，以及市政府列出的那里的交通减速措施。"
+    settings:
+      min_score:
+        label: "显示评分至少达到以下的路段"
+        options:
+          "1":
+            label: "任何高于零的评分"
+          "20":
+            label: "100 分中的 20 分"
+          "40":
+            label: "100 分中的 40 分"
+          "60":
+            label: "100 分中的 60 分"
+  crashes:
+    label: "交通事故"
+    description: "2015 年到 2024 年向 PennDOT 报告的费城交通事故，按人员受伤的严重程度着色。可以选择年份、受伤严重程度，以及涉及的人。PennDOT 的记录在事故发生约一年后才到，所以最近的死亡事故改以纪念点的方式出现。"
+    settings:
+      years:
+        label: "年份"
+        options:
+          latest:
+            label: "最近一年的记录"
+          recent:
+            label: "最近五年"
+          all:
+            label: "2015 年以来的每一年"
+      severity:
+        label: "人员受伤的严重程度"
+        options:
+          "0":
+            label: "每一起事故"
+          "1":
+            label: "有人受伤"
+          "2":
+            label: "有人遇难或受重伤"
+          "3":
+            label: "有人遇难"
+      mode:
+        label: "涉及的人"
+        options:
+          all:
+            label: "所有人"
+          walk_cycle:
+            label: "步行或骑车的人"
+          walk:
+            label: "步行的人"
+          cycle:
+            label: "骑自行车的人"
+          motorcycle:
+            label: "骑摩托车的人"
+  memorials:
+    label: "纪念点"
+    description: "在我们的街道上步行、骑车或骑滑板车时遇难的人，依据警察局 2019 年以来的交通事故死亡记录，每一位都在事发地点安静地标出。只有在已有公开的纪念名单提供姓名时，才会显示姓名；任何人都可以请求撤下姓名或标记。"
+    settings:
+      show_names:
+        label: "显示姓名"
+      all_fatal:
+        label: "同时纪念在汽车里和骑摩托车时遇难的人"
+  parking_reports:
+    label: "已报告的停车问题（Laser Vision）"
+    description: "在图例所示日期之前的 12 个月里，使用 Philly Bike Action 的 Laser Vision 应用的人报告车辆挡住人行道、人行横道、路口转角、路缘坡道和自行车道的地方，按每个约一个街区大小的区域统计。它显示的是使用同一个应用的人报告问题的地方，并不是所有的问题。报告少于 5 份的区域不显示，所以绝不会露出任何一份单独的报告。同一个地方有很多报告，就是需要做实体改善的证据：缘石外扩、护柱、路口留出视野、受保护的自行车道和装卸区。"
+    settings:
+      kind:
+        label: "显示这些车辆的报告"
+        options:
+          all:
+            label: "以上任何一种方式挡路"
+          sidewalk:
+            label: "停在人行道上"
+          bike_lane:
+            label: "停在自行车道上"
+          crosswalk:
+            label: "停在人行横道上"
+          corner:
+            label: "停在路口转角"
+          ramp:
+            label: "挡住路缘坡道"
+  street_poles:
+    label: "街道灯杆和市政府名单上的灯"
+    description: "街道部名单上的每一根街道灯杆，以及名单上列在它们上面的灯：LED 灯、较旧的高压钠灯，或市政府没有注明类型的灯。许多灯杆，例如 PECO 的灯杆和交通信号灯杆，没有列出灯。这是市政府已经安装的，并不说明今晚哪盏灯是亮的：灯不亮时，请把灯杆编号报告给 Philly311。放大到几个街区的范围才会显示。"
+    settings:
+      show:
+        label: "显示"
+        options:
+          all:
+            label: "每一根灯杆"
+          lamps:
+            label: "名单上有灯的灯杆"
+          not_led:
+            label: "名单上不是 LED 的灯"
+  traffic_calming:
+    label: "市政府名单上的交通减速措施"
+    description: "街道部为了让住宅街道上的驾驶人减速而设置的减速垫、减速丘和减速台，附有每一处设置的日期。邻居可以请求市政府在住宅街道上设置；主干道和州公路不符合条件。街道路段会显示它有多少处、从什么时候开始有，而在高伤害路网上有人受伤的路段，会说明目前还没有记录。"
+  crossing_guards:
+    label: "学校过街协管员岗位"
+    description: "市政府设有学校过街协管员的路口。这是一项安全服务，在上学和放学时，帮助学校附近的孩子和所有人过马路。每个岗位都标明它所在的路口，以及 400 米内最近的学校。"
+  basemap:
+    label: "底图"
+    description: "来自 OpenStreetMap 的街道、建筑、公园、水域和地名，位于其他一切的下面。可以选择灰色外观让数据更突出，或者关闭底图。"
+    settings:
+      look:
+        label: "外观"
+        options:
+          light:
+            label: "浅色，彩色"
+          muted:
+            label: "灰色，让数据更突出"
+  transit_stops:
+    label: "公交车站和有轨电车站"
+    description: "SEPTA 在费城的每一个公交车站和有轨电车站，依据 SEPTA 当前的时刻表：在那里停靠的线路、典型的工作日、星期六和星期日公交车或有轨电车多久来一班、服务几点开始和结束，以及平均每个工作日有多少人在那里上车（来自 SEPTA 自己的统计）。每个车站会显示：在 OpenStreetMap 已知的情况下，乘客在那里能看到什么；市政府自己的名单上有候车亭时，显示候车亭；它在公交舒适度视角下的优先度；以及邻居可以做些什么。地铁、El 高架线和 Regional Rail 车站可以在设置中添加。"
+    settings:
+      service:
+        label: "显示符合以下条件的车站"
+        options:
+          all:
+            label: "任何班次"
+          frequent:
+            label: "班次频繁：中午每 15 分钟或更频繁一班"
+          long_wait:
+            label: "等候时间长：中午不到每 30 分钟一班"
+      color:
+        label: "车站按以下依据着色"
+        options:
+          lens:
+            label: "公交舒适度视角下的优先度"
+          wait:
+            label: "中午公交车或火车多久来一班"
+          boardings:
+            label: "每个工作日有多少人上车"
+      stations:
+        label: "同时显示地铁、El 高架线和 Regional Rail 车站"
+  transit_routes:
+    label: "公交、有轨电车和火车线路"
+    description: "SEPTA 的每条线路在费城走过的街道和轨道，依据 SEPTA 当前的时刻表，按车辆类型着色。选择“班次频繁的线路”，可以看到哪里在中午至少每 15 分钟有一班公交车或火车。"
+    settings:
+      service:
+        label: "显示线路"
+        options:
+          all:
+            label: "每条线路"
+          frequent:
+            label: "班次频繁的线路：中午每 15 分钟或更频繁一班"
+  stop_amenities:
+    label: "车站的候车亭和长椅"
+    description: "OpenStreetMap 已知的公交车站和有轨电车站上，乘客能看到什么：候车亭或屋顶、有长椅但没有候车亭、两者都没有，或尚未调查。“尚未调查”是指还没有人记录，并不表示这个车站什么都没有。到目前为止，OpenStreetMap 只有大约十分之一的车站（SEPTA 完整的车站名单是它自己的图层）。邻居可以用 StreetComplete 手机应用调查车站，他们的答案大约一周内就会出现在这里。"
+    settings:
+      show:
+        label: "显示"
+        options:
+          all:
+            label: "每一个车站"
+          surveyed:
+            label: "有人调查过的车站"
+          unsurveyed:
+            label: "尚未调查的车站"
+  city_shelters:
+    label: "市政府名单上的公交候车亭"
+    description: "市政府自己名单上的公交候车亭，由市政府与其广告合作伙伴安装和维护，并标明每一个所服务的 SEPTA 车站。有市政府候车亭的车站，在公交舒适度视角中算作有遮蔽。如果 OpenStreetMap 说某个车站没有候车亭而市政府名单上有，车站页面会说明两者不一致，实地调查可以确定。这份名单最近一次更改是在 2025 年 1 月，所以之后新建或拆除的候车亭可能没有反映。"
+  heat_tracts:
+    label: "按社区统计的高温脆弱度"
+    description: "夏天的高温对每个人口普查区的人冲击有多大，依据市政府的高温脆弱性指数（公共卫生部和可持续发展办公室，2017 年到 2019 年的数据）。它把高温暴露度（这个人口普查区在夏天有多热，由卫星测量）和高温敏感度（住在那里的人当中，有多少人在高温中面临更大的风险，包括年龄、健康、收入、教育、语言和种族等十二项指标，按市政府编制这项指数的方式）放在一起。人口普查区按全市的五分之一来着色，最深的五分之一风险最高。暴露度和敏感度可以在设置中单独显示。"
+    settings:
+      measure:
+        label: "人口普查区按以下依据着色"
+        options:
+          vulnerability:
+            label: "高温脆弱度：高温和面临风险的人合在一起"
+          exposure:
+            label: "高温暴露度：有多热"
+          sensitivity:
+            label: "高温敏感度：有多少人在高温中面临风险"
+      priority:
+        label: "用轮廓标出市政府评为非常高的人口普查区"
+  city_trees:
+    label: "街道和公园里的树"
+    description: "公园与休闲部树木清单（2025 年）里的每一棵树：市政府在人行道上和公园里养护的树，不包括私人院子里的树，附有每棵树的种类和树干粗细。放大到几个街区的范围才会显示。树干直径不到 4 英寸的小树，往往是幼树，TreePhilly 要求幼树从 3 月到 12 月，每周大约浇 20 加仑水。"
+    settings:
+      show:
+        label: "显示"
+        options:
+          all:
+            label: "每一棵树"
+          big:
+            label: "大型遮阴树：树干直径至少 12 英寸"
+          small:
+            label: "小树：树干直径不到 4 英寸，往往是幼树"
+  floodplain:
+    label: "洪泛区"
+    description: "FEMA 的洪水地图预计会发洪水的地方，按市政府公布的内容（2023 年）：年概率 1% 的洪泛区，那里每年至少有百分之一的可能发生洪水；以及它旁边年概率 0.2% 的区域（常被称为百年一遇和五百年一遇洪泛区）。在那里建造的任何东西，都必须遵守市政府的洪泛区规定。能吸收雨水的绿化在那里有帮助，要选用耐得住潮湿土地的植物。"
+    settings:
+      zones:
+        label: "显示"
+        options:
+          both:
+            label: "年概率 1% 和 0.2% 的区域"
+          high:
+            label: "只显示年概率 1% 的洪泛区"
+  benches:
+    label: "长椅，按 OpenStreetMap 上的标注"
+    description: "可以坐的地方：人们添加到 OpenStreetMap（任何人都能改进的免费地图）上的长椅，地图上有标注时，还会说明每张长椅有没有靠背。OpenStreetMap 缺少很多长椅，所以地图上没有显示长椅的街道，也可能有一些。任何人都可以用 StreetComplete 手机应用添加长椅，大约一周内就会出现在这里。"
+  picnic_tables:
+    label: "野餐桌，按 OpenStreetMap 上的标注"
+    description: "人们添加到 OpenStreetMap 上的野餐桌，大多在公园里，地图上有标注时，还会说明每张桌子是否在屋顶下。OpenStreetMap 缺少很多野餐桌。任何人都可以用 StreetComplete 手机应用添加，大约一周内就会出现在这里。"
+  drinking_water:
+    label: "饮用水，按 OpenStreetMap 上的标注"
+    description: "人们添加到 OpenStreetMap 上的饮水器和水龙头，地图上有标注时，还会说明能否灌水瓶。OpenStreetMap 只知道费城的几十处，所以公园与休闲部名单上的饮水器是它们自己的图层。任何人都可以用 StreetComplete 手机应用添加饮水器，大约一周内就会出现在这里。"
+  toilets:
+    label: "公共厕所，按 OpenStreetMap 上的标注"
+    description: "人们添加到 OpenStreetMap 上的厕所，地图上有标注时，还会说明谁可以使用、是否收费，以及轮椅能否通行。不对公众开放的厕所不包括在内。OpenStreetMap 只知道费城不到一百处。任何人都可以用 StreetComplete 手机应用添加，大约一周内就会出现在这里。"
+  bookcases:
+    label: "社区小型图书亭（Little Free Library），按 OpenStreetMap 上的标注"
+    description: "公共书架，常被称为 little free library，任何人都可以在那里拿书或放书，是人们添加到 OpenStreetMap 上的。缺少很多。任何人都可以用 StreetComplete 手机应用添加，大约一周内就会出现在这里。"
+  park_water:
+    label: "公园里的饮水器"
+    description: "公园和休闲中心的饮水器和水瓶灌水站，按费城公园与休闲部的名单。休闲中心里面的饮水器，在中心开放时可以使用。"
+  libraries:
+    label: "Free Library 分馆"
+    description: "市政府列出的费城 Free Library 的每一个地点，附有地址、电话，以及指向其页面的链接，可查看开放时间。图书馆免费，向所有人开放。"
+  recreation_centers:
+    label: "休闲中心"
+    description: "费城公园与休闲部举办活动的地方：休闲中心、长者中心和环境教育中心，按市政府的名单，并说明每个中心有没有健身房。"
+  pools:
+    label: "游泳池和喷水游乐区"
+    description: "市政府的游泳池、喷水游乐区和洒水器，是天热时纳凉的地方，按费城公园与休闲部的名单，说明每个今年是否开放。游泳池只在夏季开放；本周的开放时间，请向公园与休闲部查询。"
+    settings:
+      show:
+        label: "显示"
+        options:
+          in_service:
+            label: "只显示今年开放的"
+          all:
+            label: "全部，也包括今年不开放的"
+  cooling_centers:
+    label: "纳凉和取暖中心"
+    description: "市政府应急管理办公室列为取暖或纳凉场所的地方：图书馆、休闲中心、社区合作伙伴和费城住房管理局的社区中心，按这张地图最近一次复制名单那天的内容，说明每个场所是否被列为开放、它的开放时间和提供什么。这不是实时信息：场所会随天气开放或关闭，所以出发前请先打电话问问该场所或拨打 Philly311。同时也是场所的图书馆或休闲中心，只显示一次。"
+    settings:
+      kind:
+        label: "场所类型"
+        options:
+          any:
+            label: "天热或天冷"
+          cooling:
+            label: "天热时纳凉"
+          warming:
+            label: "天冷时取暖"
+      show:
+        label: "显示"
+        options:
+          all:
+            label: "全部，开放或关闭按名单所列"
+          open:
+            label: "只显示列为开放的"
+  dumping:
+    label: "向 311 报告的非法倾倒垃圾"
+    description: "过去 90 天内有人就非法倾倒垃圾问题询问过 Philly311 的街区，说明有多少请求，以及是否还有未办结的。按街区统计，绝不按地址统计，也不显示任何关于报告人的信息。一项请求表明有人注意到了问题，并请求帮助；有些街区提出请求比别的街区更频繁，所以请求少，并不表示这个街区很干净。"
+    settings:
+      show:
+        label: "显示有以下情况的街区"
+        options:
+          any:
+            label: "过去 90 天内有任何请求"
+          open:
+            label: "有请求仍未办结"
+  dark_lights:
+    label: "已报告不亮的街灯和小巷灯"
+    description: "过去 90 天内有人请 Philly311 修理不亮的街灯或小巷灯的街区，说明有多少请求，以及是否还有未办结的，同时列出市政府名单上沿这个街区的灯杆和灯。按街区统计，绝不按地址统计，也不显示任何关于报告人的信息。"
+    settings:
+      show:
+        label: "显示有以下情况的街区"
+        options:
+          any:
+            label: "过去 90 天内有任何请求"
+          open:
+            label: "有请求仍未办结"
+  graffiti:
+    label: "向 311 报告的涂鸦"
+    description: "过去 90 天内有人请 Philly311 清除涂鸦的街区，说明有多少请求，以及是否还有未办结的。按街区统计，绝不按地址统计，也不显示任何关于报告人的信息。"
+    settings:
+      show:
+        label: "显示有以下情况的街区"
+        options:
+          any:
+            label: "过去 90 天内有任何请求"
+          open:
+            label: "有请求仍未办结"
+  public_art:
+    label: "公共艺术"
+    description: "壁画、雕塑和雕像、马赛克镶嵌画和其他公共艺术，来自市政府的“艺术百分比”名单、OpenStreetMap 和 Wikidata。当其中两三个来源列出同一件作品时，地图只显示一次，并链接到每个来源。纪念某个人的艺术作品，只显示为纪念性艺术作品，不带姓名。Mural Arts Philadelphia 在自己的网站上保存着费城最大的壁画名单；它的条款不允许复制，所以地图改为链接到它。如果缺少某件作品，请把它添加到 OpenStreetMap，大约一周内就会出现在这里。"
+    settings:
+      murals:
+        label: "壁画和墙面绘画"
+      sculptures:
+        label: "雕塑和雕像"
+      mosaics:
+        label: "马赛克镶嵌画"
+      other:
+        label: "其他类型的艺术"
+      inside:
+        label: "建筑物内的作品"
+  playgrounds:
+    label: "儿童游乐场"
+    description: "费城公园与休闲部列出的儿童游乐场，说明每个适合的年龄，以及市政府注明时的设置年份。一个公园往往有两个，一个给较小的孩子，一个给较大的孩子。地块页面会说明最近的游乐场，以及它的直线距离。"
+  walkability:
+    label: "每个地区的步行便利程度（EPA）"
+    description: "美国环境保护署（EPA）为每个人口普查街区组（几个街区大小的区域）制定的全国步行指数，来自它的 Smart Location Database（2021 年，依据大约 2017 年到 2019 年的数据）。它用四项指标，给一个地区对步行的支持程度打 1 到 20 分：有多少个街角、最近的公共交通站点有多近，以及住宅、工作和商店混合程度的两项指标。地区按费城街区组的五分之一着色，或按 EPA 自己的分类着色，后者是与全国比较。每项指标都可以在设置中单独显示。街区组已经裁剪到城市的陆地范围，所以河流保持空白。"
+    settings:
+      measure:
+        label: "地区按以下依据着色"
+        options:
+          index:
+            label: "步行指数：四项指标合在一起"
+          corners:
+            label: "街角：街道的连通程度"
+          transit:
+            label: "公共交通：最近的站点有多近"
+          mix:
+            label: "住宅、工作和商店的混合"
+      compare:
+        label: "与以下比较"
+        options:
+          city:
+            label: "费城：全市街区组的五分之一"
+          nation:
+            label: "全国：EPA 自己的分类"
+  walking_distance:
+    label: "步行距离内的人口和场所"
+    description: "对每个约两个街区宽的六边形：有多少人住在它中心步行 5 分钟的范围内，来自 2020 年人口普查；七类日常场所中有几类在步行 10 分钟范围内（图书馆、休闲中心、游泳池或喷水游乐区、公园里的饮水器、学校、接受 SNAP 的杂货店或市场，以及公交、有轨电车或火车站）；或者有多少个街角在步行 5 分钟范围内。步行 5 分钟按 400 米、步行 10 分钟按 800 米的直线距离计算，这比沿街道步行稍微远一点，而且会越过步行的人无法越过的铁路线、高速公路和河流。"
+    settings:
+      measure:
+        label: "六边形按以下依据着色"
+        options:
+          people:
+            label: "步行 5 分钟范围内居住的人口"
+          places:
+            label: "步行 10 分钟范围内有几类日常场所"
+          corners:
+            label: "步行 5 分钟范围内的街角数"
+  traffic_stress:
+    label: "骑自行车的交通压力（DVRPC）"
+    description: "每条街道骑自行车有多大压力，依据特拉华河谷区域规划委员会从车道数、车速和自行车道类型（如果有的话）做出的评定：第 1 级适合大多数各年龄的人，第 2 级适合大多数成年人，第 3 级只适合有信心的骑行者，第 4 级只适合最无所畏惧的骑行者。一条街两个方向不同时，显示压力较大的那个。评级来自 DVRPC 的模型和标示的限速，而不是骑遍每一条街道。"
+    settings:
+      show:
+        label: "显示"
+        options:
+          all:
+            label: "DVRPC 评级的每一条街道"
+          stressful:
+            label: "只显示压力大的街道：第 3 级和第 4 级"
+          calm:
+            label: "只显示平静的街道：第 1 级和第 2 级"
+  displacement_watch:
+    label: "迁离关注区：价格上涨的迹象"
+    description: "至少有以下两项迹象的地区（人口普查区），并且其中至少一项与价格本身有关（前三项）：房屋的售价比五年前高出很多，涨得比全市快；市政府的评估价值涨得比全市快得多；市政府的市场价值分析发现房价攀升，已超出长期居民的负担能力；公司买下了所售房屋中的很大一部分；至少五分之三的住房是出租的；或者许多租户的房租占了收入的一半或以上（由项目所有者于 2026 年 10 月 9 日添加）。绿化和其他改善可能让价格进一步上涨，所以当一条给地块绿化、种树、营造可以坐的地方、开办菜园或请人创作艺术作品的建议，或者一个市政府列为可用的地块，位于这些地区之一时，它的卡片会加上保护邻居的办法。这里显示的是公开记录里的迹象，不是预测，也不说明住在这里的是谁。点按一个地区，可以查看它的迹象和为每一项测量了什么，并且作为背景资料，查看租金中位数、家庭收入中位数和空置住房的数量，来自人口普查局的调查；每一个调查数字都附有它的误差范围。"
+    settings:
+      shade:
+        label: "给这些地区着色（关闭则只显示它们的轮廓）"
+  historic_districts:
+    label: "历史街区"
+    description: "费城历史委员会（Philadelphia Historical Commission）的地方历史街区。对街区内的建筑和地块做改动，即使是一幅壁画、一道围栏或一个菜园，也可能需要委员会审查：请先询问委员会（215 686 7660）。市政府要求每个人都向委员会确认房产的历史保护状态。点按一个街区，可以查看它的名称和指定的日期。"
+  historic_properties:
+    label: "列入历史名录的房产"
+    description: "列入费城历史名胜名录的房产，每一处都是自己的地块，有的单独列入，有的作为历史街区的一部分（放大后才显示）。这里的改动可能需要历史委员会审查：请先询问他们（215 686 7660）。"
+  zoning_overlays:
+    label: "分区叠加区"
+    description: "《分区法规》在基础分区之上增加自己规定的区域：社区保护、商业街、防洪和陡坡保护、Wissahickon 附近的铺装限制、机场附近的高度、招牌等等。许多叠加区相互重叠，有几个覆盖了费城的大部分地区。点按一个位置，可以查看那里的每个叠加区，以及它在《分区法规》中的章节。叠加区可能改变允许做什么；请在做计划之前向市政府核实。"
+    settings:
+      show:
+        label: "显示"
+        options:
+          all:
+            label: "叠加区和其他特别规定"
+          districts:
+            label: "只显示叠加区"
+  hearings:
+    label: "即将举行的听证会"
+    description: "关于某处房产，在分区调整委员会、执照和检查复审委员会、建筑标准委员会和市政府其他委员会面前定下的听证会，来自市政府的申诉记录，附有日期、时间和申诉的类型。任何人都可以参加分区听证会；点按一场听证会，可以查看如何参加，并打开这个地块的页面。提出申诉的人，只显示在那个地块自己的页面上，绝不显示在地图上。"
+    settings:
+      boards:
+        label: "显示"
+        options:
+          all:
+            label: "每个委员会"
+          zoning:
+            label: "只显示分区调整委员会"
+  brownfields:
+    label: "棕地场址（EPA）"
+    description: "联邦棕地资助曾为评估或清理出资的房产，来自 EPA 的记录。这不是所有污染土地的地图，也不说明某个场址今天是否受到污染。在棕地上或附近种植食物之前，请先检测土壤。"
+  aerial_photos:
+    label: "按年份的航拍照片"
+    description: "整个城市的航拍照片，从飞机上拍摄：市政府自己从 1996 年以来每一个有照片的年份（每年春季，大多数年份在 3 月到 5 月），以及市政府托管的较早照片，来自特拉华河谷区域规划委员会（1959 年和 1975 年）和美国地质调查局（1999 年）。拖动滑块浏览各个年份，可以看到一个街区以前有什么：拆掉的房子、清理过的地块、长出来的菜园。图层打开时，照片直接来自市政府的服务器，并画在地图上其他一切的下面。较早的年份不太清晰，而且 2000 年以前的照片是黑白的。"
+    settings:
+      year:
+        label: "年份"
+        options:
+          "1959":
+            label: "1959 年"
+          "1975":
+            label: "1975 年"
+          "1996":
+            label: "1996 年"
+          "1999":
+            label: "1999 年"
+          "2000":
+            label: "2000 年"
+          "2004":
+            label: "2004 年"
+          "2005":
+            label: "2005 年"
+          "2008":
+            label: "2008 年"
+          "2009":
+            label: "2009 年"
+          "2010":
+            label: "2010 年"
+          "2011":
+            label: "2011 年"
+          "2012":
+            label: "2012 年"
+          "2014":
+            label: "2014 年"
+          "2015":
+            label: "2015 年"
+          "2016":
+            label: "2016 年"
+          "2017":
+            label: "2017 年"
+          "2018":
+            label: "2018 年"
+          "2019":
+            label: "2019 年"
+          "2020":
+            label: "2020 年"
+          "2022":
+            label: "2022 年"
+          "2023":
+            label: "2023 年"
+          "2024":
+            label: "2024 年"
+          "2025":
+            label: "2025 年"
+      opacity:
+        label: "照片的显示强度（百分比）"
+  atlas_1860:
+    label: "1860 年地图集（Hexamer 和 Locher）"
+    description: "Hexamer 和 Locher 绘制的 1860 年费城地图集，逐个街区画出了建筑和地块，由 Greater Philadelphia GeoHistory Network 对齐到今天的地图，并由市政府托管。它只涵盖中心城和 Northern Liberties。把强度调低，就能透过它看到今天的街道。图层打开时，它直接来自市政府的服务器。"
+    settings:
+      opacity:
+        label: "地图集的显示强度（百分比）"
+  redlining_1937:
+    label: "1937 年红线地图（HOLC 评级）"
+    description: "1937 年，联邦机构“房主贷款公司”（Home Owners’ Loan Corporation，HOLC）按照它判断在各个社区发放抵押贷款有多安全，把费城的社区从 A 到 D 评级。评级在很大程度上取决于每个区域住着什么人：黑人家庭和许多移民家庭居住的区域，通常被评为 D，并用红线圈出，“红线”（redlining）一词就是这么来的。这个图层显示 1937 年的区域和评级，由 Mapping Inequality 描绘。这些评级只是记录了该机构在 1937 年如何评判各个地方；它们不说明今天住在那里的人。点按一个区域，可以查看它的评级，以及指向 Mapping Inequality 上它 1937 年描述的链接。仅限非商业用途。"
+    settings:
+      shade:
+        label: "给这些区域着色（关闭则只显示它们的轮廓和评级）"
