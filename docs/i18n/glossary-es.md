@@ -107,3 +107,22 @@ page worth following, see above).
 - **Survey sheet words** inside the StreetComplete app and the OpenStreetMap editor are given in
   the app's English, with the Spanish meaning beside them, since the app speaks the phone's
   language and the editor the browser's.
+
+## Added in the catch up pass (2026-10-22)
+
+| English | Spanish | Note |
+|---|---|---|
+| packet | paquete | a printable packet for a meeting |
+| flyer | volante | a sign for a lot's fence; "tamaño Carta" for Letter paper |
+| ward and division | ward (distrito electoral) y división | "ward" stays because ballots and the City say it; explained once in `represent.wardHelp` |
+| committee people | miembros del comité | |
+| Council member / at large | miembro del Concejo / de toda la ciudad (at large) | the salutation is "Estimado/a miembro del Concejo" |
+| Registered Community Organization | organización comunitaria registrada (RCO) | as before |
+| letter to the owner | carta al dueño | salutation "Estimado/a propietario/a:", with a colon as Spanish letters use |
+| license plate | placa de vehículo | the photo rule: never a child's face, never anyone who did not agree, never a license plate |
+| project neighbors finished | proyecto que terminaron los vecinos | the form is "Cuéntenos sobre un proyecto que terminó" |
+| a 311 fix | un arreglo del 311 | |
+
+Safety lines translated with extra care: `letters.unreviewed` ("Un abogado todavía no ha revisado esta
+carta. No es asesoría legal."), `flyer.publicWarning`, `flyer.whereNot`, `projects.tellUsNote`,
+`projects.privacy`, and the same rules on the Where to post a flyer, How to do it and Contact pages.
