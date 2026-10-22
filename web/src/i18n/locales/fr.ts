@@ -2376,7 +2376,7 @@ const fr: Catalog = {
       listedInDistrict: (district) => `Cette propriété figure au Philadelphia Register of Historic Places au titre de ${district}.`,
       askFirst:
         "Les changements ici peuvent nécessiter l'examen de la Historical Commission ; demandez-leur d'abord. Pour une fresque ou un jardin, demandez à la Commission avant de commencer.",
-      contact: 'Philadelphia Historical Commission : 215 686 7660, preservation@phila.gov.',
+      contact: 'Philadelphia Historical Commission : 215 686 7660, preservation@phila.gov.',
       confirm: "La Ville demande à tout le monde de confirmer le statut historique d'une propriété auprès de la Commission.",
       commissionSite: 'Le site web de la Historical Commission',
       projectReview: 'Comment la Commission examine les travaux sur les propriétés historiques',
