@@ -10,6 +10,11 @@
   import { isOpaAccount } from '../dossier/opa.ts';
   import { plain } from '../dossier/plain.ts';
   import { loadShard, shardLocation } from '../dossier/shard.ts';
+  import { pageLanguage, stringsIn } from '../i18n/boot.ts';
+  import { pickerLanguages } from '../i18n/choose.ts';
+  import { englishStrings, type Strings } from '../i18n/english.ts';
+  import { isLanguageCode, type LanguageCode } from '../i18n/languages.ts';
+  import { currentLocale } from '../i18n/locale.ts';
   import { strings } from '../strings.ts';
   import Dialog from '../components/common/Dialog.svelte';
   import SiteNav from '../components/common/SiteNav.svelte';
@@ -18,7 +23,7 @@
   import TranslationNote from '../components/language/TranslationNote.svelte';
   import QrCode from '../components/print/QrCode.svelte';
   import StaticMapView from '../components/print/StaticMapView.svelte';
-  import { clearFlyers, contactCaution, defaultFields, HOPES, hopeLines, readFlyers, writeFlyers, type FlyerFields, type Hope } from './flyer.ts';
+  import { clearFlyers, contactCaution, defaultFields, flyerWords, HOPES, readFlyers, typedHeadline, writeFlyers, type FlyerFields, type Hope } from './flyer.ts';
   import { lotPageUrl, ownLink } from './qr.ts';
 
   const t = strings.flyer;
@@ -42,7 +47,36 @@
 
   const lotUrl = $derived(opa ? lotPageUrl(siteUrl, opa) : null);
   const link = $derived(ownLink(fields.ownLink));
-  const hopes = $derived(hopeLines(fields));
+
+  // The flyer's languages: the page's own unless the organizers choose another, and English
+  // beside it if they want. Each language's words load once, when it is first chosen.
+  const pageCode = currentLocale();
+  const choices = pickerLanguages(pageCode, pageLanguage().showAll);
+  let loaded = $state.raw<Partial<Record<LanguageCode, Strings>>>({ [pageCode]: strings, en: englishStrings() });
+  const flyerCode = $derived<LanguageCode>(fields.language ?? pageCode);
+  const codes = $derived<LanguageCode[]>(fields.withEnglish && flyerCode !== 'en' ? [flyerCode, 'en'] : [flyerCode]);
+  $effect(() => {
+    for (const code of codes) {
+      if (loaded[code]) continue;
+      void stringsIn(code).then((words) => {
+        if (words) loaded = { ...loaded, [code]: words };
+      });
+    }
+  });
+  /** The flyer's words in each of its languages; until a language has loaded, the page's own stand in. */
+  const sides = $derived.by(() => {
+    if (!opa) return [];
+    const ready = [...new Set(codes.map((code) => (loaded[code] ? code : pageCode)))];
+    return ready.map((code, i) => flyerWords(loaded[code]!, code, fields, { opa, address }, i === 0));
+  });
+  const headline = $derived(typedHeadline(fields, Object.values(loaded).map((words) => words!.flyer.defaultHeadline)));
+  const ownLabel = $derived(fields.ownLinkLabel.trim());
+
+  function pickLanguage(code: string) {
+    if (!isLanguageCode(code)) return;
+    fields.language = code;
+    keep();
+  }
   const caution = $derived(contactCaution(fields.contact));
   const copies = $derived(fields.size === 'half' ? [0, 1] : [0]);
 
@@ -131,6 +165,16 @@
             <label class="check"><input type="radio" name="pk-flyer-size" checked={fields.size === size} onchange={() => ((fields.size = size), keep())} /> {t.sizes[size]}</label>
           {/each}
         </fieldset>
+        <div class="field" data-testid="flyer-language">
+          <label for="pk-flyer-language">{t.language}</label>
+          <select id="pk-flyer-language" aria-describedby="pk-flyer-language-help" value={flyerCode} onchange={(e) => pickLanguage(e.currentTarget.value)}>
+            {#each choices as language (language.code)}<option value={language.code} lang={language.code}>{language.name}</option>{/each}
+          </select>
+          <span id="pk-flyer-language-help" class="muted small">{t.languageHelp}</span>
+          {#if flyerCode !== 'en'}
+            <label class="check"><input type="checkbox" checked={!!fields.withEnglish} onchange={(e) => ((fields.withEnglish = e.currentTarget.checked), keep())} /> {t.withEnglish}</label>
+          {/if}
+        </div>
       </form>
 
       <section class="where" aria-labelledby="pk-flyer-where">
@@ -152,43 +196,58 @@
     {#if opa}
       <div class="sheet size-{fields.size}" data-testid="flyer">
         {#each copies as copy (copy)}
-          <article class="flyer" aria-label={copy === 0 ? t.preview : undefined} aria-hidden={copy === 1 ? 'true' : undefined}>
-            <h2 class="headline">{fields.headline.trim() || t.defaultHeadline}</h2>
-            <p class="address">{address ?? strings.place.parcel(opa)}</p>
+          <article class="flyer" class:two={sides.length > 1} lang={sides[0]?.code} dir={sides[0]?.dir} aria-label={copy === 0 ? t.preview : undefined} aria-hidden={copy === 1 ? 'true' : undefined}>
+            {#if headline}
+              <h2 class="headline" dir="auto">{headline}</h2>
+            {:else}
+              <h2 class="headline">{#each sides as w (w.code)}<span class="side" lang={w.code} dir={w.dir}>{w.headline}</span>{/each}</h2>
+            {/if}
+            <!-- Words from City records and words typed find their own direction, so an address
+                 keeps its number in front on a flyer in Arabic. -->
+            <p class="address" dir={address ? 'auto' : undefined}>{address ?? sides[0]?.place}</p>
             <div class="middle">
               {#if at}
                 <div class="map">
-                  <StaticMapView points={[{ lng: at[0], lat: at[1], label: '' }]} width={fields.size === 'half' ? 220 : 400} height={fields.size === 'half' ? 120 : 260} maxZoom={16.5} marker="pin" alt={t.mapAlt(address ?? opa)} />
+                  <StaticMapView points={[{ lng: at[0], lat: at[1], label: '' }]} width={fields.size === 'half' ? 220 : 400} height={fields.size === 'half' ? 120 : 260} maxZoom={16.5} marker="pin" alt={sides[0]?.mapAlt ?? ''} />
                 </div>
               {/if}
-              {#if hopes.length}
+              {#if sides.some((w) => w.hopes.length || w.ownWords)}
                 <div class="hopes">
-                  <h3>{t.hopeTitle}</h3>
-                  <ul>{#each hopes as line (line)}<li>{line}</li>{/each}</ul>
+                  {#each sides as w (w.code)}
+                    {#if w.hopes.length || w.ownWords}
+                      <div class="side" lang={w.code} dir={w.dir}>
+                        <h3>{w.hopeTitle}</h3>
+                        <ul>
+                          {#each w.hopes as line (line)}<li>{line}</li>{/each}
+                          {#if w.ownWords}<li dir="auto">{w.ownWords}</li>{/if}
+                        </ul>
+                      </div>
+                    {/if}
+                  {/each}
                 </div>
               {/if}
             </div>
             {#if fields.contact.trim()}
               <div class="reach">
-                <h3>{t.reachTitle}</h3>
-                <p>{fields.contact.trim()}</p>
+                <h3>{#each sides as w (w.code)}<span class="side" lang={w.code} dir={w.dir}>{w.reachTitle}</span>{/each}</h3>
+                <p dir="auto">{fields.contact.trim()}</p>
               </div>
             {/if}
             <div class="codes">
               {#if lotUrl}
                 <figure>
-                  <QrCode text={lotUrl} label={t.qrLabel(t.scanLot)} size={fields.size === 'half' ? 84 : 160} />
-                  <figcaption>{t.scanLot}</figcaption>
+                  <QrCode text={lotUrl} label={sides[0]?.scanLotLabel ?? ''} size={fields.size === 'half' ? 84 : 160} />
+                  <figcaption>{#each sides as w (w.code)}<span class="side" lang={w.code} dir={w.dir}>{w.scanLot}</span>{/each}</figcaption>
                 </figure>
               {/if}
               {#if link}
                 <figure>
-                  <QrCode text={link} label={t.qrLabel(fields.ownLinkLabel.trim() || t.scanOwn)} size={fields.size === 'half' ? 84 : 160} />
-                  <figcaption>{fields.ownLinkLabel.trim() || t.scanOwn}</figcaption>
+                  <QrCode text={link} label={sides[0]?.scanOwnLabel ?? ''} size={fields.size === 'half' ? 84 : 160} />
+                  <figcaption>{#if ownLabel}<span dir="auto">{ownLabel}</span>{:else}{#each sides as w (w.code)}<span class="side" lang={w.code} dir={w.dir}>{w.scanOwn}</span>{/each}{/if}</figcaption>
                 </figure>
               {/if}
             </div>
-            <p class="by">{t.byNeighbors}</p>
+            <p class="by">{#each sides as w (w.code)}<span class="side" lang={w.code} dir={w.dir}>{w.byNeighbors}</span>{/each}</p>
           </article>
         {/each}
       </div>
@@ -397,6 +456,39 @@
   .size-half .reach p {
     font-size: 1rem;
   }
+  /* Two languages: each text side by side in two columns, the flyer's language first; the
+     address, map, what was typed and the codes once. */
+  .two .headline,
+  .two .hopes,
+  .two .by {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 20px;
+  }
+  .two .side {
+    display: block;
+  }
+  .two .reach h3 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1.2em;
+  }
+  .two .reach h3 .side {
+    display: inline;
+  }
+  .two .headline {
+    font-size: 1.8rem;
+  }
+  .two .hopes {
+    flex-basis: 100%;
+  }
+  .size-half .two .headline {
+    font-size: 1.25rem;
+  }
+  /* A half page has no room below the map: the two lists sit beside it. */
+  .size-half .two .hopes {
+    flex-basis: 200px;
+  }
 
   @media print {
     @page {
@@ -429,6 +521,9 @@
     .size-letter .headline {
       font-size: 44pt;
     }
+    .size-letter .two .headline {
+      font-size: 30pt;
+    }
     .size-letter .address {
       font-size: 26pt;
     }
@@ -447,6 +542,15 @@
     }
     .size-half .headline {
       font-size: 20pt;
+    }
+    .size-half .two .headline {
+      font-size: 14pt;
+    }
+    .size-half .two .hopes ul {
+      font-size: 10pt;
+    }
+    .size-half .two figcaption {
+      font-size: 8pt;
     }
     .size-half .reach {
       margin: 6px 0;

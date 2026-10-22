@@ -194,6 +194,12 @@ In `web/`:
   They keep an English sentence in order inside Arabic, and `web/src/i18n/marks.ts` finds them after
   the page draws and puts `lang="en"` (and `dir="ltr"` on an Arabic page) on the element that holds
   them. Text that leaves the page (a downloaded file, a link) goes through `plainText()`.
+- A few things print in a language other than the page's: a letter in English by default, and a
+  neighbor flyer in any language, alone or with English beside it. `stringsIn(code)` in
+  `web/src/i18n/boot.ts` gives any language's strings (English from `englishStrings()`, another
+  language from its catalog, loaded when first chosen); format with them inside
+  `withLocale(code, ...)` so numbers, dates and lists follow that language, and put `lang` and
+  `dir` on what they fill.
 - The page reads right to left in Arabic through `dir="rtl"` and logical CSS properties (start and
   end, never left and right). The map and its controls, and the charts, keep their own directions.
 - Fonts are the visitor's own system fonts, with lists for Chinese, Khmer and Arabic in

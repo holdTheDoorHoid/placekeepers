@@ -11,8 +11,8 @@
 
 import type { Registry } from '../registry/types.ts';
 import { strings } from '../strings.ts';
-import { applyCatalog, type ApplyReport, type Catalog } from './catalog.ts';
-import { keepEnglish } from './english.ts';
+import { applyCatalog, cloneText, type ApplyReport, type Catalog } from './catalog.ts';
+import { englishStrings, keepEnglish, type Strings } from './english.ts';
 import {
   addressWithLanguage,
   decideLanguage,
@@ -190,6 +190,27 @@ export async function startLanguage(options: { registry?: Registry } = {}): Prom
 
   current = { code, decision, offer: shouldOffer(decision, showAll), showAll, strings: stringsReport, registry: registryReport };
   return current;
+}
+
+/**
+ * The interface words of any language, for something a page prints in a language other than its
+ * own, such as a flyer in Vietnamese made from a page in English (src/flyer/). English is the copy
+ * kept before the page's catalog was written; the page's own language is the strings themselves;
+ * any other is its catalog written onto a copy of English, with what it lacks marked as English.
+ * Format with them inside withLocale(code, ...). Null when the language's file cannot be loaded.
+ */
+export async function stringsIn(code: LanguageCode): Promise<Strings | null> {
+  if (code === current.code) return strings;
+  if (code === 'en') return englishStrings();
+  try {
+    const catalog = (await CATALOGS[code]()).default;
+    const words = cloneText(englishStrings());
+    applyCatalog(words, catalog, markFallback, languageOf(code).dir === 'rtl' ? { isolate: isolateValue } : {});
+    return words;
+  } catch (error) {
+    console.warn(`Placekeepers could not load the words for "${code}".`, error);
+    return null;
+  }
 }
 
 /** The content pages in the page's language, or null in English or when they cannot be loaded. */

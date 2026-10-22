@@ -820,6 +820,11 @@ export const strings = {
     ownLinkLabelPlaceholder: 'Join our group chat',
     size: 'Paper',
     sizes: { letter: 'One flyer on a Letter page', half: 'Half page, two to a sheet' } as Record<string, string>,
+    // The flyer's languages (M5.2, waiting on M5.5): any language of the site, the page's own by
+    // default, and English beside it if the organizers want. What they type prints as typed.
+    language: 'Flyer language',
+    languageHelp: 'Print the flyer in the language your neighbors read. What you type prints as you typed it.',
+    withEnglish: 'Add English beside it, in a second column',
     print: 'Print the flyer',
     clear: 'Clear what I typed',
     confirmClear: 'Clear what you typed for flyers from this browser? It cannot be brought back.',
