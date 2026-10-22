@@ -106,3 +106,19 @@ offer. The same word "доступный" also means "affordable" in "досту
 says people can write in Russian and that we read it with a translation program; promises no
 reply.
 
+## Portuguese, Brazil (pt-BR)
+
+Checked 109 items. Same meaning: 109. Changed: 0. Nothing needed fixing.
+
+Small differences, kept:
+
+| Place | Portuguese | Back translation | English | Why kept |
+|---|---|---|---|---|
+| Where to post a flyer, the library bullet | "A Free Library considera comportamento inadequado afixar materiais sem aprovação prévia" | The Free Library considers it inappropriate behavior to put up materials without prior approval | The Free Library lists putting up materials without advance approval as disruptive | "Inadequado" is a little milder than "disruptive", but it says the same thing about the same rule. Not a safety line. |
+| `letters.gate.public` | "Peça pelos programas do Land Bank para vizinhos" | Ask through the Land Bank's programs for neighbors (no "instead") | Ask through the Land Bank's programs for neighbors instead | The sentence before says the lot is public land, so it still reads as the other way to ask. |
+| `dossier.owner.cityStatuses` for "held for affordable housing" | "moradia acessível" | accessible (affordable) housing | affordable housing | Outside the safety wording, noted only because "acessível" can also mean "accessible to people with disabilities" in Brazil. A native speaker could look. |
+
+Listed as available: every place says "consta como disponível na lista" (appears as available on
+the list) or "lista como disponível", the City's own label, never an offer. Contact page: says
+people can write in Portuguese and that we read it with a translation tool; promises no reply.
+
