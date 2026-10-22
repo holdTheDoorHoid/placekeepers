@@ -6,7 +6,7 @@ Ce n'est pas un avis juridique. Nous avons vérifié pour la dernière fois les 
 
 ## Les bons endroits pour afficher
 
-- **Votre propre fenêtre, porte ou clôture.** Votre propre propriété, c'est à vous d'y afficher ce que vous voulez. Une affiche dans la vitrine d'un commerce compte dans la limite de la Ville sur les enseignes de vitrine (les enseignes ne peuvent pas couvrir plus de 20 pour cent de la vitre sans permis), donc une seule affiche, c'est très bien.
+- **Votre propre fenêtre, porte ou clôture.** Vous pouvez afficher sur votre propre propriété. Une affiche dans la vitrine d'un commerce compte dans la limite de la Ville sur les enseignes de vitrine (les enseignes ne peuvent pas couvrir plus de 20 pour cent de la vitre sans permis), donc une seule affiche, c'est très bien.
 - **La clôture du propriétaire du terrain, avec sa permission.** Demandez d'abord. Si le propriétaire dit oui, notez quand et comment il a donné son accord. La page du terrain nomme le propriétaire tel que la Ville le publie, et la page des lettres a une lettre pour demander à un propriétaire la permission de prendre soin du terrain.
 - **Les panneaux d'affichage communautaires des bibliothèques et des centres de loisirs.** Demandez au personnel avant d'afficher. La Free Library considère comme gênant le fait d'afficher des documents sans accord préalable, et Parcs et loisirs autorise les panneaux d'affichage et d'annonces sur ses sites. Le personnel vous dira où et pour combien de temps.
 - **Les commerces qui sont d'accord.** Les épiceries du coin, les laveries, les barbiers et les cafés ont souvent un panneau ou une vitrine. Demandez au propriétaire ou au gérant.
