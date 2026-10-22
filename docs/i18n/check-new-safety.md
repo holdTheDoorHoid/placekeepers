@@ -69,3 +69,21 @@ around "可用" in the setting name and the lot page title, as the glossary deci
 invitation. Contact page: nothing promises a reply in Chinese (the page does not mention Chinese
 at all, which is allowed).
 
+## Vietnamese (vi)
+
+Checked 109 items. Same meaning: 109. Changed: 0. Nothing needed fixing.
+
+Small differences, kept:
+
+| Place | Vietnamese | Back translation | English | Why kept |
+|---|---|---|---|---|
+| `flyer.whereNot` | "mức phạt từ $300 mỗi biển hoặc tờ" | fines from $300 per sign or sheet | fines from $300 a sign | "Or sheet" only says the rule covers a paper flyer too. The amount is the same. |
+| `letters.gate.public` | "Hãy xin qua các chương trình của Land Bank" | Ask through the Land Bank's programs (no "instead") | Ask through the Land Bank's programs for neighbors instead | The sentence before says the lot is public land, so it still reads as the other way to ask. |
+
+Listed as available: every place says "ghi là có sẵn" or "liệt kê là có sẵn", which reads as the
+City's label (noted as, listed as), not an invitation. For a native speaker to look at: "có sẵn"
+can also mean "ready to hand" in everyday speech, so it is worth confirming that "được ghi là có
+sẵn" does not read as "free to take". The words for "listed" and "noted as" are what keep it a
+label. Contact page: says people can write in Vietnamese and that we read it with a translation
+tool; promises no reply.
+
