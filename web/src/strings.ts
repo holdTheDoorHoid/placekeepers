@@ -2393,7 +2393,7 @@ export const strings = {
     network: 'could not be reached',
     http: 'answered with an error',
     bad_data: 'sent an answer we could not read',
-    not_found: 'has no record of it',
+    not_found: 'found no record of it',
     aborted: 'was not asked',
     empty: 'was not asked',
   } as Record<string, string>,
