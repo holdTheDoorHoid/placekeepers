@@ -528,6 +528,8 @@ export function buildDossier(input: DossierInput): DossierView {
   if (parcel?.landcare) care.push(parcel.landcare.year ? s.summary.landcareSince(parcel.landcare.year) : s.summary.landcare);
   else if (int(tile?.lc) === 1) care.push(s.summary.landcare);
   if (parcel?.garden) care.push(s.summary.garden);
+  // When the City last cleaned and sealed it: care with a date, for "Did it work?" (M5.4).
+  if (parcel?.li?.sealed) care.push(strings.didit.sealedOn(formatDate(parcel.li.sealed) ?? parcel.li.sealed));
   // The lens values: the map tile's when the lot was opened from the map, else the dossier's copy
   // of the same values (a link, a search or a saved list), the tile's winning where both have
   // one, so the breakdown and the flood note show however the page was opened (issue #31).

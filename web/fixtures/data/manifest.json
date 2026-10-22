@@ -677,6 +677,24 @@
       "rows": 1,
       "newest_record": null,
       "message": null
+    },
+    "philly311_dumping_history": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 243619,
+      "newest_record": "2026-10-02",
+      "message": null
+    },
+    "li_complaints_history": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 148209,
+      "newest_record": "2026-10-03",
+      "message": null
     }
   },
   "layers": {
@@ -1306,6 +1324,10 @@
     "tables/projects.json": {
       "bytes": 1902,
       "sha256": "f2dd5537f8cb3b65ee625baeec31c49f78c406a66ebd75db57fcbdc06cf3c087"
+    },
+    "tables/didit.json": {
+      "bytes": 13029,
+      "sha256": "632e39028a2537203ca8deb26db21d21b78899c2db2704e066bb757820c09e59"
     }
   },
   "dossiers": {

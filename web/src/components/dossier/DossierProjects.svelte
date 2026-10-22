@@ -3,6 +3,7 @@
   // approved, newest first, each with what was done, when, the group if it chose to show one, what
   // it took, and a link to the report and its photos on GitHub; then the form to report one,
   // prefilled with the lot. Nothing is fetched from GitHub; the links are plain links.
+  import { DIDIT_PAGE } from '../../config/links.ts';
   import type { DossierView } from '../../dossier/build.ts';
   import { strings } from '../../strings.ts';
 
@@ -34,7 +35,8 @@
         </li>
       {/each}
     </ul>
-    <p class="muted small">{p.oneLot} {p.privacy}</p>
+    <p class="muted small">{p.oneLot} <a href="{import.meta.env.BASE_URL}{DIDIT_PAGE}">{strings.didit.lotLink}</a></p>
+    <p class="muted small">{p.privacy}</p>
     {#if onShowLayer}
       <button class="button quiet small" type="button" onclick={() => onShowLayer('projects')}>{p.showLayer}</button>
     {/if}

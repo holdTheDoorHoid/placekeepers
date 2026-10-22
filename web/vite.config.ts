@@ -43,6 +43,7 @@ export default defineConfig({
         streetcomplete: 'streetcomplete/index.html',
         survey: 'survey/index.html',
         landBank: 'land-bank/index.html',
+        didItWork: 'did-it-work/index.html',
       },
     },
   },

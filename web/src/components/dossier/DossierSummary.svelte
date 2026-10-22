@@ -3,6 +3,7 @@
   // (src/places/reasons.ts), what City records call it, care already happening, the lens
   // priority, and links to the City's pages and street imagery (never copied).
   import type { Manifest } from '../../data/manifest.ts';
+  import { DIDIT_PAGE } from '../../config/links.ts';
   import type { DossierView } from '../../dossier/build.ts';
   import { strings } from '../../strings.ts';
   import WhyBreakdown from '../lens/WhyBreakdown.svelte';
@@ -25,6 +26,10 @@
 {#if summary.cityCalls}<p>{summary.cityCalls}</p>{/if}
 {#if summary.lotSize}<p>{summary.lotSize}</p>{/if}
 {#each summary.care as line (line)}<p class="care">{line}</p>{/each}
+{#if summary.care.length}
+  <!-- Never a verdict on one lot (M5.4): when care happened, and the citywide comparison. -->
+  <p class="small muted care-note">{strings.didit.lotNote} <a href="{import.meta.env.BASE_URL}{DIDIT_PAGE}">{strings.didit.lotLink}</a></p>
+{/if}
 <ProvenanceLine provenance={summary.provenance} />
 
 {#if summary.lens && summary.why}

@@ -50,6 +50,19 @@ export const LAND_BANK_METHOD_URL =
 /** The project's repository, where corrections are reported. */
 export const REPO_URL = 'https://github.com/holdTheDoorHoid/placekeepers';
 
+/** "Did it work?" (M5.4): the page, under the site root (import.meta.env.BASE_URL), and on the
+ * published site for print. */
+export const DIDIT_PAGE = 'did-it-work/';
+export const DIDIT_PAGE_URL = 'https://holdthedoorhoid.github.io/placekeepers/did-it-work/';
+/** "Did it work?" (M5.4): the full method, its numbers and its limits, in the repository. */
+export const DIDIT_METHOD_URL = `${REPO_URL}/blob/main/docs/DIDIT_METHOD.md`;
+/** The trials docs/EVIDENCE.md cites: the greening trial (Branas and colleagues, PNAS 2018), its
+ * shootings study (Moyer and colleagues, AJPH 2019) and the house repair trial (South and
+ * colleagues, JAMA Internal Medicine 2023). */
+export const TRIAL_GREENING_URL = 'https://doi.org/10.1073/pnas.1718503115';
+export const TRIAL_SHOOTINGS_URL = 'https://doi.org/10.2105/AJPH.2018.304752';
+export const TRIAL_HOUSES_URL = 'https://doi.org/10.1001/jamainternmed.2022.5460';
+
 /** The City's own page for one property. */
 export function propertyPageUrl(opa: string): string {
   return `https://property.phila.gov/?p=${encodeURIComponent(opa)}`;

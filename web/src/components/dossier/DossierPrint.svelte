@@ -1,6 +1,7 @@
 <script lang="ts">
   // The one page printed lot page (src/dossier/print.ts). Hidden on screen; when someone prints
   // with a lot page open, only this is printed.
+  import { DIDIT_PAGE_URL } from '../../config/links.ts';
   import type { DossierView } from '../../dossier/build.ts';
   import { printModel } from '../../dossier/print.ts';
   import { currentLanguage, isSourceLocale } from '../../i18n/locale.ts';
@@ -26,6 +27,7 @@
     {/if}
     {#if m.summary.cityCalls}<p>{m.summary.cityCalls}</p>{/if}
     {#each m.summary.care as line (line)}<p>{line}</p>{/each}
+    {#if m.summary.care.length}<p>{strings.didit.lotNote} {strings.didit.lotLink}: {DIDIT_PAGE_URL}</p>{/if}
     {#if m.summary.flood}<p><strong>{strings.dossier.summary.floodTitle}.</strong> {m.summary.flood}</p>{/if}
   </section>
 

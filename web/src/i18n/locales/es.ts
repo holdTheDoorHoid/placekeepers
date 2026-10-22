@@ -71,6 +71,7 @@ const es: Catalog = {
     menuLabel: 'Páginas del sitio',
     map: 'Mapa',
     landBank: 'El Land Bank en números',
+    didIt: '¿Funcionó?',
     pages: [
       { slug: 'about', label: 'Acerca de' },
       { slug: 'why', label: 'Por qué funciona' },
