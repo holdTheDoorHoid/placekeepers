@@ -47,7 +47,7 @@ const vi: Catalog = {
     removalEmail: (email) =>
       `Hãy gửi email cho chúng tôi theo địa chỉ [${email}](mailto:${email}). Chúng tôi không dùng biểu mẫu công khai cho việc này, vì yêu cầu gỡ bỏ là chuyện riêng tư.`,
     removalComingSoon: (issueUrl) =>
-      `Địa chỉ email riêng cho các yêu cầu này sắp có. Cho đến khi có, bản đồ không hiện bất kỳ cái tên nào, và bạn có thể gửi yêu cầu qua một [issue trên GitHub](${issueUrl}). Ai cũng đọc được một issue trên GitHub, nên bạn chỉ cần ghi số nhận dạng của nơi tưởng niệm hoặc nơi đó ở đâu: bạn không cần nêu tên, lý do hay bạn là ai.`,
+      `Địa chỉ email riêng cho các yêu cầu này sắp có. Cho đến khi có, bản đồ không hiện bất kỳ cái tên nào, và bạn có thể gửi yêu cầu qua một [issue trên GitHub](${issueUrl}). Ai cũng đọc được một issue trên GitHub, nên hãy chỉ ghi số nhận dạng của nơi tưởng niệm hoặc nơi đó ở đâu: bạn không cần nêu tên, lý do hay bạn là ai.`,
   },
 
   language: {
@@ -2186,7 +2186,7 @@ const vi: Catalog = {
         'MISCELLANEOUS DEED TAXABLE': 'Chứng thư khác, có chịu thuế',
         'DEED LAND BANK': 'Chứng thư của Land Bank',
         'DEED OF CONDEMNATION': 'Chứng thư trưng thu (condemnation)',
-        'DEED - DECEASED': 'Chứng thư từ một di sản',
+        'DEED - DECEASED': 'Chứng thư từ một di sản thừa kế',
         'DEED - ADVERSE POSSESSION': 'Chứng thư do chiếm hữu đối nghịch (adverse possession)',
         'DEED RTT - OTHER': 'Chứng thư thuộc loại khác',
         'CERTIFICATE OF STOCK TRANSFER': 'Giấy chứng nhận chuyển nhượng cổ phần',
@@ -2403,14 +2403,14 @@ const vi: Catalog = {
         'INDUSTRIAL/INDUSTRIAL MIXED-USE': 'một khu công nghiệp',
         'SPECIAL PURPOSE': 'một khu mục đích đặc biệt, như công viên, cơ sở tổ chức hoặc sân bay',
       },
-      basePending: 'Một dự luật đang chờ ở Hội đồng Thành phố sẽ thay đổi nó.',
+      basePending: 'Một dự luật đang chờ ở Hội đồng Thành phố, nếu được thông qua, sẽ thay đổi nó.',
       readBill: 'Đọc dự luật',
       overlaysIntro: (n) => (n === 1 ? 'Một lớp phủ thêm quy định riêng của nó ở đây:' : `${formatNumber(n)} lớp phủ thêm quy định riêng của chúng ở đây:`),
       noOverlays: 'Không có lớp phủ quy hoạch nào bao phủ lô đất này.',
       overlayKinds: { 1: 'Khu lớp phủ', 2: 'Quy định đặc biệt', 3: 'Giới hạn lát nền' },
       readRule: (section) => (section ? `Đọc quy định: Zoning Code mục ${section}` : 'Đọc quy định trong Zoning Code'),
       sunset: (date) => `Dự kiến chấm dứt ngày ${date}.`,
-      pending: (bill) => `Một dự luật đang chờ ở Hội đồng Thành phố${bill ? `, Dự luật ${bill},` : ''} sẽ thay đổi nó.`,
+      pending: (bill) => `Một dự luật đang chờ ở Hội đồng Thành phố${bill ? `, Dự luật ${bill},` : ''} nếu được thông qua sẽ thay đổi nó.`,
       zoningNote:
         'Quy hoạch và các lớp phủ có thể thay đổi điều được phép trên một lô đất. Bản đồ của Thành phố có thể chậm hơn các dự luật mới, nên hãy kiểm tra với văn phòng quy hoạch của Thành phố trước khi bạn lên kế hoạch.',
       zoningHelp: 'Hỗ trợ về quy hoạch và kế hoạch của Thành phố',

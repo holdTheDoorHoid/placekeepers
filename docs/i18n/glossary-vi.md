@@ -113,3 +113,14 @@ terms from the human made printed form, and terms that two pages agree on, were 
 - "Philadelphia" is written as is.
 - Where the survey sheet shows a computed time or distance ("about 45 minutes", "0.4 miles") the
   words come from English code in `web/src/survey/sheet.ts` and are not translated (see the report).
+
+## Back translation check (2026-10-21)
+
+The back translation check (`docs/i18n/check-vi.md`) kept every glossary choice. It changed the
+wording of four texts. Two of the changes set a rule worth keeping:
+
+- estate stays "di sản thừa kế" everywhere, including the City's deed type for a deed from an estate
+  ("Chứng thư từ một di sản thừa kế"), because "di sản" alone can read as heritage;
+- a bill pending in City Council "would change" the zoning: write "nếu được thông qua, sẽ thay đổi"
+  (if it passes, it will change), never a plain "sẽ thay đổi".
+
