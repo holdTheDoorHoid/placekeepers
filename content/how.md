@@ -247,8 +247,8 @@ done nearby and what it took.
 ## Money to help pay for it
 
 - The City's Division of Safe Neighborhoods runs community violence prevention grants: about $24
-  million went to 147 groups in June 2025, and a new $25 million round was announced on June 17,
-  2026.
+  million went to 147 groups in June 2025, and a new $25 million round was announced on June
+  17, 2026.
 - Feet First Philly offers public space mini grants of $500 to $2,500, for projects that make a
   neighborhood easier to walk and roll in. Applications open in August and are due in October.
 - The Block Party Bonanza (a free kit and a gift card) was a 2026 only program and ended on
