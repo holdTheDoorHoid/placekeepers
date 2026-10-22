@@ -79,6 +79,22 @@ the genitive singular: "1,5 мили").
 | committee people | уполномоченные партийных комитетов (committee people) | |
 | at large (Council) | от всего города (at large) | |
 
+## The "Did it work?" page (M5.4)
+
+| English | Russian | Notes |
+|---|---|---|
+| Did it work? | Сработало ли это? | the menu item and the page title; the lot page's "whether care worked" is "сработал ли уход" |
+| care (done to a place: cleaned, greened, sealed, demolished) | уход | "places that got care" is "места, получившие уход"; never alone after "после", because "после ухода" reads as "after leaving": always "после ухода за местами". "Забота" stays for the abstract "where care is needed most" |
+| comparison, comparison places | сравнение, места для сравнения | "similar places that did not get care" is "похожие места, где ухода не было" |
+| verdict labels | «Меньше после ухода за местами», «Больше после ухода за местами», «Явных изменений нет», «Мы не смогли определить», «Слишком мало, чтобы судить» | "We could not tell" stays a plain admission, never "нет эффекта" |
+| "This does not show that care caused them." | «Это не показывает, что причиной стал уход за этими местами.» | kept on every "more afterwards" verdict |
+| the real evidence | настоящие доказательства | the randomized trials; the records "can mislead" is "может ввести в заблуждение" |
+| 90 percent interval | 90-процентный интервал | a change in words: "3,2% больше", "6,2% меньше", "без изменений"; a range is "от 6,2% меньше до 0,2% больше" |
+| the count of shootings, dumping reports, complaints | число случаев стрельбы, число сообщений о незаконном сбросе мусора, число жалоб на пустующую недвижимость | always the whole phrase starting with "число", so it is the same subject in every sentence |
+| a half year | половина года | in the genitive after "от ... до": "от первой половины 2017 года до второй половины 2024 года" |
+| area of the city (a cell of about 5 square kilometers) | часть города | never "район" (neighborhood) or "участок" (lot) |
+| the check (placebo) | проверка | "Проверка пройдена" and "Проверка не пройдена" |
+
 ## Names of City offices and programs
 
 Where phila.gov publishes a Russian name (pages under phila.gov/ru, looked up on 2026-10-21), it is
