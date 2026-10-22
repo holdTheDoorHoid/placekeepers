@@ -2124,7 +2124,7 @@ const es: Catalog = {
       checkFailed: (noun) =>
         `En los años antes del cuidado, la cantidad de ${noun} cerca de estos lugares ya cambiaba de manera distinta a la de los lugares de comparación, así que esta comparación no puede separar el efecto del cuidado de lo que ya estaba pasando.`,
       tooFew: (places, min) =>
-        `${plural(places, { one: 'Solo se pudo comparar # lugar.', other: 'Solo se pudieron comparar # lugares.' })} Una comparación necesita al menos ${formatNumber(min)}.`,
+        `${places === 0 ? 'No se pudo comparar ningún lugar.' : plural(places, { one: 'Solo se pudo comparar # lugar.', other: 'Solo se pudieron comparar # lugares.' })} Una comparación necesita al menos ${formatNumber(min)}.`,
     },
     whyMore: {
       landcare: 'PHS y la Ciudad eligen lotes donde los vecinos piden ayuda, muchas veces donde los problemas están creciendo.',
@@ -2159,7 +2159,7 @@ const es: Catalog = {
     },
     // Proyectos que terminaron los vecinos
     projectsNow: (shown, ready, before) =>
-      `El mapa muestra ${plural(shown, { one: '# proyecto que terminaron', other: '# proyectos que terminaron' })} los vecinos. ${formatNumber(ready)} de ellos se terminaron a más tardar en ${before}, hace tiempo suficiente para tener dos años de registros después.`,
+      `El mapa muestra ${plural(shown, { one: '# proyecto que terminaron', other: '# proyectos que terminaron' })} los vecinos. ${ready === 0 ? 'Ninguno de ellos se terminó' : ready === 1 ? '1 de ellos se terminó' : `${formatNumber(ready)} de ellos se terminaron`} a más tardar en ${before}, hace tiempo suficiente para tener dos años de registros después.`,
     projectsNotRead: 'Esta copia del mapa todavía no tiene una lista de proyectos que terminaron los vecinos.',
     projectsNeed: (min) =>
       `Una comparación necesita al menos ${formatNumber(min)}. Cada proyecto reportado la acerca más, y muestra a los vecinos lo que otros han hecho.`,
