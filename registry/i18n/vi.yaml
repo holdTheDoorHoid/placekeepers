@@ -924,3 +924,537 @@ suggestions:
       đầu. Hãy nhờ chủ của các tòa nhà bên cạnh trạm yêu cầu một cây; sau đó hàng xóm có thể giúp
       tưới.
     cost: Cây ven đường miễn phí cho chủ sở hữu bất động sản
+
+layers:
+  vacant_parcels:
+    label: "Lô đất trống và tòa nhà bỏ trống"
+    description: "Các thửa đất có lẽ là bỏ trống, kèm mức chắc chắn của chúng tôi và lý do. Kết hợp chỉ báo bỏ trống của Thành phố với hồ sơ của cơ quan định giá, dấu vết tòa nhà, các vụ phá dỡ, các hồ sơ của L&I và bản đồ sử dụng đất, để không nguồn nào một mình làm sai được."
+    settings:
+      min_confidence:
+        label: "Hiện các thửa đất mà chúng tôi chắc ít nhất ở mức này"
+        options:
+          "1":
+            label: "Bất kỳ dấu hiệu bỏ trống nào"
+          "2":
+            label: "Có lẽ hoặc rất có thể là bỏ trống"
+          "3":
+            label: "Chỉ những nơi rất có thể là bỏ trống"
+      kinds:
+        label: "Hiện"
+        options:
+          "both":
+            label: "Lô đất và tòa nhà"
+          "lots":
+            label: "Chỉ lô đất"
+          "buildings":
+            label: "Chỉ tòa nhà"
+      listed:
+        label: "Được các cơ quan quản lý đất của Thành phố ghi là có sẵn"
+        options:
+          "any":
+            label: "Mọi thửa đất"
+          "available":
+            label: "Chỉ những thửa được ghi là có sẵn"
+      lens:
+        label: "Tô màu các lô đất theo"
+        options:
+          "violence":
+            label: "Góc nhìn giảm bạo lực"
+          "heat":
+            label: "Góc nhìn nóng và bóng mát"
+          "placemaking":
+            label: "Góc nhìn tạo không gian cộng đồng"
+  hin_2025:
+    label: "High Injury Network"
+    description: "Những con đường nơi xảy ra phần lớn số ca tử vong và bị thương nặng do giao thông ở Philadelphia, theo bản đồ của chương trình Vision Zero của Thành phố năm 2025."
+  shootings_hex:
+    label: "Các vụ nổ súng, đếm theo khu vực"
+    description: "Các nạn nhân bị bắn trong khoảng thời gian đã chọn, đếm trên mỗi ô lục giác rộng cỡ hai dãy phố. Hiện ra để hướng sự chăm sóc đến nơi giúp được nhiều nhất, không phải để gán cho các nơi cái nhãn nguy hiểm."
+    settings:
+      window:
+        label: "Khoảng thời gian"
+        options:
+          "m12":
+            label: "12 tháng qua"
+          "m36":
+            label: "3 năm qua"
+  landcare_lots:
+    label: "Các lô đất do PHS LandCare chăm sóc"
+    description: "Các lô đất trống mà Pennsylvania Horticultural Society đã dọn dẹp, xanh hóa và tiếp tục cắt cỏ, qua LandCare và Community LandCare. Đây là sự chăm sóc mà các thử nghiệm ở Philadelphia đã kiểm chứng."
+  gardens:
+    label: "Vườn cộng đồng"
+    description: "Các vườn cộng đồng và nông trại được PHS hoặc Neighborhood Gardens Trust hỗ trợ, và các vườn đã đăng ký với Parks and Recreation. Người dân đã chăm sóc những nơi này, nên chúng không bao giờ được hiện là bỏ trống."
+  council_districts:
+    label: "Các khu vực của Hội đồng Thành phố"
+    description: "Mười khu vực của Hội đồng Thành phố như được vẽ năm 2024, để bạn biết nên liên hệ văn phòng nào."
+    settings:
+      names:
+        label: "Hiện tên"
+  community_organizations:
+    label: "Tổ chức Cộng đồng Đã đăng ký (RCO)"
+    description: "Các nhóm khu phố đã đăng ký với Thành phố, được thông báo về các thay đổi quy hoạch trong khu vực của họ. Khu vực của các nhóm thường chồng lên nhau."
+    settings:
+      names:
+        label: "Hiện tên"
+  neighborhoods:
+    label: "Các khu phố"
+    description: "Tên và ranh giới các khu phố, từ bản đồ khu phố của OpenDataPhilly do Abaca Labs thực hiện."
+    settings:
+      names:
+        label: "Hiện tên"
+  segments:
+    label: "An toàn đường phố, từng đoạn phố"
+    description: "Mỗi đoạn phố được tô màu theo góc nhìn an toàn đường phố: có nằm trong High Injury Network không, có bao nhiêu người thiệt mạng hoặc bị thương nặng ở đó khi đi bộ hoặc đi xe đạp trong năm năm gần nhất của hồ sơ PennDOT, có ai thiệt mạng ở đó trong hai năm qua không, và có trường học trong vòng 400 mét không. Hãy kéo các thanh trượt của góc nhìn để đổi cách kết hợp. Một đoạn phố cũng cho biết Thành phố liệt kê bao nhiêu cột dọc theo nó và bao nhiêu đèn trên đó là đèn LED, và các biện pháp làm chậm xe mà Thành phố liệt kê ở đó."
+    settings:
+      min_score:
+        label: "Hiện các đoạn phố có điểm ít nhất"
+        options:
+          "1":
+            label: "Bất kỳ điểm nào trên không"
+          "20":
+            label: "20 trên 100"
+          "40":
+            label: "40 trên 100"
+          "60":
+            label: "60 trên 100"
+  crashes:
+    label: "Các vụ tai nạn"
+    description: "Các vụ tai nạn báo cho PennDOT ở Philadelphia từ 2015 đến 2024, tô màu theo mức người bị thương nặng đến đâu. Hãy chọn các năm, mức người bị thương, và những ai có liên quan. Hồ sơ của PennDOT đến sau các vụ tai nạn khoảng một năm, nên các ca tử vong gần đây nhất hiện ra dưới dạng nơi tưởng niệm."
+    settings:
+      years:
+        label: "Các năm"
+        options:
+          "latest":
+            label: "Năm gần nhất của hồ sơ"
+          "recent":
+            label: "Năm năm gần nhất"
+          "all":
+            label: "Mọi năm từ 2015"
+      severity:
+        label: "Mức người bị thương nặng đến đâu"
+        options:
+          "3":
+            label: "Có người thiệt mạng"
+          "2":
+            label: "Có người thiệt mạng hoặc bị thương nặng"
+          "1":
+            label: "Có người bị thương"
+          "0":
+            label: "Mọi vụ tai nạn"
+      mode:
+        label: "Những ai có liên quan"
+        options:
+          "all":
+            label: "Mọi người"
+          "walk_cycle":
+            label: "Người đi bộ hoặc đi xe đạp"
+          "walk":
+            label: "Người đi bộ"
+          "cycle":
+            label: "Người đi xe đạp"
+          "motorcycle":
+            label: "Người đi xe máy"
+  memorials:
+    label: "Tưởng niệm"
+    description: "Những người đã thiệt mạng trên đường phố của chúng ta khi đi bộ, đi xe đạp hoặc đi xe scooter, theo hồ sơ của Police Department về các ca tử vong trong tai nạn giao thông từ năm 2019, mỗi người được đánh dấu lặng lẽ tại nơi xảy ra. Một cái tên chỉ xuất hiện khi một danh sách tưởng niệm công khai đã nêu nó, và bất kỳ ai cũng có thể yêu cầu gỡ một cái tên hoặc một dấu."
+    settings:
+      show_names:
+        label: "Hiện tên"
+      all_fatal:
+        label: "Cũng tưởng nhớ những người thiệt mạng khi đi ô tô và xe máy"
+  parking_reports:
+    label: "Các vấn đề đỗ xe đã được báo (Laser Vision)"
+    description: "Nơi những người dùng ứng dụng Laser Vision của Philly Bike Action báo có xe chắn vỉa hè, vạch qua đường, góc đường, lối dốc vỉa hè và làn xe đạp trong 12 tháng đến ngày ghi ở chú giải, đếm theo khu vực rộng cỡ một dãy phố. Nó cho thấy nơi những người dùng một ứng dụng báo vấn đề, không phải mọi vấn đề. Khu vực có ít hơn 5 báo cáo bị bỏ ra, để không bao giờ lộ một báo cáo riêng lẻ nào. Nhiều báo cáo ở một chỗ là bằng chứng cho các cách sửa vật lý: mở rộng lề đường, cột chắn, góc phố thoáng tầm nhìn, làn xe đạp có bảo vệ và khu vực bốc dỡ hàng."
+    settings:
+      kind:
+        label: "Hiện các báo cáo về xe"
+        options:
+          "all":
+            label: "Chắn đường theo bất kỳ cách nào trong số này"
+          "sidewalk":
+            label: "Trên vỉa hè"
+          "bike_lane":
+            label: "Trong làn xe đạp"
+          "crosswalk":
+            label: "Trên vạch qua đường"
+          "corner":
+            label: "Ở góc đường"
+          "ramp":
+            label: "Chắn lối dốc vỉa hè"
+  street_poles:
+    label: "Cột trên đường phố và các đèn mà Thành phố liệt kê"
+    description: "Mọi cột trên đường phố mà Streets Department liệt kê, cùng các đèn được liệt kê trên đó: đèn LED, đèn natri cao áp loại cũ, hoặc một đèn thuộc loại mà họ không nêu tên. Nhiều cột, như cột của PECO và cột của tín hiệu giao thông, không liệt kê đèn nào. Đây là những gì Thành phố đã lắp đặt, không phải đèn có sáng đêm nay hay không: hãy báo đèn tắt cho Philly311 kèm số của cột. Hiện khi phóng to, rộng vài dãy phố."
+    settings:
+      show:
+        label: "Hiện"
+        options:
+          "all":
+            label: "Mọi cột"
+          "lamps":
+            label: "Các cột có đèn mà Thành phố liệt kê"
+          "not_led":
+            label: "Các đèn mà Thành phố không liệt kê là LED"
+  traffic_calming:
+    label: "Biện pháp làm chậm xe mà Thành phố liệt kê"
+    description: "Các đệm, gờ và bục giảm tốc mà Streets Department đã lắp để làm chậm xe trên các đường phố khu dân cư, kèm ngày mỗi cái được lắp. Hàng xóm có thể đề nghị Thành phố làm chúng trên một đường phố khu dân cư; các đường huyết mạch (arterial) và đường của tiểu bang không đủ điều kiện. Một đoạn phố cho biết nó có bao nhiêu cái và từ khi nào, và một đoạn trong High Injury Network nơi có người bị thương cho biết khi nào chưa ghi nhận cái nào."
+  crossing_guards:
+    label: "Các vị trí nhân viên hướng dẫn học sinh qua đường"
+    description: "Các góc đường nơi Thành phố bố trí một nhân viên hướng dẫn học sinh qua đường, một dịch vụ an toàn giúp trẻ em và mọi người khác băng qua đường gần trường học vào đầu và cuối giờ học. Mỗi vị trí nêu góc đường của nó và trường học gần nhất trong vòng 400 mét."
+  basemap:
+    label: "Bản đồ nền"
+    description: "Đường phố, tòa nhà, công viên, sông hồ và địa danh từ OpenStreetMap, nằm bên dưới mọi thứ khác. Hãy chọn kiểu màu xám để dữ liệu nổi bật, hoặc tắt bản đồ nền."
+    settings:
+      look:
+        label: "Kiểu hiển thị"
+        options:
+          "light":
+            label: "Sáng, có màu"
+          "muted":
+            label: "Màu xám, để dữ liệu nổi bật"
+  transit_stops:
+    label: "Trạm xe buýt và xe điện"
+    description: "Mọi trạm xe buýt và xe điện của SEPTA ở Philadelphia, từ lịch chạy hiện hành của SEPTA: các tuyến dừng ở đó, xe buýt hoặc xe điện đến thường xuyên thế nào vào một ngày thường trong tuần, thứ Bảy và Chủ Nhật, khi nào xe bắt đầu và ngừng chạy, và bao nhiêu người lên xe ở đó vào một ngày trong tuần trung bình, từ số đếm riêng của SEPTA. Mỗi trạm cho thấy hành khách thấy gì ở đó nơi OpenStreetMap biết, một mái che nơi danh sách riêng của Thành phố có, mức ưu tiên của nó theo góc nhìn Thoải mái khi đi xe công cộng, và những gì hàng xóm có thể làm. Các ga tàu điện ngầm, El và Regional Rail có thể được thêm trong phần cài đặt."
+    settings:
+      service:
+        label: "Hiện các trạm có"
+        options:
+          "all":
+            label: "Bất kỳ chuyến nào"
+          "frequent":
+            label: "Xe chạy thường xuyên: cứ 15 phút một chuyến hoặc thường hơn vào buổi trưa"
+          "long_wait":
+            label: "Phải chờ lâu: thưa hơn cứ 30 phút một chuyến vào buổi trưa"
+      color:
+        label: "Tô màu các trạm theo"
+        options:
+          "lens":
+            label: "Mức ưu tiên theo góc nhìn Thoải mái khi đi xe công cộng"
+          "wait":
+            label: "Xe buýt hoặc tàu đến thường xuyên thế nào vào buổi trưa"
+          "boardings":
+            label: "Bao nhiêu người lên xe mỗi ngày trong tuần"
+      stations:
+        label: "Hiện thêm các ga tàu điện ngầm, El và Regional Rail"
+  transit_routes:
+    label: "Các tuyến xe buýt, xe điện và tàu"
+    description: "Các con đường và đường ray mà mỗi tuyến SEPTA đi qua ở Philadelphia, từ lịch chạy hiện hành của SEPTA, tô màu theo loại phương tiện. Hãy chọn các tuyến thường xuyên để xem nơi xe buýt hoặc tàu đến ít nhất cứ 15 phút một chuyến vào buổi trưa."
+    settings:
+      service:
+        label: "Hiện các tuyến"
+        options:
+          "all":
+            label: "Mọi tuyến"
+          "frequent":
+            label: "Các tuyến thường xuyên: cứ 15 phút một chuyến hoặc thường hơn vào buổi trưa"
+  stop_amenities:
+    label: "Mái che và ghế ngồi ở các trạm"
+    description: "Những gì hành khách thấy ở các trạm xe buýt và xe điện mà OpenStreetMap biết: một mái che hoặc mái lợp, một ghế ngồi nhưng không có mái che, không có cả hai, hoặc chưa khảo sát. \"Chưa khảo sát\" nghĩa là chưa có ai ghi lại; điều đó không có nghĩa là trạm không có gì. Cho đến nay OpenStreetMap chỉ có khoảng một trong mười trạm (danh sách đầy đủ các trạm của SEPTA là một lớp riêng). Hàng xóm có thể khảo sát các trạm bằng ứng dụng điện thoại StreetComplete, và câu trả lời của họ xuất hiện ở đây trong khoảng một tuần."
+    settings:
+      show:
+        label: "Hiện"
+        options:
+          "all":
+            label: "Mọi trạm"
+          "surveyed":
+            label: "Các trạm đã có người khảo sát"
+          "unsurveyed":
+            label: "Các trạm chưa khảo sát"
+  city_shelters:
+    label: "Các mái che trạm xe buýt mà Thành phố liệt kê"
+    description: "Các mái che trạm xe buýt trong danh sách riêng của Thành phố, do Thành phố lắp đặt và bảo trì cùng đối tác quảng cáo của mình, kèm trạm SEPTA mà mỗi mái che phục vụ. Một trạm có mái che của Thành phố được tính là có mái che trong góc nhìn Thoải mái khi đi xe công cộng. Nơi OpenStreetMap cho biết một trạm không có mái che nhưng Thành phố liệt kê có, trang của trạm cho biết hai nguồn không thống nhất, và một cuộc khảo sát sẽ giải quyết việc đó. Danh sách thay đổi lần gần nhất vào tháng 1 năm 2025, nên một mái che mới lắp hoặc đã dỡ từ đó có thể bị thiếu."
+  heat_tracts:
+    label: "Mức dễ bị tổn thương do nóng theo khu phố"
+    description: "Cái nóng mùa hè tác động mạnh thế nào lên người dân trong mỗi khu điều tra dân số, từ Chỉ số Dễ bị Tổn thương do Nóng (Heat Vulnerability Index) của Thành phố (Sở Y tế Công cộng và Văn phòng Phát triển Bền vững, dữ liệu 2017 đến 2019). Chỉ số gộp mức chịu nóng, tức khu đó nóng đến đâu vào những ngày hè theo đo đạc của vệ tinh, và độ nhạy với nóng, tức số người sống ở đó có nguy cơ cao hơn khi trời nóng (mười hai thước đo về tuổi, sức khỏe, thu nhập, học vấn, ngôn ngữ và chủng tộc, như Thành phố đã xây dựng chỉ số). Các khu được tô đậm nhạt theo từng phần năm của thành phố, phần năm đậm nhất là có nhiều nguy cơ nhất. Mức chịu nóng và độ nhạy có thể được hiện riêng trong phần cài đặt."
+    settings:
+      measure:
+        label: "Tô đậm nhạt các khu theo"
+        options:
+          "vulnerability":
+            label: "Mức dễ bị tổn thương do nóng: cái nóng và những người có nguy cơ gộp lại"
+          "exposure":
+            label: "Mức chịu nóng: nóng đến đâu"
+          "sensitivity":
+            label: "Độ nhạy với nóng: bao nhiêu người có nguy cơ khi trời nóng"
+      priority:
+        label: "Viền các khu mà Thành phố đánh giá là rất cao"
+  city_trees:
+    label: "Cây ven đường và trong công viên"
+    description: "Mọi cây trong danh mục cây của Parks and Recreation (2025): các cây mà Thành phố trông coi trên vỉa hè và trong công viên, không phải cây trong sân nhà riêng, kèm loại và kích thước thân của mỗi cây. Hiện khi phóng to, rộng vài dãy phố. Các cây nhỏ, thân rộng dưới 4 inch, thường là cây non, và TreePhilly đề nghị cây non được tưới khoảng 20 gallon nước mỗi tuần từ tháng 3 đến tháng 12."
+    settings:
+      show:
+        label: "Hiện"
+        options:
+          "all":
+            label: "Mọi cây"
+          "big":
+            label: "Cây bóng mát lớn: thân rộng ít nhất 12 inch"
+          "small":
+            label: "Cây nhỏ: thân rộng dưới 4 inch, thường là cây non"
+  floodplain:
+    label: "Vùng ngập lụt"
+    description: "Nơi các bản đồ lũ của FEMA dự kiến có ngập lụt, như Thành phố công bố (2023): vùng ngập có xác suất 1 phần trăm mỗi năm, nơi mỗi năm có ít nhất 1 trên 100 khả năng xảy ra lũ, và khu vực có xác suất 0,2 phần trăm mỗi năm bên cạnh nó (thường được gọi là vùng ngập 100 năm và 500 năm). Mọi thứ xây ở đó phải theo quy định vùng ngập lụt của Thành phố. Xanh hóa giúp thấm nước mưa thì có ích ở đó, với các cây chịu được đất ẩm ướt."
+    settings:
+      zones:
+        label: "Hiện"
+        options:
+          "both":
+            label: "Cả khu vực xác suất 1 phần trăm và 0,2 phần trăm mỗi năm"
+          "high":
+            label: "Chỉ vùng ngập có xác suất 1 phần trăm mỗi năm"
+  benches:
+    label: "Ghế ngồi, như được vẽ trong OpenStreetMap"
+    description: "Chỗ để ngồi: các ghế ngồi mà mọi người đã thêm vào OpenStreetMap, bản đồ miễn phí mà ai cũng có thể cải thiện, kèm việc mỗi ghế có tựa lưng hay không nơi bản đồ cho biết. OpenStreetMap còn thiếu nhiều ghế, nên một con phố không thấy ghế nào vẫn có thể có một số. Bất kỳ ai cũng có thể thêm một chiếc ghế bằng ứng dụng điện thoại StreetComplete, và nó xuất hiện ở đây trong khoảng một tuần."
+  picnic_tables:
+    label: "Bàn dã ngoại, như được vẽ trong OpenStreetMap"
+    description: "Các bàn dã ngoại mà mọi người đã thêm vào OpenStreetMap, phần lớn trong công viên, kèm việc mỗi bàn có nằm dưới mái hay không nơi bản đồ cho biết. OpenStreetMap còn thiếu nhiều bàn. Bất kỳ ai cũng có thể thêm một bàn bằng ứng dụng điện thoại StreetComplete, và nó xuất hiện ở đây trong khoảng một tuần."
+  drinking_water:
+    label: "Nước uống, như được vẽ trong OpenStreetMap"
+    description: "Các vòi uống nước và vòi nước mà mọi người đã thêm vào OpenStreetMap, kèm việc có đổ đầy chai được không nơi bản đồ cho biết. OpenStreetMap chỉ biết vài chục cái trong thành phố, nên các vòi uống nước mà Parks and Recreation liệt kê là một lớp riêng. Bất kỳ ai cũng có thể thêm một vòi uống nước bằng ứng dụng điện thoại StreetComplete, và nó xuất hiện ở đây trong khoảng một tuần."
+  toilets:
+    label: "Nhà vệ sinh công cộng, như được vẽ trong OpenStreetMap"
+    description: "Các nhà vệ sinh mà mọi người đã thêm vào OpenStreetMap, kèm ai được dùng, có thu phí không và có lối cho xe lăn không nơi bản đồ cho biết. Các nhà vệ sinh không mở cho công chúng bị bỏ ra. OpenStreetMap biết chưa đến một trăm cái trong thành phố. Bất kỳ ai cũng có thể thêm một cái bằng ứng dụng điện thoại StreetComplete, và nó xuất hiện ở đây trong khoảng một tuần."
+  bookcases:
+    label: "Thư viện nhỏ miễn phí, như được vẽ trong OpenStreetMap"
+    description: "Các tủ sách công cộng, thường gọi là thư viện nhỏ miễn phí (little free library), nơi ai cũng có thể lấy hoặc để lại một cuốn sách, như mọi người đã thêm vào OpenStreetMap. Nhiều cái còn thiếu. Bất kỳ ai cũng có thể thêm một cái bằng ứng dụng điện thoại StreetComplete, và nó xuất hiện ở đây trong khoảng một tuần."
+  park_water:
+    label: "Vòi uống nước trong công viên"
+    description: "Các vòi uống nước và điểm đổ đầy chai nước ở công viên và trung tâm sinh hoạt, như Philadelphia Parks and Recreation liệt kê. Cái nằm bên trong một trung tâm sinh hoạt dùng được khi trung tâm mở cửa."
+  libraries:
+    label: "Các chi nhánh Free Library"
+    description: "Mọi địa điểm của Free Library of Philadelphia mà Thành phố liệt kê, kèm địa chỉ, số điện thoại và liên kết đến trang xem giờ mở cửa. Thư viện miễn phí và mở cho mọi người."
+  recreation_centers:
+    label: "Các trung tâm sinh hoạt"
+    description: "Nơi Philadelphia Parks and Recreation tổ chức các chương trình: trung tâm sinh hoạt, trung tâm cho người lớn tuổi và trung tâm giáo dục môi trường, kèm việc mỗi nơi có phòng tập thể dục hay không, như Thành phố liệt kê."
+  pools:
+    label: "Hồ bơi và khu vòi phun nước"
+    description: "Các hồ bơi, khu vòi phun nước (sprayground) và vòi phun nước của Thành phố, những nơi để giải nhiệt vào ngày nóng, kèm việc mỗi nơi có hoạt động trong năm nay hay không, như Philadelphia Parks and Recreation liệt kê. Hồ bơi chỉ mở vào mùa hè; hãy hỏi Parks and Recreation về giờ mở cửa của tuần này."
+    settings:
+      show:
+        label: "Hiện"
+        options:
+          "in_service":
+            label: "Chỉ những nơi hoạt động trong năm nay"
+          "all":
+            label: "Tất cả, cả những nơi không hoạt động"
+  cooling_centers:
+    label: "Điểm tránh nóng và sưởi ấm"
+    description: "Những nơi mà Office of Emergency Management của Thành phố liệt kê là điểm sưởi ấm hoặc tránh nóng: thư viện, trung tâm sinh hoạt, đối tác cộng đồng và các trung tâm cộng đồng của Philadelphia Housing Authority, kèm việc mỗi nơi được ghi là đang mở hay không, giờ mở cửa và những gì nơi đó cung cấp, như được liệt kê vào ngày bản đồ này sao chép danh sách gần nhất. Không phải thông tin trực tiếp: các điểm mở và đóng theo thời tiết, nên hãy gọi cho điểm đó hoặc Philly311 trước khi đi. Một thư viện hoặc trung tâm sinh hoạt cũng là một điểm sẽ chỉ hiện một lần."
+    settings:
+      kind:
+        label: "Các điểm cho"
+        options:
+          "any":
+            label: "Nóng hoặc lạnh"
+          "cooling":
+            label: "Tránh nóng khi thời tiết nóng"
+          "warming":
+            label: "Sưởi ấm khi thời tiết lạnh"
+      show:
+        label: "Hiện"
+        options:
+          "all":
+            label: "Tất cả, mở hay đóng như được ghi"
+          "open":
+            label: "Chỉ những nơi được ghi là đang mở"
+  dumping:
+    label: "Đổ rác trái phép đã báo cho 311"
+    description: "Các đoạn phố nơi có người đã hỏi Philly311 về việc đổ rác trái phép trong 90 ngày qua, kèm số yêu cầu và có yêu cầu nào còn đang mở không. Đếm theo đoạn phố, không bao giờ theo địa chỉ, và không có gì về người đã báo. Một yêu cầu cho thấy có người đã để ý và nhờ giúp; một số đoạn phố nhờ thường xuyên hơn những đoạn khác, nên ít yêu cầu không có nghĩa là đoạn phố sạch."
+    settings:
+      show:
+        label: "Hiện các đoạn phố có"
+        options:
+          "any":
+            label: "Bất kỳ yêu cầu nào trong 90 ngày qua"
+          "open":
+            label: "Một yêu cầu còn đang mở"
+  dark_lights:
+    label: "Đèn đường và đèn hẻm đã báo bị tắt"
+    description: "Các đoạn phố nơi có người đã nhờ Philly311 sửa một đèn đường hoặc đèn hẻm bị tắt trong 90 ngày qua, kèm số yêu cầu và có yêu cầu nào còn đang mở không, bên cạnh các cột và đèn mà Thành phố liệt kê dọc đoạn phố. Đếm theo đoạn phố, không bao giờ theo địa chỉ, và không có gì về người đã báo."
+    settings:
+      show:
+        label: "Hiện các đoạn phố có"
+        options:
+          "any":
+            label: "Bất kỳ yêu cầu nào trong 90 ngày qua"
+          "open":
+            label: "Một yêu cầu còn đang mở"
+  graffiti:
+    label: "Vẽ bậy lên tường đã báo cho 311"
+    description: "Các đoạn phố nơi có người đã nhờ Philly311 xóa hình vẽ bậy trong 90 ngày qua, kèm số yêu cầu và có yêu cầu nào còn đang mở không. Đếm theo đoạn phố, không bao giờ theo địa chỉ, và không có gì về người đã báo."
+    settings:
+      show:
+        label: "Hiện các đoạn phố có"
+        options:
+          "any":
+            label: "Bất kỳ yêu cầu nào trong 90 ngày qua"
+          "open":
+            label: "Một yêu cầu còn đang mở"
+  public_art:
+    label: "Nghệ thuật công cộng"
+    description: "Tranh tường, tượng điêu khắc và tượng, tranh ghép mảnh và nghệ thuật công cộng khác, từ danh sách Percent for Art của Thành phố, OpenStreetMap và Wikidata. Khi hai hoặc ba nguồn cùng liệt kê một tác phẩm, bản đồ chỉ hiện nó một lần và liên kết đến từng nguồn. Các tác phẩm tưởng nhớ một người chỉ được hiện như tác phẩm tưởng niệm, không có tên. Mural Arts Philadelphia giữ danh sách tranh tường lớn nhất của thành phố trên trang web riêng của họ; điều khoản của họ không cho phép sao chép, nên bản đồ liên kết đến đó thay vì chép lại. Nếu thiếu một tác phẩm, hãy thêm nó vào OpenStreetMap và nó xuất hiện ở đây trong khoảng một tuần."
+    settings:
+      murals:
+        label: "Tranh tường và tranh vẽ trên tường"
+      sculptures:
+        label: "Tượng điêu khắc và tượng"
+      mosaics:
+        label: "Tranh ghép mảnh (mosaic)"
+      other:
+        label: "Các loại nghệ thuật khác"
+      inside:
+        label: "Các tác phẩm bên trong tòa nhà"
+  playgrounds:
+    label: "Sân chơi"
+    description: "Các sân chơi mà Philadelphia Parks and Recreation liệt kê, kèm độ tuổi mà mỗi sân dành cho và năm lắp đặt khi Thành phố cho biết. Một công viên thường có hai sân, một cho trẻ nhỏ hơn và một cho trẻ lớn hơn. Trang của một lô đất nêu tên sân chơi gần nhất và khoảng cách theo đường thẳng."
+  walkability:
+    label: "Mỗi khu vực dễ đi bộ đến đâu (EPA)"
+    description: "Chỉ số Dễ đi bộ Quốc gia (National Walkability Index) của Cơ quan Bảo vệ Môi trường Hoa Kỳ (EPA) cho mỗi nhóm khối điều tra dân số, một khu vực vài dãy phố, từ Smart Location Database của họ (2021, từ dữ liệu khoảng 2017 đến 2019). Nó chấm từ 1 đến 20 mức một khu vực hỗ trợ việc đi bộ tốt đến đâu, dựa trên bốn thước đo: có bao nhiêu góc phố, trạm xe công cộng gần nhất cách bao xa, và hai thước đo về mức hòa trộn của nhà ở, việc làm và cửa hàng. Các khu vực được tô đậm nhạt theo từng phần năm số nhóm khối của Philadelphia, hoặc theo các hạng riêng của EPA, so sánh với cả nước. Mỗi thước đo có thể được hiện riêng trong phần cài đặt. Các nhóm khối được cắt theo phần đất của thành phố, nên sông vẫn để trống."
+    settings:
+      measure:
+        label: "Tô đậm nhạt các khu vực theo"
+        options:
+          "index":
+            label: "Chỉ số dễ đi bộ: cả bốn thước đo gộp lại"
+          "corners":
+            label: "Góc phố: các đường phố kết nối với nhau đến đâu"
+          "transit":
+            label: "Xe công cộng: trạm gần nhất cách bao xa"
+          "mix":
+            label: "Mức hòa trộn của nhà ở, việc làm và cửa hàng"
+      compare:
+        label: "So sánh với"
+        options:
+          "city":
+            label: "Philadelphia: từng phần năm số nhóm khối của thành phố"
+          "nation":
+            label: "Cả nước: các hạng riêng của EPA"
+  walking_distance:
+    label: "Người và địa điểm trong khoảng đi bộ"
+    description: "Với mỗi ô lục giác rộng cỡ hai dãy phố: có bao nhiêu người sống trong vòng 5 phút đi bộ từ giữa ô, theo điều tra dân số 2020; có bao nhiêu trong bảy loại địa điểm hằng ngày nằm trong vòng 10 phút đi bộ (một thư viện, một trung tâm sinh hoạt, một hồ bơi hoặc khu vòi phun nước, một vòi uống nước trong công viên, một trường học, một cửa hàng tạp hóa hoặc chợ nhận SNAP, và một trạm xe buýt, xe điện hoặc tàu); hoặc có bao nhiêu góc phố trong vòng 5 phút đi bộ. 5 phút đi bộ được tính là 400 mét và 10 phút đi bộ là 800 mét theo đường thẳng, xa hơn một chút so với đi bộ dọc các đường phố và cắt qua đường ray, đường cao tốc và sông mà người đi bộ không qua được."
+    settings:
+      measure:
+        label: "Tô đậm nhạt các ô lục giác theo"
+        options:
+          "people":
+            label: "Số người sống trong vòng 5 phút đi bộ"
+          "places":
+            label: "Các loại địa điểm hằng ngày trong vòng 10 phút đi bộ"
+          "corners":
+            label: "Các góc phố trong vòng 5 phút đi bộ"
+  traffic_stress:
+    label: "Mức căng thẳng giao thông cho người đi xe đạp (DVRPC)"
+    description: "Mỗi con đường căng thẳng đến đâu khi đi xe đạp, theo đánh giá của Delaware Valley Regional Planning Commission dựa trên số làn, tốc độ xe chạy và loại làn xe đạp, nếu có: mức 1 phù hợp với phần lớn mọi người ở mọi lứa tuổi, mức 2 với phần lớn người lớn, mức 3 chỉ với người đi xe tự tin, và mức 4 chỉ với những người gan dạ nhất. Nơi hai chiều của một con đường khác nhau, chiều căng thẳng hơn được hiện. Các đánh giá đến từ các mô hình của DVRPC và giới hạn tốc độ đã niêm yết, không phải từ việc đi xe qua từng con đường."
+    settings:
+      show:
+        label: "Hiện"
+        options:
+          "all":
+            label: "Mọi con đường DVRPC đánh giá"
+          "stressful":
+            label: "Chỉ các đường căng thẳng: mức 3 và 4"
+          "calm":
+            label: "Chỉ các đường êm: mức 1 và 2"
+  displacement_watch:
+    label: "Theo dõi nguy cơ phải dọn đi: các dấu hiệu cho thấy giá đang tăng"
+    description: "Các khu vực (khu điều tra dân số) có ít nhất hai trong các dấu hiệu sau, trong đó ít nhất một dấu hiệu nói về chính giá cả (ba dấu hiệu đầu): nhà bán được giá cao hơn nhiều so với năm năm trước, nhanh hơn mức chung của cả thành phố; giá trị định giá của Thành phố tăng nhanh hơn nhiều so với mức chung của thành phố; Phân tích Giá trị Thị trường (Market Value Analysis) của Thành phố thấy giá đang vượt khỏi tầm với của cư dân lâu năm; các công ty mua nhiều căn trong số nhà đã bán; ít nhất ba trong năm căn nhà là nhà thuê; hoặc nhiều người thuê nhà phải trả một nửa thu nhập hoặc hơn cho tiền thuê (do chủ sở hữu bổ sung ngày 9 tháng 10 năm 2026). Xanh hóa và các cải thiện khác có thể làm giá tăng thêm, nên khi một gợi ý xanh hóa một lô đất, trồng cây, làm một chỗ ngồi, bắt đầu một khu vườn hoặc xin nghệ thuật, hoặc một lô đất mà Thành phố liệt kê là có sẵn, nằm trong một trong các khu vực này, thẻ của nó có thêm các cách bảo vệ hàng xóm. Đây là các dấu hiệu trong hồ sơ công, không phải dự báo, và nó không nói gì về những người sống ở đây. Hãy chạm vào một khu vực để xem các dấu hiệu của nó và những gì đã được đo cho từng dấu hiệu, và, như bối cảnh, tiền thuê nhà ở giữa, thu nhập hộ gia đình ở giữa và số căn nhà bỏ trống, từ khảo sát của Cục Điều tra Dân số Hoa Kỳ; mọi con số khảo sát đều kèm biên độ sai số."
+    settings:
+      shade:
+        label: "Tô đậm nhạt các khu vực (tắt thì chỉ hiện đường viền)"
+  historic_districts:
+    label: "Các khu lịch sử"
+    description: "Các khu lịch sử địa phương của Philadelphia Historical Commission. Thay đổi đối với các tòa nhà và lô đất trong một khu có thể cần Commission xem xét, kể cả một bức tranh tường, một hàng rào hay một khu vườn: hãy hỏi Commission trước (215 686 7660). Thành phố đề nghị mọi người xác nhận tình trạng lịch sử của một bất động sản với Commission. Hãy chạm vào một khu để xem tên và ngày được chỉ định."
+  historic_properties:
+    label: "Các bất động sản trong danh bạ di tích lịch sử"
+    description: "Các bất động sản trong Philadelphia Register of Historic Places, mỗi nơi là một thửa đất riêng, được liệt kê riêng hoặc như một phần của một khu lịch sử (hiện khi phóng to). Thay đổi ở đây có thể cần Historical Commission xem xét: hãy hỏi họ trước (215 686 7660)."
+  zoning_overlays:
+    label: "Các lớp phủ quy hoạch (zoning overlay)"
+    description: "Các khu vực nơi Zoning Code thêm các quy định riêng lên trên quy hoạch cơ bản: bảo tồn khu phố, các đường thương mại, bảo vệ chống lũ và sườn dốc, giới hạn lát nền gần Wissahickon, chiều cao gần sân bay, biển hiệu và hơn nữa. Nhiều lớp chồng lên nhau, và một vài lớp bao phủ phần lớn thành phố. Hãy chạm vào một chỗ để thấy mọi lớp phủ ở đó, kèm mục của nó trong Zoning Code. Các lớp phủ có thể thay đổi điều được phép; hãy hỏi Thành phố trước khi bạn lên kế hoạch."
+    settings:
+      show:
+        label: "Hiện"
+        options:
+          "all":
+            label: "Các khu lớp phủ và các quy định đặc biệt khác"
+          "districts":
+            label: "Chỉ các khu lớp phủ"
+  hearings:
+    label: "Các phiên điều trần sắp diễn ra"
+    description: "Các phiên điều trần được ấn định trước Zoning Board of Adjustment, L&I Review Board, Board of Building Standards và các hội đồng khác của Thành phố về một bất động sản, từ hồ sơ kháng cáo của Thành phố, kèm ngày, giờ và loại kháng cáo. Bất kỳ ai cũng có thể tham gia một phiên điều trần về quy hoạch (zoning); hãy chạm vào một phiên để xem cách tham gia và để mở trang của lô đất. Người nộp một kháng cáo chỉ được hiện trên trang riêng của lô đất đó, không bao giờ trên bản đồ."
+    settings:
+      boards:
+        label: "Hiện"
+        options:
+          "all":
+            label: "Mọi hội đồng"
+          "zoning":
+            label: "Chỉ Zoning Board of Adjustment"
+  brownfields:
+    label: "Các địa điểm brownfield (EPA)"
+    description: "Các bất động sản nơi một khoản trợ cấp brownfield của liên bang đã chi trả cho một đợt đánh giá hoặc dọn dẹp, từ hồ sơ của EPA. Brownfield là đất từng dùng cho công nghiệp, có thể còn ô nhiễm. Đây không phải bản đồ của mọi vùng đất bị ô nhiễm, và nó không cho biết một địa điểm hiện nay có bị ô nhiễm hay không. Hãy xét nghiệm đất trước khi trồng thực phẩm trên hoặc gần một địa điểm như vậy."
+  aerial_photos:
+    label: "Ảnh chụp từ trên không theo năm"
+    description: "Các bức ảnh chụp từ trên không của cả thành phố, chụp từ máy bay: ảnh của chính Thành phố cho mọi năm họ có từ 1996 (mỗi mùa xuân, phần lớn các năm từ tháng 3 đến tháng 5), và các ảnh cũ hơn do Thành phố lưu trữ, từ Delaware Valley Regional Planning Commission (1959 và 1975) và U.S. Geological Survey (1999). Hãy trượt qua các năm để xem trước đây một dãy phố có gì: những ngôi nhà đã bị phá, những lô đất đã được dọn, những khu vườn đã lớn lên. Các ảnh đến thẳng từ máy chủ của Thành phố khi lớp này được bật, và được vẽ bên dưới mọi thứ khác trên bản đồ. Các năm cũ kém sắc nét hơn, và các ảnh cho đến năm 2000 là ảnh đen trắng."
+    settings:
+      year:
+        label: "Năm"
+        options:
+          "1959":
+            label: "1959"
+          "1975":
+            label: "1975"
+          "1996":
+            label: "1996"
+          "1999":
+            label: "1999"
+          "2000":
+            label: "2000"
+          "2004":
+            label: "2004"
+          "2005":
+            label: "2005"
+          "2008":
+            label: "2008"
+          "2009":
+            label: "2009"
+          "2010":
+            label: "2010"
+          "2011":
+            label: "2011"
+          "2012":
+            label: "2012"
+          "2014":
+            label: "2014"
+          "2015":
+            label: "2015"
+          "2016":
+            label: "2016"
+          "2017":
+            label: "2017"
+          "2018":
+            label: "2018"
+          "2019":
+            label: "2019"
+          "2020":
+            label: "2020"
+          "2022":
+            label: "2022"
+          "2023":
+            label: "2023"
+          "2024":
+            label: "2024"
+          "2025":
+            label: "2025"
+      opacity:
+        label: "Độ đậm của ảnh, theo phần trăm"
+  atlas_1860:
+    label: "Bản đồ atlas năm 1860 (Hexamer và Locher)"
+    description: "Bản đồ atlas Philadelphia năm 1860 của Hexamer và Locher, vẽ từng dãy phố cùng các tòa nhà và lô đất, được Greater Philadelphia GeoHistory Network ghép khớp với bản đồ ngày nay và do Thành phố lưu trữ. Nó chỉ bao phủ Center City và Northern Liberties. Hãy giảm độ đậm của nó để nhìn thấy các đường phố ngày nay xuyên qua nó. Nó đến thẳng từ máy chủ của Thành phố khi lớp này được bật."
+    settings:
+      opacity:
+        label: "Độ đậm của bản đồ atlas, theo phần trăm"
+  redlining_1937:
+    label: "Bản đồ redlining năm 1937 (các xếp loại HOLC)"
+    description: "Năm 1937, một cơ quan liên bang, Home Owners' Loan Corporation (HOLC), xếp loại các khu dân cư của Philadelphia từ A đến D theo mức an toàn mà họ cho là có khi cho vay mua nhà ở đó. Các xếp loại này dựa vào việc ai sống trong mỗi khu: các khu có các gia đình người Da đen và nhiều gia đình nhập cư sinh sống thường bị xếp loại D và khoanh viền đỏ, đó là nguồn gốc của từ redlining. Lớp này hiện các khu và xếp loại năm 1937 như Mapping Inequality đã vẽ lại. Các xếp loại là bản ghi về cách cơ quan đó đánh giá các nơi vào năm 1937; chúng không nói gì về những người đang sống ở đó ngày nay. Hãy chạm vào một khu để xem xếp loại của nó và liên kết đến bản mô tả năm 1937 tại Mapping Inequality. Chỉ dùng phi thương mại."
+    settings:
+      shade:
+        label: "Tô đậm nhạt các khu (tắt thì chỉ hiện đường viền và xếp loại)"
