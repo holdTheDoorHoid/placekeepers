@@ -6,7 +6,10 @@
 import { render } from 'svelte/server';
 import { afterEach, describe, expect, it } from 'vitest';
 import WhyBreakdown from '../src/components/lens/WhyBreakdown.svelte';
+import { applyCatalog, cloneText } from '../src/i18n/catalog.ts';
 import { setLocale } from '../src/i18n/locale.ts';
+import { hasFallback, isolateValue, markFallback } from '../src/i18n/marks.ts';
+import { labelledParts, strings } from '../src/strings.ts';
 import { clockWords } from '../src/dossier/rules.ts';
 import { formatDuration, formatMiles } from '../src/survey/sheet.ts';
 import { clock } from '../src/transit/describe.ts';
@@ -63,5 +66,53 @@ describe('the why of a score', () => {
     expect(body).toContain('26,3');
     expect(body).toContain('16,2');
     expect(body).not.toContain('26.3');
+  });
+});
+
+describe('joining a label to its value, and a list into a phrase', () => {
+  it('reads as before in English', () => {
+    expect(strings.join.labelled('Route', '47')).toBe('Route: 47');
+    expect(strings.join.colon('Protections')).toBe('Protections:');
+    expect(strings.join.and(['a', 'b', 'c'])).toBe('a, b and c');
+    expect(strings.join.long(['a', 'b', 'c'])).toBe('a; b; and c');
+    expect(strings.join.names(['A', 'B'])).toBe('A and B');
+    expect(labelledParts('License')).toEqual({ label: 'License:', gap: ' ', after: '' });
+  });
+
+  it('is right in a language that has not translated it yet, and never marked as English', () => {
+    setLocale('es');
+    const copy = cloneText(strings);
+    applyCatalog(copy, {}, markFallback);
+    expect(copy.join.labelled('Ruta', '47')).toBe('Ruta: 47');
+    expect(copy.join.colon('Protecciones')).toBe('Protecciones:');
+    expect(copy.join.and(['a', 'b', 'c'])).toBe('a, b y c');
+    expect(copy.join.long(['a', 'b'])).toBe('a y b');
+    expect(copy.join.names(['A', 'B'])).toBe('A y B');
+    for (const text of [copy.join.labelled('Ruta', '47'), copy.join.and(['a', 'b'])]) expect(hasFallback(text)).toBe(false);
+    // Any other template a catalog leaves out is still marked as English.
+    expect(hasFallback(copy.survey.title('47', 'Norte'))).toBe(true);
+  });
+
+  it('joins a list the language way in Chinese and Arabic', () => {
+    setLocale('zh-Hans');
+    const zh = cloneText(strings);
+    applyCatalog(zh, {}, markFallback);
+    expect(zh.join.and(['甲', '乙', '丙'])).toBe('甲、乙和丙');
+    setLocale('ar');
+    const ar = cloneText(strings);
+    applyCatalog(ar, {}, markFallback, { isolate: isolateValue });
+    expect(ar.join.and(['أ', 'ب'])).toBe('أ وب');
+  });
+
+  it('splits around the value the way the language writes it', () => {
+    const english = strings.join.labelled;
+    try {
+      strings.join.labelled = (label, value) => `${label}\u202F: ${value}`;
+      expect(labelledParts('Licence')).toEqual({ label: 'Licence\u202F:', gap: ' ', after: '' });
+      strings.join.labelled = (label, value) => `${label}：${value}`;
+      expect(labelledParts('许可证')).toEqual({ label: '许可证：', gap: '', after: '' });
+    } finally {
+      strings.join.labelled = english;
+    }
   });
 });

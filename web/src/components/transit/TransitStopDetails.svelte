@@ -66,7 +66,7 @@
         <p>{comfort.summary}</p>
         <ul class="facts">
           {#each comfort.answers as answer (answer.key)}
-            <li class:unknown={!answer.known}>{answer.label}: {answer.value}</li>
+            <li class:unknown={!answer.known}>{strings.join.labelled(answer.label, answer.value)}</li>
           {/each}
         </ul>
         {#if comfort.anyUnknown}<p class="muted small">{s.unknownNote}</p>{/if}

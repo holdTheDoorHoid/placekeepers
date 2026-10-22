@@ -10,7 +10,7 @@
 </script>
 
 <div class="route">
-  <svelte:element this={`h${level}`} class="route-title">{a.route}: {view.route.label}</svelte:element>
+  <svelte:element this={`h${level}`} class="route-title">{strings.join.labelled(a.route, view.route.label)}</svelte:element>
   {#if view.warning}<p class="warning" role="note">{view.warning}</p>{/if}
   <dl>
     <dt>{a.who}</dt>

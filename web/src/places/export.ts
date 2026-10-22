@@ -298,7 +298,7 @@ export function csvCell(value: string | number | null, text = true): string {
 }
 
 function flagsText(flags: ExportFlag[]): string {
-  return flags.map((f) => `${f.title}: ${f.text}`).join(' | ');
+  return flags.map((f) => strings.join.labelled(f.title, f.text)).join(' | ');
 }
 
 /** The CSV file: the notes (terms first) as lines starting with "#", then a header and the rows. */

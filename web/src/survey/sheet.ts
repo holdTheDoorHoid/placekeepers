@@ -162,7 +162,7 @@ export function isTrolley(md: number): boolean {
 
 /** "47: Whitman Plaza to 5th-Godfrey", for the route menu. */
 export function routeLabel(route: Pick<IndexRoute, 'r' | 'nm'>): string {
-  return route.nm ? `${route.r}: ${route.nm}` : route.r;
+  return route.nm ? strings.join.labelled(route.r, route.nm) : route.r;
 }
 
 /** "Southbound to Whitman Plaza", or what SEPTA gives of it. */

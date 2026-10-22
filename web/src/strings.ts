@@ -18,6 +18,7 @@ import {
   formatDateIn,
   moneyFormat,
   numberFormat,
+  listFormat,
   timeFormat,
 } from './i18n/locale.ts';
 import type { Evidence } from './registry/types.ts';
@@ -58,7 +59,6 @@ export function formatTime(ms: number): string {
   return timeFormat().format(new Date(ms));
 }
 
-/** CITY WORDS become "City words": for descriptions the City writes in capitals. */
 /**
  * A time on the clock in the page's language, from hours (0 to 23) and minutes: "6:50 AM" in
  * English, "6:50" in Portuguese. For times the City or SEPTA write down, not moments.
@@ -67,6 +67,7 @@ export function formatClock(hours: number, minutes: number): string {
   return clockFormat().format(new Date(Date.UTC(1970, 0, 1, hours, minutes)));
 }
 
+/** CITY WORDS become "City words": for descriptions the City writes in capitals. */
 export function sentenceCase(text: string): string {
   const lower = text.toLowerCase().replace(/\s+/g, ' ').trim();
   return lower ? lower[0]!.toUpperCase() + lower.slice(1) : lower;
@@ -86,6 +87,28 @@ function giveOrTake(margin: number | null, unit: 'points' | 'homes'): string {
 export function distanceWords(meters: number): string {
   if (meters < 1000) return strings.units.meters(Math.round(meters / 10) * 10);
   return strings.units.kilometers(Math.round(meters / 100) / 10);
+}
+
+/** "a, b and c" in the page's language (Intl.ListFormat): "a, b y c" in Spanish, "a、b和c" in Chinese. */
+export function formatList(items: readonly string[]): string {
+  return listFormat().format(items);
+}
+
+/** A character no label holds, to find where strings.join.labelled puts its value. */
+const VALUE_SPOT = '\uE000';
+
+/**
+ * strings.join.labelled split around its value, for markup that sets the label in bold or makes
+ * the value a link: { label: "License:", gap: " ", after: "" } in English, "Licence\u202F:" and " "
+ * in French, "许可证：" and "" in Chinese.
+ */
+export function labelledParts(label: string): { label: string; gap: string; after: string } {
+  const whole = strings.join.labelled(label, VALUE_SPOT);
+  const at = whole.indexOf(VALUE_SPOT);
+  if (at < 0) return { label: strings.join.colon(label), gap: ' ', after: '' };
+  const head = whole.slice(0, at);
+  const lead = head.trimEnd();
+  return { label: lead, gap: head.slice(lead.length), after: whole.slice(at + VALUE_SPOT.length) };
 }
 
 /** A change in percent in words: "up 61%", "down 3%", "unchanged". */
@@ -153,6 +176,23 @@ export const strings = {
     miles: (miles: number) => `${formatDecimal(miles, 1)} miles`,
     /** A walk shorter than the shortest the sheet shows: "less than 0.1 miles". */
     lessThanMiles: (miles: number) => `less than ${formatDecimal(miles, 1)} miles`,
+  },
+
+  // How pieces of text are joined, so each language joins them its own way (the translators' fix
+  // pass, issue #49). A language that leaves these out still gets them right and never marked as
+  // English (src/i18n/catalog.ts, OWN_FALLBACKS): the punctuation after a label as English writes
+  // it, and lists in the page language's own way (Intl.ListFormat), never with the English "and".
+  join: {
+    /** "Route: 47": a label and its value as one piece of text. French writes "Ligne\u202F: 47", Chinese "路线：47". */
+    labelled: (label: string, value: string) => `${label}: ${value}`,
+    /** "Protections:": a label alone, before a list. */
+    colon: (label: string) => `${label}:`,
+    /** "a, b and c": a short list, such as the plans in a letter to an owner. */
+    and: (items: string[]) => (items.length <= 1 ? items.join('') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`),
+    /** "a; b; and c": long phrases that may hold commas themselves, such as the signs of a displacement watch area. */
+    long: (items: string[]) => (items.length <= 1 ? items.join('') : `${items.slice(0, -1).join('; ')}; and ${items.at(-1)}`),
+    /** "A and B": the owners a letter is addressed to, as the City lists them. */
+    names: (names: string[]) => names.join(' and '),
   },
 
   header: {

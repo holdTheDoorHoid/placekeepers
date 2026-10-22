@@ -12,7 +12,8 @@ import { LANGUAGES, languageOf, type Language, type LanguageCode } from './langu
 export const CITY_TIME_ZONE = 'America/New_York';
 
 let active: LanguageCode = 'en';
-const cache = new Map<string, Intl.DateTimeFormat | Intl.NumberFormat | Intl.PluralRules>();
+type Formatter = Intl.DateTimeFormat | Intl.NumberFormat | Intl.PluralRules | Intl.ListFormat;
+const cache = new Map<string, Formatter>();
 
 /** Sets the page's language. Called by the boot step, and by tests that check a catalog. */
 export function setLocale(code: LanguageCode): void {
@@ -35,7 +36,7 @@ export function isSourceLocale(): boolean {
   return active === 'en';
 }
 
-function cached<T extends Intl.DateTimeFormat | Intl.NumberFormat | Intl.PluralRules>(key: string, make: (intl: string) => T): T {
+function cached<T extends Formatter>(key: string, make: (intl: string) => T): T {
   const full = `${active}|${key}`;
   let hit = cache.get(full) as T | undefined;
   if (!hit) {
@@ -79,6 +80,11 @@ export function timeFormat(): Intl.DateTimeFormat {
  */
 export function clockFormat(): Intl.DateTimeFormat {
   return cached('clock', (intl) => new Intl.DateTimeFormat(intl, { hour: 'numeric', minute: '2-digit', timeZone: 'UTC' }));
+}
+
+/** "a, b and c" in the page's language: "a, b y c" in Spanish, "a、b和c" in Chinese. */
+export function listFormat(): Intl.ListFormat {
+  return cached('list', (intl) => new Intl.ListFormat(intl, { type: 'conjunction' }));
 }
 
 /** The plural category of a count in the page's language ("one", "few", "many", "other" ...). */

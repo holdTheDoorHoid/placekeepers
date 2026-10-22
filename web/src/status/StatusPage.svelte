@@ -14,7 +14,7 @@
     type ParseResult,
   } from '../data/manifest.ts';
   import type { Registry } from '../registry/types.ts';
-  import { formatDate, strings } from '../strings.ts';
+  import { formatDate, labelledParts, strings } from '../strings.ts';
   import Dialog from '../components/common/Dialog.svelte';
   import SiteNav from '../components/common/SiteNav.svelte';
   import { isSourceLocale } from '../i18n/locale.ts';
@@ -99,9 +99,9 @@
             {#if row.source}
               <p class="meta">
                 {s.cadence[row.source.cadence] ?? ''}.
-                {s.publisher}: {row.source.publisher}.
+                {strings.join.labelled(s.publisher, row.source.publisher)}.
                 <a href={row.source.homepage} target="_blank" rel="noopener noreferrer">{s.homepage}</a>.
-                {#if lic}{s.license}: <a href={lic.url} target="_blank" rel="noopener noreferrer">{lic.label}</a>.{/if}
+                {#if lic}{@const label = labelledParts(s.license)}{label.label}{label.gap}<a href={lic.url} target="_blank" rel="noopener noreferrer">{lic.label}</a>{label.after}.{/if}
               </p>
               {#if lic?.non_commercial}<p class="non-commercial">{strings.redlining.statusNote}</p>{/if}
             {/if}

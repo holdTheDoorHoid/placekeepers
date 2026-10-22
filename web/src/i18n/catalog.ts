@@ -9,6 +9,7 @@
 // every template keeps the values English shows, and lists what each language still lacks.
 
 import type { strings } from '../strings.ts';
+import { listFormat } from './locale.ts';
 import { markFallback } from './marks.ts';
 
 /** The shape of a translation of `T`: every key optional, text widened from English's literals. */
@@ -35,6 +36,24 @@ export const ENGLISH_ONLY: ReadonlySet<string> = new Set([
   'redlining.licenseUrl',
   'streets.removalSubject',
   'streets.removalBody',
+]);
+
+type Template = (...args: never[]) => unknown;
+
+const joinList = (items: string[]) => listFormat().format(items);
+
+/**
+ * Templates a language gets right before its translator writes them, so their English is not
+ * shown marked as English: the punctuation after a label (English's colon suits a language until
+ * its translator writes its own, as French and Chinese do), and lists, joined the page language's
+ * own way (Intl.ListFormat) rather than with the English "and". "english" keeps English's template.
+ */
+const OWN_FALLBACKS: ReadonlyMap<string, 'english' | Template> = new Map<string, 'english' | Template>([
+  ['join.labelled', 'english'],
+  ['join.colon', 'english'],
+  ['join.and', joinList],
+  ['join.long', joinList],
+  ['join.names', joinList],
 ]);
 
 /** Object keys whose values are identifiers, never text (the menu's page slugs). */
@@ -149,7 +168,10 @@ function mergeValue(
       report.translated.push(path);
     } else {
       if (tr !== undefined) report.mismatched.push(path);
-      box[key] = markedTemplate(en as (...args: unknown[]) => unknown, mark, how.isolate);
+      const own = OWN_FALLBACKS.get(path);
+      const fallback = (own === 'english' ? en : own) as ((...args: unknown[]) => unknown) | undefined;
+      if (fallback) box[key] = how.isolate ? isolatingTemplate(fallback, how.isolate) : fallback;
+      else box[key] = markedTemplate(en as (...args: unknown[]) => unknown, mark, how.isolate);
       report.fallback.push(path);
     }
   } else if (Array.isArray(en)) {

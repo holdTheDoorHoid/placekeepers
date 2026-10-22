@@ -106,7 +106,7 @@
         <li>
           <strong>{s.crashTitle(crash.year)}</strong>
           <span>{crash.severity}.</span>
-          <span class="small">{s.involved}: {crash.involved}.</span>
+          <span class="small">{strings.join.labelled(s.involved, crash.involved)}.</span>
         </li>
       {/each}
     </ul>

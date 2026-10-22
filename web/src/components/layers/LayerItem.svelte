@@ -7,7 +7,7 @@
   import type { Layer } from '../../registry/types.ts';
   import { LIVE_CITY_DATA } from '../../state/options.ts';
   import type { AppStore } from '../../state/store.svelte.ts';
-  import { strings } from '../../strings.ts';
+  import { labelledParts, strings } from '../../strings.ts';
   import EvidenceBadge from '../common/EvidenceBadge.svelte';
   import Legend from './Legend.svelte';
   import SettingControl from './SettingControl.svelte';
@@ -93,7 +93,8 @@
           <a href={source.homepage} target="_blank" rel="noopener noreferrer">{source.name}</a>,
           {source.publisher}.
           {#if license}
-            {strings.layers.license}: <a href={license.url} target="_blank" rel="noopener noreferrer">{license.label}</a>.
+            {@const label = labelledParts(strings.layers.license)}
+            {label.label}{label.gap}<a href={license.url} target="_blank" rel="noopener noreferrer">{license.label}</a>{label.after}.
           {/if}
           <!-- No credit line for a source whose license says so (the warming and cooling sites,
                owner 2026-10-09). -->
