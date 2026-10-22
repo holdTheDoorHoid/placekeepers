@@ -986,3 +986,81 @@ lenses:
       heat_and_shade:
         label: "Calor e sombra"
 
+suggestions:
+  clean_and_green:
+    label: "Limpar e criar uma área verde neste lote"
+    summary: "Retire o lixo, nivele o terreno, plante grama e algumas árvores, coloque uma cerca baixa de postes e trilhos, e corte a grama com regularidade."
+    cost: "Cerca de US$ 1.100 a US$ 1.500 no início e US$ 150 a US$ 300 por ano (a confirmar com o PHS)"
+  seal_abandoned_building:
+    label: "Pedir que este prédio seja lacrado"
+    summary: "Informe um prédio abandonado aberto para que a Prefeitura lacre as portas e janelas dele."
+    cost: "Informar é grátis"
+  plant_shade_trees:
+    label: "Plantar árvores de sombra neste lote e ao longo dele"
+    summary: "Menos árvores dão sombra a esta área do que em volta de pelo menos metade dos lugares deste mapa (o levantamento de cobertura de árvores de 2018 da Prefeitura). As árvores refrescam um quarteirão com a sombra e com a água que as folhas liberam. A Prefeitura planta árvores de rua grátis na calçada quando o proprietário de um imóvel pede, e o TreePhilly distribui árvores grátis para plantar no chão em terrenos particulares. Escolha árvores que cresçam altas, para dar sombra à rua e para que os vizinhos ainda possam enxergar do outro lado do lote."
+    cost: "Árvores grátis da Prefeitura e do TreePhilly. Árvores jovens precisam de cerca de 20 galões de água por semana, de março a dezembro"
+  cool_green_lot:
+    label: "Criar uma área verde neste lote para refrescar o quarteirão"
+    summary: "Pelo índice de vulnerabilidade ao calor da Prefeitura, o calor do verão atinge as pessoas daqui mais do que em volta de pelo menos metade dos lugares deste mapa. Terra nua, cascalho e entulho absorvem o sol, enquanto grama, canteiros e, acima de tudo, árvores mantêm um lote mais fresco e dão sombra à calçada ao lado. O que quer que este lote vire, um jardim, um lote limpo e verde ou um quintal lateral, plante árvores de sombra nele e mantenha-as altas para que o lote continue aberto à vista."
+    cost: "De árvores grátis (TreePhilly) a cerca de US$ 1.100 a US$ 1.500 no início para um lote limpo e verde completo (a confirmar com o PHS)"
+  seating_and_shade:
+    label: "Fazer um lugar para sentar à sombra"
+    summary: "Mais pessoas moram a até 5 minutos a pé deste lote do que em volta de pelo menos metade dos lugares deste mapa. Alguns bancos ou uma mesa de piquenique sob árvores de sombra podem fazer dele um lugar onde os vizinhos param, descansam e se encontram. Pergunte aos vizinhos o que eles usariam, escolha assentos resistentes e plante árvores que cresçam altas para que o lote continue aberto à vista. Planeje quem vai mantê-lo limpo."
+    cost: "De árvores grátis (TreePhilly) e um banco feito a partir de um projeto aberto a alguns milhares de dólares. As mini verbas de espaço público do Feet First Philly dão de US$ 500 a US$ 2.500"
+  community_garden:
+    label: "Começar um jardim comunitário"
+    summary: "Este lote fica mais longe de um parque do que pelo menos metade dos lugares deste mapa, e pelo menos 1.000 pessoas moram a até 5 minutos a pé dele. Um jardim comunitário dá aos vizinhos área verde, alimentos e flores, e um motivo para se encontrar. Precisa de jardineiros que voltem toda semana, de água e de permissão para usar o terreno. Quando um jardim está funcionando, o Neighborhood Gardens Trust pode ajudar a mantê-lo como jardim para sempre."
+    cost: "De alguns canteiros elevados a alguns milhares de dólares com terra, cerca e água. O Urban Garden Agreement do Land Bank custa US$ 1"
+  art_request:
+    label: "Perguntar sobre um mural ou outra arte"
+    summary: "Muitas pessoas moram em volta deste lote, e nenhuma obra da lista Percent for Art da Prefeitura ou do Wikidata fica a até 5 minutos a pé. Essas listas deixam de fora muitos murais, então veja primeiro a camada Arte pública e a lista de murais do próprio Mural Arts. Uma parede em branco de frente para o lote poderia receber um mural: o Mural Arts aceita pedidos dos proprietários de paredes no próprio site. A arte é bem-vinda pela beleza e pelo orgulho; nenhum estudo a liga a menos violência."
+    cost: "Perguntar ao Mural Arts é grátis"
+  report_dumping:
+    label: "Informar o descarte ilegal de lixo ao Philly311"
+    summary: "Alguém perguntou ao Philly311 sobre descarte ilegal de lixo em um quarteirão para o qual este lote dá de frente nos últimos 90 dias, e o pedido ainda está aberto. Se o lixo ainda está lá, faça o seu próprio pedido, com uma foto, para que a Prefeitura o recolha. Um relato é sobre o lixo, nunca sobre quem o deixou."
+    cost: "Informar é grátis"
+  report_dark_light:
+    label: "Informar a luz de rua apagada ao Philly311"
+    summary: "Alguém pediu ao Philly311 que consertasse uma luz de rua ou de beco apagada em um quarteirão para o qual este lote dá de frente, nos últimos 90 dias, e o pedido ainda está aberto. Se a luz continua apagada, faça o seu próprio pedido, com o número do poste se ele tiver um. Uma rua iluminada ajuda os vizinhos a usar a rua e o lote depois de escurecer."
+    cost: "Informar é grátis"
+  report_graffiti:
+    label: "Informar a pichação ao Philly311"
+    summary: "Alguém pediu ao Philly311 que removesse pichação em um quarteirão para o qual este lote dá de frente nos últimos 90 dias, e o pedido ainda está aberto. Se ela continua lá, faça o seu próprio pedido, com uma foto, para que a Prefeitura possa limpá-la. Se os vizinhos preferirem ter arte naquela parede, pergunte ao proprietário dela sobre um mural."
+    cost: "Informar é grátis"
+  memorial_or_ghost_bike:
+    label: "Um memorial ou uma ghost bike"
+    summary: "Um memorial homenageia a pessoa que morreu e lembra todos que passam de reduzir a velocidade. Para uma pessoa que morreu andando de bicicleta, a Bicycle Coalition pode colocar uma ghost bike, uma bicicleta pintada de branco."
+    cost: "Baixo; pedir uma ghost bike é grátis"
+  traffic_calming_petition:
+    label: "Pedir moderação de tráfego nesta rua residencial"
+    summary: "Os vizinhos podem pedir à Prefeitura almofadas de velocidade em uma rua residencial. A Prefeitura pontua os pedidos três vezes por ano usando dados de colisões e, se esta rua for escolhida, 60 por cento do quarteirão assina um abaixo-assinado. Avenidas principais, rodovias estaduais e ruas curtas, íngremes e sinuosas não se qualificam."
+    cost: "Pedir é grátis"
+  daylighting_check:
+    label: "Conferir se esta esquina está livre por 20 pés"
+    summary: "A lei da Pensilvânia já proíbe estacionar a menos de 20 pés de uma faixa de pedestres em um cruzamento, e a menos de 30 pés de uma placa de pare ou de um semáforo, para que motoristas e pessoas atravessando possam se ver. Se carros estacionam ali, pergunte à Prefeitura sobre liberar a visibilidade da esquina com tinta, balizadores ou jardineiras. Informe ao Philly311 uma luz de rua apagada aqui."
+    cost: "Perguntar é grátis"
+  asphalt_art_check:
+    label: "Arte no asfalto nesta esquina: consulte antes a Prefeitura"
+    summary: "Um estudo de cruzamentos pintados encontrou menos colisões com pessoas a pé e de bicicleta, mas não tinha grupo de comparação e foi pago pelo patrocinador do programa. Em 2025 o governo federal começou a pedir que os estados removam arte em faixas de pedestres, e a Filadélfia não tem processo de licença para isso. Consulte a Prefeitura antes de pintar qualquer coisa."
+    cost: "Não se sabe; não há processo da Prefeitura para estimar o preço"
+  stop_survey:
+    label: "Verificar este ponto com o StreetComplete"
+    summary: "Ninguém registrou ainda se este ponto tem abrigo ou banco, ou o OpenStreetMap e a lista de abrigos de ônibus da Prefeitura discordam sobre o abrigo dele. Qualquer pessoa pode descobrir em poucos minutos com o aplicativo de celular gratuito StreetComplete, e as respostas chegam a este mapa em cerca de uma semana. Se o aplicativo não tiver pergunta aqui, o ponto ainda não está no OpenStreetMap: adicione-o com a camada Things do aplicativo, ou deixe uma nota."
+    cost: "Grátis; cerca de três minutos por ponto"
+  stop_shelter_request:
+    label: "Pedir à Prefeitura um abrigo neste ponto"
+    summary: "Uma verificação não achou abrigo aqui, e a lista de abrigos de ônibus da Prefeitura também não tem nenhum aqui. O programa de abrigos de ônibus da Prefeitura, administrado pelo seu escritório de transportes (OTIS), constrói abrigos pagos pela publicidade que eles exibem e pretende pô-los nos 15 por cento de pontos de ônibus mais movimentados. Não há formulário público de pedido, então escreva ao OTIS com o número do ponto e quantas pessoas embarcam aqui."
+    cost: "Perguntar é grátis"
+  stop_bench_request:
+    label: "Pedir à Prefeitura um banco neste ponto"
+    summary: "Uma verificação não achou banco aqui. Os bancos nos pontos fazem parte do programa de mobiliário urbano da Prefeitura, administrado pelo OTIS, e não achamos uma forma pública de pedir um, então escreva ao OTIS com o número do ponto. Um banco que você mesmo construa precisa de permissão, e o caminho de licença da Prefeitura para um banco em uma calçada ainda não está confirmado."
+    cost: "Perguntar é grátis"
+  stop_streetlight_report:
+    label: "Informar uma luz de rua apagada neste ponto"
+    summary: "O OpenStreetMap diz que este ponto não é iluminado. Se uma luz de rua aqui estiver apagada, informe ao Philly311. O programa atual de iluminação da Prefeitura troca luzes, mas não acrescenta novas, então um ponto sem nenhuma luz é uma pergunta para o OTIS."
+    cost: "Informar é grátis"
+  stop_shade_trees:
+    label: "Plantar árvores de sombra perto deste ponto"
+    summary: "Poucas árvores dão sombra a este ponto. A Prefeitura planta árvores de rua grátis na calçada em frente a uma casa ou comércio quando o proprietário pede, e as rega no primeiro ano. Peça aos proprietários dos prédios ao lado do ponto que peçam uma; depois disso os vizinhos podem ajudar a regá-la."
+    cost: "Árvores de rua grátis para proprietários de imóveis"
+

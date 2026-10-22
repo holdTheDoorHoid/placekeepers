@@ -39,7 +39,7 @@ page to judge the choices.
 | garden | jardim | "Horta" only when food is meant. "Community garden" is "jardim comunitário"; "garden or farm" is "jardim comunitário ou horta urbana". |
 | greening | criar áreas verdes | A verb phrase, never "verdejar". "Greening suggestions" is "sugestões de áreas verdes". |
 | placemaking | espaços de convivência | Places where neighbors gather, such as a garden, a bench or a mural. |
-| clean and green | limpar e plantar | |
+| clean and green | limpar e criar uma área verde | |
 | heat, shade | calor, sombra | |
 | tract (census tract) | setor censitário | The IBGE term. |
 | block group (census) | grupo de quarteirões do censo | |
