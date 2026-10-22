@@ -9,7 +9,7 @@
 // as punctuation, and proper names as they are (Placekeepers, Philly311, LandCare).
 
 import type { Catalog } from '../catalog.ts';
-import { formatDecimal, formatNumber, plural } from '../format.ts';
+import { formatDate, formatDecimal, formatNumber, plural } from '../format.ts';
 import { distanceWords } from '../../strings.ts';
 
 /** A change in percent in words: "monte 61%", "bese 3%", "pa chanje". */
@@ -92,6 +92,7 @@ const ht: Catalog = {
       { slug: 'responsibly', label: 'Itilize l avèk responsablite' },
       { slug: 'vacant-land', label: 'Kijan nou jwenn teren vid' },
       { slug: 'streetcomplete', label: 'Verifye estasyon bis yo' },
+      { slug: 'posting', label: 'Kote pou mete yon afich' },
       { slug: 'terms', label: 'Kondisyon' },
       { slug: 'privacy', label: 'Vi prive' },
       { slug: 'contact', label: 'Kontakte nou' },
@@ -478,6 +479,394 @@ const ht: Catalog = {
     importLeftOut: (n, limit) => `${plural(n, { other: '# kote' })} pa antre: yon lis ka gen jiska ${formatNumber(limit)}.`,
   },
 
+  represent: {
+    title: 'Ki moun ki reprezante ou',
+    intro: 'Moun yo te eli pou adrès sa a, ak biwo ofisyèl yo. Rele yo oswa ekri yo sou teren sa a.',
+    ward: (ward, division) => `Ward ${ward}, divizyon ${division}`,
+    wardOnly: (ward) => `Ward ${ward}`,
+    wardHelp: 'Ward ak divizyon ou deside kote ou vote ak ki moun ki manm komite katye ou a (committee people).',
+    district: (n) => `Distri ${n}`,
+    offices: {
+      council: 'Konsèy Minisipal',
+      house: 'Chanm Reprezantan Pensilvani (Pennsylvania House)',
+      senate: 'Sena Pensilvani (Pennsylvania Senate)',
+      congress: 'Chanm Reprezantan Etazini (U.S. House of Representatives)',
+    },
+    titles: {
+      council: 'Manm Konsèy',
+      house: 'Reprezantan eta',
+      senate: 'Senatè eta',
+      congress: 'Manm Kongrè',
+    },
+    office: 'Biwo',
+    phone: 'Telefòn',
+    website: 'Sit entènèt',
+    vacant: 'Pa gen okenn manm ki make pou pòs sa a kounye a. Pòs la ka vid jiskaske gen yon eleksyon.',
+    notWorkedOut: 'Nou pa t ka detèmine distri sa a pou teren an semèn sa a.',
+    notInBuild: 'Kopi semèn sa a te bati san lis manm sa a, kidonk nou pa ka di ki moun ki okipe pòs la.',
+    atLargeTitle: 'Manm Konsèy pou tout vil la',
+    atLarge: 'Sèt lòt manm Konsèy eli pa tout vil la epi yo reprezante chak adrès:',
+    rcoTitle: 'Òganizasyon Kominotè Anrejistre',
+    rcoIntro: 'Vil la avèti òganizasyon sa yo sou apèl zonaj isit la. Yo se yon bon premye kontak pou yon pwojè katye.',
+    noRco: 'Pa gen okenn Òganizasyon Kominotè Anrejistre ki kouvri teren sa a, jan Vil la trase yo.',
+    rcosNotInBuild: 'Kopi semèn sa a te bati san òganizasyon kominotè yo, kidonk nou pa ka fè lis yo.',
+    rcoUnknown: (n) => `${plural(n, { other: '# lòt òganizasyon' })} kouvri teren sa a, men kopi semèn sa a pa gen kontak pou ${n === 1 ? 'li' : 'yo'}.`,
+    rcoAddress: 'Adrès',
+    rcoMeeting: 'Reyinyon nan',
+    rcoPreferred: 'Prefere',
+    rcoContact: 'Kontak',
+    rcoAsPublished: 'Kontak jan Vil la pibliye yo pou piblik la.',
+    checked: (who, when) => `${who}, verifye ${when}`,
+    sourceNames: {
+      city_elected_officials: 'Vil Filadèlfi, lis ofisyèl ki eli yo',
+      pa_legislators: 'Open States',
+      us_legislators: 'pwojè congress-legislators',
+      rco_contacts: 'Komisyon Planifikasyon Vil Filadèlfi',
+    },
+    loading: 'N ap chèche ki moun ki reprezante teren sa a.',
+    unlisted:
+      'Nou kalkile chak semèn ki moun ki reprezante chak teren, pou teren ki sou lis nou an. Atlas, kat Vil la, montre ofisyèl ki eli yo pou nenpòt adrès.',
+    missing: 'Kopi semèn sa a pa di ki moun ki reprezante teren sa a. Atlas, kat Vil la, montre ofisyèl ki eli yo pou nenpòt adrès.',
+    atlas: 'Ofisyèl ki eli pou adrès sa a sou Atlas, kat Vil la',
+    officialOnly: 'Pou ofisyèl ki eli, se sèlman biwo ofisyèl yo ki sou lis: pa gen nimewo telefòn pèsonèl ni adrès imèl.',
+    officesMove: 'Gen kèk fwa biwo yo deplase anvan lis yo ajou: sit entènèt chak manm gen dènye adrès ak telefòn.',
+  },
+
+  packet: {
+    pageTitle: 'Fè yon pake',
+    intro:
+      'Yon pake pou enprime oswa pataje nan yon reyinyon: yon paj kouvèti ak yon kat, ki moun pou kontakte, ak yon paj pou chak kote, ak sa paj teren an di sou li. Li fèt nan navigatè sa a apati kopi chak semèn nou an nan dosye Vil la; anyen pa voye okenn kote.',
+    make: 'Fè yon pake',
+    makeHelp: 'Louvri yon pake ou ka enprime pou kote sa yo nan yon nouvo onglè.',
+    makeFromView: 'Fè yon pake ak kote sa yo',
+    makeFromViewHelp: (limit) => `${formatNumber(limit)} ki pi wo sou lis ki klase a, nan lòd li.`,
+    viewName: 'Kote sou kat la',
+    chooseList: 'Kote ki nan pake a',
+    fromView: (name, n) => `${name} (${plural(n, { other: '# kote' })}, soti sou kat la)`,
+    noLists: 'Poko gen lis ki sere nan navigatè sa a. Sere kote nan kat la, apre sa tounen, oswa louvri yon pake nan afichaj analiz la.',
+    emptyList: 'Lis sa a poko gen kote.',
+    lensLabel: 'Sijesyon selon lantiy la',
+    print: 'Enprime pake a',
+    printHelp: 'Enprime sou papye Letter an nwa ak blan: yon paj pou chak kote, apre paj kouvèti a ak paj kontak yo.',
+    backToMap: 'Retounen nan kat la',
+    loading: (done, total) => `N ap li kopi chak semèn lan: ${formatNumber(done)} sou ${formatNumber(total)} fichye.`,
+    failed: 'Gen kèk pati nan kopi chak semèn lan ki pa t ka chaje. Verifye koneksyon ou epi eseye ankò.',
+    retry: 'Eseye ankò',
+    leftOut: (n, limit) =>
+      `Yon pake ka gen jiska ${formatNumber(limit)} kote, kidonk ${plural(n, { other: '# kote sou lis sa a' })} pa antre. Fè yon lis ki pi piti pou rès la.`,
+    coverKicker: 'Pake Placekeepers',
+    made: (date) => `Fèt ${date}`,
+    count: (n) => plural(n, { other: '# kote' }),
+    dataFrom: (date) => `Soti nan kopi chak semèn nou an nan dosye Vil la ${date}. Chak paj teren sou entènèt gen dosye jodi a.`,
+    lensUsed: (lens) => `Sijesyon selon lantiy la: ${lens}.`,
+    contentsTitle: 'Nan pake sa a',
+    contents: {
+      contacts: 'Ki moun pou kontakte',
+    },
+    mapTitle: 'Kote kote yo ye',
+    mapAlt: (n) => `Yon kat ${plural(n, { other: '# kote' })}, nimewote jan yo ye nan pake sa a.`,
+    mapLoading: 'N ap trase kat la…',
+    mapCredit: 'Kat: Protomaps, kontribitè OpenStreetMap.',
+    mapPlain: 'Kat debaz la pa disponib isit la, kidonk kote yo montre kote yo ye, san ri.',
+    noPoint: (n) => `${plural(n, { other: '# kote' })} pa gen okenn pwen ki konnen epi ${n === 1 ? 'li' : 'yo'} pa sou kat la.`,
+    watchIntro:
+      'Gen kèk kote nan pake sa a ki nan zòn pou veye deplasman, kote dosye piblik yo montre siy ki di pri yo ap monte. Paj kote sa yo montre isit la.',
+    watchArea: (tract) => (tract ? `Sektè resansman ${tract}` : 'Yon zòn pou veye deplasman'),
+    areaSigns: (signs) => `Siy isit la ki montre pri yo ap monte: ${signs}.`,
+    watchLots: (list) => `Kote isit la: ${list}.`,
+    seeFront: 'Gade "Veye deplasman" nan devan pake sa a.',
+    contactsTitle: 'Ki moun pou kontakte',
+    contactsIntro:
+      'Chak òganizasyon ak chak biwo yon sèl fwa, ak kote nan pake sa a li kouvri. Se sèlman biwo ofisyèl, ak kontak òganizasyon kominotè jan Vil la pibliye yo. Chak kontak montre sous li ak dènye jou yo verifye l.',
+    forLots: (list) => `Pou kote ${list}`,
+    forLot: (n) => `Pou kote ${n}`,
+    wardsTitle: 'Ward ak divizyon',
+    wardsIntro: 'Kote vwazen nan chak kote vote, ak ki moun ki manm komite yo.',
+    contactsMissing: 'Kopi semèn sa a pa di ki moun ki reprezante kote sa yo. Atlas, kat Vil la, montre ofisyèl ki eli yo pou nenpòt adrès.',
+    contactsUnknown: (list) => `Nou pa t ka detèmine ki moun ki reprezante kote ${list} semèn sa a.`,
+    lotPlace: (n) => `Kote ${n}`,
+    parcel: (opa) => `Pasèl ${opa}`,
+    lotPage: 'Paj teren sou entènèt',
+    notListed:
+      'Kopi chak semèn nou an pa gen paj pou pasèl sa a, kidonk pake sa a pa ka di plis. Paj teren li sou entènèt chèche l ak Vil la.',
+    sections: {
+      vacancy: 'Sa nou panse li ye',
+      owner: 'Ki moun ki posede l',
+      permission: 'Fason pou jwenn pèmisyon, nan lòd pou eseye yo',
+      actions: 'Sa ou ta ka fè isit la',
+      rules: 'Règ pou teren sa a',
+      represent: 'Ki moun ki reprezante teren sa a',
+      notChecked: 'Sa nou pa t ka verifye',
+    },
+    ownerType: (type) => `Kalite pwopriyetè: ${type}.`,
+    noNames: 'Non pwopriyetè yo ak adrès postal yo sou paj teren sou entènèt la ak nan dosye Vil la.',
+    firstStep: 'Premye etap',
+    cost: 'Pri',
+    gardenAsk: 'Mande vwazen yo an premye: yon jaden mache lè blòk la vle l.',
+    representUnknown: 'Kopi semèn sa a pa di ki moun ki reprezante teren sa a.',
+    rcoLine: (names) => `Òganizasyon Kominotè Anrejistre: ${names}.`,
+    ownerLetter: 'Lèt bay pwopriyetè a pou mande pèmisyon',
+    ownerLetterOffered: 'Ofri: ranpli l epi enprime l sou paj lèt yo.',
+    otherLetters: 'Lèt bay biwo Konsèy la ak òganizasyon kominotè yo',
+    lettersLink: 'Ekri yon lèt',
+    notChecked: {
+      line: (parts, date) =>
+        [
+          parts.length ? `${parts.join(' ')}` : '',
+          'Ki moun ki itilize teren an jodi a, si li gen kloti oswa si yo pran swen li, ak nenpòt bagay ki pi nouvo pase dosye Vil la' +
+            (date ? ` nan ${formatDate(date) ?? date}` : '') +
+            ': gade an pèsòn ak sou paj teren sou entènèt la.',
+        ]
+          .filter(Boolean)
+          .join(' '),
+      noDossier: 'Pasèl sa a pa nan kopi chak semèn nou an.',
+      partial: {
+        transfers: 'Akt li yo pa nan kopi chak semèn nou an.',
+        assessments: 'Evalyasyon li yo pa nan kopi chak semèn nou an.',
+        li: 'Vyolasyon L&I li yo pa nan kopi chak semèn nou an.',
+      },
+      missing: {
+        historic: 'Si li istorik (kopi chak semèn lan pa t gen rejis istorik la).',
+        overlays: 'Zonaj siperpoze li yo (kopi chak semèn lan pa t genyen yo).',
+        brownfields: 'Dosye brownfield federal toupre (kopi chak semèn lan pa t genyen yo).',
+        appeals: 'Apèl ak odyans li yo (kopi chak semèn lan pa t genyen yo).',
+      },
+      represent: 'Ki moun ki reprezante l.',
+    },
+    privacy: 'Fèt nan navigatè sa a apati kopi chak semèn nou an. Anyen sou pake sa a pa voye okenn kote.',
+  },
+
+  flyer: {
+    pageTitle: 'Fè yon afich pou vwazen',
+    make: 'Fè yon afich pou vwazen',
+    intro:
+      'Yon panno pou kloti yon teren vid: li di moun k ap pase ke vwazen yo pran swen kote sa a ak ki jan pou jwenn youn lòt. Ou chwazi sa li di epi ou enprime l isit la. Anyen pa voye okenn kote.',
+    noLot:
+      'Louvri paj sa a depi yon paj teren oswa yon pake, pou afich la ka montre adrès teren an, yon kat ak yon kòd pou paj li.',
+    loading: 'N ap li kopi chak semèn lan…',
+    headline: 'Tit',
+    defaultHeadline: 'Vwazen yo pran swen teren sa a',
+    hopes: 'Sa ou espere fè',
+    hopeOptions: {
+      cleanup: 'Yon netwayaj',
+      garden: 'Yon jaden',
+      seating: 'Yon kote pou chita',
+      mural: 'Yon miral',
+      ask_city: 'Mande Vil la sou sa',
+    },
+    hopeLines: {
+      cleanup: 'Netwaye l ansanm',
+      garden: 'Plante yon jaden',
+      seating: 'Fè yon kote pou chita',
+      mural: 'Pentire yon miral, ak pèmisyon pwopriyetè mi an',
+      ask_city: 'Mande Vil la sa ki ka rive isit la',
+    },
+    ownWords: 'Oswa ak pwòp mo ou',
+    contact: 'Ki jan vwazen yo ka jwenn ou',
+    contactHelp: 'Yon lyen gwoup mesaj, yon imèl, yon telefòn, oswa yon lè ak yon kote reyinyon.',
+    publicWarning:
+      'Sa ou enprime se piblik: nenpòt moun ka li l epi pran foto l. Prefere yon lyen gwoup mesaj oswa yon imèl ki fèt pou pwojè a olye de yon adrès kay oswa yon nimewo telefòn pèsonèl.',
+    publicCaution: 'Sa a sanble li ka yon adrès kay oswa yon nimewo telefòn pèsonèl. Yo pral enprime l pou nenpòt moun wè.',
+    ownLink: 'Pwòp lyen ou pou yon dezyèm kòd QR (opsyonèl)',
+    ownLinkHelp: 'Pa egzanp lyen envitasyon gwoup mesaj ou a. Li dwe kòmanse ak https://',
+    ownLinkBad: 'Sa a pa sanble yon adrès entènèt, kidonk yo pa enprime dezyèm kòd la.',
+    ownLinkLabel: 'Pou ki sa dezyèm kòd la ye (opsyonèl)',
+    ownLinkLabelPlaceholder: 'Antre nan gwoup mesaj nou an',
+    size: 'Papye',
+    sizes: { letter: 'Yon afich sou yon paj Letter', half: 'Mwatye paj, de pa fèy' },
+    print: 'Enprime afich la',
+    clear: 'Efase sa mwen tape',
+    confirmClear: 'Efase sa ou te tape pou afich yo nan navigatè sa a? Pa gen fason pou fè l tounen.',
+    cleared: 'Efase. Anyen ou te tape pou afich yo pa rete nan navigatè sa a kounye a.',
+    kept: 'Sa ou tape rete nan navigatè sa a sèlman, pou ou ka tounen ladan l. Anyen pa voye okenn kote.',
+    where: 'Kote ou gen dwa afiche l',
+    whereLead:
+      'Pwòp fenèt oswa kloti ou, kloti pwopriyetè teren an ak pèmisyon li, tablo kominotè nan bibliyotèk ak sant rekreyasyon (mande anplwaye yo), ak biznis ki dakò.',
+    whereNot:
+      'Pa sou poto sèvis piblik, limyè ri, panno sikilasyon, pyebwa Vil la oswa pyebwa ri, ni abri SEPTA: kòd Vil la entèdi sa, ak amann depi $300 pa panno.',
+    whereLink: 'Li gid la, ak sous li yo',
+    preview: 'Afich la',
+    hopeTitle: 'N ap espere',
+    reachTitle: 'Jwenn nou',
+    scanLot: 'Eskane pou wè teren sa a sou Placekeepers: sa dosye Vil la di ak ki jan vwazen yo ka ede.',
+    scanOwn: 'Eskane pou lyen nou an',
+    mapAlt: (address) => `Yon kat blòk ki alantou ${address}, ak teren an make.`,
+    byNeighbors: 'Vwazen mete l, se pa Vil la ni pwopriyetè a. Fèt ak Placekeepers, yon kat gratis pou vwazen Filadèlfi.',
+    qrLabel: (what) => `Kòd QR: ${what}`,
+    qrCredit: 'Yo fè kòd QR yo nan navigatè sa a ak qrcode-generator pa Kazuhiko Arase (lisans MIT).',
+  },
+
+  letters: {
+    pageTitle: 'Ekri yon lèt',
+    intro:
+      'Lèt ou ranpli isit la epi enprime. Sit la pa janm voye anyen: ou voye lèt la pa lapòs, pa imèl oswa ou pote l a men ou menm. Sa ou tape rete nan navigatè sa a sèlman.',
+    unreviewed: 'Yon avoka poko revize lèt sa a. Se pa konsèy jiridik.',
+    legalHelp: 'Pou èd jiridik, mande Grounded in Philly, yon pwojè Garden Justice Legal Initiative',
+    legalHelpShort: 'Èd jiridik gratis: Grounded in Philly (Garden Justice Legal Initiative)',
+    senderNote: 'Nòt pou moun k ap voye a',
+    chooseTemplate: 'Ki lèt',
+    templates: {
+      owner: 'Bay pwopriyetè teren an, pou mande pèmisyon pou pran swen li',
+      council: 'Bay biwo Konsèy Minisipal la, pou mande sipò',
+      rco: 'Bay yon Òganizasyon Kominotè Anrejistre, pou mande pou prezante',
+      followup: 'Swivi yon rapò 311 ki toujou ouvè',
+    },
+    templateHelp: {
+      owner:
+        'Mande pwopriyetè a pèmisyon pou pran swen teren an pou yon ti tan: yon netwayaj, yon jaden oswa yon kote pou chita. Ekri bay yon sèl pwopriyetè alafwa.',
+      council: 'Mande biwo manm Konsèy distri ou a sipò pou yon lakou sou kote, yon teren Land Bank oswa yon netwayaj.',
+      rco: 'Prezante pwojè ou bay yon òganizasyon kominotè epi mande tan nan youn nan reyinyon li yo.',
+      followup: 'Mande biwo Konsèy distri ou a pou ede ak yon demann Philly311 ki rete ouvè.',
+    },
+    forLot: (address) => `Pou ${address}`,
+    forList: (name, n) => `Pou lis "${name}" (${plural(n, { other: '# kote' })})`,
+    chooseLot: 'Ki kote',
+    noLot:
+      'Louvri paj sa a depi yon paj teren oswa yon pake pou ranpli adrès teren an, pwopriyetè li ak ki moun ki reprezante l. Ou ka tape yo ou menm tou.',
+    loading: 'N ap li kopi chak semèn lan…',
+    gate: {
+      public:
+        'Teren sa a se tè piblik. Mande atravè pwogram Land Bank pou vwazen yo olye de sa, oswa mande biwo Konsèy ou a sipò: gen yon lèt pou sa.',
+      not_sure:
+        'Nou pa sèten teren sa a vid, e li ka kay yon moun, kidonk sit la pa ofri yon lèt bay pwopriyetè li. Si ou konnen teren an vid, gade ankò an pèsòn, epi mande vwazen yo ki moun ki pwopriyetè a.',
+      no_owner: 'Dosye Vil la pa bay non okenn pwopriyetè pou teren sa a, kidonk pa gen pèsonn pou adrese lèt sa a ba li.',
+      not_listed:
+        'Kopi chak semèn nou an pa gen paj pou pasèl sa a, kidonk sit la pa ka di si yon lèt bay pwopriyetè li bon isit la. Louvri paj teren li.',
+    },
+    notOffered: 'Lèt bay pwopriyetè a pa ofri isit la',
+    fields: {
+      date: 'Dat',
+      senderName: 'Non ou',
+      group: 'Gwoup ou oswa blòk ou, si genyen',
+      contact: 'Ki jan pou jwenn ou',
+      contactHelp: 'Yon telefòn, yon imèl oswa yon adrès postal. Li enprime sou lèt la.',
+      ownerName: 'Non pwopriyetè a, jan Vil la pibliye l',
+      ownerAddress: 'Adrès postal pwopriyetè a, jan Vil la pibliye l',
+      lotAddress: 'Adrès teren an',
+      plans: 'Sa ou espere fè',
+      planOptions: {
+        cleanup: 'netwaye l',
+        garden: 'plante yon ti jaden',
+        seating: 'monte yon kote pou chita',
+      },
+      duration: 'Pou konbyen tan',
+      durationPlaceholder: 'sezon sa a',
+      extra: 'Ak pwòp mo ou (opsyonèl)',
+      recipientName: 'Bay',
+      recipientAddress: 'Adrès',
+      ask: 'Sa ou ap mande',
+      askOptions: {
+        side_yard: 'Sipò pou yon lakou sou kote (sèlman si ou rete bò kote a)',
+        land_bank: 'Sipò pou pran swen yon teren Land Bank',
+        cleanup: 'Èd pou òganize yon netwayaj',
+      },
+      project: 'Pwojè ou, an kèk mo',
+      projectPlaceholder: 'yon netwayaj ak yon ti jaden',
+      requestNumber: 'Nimewo demann Philly311',
+      reportedOn: 'Kilè ou te rapòte l',
+      problem: 'Ki pwoblèm nan',
+      problemOptions: {
+        dumping: 'fatra jete ilegalman',
+        light: 'yon limyè ri ki kase',
+        graffiti: 'grafiti',
+        building: 'yon bilding vid ki ouvè',
+        other: 'yon lòt pwoblèm ak kote a li menm',
+      },
+      problemOther: 'Pwoblèm nan, ak pwòp mo ou',
+    },
+    prefilledFrom: (source, date) => `Ranpli ak ${source}, ${date}. Verifye l anvan ou voye l.`,
+    nameLeftOut: 'Non pwopriyetè a rete vid isit la. Ekri l jan ou konnen l, oswa kite l vid epi lèt la kòmanse ak "Chè pwopriyetè pwopriyete a".',
+    cityRecords: 'dosye Vil la',
+    print: 'Enprime lèt la',
+    clear: 'Efase tout sa mwen tape',
+    cleared: 'Efase. Anyen ou te tape pa rete nan navigatè sa a kounye a.',
+    confirmClear: 'Efase tout sa ou te tape nan lèt sa yo nan navigatè sa a? Pa gen fason pou fè l tounen.',
+    kept: 'Sa ou tape rete nan navigatè sa a sèlman, pou ou ka tounen ladan l. Anyen pa voye okenn kote.',
+    notKept: 'Navigatè sa a pa kenbe sa ou tape kounye a, petèt yon fenèt prive. Enprime anvan ou fèmen paj la.',
+    preview: 'Lèt la',
+    salutation: (name) => `Chè ${name},`,
+    dearOwner: 'Chè pwopriyetè pwopriyete a,',
+    sincerely: 'Ak respè,',
+    reachMe: (contact) => `Ou ka jwenn mwen nan ${contact}.`,
+    reachMeBlank: 'Ou ka jwenn mwen nan [ki jan pou jwenn ou].',
+    thanks: 'Mèsi paske w ap konsidere sa.',
+    thanksHelp: 'Mèsi pou èd ou.',
+    me: (name, group) => `Non m se ${name || '[non ou]'}${group ? `, epi m ap ekri pou ${group}` : ''}.`,
+    owner: {
+      intro: (lot) => `Mwen rete toupre ${lot || '[adrès teren an]'}, teren dosye Vil la mete sou non ou.`,
+      ask: (plans) =>
+        `Vwazen sou blòk sa a ta renmen pran swen teren an pou yon ti tan. N ap mande pèmisyon ou pou ${plans || '[sa ou espere fè]'}.`,
+      terms: (duration) =>
+        `${duration ? `Nou t ap fè sa ${duration}, n ap fè travay la tèt nou epi n ap peye pou nenpòt founiti.` : 'Nou t ap fè travay la tèt nou epi n ap peye pou nenpòt founiti.'} Nou t ap kenbe teren an pwòp epi an sekirite, epi nou pa t ap bati anyen pèmanan. Ou ka di non, epi si ou di wi ou ka mande nou sispann nenpòt ki lè.`,
+      writing:
+        'Si ou dakò, nou ta renmen mete akò nou an alekri, pou ou menm ak nou konnen sa nou te pwomèt. Nou kontan reponn nenpòt kesyon anvan.',
+    },
+    council: {
+      dear: (name) => (name ? `Chè manm Konsèy ${name},` : 'Chè manm Konsèy,'),
+      intro: (group, lot) =>
+        `M ap ekri kòm yon vwazen nan distri ou${group ? `, ak ${group},` : ''} sou ${lot || '[adrès teren an]'}.`,
+      ask: {
+        side_yard:
+          'Mwen rete bò kote a, epi m ta renmen pran swen teren an kòm yon lakou sou kote. Pwogram lakou sou kote Philadelphia Land Bank bezwen sipò biwo ou a, epi m ap mande sipò sa a.',
+        land_bank:
+          'Vwazen yo ta renmen pran swen teren sa a atravè youn nan pwogram Philadelphia Land Bank pou vwazen, tankou yon akò jaden. M ap mande sipò biwo ou a pou aplikasyon nou an.',
+        cleanup: 'Teren sa a bezwen yon netwayaj. Vwazen yo pare pou ede, epi n ap mande biwo ou a pou ede nou òganize l ak Vil la.',
+      },
+      meet: 'Mwen ta kontan rankontre anplwaye ou yo oswa montre yo teren an.',
+    },
+    rco: {
+      dear: (name) => (name ? `Chè vwazen ${name},` : 'Chè vwazen,'),
+      intro: (project, lot) => `Nou se vwazen k ap travay sou ${project || '[pwojè ou]'} nan ${lot || '[adrès teren an]'}.`,
+      ask: 'Nou ta renmen prezante pwojè a nan youn nan reyinyon ou yo, tande sa manm ou yo panse, epi reponn kesyon yo. Èske nou ta ka gen kèk minit sou òd jou yon pwochen reyinyon?',
+    },
+    followup: {
+      dear: (name) => (name ? `Chè manm Konsèy ${name} ak anplwaye yo,` : 'Chè anplwaye biwo Konsèy la,'),
+      reported: (when, problem, place, number) =>
+        `Nan ${when || '[jou ou te rapòte l]'}, mwen te rapòte ${problem || '[pwoblèm nan]'} nan ${place || '[adrès la]'} bay Philly311. Nimewo demann lan se ${number || '[nimewo demann lan]'}. Demann lan toujou ouvè, epi pwoblèm nan toujou la.`,
+      ask: 'M ap mande biwo ou a pou ede asire yo okipe l.',
+      subject: (number) => `Sou demann Philly311 ${number || '[nimewo]'}`,
+    },
+  },
+
+  projects: {
+    kinds: {
+      cleanup: 'Netwayaj',
+      garden: 'Jaden',
+      seating: 'Kote pou chita',
+      art: 'Miral oswa atizay',
+      trees: 'Pyebwa',
+      city_install: 'Yon abri oswa yon ban Vil la enstale',
+      fix_311: 'Yon repare 311',
+      other: 'Yon lòt pwojè',
+    },
+    legend: 'Yon pwojè vwazen yo fini',
+    legendNote: 'Placekeepers li epi apwouve chak rapò anvan li parèt.',
+    detailsTitle: 'Pwojè vwazen yo fini',
+    here: (n) => `${plural(n, { other: '# pwojè' })} isit la`,
+    finished: (month) => `Fini nan ${month}`,
+    by: (group) => `Pa ${group}`,
+    whatItTook: 'Sa li te pran',
+    report: 'Wè rapò a ak foto li yo sou GitHub',
+    source: 'Li plis sou li',
+    openLot: 'Louvri paj teren an',
+    showLayer: 'Montre pwojè vwazen yo fini sou kat la',
+    privacy: 'Kat la pa janm montre ki moun ki voye yon rapò, sèlman yon non gwoup yo te chwazi montre.',
+    section: 'Pwojè isit la',
+    loading: 'N ap chèche pwojè vwazen yo te rapòte isit la.',
+    none: 'Pèsonn poko rapòte yon pwojè vwazen yo fini isit la.',
+    unpublished: 'Kopi kat sa a poko gen lis pwojè vwazen yo fini.',
+    failed: 'Nou pa t ka chaje lis pwojè vwazen yo fini. Eseye ankò pita.',
+    tellUs: 'Di nou sou yon pwojè ou fini',
+    tellUsHere: 'Di nou sou yon pwojè ou fini isit la',
+    tellUsNote:
+      'Fòm lan louvri sou GitHub, kote nenpòt moun ka li l. Yon moun li chak rapò anvan li parèt sou kat la. Foto yo rete sou GitHub: pa janm ak figi yon timoun oswa figi nenpòt moun ki pa t dakò, epi pa janm ak yon plak machin.',
+    oneLot: 'Yon sèl teren poukont li pa ka montre si yon pwojè te mache.',
+    timelineKind: 'Pwojè vwazen yo fini',
+    timelineToggle: 'Pwojè vwazen yo fini',
+    timelineText: (kind, group) => (group ? `${kind}, pa ${group}` : kind),
+    printTitle: 'Pwojè vwazen yo fini isit la',
+  },
+
   displacement: {
     caution: 'Amenajman vèt ka fè pri yo monte toupre. Panse pou ou mete pwoteksyon ansanm ak li.',
     placemakingCaution:
@@ -684,7 +1073,9 @@ const ht: Catalog = {
                                         ? 'Gad travèse lekòl'
                                         : style === 'redlining'
                                           ? 'Kat redlining 1937'
-                                          : 'Detay',
+                                          : style === 'projects'
+                                            ? 'Pwojè vwazen yo fini'
+                                            : 'Detay',
     memorialTitle: 'An memwa',
     peopleHere: (n) => `Nou sonje ${plural(n, { other: '# moun' })} isit la`,
     killed: {

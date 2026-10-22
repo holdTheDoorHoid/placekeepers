@@ -51,8 +51,9 @@ nou ka sijere se kontakte PHDC epi mande sou pasèl espesifik la.
 ### Teren prive
 
 - **Mande pwopriyetè a.** Anpil pwopriyetè ka rive jwenn nan adrès postal ki montre sou paj teren
-  an. Nou planifye yon modèl lèt pou mande pèmisyon, men li **poko ekri**. Mande Garden Justice
-  Legal Initiative gade nenpòt akò anvan ou siyen l.
+  an. Sou yon paj teren, "Ekri yon lèt" louvri [yon lèt ki mande pwopriyetè a pèmisyon](../letters/)
+  pou pran swen teren an pou yon ti tan. **Yon avoka poko revize l, epi se pa konsèy jiridik.**
+  Mande Garden Justice Legal Initiative gade nenpòt akò anvan ou siyen l.
 - **Achte l.** Yon acha òdinè, byenke anpil pwopriyete vid gen yon tit ki mele (pwopriyetè a te
   mouri epi sikseswon an pa t janm regle legalman), sa ki ka fè yon vant difisil.
 - **Posesyon advèsatif pou jaden.** Yon lwa Pensilvani 2024 pèmèt yon rezidan, yon gwoup, oswa yon
@@ -127,6 +128,37 @@ Tankou nenpòt plantasyon, pyebwa ka fè pri toupre yo monte; gade fason pou pwo
 - Depi 10 novanm 2025, Vil la bloke otomatikman nenpòt akt kote vandè a te deja mouri nan dat yo
   sipoze te siyen l.
 
+## Òganize ak vwazen ou yo
+
+- **Ki moun ki reprezante ou.** Chak paj teren ki sou lis nou an fini ak ki moun ki reprezante
+  teren an: ward ak divizyon li, manm Konsèy Minisipal li, reprezantan eta, senatè eta ak manm
+  Kongrè li, chak ak biwo ofisyèl ak telefòn li, ak Òganizasyon Kominotè Anrejistre ki gen zòn ki
+  kouvri l, ak kontak Vil la pibliye. Chak montre kote li soti ak dènye jou yo verifye l. Atlas,
+  kat Vil la, montre menm bagay la pou nenpòt adrès nan afichaj "Voting" (vote) li.
+- **Pake.** Sere kote ou renmen yo nan yon lis, apre sa chwazi "Fè yon pake" bò lis la (oswa "Fè
+  yon pake ak kote sa yo" anwo lis ki klase a nan afichaj analiz la). Pake a louvri nan pwòp onglè
+  li, pare pou enprime sou papye Letter: yon paj kouvèti ak yon ti kat, ki moun pou kontakte, ak yon
+  paj pou chak kote ak sa paj teren li di. Li fèt nan navigatè ou apati kopi chak semèn nou an nan
+  dosye Vil la; anyen pa voye okenn kote.
+- **Lèt.** [Paj lèt yo](../letters/) gen kat ti lèt pou ranpli epi enprime: bay pwopriyetè yon teren
+  pou mande pèmisyon pou pran swen li, bay biwo Konsèy Minisipal ou a pou mande sipò pou yon lakou
+  sou kote, yon teren Land Bank oswa yon netwayaj, bay yon Òganizasyon Kominotè Anrejistre pou
+  mande pou prezante pwojè ou nan yon reyinyon, ak yon swivi sou yon rapò Philly311 ki rete ouvè.
+  **Yon avoka poko revize lèt sa yo. Yo pa konsèy jiridik.** Pou èd jiridik, itilize
+  [fòm demann Grounded in Philly](https://groundedinphilly.org/request-representation/) (Garden
+  Justice Legal Initiative). Sit la pa janm voye yon lèt, epi sa ou tape rete nan navigatè ou
+  jiskaske ou efase l.
+- Lèt bay yon pwopriyetè ofri pou yon konpayi oswa yon òganizasyon san bi likratif, epi pou yon moun
+  sèlman kote kat la ase sèten teren an vid: yon teren nou pa sèten ladan l ka kay yon moun. Teren
+  Vil la ak Land Bank pase atravè pwogram Land Bank yo olye de sa.
+- **Yon afich pou vwazen.** Sou yon paj teren, "Fè yon afich pou vwazen" fè yon panno pou kloti
+  teren an: yon gwo tit, adrès la ak yon ti kat, sa ou espere fè, ki jan vwazen yo ka jwenn ou, ak
+  yon kòd QR ki louvri paj teren an sou Placekeepers. Li enprime sou yon paj Letter oswa kòm de
+  mwatye paj sou yon fèy. Sa ou enprime se piblik, kidonk sèvi ak yon lyen gwoup mesaj oswa yon imèl
+  ki fèt pou pwojè a olye de adrès kay ou oswa telefòn pèsonèl ou. Anvan ou mete l anlè, li
+  [kote ou gen dwa afiche l](../posting/): pa janm sou poto sèvis piblik, limyè ri, panno sikilasyon
+  oswa pyebwa ri, kote kòd Vil la mete amann depi $300 pa panno.
+
 ## Pèmi pou ri ak espas piblik
 
 | Sa ou vle fè | Ki moun pou mande | Sa li bezwen | Pri | Konbyen tan |
@@ -190,6 +222,25 @@ Percent for Art Vil la, OpenStreetMap ak Wikidata. Nenpòt moun ka ajoute yon z�
 kòm yon zèv atizay ak kalite li, epi non li ak atis la lè ou konnen yo; li rive sou kat la nan
 apeprè yon semèn. Mural Arts Philadelphia kenbe pi gwo lis miral vil la sou
 [pwòp sit li](https://muralarts.org/artworks/).
+
+## Di nou sou yon pwojè ou fini
+
+Èske vwazen yo te netwaye yon teren, plante yon jaden oswa pyebwa, bati yon kote pou chita, pentire
+yon miral, jwenn yon ban oswa yon abri nan men Vil la, oswa jwenn yon pwoblèm 311 regle? Di nou sa
+ak ti fòm sa a, epi li ka parèt sou kat la anba "Pwojè vwazen yo fini", kote lòt vwazen ka wè sa yo
+te fè toupre ak sa li te pran.
+
+[Di nou sou yon pwojè ou fini](https://github.com/holdTheDoorHoid/placekeepers/issues/new?template=project.yml)
+
+- Yon moun ki jere Placekeepers li chak rapò anvan li parèt. Yon fwa apwouve, li anjeneral rive sou
+  kat la nan yon èdtan, epi toujou nan pwochen mizajou chak semèn lan.
+- Kat la montre sa yo te fè, kote, mwa yo te fini l, epi, si ou vle, non gwoup ou a ak kèk mo sou sa
+  li te pran. Li pa janm montre non itilizatè GitHub ou, epi li pa montre si ou te gen pèmisyon. Fòm
+  lan mande sou pèmisyon pou nou ka wè ki wout legal ki mache; nou pa janm jije repons lan.
+- Fòm lan sou GitHub, kote nenpòt moun ka li l, epi pou voye l ou bezwen yon kont GitHub gratis.
+- Foto byenveni sou rapò a li menm, men pa janm ak figi yon timoun oswa figi nenpòt moun ki pa t
+  dakò, epi pa janm ak yon plak machin. Kat la pa montre foto: li mete yon lyen nan rapò a.
+- Sou paj yon teren sou kat la, fòm lan louvri ak teren sa a deja ranpli.
 
 ## Lajan pou ede peye l
 
