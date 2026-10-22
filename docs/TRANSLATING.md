@@ -81,12 +81,20 @@ once a native speaker has checked the language.
    ok: (date) => `Datos del ${date}`,
    ```
    Keep every value the English shows (the tests check), and put it where your language needs it.
-   Import `plural`, `formatNumber`, `formatDecimal`, `formatMoney` and `formatDate` from
-   `'../format.ts'`. Numbers, money and dates already follow your language, in Philadelphia time.
+   Import `plural`, `formatNumber`, `formatDecimal`, `formatMoney`, `formatDate`, `formatTime`,
+   `formatClock`, `formatList` and `distanceWords` from `'../format.ts'`. Numbers, money, dates,
+   times and lists already follow your language, in Philadelphia time.
    `plural` takes one form per plural category your language has, with `#` for the number:
    English, Spanish, French and Portuguese use `one` and `other`; Russian `one`, `few`, `many` and
    `other`; Arabic `zero`, `one`, `two`, `few`, `many` and `other`; Chinese, Vietnamese, Khmer and
    Haitian Creole only `other`.
+   The `join` templates say how pieces of text are joined: `join.labelled` and `join.colon` hold
+   the punctuation after a label ("Route: 47", "Protections:"), `join.and`, `join.long` and
+   `join.names` join lists. Write them as your language punctuates, for example
+   `` labelled: (label, value) => `${label}\u202F: ${value}` `` in French or
+   `` labelled: (label, value) => `${label}：${value}` `` in Chinese. Until you do, the label keeps
+   English's colon and lists are joined your language's own way by the browser, never with the
+   English "and" (`formatList` gives the same result if you want it).
 4. **Registry text.** Open `registry/i18n/<code>.yaml` (make it if it is missing, from
    `registry/i18n/es.yaml`). Under each registry file's name, give the item's `id` and the fields
    you translate. The fields a visitor reads, and so the only ones allowed, are:
@@ -175,6 +183,9 @@ In `web/`:
   must do the same, or it stays in English.
 - `web/src/i18n/catalog.ts` does the writing. A key the catalog lacks keeps its English text,
   wrapped in two invisible Unicode isolates (FIRST STRONG ISOLATE and POP DIRECTIONAL ISOLATE).
+  The `join` templates are the exception (`OWN_FALLBACKS`): until a catalog has them, the colon
+  stays as English writes it and lists are joined by `Intl.ListFormat`, unmarked, since neither
+  is English text.
   They keep an English sentence in order inside Arabic, and `web/src/i18n/marks.ts` finds them after
   the page draws and puts `lang="en"` (and `dir="ltr"` on an Arabic page) on the element that holds
   them. Text that leaves the page (a downloaded file, a link) goes through `plainText()`.
@@ -191,6 +202,11 @@ In `web/`:
   a translator gets to it; nothing else needs to change.
 - Keep a sentence whole in one key, with its values passed in, rather than joining pieces in code:
   word order differs between languages.
+- Never write punctuation or words between pieces in code: no `${label}: ${value}`, no `' and '`.
+  Use `strings.join.labelled`, `strings.join.colon` and the list templates (`labelledParts` when
+  the value is a link or the label is bold), and format numbers, times and dates through the
+  helpers in `web/src/strings.ts` (`formatDecimal`, `formatClock`, `formatList`), never
+  `toFixed` or a hand built "AM".
 - Renaming or removing an English key leaves translations of the old key behind; the tests list them
   ("has no key English lacks"), and the fix is to rename or remove them in each catalog.
 - New English sentences written by the pipeline into published files should carry codes and values

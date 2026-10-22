@@ -2,7 +2,8 @@
 // object in web/src/strings.ts key for key. English stays the source of truth: a key the catalog
 // leaves out shows the English text, marked so screen readers read it in an English voice
 // (src/i18n/marks.ts), and a key English adds later simply falls back until a translator gets to
-// it. Nothing in strings.ts has to change for a new English key to work this way.
+// it. The `join` templates (punctuation and lists) fall back their own way, unmarked
+// (OWN_FALLBACKS). Nothing in strings.ts has to change for a new English key to work this way.
 //
 // The catalog's type comes from strings.ts itself, so TypeScript stops a key English lacks and a
 // template with the wrong arguments; tests/i18n.test.ts checks the same at run time, checks that
