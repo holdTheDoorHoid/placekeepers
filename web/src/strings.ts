@@ -140,6 +140,10 @@ export const strings = {
   units: {
     meters: (n: number) => `${formatNumber(n)} meters`,
     kilometers: (km: number) => `${formatDecimal(km, 1)} kilometers`,
+    /** Miles with one decimal, for a walk on a survey sheet: "0.4 miles", "10.3 miles". */
+    miles: (miles: number) => `${formatDecimal(miles, 1)} miles`,
+    /** A walk shorter than the shortest the sheet shows: "less than 0.1 miles". */
+    lessThanMiles: (miles: number) => `less than ${formatDecimal(miles, 1)} miles`,
   },
 
   header: {
@@ -1622,6 +1626,13 @@ export const strings = {
     } as Record<string, string>,
     estimateTitle: 'How long it takes',
     estimate: (time: string) => `Our estimate: ${time} for one person or pair.`,
+    /**
+     * How long a walk takes, our estimate rounded to 5 minutes (src/survey/sheet.ts,
+     * formatDuration): "about 45 minutes", "about 1 hour", "about 1 hour 15 minutes". `hours` may
+     * be 0; `minutes` is 0 to 55. It fills in `estimate` and `partEstimate`.
+     */
+    duration: (hours: number, minutes: number) =>
+      `about ${[hours ? plural(hours, 'hour', 'hours') : '', minutes || !hours ? `${formatNumber(minutes)} minutes` : ''].filter(Boolean).join(' ')}`,
     estimateBasis:
       'This is our own estimate, not a measurement: walking about 3 miles an hour from stop to stop, and about a minute at each stop. Getting to the first stop and home is extra.',
     trolleyTunnel:
