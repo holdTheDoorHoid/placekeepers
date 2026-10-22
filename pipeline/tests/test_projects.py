@@ -749,3 +749,54 @@ def test_points_from_the_city_limits_file_round_trip(tmp_path):
     assert index_ is not None and limits is not None
     assert limits.covers(Point(-75.1385, 39.9951))
     assert not limits.covers(Point(-75.10, 39.70))
+
+
+# ---------------------------------------------------------------------------------------------
+# The workflows: read only tokens wherever packages run, and no secret
+
+
+def workflow(name: str) -> dict[str, Any]:
+    return yaml.safe_load((REPO_ROOT / ".github" / "workflows" / name).read_text(encoding="utf-8"))
+
+
+def test_the_quick_publish_runs_packages_only_with_read_tokens_and_uses_no_secret():
+    text = (REPO_ROOT / ".github" / "workflows" / "projects.yml").read_text(encoding="utf-8")
+    assert "secrets." not in text
+    flow = workflow("projects.yml")
+    assert flow["permissions"] == {}
+    # PyYAML reads the key `on` as True.
+    events = flow[True]
+    assert set(events["issues"]["types"]) == {
+        "labeled",
+        "unlabeled",
+        "edited",
+        "closed",
+        "reopened",
+        "deleted",
+    }
+    assert "workflow_dispatch" in events
+    assert flow["concurrency"] == {"group": "projects", "cancel-in-progress": False}
+    jobs = flow["jobs"]
+    assert jobs["build"]["permissions"] == {"contents": "read", "issues": "read", "actions": "read"}
+    assert "project-approved" in jobs["build"]["if"]
+    assert jobs["site"]["permissions"] == {"contents": "read"}
+    assert jobs["deploy"]["permissions"] == {"pages": "write", "id-token": "write"}
+    # Only deploy can write, and it runs nothing but the Pages action.
+    assert [step.get("uses", "").split("@")[0] for step in jobs["deploy"]["steps"]] == [
+        "actions/deploy-pages"
+    ]
+    # The site is built from the same commit as the weekly data it publishes.
+    checkout = jobs["site"]["steps"][0]
+    assert checkout["with"]["ref"] == "${{ needs.build.outputs.sha }}"
+
+
+def test_the_weekly_refresh_reads_issues_with_a_read_only_token_and_keeps_the_inputs():
+    jobs = workflow("refresh.yml")["jobs"]
+    assert jobs["pipeline"]["permissions"] == {"contents": "read", "issues": "read"}
+    steps = {step.get("name"): step for step in jobs["pipeline"]["steps"]}
+    assert steps["Fetch, check and publish"]["env"]["GITHUB_TOKEN"] == "${{ github.token }}"
+    assert steps["Hand over the site data"]["with"]["retention-days"] == 14
+    inputs = steps["Hand over the project inputs"]["with"]
+    assert inputs["name"] == "project-inputs"
+    assert inputs["path"].endswith("/derived/project_inputs")
+    assert inputs["retention-days"] == 14
