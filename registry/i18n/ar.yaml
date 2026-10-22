@@ -1481,6 +1481,455 @@ suggestions:
       يطلبوا واحدة؛ ويستطيع الجيران المساعدة في سقيها بعد ذلك.
     cost: أشجار شوارع مجانية لمالكي العقارات
 
+routes:
+  land_bank_garden_agreement:
+    label: اتفاقية حديقة أو ترخيص من Land Bank
+    who: >-
+      أي شخص لاتفاقية الحديقة الحضرية (Urban Garden Agreement) بدولار واحد؛ والمجموعات التي لها
+      راعٍ غير ربحي لترخيص الحديقة المجتمعية (Community Garden License)
+    cost: >-
+      1 دولار (اتفاقية الحديقة الحضرية Urban Garden Agreement)، أو 25 دولارًا في السنة (اتفاقية
+      الحديقة الفردية Individual Garden Agreement)، أو تأمين وراعٍ (ترخيص الحديقة المجتمعية
+      Community Garden License)
+    timeline: أسابيع للاتفاقيات القصيرة؛ وأشهر للترخيص
+    steps:
+      - تأكد من أن Land Bank أو المدينة تملك القطعة.
+      - اقرأ دليل Grounded in Philly للحصول على إذن لاستخدام أراضي المدينة.
+      - >-
+        قدّم طلبًا إلى Land Bank، أو شارك أولًا في إحدى ندواتها المجانية عبر الإنترنت (webinars).
+    links:
+      "https://phillylandbank.org/":
+        label: Philadelphia Land Bank
+      "https://groundedinphilly.org/get-permission-to-use-land-city/":
+        label: "Grounded in Philly: الإذن باستخدام أراضي المدينة"
+  ask_the_owner:
+    label: اطلب إذن المالك
+    who: أي شخص
+    cost: مجاني
+    timeline: يعتمد على المالك
+    steps:
+      - اعثر على عنوان مراسلة المالك في صفحة القطعة.
+      - اكتب لطلب الإذن بتنظيف القطعة وتخضيرها، واعرض اتفاقًا كتابيًا بسيطًا.
+      - اطلب من Garden Justice Legal Initiative أن تراجع أي اتفاق قبل أن توقّع.
+    links:
+      "https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/":
+        label: Garden Justice Legal Initiative
+  community_landcare:
+    label: ارعَ قطعة مع PHS Community LandCare
+    who: مجموعات السكان
+    cost: للتأكيد مع PHS
+    timeline: للتأكيد مع PHS
+    steps:
+      - تواصل مع PHS بشأن Community LandCare.
+    links:
+      "https://phsonline.org/":
+        label: جمعية بنسلفانيا للبستنة (Pennsylvania Horticultural Society)
+  report_to_311:
+    label: بلّغ Philly311
+    who: أي شخص
+    cost: مجاني
+    timeline: من أيام إلى أسابيع
+    steps:
+      - >-
+        بلّغ Philly311 عن المبنى المفتوح أو إلقاء النفايات بصورة غير قانونية أو الكتابات على الجدران
+        أو ضوء الشارع أو الزقاق المطفأ، عبر الإنترنت أو بالتطبيق أو بالاتصال برقم 311.
+      - احتفظ برقم طلب الخدمة وعاود الاطلاع.
+    links:
+      "https://www.phila.gov/services/property-lots-housing/submit-a-service-request-with-311/":
+        label: Philly311
+  ghost_bike_request:
+    label: اسأل Bicycle Coalition عن دراجة شبحية أو نصب تذكاري
+    who: العائلة، أو الأصدقاء بمباركة العائلة
+    cost: الطلب مجاني
+    timeline: غير محدد
+    steps:
+      - تحدث إلى العائلة أولًا. لا يُقام نصب تذكاري إلا بمباركتها.
+      - >-
+        بالنسبة إلى شخص قُتل أثناء ركوب الدراجة، املأ نموذج طلب الدراجة الشبحية لدى Bicycle
+        Coalition. ويُطلب بالنموذج نفسه إصلاح دراجة شبحية أو استبدالها.
+      - >-
+        تدعم Families for Safe Streets، التي تديرها Bicycle Coalition، العائلات بعد وقوع حادث وتشارك
+        دليل موارد لما بعد الحادث.
+      - خطط لمن سيعتني بالنصب التذكاري على مر الوقت.
+    links:
+      "https://bicyclecoalition.org/what-is-a-ghost-bike/":
+        label: "Bicycle Coalition: ما هي الدراجة الشبحية"
+      "https://forms.gle/HBtY1hG4xcdVJKNb8":
+        label: نموذج طلب دراجة شبحية
+      "https://bicyclecoalition.org/programs/families-for-safe-streets/":
+        label: Families for Safe Streets Greater Philadelphia
+  traffic_calming_request:
+    label: اطلب تهدئة حركة المرور في شارع سكني
+    who: سكان المقطع، خاصة للشارع الذي يسكنون فيه
+    cost: الطلب مجاني
+    timeline: تقيّم المدينة الطلبات ثلاث مرات في السنة وتركّب عادة وسائد السرعة من مايو إلى أكتوبر
+    steps:
+      - >-
+        تحقق مما إذا كان الشارع مؤهلًا على خريطة المدينة لتهدئة حركة المرور، أو بالاتصال برقم 311.
+      - أرسل طلب المدينة الإلكتروني لتهدئة حركة المرور.
+      - >-
+        إن اختارت المدينة الطلب، فاجمع تواقيع 60 في المئة من الأسر في المقطع، توقيعًا واحدًا لكل
+        أسرة.
+    links:
+      "https://www.phila.gov/services/streets-sidewalks-alleys/request-traffic-calming-for-a-residential-street/":
+        label: "مدينة فيلادلفيا: اطلب تهدئة حركة المرور"
+  otis_contact:
+    label: اسأل مكتب النقل في المدينة (OTIS)
+    who: أي شخص
+    cost: مجاني
+    timeline: غير محدد
+    steps:
+      - >-
+        اكتب إلى مكتب النقل ونظم البنية التحتية على otis@phila.gov، مع ذكر الزاوية وما تراه هناك.
+      - اسأل عمّا تسمح به المدينة عند هذه الزاوية وكيف تطلبه.
+    links:
+      "https://visionzerophl.com/":
+        label: Vision Zero Philadelphia
+  treephilly_yard_trees:
+    label: احصل على أشجار مجانية من توزيع TreePhilly
+    who: >-
+      سكان فيلادلفيا، لأشجار تُزرع في الأرض في ملكية خاصة، مثل قطعة تملكها أو قطعة خاصة يوافق
+      مالكها كتابيًا
+    cost: مجاني
+    timeline: توزيع الربيع أو الخريف التالي
+    steps:
+      - >-
+        اشترك في نشرة TreePhilly البريدية لتعرف متى يفتح التسجيل. تجري عمليات التوزيع في الربيع (من
+        مارس إلى مايو) وفي الخريف (من سبتمبر إلى ديسمبر) في الرموز البريدية ذات الأولوية.
+      - >-
+        سجّل لدى المجموعة المجتمعية التي تستضيف توزيعًا قريبًا منك. يفتح التسجيل قبل التوزيع بنحو
+        أسبوعين إلى شهر، ويغلق حين تنفد الأشجار.
+      - >-
+        استلم الشجرة، بارتفاع 2 إلى 10 أقدام في دلو سعته 5 غالونات، مع كيس مجاني من المهاد (الملش)،
+        وازرعها في الأرض. لا يجوز وضع أشجار التوزيع في حاوية أو في الرصيف أو في أي مكان آخر من حق
+        المرور العام.
+    links:
+      "https://treephilly.org/yard-trees/":
+        label: "TreePhilly: أشجار الأفنية"
+  mural_arts_wall_request:
+    label: اطلب من Mural Arts جدارية على جدار
+    who: مالك الجدار، مع جيران يؤيدون ذلك. ويستطيع أي شخص أن يبدأ بسؤال المالك
+    cost: التقديم مجاني
+    timeline: أشهر
+    steps:
+      - اعثر على جدار يواجه القطعة ويسهل رؤيته من الشارع، واسأل مالكه هل يرحّب بجدارية.
+      - >-
+        بموافقة المالك، املأ نموذج طلب الجدار في صفحة الاتصال لدى Mural Arts Philadelphia. ويسأل عن
+        الجدار وتأييد الجيران ولماذا تهم الجدارية هناك.
+      - >-
+        وأي شيء في الشارع أو على الرصيف، أي حق المرور العام، يذهب أيضًا إلى لجنة الفنون لدى المدينة
+        (Art Commission).
+    links:
+      "https://muralarts.org/contact/":
+        label: "Mural Arts Philadelphia: صفحة الاتصال، وفيها نموذج جدارية على جدارك"
+  public_space_mini_grant:
+    label: قدّم على منحة Feet First Philly الصغيرة للمساحات العامة
+    who: >-
+      الجيران والمجموعات المجتمعية. ويفضّل البرنامج المجتمعات التي نالت استثمارًا أقل في شوارعها
+      وخدمات المدينة
+    cost: منح من 500 إلى 2,500 دولار، يمول جزءًا منها إدارة الصحة العامة
+    timeline: يفتح التقديم في أغسطس ويُغلق في أكتوبر كل سنة
+    steps:
+      - >-
+        اقرأ طلب المقترحات في صفحة المنح الصغيرة لدى Feet First Philly. يجب أن تجعل المشاريع الحي
+        أكثر أمانًا وأسهل للمشي والتنقل بالعجلات؛ واسأل Feet First Philly هل يؤهل مكان للجلوس على
+        قطعة أرض.
+      - قدّم بينما الجولة مفتوحة. يفتح التقديم في أغسطس ويُغلق في أكتوبر.
+      - توقّع أن ترسل تقريرًا قصيرًا في منتصف المدة وآخر في النهاية.
+    links:
+      "https://feetfirstphilly.org/public-space-enhancement-mini-grant-2/":
+        label: "Feet First Philly: منحة تحسين المساحات العامة الصغيرة"
+  land_bank_side_yard:
+    label: احصل عليها كفناء جانبي أو خلفي (لمالكي المنزل المجاور فقط)
+    who: مالك المنزل المجاور، وفقط حين تحدد قائمة المدينة القطعة على أنها مؤهلة لفناء جانبي
+    cost: >-
+      سعر رمزي. ويجب أن تبقى القطعة فناءً جانبيًا إلى الأبد، بموجب رهن عقاري مدته 30 سنة بقيمتها
+      المقدّرة يُعفى منه إذا احتُرمت القواعد؛ ويمكن للمدينة استردادها إن لم تُحترم
+    timeline: >-
+      يهدف الموظفون إلى الرد خلال 120 يومًا، ثم يقرر مجلس إدارة Land Bank ومجلس المدينة. ولم تُنقل
+      ملكية سوى 67 قطعة بهذه الطريقة في المدينة كلها من 2020 إلى 2023
+    steps:
+      - تحقق من أنك تملك المنزل المجاور ومن أن القطعة معلَّمة على أنها مؤهلة لفناء جانبي.
+      - اقرأ صفحة Land Bank عن الأفنية الجانبية والخلفية وقدّم طلبك.
+      - >-
+        توقّع انتظارًا طويلًا. وبعد مراجعة الموظفين، يجب أن يوافق مجلس إدارة Land Bank ومجلس
+        المدينة.
+    links:
+      "https://phillylandbank.org/side-or-rear-yards/":
+        label: "Philadelphia Land Bank: الأفنية الجانبية أو الخلفية"
+  contact_phdc:
+    label: اسأل PHDC عن هذه القطعة
+    who: أي شخص
+    cost: السؤال مجاني
+    timeline: غير معروف. وليس لقطع Redevelopment Authority مسار منشور للجيران بعد
+    steps:
+      - تواصل مع PHDC واذكر عنوان القطعة ورقم حسابها في OPA.
+      - اسأل من يدير القطعة، وهل هي متاحة، وكيف يستطيع الجيران الاعتناء بها.
+      - "إن لم تكن متأكدًا ممن تسأل، فابدأ من Land Bank (land@phdc.phila.gov، 215 448 3034)."
+    links:
+      "https://phdcphila.org/":
+        label: PHDC
+      "https://phillylandbank.org/":
+        label: Philadelphia Land Bank
+  garden_adverse_possession:
+    label: التملك بالتقادم لحديقة (قانون 2024)
+    who: سكان فيلادلفيا أو المجموعات أو المنظمات غير الربحية التي زرعت قطعة مملوكة ملكية خاصة
+    cost: محام ورسوم محكمة. وأي رهون على الأرض تبقى معها
+    timeline: 10 سنوات على الأقل من الاستخدام، ثم دعوى قضائية
+    steps:
+      - >-
+        تحقق من شروط قانون 2024 (53 Pa.C.S. المادة 1143، ساري منذ 6 سبتمبر 2024): أرض مملوكة ملكية
+        خاصة مساحتها نصف فدان أو أقل، و10 سنوات من الاستخدام منها 5 سنوات على الأقل كحديقة، ولا
+        مبانٍ دائمة (الأسوار والسقائف مسموح بها).
+      - اقرأ دليل Grounded in Philly عن التملك بالتقادم.
+      - >-
+        اطلب من Garden Justice Legal Initiative محاميًا. يحتاج هذا المسار إلى دعوى تثبيت ملكية
+        (quiet title).
+    links:
+      "https://groundedinphilly.org/how-to-obtain-land-adverse-possession/":
+        label: "Grounded in Philly: التملك بالتقادم"
+      "https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/":
+        label: Garden Justice Legal Initiative
+  conservatorship:
+    label: الحراسة القضائية (القانون 135، Act 135)
+    who: منظمة غير ربحية أو شخص يقدّم التماسًا إلى المحكمة
+    warning: >-
+      قد تنتزع الحراسة القضائية العقار من مالكه. وجد باحثون أنها تُستخدم بصورة غير متناسبة في
+      الأحياء التي تواجه تغيّرًا سكانيًا بفعل ارتفاع الأسعار (gentrification). تحدّث إلى Garden
+      Justice Legal Initiative قبل أن تفكر في اللجوء إليها.
+    cost: >-
+      تكاليف المحكمة والإصلاح. ومنذ 2014 يمكن أن يُدفع لمقدّم الالتماس الأكبر من: 2,500 دولار، أو
+      20% من التكاليف، أو 20% من سعر البيع
+    timeline: قضية في المحكمة؛ اسأل المساعدة القانونية كم ستستغرق
+    steps:
+      - تحدث إلى Garden Justice Legal Initiative قبل أي شيء آخر.
+      - اسأل أولًا هل تفي مراسلة المالك، أو مساعدة عائلة على الاحتفاظ بالعقار، بالحاجة نفسها.
+      - >-
+        اعرف شروط القانون: لا يجوز للمحكمة أن تعيّن حارسًا قضائيًا إلا لعقار لم يُشغل قانونيًا خلال
+        12 شهرًا، ولا يُسوَّق، وليس قيد الحجز العقاري (foreclosure)، ولم يُشترَ في آخر 6 أشهر.
+    links:
+      "https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/":
+        label: Garden Justice Legal Initiative
+  tangled_title_help:
+    label: ساعد عائلة على الاحتفاظ بمنزل موروث (Tangled Title Fund)
+    who: >-
+      العائلات التي ما زال منزلها باسم قريب توفي، ودخل أسرتها يصل إلى 80% من الوسيط في المنطقة؛
+      ويجب أن يكون العقار منزل مقدّم الطلب
+    cost: مجاني للعائلة ضمن حدود الصندوق؛ وتتحمل العائلة ما يتجاوزها
+    timeline: من يأتي أولًا يُخدم أولًا
+    steps:
+      - >-
+        تواصل مع Tangled Title Fund لدى Philadelphia VIP (tangledtitlefund@gmail.com، 215 523 9553).
+      - >-
+        يدفع الصندوق ما يصل إلى 6,500 دولار من التكلفة القانونية لتسوية سند الملكية، وما يصل إلى
+        3,500 دولار إضافية لضريبة النقل، حالة بحالة.
+    links:
+      "https://phillyvip.org/tangled-title-fund/":
+        label: "Philadelphia VIP: Tangled Title Fund"
+  fraud_guard:
+    label: اشترك في تنبيهات Fraud Guard المجانية التي تقدمها المدينة
+    who: مالكو العقارات وعائلاتهم
+    cost: مجاني
+    timeline: يصل التنبيه بعد نحو 30 يومًا من تسجيل مستند
+    steps:
+      - اشترك في Fraud Guard باسم وعنوان بريد إلكتروني.
+      - ترسل المدينة بريدًا إلكترونيًا حين يُسجَّل مستند يذكر اسمك، فيُكتشف الصك المزوّر مبكرًا.
+      - "تُوجَّه الأسئلة إلى إدارة السجلات (215 686 2290، records.info@phila.gov)."
+    links:
+      "https://www.phila.gov/2022-09-06-own-property-in-philadelphia-get-free-deed-fraud-protection-with-fraud-guard/":
+        label: "مدينة فيلادلفيا: Fraud Guard"
+  bus_shelter_request:
+    label: اطلب من المدينة مظلة حافلات
+    who: أي شخص
+    cost: السؤال مجاني
+    timeline: >-
+      غير محدد. يرسل OTIS مواقع المظلات الجديدة إلى لجنة الفنون لدى المدينة (Art Commission)
+      للمراجعة (ثمانية في ديسمبر 2025)
+    steps:
+      - >-
+        دوّن رقم SEPTA للموقف (على اللافتة، وعلى هذه الخريطة) والزاوية وعدد من يصعدون هناك في كل يوم
+        أسبوع.
+      - >-
+        اكتب إلى مكتب النقل ونظم البنية التحتية (OTIS) لدى المدينة على otis@phila.gov، أو اتصل
+        بالرقم 215-686-9003. يدير OTIS برنامج المدينة لمظلات الحافلات؛ وليس هناك نموذج طلب عام.
+      - >-
+        أرسل نسخة إلى مكتب دائرة مجلس المدينة الخاصة بك، وأبلغ SEPTA أيضًا، عبر نموذج التعليقات
+        الإلكتروني لديها أو على الرقم 215-580-7800.
+    links:
+      "https://www.phila.gov/media/20240521160603/RFI-OTIS-street-furniture-20240521.pdf":
+        label: طلب OTIS للحصول على معلومات عن أثاث الشوارع (مايو 2024)، مع هدف المدينة من المظلات
+      "https://www.phila.gov/media/20251205094032/Bus-Shelter-Upgrades-submission.pdf":
+        label: ثماني مظلات حافلات جديدة أُرسلت إلى لجنة الفنون (ديسمبر 2025)
+      "https://wwww.septa.org/customer-service/comment-form/":
+        label: نموذج تعليقات SEPTA
+      "https://phlcouncil.com/council-members/":
+        label: "مجلس مدينة فيلادلفيا: عضو المجلس ومكتبه في كل دائرة"
+  stop_bench_request:
+    label: اطلب من المدينة مقعدًا في موقف
+    who: أي شخص
+    cost: السؤال مجاني
+    timeline: غير محدد
+    steps:
+      - دوّن رقم SEPTA للموقف (على اللافتة، وعلى هذه الخريطة) والزاوية.
+      - >-
+        اكتب إلى OTIS على otis@phila.gov، أو اتصل بالرقم 215-686-9003، واطلب مقعدًا في الموقف.
+        المقاعد في المواقف تتبع برنامج المدينة لأثاث الشوارع؛ ولم نجد نموذج طلب عام.
+      - أرسل نسخة إلى مكتب دائرة مجلس المدينة الخاصة بك.
+    links:
+      "https://www.phila.gov/media/20240521160603/RFI-OTIS-street-furniture-20240521.pdf":
+        label: طلب OTIS للحصول على معلومات عن أثاث الشوارع (مايو 2024)
+      "https://phlcouncil.com/council-members/":
+        label: "مجلس مدينة فيلادلفيا: عضو المجلس ومكتبه في كل دائرة"
+  street_tree_request:
+    label: اطلب شجرة شارع مجانية
+    who: >-
+      مالك المنزل أو النشاط التجاري أو القطعة أو العقار الآخر الذي ستقف الشجرة أمامه؛ ويستطيع
+      الجيران أن يطلبوا ذلك من المالك
+    cost: مجاني
+    timeline: موسم الزراعة التالي بعد زيارة خبير الأشجار
+    steps:
+      - >-
+        تُزرع أشجار الشوارع في الرصيف أمام العقار حين يطلب مالكه ذلك. تحدث مع مالكي المباني بجانب
+        الموضع. وبالنسبة إلى قطعة أرض فارغة، اسأل المالك الذي تذكره صفحة القطعة، أو Land Bank لقطعة
+        تملكها المدينة أو Land Bank.
+      - >-
+        يطلب المالك شجرة شارع مجانية من قسم إدارة أشجار الشوارع (Street Tree Management Division) في
+        إدارة الحدائق والترفيه، عبر الإنترنت، أو بالبريد الإلكتروني على StreetTree.Info@phila.gov،
+        أو بالهاتف على 215-685-4363.
+      - >-
+        يزور خبير أشجار تابع للمدينة ليقرر أي شجرة تناسب. وتزرعها المدينة مجانًا في موسم زراعة (من
+        منتصف أبريل إلى منتصف يونيو، أو من منتصف أكتوبر إلى منتصف نوفمبر) وتسقيها وتغطي تربتها
+        بالمهاد في السنة الأولى. وبعد ذلك تطلب TreePhilly نحو 20 غالونًا من الماء في الأسبوع من مارس
+        إلى ديسمبر.
+    links:
+      "https://www.phila.gov/services/trees-parks-the-environment/tree-related-services/get-a-street-tree/":
+        label: "مدينة فيلادلفيا: احصل على شجرة شارع"
+      "https://treephilly.org/street-trees/":
+        label: "TreePhilly: أشجار الشوارع"
+  streetcomplete_survey:
+    label: امسح الموقف بتطبيق StreetComplete
+    who: أي شخص لديه هاتف Android (ظهرت في سبتمبر 2026 أول نسخة تجريبية لهاتف iPhone)
+    cost: مجاني
+    timeline: تصل الإجابات إلى هذه الخريطة خلال نحو أسبوع
+    steps:
+      - ثبّت تطبيق StreetComplete المجاني وأنشئ حسابًا مجانيًا في OpenStreetMap لتُنشر إجاباتك.
+      - >-
+        عند الموقف، اضغط على علامة التطبيق وأجب عن أسئلته بشأن المظلة والمقعد والإضاءة ورقم الموقف.
+      - >-
+        إن لم يكن في التطبيق سؤال عند الموقف، فأضف الموقف بطبقة Things في التطبيق، أو اترك ملاحظة
+        ليضيفه رسّام خرائط آخر.
+    links:
+      "https://holdthedoorhoid.github.io/placekeepers/streetcomplete/":
+        label: "Placekeepers: مسح مواقف الحافلات"
+      "https://streetcomplete.app/":
+        label: StreetComplete
+  neighborhood_gardens_trust:
+    label: احفظ حديقة مجتمعية إلى الأبد (Neighborhood Gardens Trust)
+    who: البستانيون الذين نمت حديقتهم المجتمعية ثلاثة مواسم على الأقل
+    cost: التقديم مجاني
+    timeline: إجابة خلال نحو أسبوعين؛ أما الحصول على الأرض فيستغرق وقتًا أطول
+    steps:
+      - >-
+        تحقق من معايير الصندوق: حديقة نشطة ثلاثة مواسم زراعة على الأقل، وبستانيون قادرون على
+        الاعتناء بها، وصلات بجهات مثل مؤسسة للتنمية المجتمعية أو كنيسة أو مدرسة، وتأييد من الجيران
+        ومن عضو مجلس المدينة عن الدائرة.
+      - >-
+        قدّم طلبك بطلب الحديقة الإلكتروني لدى الصندوق، أو بنموذجه القابل للطباعة. يرد الصندوق خلال
+        نحو أسبوعين، ثم يزور الحديقة ويعرضها على مجلس إدارته.
+      - >-
+        وبعد الموافقة، يعمل الصندوق مع المدينة للحصول على الأرض ويحتفظ بها ليظل الجيران يزرعون، مع
+        تأمين المسؤولية والمساعدة في الماء والصيانة. وتُوجَّه الأسئلة إلى 215 988 1630 أو
+        ngtrust@pennhort.org.
+    links:
+      "https://ngtrust.org/preservation/":
+        label: "Neighborhood Gardens Trust: حفظ الحدائق"
+  community_land_trust:
+    label: ابقِ المنازل والأرض ميسورة إلى الأبد (ائتمانات الأراضي المجتمعية)
+    who: الجيران والمجموعات المجتمعية والمنظمات غير الربحية
+    cost: السؤال مجاني
+    timeline: طويل؛ وتستغرق مشاريع ائتمان الأراضي سنوات
+    steps:
+      - >-
+        تعرّف على طريقة عمل ائتمان الأراضي المجتمعية: منظمة غير ربحية تملك الأرض إلى الأبد، وتشتري
+        العائلات المنازل المقامة عليها أو تستأجرها، وعقد إيجار أرض طويل يُبقي كل منزل ميسورًا حين
+        يُباع من جديد.
+      - >-
+        تحدث مع ائتمان أراضٍ يعمل بالفعل في فيلادلفيا، مثل Community Justice Land Trust الذي ينتمي
+        إلى Women's Community Revitalization Project، ويملك منازل في Point Breeze وGrays Ferry
+        وMantua وGermantown وPort Richmond وHaddington.
+      - >-
+        اسأل Garden Justice Legal Initiative كيف يمكن لائتمان أراضٍ أن يحتفظ بحديقة أو قطعة تعتني
+        بها مجموعتك بالفعل.
+    links:
+      "https://groundedsolutions.org/strengthening-neighborhoods/community-land-trusts":
+        label: "Grounded Solutions Network: ائتمانات الأراضي المجتمعية"
+      "https://www.wcrpphila.org/cjlt":
+        label: "Women's Community Revitalization Project: Community Justice Land Trust"
+  homestead_exemption:
+    label: اخفض فاتورة ضرائب صاحب المنزل (إعفاء Homestead لدى المدينة)
+    who: >-
+      أي شخص يملك منزله في فيلادلفيا ويسكنه كمنزله الرئيسي، حتى مع رهن عقاري أو دين ضرائب؛ ما عدا
+      المنازل الخاضعة لتخفيض ضريبي مدته 10 سنوات
+    cost: مجاني
+    timeline: الموعد النهائي 1 ديسمبر كل سنة
+    steps:
+      - >-
+        قدّم طلبك في مركز ضرائب فيلادلفيا (tax-services.phila.gov)، حيث يغطي طلب واحد مجمّع برامج
+        الإعفاء الضريبي لدى المدينة، أو اتصل بخط Homestead الساخن على 215 686 9200، أو أرسل النموذج
+        بالبريد إلى إدارة الإيرادات (Department of Revenue)، P.O. Box 52817، Philadelphia, PA 19115.
+      - >-
+        يخصم الإعفاء 100,000 دولار من القيمة المقدّرة للمنزل لأغراض فاتورة الضرائب، فيوفّر ما يصل
+        إلى 1,399 دولارًا في السنة.
+      - >-
+        قدّم طلبك بحلول 1 ديسمبر (وبحلول 1 أكتوبر لتراه في الفاتورة التالية). وبعد القبول، لا حاجة
+        إلى التقديم من جديد إلا إذا تغيّر الصك.
+    links:
+      "https://www.phila.gov/services/payments-assistance-taxes/taxes/property-and-real-estate-taxes/get-real-estate-tax-relief/get-the-homestead-exemption/":
+        label: "مدينة فيلادلفيا: احصل على إعفاء Homestead"
+  longtime_owner_occupants:
+    label: >-
+      حدّ تقييم المالك المقيم منذ زمن طويل (برنامج LOOP لدى المدينة: Longtime Owner Occupants
+      Program)
+    who: >-
+      أصحاب المنازل الذين يسكنون منازلهم منذ 10 سنوات على الأقل، وارتفع تقييم منزلهم 50 في المئة
+      على الأقل في سنة واحدة أو 75 في المئة على مدى خمس سنوات، ودخل أسرتهم دون حد المدينة (مثل
+      103,050 دولارًا لشخص واحد أو 147,200 دولار لأربعة أشخاص في 2026)، ومنتظمون في ضرائبهم أو
+      لديهم اتفاق سداد
+    cost: مجاني
+    timeline: موعد نهائي سنوي، 30 سبتمبر في السنوات الأخيرة
+    steps:
+      - >-
+        قدّم طلبك في مركز ضرائب فيلادلفيا (tax-services.phila.gov) بطلب المدينة المجمّع، أو اتصل
+        بالرقم 215 686 9200، أو راسل revenue@phila.gov، أو أرسل النموذج بالبريد إلى إدارة الإيرادات،
+        P.O. Box 53190, Philadelphia, PA 19105.
+      - >-
+        يضع LOOP حدًا للتقييم الذي تستخدمه فاتورة الضرائب، هو 1.5 ضعف السنة السابقة أو 1.75 ضعف أدنى
+        قيمة في السنوات الخمس الأخيرة، ما دام المالك مؤهلًا.
+      - >-
+        قدّم طلبك بحلول الموعد النهائي السنوي للمدينة (30 سبتمبر في السنوات الأخيرة)؛ وتذكر صفحة
+        المدينة الموعد الحالي.
+    links:
+      "https://www.phila.gov/services/payments-assistance-taxes/payment-plans-and-assistance-programs/income-based-programs-for-residents/apply-for-the-longtime-owner-occupants-program-loop/":
+        label: "مدينة فيلادلفيا: قدّم طلبًا إلى LOOP"
+
+partners:
+  phs:
+    one_line: LandCare وCommunity LandCare وPhilly Spring Cleanup.
+  gjli:
+    one_line: مساعدة قانونية مجانية وأدلة لاستخدام الأراضي الفارغة.
+  ngt:
+    one_line: يحفظ الحدائق المجتمعية إلى الأبد.
+  land_bank:
+    one_line: برامج المدينة لقطع الأراضي الفارغة، ومنها الأفنية الجانبية والحدائق.
+  bike_coalition:
+    one_line: الدعوة إلى Vision Zero، والدراجات الشبحية، وFamilies for Safe Streets.
+  feet_first:
+    one_line: الدعوة إلى حماية المشاة، وجولات تقييم المشي، ومنح صغيرة للمساحات العامة.
+  treephilly:
+    one_line: "برنامج غرس الأشجار التابع لإدارة الحدائق والترفيه: أشجار شوارع وأشجار أفنية مجانية."
+  mural_arts:
+    one_line: جداريات في أنحاء المدينة؛ ويستطيع مالكو الجدران أن يطلبوا واحدة.
+
 options:
   live_city_data:
     label: جلب بيانات المدينة الحية
