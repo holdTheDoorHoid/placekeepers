@@ -2186,7 +2186,7 @@ const ptBR: Catalog = {
       },
       unsafe: {
         text: (since) => (since ? `O L&I lista este prédio como inseguro, desde ${since}.` : 'O L&I lista este prédio como inseguro.'),
-        careful: 'Fique longe e mantenha as crianças longe: o L&I considerou a estrutura insegura. Não entre nela nem tente fechá-la por conta própria.',
+        careful: 'Fique longe e mantenha as crianças longe: o L&I considerou a estrutura insegura. Não entre nela nem tente vedar o acesso a ela por conta própria.',
         next: 'Se ele estiver aberto para entrar, informe ao Philly311 para que a Prefeitura possa lacrá-lo.',
       },
       imminently_dangerous: {

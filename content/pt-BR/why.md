@@ -57,7 +57,7 @@ mesmo possa julgar quanto peso dar a ela.
 | Fraca | Só pesquisas, opiniões ou um único estudo pequeno a sustentam. |
 | Não se trata de violência | Vale a pena fazer por outros motivos, mas nenhum estudo liga a menos violência. Os murais têm este selo: eles estão ligados a vizinhos sentindo mais orgulho e conexão, mas nenhum estudo os ligou a menos violência, então os murais ficam na sua própria lente, não na pontuação de violência. |
 
-As árvores também têm o selo Mista para o calor. Um estudo que mediu o ar de bicicleta em uma cidade
+As árvores também têm o selo Mista para o calor. Um estudo que mediu o ar pedalando por uma cidade
 inteira constatou que as árvores refrescam um quarteirão nos dias de verão, mais onde cobrem mais de
 cerca de 40 por cento dele, mas pouco à noite. Estimativas para a Filadélfia dizem que alcançar a
 meta da Prefeitura de 30 por cento de cobertura de árvores em todos os bairros poderia evitar cerca
