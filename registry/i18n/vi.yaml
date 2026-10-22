@@ -1458,3 +1458,272 @@ layers:
     settings:
       shade:
         label: "Tô đậm nhạt các khu (tắt thì chỉ hiện đường viền và xếp loại)"
+
+sources:
+  opa_properties:
+    name: "Bất động sản của OPA"
+    publisher: "Thành phố Philadelphia, Office of Property Assessment"
+  pwd_parcels:
+    name: "Các thửa đất của Water Department"
+    publisher: "Philadelphia Water Department"
+  vacant_indicators_land:
+    name: "Chỉ báo bất động sản bỏ trống, đất"
+    publisher: "Thành phố Philadelphia"
+  vacant_indicators_bldg:
+    name: "Chỉ báo bất động sản bỏ trống, tòa nhà"
+    publisher: "Thành phố Philadelphia"
+  shootings:
+    name: "Các nạn nhân bị bắn"
+    publisher: "Philadelphia Police Department"
+  high_injury_network:
+    name: "High Injury Network của Vision Zero 2025"
+    publisher: "Thành phố Philadelphia, Office of Transportation and Infrastructure Systems"
+  real_estate_transfers:
+    name: "Các vụ chuyển nhượng bất động sản"
+    publisher: "Thành phố Philadelphia, Department of Records"
+  assessment_history:
+    name: "Lịch sử định giá"
+    publisher: "Thành phố Philadelphia, Office of Property Assessment"
+  li_violations:
+    name: "Các vi phạm quy định của L&I"
+    publisher: "Thành phố Philadelphia, Department of Licenses and Inspections"
+  li_complaints:
+    name: "Các khiếu nại gửi L&I"
+    publisher: "Thành phố Philadelphia, Department of Licenses and Inspections"
+  li_permits:
+    name: "Giấy phép xây dựng và quy hoạch của L&I"
+    publisher: "Thành phố Philadelphia, Department of Licenses and Inspections"
+  li_unsafe:
+    name: "Các tòa nhà không an toàn"
+    publisher: "Thành phố Philadelphia, Department of Licenses and Inspections"
+  li_imminently_dangerous:
+    name: "Các tòa nhà nguy hiểm cận kề"
+    publisher: "Thành phố Philadelphia, Department of Licenses and Inspections"
+  li_clean_and_seal:
+    name: "Lệnh công việc dọn dẹp và bịt kín"
+    publisher: "Thành phố Philadelphia, Department of Licenses and Inspections"
+  li_demolitions:
+    name: "Các vụ phá dỡ tòa nhà"
+    publisher: "Thành phố Philadelphia, Department of Licenses and Inspections"
+  building_footprints:
+    name: "Dấu vết (diện tích nền) của các tòa nhà"
+    publisher: "Thành phố Philadelphia, Department of Licenses and Inspections"
+  land_use:
+    name: "Sử dụng đất"
+    publisher: "Philadelphia City Planning Commission"
+  city_owned_property:
+    name: "Bất động sản thuộc sở hữu của Thành phố"
+    publisher: "Thành phố Philadelphia, Department of Planning and Development"
+  phs_landcare:
+    name: "Các lô đất của PHS LandCare"
+    publisher: "Pennsylvania Horticultural Society, qua Thành phố Philadelphia"
+  gardens_phs_ngt:
+    name: "Các vườn được PHS và Neighborhood Gardens Trust hỗ trợ"
+    publisher: "Pennsylvania Horticultural Society và Neighborhood Gardens Trust"
+  gardens_registered:
+    name: "Các vườn cộng đồng đã đăng ký"
+    publisher: "Philadelphia Parks and Recreation"
+  ppr_properties:
+    name: "Các bất động sản của Parks and Recreation"
+    publisher: "Philadelphia Parks and Recreation"
+  zoning_base_districts:
+    name: "Các khu quy hoạch cơ bản"
+    publisher: "Philadelphia City Planning Commission"
+  council_districts:
+    name: "Các khu vực của Hội đồng Thành phố 2024"
+    publisher: "Thành phố Philadelphia"
+  community_organizations:
+    name: "Các Tổ chức Cộng đồng Đã đăng ký (RCO)"
+    publisher: "Philadelphia City Planning Commission"
+  neighborhoods:
+    name: "Các khu phố của Philadelphia"
+    publisher: "Abaca Labs, qua OpenDataPhilly"
+  acs_poverty:
+    name: "Tỷ lệ nghèo theo khu điều tra dân số (ACS 2020 đến 2024)"
+    publisher: "Cục Điều tra Dân số Hoa Kỳ (U.S. Census Bureau), American Community Survey"
+  cagp_tax_2025:
+    name: "Nợ thuế tính đến tháng 7 năm 2025 (Clean & Green Philly)"
+    publisher: "Clean & Green Philly, Code for Philly"
+  crashes_2020_2024:
+    name: "Các vụ tai nạn, 2020 đến 2024 (dữ liệu PennDOT, bản sao của Thành phố)"
+    publisher: "Thành phố Philadelphia, từ hồ sơ tai nạn của Pennsylvania Department of Transportation"
+  crashes_2016_2020:
+    name: "Các vụ tai nạn, 2016 đến 2020 (dữ liệu PennDOT, bản sao của Thành phố)"
+    publisher: "Thành phố Philadelphia, từ hồ sơ tai nạn của Pennsylvania Department of Transportation"
+  crashes_2007_2017:
+    name: "Các vụ tai nạn, 2015 (dữ liệu PennDOT, bản sao của Thành phố cho 2007 đến 2017)"
+    publisher: "Thành phố Philadelphia, từ hồ sơ tai nạn của Pennsylvania Department of Transportation"
+  fatal_crashes:
+    name: "Các vụ tai nạn chết người"
+    publisher: "Philadelphia Police Department, Accident Investigation Unit"
+  schools:
+    name: "Trường học"
+    publisher: "Thành phố Philadelphia, Planning Commission"
+  street_centerlines:
+    name: "Đường tim phố"
+    publisher: "Thành phố Philadelphia, Streets Department"
+  memorial_names:
+    name: "Tên trên các nơi tưởng niệm, được chọn lọc thủ công"
+    publisher: "Placekeepers, từ các danh sách tưởng niệm công khai như TrafficVictimsPHL của Bicycle Coalition"
+  pba_laser:
+    name: "Các vấn đề đỗ xe đã được báo qua Laser Vision"
+    publisher: "Philly Bike Action"
+  census_tracts_2020:
+    name: "Các khu điều tra dân số 2020"
+    publisher: "Thành phố Philadelphia, Planning Commission, từ U.S. Census Bureau"
+  tree_canopy_2018:
+    name: "Tán cây 2008 đến 2018"
+    publisher: "Thành phố Philadelphia, Parks and Recreation, cùng University of Vermont Spatial Analysis Laboratory"
+  street_trees:
+    name: "Danh mục cây ven đường"
+    publisher: "Thành phố Philadelphia, Parks and Recreation"
+  fema_floodplain:
+    name: "Vùng ngập lụt của FEMA (2023)"
+    publisher: "Federal Emergency Management Agency, do Thành phố Philadelphia công bố"
+  basemap_openstreetmap:
+    name: "Bản đồ nền từ OpenStreetMap"
+    publisher: "Những người đóng góp cho OpenStreetMap, trong một tệp bản đồ do Protomaps dựng"
+  septa_gtfs:
+    name: "Lịch chạy của SEPTA (GTFS)"
+    publisher: "Southeastern Pennsylvania Transportation Authority (SEPTA)"
+  septa_ridership_bus:
+    name: "Số hành khách ở các trạm xe buýt của SEPTA"
+    publisher: "Southeastern Pennsylvania Transportation Authority (SEPTA)"
+  septa_ridership_trolley:
+    name: "Số hành khách ở các trạm xe điện của SEPTA"
+    publisher: "Southeastern Pennsylvania Transportation Authority (SEPTA)"
+  osm_philadelphia:
+    name: "OpenStreetMap ở Philadelphia (trạm xe buýt, mái che, ghế ngồi, nước, nhà vệ sinh và hơn nữa)"
+    publisher: "Những người đóng góp cho OpenStreetMap, từ bản trích Pennsylvania của Geofabrik"
+  heat_vulnerability:
+    name: "Mức dễ bị tổn thương do nóng theo khu điều tra dân số"
+    publisher: "Thành phố Philadelphia, Department of Public Health và Office of Sustainability"
+  library_locations:
+    name: "Các địa điểm của Free Library"
+    publisher: "Thành phố Philadelphia, cho Free Library of Philadelphia"
+  ppr_program_sites:
+    name: "Các địa điểm chương trình của Parks and Recreation"
+    publisher: "Thành phố Philadelphia, Parks and Recreation"
+  ppr_swimming_pools:
+    name: "Các hồ bơi của Parks and Recreation"
+    publisher: "Thành phố Philadelphia, Parks and Recreation"
+  ppr_spraygrounds:
+    name: "Các khu vòi phun nước của Parks and Recreation"
+    publisher: "Thành phố Philadelphia, Parks and Recreation"
+  ppr_hydration_stations:
+    name: "Các điểm lấy nước của Parks and Recreation"
+    publisher: "Thành phố Philadelphia, Parks and Recreation"
+  philly311_conditions:
+    name: "Các yêu cầu gửi Philly311 về đổ rác, đèn tắt và vẽ bậy lên tường"
+    publisher: "Thành phố Philadelphia, Philly311"
+  bus_shelters:
+    name: "Các mái che trạm xe buýt"
+    publisher: "Thành phố Philadelphia, Office of Transportation and Infrastructure Systems"
+  street_poles:
+    name: "Các cột trên đường phố"
+    publisher: "Thành phố Philadelphia, Streets Department (Street Lighting Division)"
+  traffic_calming:
+    name: "Các thiết bị làm chậm xe"
+    publisher: "Thành phố Philadelphia, Streets Department"
+  crossing_guards:
+    name: "Các vị trí nhân viên hướng dẫn học sinh qua đường"
+    publisher: "Thành phố Philadelphia, Streets Department"
+  percent_for_art:
+    name: "Bộ sưu tập Percent for Art"
+    publisher: "Thành phố Philadelphia, Department of Planning and Development"
+  wikidata_art:
+    name: "Nghệ thuật công cộng trong Wikidata"
+    publisher: "Những người đóng góp cho Wikidata (Wikimedia Foundation)"
+  commercial_corridors:
+    name: "Các trục thương mại của Philadelphia"
+    publisher: "Thành phố Philadelphia, Department of Planning and Development"
+  epa_walkability:
+    name: "Chỉ số Dễ đi bộ Quốc gia (Smart Location Database của EPA)"
+    publisher: "U.S. Environmental Protection Agency, Office of Community Revitalization"
+  census_blocks_2020:
+    name: "Dân số theo khối điều tra dân số (điều tra dân số 2020)"
+    publisher: "U.S. Census Bureau, dữ liệu phân chia khu vực của Điều tra Dân số 2020 (P.L. 94-171)"
+  dvrpc_lts:
+    name: "Mức căng thẳng giao thông cho xe đạp (Level of Traffic Stress của DVRPC)"
+    publisher: "Delaware Valley Regional Planning Commission (DVRPC)"
+  snap_retailers:
+    name: "Các cửa hàng thực phẩm nhận SNAP (USDA)"
+    publisher: "U.S. Department of Agriculture, dữ liệu về các nhà bán lẻ SNAP"
+  real_estate_sales:
+    name: "Các vụ bán bất động sản, toàn thành phố"
+    publisher: "Thành phố Philadelphia, Department of Records"
+  assessment_values:
+    name: "Giá trị thị trường được định giá, toàn thành phố, hai năm thuế"
+    publisher: "Thành phố Philadelphia, Office of Property Assessment"
+  acs_tenure:
+    name: "Người thuê nhà và chủ nhà theo khu điều tra dân số (ACS 2020 đến 2024)"
+    publisher: "Cục Điều tra Dân số Hoa Kỳ (U.S. Census Bureau), American Community Survey"
+  market_value_analysis:
+    name: "Phân tích Giá trị Thị trường (Market Value Analysis) 2026"
+    publisher: "Reinvestment Fund, cho Department of Planning and Development của Thành phố Philadelphia"
+  li_history:
+    name: "Hồ sơ L&I cho dòng thời gian của lô đất"
+    publisher: "Thành phố Philadelphia, Department of Licenses and Inspections"
+  cagp_vacant_land_2024:
+    name: "Danh sách đất trống, tháng 6 năm 2024 (L&I, do Clean & Green Philly lưu giữ)"
+    publisher: "Thành phố Philadelphia, Department of Licenses and Inspections, do Clean & Green Philly (Code for Philly) lưu giữ"
+  cagp_vacant_buildings_2024:
+    name: "Danh sách tòa nhà bỏ trống, tháng 6 năm 2024 (Clean & Green Philly)"
+    publisher: "Clean & Green Philly, Code for Philly"
+  historic_districts:
+    name: "Các khu lịch sử địa phương"
+    publisher: "Philadelphia Historical Commission"
+  historic_sites:
+    name: "Philadelphia Register of Historic Places, các bất động sản"
+    publisher: "Philadelphia Historical Commission"
+  zoning_overlays:
+    name: "Các lớp phủ quy hoạch"
+    publisher: "Philadelphia City Planning Commission"
+  appeals:
+    name: "Các kháng cáo lên Zoning Board, L&I Review Board và các hội đồng khác"
+    publisher: "Thành phố Philadelphia, Department of Licenses and Inspections"
+  epa_brownfields:
+    name: "Các bất động sản brownfield của EPA (ACRES), Philadelphia"
+    publisher: "United States Environmental Protection Agency"
+  land_conveyances:
+    name: "Các chứng thư từ các cơ quan quản lý đất của Thành phố từ năm 2014"
+    publisher: "Thành phố Philadelphia, Department of Records"
+  land_conveyed_by_fy:
+    name: "Các bất động sản được chuyển nhượng theo chương trình và năm tài chính, 2017 đến 2023 (bảng điều khiển Land Management)"
+    publisher: "Thành phố Philadelphia, Department of Planning and Development (Land Management)"
+  city_aerial_photos:
+    name: "Ảnh chụp từ trên không theo năm (orthophoto)"
+    publisher: "Thành phố Philadelphia, Office of Innovation and Technology"
+  dvrpc_aerial_photos:
+    name: "Ảnh chụp từ trên không năm 1959 và 1975"
+    publisher: "Delaware Valley Regional Planning Commission, do Thành phố Philadelphia lưu trữ"
+  usgs_aerial_photos_1999:
+    name: "Ảnh chụp từ trên không năm 1999"
+    publisher: "U.S. Geological Survey, do Thành phố Philadelphia lưu trữ"
+  city_atlas_1860:
+    name: "Bản đồ atlas năm 1860 của Hexamer và Locher"
+    publisher: "Greater Philadelphia GeoHistory Network, do Thành phố Philadelphia lưu trữ"
+  mapping_inequality_1937:
+    name: "Mapping Inequality: bản đồ HOLC năm 1937 của Philadelphia"
+    publisher: "University of Richmond, Digital Scholarship Lab"
+  acs_rent_burden:
+    name: "Tiền thuê nhà theo phần trăm thu nhập, theo khu điều tra dân số (ACS 2020 đến 2024)"
+    publisher: "Cục Điều tra Dân số Hoa Kỳ (U.S. Census Bureau), American Community Survey"
+  acs_occupancy:
+    name: "Nhà có người ở và nhà bỏ trống theo khu điều tra dân số (ACS 2020 đến 2024)"
+    publisher: "Cục Điều tra Dân số Hoa Kỳ (U.S. Census Bureau), American Community Survey"
+  acs_vacancy:
+    name: "Vì sao nhà bỏ trống, theo khu điều tra dân số (ACS 2020 đến 2024)"
+    publisher: "Cục Điều tra Dân số Hoa Kỳ (U.S. Census Bureau), American Community Survey"
+  acs_income:
+    name: "Thu nhập hộ gia đình ở giữa theo khu điều tra dân số (ACS 2020 đến 2024)"
+    publisher: "Cục Điều tra Dân số Hoa Kỳ (U.S. Census Bureau), American Community Survey"
+  acs_rent:
+    name: "Tiền thuê nhà ở giữa theo khu điều tra dân số (ACS 2020 đến 2024)"
+    publisher: "Cục Điều tra Dân số Hoa Kỳ (U.S. Census Bureau), American Community Survey"
+  warming_cooling_sites:
+    name: "Các điểm sưởi ấm và tránh nóng"
+    publisher: "Thành phố Philadelphia, Office of Emergency Management"
+  ppr_playgrounds:
+    name: "Các sân chơi"
+    publisher: "Thành phố Philadelphia, Parks and Recreation"
