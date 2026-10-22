@@ -71,6 +71,11 @@ words stay apart; both are plain Modern Standard Arabic.
 | vacant building | مبنى فارغ |
 | vacant parcel | قطعة فارغة |
 | lot page | صفحة القطعة |
+| ward, division | المنطقة الانتخابية، القسم (committee people: أعضاء لجنة الحزب) |
+| packet | حزمة |
+| flyer | ملصق (the sign for a lot's fence is also called لافتة) |
+| letter (the printable letters) | خطاب (خطابات), never رسالة, so the interface and the pages agree |
+| project neighbors finished | مشروع أنهاه الجيران (مشاريع أنهاها الجيران) |
 | parcel | القطعة |
 | place | مكان (أماكن) |
 | neighbor, neighborhood | جار (جيران)، حي |

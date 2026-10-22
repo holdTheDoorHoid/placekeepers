@@ -359,6 +359,41 @@ sources:
   ppr_playgrounds:
     name: ملاعب الأطفال
     publisher: مدينة فيلادلفيا، إدارة الحدائق والترفيه
+  project_reports:
+    name: مشاريع أنهاها الجيران، أُبلغ عنها عبر نموذج GitHub الخاص بالموقع
+    publisher: >-
+      الجيران، عبر نموذج Placekeepers "أخبرنا عن مشروع أنهيته" (Tell us about a project you
+      finished)
+  project_corrections:
+    name: مشاريع أنهاها الجيران، إدخالات يدوية وتصحيحات
+    publisher: Placekeepers
+  political_divisions:
+    name: المناطق الانتخابية والأقسام السياسية (Political wards and divisions)
+    publisher: مدينة فيلادلفيا
+  pa_house_districts:
+    name: دوائر مجلس نواب بنسلفانيا
+    publisher: مكتب الإحصاء الأمريكي، ملفات TIGER/Line Shapefiles
+  pa_senate_districts:
+    name: دوائر مجلس شيوخ بنسلفانيا
+    publisher: مكتب الإحصاء الأمريكي، ملفات TIGER/Line Shapefiles
+  us_house_districts:
+    name: دوائر الكونغرس في بنسلفانيا
+    publisher: مكتب الإحصاء الأمريكي، ملفات TIGER/Line Shapefiles
+  pa_legislators:
+    name: أعضاء الجمعية العامة لبنسلفانيا
+    publisher: Open States (Plural Policy)
+  us_legislators:
+    name: أعضاء الكونغرس
+    publisher: مشروع unitedstates/congress-legislators
+  us_legislator_offices:
+    name: مكاتب الدوائر لأعضاء الكونغرس
+    publisher: مشروع unitedstates/congress-legislators
+  city_elected_officials:
+    name: المسؤولون المنتخبون في المدينة
+    publisher: مدينة فيلادلفيا
+  rco_contacts:
+    name: جهات اتصال المنظمات المجتمعية المسجّلة
+    publisher: لجنة التخطيط العمراني في فيلادلفيا
 
 layers:
   vacant_parcels:
@@ -1092,6 +1127,13 @@ layers:
     settings:
       shade:
         label: ظلّل المناطق (إيقافه يعرض حدودها وتصنيفاتها فقط)
+  projects:
+    label: مشاريع أنهاها الجيران
+    description: >-
+      حملات تنظيف وحدائق وأماكن للجلوس وجداريات وأشجار ومقاعد ومظلات تابعة للمدينة وإصلاحات عبر
+      311 أنهاها الجيران وأخبرونا عنها. يقرأ Placekeepers كل بلاغ ويوافق عليه قبل أن يظهر. اضغط
+      على واحد لترى ما أُنجز، ومتى، وما تطلّبه، مع رابط إلى التقرير وصوره على GitHub. ولا تعرض
+      الخريطة أبدًا من أرسل تقريرًا، بل فقط اسم مجموعة اختاروه.
 
 lenses:
   violence:
