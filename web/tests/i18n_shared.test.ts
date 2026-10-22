@@ -3,7 +3,9 @@
 // through Intl or a template in web/src/strings.ts. English must read exactly as before; the other
 // tests check that. Here: a page in another language.
 
+import { render } from 'svelte/server';
 import { afterEach, describe, expect, it } from 'vitest';
+import WhyBreakdown from '../src/components/lens/WhyBreakdown.svelte';
 import { setLocale } from '../src/i18n/locale.ts';
 import { clockWords } from '../src/dossier/rules.ts';
 import { formatDuration, formatMiles } from '../src/survey/sheet.ts';
@@ -39,5 +41,27 @@ describe('a survey walk', () => {
     expect(formatMiles(16529)).toContain('10,3');
     expect(formatMiles(50)).toContain('0,1');
     expect(formatDuration(75)).toMatch(/1\D+15/);
+  });
+});
+
+describe('the why of a score', () => {
+  const why = {
+    score: 26.3,
+    allOff: false,
+    factors: [
+      { id: 'a', label: 'A', evidence: 'strong', explain: '', weight: 2, value: 80, contribution: 16.2 },
+      { id: 'b', label: 'B', evidence: 'strong', explain: '', weight: 1, value: 60, contribution: 10.1 },
+    ],
+    main: null,
+    missing: [],
+  } as never;
+
+  it('writes its points with the page language decimal mark', () => {
+    expect(render(WhyBreakdown, { props: { why, idPrefix: 't' } }).body).toContain('26.3');
+    setLocale('pt-BR');
+    const body = render(WhyBreakdown, { props: { why, idPrefix: 't' } }).body;
+    expect(body).toContain('26,3');
+    expect(body).toContain('16,2');
+    expect(body).not.toContain('26.3');
   });
 });
