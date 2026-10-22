@@ -140,3 +140,28 @@ apply) is English's own wording. None reads as an invitation. For a native speak
 everyday Creole. Contact page: says people can write in Creole and that we read it with a
 translation tool; promises no reply.
 
+## Khmer (km)
+
+Checked 109 items. Same meaning: 109. Changed: 0. Nothing was edited, so the zero width spaces
+are untouched. Three places are worth a native speaker's eyes (listed in the second table).
+
+Small differences, kept:
+
+| Place | Khmer | Back translation | English | Why kept |
+|---|---|---|---|---|
+| Where to post a flyer, off limits, utility poles | "ការដំដែកគោល ឬដាក់អ្វីមួយលើបង្គោលអគ្គិសនី" | driving nails, or putting anything, on an electric pole | Nailing or tacking anything to a utility pole | "ដាក់" (put) is looser than "tack", so the Khmer covers a little more, never less. It keeps the rule on the cautious side. |
+| `landBank.listed.sideYard` | "បើកចំហឱ្យអ្នកជិតខាងសុំជាទីធ្លាក្បែរផ្ទះ" | open for a neighbor to ask for as a side yard | Open to a neighbor as a side yard | "Ask for" is added, which matches that the side yard program takes applications. |
+
+For a native speaker to look at:
+
+| Place | Question |
+|---|---|
+| `projects.tellUsNote` and the photo bullet on How to do it | "...មិនបានយល់ព្រមដាច់ខាត ហើយមិនត្រូវមានស្លាកលេខរថយន្តដាច់ខាត": the word "ដាច់ខាត" (strictly, absolutely) ends each clause. In the second clause it can only mean "never". In the first it follows "did not agree", so a reader could take it as "who flatly did not agree" and so weaken the rule to people who refused. The parallel with the second clause most likely makes it "never" in both. I left it, because I cannot be sure of the best fix. A native speaker might put "ដាច់ខាត" in front of "មិនត្រូវ" in the first clause. |
+| All listed as available places | "អាចរកបាន" literally reads "can be found, can be obtained". The glossary chose it with curly quotes and "ចុះបញ្ជីថា" (listed as) so it reads as the City's label. Please confirm it does not read as "easy to get". |
+| `dossier.owner.cityStatuses` held for the Council member | "ក្រុមប្រឹក្សាស្រុក" is the district council of a Cambodian "srok". The City Council member is meant. A native speaker could suggest the usual word for a city council member. |
+
+Listed as available: every place says "ចុះបញ្ជីថា “អាចរកបាន”" (listed as "available") with the
+word in curly quotes, as the glossary decided, and the old wording "អាចសុំបាន" (can be asked for)
+is gone from every listed place. Contact page: says people can write in Khmer and that we read it
+with a translation tool; promises no reply.
+
