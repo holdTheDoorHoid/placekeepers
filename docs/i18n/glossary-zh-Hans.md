@@ -130,6 +130,6 @@ Each passage is one fixed block of text, the same in the catalog, the registry a
 
 - 宅基地豁免 is the City's own wording, but 宅基地 usually means a rural house plot, so the
   English name stays beside it.
-- The City's survey sheet time and distance ("about 1 hour 15 minutes", "0.4 miles") come from code
+- The survey sheet's time and distance ("about 1 hour 15 minutes", "0.4 miles") come from code
   that writes English (`web/src/survey/sheet.ts`), so they appear in English inside a Chinese
   sentence.
