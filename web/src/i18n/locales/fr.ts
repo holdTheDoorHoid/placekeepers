@@ -2046,7 +2046,7 @@ const fr: Catalog = {
         'OWNED - HELD FOR CITY COUNCIL MEMBER': ['réservé au membre du Conseil du district', "Il est réservé au membre du Conseil municipal du district, donc il n'est pas proposé pour le moment. Le bureau du membre peut dire pourquoi."],
         'OWNED - TO BE FEATURED SOON': ['bientôt proposé', 'Les agences foncières de la Ville prévoient de le proposer bientôt.'],
         'OWNED - NOT AVAILABLE (GSI PROJECT)': ["mis de côté pour des travaux d'eaux pluviales vertes", 'Il est réservé pour des plantations que le Water Department aménage pour absorber la pluie.'],
-        'OWNED - COMPETITIVE BID POSTED': ["proposé par appel d'offres", "Les agences foncières de la Ville ont demandé des offres pour l'acquérir."],
+        'OWNED - COMPETITIVE BID POSTED': ["proposé par appel d'offres", "Les agences foncières de la Ville ont demandé des offres pour ce terrain."],
       },
       sideYard: 'La Ville le marque comme admissible au programme de jardin latéral, pour le propriétaire de la maison voisine.',
       agencies: {
