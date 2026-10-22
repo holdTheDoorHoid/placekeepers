@@ -45,6 +45,10 @@ the genitive singular: "1,5 мили").
 | adverse possession | приобретательная давность (adverse possession) | |
 | homestead exemption | Homestead Exemption, городская налоговая льгота | the City's own Russian pages keep the English name on the form |
 | assessment, assessed value | оценка, оценочная стоимость | "оценочная стоимость" is the City's own wording |
+| appraised value (a deed or mortgage) | стоимость по оценке (appraised value) | never "оценочная стоимость", which is kept for the City's assessed value used for taxes |
+| area (as in "area median income") | регион | "80% медианного дохода по региону (area median income)"; never "район", which is the neighborhood and would change who qualifies |
+| what City records suggest | «На что указывают городские записи» | records "point to" or "suggest", never "say"; the owner flags are careful inferences |
+| new hearing not granted (an appeal decision) | «В новом слушании отказано» | the board refused; "не назначено" would mean only that none is scheduled |
 | brownfield | участок brownfield | the Latin word stays |
 | soil test | анализ почвы | "Сделайте анализ почвы, прежде чем выращивать продукты питания" |
 | greening | озеленение | |
