@@ -2080,8 +2080,8 @@ const vi: Catalog = {
     },
     half: (year, half) => `${half === 1 ? 'nửa đầu' : 'nửa cuối'} năm ${year}`,
     noChange: 'không thay đổi',
-    fewerBy: (percent) => `ít hơn ${formatDecimal(percent, 1)}%`,
-    moreBy: (percent) => `nhiều hơn ${formatDecimal(percent, 1)}%`,
+    fewerBy: (percent) => `giảm ${formatDecimal(percent, 1)}%`,
+    moreBy: (percent) => `tăng ${formatDecimal(percent, 1)}%`,
     range: (low, high) => `từ ${low} đến ${high}`,
     compared: (places, from, to, areas) =>
       `So sánh: ${plural(places, { other: '# địa điểm' })} được chăm sóc từ ${from} đến ${to}, ở ${plural(areas, { other: '# khu vực' })} của thành phố, mỗi nơi có tối đa năm địa điểm tương tự không được chăm sóc để đối chiếu.`,

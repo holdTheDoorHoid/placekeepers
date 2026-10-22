@@ -160,8 +160,8 @@ New terms for the page that compares places that got care with places that did n
 | we could not tell (the check failed) | Chúng tôi không thể kết luận | a plain admission, never "không có tác dụng" (no effect) and never "có hiệu quả" (it worked); "too few to tell" is "quá ít để kết luận", as in the sales and homes lines |
 | does not show that care caused it | không cho thấy rằng việc chăm sóc đã gây ra | "không cho thấy" is as strong as "does not show"; never "chứng minh" (prove) |
 | the real evidence | bằng chứng thực sự | the two randomized trials ("thử nghiệm ngẫu nhiên", as on the Why this works page); observational comparisons "có thể gây hiểu lầm" (can mislead, not will) |
-| 90 percent interval | dải 90 phần trăm | written "từ ít hơn 6,2% đến nhiều hơn 0,2%"; "khoảng" alone would read "about" |
-| more, fewer than expected | nhiều hơn, ít hơn | "nhiều hơn 3,2%", "ít hơn 6,2%", and "không thay đổi" for no change |
+| 90 percent interval | dải 90 phần trăm | written "từ giảm 6,2% đến tăng 0,2%"; "khoảng" alone would read "about" |
+| a change in percent (2.7% more, 6.2% fewer) | tăng 2,7%, giảm 6,2% | "không thay đổi" for no change. A plain "nhiều hơn 2,7%" reads "more than 2.7%", a threshold, so a change that stands alone is "tăng" or "giảm"; where a sentence names what it is compared with, "nhiều hơn 3,3% so với mức dự kiến" is clear |
 | comparison places | các nơi so sánh | the similar places that did not get care |
 | the ring (200 to 400 meters out) | vòng quanh mỗi địa điểm | |
 | check (placebo, ring, later care) | phép kiểm tra | "đạt" and "không đạt" |
