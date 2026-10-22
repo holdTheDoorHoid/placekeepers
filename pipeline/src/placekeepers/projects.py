@@ -1056,9 +1056,9 @@ def build_projects(
     build.projects.sort(key=lambda p: (p.finished, p.id), reverse=True)
     for outcome in build.held:
         if outcome.needs_owner:
-            build.notes.append(
-                f"{NOTE_PREFIX}{outcome.ref} is approved but stays off the map: {outcome.reason}"
-            )
+            # A hand entry was never approved on GitHub: it simply stays off.
+            state = "is approved but stays" if outcome.ref.startswith("issue") else "stays"
+            build.notes.append(f"{NOTE_PREFIX}{outcome.ref} {state} off the map: {outcome.reason}")
     shown = len(build.projects)
     problems = sum(o.needs_owner for o in build.held)
     build.notes.insert(

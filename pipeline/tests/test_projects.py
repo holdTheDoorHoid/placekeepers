@@ -368,6 +368,7 @@ def test_only_approved_valid_reports_and_hand_entries_appear(tmp_path):
     assert any("issue #101: a photo and a GitHub user name left out" in n for n in notes)
     assert any("issue #102: an email address and a phone number left out" in n for n in notes)
     assert any("issue #114 is approved but stays off the map" in n for n in notes)
+    assert any("entry h2025_0002 stays off the map: the place is outside" in n for n in notes)
     # Reports the owner took down on purpose, or never approved, are not in the notes.
     assert not any("#107" in n or "#103" in n or "#112" in n for n in notes)
     assert all(n.startswith(NOTE_PREFIX) for n in notes)
