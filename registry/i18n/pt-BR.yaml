@@ -210,6 +210,12 @@ sources:
   philly311_conditions:
     name: "Pedidos ao Philly311 sobre descarte de lixo, luzes apagadas e pichação"
     publisher: "Prefeitura da Filadélfia, Philly311"
+  philly311_dumping_history:
+    name: "Pedidos ao Philly311 sobre descarte ilegal de lixo desde 2016"
+    publisher: "Prefeitura da Filadélfia, Philly311"
+  li_complaints_history:
+    name: "Reclamações ao L&I sobre lotes e prédios vazios desde 2015"
+    publisher: "Prefeitura da Filadélfia, Departamento de Licenças e Inspeções (L&I)"
   bus_shelters:
     name: "Abrigos de ônibus"
     publisher: "Prefeitura da Filadélfia, Escritório de Transporte e Sistemas de Infraestrutura (OTIS)"

@@ -201,3 +201,30 @@ Portuguese counts 0 and 1 as the same plural form in the standard rules, but peo
   and every content page that quotes them (About, Use this responsibly, How to do it).
 - `routes.conservatorship.warning` in the registry is the same sentence as
   `dossier.actions.conservatorshipWarning` in the catalog.
+
+## Added for the "Did it work?" page (2026-10-22)
+
+| English | Portuguese | Note |
+|---|---|---|
+| care (what a lot or building received) | cuidado | the same word as "onde o cuidado é mais necessário" |
+| Did it work? | Funcionou? | page title and menu; matches "Por que funciona" |
+| We could not tell | Não conseguimos saber | a plain admission, never "sem efeito" and never "funcionou" |
+| Too few to tell | Poucos demais para saber | |
+| No clear change | Sem mudança clara | |
+| Fewer / More after care | Menos / Mais depois do cuidado | |
+| the real evidence (randomized trials) | a evidência real; ensaios randomizados | "ensaio", as on the Why this works page. A comparison of records "pode induzir ao erro"; a trial cannot be fooled the same ways |
+| This does not show that care caused them | Isso não mostra que o cuidado tenha sido a causa | written without a pronoun, so one sentence fits tiroteios, relatos and reclamações |
+| comparison places | lugares de comparação | |
+| check (the placebo and the ring) | verificação | "Verificação aprovada / reprovada". The survey word "verificar" is a different use |
+| the ring (200 to 400 meters out) | o anel | |
+| half year | semestre | "primeiro semestre de 2017"; the template adds "entre o ... e o ..." |
+| 90 percent interval | intervalo de 90 por cento | |
+| no change (in a template that says "found ...") | uma mudança de zero | "encontrou nenhuma mudança" would not parse |
+| dumping reports | relatos de descarte ilegal de lixo | |
+| complaints about vacant property | reclamações sobre imóveis vazios | "reclamações", as in "Reclamações ao L&I" |
+| shootings (counts) | tiroteios | |
+| chance | coincidência | |
+| area (a part of the city redrawn in the interval) | área | |
+| season (LandCare's spring or fall) | estação do ano | |
+| clean and seal | limpeza e lacre | as the lot page says |
+| unsafe (a building) | inseguro | never "perigoso" |
