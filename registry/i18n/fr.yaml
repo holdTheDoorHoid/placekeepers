@@ -1374,3 +1374,37 @@ routes:
     links:
       "https://www.phila.gov/services/payments-assistance-taxes/payment-plans-and-assistance-programs/income-based-programs-for-residents/apply-for-the-longtime-owner-occupants-program-loop/":
         label: "Ville de Philadelphie : demander LOOP"
+
+partners:
+  phs:
+    one_line: "LandCare, Community LandCare et Philly Spring Cleanup."
+  gjli:
+    one_line: "Aide juridique gratuite et guides pour utiliser les terrains vacants."
+  ngt:
+    one_line: "Préserve les jardins communautaires de façon permanente."
+  land_bank:
+    one_line: "Programmes de la Ville pour les terrains vacants, y compris les jardins latéraux et les jardins communautaires."
+  bike_coalition:
+    one_line: "Plaidoyer Vision Zero, ghost bikes et Families for Safe Streets."
+  feet_first:
+    one_line: "Plaidoyer pour les piétons, audits de marche et mini-subventions pour l'espace public."
+  treephilly:
+    one_line: "Le programme de plantation d'arbres de Parks and Recreation : arbres de rue et arbres de cour gratuits."
+  mural_arts:
+    one_line: "Des fresques dans toute la ville ; les propriétaires de murs peuvent en demander une."
+
+options:
+  live_city_data:
+    label: "Récupérer les données en direct de la Ville"
+    description: >-
+      Quand vous ouvrez la page d'un terrain ou cherchez une adresse, votre navigateur demande
+      aux serveurs publics de la Ville de Philadelphie les registres les plus récents : le
+      propriétaire, les ventes, les évaluations, les inspections et les appels. Ces demandes
+      vont directement de votre appareil à la Ville, sans jamais passer par Placekeepers, et les
+      serveurs de la Ville les voient comme ils verraient une visite sur le site web des
+      propriétés de la Ville. Les photos aériennes de la Ville et son atlas de 1860, sous « Hier et
+      aujourd'hui », viennent aussi directement des serveurs de la Ville, mais seulement quand
+      vous activez l'une d'elles. Désactivez cette option pour utiliser seulement la copie
+      hebdomadaire des données que Placekeepers publie. La recherche d'adresse, l'ouverture d'une
+      parcelle qui n'est pas dans notre liste, et les anciennes photos et l'atlas ont besoin
+      qu'elle soit activée.
