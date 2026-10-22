@@ -11,6 +11,8 @@ The key terms of the Vietnamese translation of Placekeepers, so the interface ca
   or a new sentence instead). Ranges are written "từ 2019 đến 2024".
 - Numbers and dates follow `Intl` for `vi` in the interface (a dot for thousands, a comma for
   decimals, "5 tháng 10, 2026"). Text written by hand uses the same style ("1.000", "0,2").
+- Dollar amounts keep the US form ($6,500, $1,399) because that is how City forms, bills and the
+  English site show them; other counts use the Vietnamese dot ("40.000 lô đất").
 - Feet, miles, inches and gallons stay as the City uses them (feet, dặm, inch, gallon); meters are
   "mét", kilometers "km".
 - Vietnamese has no plural forms, so `plural()` takes only `other`.
@@ -48,16 +50,16 @@ The key terms of the Vietnamese translation of Placekeepers, so the interface ca
 | conservatorship | conservatorship (quyền quản lý tài sản thay chủ) | the English word stays, with the gloss on first use in a text; the label and the warning carry both |
 | gentrification | gentrification (giá nhà đất tăng khiến người dân lâu năm khó ở lại) | |
 | side yard | sân hông | |
-| deed | chứng thư (deed) | "chứng thư nhà đất" where room allows |
+| deed | chứng thư (deed) | matches the City's Vietnamese deed fraud page ("chứng thư", "gian lận chứng thư") |
 | deed theft / deed fraud | đánh cắp chứng thư (deed theft) / gian lận chứng thư | |
 | estate (of someone who died) | di sản thừa kế | "possible estate" = "có thể là di sản thừa kế" |
 | tangled title | giấy tờ nhà đất bị rối (tangled title) | |
 | sheriff sale | bán đấu giá do Sheriff tổ chức | |
 | assessor | cơ quan định giá | the Office of Property Assessment (OPA) |
 | assessment, assessed value | định giá, giá trị định giá | |
-| homestead exemption | Homestead Exemption (giảm thuế cho nhà ở chính) | City program name kept |
-| Longtime Owner Occupants Program | chương trình Longtime Owner Occupants (LOOP) | name kept, gloss "giảm thuế cho chủ nhà ở lâu năm" |
-| Registered Community Organization (RCO) | Tổ chức Cộng đồng Đã đăng ký (RCO) | |
+| homestead exemption | Miễn Thuế Nhà cửa vườn tược (Homestead Exemption) | the City's own Vietnamese name, from its printed Homestead Exemption application in Vietnamese (phila.gov/media/20220222114305/Homestead-Exemption-application-2023-Vietnamese.pdf); the English name stays beside it |
+| Longtime Owner Occupants Program | Chương trình Longtime Owner Occupants (LOOP) | English name and acronym kept. phila.gov's Vietnamese page (machine translated) calls it "Chương trình Người cư dân Chủ lâu năm (LOOP)", which reads poorly, so we did not adopt it; a gloss "giảm thuế cho chủ nhà ở lâu năm" is added where room allows |
+| Registered Community Organization (RCO) | Tổ chức Cộng đồng Đã đăng ký (RCO) | matches phila.gov's Vietnamese page ("Các tổ chức cộng đồng đã đăng ký (RCOs)") |
 | zoning | quy hoạch phân vùng (zoning) | |
 | overlay | lớp phủ quy hoạch (zoning overlay) | |
 | brownfield | brownfield (đất từng dùng cho công nghiệp, có thể còn ô nhiễm) | the word stays, gloss on first use |
@@ -79,6 +81,10 @@ The key terms of the Vietnamese translation of Placekeepers, so the interface ca
 | privacy and live data | quyền riêng tư và dữ liệu trực tiếp | |
 | Then and now (layer group) | Trước đây và bây giờ | |
 | Land Bank | Land Bank | proper name |
+| Department of Records | Sở Hồ sơ (Department of Records) | the name phila.gov's Vietnamese footer uses; the other City departments stay in English |
+| notary | công chứng viên | as on the City's Vietnamese deed fraud page |
+| real estate tax | thuế bất động sản | as on the City's Vietnamese Homestead Exemption form |
+| primary residence | nơi cư trú chính, nhà ở chính | as on the same form |
 | side yard program | chương trình sân hông | |
 | warming / cooling site | điểm sưởi ấm / điểm tránh nóng | |
 
@@ -92,6 +98,15 @@ Philadelphia Housing Authority, L&I (Licenses and Inspections), Tax Center, Atla
 names of City offices and boards (Office of Property Assessment, Department of Records, Zoning Board
 of Adjustment, Historical Commission and so on). phila.gov publishes no Vietnamese names for them,
 so they stay in English and a Vietnamese gloss is added only where a neighbor would need it.
+
+## City sources looked up (phila.gov, October 2026)
+
+Six lookups, all of phila.gov's own Vietnamese pages: the Vietnamese Homestead Exemption
+application (PDF), the Vietnamese pages for deed fraud protection, the Longtime Owner Occupants
+Program and Registered Community Organizations, and a search for the Fraud Guard page. Several of
+phila.gov's Vietnamese web pages are machine translated and disagree with each other (the
+Department of Records is "Sở Hồ sơ", "Bộ Hồ sơ" and "Cục Hồ sơ quy định" on one page), so only
+terms from the human made printed form, and terms that two pages agree on, were adopted.
 
 ## Scope notes
 
