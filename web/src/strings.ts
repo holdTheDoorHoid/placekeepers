@@ -846,7 +846,7 @@ export const strings = {
       intro: (lot: string) => `I live near ${lot || '[the lot\'s address]'}, the lot that the City\'s records list in your name.`,
       ask: (plans: string) => `Neighbors on this block would like to take care of the lot for a while. We are asking your permission to ${plans || '[what you hope to do]'}.`,
       terms: (duration: string) =>
-        `We would do this ${duration || 'for a while'}, doing the work ourselves and paying for any supplies. We would keep the lot clean and safe, and we would not build anything permanent. You can say no, and if you say yes you can ask us to stop at any time.`,
+        `${duration ? `We would do this ${duration}, doing the work ourselves and paying for any supplies.` : 'We would do the work ourselves and pay for any supplies.'} We would keep the lot clean and safe, and we would not build anything permanent. You can say no, and if you say yes you can ask us to stop at any time.`,
       writing: 'If you agree, we would like to put our agreement in writing, so that you and we both know what we have promised. We are glad to answer any questions first.',
     },
     council: {
