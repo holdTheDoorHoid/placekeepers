@@ -2035,6 +2035,176 @@ const es: Catalog = {
     },
   },
 
+  didit: {
+    pageTitle: '¿Funcionó?',
+    back: 'Volver al mapa',
+    intro:
+      'Cuando un lote o un edificio recibió cuidado, ¿cambiaron las cuadras a su alrededor, en comparación con lugares parecidos que no recibieron cuidado? Comparamos los registros de la propia Ciudad de miles de lugares de toda Filadelfia. Esto es lo que pueden decir y lo que no.',
+    loading: 'Cargando los resultados',
+    loadFailed: 'No se pudieron cargar los resultados. Revise su conexión e inténtelo de nuevo.',
+    retry: 'Intentar de nuevo',
+    missing: 'Los resultados todavía no se han publicado. Aparecen después de la próxima actualización semanal de los datos.',
+    print: 'Imprimir esta página',
+    runOn: (generated, through) =>
+      `Esta comparación se hizo el ${generated}, con los registros de la Ciudad hasta el ${through}. Se vuelve a hacer más o menos una vez al año.`,
+    // La respuesta corta
+    shortTitle: 'La respuesta corta',
+    tallyIntro: (n) => `Hicimos ${plural(n, { one: '# comparación', other: '# comparaciones' })}.`,
+    tallyParts: {
+      fewer: (n) => `${plural(n, { one: '# encontró', other: '# encontraron' })} menos problemas cerca después del cuidado`,
+      more: (n) => plural(n, { one: '# encontró más', other: '# encontraron más' }),
+      no_clear_change: (n) => plural(n, { one: '# no encontró un cambio claro', other: '# no encontraron un cambio claro' }),
+      check_failed: (n) =>
+        `${plural(n, { one: '# no fue confiable', other: '# no fueron confiables' })}, porque los lugares que recibieron cuidado ya estaban cambiando de manera distinta antes de recibirlo`,
+      too_few: (n) => `${plural(n, { one: '# tuvo', other: '# tuvieron' })} muy pocos lugares para saberlo`,
+    },
+    tallyJoin: (parts) => (parts.length <= 1 ? `${parts.join('')}.` : `${parts.slice(0, -1).join(', ')} y ${parts[parts.length - 1]}.`),
+    noneFewer:
+      'Los registros de la Ciudad no muestran que el cuidado haya reducido los tiroteos, la basura tirada ni las quejas en los alrededores. Donde muestran más después, la razón más probable es que el cuidado llegó adonde los problemas ya estaban creciendo, y no que el cuidado los causara.',
+    someFewer: 'Donde los registros muestran menos problemas después del cuidado, lea las verificaciones que aparecen bajo cada resultado antes de confiar en él.',
+    notOneLot: 'Nada de esto es un veredicto sobre ningún lote en particular.',
+    // La evidencia real (docs/EVIDENCE.md)
+    trialsTitle: 'La evidencia real: ensayos en Filadelfia',
+    trialsIntro:
+      'Una comparación de registros como esta puede inducir a error. Los ensayos aleatorizados no pueden ser engañados de las mismas maneras, y aquí se hicieron dos:',
+    trials: [
+      'Reverdecer lotes vacíos: en un ensayo en toda la ciudad con 541 lotes, la violencia con armas de fuego bajó 29% cerca de los lotes reverdecidos en los vecindarios por debajo de la línea de pobreza (Branas y sus colegas, 2018).',
+      'En el mismo ensayo, los tiroteos bajaron 6.8% cerca de los lotes reverdecidos y 9.2% cerca de los lotes que solo se limpiaron y se les cortó el pasto (Moyer y sus colegas, 2019).',
+      'Arreglar casas abandonadas: poner puertas y ventanas que funcionen redujo las agresiones con armas de fuego 13% en los alrededores; la limpieza sola no hizo ninguna diferencia medible (South y sus colegas, 2023).',
+    ],
+    trialLinks: ['Leer el ensayo del reverdecimiento', 'Leer el estudio sobre los tiroteos', 'Leer el ensayo de reparación de casas'],
+    whyLink: 'Más sobre por qué funciona',
+    warningsTitle: 'Por qué una comparación de registros puede inducir a error',
+    warnings: [
+      'El cuidado suele llegar adonde los problemas ya están creciendo, así que los lugares que lo recibieron pueden ser distintos de los lugares con los que se comparan, en formas que ningún registro muestra.',
+      'Después de un mal año suele venir uno mejor de todos modos. Los lugares elegidos justo después de una mala racha pueden parecer mejorados cuando nada cambió.',
+      'Los problemas pueden mudarse calle abajo en vez de terminar. Para eso comprobamos el anillo alrededor de cada lugar.',
+    ],
+    // Un tipo de cuidado
+    kinds: {
+      landcare: 'Lotes que PHS LandCare limpió y reverdeció',
+      clean_seal: 'Propiedades que la Ciudad limpió y selló',
+      demolition: 'Edificios que la Ciudad demolió',
+      projects: 'Proyectos que terminaron los vecinos',
+    },
+    kindNotes: {
+      landcare: (records, dated) =>
+        `La lista de PHS LandCare indica la estación del año en que se limpió y reverdeció cada lote, para ${formatNumber(dated)} de sus ${formatNumber(records)} lotes. Los lotes sin estación, la mayoría cuidados por vecinos mediante Community LandCare, quedan fuera.`,
+      clean_seal: (records) =>
+        `Las órdenes de trabajo de limpieza y sellado de la Ciudad que se completaron, según el día en que terminó el trabajo: ${formatNumber(records)} desde 2007. Los registros de la Ciudad tienen muchas menos a partir de 2020, así que la mayoría de estas comparaciones son de 2017 a 2019.`,
+      demolition: (records) =>
+        `Demoliciones que la Ciudad hizo por su cuenta, según el día en que terminó cada una: ${formatNumber(records)} desde 2007. Las demoliciones con un permiso privado quedan fuera.`,
+    },
+    outcomes: {
+      shootings: 'Tiroteos a unas dos cuadras de distancia (200 metros)',
+      dumping: 'Basura tirada ilegalmente reportada a Philly311 a unas dos cuadras de distancia, sin contar el lugar mismo',
+      complaints: 'Quejas a L&I sobre lotes y edificios vacíos a unas dos cuadras de distancia, sin contar el lugar mismo',
+    },
+    outcomeNouns: {
+      shootings: 'tiroteos',
+      dumping: 'reportes de basura tirada ilegalmente',
+      complaints: 'quejas sobre propiedades vacías',
+    },
+    verdictLabels: {
+      fewer: 'Menos después del cuidado',
+      more: 'Más después del cuidado',
+      no_clear_change: 'Sin cambio claro',
+      check_failed: 'No pudimos saberlo',
+      too_few: 'Muy pocos para saberlo',
+    },
+    verdicts: {
+      fewer: (noun, percent, range) =>
+        `En los dos años después del cuidado hubo ${formatDecimal(percent, 1)}% menos ${noun} en los alrededores que lo esperado según lugares parecidos sin cuidado (intervalo del 90 por ciento: ${range}).`,
+      more: (noun, percent, range) =>
+        `En los dos años después del cuidado hubo ${formatDecimal(percent, 1)}% más ${noun} en los alrededores que lo esperado según lugares parecidos sin cuidado (intervalo del 90 por ciento: ${range}).`,
+      notCaused: 'Esto no demuestra que el cuidado haya sido la causa.',
+      moreReports: 'Más reportes también pueden significar que más vecinos reportan una vez que la Ciudad ha prestado atención al lugar.',
+      noClearChange: (change, range) =>
+        `Sin cambio claro. La comparación encontró ${change} (intervalo del 90 por ciento: ${range}), y ese intervalo incluye que no haya cambio alguno.`,
+      checkFailed: (noun) =>
+        `En los años antes del cuidado, la cantidad de ${noun} cerca de estos lugares ya cambiaba de manera distinta a la de los lugares de comparación, así que esta comparación no puede separar el efecto del cuidado de lo que ya estaba pasando.`,
+      tooFew: (places, min) =>
+        `${plural(places, { one: 'Solo se pudo comparar # lugar.', other: 'Solo se pudieron comparar # lugares.' })} Una comparación necesita al menos ${formatNumber(min)}.`,
+    },
+    whyMore: {
+      landcare: 'PHS y la Ciudad eligen lotes donde los vecinos piden ayuda, muchas veces donde los problemas están creciendo.',
+      clean_seal:
+        'La Ciudad limpia y sella una propiedad después de quejas sobre ella, muchas veces cuando una cuadra va en declive o después de problemas en la propiedad misma.',
+      demolition:
+        'La Ciudad demuele un edificio cuando ya se ha vuelto inseguro, muchas veces en cuadras que van en declive de maneras que los registros no muestran.',
+      projects: 'Los vecinos muchas veces empiezan proyectos donde los problemas están creciendo.',
+    },
+    half: (year, half) => `${half === 1 ? 'primer' : 'segundo'} semestre de ${year}`,
+    noChange: 'un cambio de cero',
+    fewerBy: (percent) => `${formatDecimal(percent, 1)}% menos`,
+    moreBy: (percent) => `${formatDecimal(percent, 1)}% más`,
+    range: (low, high) => `de ${low} a ${high}`,
+    compared: (places, from, to, areas) =>
+      `${places === 1 ? 'Comparado' : 'Comparados'}: ${plural(places, { one: '# lugar que recibió', other: '# lugares que recibieron' })} cuidado desde el ${from} hasta el ${to}, en ${plural(areas, { one: '# zona', other: '# zonas' })} de la ciudad, cada uno con hasta cinco lugares parecidos que no lo recibieron.`,
+    counts: (before, after, expected) =>
+      `Cerca de los lugares que recibieron cuidado: ${formatNumber(before)} en los dos años anteriores, ${formatNumber(after)} en los dos años posteriores, cuando se esperaban ${formatNumber(expected)} según los lugares de comparación.`,
+    checksTitle: 'Verificaciones',
+    checks: {
+      passed: (change, range, places) =>
+        `Verificación superada: al fingir que el cuidado llegó cuatro años y medio antes, la comparación debería encontrar que no hay cambio, y encontró ${change} (${range}; ${plural(places, { one: '# lugar', other: '# lugares' })} con registros de tanto tiempo atrás).`,
+      failed: (change, range, places) =>
+        `Verificación fallida: al fingir que el cuidado llegó cuatro años y medio antes, la comparación encontró ${change} (${range}; ${plural(places, { one: '# lugar', other: '# lugares' })} con registros de tanto tiempo atrás) cuando no debería encontrar ningún cambio. Los lugares que recibieron cuidado ya iban por un camino distinto.`,
+      tooFew: 'No se pudo hacer la verificación: muy pocos de estos lugares tienen registros de tanto tiempo atrás.',
+      around: (change, range) => `Más lejos, de 200 a 400 metros de distancia: ${change} (${range}).`,
+      moved: 'Parte del problema puede haberse mudado hacia allá.',
+      later: (change, range, places) =>
+        `Comparado solo con lugares que recibieron el mismo cuidado más tarde: ${change} (${range}; ${plural(places, { one: '# lugar', other: '# lugares' })}).`,
+      naive: (change, noun) =>
+        `Un simple antes y después diría ${change}, porque no toma en cuenta cómo cambió la cantidad de ${noun} en todos los demás lugares.`,
+    },
+    // Proyectos que terminaron los vecinos
+    projectsNow: (shown, ready, before) =>
+      `El mapa muestra ${plural(shown, { one: '# proyecto que terminaron', other: '# proyectos que terminaron' })} los vecinos. ${formatNumber(ready)} de ellos se terminaron a más tardar en ${before}, hace tiempo suficiente para tener dos años de registros después.`,
+    projectsNotRead: 'Esta copia del mapa todavía no tiene una lista de proyectos que terminaron los vecinos.',
+    projectsNeed: (min) =>
+      `Una comparación necesita al menos ${formatNumber(min)}. Cada proyecto reportado la acerca más, y muestra a los vecinos lo que otros han hecho.`,
+    projectsLink: 'Cuéntenos sobre un proyecto que terminó',
+    // Lo que esto no puede decir
+    cannotTitle: 'Lo que esto no puede decir',
+    cannot: [
+      'Si un lugar sigue viéndose vacío más adelante. Las listas de propiedades vacías de la Ciudad existen solo para 2024 y 2026, y LandCare y la limpieza y el sellado están pensados para mantener un lugar bien cuidado mientras sigue vacío, así que "sigue vacío" no permite distinguir el éxito del fracaso.',
+      'Nada sobre un lote en particular. Los tiroteos, la basura tirada y las quejas suben y bajan en cada cuadra por muchas razones. Solo muchos lugares juntos pueden mostrar un patrón, y aun así no con certeza.',
+      'Por qué algo cambió. Una comparación muestra qué cambió, no qué lo causó.',
+      'Nada sobre los lotes que dejaron LandCare. Su lista incluye solo los lotes que cuida ahora.',
+      'Los cambios en los propios registros: los registros de limpieza y sellado de la Ciudad tienen muchas menos órdenes a partir de 2020, sus reportes de basura tirada empiezan en enero de 2016, y L&I cambió los nombres de sus tipos de queja en 2020. Cada comparación pone lugares frente a otros en los mismos años, lo cual resuelve la mayor parte de esto.',
+    ],
+    chance: (n) =>
+      `Casualidad: con 90 por ciento, más o menos una comparación de cada diez puede parecer un cambio cuando no lo hay, así que entre ${plural(n, { one: '# comparación', other: '# comparaciones' })} una o dos pueden ser solo casualidad.`,
+    // Cómo comparamos
+    methodTitle: 'Cómo comparamos',
+    method: [
+      'Un lugar es un cuadrado de la ciudad de 100 metros de lado donde hubo cuidado en algún semestre, de 2017 en adelante.',
+      'Para cada uno buscamos hasta cinco lugares dentro de unas 2 millas (3 kilómetros), pero no en la misma cuadra, que no recibieron el mismo cuidado en los dos años anteriores ni en los dos posteriores, con una cantidad parecida en cada uno de los dos años anteriores y una proporción parecida de vecinos por debajo de la línea de pobreza.',
+      'Comparamos el cambio en el lugar que recibió cuidado, de los dos años anteriores a los dos años posteriores, con el cambio promedio en sus lugares de comparación, sin contar el semestre del trabajo mismo.',
+      'El intervalo del 90 por ciento sale de volver a sortear zonas enteras de la ciudad 2,000 veces. Lo más probable es que el cambio verdadero esté dentro de él.',
+      'Primero probamos el método en ciudades inventadas donde conocíamos la respuesta. Encontró el cambio que pusimos, y no encontró ninguno cuando no pusimos ninguno.',
+    ],
+    methodLink: 'El método completo, cada número y el código',
+    // Fuentes
+    sourcesTitle: 'Fuentes',
+    sources: {
+      landcare: 'Lotes de PHS LandCare, de la Pennsylvania Horticultural Society a través de la Ciudad de Filadelfia.',
+      clean_seal: 'Órdenes de trabajo de limpieza y sellado, del Departamento de Licencias e Inspecciones de la Ciudad.',
+      demolition: 'Demoliciones de edificios, del Departamento de Licencias e Inspecciones de la Ciudad.',
+      shootings: (first, last) => `Personas baleadas, del Departamento de Policía de Filadelfia, del ${first} al ${last}. Solo conteos.`,
+      dumping: (first, last) => `Solicitudes a Philly311 sobre basura tirada ilegalmente, del ${first} al ${last}.`,
+      complaints: (first, last) =>
+        `Quejas sobre lotes y edificios vacíos, del Departamento de Licencias e Inspecciones de la Ciudad, del ${first} al ${last}.`,
+      poverty:
+        'La proporción de vecinos por debajo de la línea de pobreza por sector censal, de la Encuesta sobre la Comunidad Estadounidense (ACS) de la Oficina del Censo de EE. UU., 2020 a 2024.',
+      projects: 'Proyectos que terminaron los vecinos, según se reportaron a Placekeepers y fueron aprobados por la persona que lo mantiene.',
+    },
+    // La página del lote
+    lotNote: 'Un solo lote no puede mostrar si el cuidado funcionó: los tiroteos, la basura tirada y las quejas suben y bajan en cada cuadra por muchas razones.',
+    lotLink: 'Vea lo que muestran los registros de la Ciudad para toda Filadelfia',
+    sealedOn: (date) => `La Ciudad lo limpió y selló por última vez el ${date}.`,
+  },
+
   projects: {
     kinds: {
       cleanup: 'Limpieza',

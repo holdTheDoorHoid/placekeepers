@@ -229,6 +229,12 @@ sources:
   philly311_conditions:
     name: "Solicitudes a Philly311 sobre basura tirada, luces apagadas y grafiti"
     publisher: "Ciudad de Filadelfia, Philly311"
+  philly311_dumping_history:
+    name: "Solicitudes a Philly311 sobre basura tirada ilegalmente desde 2016"
+    publisher: "Ciudad de Filadelfia, Philly311"
+  li_complaints_history:
+    name: "Quejas a L&I sobre lotes y edificios vacíos desde 2015"
+    publisher: "Ciudad de Filadelfia, Departamento de Licencias e Inspecciones"
   bus_shelters:
     name: "Refugios de autobús"
     publisher: "Ciudad de Filadelfia, Oficina de Transporte y Sistemas de Infraestructura"
