@@ -32,6 +32,9 @@ from there, checked 2026-10-21:
 | Office of Property Assessment | Biwo Pwopriyete Evalyasyon (OPA) | OPA department page |
 | Department of Licenses and Inspections | Depatman Lisans ak Enspeksyon (L&I) | L&I department page |
 | City Council | Konsèy Minisipal | Land Bank department page |
+| Department of Sanitation | Depatman Sanitasyon | Department of Sanitation page |
+| Philadelphia More Beautiful Committee | Philadelphia Pi Bèl Komite | same page |
+| Block Captain | kòmandan blòk | the City's service link "Vin yon kòmandan blòk" |
 | Department of Records | Depatman Dosye | City Creole pages, as read in a search result |
 
 Two City translations were not used because they are machine errors: the Land Bank page calls the
