@@ -235,3 +235,11 @@ export const HOLC_COLORS: Record<string, string> = {
 };
 export const HOLC_UNGRADED = '#9b9b9b';
 export const HOLC_FILL_OPACITY = 0.3;
+
+/**
+ * Projects neighbors finished (M5.3): a white badge with a deep green ring and a gold center, unlike
+ * any single colored dot on the map, so finished care reads as something to celebrate.
+ */
+export const PROJECT_RING = '#1b7837';
+export const PROJECT_FILL = '#ffffff';
+export const PROJECT_CENTER = '#e6a800';

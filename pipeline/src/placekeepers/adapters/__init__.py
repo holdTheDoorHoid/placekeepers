@@ -44,6 +44,7 @@ from placekeepers.adapters.opa_properties import OpaProperties
 from placekeepers.adapters.osm import OsmExtract
 from placekeepers.adapters.pba_laser import PbaLaser
 from placekeepers.adapters.philly311 import Philly311Conditions
+from placekeepers.adapters.projects import ProjectCorrections, ProjectReports
 from placekeepers.adapters.property_records import AssessmentHistory, RealEstateTransfers
 from placekeepers.adapters.pwd_parcels import PwdParcels
 from placekeepers.adapters.redlining import MappingInequality1937
@@ -196,6 +197,10 @@ ADAPTERS: dict[str, type[Adapter]] = {
     "acs_rent": AcsRent,
     "warming_cooling_sites": WarmingCoolingSites,
     "ppr_playgrounds": PprPlaygrounds,
+    # Projects neighbors finished (M5.3, issue #47): the reports the owner approved on GitHub, and
+    # the hand entries and corrections in data/curated/interventions.yaml
+    "project_reports": ProjectReports,
+    "project_corrections": ProjectCorrections,
 }
 
 

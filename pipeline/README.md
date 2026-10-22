@@ -29,6 +29,7 @@ install it ahead (CI does), run
 | `pk publish [--out DIR]` | Writes `manifest.json` and the map layers (default `build/data`) |
 | `pk health [ids...]` | Shows each source's status (`--json` for machines, `--strict` to fail when any source is not ok) |
 | `pk all` | Fetch and validate each source in turn, run the vacancy model, publish, then show health |
+| `pk projects --data DIR` | Reads the approved project reports from GitHub again and replaces only the projects layer, `tables/projects.json` and their lines in `manifest.json` in a data root a weekly publish wrote (M5.3; `--inputs DIR` for the project inputs, `--issues-file FILE` to read saved reports instead of GitHub, `--summary FILE` to append what became of each report) |
 
 Options: `--sources a,b` limits a command to some sources, `--offline` uses only the cache,
 `--force` downloads frozen and recently fetched yearly sources again, `--cache DIR` uses another
@@ -471,6 +472,31 @@ Each flag's careful note and next step are the same for every parcel, so they ar
 in `dossiers/common.json`, not once per parcel. Files are named by the first four digits of the OPA
 account, so opening one lot on a phone fetches a small file. Readers take only the columns a
 snapshot has, so a source that drops a column cannot stop the publish.
+
+### Projects neighbors finished (M5.3)
+
+`projects.py` checks the reports the owner approved on GitHub (the source `project_reports`, endpoint
+kind `github_issues`, read with the token in `GITHUB_TOKEN`) and merges the hand entries and
+corrections of `data/curated/interventions.yaml` (`project_corrections`); `publish/projects.py`
+writes the layer `projects` (`tiles/projects.pmtiles`) and `tables/projects.json`
+(docs/CONTRACTS.md sections 4, 5 and 10):
+
+* Only issues with the label `project-approved` are read, and each is reduced at once to its form
+  answers: no GitHub user name, title, photo or answer about permission is kept, even in the
+  download cache. The group name and the note lose links, photos, email addresses, phone numbers
+  and @ mentions, and the build notes say which report lost what.
+* A report appears when it carries the label, was not closed as not planned, was not edited after
+  approval by anyone but the approver, reads as the form, has the consent box ticked, a real month
+  not in the future, and a parcel or address found in the City's property list, inside the city
+  limits. A curated `suppressed` entry always wins. The build notes name each held report and why.
+* The weekly publish also leaves the project inputs in `<cache>/derived/project_inputs/` (parcel
+  numbers, addresses and points, and the city limits), which the weekly refresh hands to
+  `.github/workflows/projects.yml` for `pk projects`, the quick publish after a label changes.
+
+`tests/test_projects.py` uses fixture issues (`tests/fixtures/projects_issues.json`, written by
+`tests/projects_cases.py`): approved, not approved, invalid, outside the city, suppressed, spam,
+edited after approval and repeated reports, and proves no user name or photo link reaches a
+published file beyond the link to each report.
 
 ## Tests
 

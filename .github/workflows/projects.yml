@@ -1,0 +1,211 @@
+# Publishes projects neighbors finished soon after the owner approves or removes one (M5.3, issue
+# #47). The owner approves a report with one click: the `project-approved` label on its issue. When
+# that label is added or removed, or an approved issue is edited, closed, reopened or deleted (or
+# someone starts this workflow by hand), it runs:
+#
+#   build   waits for a weekly refresh that is running to finish, then takes the site data and the
+#           project inputs of the newest weekly refresh that succeeded on the default branch,
+#           reads the approved reports again and replaces only the projects layer and table in
+#           that data (pk projects), and writes what became of each report on the run's page;
+#   site    builds the map from the same commit as that weekly refresh, with that data, so nothing
+#           changes on the site but the projects;
+#   deploy  publishes it on GitHub Pages.
+#
+# It never runs the weekly refresh: a run takes a few minutes. When no weekly copy is at hand (the
+# weekly run keeps it 14 days), it stops and says so on the run's page, and the projects appear
+# at the next weekly refresh, which reads the reports too.
+#
+# Waiting for a weekly refresh that is running means this run always starts from the newest data
+# and publishes after it: it can never put last week's data back on the site, and a label added
+# while the refresh runs is never lost.
+#
+# Permissions: build reads the repository, the issues and the weekly run's artifacts; site reads
+# the repository; only deploy can write, and only to Pages. No job that runs installed packages
+# holds a write token, and no secret is used.
+
+name: Publish approved projects
+
+on:
+  issues:
+    types: [labeled, unlabeled, edited, closed, reopened, deleted]
+  workflow_dispatch:
+
+permissions: {}
+
+# One run at a time; a newer event waits, and while it waits an even newer one replaces it, which
+# is fine: every run reads every approved report again.
+concurrency:
+  group: projects
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Read the approved reports and replace the projects
+    # Only events about the approval label, or about an issue that carries it.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      ((github.event.action == 'labeled' || github.event.action == 'unlabeled') &&
+        github.event.label.name == 'project-approved') ||
+      (github.event.action != 'labeled' && github.event.action != 'unlabeled' &&
+        contains(github.event.issue.labels.*.name, 'project-approved'))
+    runs-on: ubuntu-24.04
+    # Up to 100 minutes waiting for a weekly refresh, then a few minutes of work.
+    timeout-minutes: 120
+    permissions:
+      contents: read
+      issues: read # read the approved reports
+      actions: read # find the weekly refresh and download its artifacts
+    outputs:
+      ready: ${{ steps.weekly.outputs.ready }}
+      sha: ${{ steps.weekly.outputs.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Find the newest weekly data, after any refresh that is running
+        id: weekly
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          for attempt in $(seq 1 100); do
+            running=$(gh run list --workflow refresh.yml --limit 20 --json status \
+              --jq '[.[] | select(.status != "completed")] | length')
+            if [ "$running" = "0" ]; then
+              break
+            fi
+            echo "A weekly refresh is running; waiting for it to finish (minute $attempt)."
+            sleep 60
+          done
+          run=$(gh run list --workflow refresh.yml --branch "$DEFAULT_BRANCH" --status success \
+            --limit 1 --json databaseId --jq '.[0].databaseId // empty')
+          if [ -z "$run" ]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "No weekly refresh has succeeded yet, so the projects wait for the next one." \
+              | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          have=$(gh api "repos/$GH_REPO/actions/runs/$run/artifacts" \
+            --jq '[.artifacts[] | select(.expired == false) | .name]
+                  | (any(.[]; . == "site-data") and any(.[]; . == "project-inputs"))')
+          if [ "$have" != "true" ]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "The newest weekly refresh's data is no longer kept, or it was made before projects existed, so the projects wait for the next weekly refresh." \
+              | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          sha=$(gh run view "$run" --json headSha --jq .headSha)
+          gh run download "$run" --name site-data --dir "$RUNNER_TEMP/site-data"
+          gh run download "$run" --name project-inputs --dir "$RUNNER_TEMP/project-inputs"
+          test -s "$RUNNER_TEMP/site-data/data/manifest.json"
+          echo "Using the data of weekly refresh $run (commit $sha)."
+          {
+            echo "ready=true"
+            echo "sha=$sha"
+          } >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        if: steps.weekly.outputs.ready == 'true'
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pipeline/pyproject.toml
+
+      - name: Install tippecanoe and the pipeline
+        if: steps.weekly.outputs.ready == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq tippecanoe
+          pip install -e pipeline
+
+      - name: Read the approved reports and replace the projects
+        if: steps.weekly.outputs.ready == 'true'
+        env:
+          # Read only (contents, issues and actions).
+          GITHUB_TOKEN: ${{ github.token }}
+          PK_CACHE: ${{ runner.temp }}/pk-cache
+        run: |
+          pk projects --data "$RUNNER_TEMP/site-data/data" \
+            --inputs "$RUNNER_TEMP/project-inputs" --summary "$GITHUB_STEP_SUMMARY"
+
+      - name: Hand over the site data
+        if: steps.weekly.outputs.ready == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: projects-site-data
+          path: ${{ runner.temp }}/site-data
+          retention-days: 1
+          if-no-files-found: error
+
+  site:
+    name: Build the site
+    needs: build
+    if: needs.build.outputs.ready == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      # The same commit as the weekly refresh whose data this is: only the projects change.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ needs.build.outputs.sha }}
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Build the map
+        working-directory: web
+        run: |
+          npm ci
+          npm run build
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: projects-site-data
+          path: ${{ runner.temp }}/site-data
+
+      - name: Add the data to the site
+        run: |
+          mkdir -p web/dist/data
+          cp -R "$RUNNER_TEMP/site-data/data/." web/dist/data/
+          if [ -d "$RUNNER_TEMP/site-data/basemap" ]; then
+            cp -R "$RUNNER_TEMP/site-data/basemap" web/dist/data/basemap
+          fi
+          test -s web/dist/data/manifest.json
+          big=$(find web/dist -type f -size +95M)
+          if [ -n "$big" ]; then
+            echo "::error::Files too large for GitHub Pages (move them to Cloudflare R2): $big"
+            exit 1
+          fi
+          total=$(du -sm web/dist | cut -f1)
+          echo "Site size: ${total} MB"
+          if [ "$total" -gt 950 ]; then
+            echo "::error::The site is ${total} MB, close to the 1 GB GitHub Pages limit."
+            exit 1
+          fi
+
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: web/dist
+
+  deploy:
+    name: Publish on GitHub Pages
+    needs: site
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

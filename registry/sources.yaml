@@ -1133,3 +1133,31 @@
   cadence: weekly
   health: {min_rows: 400, max_drop_pct: 10}
   release: v0.4
+# Projects neighbors finished (M5.3, issue #47; owner, 2026-10-21: the owner approves every report
+# with one click, the `project-approved` label, before it appears). Only issues carrying that label
+# are read, with the workflow's built in read only token; GitHub user names are never kept, and the
+# answer about permission is not kept either (adapters/projects.py). Read every run, and again soon
+# after a label changes (.github/workflows/projects.yml).
+- id: project_reports
+  name: Projects neighbors finished, reported on the site's GitHub form
+  publisher: Neighbors, through Placekeepers' "Tell us about a project you finished" form
+  homepage: https://github.com/holdTheDoorHoid/placekeepers/issues?q=label%3Aproject-approved
+  endpoint: {kind: github_issues, repo: holdTheDoorHoid/placekeepers, label: project-approved}
+  license: neighbor_reports_odbl
+  attribution: "Projects neighbors finished: reports from neighbors, approved by Placekeepers"
+  cadence: irregular
+  health: {min_rows: 0, max_drop_pct: 100}
+  release: v0.5
+# Hand entries and corrections for the projects (M5.3): a fixed place, a suppressed report by its
+# issue number, or a project entered by hand. A suppressed entry always wins. Read from the
+# repository at every publish, so a suppression takes effect at the next publish even offline.
+- id: project_corrections
+  name: Projects neighbors finished, hand entries and corrections
+  publisher: Placekeepers
+  homepage: https://github.com/holdTheDoorHoid/placekeepers/blob/main/data/curated/interventions.yaml
+  endpoint: {kind: curated, path: data/curated/interventions.yaml}
+  license: neighbor_reports_odbl
+  attribution: "Projects neighbors finished: hand entries and corrections by Placekeepers"
+  cadence: irregular
+  health: {min_rows: 0, max_drop_pct: 100}
+  release: v0.5

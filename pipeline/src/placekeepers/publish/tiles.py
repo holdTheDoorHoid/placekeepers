@@ -269,6 +269,15 @@ TILE_OPTIONS: dict[str, list[str]] = {
         "--feature-filter",
         json.dumps({"historic_sites": [">=", "$zoom", 13]}, separators=(",", ":")),
     ],
+    # Projects neighbors finished (M5.3): a few hundred points at most, every one kept at every
+    # zoom, so no project disappears when the map is zoomed out.
+    "tiles/projects.pmtiles": [
+        "--minimum-zoom=10",
+        "--maximum-zoom=16",
+        "--base-zoom=10",
+        "--no-feature-limit",
+        "--no-tile-size-limit",
+    ],
     # Boundaries are few, large shapes: simplified at low zooms, borders kept shared, and
     # detailed enough at zoom 14 to be stretched further by the map.
     "tiles/boundaries.pmtiles": [

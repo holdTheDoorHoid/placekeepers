@@ -717,6 +717,19 @@ status. The weekly refresh keeps the file with the snapshot. The series starts w
 of 2026-10-04: 1,687 records listed as available on 1,639 parcels, 1,291 of them open to a
 neighbor as a side yard.
 
+### Projects neighbors finished (M5.3, issue #47, 2026-10-21)
+
+| Source | Endpoint | Use | Status |
+|---|---|---|---|
+| Project reports (`project_reports`) | GitHub issues of this repository with the label `project-approved`, read with GitHub's GraphQL API and the workflow's own read only token (endpoint kind `github_issues`) | The projects layer, "Projects here" on lot pages and `tables/projects.json` | Live from v0.5. Each reporter agrees to the Open Database License (`neighbor_reports_odbl`); photos are not covered and stay on GitHub. No user name, title, photo or permission answer is kept |
+| Hand entries and corrections (`project_corrections`) | `data/curated/interventions.yaml` (endpoint kind `curated`) | Fixes to reports by issue number, suppressions, and projects entered by hand | Live from v0.5, empty at first |
+
+The place of each report comes from the City's property list (`opa_properties`): its point and
+address, and the city limits from the 2020 census tracts. The reports are read every week and
+again a few minutes after the owner changes a label (`.github/workflows/projects.yml`). How the
+checks work is in DESIGN.md section 13.3; the file formats are in CONTRACTS.md sections 4, 5 and
+10.
+
 ## Sources checked 2026-10-08
 
 The owner asked to bring four community and City sources onto the map. A check of each one's

@@ -9,6 +9,12 @@
 #   issues    opens an issue for a source that failed this week and last week, and closes it
 #             once the source works again.
 #
+# Projects neighbors finished (M5.3): the pipeline reads the reports the owner approved (issues with
+# the `project-approved` label) with this run's read only token, and hands the site data and the
+# project inputs (parcel numbers, addresses and points from the City's property list, and the city
+# limits) to projects.yml, which republishes only the projects soon after a label changes. Both
+# are kept 14 days for it.
+#
 # A source that fails keeps last week's copy, so the map never goes dark. If a job fails, nothing
 # is deployed and the site keeps its previous version.
 #
@@ -61,6 +67,7 @@ jobs:
     timeout-minutes: 90
     permissions:
       contents: read # read the data-snapshots release
+      issues: read # read the project reports the owner approved (M5.3)
     env:
       # The runner has about 14 GB free, so the laptop's 10 GB floor would skip every download
       # and quietly serve last week's data. A run needs about 2 GB at its peak (the restored
@@ -142,6 +149,8 @@ jobs:
       - name: Fetch, check and publish
         env:
           BREAK_SOURCE: ${{ inputs.break_source || '' }}
+          # Read only (contents and issues): the project reports the owner approved (M5.3).
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           out="$GITHUB_WORKSPACE/build/site/data"
           echo "Disk before the pipeline:"
@@ -226,13 +235,25 @@ jobs:
           retention-days: 3
           if-no-files-found: error
 
+      # Kept 14 days (3 before M5.3): projects.yml republishes the projects on top of it whenever a
+      # label changes, so it must outlast a week, and one failed week.
       - name: Hand over the site data
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: site-data
           path: build/site
-          retention-days: 3
+          retention-days: 14
           if-no-files-found: error
+
+      # What projects.yml needs to place a report without this run's snapshots: parcel numbers,
+      # addresses and points (nothing about owners), and the city limits (M5.3).
+      - name: Hand over the project inputs
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: project-inputs
+          path: ${{ env.PK_CACHE }}/derived/project_inputs
+          retention-days: 14
+          if-no-files-found: warn
 
       - name: Hand over the manifests
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

@@ -148,3 +148,22 @@ export function liHistoryUrl(address: string): string {
 export function atlasZoningUrl(opa: string): string {
   return `https://atlas.phila.gov/${encodeURIComponent(opa)}/zoning`;
 }
+
+// Projects neighbors finished (M5.3, issue #47).
+
+/** The live site, for the lot link a project report carries (the owner opens it to check the lot). */
+export const SITE_URL = 'https://holdthedoorhoid.github.io/placekeepers/';
+
+/**
+ * The repository's "Tell us about a project you finished" issue form
+ * (.github/ISSUE_TEMPLATE/project.yml), prefilled with the lot's link and address when a lot page
+ * opens it. The form opens on GitHub; the site sends nothing anywhere.
+ */
+export function projectReportUrl(opa: string | null = null, address: string | null = null): string {
+  const params = new URLSearchParams({ template: 'project.yml' });
+  if (opa) {
+    params.set('title', `Project: ${address ?? `parcel ${opa}`}`);
+    params.set('where', `${SITE_URL}#p=${opa}${address ? ` (${address})` : ''}`);
+  }
+  return `${REPO_URL}/issues/new?${params.toString()}`;
+}

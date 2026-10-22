@@ -1338,3 +1338,21 @@
       type: toggle
       default: true
   release: v0.4
+# Projects neighbors finished (M5.3, issue #47): reports the owner approved, and hand entries.
+- id: projects
+  label: Projects neighbors finished
+  group: care
+  description: >-
+    Cleanups, gardens, places to sit, murals, trees, City benches and shelters, and 311 fixes that
+    neighbors finished and told us about. Each report is read and approved by Placekeepers before
+    it appears. Tap one to see what was done, when, and what it took, with a link to the report
+    and its photos on GitHub. The map never shows who sent a report, only a group name they chose.
+  sources: [project_reports, project_corrections]
+  file: tiles/projects.pmtiles
+  source_layer: projects
+  geometry: point
+  style: projects
+  evidence: context
+  default: {field: false, analysis: true}
+  settings: []
+  release: v0.5

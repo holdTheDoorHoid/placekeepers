@@ -25,6 +25,7 @@ import { loadCommon, loadShard, shardLocation } from './shard.ts';
 import { isTimelineKind, type TimelineKind } from './timeline.ts';
 import type { DossierNotes } from './types.ts';
 import { readItem, writeItem } from '../state/storage.ts';
+import { loadProjectsTable, type ProjectsState } from '../projects/projects.ts';
 
 /** The kinds of record a reader switched off in the timeline, remembered in this browser only. */
 export const TIMELINE_HIDDEN_KEY = 'timeline-hidden';
@@ -80,6 +81,11 @@ export class DossierController {
   history = $state.raw<HistoryState>({ status: 'idle' });
   /** The kinds of record the reader switched off in the timeline. */
   hiddenKinds = $state.raw<TimelineKind[]>(readHidden());
+  /**
+   * The projects neighbors finished (M5.3, tables/projects.json): one small file for every lot,
+   * fetched once, when the first lot page opens.
+   */
+  projects = $state.raw<ProjectsState>({ status: 'idle' });
 
   private readonly deps: DossierDeps;
   private historyRun: Promise<void> | null = null;
@@ -115,6 +121,19 @@ export class DossierController {
     this.history = { status: 'idle' };
     this.historyRun = null;
     this.start(false);
+    void this.loadProjects();
+  }
+
+  /** Fetches the projects neighbors finished once (again only after a failure). */
+  loadProjects(): Promise<void> {
+    if (this.projects.status === 'found' || this.projects.status === 'unpublished' || this.projects.status === 'loading') {
+      return Promise.resolve();
+    }
+    this.projects = { status: 'loading' };
+    return (async () => {
+      const manifest = await this.deps.manifest();
+      this.projects = await loadProjectsTable(this.deps.dataBase, manifest, this.deps.fetchImpl);
+    })();
   }
 
   close(): void {
@@ -135,6 +154,7 @@ export class DossierController {
   retry(): void {
     if (!this.opa) return;
     this.start(true);
+    if (this.projects.status === 'failed') void this.loadProjects();
     if (this.history.status === 'failed') {
       this.history = { status: 'idle' };
       this.historyRun = null;

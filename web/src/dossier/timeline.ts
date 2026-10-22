@@ -138,7 +138,7 @@ export function withOlder(live: LiGroups, copy: LiGroups | null): LiGroups {
  * records. Appeals (M4.6) appear on the day they were filed, with their hearing day; who filed
  * them is shown in "Rules for this lot", not here.
  */
-export const TIMELINE_KINDS = ['deed', 'violation', 'permit', 'demolition', 'clean_seal', 'notice', 'appeal', 'vacancy'] as const;
+export const TIMELINE_KINDS = ['deed', 'violation', 'permit', 'demolition', 'clean_seal', 'notice', 'appeal', 'vacancy', 'project'] as const;
 export type TimelineKind = (typeof TIMELINE_KINDS)[number];
 
 export function isTimelineKind(value: unknown): value is TimelineKind {
@@ -195,6 +195,11 @@ export interface TimelineInput {
   appeals?: Appeal[] | null;
   lists: ListRecord[];
   landcare: LandCare | null;
+  /**
+   * Projects neighbors finished on this lot (M5.3, issue #47), from tables/projects.json: the month
+   * each was finished (YYYY-MM) and what it was, in words. Absent or empty when there are none.
+   */
+  projects?: { finished: string; text: string }[];
   /** Today in Philadelphia, YYYY-MM-DD. */
   today: string;
 }
@@ -210,6 +215,8 @@ export interface Timeline {
 const t = () => strings.dossier.history.timeline;
 
 function day(value: string | null): string {
+  // A project neighbors finished is dated by its month (M5.3): "May".
+  if (value && /^\d{4}-\d{2}$/.test(value)) return formatDate(`${value}-15`, 'short')?.replace(/ \d{1,2}, \d{4}$/, '') ?? value;
   return value ? (formatDate(value, 'short')?.replace(/, \d{4}$/, '') ?? value) : '';
 }
 
@@ -369,6 +376,9 @@ export function buildTimeline(input: TimelineInput): Timeline {
     add('appeal', t().kinds.appeal!, appeal.filed, { text: parts.join(', '), status, open: false, early: false });
   }
   for (const record of input.lists) add('vacancy', t().kinds.vacancy!, record.date, { text: t().lists[record.list]!, status: null, open: false, early: false });
+  for (const project of input.projects ?? []) {
+    add('project', strings.projects.timelineKind, project.finished, { text: project.text, status: null, open: false, early: false }, true);
+  }
   const yearOnly: TimelineRow[] = [];
   if (input.landcare?.year) {
     yearOnly.push({
@@ -380,15 +390,20 @@ export function buildTimeline(input: TimelineInput): Timeline {
       future: false,
     });
   }
-  // Newest first; a year only record sorts as the end of its year; undated records last.
-  const key = (r: TimelineRow) => (r.day === null ? '' : r.day.length === 4 ? `${r.day}-99-99` : r.day);
+  // Newest first; a year only record sorts as the end of its year, and a month only record (a
+  // project neighbors finished) as the end of its month; undated records last.
+  const key = (r: TimelineRow) => (r.day === null ? '' : r.day.length === 4 ? `${r.day}-99-99` : r.day.length === 7 ? `${r.day}-99` : r.day);
   const all = [...rows, ...yearOnly].sort((a, b) => cmp(key(b), key(a)) || TIMELINE_KINDS.indexOf(a.kind) - TIMELINE_KINDS.indexOf(b.kind));
   const counts = new Map<TimelineKind, number>();
   for (const row of all) counts.set(row.kind, (counts.get(row.kind) ?? 0) + 1);
   return {
     story: storyOf(input),
     rows: all,
-    kinds: TIMELINE_KINDS.filter((k) => counts.has(k)).map((id) => ({ id, label: t().toggles[id]!, count: counts.get(id)! })),
+    kinds: TIMELINE_KINDS.filter((k) => counts.has(k)).map((id) => ({
+      id,
+      label: id === 'project' ? strings.projects.timelineToggle : t().toggles[id]!,
+      count: counts.get(id)!,
+    })),
   };
 }
 

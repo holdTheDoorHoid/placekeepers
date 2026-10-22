@@ -29,6 +29,7 @@
   import WatchDetails from '../displacement/WatchDetails.svelte';
   import RulesDetails from '../rules/RulesDetails.svelte';
   import RedliningDetails from '../history/RedliningDetails.svelte';
+  import ProjectDetails from '../projects/ProjectDetails.svelte';
   import { watchSummaryOf } from '../../displacement/watch.ts';
   import { sitePlace } from '../../amenities/describe.ts';
   import { COOLING_LAYER } from '../../map/styles/public_place.ts';
@@ -199,6 +200,8 @@
     <RedliningDetails features={target.features} />
   {:else if style === STYLES.traffic_stress}
     <StressDetails features={target.features} />
+  {:else if style === STYLES.projects}
+    <ProjectDetails features={target.features} lngLat={target.lngLat} onOpenLot={(opa) => store.select(opa, null, { center: target.lngLat })} />
   {:else if style === STYLES.parking_reports}
     <ParkingDetails
       properties={first}

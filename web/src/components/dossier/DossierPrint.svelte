@@ -54,6 +54,13 @@
     {/each}
   </section>
 
+  {#if m.projects.length}
+    <section>
+      <h2>{strings.projects.printTitle}</h2>
+      {#each m.projects as line (line)}<p>{line}</p>{/each}
+    </section>
+  {/if}
+
   {#if m.rules.length}
     <section>
       <h2>{s.sections.rules}</h2>

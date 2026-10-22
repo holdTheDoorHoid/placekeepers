@@ -12,7 +12,8 @@ export type Geometry = (typeof GEOMETRIES)[number];
 export const CADENCES = ['daily', 'weekly', 'monthly', 'yearly', 'irregular', 'frozen'] as const;
 export type Cadence = (typeof CADENCES)[number];
 
-export const ENDPOINT_KINDS = ['carto', 'arcgis', 'url', 'osm_extract', 'curated', 'sparql', 'arcgis_tiles'] as const;
+// github_issues (M5.3): the repository's issues with one label, the reports of projects neighbors finished.
+export const ENDPOINT_KINDS = ['carto', 'arcgis', 'url', 'osm_extract', 'curated', 'sparql', 'arcgis_tiles', 'github_issues'] as const;
 export type EndpointKind = (typeof ENDPOINT_KINDS)[number];
 
 // json: a reply the source's pipeline adapter asks for with query parameters (pba_laser, issue #37).
@@ -75,6 +76,10 @@ export interface Endpoint {
   bounds?: [number, number, number, number];
   /** arcgis_tiles: the picture services, in order (M4.3). */
   services?: TileService[];
+  /** github_issues: the repository, owner/name (M5.3). */
+  repo?: string;
+  /** github_issues: the label that marks an issue as approved (M5.3). */
+  label?: string;
 }
 
 export interface SourceHealth {
