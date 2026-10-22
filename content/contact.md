@@ -15,6 +15,15 @@ here.
 
 [Suggest a data source](https://github.com/holdTheDoorHoid/placekeepers/issues/new?template=data-source.yml)
 
+## Tell us about a project you finished
+
+If neighbors finished a cleanup, a garden, a place to sit, a mural, trees, or got a bench, a
+shelter or a 311 fix from the City, tell us with this form. A person reads every report, and once
+it is approved it appears on the map under "Projects neighbors finished", with a link back to the
+report. The map never shows who sent it.
+
+[Tell us about a project you finished](https://github.com/holdTheDoorHoid/placekeepers/issues/new?template=project.yml)
+
 ## A bus stop, shelter or bench is missing or wrong
 
 What our map says about benches, and about shelters the City's own list does not have, comes from
@@ -34,6 +43,6 @@ back in a later update.
 
 ## Everything else
 
-For anything that does not fit the two forms above, open a general issue on
+For anything that does not fit the forms above, open a general issue on
 [GitHub](https://github.com/holdTheDoorHoid/placekeepers/issues/new/choose), or use the
 correction form and explain what you need in the description.

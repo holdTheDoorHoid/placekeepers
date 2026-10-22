@@ -986,6 +986,19 @@ the owner can undo them).** The owner's decision to show appeals in full is in d
   outside the downloaded candidates) says those records are not in the weekly copy and offers live
   City data; it never says "No deeds on record." or shows zero violations for them (D9).
 
+**Projects here, as built (M5.3, issue #47, 2026-10-21).** Between "What you can do" and "Rules
+for this lot", the lot page lists the projects neighbors finished on the lot that the owner
+approved, newest first: what was done, the month it was finished, the group's name if it chose to
+show one, what it took, and a link to the report and its photos on GitHub. Then a button, "Tell us
+about a project you finished here", opens the report form prefilled with the lot's link and
+address, with a note that the form is public and photos never show children's faces or license
+plates. With no project it says none has been reported yet; when the build has no list, or it
+could not load, it says so instead. The page adds "One lot on its own cannot show whether a project
+worked." Each project is also a kind of its own in the lot timeline, dated by its month, with a
+ninth switch, "Projects neighbors finished", and the printed page lists them with the address of
+each report. The list comes from one small file for the whole city (`tables/projects.json`),
+fetched once from the site itself; nothing is asked of GitHub (section 13.3).
+
 ### 5.7 Street safety and memorials
 
 - High Injury Network (2025 version, 162 segments) as a line layer.
@@ -1604,6 +1617,15 @@ docs/            design, roadmap, research
 - Interventions people completed can be logged through an issue form (organizing tools release), so
   outcomes can later be evaluated honestly.
 
+  As built (M5.3, issue #47, 2026-10-21): the form "Tell us about a project you finished"
+  (`.github/ISSUE_TEMPLATE/project.yml`), linked from every lot page (prefilled with the lot), the
+  How page and the Contact page. The owner approves each report with one click, the label
+  `project-approved` (owner, 2026-10-21); nothing reaches the map without it, and removing the
+  label or closing the issue as not planned takes the project off. The live moderation the founding
+  decisions rule out is not needed: approval is one click whenever the owner has time, and an
+  unapproved report simply waits. How it works, what the map shows and what it never shows are in
+  section 13.3; the owner's how to is `docs/owner/approving-projects.md`.
+
 ## 11. Related projects and partners
 
 - **Clean & Green Philly**: credited on the About page; reused code keeps its MIT notice. The owner
@@ -1635,3 +1657,92 @@ docs/            design, roadmap, research
 8. Then and now (section 5.11): send the Athenaeum of Philadelphia the permission request for the
    GeoHistory Network's other maps the City hosts (the 1875, 1895 and 1910 atlases, the 1942 and
    1962 land use maps, the 1928 aerial photos); the draft is with the owner's outreach drafts.
+
+## 13. Organizing tools (v0.5)
+
+Phase 5 (issue #19, docs/ROADMAP.md). Each milestone adds its own subsection here, numbered after
+its milestone (13.1 for M5.1, and so on).
+
+### 13.3 Projects neighbors finished (M5.3, issue #47, 2026-10-21)
+
+**What the owner will see.**
+
+- **A form on GitHub**, "Tell us about a project you finished": what was done (a cleanup, a
+  garden, a place to sit, a mural or art, trees, a shelter or bench the City installed, a 311 fix,
+  or other), where (the lot's link from the map, its parcel number, or an address), the month and
+  year it was finished, whether permission was given (yes from the owner, yes from the City or the
+  Land Bank, not needed, no or not sure), an optional group name to show, an optional "what it
+  took", and a box agreeing that the report may be shown on the map and in its downloads under the
+  site's data license, the Open Database License. The form says the map never shows the GitHub
+  user name or the permission answer, that anyone can read the page, and that photos belong on the
+  issue only, never with the face of a child or of anyone who did not agree, and never with a
+  license plate. It is linked from each lot page (prefilled), the How page and the Contact page.
+- **One click to approve**: the label `project-approved`. A few minutes later the workflow
+  "Publish approved projects" puts the project on the map (below); the weekly refresh reads the
+  reports too. Removing the label, or closing the issue as not planned, takes it off the same way.
+- **A map layer**, "Projects neighbors finished", in the care group: a white badge with a green
+  ring and a gold center for each project, on in the analysis view and off in the field view like
+  the other care layers. Tapping one shows what was done, when, the group, what it took, a link to
+  the report, and "Open the lot page".
+- **"Projects here" on the lot page** and a kind of its own in the lot timeline (section 5.6).
+- **The owner's page**, `docs/owner/approving-projects.md`: how to read a report, what to check,
+  how to approve or remove one from a computer or a phone, how to see why a report is held back,
+  and how to fix one in `data/curated/interventions.yaml`.
+- **The table for "Did it work?"**: `tables/projects.json`, every project the map shows with the
+  month it was finished and the day it was approved (docs/CONTRACTS.md section 10). M5.4 reads it.
+
+**Which reports appear.** A report appears only when it carries the label now and was not closed
+as not planned, its answers read as the form's, the consent box is ticked, what was done is one of
+the form's answers, the month is real (1950 or later) and not in the future in Philadelphia, and it
+names a parcel the City's property list knows (its link or number) or an address found there
+(ranges such as "1234-36 N 5th St" hold their numbers), inside the city limits. A curated
+correction can fix the place, the month, the kind, the group or the note; a curated `suppressed`
+entry always wins. The same project reported twice (same place, kind, month and group) is shown
+once. A report that fails stays off the map, and the build notes (on the Data status page and the
+workflow's run page) say why by its issue number, so the owner can ask the reporter. Reports the
+owner took down on purpose are not listed there.
+
+**Edits after approval.** If anyone but the person who approved a report edits it afterwards, it
+leaves the map until the owner approves it again (remove the label and add it again): otherwise a
+reporter could change approved text into something nobody reviewed. The owner's own edits, such as
+removing a photo, keep it on the map.
+
+**What the map never shows, and why.**
+
+- No GitHub user name: only the group name the reporter chose. User names are read only to compare
+  the last editor with the approver and are never kept, even in the download cache.
+- No photo: photos stay on GitHub, and the map loads nothing from GitHub in the visitor's browser;
+  it only links to the report. The issue title is never kept either.
+- No permission answer (decided by this milestone; the owner can change it). The form promises the
+  answer is never judged. Showing "no or not sure" on a public map beside a group name could be
+  used against the neighbors who did the work, and showing only the yes answers would judge the
+  rest by their absence. The answer stays on the public issue for the owner and is not copied into
+  the pipeline at all.
+- No links, email addresses, phone numbers or @ mentions in the group name or the note: they are
+  left out (the note at most 600 characters, the group name 80), and the build notes say which
+  report lost what. A person's name typed into the note can only be caught by the owner, which the
+  owner's page asks them to check.
+- Tests prove it: fixture issues with user names, a title with a person's name, photo links,
+  phone numbers, emails, @ mentions and spam links publish none of them beyond the link to each
+  report (`pipeline/tests/test_projects.py`), and the web tests check the tap panel and the lot page
+  (`web/tests/projects.test.ts`, `web/e2e/projects.spec.ts`, `web/e2e/privacy.spec.ts`).
+
+**How it is built.** Two registry sources: `project_reports` (a new endpoint kind, `github_issues`,
+read with GitHub's GraphQL API and the workflow's built in read only token, `issues: read`; no new
+secret and no new service) and `project_corrections` (the curated file); the license
+`neighbor_reports_odbl` records what reporters agree to. The weekly publish builds the layer and the
+table from the reports' snapshot, the City's property list and the city limits, and leaves the
+project inputs (parcel numbers, addresses and points, and the city limits; nothing about owners)
+for the quick publish.
+
+**Soon after a label changes.** `.github/workflows/projects.yml` runs when the approval label is
+added or removed, or an approved issue is edited, closed, reopened or deleted (or by hand). It
+waits for a weekly refresh that is running to finish, so it never puts older data back on the site
+and never misses a label added during one; takes the site data and the project inputs of the
+newest weekly refresh that succeeded (the weekly refresh keeps both 14 days, up from 3); reads the
+approved reports again; replaces only the projects layer, the table and their lines in the
+manifest (`pk projects`); builds the site from the same commit as that weekly refresh, so nothing
+else changes; and deploys it. A run takes a few minutes, never the full refresh. Its run page lists
+every approved report with "Yes" or "No" and the reason. When no weekly copy is at hand, it says so
+and the projects wait for the next weekly refresh.
+

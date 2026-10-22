@@ -346,4 +346,25 @@ test.describe('privacy', () => {
     // And every page asks the browser to send no referrer at all.
     await expect(page.locator('meta[name="referrer"]')).toHaveAttribute('content', 'no-referrer');
   });
+
+  test('projects neighbors finished come only from the site: no request to GitHub, no photo', async ({ page, context }, info) => {
+    // M5.3 (issue #47): the map and the lot page show the approved projects from the site's own
+    // table and layer; the report and its photos stay on GitHub behind a plain link.
+    await page.addInitScript(() => localStorage.setItem('placekeepers:v1:options', JSON.stringify({ live_city_data: false })));
+    const seen = watchOrigins(context);
+    await open(page, `v=a&m=18/${LOT.lat}/${LOT.lng}&p=${LOT.id}&l=projects,vacant_parcels`);
+    const projects = page.locator('#pk-right section', { has: page.getByRole('heading', { name: 'Projects here', exact: true }) });
+    await expect(projects).toContainText('By Example Avenue Growers');
+    await expect(projects.locator('img')).toHaveCount(0);
+    for (const link of await projects.locator('a').all()) {
+      await expect(link).toHaveAttribute('target', '_blank');
+      await expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+    }
+    if (isPhone(info)) await page.locator('#pk-right').getByRole('button', { name: 'Close panel' }).click();
+    const local = new URL(page.url()).origin;
+    expect([...seen.origins].filter((origin) => origin !== local)).toEqual([]);
+    expect(seen.urls.some((url) => url.startsWith(local) && url.endsWith('/data/tables/projects.json'))).toBe(true);
+    expect(seen.urls.some((url) => url.startsWith(local) && url.includes('/data/tiles/projects.'))).toBe(true);
+    expect(seen.urls.filter((url) => /github/.test(url))).toEqual([]);
+  });
 });

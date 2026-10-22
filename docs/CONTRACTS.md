@@ -18,7 +18,7 @@ change once published, because saved links contain them.
   publisher: Philadelphia Police Department
   homepage: https://opendataphilly.org/datasets/shooting-victims/
   endpoint:
-    kind: carto                       # carto | arcgis | url | osm_extract | curated | sparql | arcgis_tiles
+    kind: carto                       # carto | arcgis | url | osm_extract | curated | sparql | arcgis_tiles | github_issues
     table: shootings                  # carto: table (and optional where)
     # arcgis: service: <name>, layer: 0 (and optional url, see below)
     # url: url: <https link>, format: csv | geojson | parquet | zip | json
@@ -120,6 +120,18 @@ message naming the service, and the weekly refresh opens the usual issue after t
 2026-10-09 (owner's decision) `dvrpc_aerial_photos` (1959 and 1975) and `usgs_aerial_photos_1999`,
 the older photos the City hosts for DVRPC and the U.S. Geological Survey on the same server, with
 their terms recorded as not stated (`unstated`).
+
+A `github_issues` endpoint (added 2026-10-21 by M5.3, issue #47) names the issues of a GitHub
+repository that carry one label: `repo` (owner and name, `holdTheDoorHoid/placekeepers`) and
+`label` (`project-approved`, the owner's one click approval of a report of a project neighbors
+finished). `project_reports` is the only one. Its adapter (`pipeline/src/placekeepers/adapters/projects.py`)
+asks GitHub's GraphQL API for every issue with the label, open or closed, with the token in
+`GITHUB_TOKEN` (the workflow's own read only token; no secret), and reduces each issue at once to
+its number, link, state, the day the label was last added, whether anyone but the person who added
+it edited the issue after that, and the form's answers the map may show. No GitHub user name, issue
+title, photo or answer about permission is kept, not even in the download cache. Without a token
+the download fails and the source keeps its last good copy. The web app's registry check accepts
+the kind and its two keys and never reads the source.
 
 ### `registry/licenses.yaml`
 
@@ -431,6 +443,8 @@ data/
                           "brownfields"   (the rules and records of each lot; M4.6)
     redlining.pmtiles     layer "holc"      (the 1937 redlining map, Mapping Inequality's areas and grades;
                           its own file under CC BY-NC 2.5, non commercial only, never in a download; 2026-10-09)
+    projects.pmtiles      layer "projects"  (projects neighbors finished: approved reports and hand entries;
+                          section 4; M5.3)
   tables/
     parcels.json          compact columnar table for ranking and lists
     owners.json           organizations holding many vacant parcels, with their parcels (section 6)
@@ -439,6 +453,8 @@ data/
       <route id>.json     one route's stops in order, each direction, with the id of the OpenStreetMap stop at each
     stop_amenities.json   what OpenStreetMap says at each stop it knows, by its id (section 8; Open Database License; decision D1)
     land_bank.json        The Land Bank in numbers: conveyances by year, agency, buyer type, program and district, the City's counts by program, and the weekly count of listed lots (section 9; aggregates only; added 2026-10-09 by M4.4)
+    projects.json         projects neighbors finished that the map shows, with the month each was finished
+                          and the day it was approved (section 10; added 2026-10-21 by M5.3)
   dossiers/
     <first four digits of the OPA account>.json
     common.json           the parts of every flag that are the same for all parcels (section 6)
@@ -584,6 +600,15 @@ a year) and `vp` the share of homes empty (percent), each a whole number or `nul
 the survey behind them (`survey_years`) and the floors below which a tract's share is not shown
 (`min_renters` renter households, `min_homes` homes), or is `null` when the context was not
 measured (`pipeline/src/placekeepers/derive/tract_context.py`). Older manifests have neither.
+
+A quick publish of projects neighbors finished (`pk projects`, added 2026-10-21 by M5.3; run by
+`.github/workflows/projects.yml` after the owner adds or removes the approval label) changes a
+published data root in place and touches only: the files `tiles/projects.pmtiles` (or
+`tiles/projects.projects.geojson`) and `tables/projects.json` and their `files` entries, the
+`project_reports` entry of `sources` (`status` ok, `last_attempt` and `last_success` the time it read
+GitHub, `rows` the approved reports read), and the notes about the projects, which all begin
+"Projects neighbors finished: " (plus `projects has nothing to show yet` when none is shown).
+`build_id`, `generated_at` and everything else stay as the weekly publish wrote them.
 
 `notes` (added 2026-10-04 by M0.2) is a list of plain sentences about the build, possibly empty:
 data quality remarks, a layer with no usable data yet, or `tiles skipped: tippecanoe not installed`.
@@ -1440,6 +1465,25 @@ copied: the map links to each at Mapping Inequality by its label.
 
 Coordinates are rounded to five decimals (about a meter): the 1937 map was drawn by hand on paper.
 
+### `projects` in tiles/projects.pmtiles (projects neighbors finished)
+
+Added 2026-10-21 by M5.3 (issue #47). One point per project the map shows: a report the owner
+approved on GitHub that passed every check, or a hand entry in `data/curated/interventions.yaml`
+(section 5), each at its parcel's point in the City's property list, or at the hand entry's own
+point. The same projects are in `tables/projects.json` (section 10). Every point is kept at every
+zoom from 10 to 16. Never a GitHub user name, a title, a photo or an answer about permission.
+
+| Property | Type | Meaning |
+|---|---|---|
+| `id` | string | `r<issue number>` for a report, or the hand entry's id (`h2025_0001`); stable |
+| `k` | integer | what was done: 1 cleanup, 2 garden, 3 place to sit, 4 mural or art, 5 trees, 6 a shelter or bench the City installed, 7 a 311 fix, 0 other |
+| `f` | string | the month it was finished, `YYYY-MM` |
+| `p` | string | the parcel (9 digit OPA account); absent for a point on no parcel |
+| `a` | string | the address as the City's property list writes it, or the hand entry's place in words; absent when unknown |
+| `g` | string | the group name the reporter chose to show; absent when none |
+| `n` | string | the note on what it took, with links, photos, email addresses, phone numbers and @ mentions left out, at most 600 characters; absent when none |
+| `l` | string | the report on GitHub (`https://github.com/holdTheDoorHoid/placekeepers/issues/<n>`), or a hand entry's public source (https); absent when none |
+
 ## 5. Hand curated memorial files (`data/curated/`)
 
 Added 2026-10-04 by M1.5. People edit these by hand; the pipeline reads them at every publish
@@ -1478,6 +1522,41 @@ and leaves out entries listed in `suppressed.yaml`.
 shows; the Police marker stays, unnamed) or a marker's id (the marker is not drawn). A marker may be
 listed with its date, `lat` and `lng`, so it stays hidden even if the Police correct the record and
 its id changes. If this file cannot be read, no memorials are published at all.
+
+### `interventions.yaml`: hand entries and corrections of projects neighbors finished
+
+Added 2026-10-21 by M5.3 (issue #47). People edit it by hand (docs/owner/approving-projects.md);
+the pipeline reads the repository's copy at every publish, weekly or quick, and merges it with the
+approved reports (`pipeline/src/placekeepers/projects.py`, `read_curated`). It is also the source
+`project_corrections`, checked like a snapshot so the Data status page lists it. A list; each entry
+has exactly one of `issue` or `id`:
+
+```yaml
+- issue: 12                    # a correction to the report in issue #12
+  parcel: "371000001"          # the right lot (9 digits, in quotes), or:
+  address: 2931 N Lawrence St  # the right address, or:
+  lat: 39.995                  # a point on no parcel, with lng
+  lng: -75.139
+  kind: garden                 # cleanup | garden | seating | art | trees | city_install | fix_311 | other
+  finished: 2025-06            # the right year and month
+  group: Sample Block Club     # replaces the group name shown
+  what_it_took: ...            # replaces the note shown
+  suppressed: true             # never shown, whatever the issue says; always wins
+  comment: ...                 # for curators only; never published
+- id: h2025_0001               # a hand entry: ours, stable, never reused (lowercase, digits, _)
+  kind: art                    # needed, with finished and one of parcel, address or lat and lng
+  finished: 2025-08
+  parcel: "371000002"
+  group: ...                   # optional, as above
+  what_it_took: ...
+  source: https://...          # optional public page about it (https), published as its link
+  suppressed: true             # optional; hides the entry
+```
+
+An entry with a problem is skipped and reported in the build notes by its issue number or id; a
+broken entry that says `suppressed: true` for an issue still suppresses it. A hand entry is checked
+like a report (a real month not in the future, a place inside the city). Never a person's name or
+contact details.
 
 ## 6. Dossier shards (`dossiers/<prefix>.json`), `dossiers/common.json` and the owners table
 
@@ -2139,3 +2218,50 @@ series survives from week to week; if the saved snapshots are ever lost, it star
 
 Without the `land_conveyances` snapshot the file is not written and the build notes say so; the page
 then says the numbers are not published yet.
+
+## 10. Projects neighbors finished (`tables/projects.json`)
+
+Added 2026-10-21 by M5.3 (issue #47). Every project the map shows, newest first: the reports the
+owner approved on GitHub that passed every check, and the hand entries, as in the layer `projects`
+(section 4). The lot page reads it for "Projects here" and the lot timeline, and **M5.4 ("Did it
+work?", issue #48) reads it as the list of projects neighbors finished, with their dates**: the
+month each was finished and the day the owner approved it. Written by
+`pipeline/src/placekeepers/projects.py` (`write_table`) at every weekly publish and every quick
+publish; listed in the manifest's `files`. Not written when the reports have never been read (the
+build notes then say so), so a lot page never says "none reported" without having looked.
+
+```json
+{
+  "schema": 1,
+  "generated_at": "2026-10-21T15:00:00Z",
+  "as_of": "2026-10-21",
+  "projects": [
+    {"id": "r101", "issue": 101, "kind": "garden", "finished": "2026-05", "approved": "2026-06-02",
+     "parcel": "371000001", "address": "2931 N LAWRENCE ST", "lng": -75.13851, "lat": 39.99512,
+     "group": "Lawrence Street Growers", "note": "Twelve neighbors, four Saturdays...",
+     "link": "https://github.com/holdTheDoorHoid/placekeepers/issues/101"}
+  ]
+}
+```
+
+| Field | Meaning |
+|---|---|
+| `as_of` | the day the projects were checked (Philadelphia); a month after its month is in the future |
+| `id` | as `id` in the layer |
+| `issue` | the GitHub issue number, or `null` for a hand entry |
+| `kind` | `cleanup`, `garden`, `seating`, `art`, `trees`, `city_install`, `fix_311` or `other` |
+| `finished` | the month it was finished, `YYYY-MM` (a curated correction may change it) |
+| `approved` | the day (Philadelphia) the approval label was last added, `YYYY-MM-DD`, or `null` for a hand entry |
+| `parcel`, `address`, `lng`, `lat` | where it is: the parcel and its point and address in the City's property list, or a hand entry's point (and place in words); coordinates to six decimals |
+| `group`, `note`, `link` | as `g`, `n` and `l` in the layer, or `null` |
+
+Order: `finished` newest first, then `id` in reverse code point order. Rows never carry a GitHub
+user name, the issue title, a photo or the answer about permission.
+
+For a run without the weekly snapshots (the quick publish), the weekly publish also leaves the
+**project inputs** in the cache, `derived/project_inputs/`: `parcel_index.parquet` (the City's
+property list cut to `parcel_number`, `location`, `lat` and `lng`; nothing about owners) and
+`city_limits.geojson` (the 2020 census tracts joined). The weekly refresh hands them to
+`projects.yml` as the artifact `project-inputs`, kept 14 days with the site data. They are never
+published on the site.
+

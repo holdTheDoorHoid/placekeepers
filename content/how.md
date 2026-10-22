@@ -191,6 +191,26 @@ artwork with its kind, and its name and artist when you know them; it reaches th
 week. Mural Arts Philadelphia keeps the largest list of the city's murals on
 [its own site](https://muralarts.org/artworks/).
 
+## Tell us about a project you finished
+
+Did neighbors clean up a lot, plant a garden or trees, build a place to sit, paint a mural, get a
+bench or a shelter from the City, or get a 311 problem fixed? Tell us with this short form, and it
+can appear on the map under "Projects neighbors finished", where other neighbors can see what was
+done nearby and what it took.
+
+[Tell us about a project you finished](https://github.com/holdTheDoorHoid/placekeepers/issues/new?template=project.yml)
+
+- A person who runs Placekeepers reads every report before it appears. Once approved, it usually
+  reaches the map within an hour, and always by the next weekly update.
+- The map shows what was done, where, the month it was finished, and, if you want, your group's
+  name and a few words on what it took. It never shows your GitHub user name, and it does not show
+  whether you had permission. The form asks about permission so we can see which lawful routes
+  work; we never judge the answer.
+- The form is on GitHub, where anyone can read it, and sending it needs a free GitHub account.
+- Photos are welcome on the report itself, but never with the face of a child or of anyone who did
+  not agree, and never with a license plate. The map does not show photos: it links to the report.
+- On a lot's page on the map, the form opens with that lot already filled in.
+
 ## Money to help pay for it
 
 - The City's Division of Safe Neighborhoods runs community violence prevention grants: about $24
