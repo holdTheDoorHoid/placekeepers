@@ -121,10 +121,27 @@ Each passage is one fixed block of text, the same in the catalog, the registry a
 
 - Possible estate: 登记业主可能已经去世。家属可能仍然对这处房产享有权利，而且自己可能并不知道。如果您认识这家人，Tangled Title Fund（最高 6,500 美元的法律援助）和 Philadelphia VIP 可以帮助他们保住房产。家属也可以注册市政府免费的 Fraud Guard 提醒。
 - Conservatorship warning: 财产托管（conservatorship）可能让业主失去自己的房产。研究人员发现，它在面临绅士化的社区中被不成比例地使用。在您考虑这条途径之前，请先与 Garden Justice Legal Initiative 谈一谈。
-- Deed fraud notice: 契据盗窃是指有人提交一份伪造的契据来夺取房产，常常是业主已经去世或住在别处的房产。业主和家人可以注册市政府免费的 Fraud Guard 提醒：每当有文件登记了他们的姓名，就会收到一封电子邮件。自 2025 年 11 月起，市政府还会自动拦截这样的契据：卖方在据称签署契据时已经去世。
-- Displacement caution (greening): 绿化可能会抬高附近的价格。建议同时配套一些保护措施。
+- Deed fraud notice: 契据盗窃是指有人提交一份伪造的契据来夺取房产，常常是业主已经去世或住在别处的房产。业主和家人可以注册市政府免费的 Fraud Guard 提醒：每当有文件登记了他们的姓名，就会收到一封电子邮件。自 2025 年 11 月起，市政府还会自动拦截卖方在据称签署契据时已经去世的契据。
+- Displacement caution (greening): 绿化可能会抬高附近的价格。请考虑同时配套保护措施。
 - Displacement caution (gardens, seating and art): 新的花园、座椅和艺术作品，可能让一个街区更受追捧，并抬高附近的价格和租金。请配套保护措施，保护租房或拖欠税款的邻居。
 - Brownfield soil note: 这个地址或其附近，有联邦棕地评估或清理的记录。在种植食物之前，请先检测土壤。
+
+## Changes made by the back translation check (2026-10-21)
+
+The back translation check (docs/i18n/check-zh-Hans.md) changed these wordings. A reviewer who
+changes them again should change every place the passage appears.
+
+- The greening caution now reads "请考虑同时配套保护措施" for "Consider pairing it with protections".
+  It was "建议同时配套一些保护措施": "建议" (recommend) is stronger than "consider", and "一些"
+  (some) hedged the protections.
+- The deed fraud notice and the matching bullet on the How to do it page now say the City blocks
+  "卖方在据称签署契据时已经去世的契据" (deeds whose seller had already died). They said "这样的契据"
+  (such deeds) before, which could be read as every forged deed, and so promise more protection than
+  the City gives.
+- "Quick resales" (fast_resales.careful) now says someone may be buying and selling the property
+  "来牟利" (for profit). "倒卖牟利" carries a sense of illegal profiteering that the English does not.
+- "Sponsor" (a nonprofit sponsor for a Community Garden License) stays "担保" for now; see the open
+  question in the check report, since "担保" can read as a legal guarantor.
 
 ## Known weak spots
 

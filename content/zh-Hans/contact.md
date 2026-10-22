@@ -24,4 +24,4 @@
 
 ## 其他一切
 
-如果有什么不适合上面两份表格，请在 [GitHub](https://github.com/holdTheDoorHoid/placekeepers/issues/new/choose) 上开一个一般性的议题，或者使用更正表格，并在说明里写明您需要什么。
+如果有什么不适合上面的表格，请在 [GitHub](https://github.com/holdTheDoorHoid/placekeepers/issues/new/choose) 上开一个一般性的议题，或者使用更正表格，并在说明里写明您需要什么。
