@@ -114,3 +114,24 @@ Library, Mural Arts Philadelphia, Feet First Philly, Bicycle Coalition, Families
 Streets, TreePhilly, PennDOT, PECO, FEMA, EPA, DVRPC, OpenStreetMap, StreetComplete, Wikidata,
 GitHub, CSV, GeoJSON, Census Bureau, and the buttons of other people's apps (StreetComplete's
 "Uh…", "Things", "Create new note"; OpenStreetMap's editor).
+
+## Changes from the back translation check (2026-10-21)
+
+An AI checker back translated the safety and legal wording (`docs/i18n/check-km.md`) and changed
+these words. They are still proposals for the native reviewer, like every row above.
+
+| English | Khmer now | Why it changed |
+|---|---|---|
+| imminently dangerous (a building) | មានគ្រោះថ្នាក់ជិតកើតឡើង | The first choice, "អាចបង្កគ្រោះថ្នាក់ក្នុងពេលឆាប់ៗ", reads "may cause danger soon", a possibility. L&I's word is a finding, so the "may" is gone. The line "could fail at any time" keeps its "អាច", as English has "could". |
+| unsafe (a building) | មិនមានសុវត្ថិភាព | Unchanged, listed here so it stays beside the row above. |
+| what City records suggest (flags heading) | សញ្ញាពីកំណត់ត្រារបស់ទីក្រុង | "បង្ហាញ" means "show", which is firmer than "suggest". "Signs from the City's records" keeps the hedge. Where a sentence says the records suggest something, it is "បង្ហាញសញ្ញាថា". |
+| church | ព្រះវិហារ (church) | The first choice was វត្ត, a Buddhist temple, which changed a program's own criterion. |
+| credited, with the source named | មានដាក់ឈ្មោះប្រភព | The first choice used ឥណទាន, which means a loan. |
+| broom | អំបោស | The first choice, ឆ្នាំងបោស, means a pot. |
+| the rules or terms of an agreement (side yard) | លក្ខខណ្ឌ | The first choice, "ច្បាប់", reads as the law. |
+| randomized trial, ideally in Philadelphia | ហើយល្អបំផុតបើធ្វើនៅ Philadelphia | The first choice, "ជាពិសេស", reads "especially", not "ideally". |
+
+Left as the translator wrote them, for the native reviewer to confirm or change: "ប្រហែលជា" for
+"may" (it can also read "probably"), "ការអនុញ្ញាត" (permission) for "blessing" in the memorial
+lines, "ស្លាប់" (died) for "killed", "អាចសុំបាន" (can be asked for) for "available", "ឱកាស" for
+"chance" in the flood lines, and "សន្មតថាបានចុះហត្ថលេខា" for "supposedly signed".
