@@ -1086,3 +1086,315 @@ suggestions:
     summary: "Pocos árboles dan sombra a esta parada. La Ciudad planta árboles gratis en la acera frente a una casa o un negocio cuando su dueño lo pide, y los riega el primer año. Pida a los dueños de los edificios junto a la parada que soliciten uno; los vecinos pueden ayudar a regarlo después."
     cost: "Árboles de calle gratis para los dueños de propiedades"
 
+
+routes:
+  land_bank_garden_agreement:
+    label: "Acuerdo o licencia de jardín del Land Bank"
+    who: "Cualquier persona, con un Acuerdo de Jardín Urbano (Urban Garden Agreement) de $1; grupos con un patrocinador sin fines de lucro, con una Licencia de Jardín Comunitario (Community Garden License)"
+    steps:
+      - "Compruebe que el Land Bank o la Ciudad sea dueño del lote."
+      - "Lea la guía de Grounded in Philly sobre cómo obtener permiso para usar terrenos de la Ciudad."
+      - "Presente su solicitud al Land Bank, o primero participe en uno de sus seminarios web gratuitos."
+    cost: "$1 (Acuerdo de Jardín Urbano), $25 al año (Acuerdo de Jardín Individual), o seguro y un patrocinador (Licencia de Jardín Comunitario)"
+    timeline: "Semanas para los acuerdos cortos; meses para una licencia"
+    links:
+      "https://phillylandbank.org/":
+        label: "Philadelphia Land Bank"
+      "https://groundedinphilly.org/get-permission-to-use-land-city/":
+        label: "Grounded in Philly: permiso para usar terrenos de la Ciudad"
+  ask_the_owner:
+    label: "Pedir permiso al dueño"
+    who: "Cualquier persona"
+    steps:
+      - "Busque la dirección postal del dueño en la página del lote."
+      - "Escríbale para pedir permiso para limpiar y reverdecer el lote, y ofrezca un acuerdo escrito sencillo."
+      - "Pida a la Garden Justice Legal Initiative que revise cualquier acuerdo antes de que lo firme."
+    cost: "Gratis"
+    timeline: "Depende del dueño"
+    links:
+      "https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/":
+        label: "Garden Justice Legal Initiative"
+  community_landcare:
+    label: "Cuidar un lote con PHS Community LandCare"
+    who: "Grupos de residentes"
+    steps:
+      - "Comuníquese con PHS sobre Community LandCare."
+    cost: "Por confirmar con PHS"
+    timeline: "Por confirmar con PHS"
+    links:
+      "https://phsonline.org/":
+        label: "Pennsylvania Horticultural Society"
+  report_to_311:
+    label: "Reportarlo a Philly311"
+    who: "Cualquier persona"
+    steps:
+      - "Reporte el edificio abierto, la basura tirada ilegalmente, el grafiti, o la luz de calle o de callejón apagada a Philly311 por internet, con la aplicación o llamando al 311."
+      - "Guarde el número de la solicitud de servicio y vuelva a revisar."
+    cost: "Gratis"
+    timeline: "De días a semanas"
+    links:
+      "https://www.phila.gov/services/property-lots-housing/submit-a-service-request-with-311/":
+        label: "Philly311"
+  ghost_bike_request:
+    label: "Pedir a la Bicycle Coalition una bicicleta blanca (ghost bike) o un memorial"
+    who: "La familia, o amigos con la bendición de la familia"
+    steps:
+      - "Hable primero con la familia. Un memorial se coloca solo con su bendición."
+      - "Para una persona que murió al andar en bicicleta, llene el formulario de solicitud de ghost bike de la Bicycle Coalition. El mismo formulario sirve para pedir que se repare o se reemplace una ghost bike."
+      - "Families for Safe Streets, dirigido por la Bicycle Coalition, apoya a las familias después de un choque y comparte una guía de recursos para después del choque."
+      - "Planifique quién cuidará el memorial con el tiempo."
+    cost: "Pedirla es gratis"
+    timeline: "No se indica"
+    links:
+      "https://bicyclecoalition.org/what-is-a-ghost-bike/":
+        label: "Bicycle Coalition: qué es una ghost bike"
+      "https://forms.gle/HBtY1hG4xcdVJKNb8":
+        label: "Formulario de solicitud de ghost bike"
+      "https://bicyclecoalition.org/programs/families-for-safe-streets/":
+        label: "Families for Safe Streets Greater Philadelphia"
+  traffic_calming_request:
+    label: "Pedir medidas para calmar el tránsito en una calle residencial"
+    who: "Residentes de la cuadra, sobre todo de la calle donde viven"
+    steps:
+      - "Compruebe si la calle califica en el mapa de medidas para calmar el tránsito de la Ciudad, o llamando al 311."
+      - "Envíe la solicitud en línea de la Ciudad para calmar el tránsito."
+      - "Si la Ciudad elige la solicitud, reúna las firmas del 60 por ciento de los hogares de la cuadra, una por hogar."
+    cost: "Pedirlo es gratis"
+    timeline: "La Ciudad califica las solicitudes tres veces al año y por lo general instala los reductores de velocidad (cojines) de mayo a octubre"
+    links:
+      "https://www.phila.gov/services/streets-sidewalks-alleys/request-traffic-calming-for-a-residential-street/":
+        label: "Ciudad de Filadelfia: pedir medidas para calmar el tránsito"
+  otis_contact:
+    label: "Preguntar a la oficina de transporte de la Ciudad (OTIS)"
+    who: "Cualquier persona"
+    steps:
+      - "Escriba a la Oficina de Transporte y Sistemas de Infraestructura a otis@phila.gov, nombrando la esquina y lo que ve allí."
+      - "Pregunte qué permite la Ciudad en esta esquina y cómo pedirlo."
+    cost: "Gratis"
+    timeline: "No se indica"
+    links:
+      "https://visionzerophl.com/":
+        label: "Vision Zero Philadelphia"
+  treephilly_yard_trees:
+    label: "Conseguir árboles gratis en un reparto de TreePhilly"
+    who: "Residentes de Filadelfia, para árboles plantados en el suelo de propiedades privadas, como un lote que usted posee o un lote privado cuyo dueño esté de acuerdo por escrito"
+    steps:
+      - "Inscríbase en el boletín de TreePhilly para saber cuándo abre el registro. Los repartos son en primavera (de marzo a mayo) y en otoño (de septiembre a diciembre) en códigos postales prioritarios."
+      - "Regístrese con el grupo comunitario que hace un reparto cerca de usted. El registro abre de dos semanas a un mes antes del reparto y cierra cuando se acaban los árboles."
+      - "Recoja el árbol, de 2 a 10 pies de alto en un balde de 5 galones, con una bolsa gratis de mantillo, y plántelo en el suelo. Los árboles del reparto no pueden ir en una maceta, en la acera ni en ningún otro lugar del derecho de paso público."
+    cost: "Gratis"
+    timeline: "El próximo reparto de primavera o de otoño"
+    links:
+      "https://treephilly.org/yard-trees/":
+        label: "TreePhilly: árboles para patios"
+  mural_arts_wall_request:
+    label: "Pedir a Mural Arts un mural en una pared"
+    who: "El dueño de la pared, con vecinos que lo apoyen. Cualquiera puede empezar preguntándole al dueño"
+    steps:
+      - "Busque una pared que dé al lote y se vea fácilmente desde la calle, y pregunte a su dueño si le daría la bienvenida a un mural."
+      - "Con el acuerdo del dueño, llene el formulario de solicitud de pared en la página de contacto de Mural Arts Philadelphia. Pregunta por la pared, el apoyo de los vecinos y por qué un mural importa allí."
+      - "Todo lo que esté en la calle o en la acera, el derecho de paso público, también va a la Comisión de Arte de la Ciudad."
+    cost: "Solicitarlo es gratis"
+    timeline: "Meses"
+    links:
+      "https://muralarts.org/contact/":
+        label: "Mural Arts Philadelphia: página de contacto, con el formulario para un mural en su pared"
+  public_space_mini_grant:
+    label: "Solicitar un mini subsidio para espacios públicos de Feet First Philly"
+    who: "Vecinos y grupos comunitarios. El programa favorece a las comunidades que han recibido menos inversión en sus calles y servicios de la Ciudad"
+    steps:
+      - "Lea la solicitud de propuestas en la página de mini subsidios de Feet First Philly. Los proyectos deben hacer el vecindario más seguro y fácil para caminar y rodar; pregunte a Feet First Philly si un lugar para sentarse en un lote califica."
+      - "Presente su solicitud mientras la ronda esté abierta. Las solicitudes abren en agosto y vencen en octubre."
+      - "Prepárese para enviar un informe corto a la mitad y otro al final."
+    cost: "Subsidios de $500 a $2,500, financiados en parte por el Departamento de Salud Pública"
+    timeline: "Las solicitudes abren en agosto y vencen en octubre de cada año"
+    links:
+      "https://feetfirstphilly.org/public-space-enhancement-mini-grant-2/":
+        label: "Feet First Philly: mini subsidio para mejorar espacios públicos"
+  land_bank_side_yard:
+    label: "Conseguirlo como patio lateral o trasero (solo dueños de la casa de al lado)"
+    who: "El dueño de la casa de al lado, y solo cuando la lista de la Ciudad marca el lote como elegible para un patio lateral"
+    steps:
+      - "Compruebe que usted es dueño de la casa de al lado y que el lote está marcado como elegible para un patio lateral."
+      - "Lea la página de patios laterales y traseros del Land Bank y presente su solicitud."
+      - "Prepárese para una espera larga. Después de la revisión del personal, la junta del Land Bank y el Concejo Municipal deben aprobarlo."
+    cost: "Un precio simbólico. El lote debe seguir siendo un patio lateral para siempre, con una hipoteca a 30 años por su valor tasado que se perdona si se cumplen las reglas; la Ciudad puede recuperarlo si no se cumplen"
+    timeline: "El personal se propone responder en 120 días, y luego deciden la junta del Land Bank y el Concejo Municipal. Solo se transfirieron 67 lotes de esta manera en toda la ciudad de 2020 a 2023"
+    links:
+      "https://phillylandbank.org/side-or-rear-yards/":
+        label: "Philadelphia Land Bank: patios laterales o traseros"
+  contact_phdc:
+    label: "Preguntar a PHDC por esta parcela"
+    who: "Cualquier persona"
+    steps:
+      - "Comuníquese con PHDC e indique la dirección de la parcela y su número de cuenta de la OPA."
+      - "Pregunte quién administra la parcela, si está disponible y cómo podrían cuidarla los vecinos."
+      - "Si no está seguro de a quién preguntar, empiece por el Land Bank (land@phdc.phila.gov, 215 448 3034)."
+    cost: "Preguntar es gratis"
+    timeline: "No se sabe. Los lotes de la Autoridad de Redesarrollo todavía no tienen una vía publicada para los vecinos"
+    links:
+      "https://phdcphila.org/":
+        label: "PHDC"
+      "https://phillylandbank.org/":
+        label: "Philadelphia Land Bank"
+  garden_adverse_possession:
+    label: "Posesión adversa de un jardín (ley de 2024)"
+    who: "Residentes de Filadelfia, grupos u organizaciones sin fines de lucro que han cultivado un jardín en un lote de propiedad privada"
+    steps:
+      - "Revise las condiciones de la ley de 2024 (53 Pa.C.S. sección 1143, en vigor desde el 6 de septiembre de 2024): terreno de propiedad privada de media acre o menos, 10 años de uso con al menos 5 de ellos como jardín, y sin edificios permanentes (se permiten cercas y cobertizos)."
+      - "Lea la guía de Grounded in Philly sobre la posesión adversa."
+      - "Pida un abogado a la Garden Justice Legal Initiative. Esta vía necesita una demanda para aclarar el título (quiet title)."
+    cost: "Un abogado y costos del tribunal. Cualquier gravamen sobre el terreno se queda con él"
+    timeline: "Al menos 10 años de uso, y luego una demanda"
+    links:
+      "https://groundedinphilly.org/how-to-obtain-land-adverse-possession/":
+        label: "Grounded in Philly: posesión adversa"
+      "https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/":
+        label: "Garden Justice Legal Initiative"
+  conservatorship:
+    label: "Administración judicial (conservatorship, Ley 135)"
+    who: "Una organización sin fines de lucro o una persona que presenta una petición al tribunal"
+    warning: "La administración judicial (conservatorship) puede quitarle una propiedad a su dueño. Investigadores encontraron que se usa de forma desproporcionada en vecindarios que enfrentan gentrificación. Hable con la Garden Justice Legal Initiative antes de considerarla."
+    steps:
+      - "Hable con la Garden Justice Legal Initiative antes que nada."
+      - "Pregunte primero si escribirle al dueño, o ayudar a una familia a conservar la propiedad, satisfaría la misma necesidad."
+      - "Conozca las condiciones de la ley: un tribunal puede nombrar a un administrador judicial (conservator) solo para una propiedad que no ha estado ocupada legalmente por 12 meses, que no se está ofreciendo en el mercado, que no está en ejecución hipotecaria y que no se compró en los últimos 6 meses."
+    cost: "Costos del tribunal y de reparación. Desde 2014, a quien presenta la petición se le puede pagar lo que sea mayor entre $2,500, el 20% de los costos o el 20% del precio de venta"
+    timeline: "Un caso judicial; pregunte a la ayuda legal cuánto tardaría"
+    links:
+      "https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/":
+        label: "Garden Justice Legal Initiative"
+  tangled_title_help:
+    label: "Ayudar a una familia a conservar una casa heredada (Tangled Title Fund)"
+    who: "Familias cuya casa sigue a nombre de un familiar que falleció, con ingresos del hogar de hasta el 80% de la mediana del área; la propiedad debe ser la vivienda de quien solicita"
+    steps:
+      - "Comuníquese con el Tangled Title Fund de Philadelphia VIP (tangledtitlefund@gmail.com, 215 523 9553)."
+      - "El fondo paga hasta $6,500 del costo legal de aclarar el título, y hasta $3,500 más del impuesto de transferencia, caso por caso."
+    cost: "Gratis para la familia hasta los límites del fondo; la familia cubre lo que pase de ellos"
+    timeline: "Por orden de llegada"
+    links:
+      "https://phillyvip.org/tangled-title-fund/":
+        label: "Philadelphia VIP: Tangled Title Fund"
+  fraud_guard:
+    label: "Inscribirse en las alertas gratuitas de Fraud Guard de la Ciudad"
+    who: "Dueños de propiedades y sus familias"
+    steps:
+      - "Inscríbase en Fraud Guard con un nombre y una dirección de correo electrónico."
+      - "La Ciudad envía un correo electrónico cuando se registra un documento que lo nombra, para que una escritura falsa se detecte pronto."
+      - "Las preguntas van al Departamento de Registros (215 686 2290, records.info@phila.gov)."
+    cost: "Gratis"
+    timeline: "Una alerta llega unos 30 días después de que se registra un documento"
+    links:
+      "https://www.phila.gov/2022-09-06-own-property-in-philadelphia-get-free-deed-fraud-protection-with-fraud-guard/":
+        label: "Ciudad de Filadelfia: Fraud Guard"
+  bus_shelter_request:
+    label: "Pedir a la Ciudad un refugio de autobús"
+    who: "Cualquier persona"
+    steps:
+      - "Anote el número de SEPTA de la parada (en el letrero y en este mapa), la esquina y cuántas personas suben allí cada día de semana."
+      - "Escriba a la Oficina de Transporte y Sistemas de Infraestructura (OTIS) de la Ciudad a otis@phila.gov, o llame al 215-686-9003. OTIS maneja el programa de refugios de autobús de la Ciudad; no hay un formulario público de solicitud."
+      - "Envíe copia a la oficina del distrito de su Concejo Municipal, e infórmelo también a SEPTA, por su formulario de comentarios en línea o al 215-580-7800."
+    cost: "Preguntar es gratis"
+    timeline: "No se indica. OTIS envía las ubicaciones de refugios nuevos a la Comisión de Arte de la Ciudad para su revisión (ocho en diciembre de 2025)"
+    links:
+      "https://www.phila.gov/media/20240521160603/RFI-OTIS-street-furniture-20240521.pdf":
+        label: "Solicitud de información de OTIS sobre mobiliario urbano (mayo de 2024), con la meta de refugios de la Ciudad"
+      "https://www.phila.gov/media/20251205094032/Bus-Shelter-Upgrades-submission.pdf":
+        label: "Ocho refugios de autobús nuevos enviados a la Comisión de Arte (diciembre de 2025)"
+      "https://wwww.septa.org/customer-service/comment-form/":
+        label: "Formulario de comentarios de SEPTA"
+      "https://phlcouncil.com/council-members/":
+        label: "Concejo Municipal de Filadelfia: el concejal de cada distrito y su oficina"
+  stop_bench_request:
+    label: "Pedir a la Ciudad un banco en una parada"
+    who: "Cualquier persona"
+    steps:
+      - "Anote el número de SEPTA de la parada (en el letrero y en este mapa) y la esquina."
+      - "Escriba a OTIS a otis@phila.gov, o llame al 215-686-9003, y pida un banco en la parada. Los bancos en las paradas pertenecen al programa de mobiliario urbano de la Ciudad; no encontramos un formulario público de solicitud."
+      - "Envíe copia a la oficina del distrito de su Concejo Municipal."
+    cost: "Preguntar es gratis"
+    timeline: "No se indica"
+    links:
+      "https://www.phila.gov/media/20240521160603/RFI-OTIS-street-furniture-20240521.pdf":
+        label: "Solicitud de información de OTIS sobre mobiliario urbano (mayo de 2024)"
+      "https://phlcouncil.com/council-members/":
+        label: "Concejo Municipal de Filadelfia: el concejal de cada distrito y su oficina"
+  street_tree_request:
+    label: "Pedir un árbol de calle gratis"
+    who: "El dueño de la casa, el negocio, el lote u otra propiedad frente a la cual estaría el árbol; los vecinos pueden pedírselo al dueño"
+    steps:
+      - "Los árboles de calle se plantan en la acera frente a una propiedad cuando su dueño lo pide. Hable con los dueños de los edificios junto al lugar. Para un lote vacío, pregunte al dueño que nombra su página del lote, o al Land Bank si el lote es de la Ciudad o del Land Bank."
+      - "El dueño pide un árbol de calle gratis a la División de Manejo de Árboles de Calle de Parques y Recreación, en línea, por correo electrónico a StreetTree.Info@phila.gov, o por teléfono al 215-685-4363."
+      - "Un arborista de la Ciudad visita el lugar para decidir qué árbol conviene. La Ciudad lo planta gratis en una temporada de plantación (de mediados de abril a mediados de junio, o de mediados de octubre a mediados de noviembre) y lo riega y le pone mantillo el primer año. Después de eso, TreePhilly pide unos 20 galones de agua por semana de marzo a diciembre."
+    cost: "Gratis"
+    timeline: "La próxima temporada de plantación después de la visita del arborista"
+    links:
+      "https://www.phila.gov/services/trees-parks-the-environment/tree-related-services/get-a-street-tree/":
+        label: "Ciudad de Filadelfia: conseguir un árbol de calle"
+      "https://treephilly.org/street-trees/":
+        label: "TreePhilly: árboles de calle"
+  streetcomplete_survey:
+    label: "Revisar la parada con StreetComplete"
+    who: "Cualquier persona con un teléfono Android (en septiembre de 2026 apareció una primera versión de prueba para iPhone)"
+    steps:
+      - "Instale la aplicación gratuita StreetComplete y cree una cuenta gratuita de OpenStreetMap para que se publiquen sus respuestas."
+      - "En la parada, toque el marcador de la aplicación y responda sus preguntas sobre el refugio, el banco, la luz y el número de la parada."
+      - "Si la aplicación no tiene ninguna pregunta en la parada, agréguela con la capa Things de la aplicación, o deje una nota para que otro mapeador pueda hacerlo."
+    cost: "Gratis"
+    timeline: "Las respuestas llegan a este mapa en más o menos una semana"
+    links:
+      "https://holdthedoorhoid.github.io/placekeepers/streetcomplete/":
+        label: "Placekeepers: revisar paradas de autobús"
+      "https://streetcomplete.app/":
+        label: "StreetComplete"
+  neighborhood_gardens_trust:
+    label: "Conservar un jardín comunitario para siempre (Neighborhood Gardens Trust)"
+    who: "Jardineros cuyo jardín comunitario lleva al menos tres temporadas"
+    steps:
+      - "Revise los criterios del trust: un jardín activo por al menos tres temporadas de cultivo, jardineros capaces de mantenerlo, lazos con grupos como una corporación de desarrollo comunitario, una iglesia o una escuela, y el apoyo de los vecinos y del miembro del Concejo Municipal del distrito."
+      - "Presente la solicitud de jardín en línea del trust, o su formulario imprimible. El trust responde en unas dos semanas, luego visita el jardín y lo lleva a su junta."
+      - "Una vez aprobado, el trust trabaja con la Ciudad para adquirir el terreno y lo conserva para que los vecinos puedan seguir cultivando, con seguro de responsabilidad civil y ayuda con el agua y el mantenimiento. Las preguntas van al 215 988 1630 o a ngtrust@pennhort.org."
+    cost: "Solicitarlo es gratis"
+    timeline: "Una respuesta en unas dos semanas; adquirir el terreno toma más tiempo"
+    links:
+      "https://ngtrust.org/preservation/":
+        label: "Neighborhood Gardens Trust: preservación de jardines"
+  community_land_trust:
+    label: "Mantener asequibles las casas y el terreno para siempre (fideicomisos comunitarios de tierras)"
+    who: "Vecinos, grupos comunitarios y organizaciones sin fines de lucro"
+    steps:
+      - "Aprenda cómo funciona un fideicomiso comunitario de tierras: una organización sin fines de lucro es dueña del terreno para siempre, las familias compran o alquilan las casas que hay en él, y un arrendamiento largo del terreno mantiene cada casa asequible cuando se vende otra vez."
+      - "Hable con un fideicomiso de tierras que ya trabaje en Filadelfia, como el Community Justice Land Trust del Women's Community Revitalization Project, que tiene casas en Point Breeze, Grays Ferry, Mantua, Germantown, Port Richmond y Haddington."
+      - "Pregunte a la Garden Justice Legal Initiative cómo un fideicomiso de tierras podría tener un jardín o un lote que su grupo ya cuida."
+    cost: "Preguntar es gratis"
+    timeline: "Largo; los proyectos de un fideicomiso de tierras toman años"
+    links:
+      "https://groundedsolutions.org/strengthening-neighborhoods/community-land-trusts":
+        label: "Grounded Solutions Network: fideicomisos comunitarios de tierras"
+      "https://www.wcrpphila.org/cjlt":
+        label: "Women's Community Revitalization Project: Community Justice Land Trust"
+  homestead_exemption:
+    label: "Bajar la factura de impuestos de un propietario (la exención por vivienda familiar, Homestead, de la Ciudad)"
+    who: "Cualquier persona que sea dueña de su casa en Filadelfia y viva en ella como su vivienda principal, incluso con una hipoteca o deuda de impuestos; no las casas con una reducción de impuestos de 10 años"
+    steps:
+      - "Presente la solicitud en el Philadelphia Tax Center (tax-services.phila.gov), donde una solicitud combinada cubre los programas de alivio de impuestos de la Ciudad, o llame a la línea de Homestead al 215 686 9200, o envíe el formulario por correo al Departamento de Ingresos, P.O. Box 52817, Philadelphia, PA 19115."
+      - "La exención resta $100,000 del valor tasado de la casa para la factura de impuestos, y ahorra hasta $1,399 al año."
+      - "Presente la solicitud antes del 1 de diciembre (antes del 1 de octubre para verlo en la próxima factura). Una vez aceptada, no hace falta volver a solicitarla a menos que cambie la escritura."
+    cost: "Gratis"
+    timeline: "Vence el 1 de diciembre de cada año"
+    links:
+      "https://www.phila.gov/services/payments-assistance-taxes/taxes/property-and-real-estate-taxes/get-real-estate-tax-relief/get-the-homestead-exemption/":
+        label: "Ciudad de Filadelfia: obtenga la exención por vivienda familiar (Homestead)"
+  longtime_owner_occupants:
+    label: "Limitar el avalúo de un propietario de muchos años (el Programa para Propietarios Ocupantes de Muchos Años de la Ciudad, LOOP)"
+    who: "Propietarios que han vivido en su casa al menos 10 años, cuyo avalúo subió al menos 50 por ciento en un año o 75 por ciento en cinco años, con ingresos del hogar por debajo del límite de la Ciudad (como $103,050 para una persona o $147,200 para cuatro en 2026), al día con sus impuestos o con un acuerdo de pago"
+    steps:
+      - "Presente la solicitud en el Philadelphia Tax Center (tax-services.phila.gov) con la solicitud combinada de la Ciudad, o llame al 215 686 9200, escriba a revenue@phila.gov, o envíe el formulario por correo al Departamento de Ingresos, P.O. Box 53190, Philadelphia, PA 19105."
+      - "LOOP limita el avalúo que usa la factura de impuestos, a 1.5 veces el del año anterior o 1.75 veces el valor más bajo de los últimos cinco años, mientras el propietario siga siendo elegible."
+      - "Presente la solicitud antes de la fecha límite anual de la Ciudad (el 30 de septiembre en los últimos años); la página de la Ciudad da la fecha actual."
+    cost: "Gratis"
+    timeline: "Una fecha límite anual, el 30 de septiembre en los últimos años"
+    links:
+      "https://www.phila.gov/services/payments-assistance-taxes/payment-plans-and-assistance-programs/income-based-programs-for-residents/apply-for-the-longtime-owner-occupants-program-loop/":
+        label: "Ciudad de Filadelfia: solicite LOOP"
+
