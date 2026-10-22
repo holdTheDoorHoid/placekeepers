@@ -1597,6 +1597,8 @@ export const strings = {
     loadFailed: 'The numbers could not be loaded. Check your connection and try again.',
     retry: 'Try again',
     missing: 'The numbers are not published yet. They appear after the next weekly data refresh.',
+    /** A record the City's list gives no status (the pipeline's key "No status"). */
+    noStatus: 'No status',
     agencyLabel: 'Agency',
     agencyHelp: 'Every section below follows this choice, except the City\'s own counts by program and the weekly count of listed lots.',
     agencies: {
@@ -1812,6 +1814,8 @@ export const strings = {
     } as Record<string, string>,
     problems: 'Problems in the status file',
     notesTitle: 'Notes from the latest refresh',
+    /** Above the notes on a page in another language: the notes themselves stay in English. */
+    notesInEnglish: 'These notes are written in English, for the people who keep the map running.',
     basemapLabel: { ok: 'Up to date', failing: 'Not available' } as Record<string, string>,
     basemapMade: (date: string) =>
       `The weekly refresh makes a new copy of the base map about once a month. This copy was made from OpenStreetMap on ${date}.`,
@@ -2097,6 +2101,32 @@ export const strings = {
       individual: 'The owner name looks like a person\'s name.',
       publicName: (label: string) => `City records name ${label} as the owner.`,
       markerReason: (marker: string) => `The owner name includes "${marker}".`,
+      /** When the City's list of public property and the owner names disagree (the pipeline's agency_reason). */
+      agencyConflict: (contact: string) => `City property records name a different owner, so ask ${contact} which is current.`,
+      agencyContacts: { PUB: 'the Land Bank', PLB: 'the Land Bank', PRA: 'PHDC', PHDC: 'PHDC' } as Record<string, string>,
+      /** Public bodies an owner name can name (src/dossier/owners.ts), as "City records name ... as the owner." */
+      publicBodies: {
+        land_bank: 'the Philadelphia Land Bank',
+        redevelopment_authority: 'the Philadelphia Redevelopment Authority',
+        pha: 'the Philadelphia Housing Authority',
+        housing_authority: 'a housing authority',
+        phdc: 'the Philadelphia Housing Development Corporation (PHDC)',
+        pha_or_phdc: 'the Philadelphia Housing Authority or PHDC (the name is cut short)',
+        city: 'the City of Philadelphia',
+        school_district: 'the School District of Philadelphia',
+        community_college: 'the Community College of Philadelphia',
+        septa: 'SEPTA',
+        commonwealth: 'the Commonwealth of Pennsylvania',
+        phfa: 'the Pennsylvania Housing Finance Agency',
+        united_states: 'the United States government',
+        hud: 'the U.S. Department of Housing and Urban Development',
+        veterans_affairs: 'the U.S. Department of Veterans Affairs',
+        paid: 'the Philadelphia Authority for Industrial Development',
+        port_authority: 'the Philadelphia Regional Port Authority',
+        district_attorney: "the Philadelphia District Attorney's Office",
+        public_authority: 'a public authority',
+        pgw: 'Philadelphia Gas Works',
+      },
       markers: {
         TR: 'TR, short for trustee',
         TRS: 'TRS, short for trustees',
@@ -2224,6 +2254,9 @@ export const strings = {
         next: 'If you know the family, the Tangled Title Fund (up to $6,500 in legal help) and Philadelphia VIP can help them keep it. Families can also sign up for the City\'s free Fraud Guard alerts.',
       },
       tax_debt_2025: {
+        /** The pipeline writes this sentence in English; a page in another language builds it from the flag's data. */
+        text: (amount: string, years: number | null) =>
+          `As of July 2025, City records showed ${amount} in unpaid real estate taxes${years ? ` from ${plural(years, 'tax year', 'tax years')}` : ''}.`,
         careful:
           'This is the last public record, from July 9, 2025, not today\'s balance: the owner may have paid since, or owe more. About three or more years of unpaid taxes can lead to a sheriff sale, where a lot neighbors care for can be sold to an outside buyer.',
         next: 'Check today\'s balance on the City\'s Tax Center before you rely on this. If your block cares for this lot, Grounded in Philly\'s guide to sheriff sales explains the risk and what you can do.',
@@ -2233,6 +2266,8 @@ export const strings = {
         one: (sale: string) => `Sold at sheriff sale on ${sale}.`,
         many: (n: number, sales: string) => `Sold at sheriff sale ${n} times: ${sales}.`,
         sale: (date: string, price: string | null) => (price ? `${date}, for ${price}` : date),
+        /** The last of several sales: "May 14, 2019, for $12,300; and June 2, 2021". */
+        andLast: (others: string, last: string) => `${others}; and ${last}`,
         careful:
           'At a sheriff sale the winning bid clears old debts on the property, so a lot neighbors have cared for can pass to an outside buyer. A past sale does not mean the property is for sale now.',
         next: 'If your block cares for this lot, read Grounded in Philly\'s guide to sheriff sales and ask the Garden Justice Legal Initiative for free legal help.',

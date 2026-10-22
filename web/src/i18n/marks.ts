@@ -11,13 +11,23 @@
 // Nothing marks text on a page in English. Text that leaves the page (a downloaded file, an
 // address) goes through plainText() so the marks never reach it.
 
-export const FALLBACK_START = '⁨';
-export const FALLBACK_END = '⁩';
-const MARKS = /[⁨⁩]/g;
+import { isSourceLocale } from './locale.ts';
+
+export const FALLBACK_START = '\u2068';
+export const FALLBACK_END = '\u2069';
+const MARKS = /[\u2068\u2069]/g;
 
 /** English text marked as a fallback. */
 export function markFallback(text: string): string {
   return text ? `${FALLBACK_START}${text}${FALLBACK_END}` : text;
+}
+
+/**
+ * Text that stays in English in every language, such as the weekly refresh's notes for the people
+ * who maintain the map: marked on a page in another language, as it is on a page in English.
+ */
+export function asEnglish(text: string): string {
+  return isSourceLocale() ? text : markFallback(text);
 }
 
 /** The text without fallback marks, for files, addresses and comparisons. */

@@ -18,7 +18,8 @@
     "build:e2e": "PK_E2E=1 vite build",
     "preview:e2e": "PK_E2E=1 vite preview --port 4317 --strictPort",
     "e2e": "playwright test",
-    "basemap": "bash scripts/make-basemap.sh"
+    "basemap": "bash scripts/make-basemap.sh",
+    "i18n:status": "node scripts/i18n-status.ts"
   },
   "dependencies": {
     "@protomaps/basemaps": "^5.7.2",

@@ -14,7 +14,7 @@ import { permissionFromRoutes, permissionText, type PermissionCode } from '../co
 import { isGarden, isGreening, isPlacemaking } from '../config/suggestions.ts';
 import { protectionLinks, signsText, watchSigns } from '../displacement/watch.ts';
 import type { Manifest } from '../data/manifest.ts';
-import { completeFlag, sortFlags } from '../dossier/flags.ts';
+import { completeFlag, flagTextFromData, sortFlags } from '../dossier/flags.ts';
 import { loadCommon, loadShard, shardLocation } from '../dossier/shard.ts';
 import { PUBLIC_OWNER_TYPES, type DossierNotes, type ShardParcel } from '../dossier/types.ts';
 import type { Registry } from '../registry/types.ts';
@@ -150,7 +150,7 @@ function round(n: number | undefined, digits: number): number | null {
 }
 
 /** One place as an export row, from its tile properties and its dossier, whichever are known. */
-export function exportRow(input: Pick<ExportInput, 'registry' | 'state' | 'siteUrl'>, place: ExportPlace, parcel: ShardParcel | null, notes: DossierNotes | null): ExportRow {
+export function exportRow(input: Pick<ExportInput, 'registry' | 'state' | 'siteUrl'> & { manifest?: Manifest | null }, place: ExportPlace, parcel: ShardParcel | null, notes: DossierNotes | null): ExportRow {
   const e = strings.export;
   const tile = place.properties;
   const described = tile ? describePlace(input.registry, input.state, { id: place.id, properties: tile, center: place.center ?? [0, 0] }) : null;
@@ -180,8 +180,13 @@ export function exportRow(input: Pick<ExportInput, 'registry' | 'state' | 'siteU
   const nearBrownfield = Number(tile?.bf) === 1 || (parcel?.rules?.brownfields.length ?? 0) > 0;
   const soilNote = suggestion && isGarden(suggestion.id) && nearBrownfield ? strings.dossier.rules.brownfield : '';
 
+  // In another language, the flags are written in the page's words from their data, as on the lot
+  // page (issue #49). The day the weekly copy was built dates a fast resale as recent or not.
+  const ownWords = !isSourceLocale();
+  const builtOn = input.manifest?.generated_at?.slice(0, 10) ?? null;
   const flags = sortFlags(owner?.flags ?? []).map((flag) => {
-    const whole = completeFlag(flag, notes?.flags[flag.id] ?? null);
+    const own = ownWords && flag.data ? { ...flag, text: flagTextFromData(flag.id, flag.data, builtOn) ?? flag.text } : flag;
+    const whole = completeFlag(own, notes?.flags[flag.id] ?? null, [], { ownWords });
     return {
       id: whole.id,
       title: strings.dossier.owner.flagTitles[whole.id] ?? strings.dossier.owner.otherFlag,

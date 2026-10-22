@@ -17,6 +17,7 @@
   import { formatDate, strings } from '../strings.ts';
   import Dialog from '../components/common/Dialog.svelte';
   import SiteNav from '../components/common/SiteNav.svelte';
+  import { isSourceLocale } from '../i18n/locale.ts';
   import LanguageOffer from '../components/language/LanguageOffer.svelte';
   import LanguagePicker from '../components/language/LanguagePicker.svelte';
   import TranslationNote from '../components/language/TranslationNote.svelte';
@@ -111,7 +112,10 @@
       {#if manifest.notes.length}
         <section class="notes" aria-labelledby="pk-notes-title">
           <h2 id="pk-notes-title">{s.notesTitle}</h2>
-          <ul>
+          <!-- The refresh writes its notes in English for the people who maintain the map, so they
+               stay English in every language, marked for screen readers (issue #49). -->
+          {#if !isSourceLocale()}<p class="muted small">{s.notesInEnglish}</p>{/if}
+          <ul lang="en" dir="ltr">
             {#each manifest.notes as note, i (i)}<li>{note}</li>{/each}
           </ul>
         </section>

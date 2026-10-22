@@ -114,6 +114,8 @@
   const districtMax = $derived(Math.max(1, ...districtRows.map((d) => d.n)));
 
   function statusLabel(status: string): string {
+    // The pipeline's own key for a blank status on the City's list (docs/CONTRACTS.md section 9).
+    if (status === 'No status') return t.noStatus;
     const known = strings.dossier.owner.cityStatuses[statusKey(status)];
     return known ? sentenceCase(known[0]) : plain(sentenceCase(status));
   }

@@ -18,6 +18,8 @@ import { parcelLensOf, placeSuggestions, suggestionsForLens } from '../places/ra
 import { placeReasons, reasonContext, type PlaceReasons } from '../places/reasons.ts';
 import type { Lens, Partner, Registry, Route, Suggestion } from '../registry/types.ts';
 import type { AppState } from '../state/defaults.ts';
+import { isSourceLocale } from '../i18n/locale.ts';
+import { markFallback } from '../i18n/marks.ts';
 import { formatDate, formatMoney, formatTime, sentenceCase, strings } from '../strings.ts';
 import { today } from './dates.ts';
 import { CITY_LIST_SOURCE, cityListDate, cityStatusText, listingText, type ListingText } from './listing.ts';
@@ -27,6 +29,7 @@ import {
   completeFlag,
   deedFraudLinks,
   flagLinks,
+  flagTextFromData,
   helpLinks,
   liFacts,
   liFlags,
@@ -40,7 +43,7 @@ import {
   type FlagId,
 } from './flags.ts';
 import type { FailReason } from './http.ts';
-import { isPrivate, ownerTypeFromNames, sameOwners } from './owners.ts';
+import { isPrivate, ownerTypeFromNames, ownerTypeWithAgency, sameOwners } from './owners.ts';
 import { plain } from './plain.ts';
 import { FULL_RECORDS_FROM, isSheriff } from './transfers.ts';
 import {
@@ -576,16 +579,24 @@ export function buildDossier(input: DossierInput): DossierView {
   const ownerChanged = !!(property && shardOwner && shardOwner.names.length && !sameOwners(shardOwner.names, property.names));
   let ownerType: OwnerType;
   let typeReason: string | null;
+  // The weekly copy writes the reason in English. A page in another language writes it again
+  // from the owner names and the City's list, as the pipeline does, when that gives the same type;
+  // otherwise it keeps the English, marked (issue #49).
+  const shardReason = (owner: NonNullable<typeof shardOwner>): string | null => {
+    if (isSourceLocale() || !owner.typeReason) return owner.typeReason;
+    const again = ownerTypeWithAgency(owner.names, owner.cityOwned?.agency ?? null);
+    return again.type === owner.type ? again.reason : markFallback(owner.typeReason);
+  };
   if (property && shardOwner && !ownerChanged) {
     ownerType = shardOwner.type;
-    typeReason = shardOwner.typeReason;
+    typeReason = shardReason(shardOwner);
   } else if (property) {
     const found = ownerTypeFromNames(property.names);
     ownerType = found.type;
     typeReason = found.reason;
   } else if (shardOwner) {
     ownerType = shardOwner.type;
-    typeReason = shardOwner.typeReason;
+    typeReason = shardReason(shardOwner);
   } else {
     ownerType = OWNER_TYPE_BY_CODE[int(tile?.ot) ?? 0] ?? 'unknown';
     typeReason = null;
@@ -643,9 +654,15 @@ export function buildDossier(input: DossierInput): DossierView {
       .map((id) => registry.routes.find((r) => r.id === id))
       .filter((r): r is Route => !!r && r.links.length > 0)
       .map((r) => ({ label: r.label, url: r.links[0]!.url }));
+  // In another language the flags of the weekly copy are written again from their data in the
+  // page's words, with the page's careful notes and next steps (issue #49); the English the
+  // pipeline wrote stays, marked, only where the data cannot say it.
+  const ownWords = !isSourceLocale();
+  const builtOn = snapshotDate ? snapshotDate.slice(0, 10) : null;
   const complete = (flag: OwnerFlag): OwnerFlag => {
     const note = notes?.flags[flag.id] ?? null;
-    const whole = completeFlag(flag, note, routeLinks(note?.routes ?? []));
+    const own = ownWords && flag.data ? { ...flag, text: flagTextFromData(flag.id, flag.data, builtOn) ?? markFallback(flag.text) } : flag;
+    const whole = completeFlag(own, note, routeLinks(note?.routes ?? []), { ownWords });
     // A flag's text can quote a City record, such as a violation title.
     return { ...whole, text: plain(whole.text) };
   };
@@ -948,7 +965,9 @@ export function buildDossier(input: DossierInput): DossierView {
       held: ownerHeld ? s.owner.heldBack : null,
       ownerChanged,
       deedFraud: showDeedFraud
-        ? { text: deedNote?.text ?? s.owner.deedFraud, links: mergeLinks(deedNote?.links ?? [], routeLinks(deedNote?.routes ?? []), deedFraudLinks()) }
+        ? ownWords
+          ? { text: s.owner.deedFraud, links: mergeLinks(deedFraudLinks(), routeLinks(deedNote?.routes ?? [])) }
+          : { text: deedNote?.text ?? s.owner.deedFraud, links: mergeLinks(deedNote?.links ?? [], routeLinks(deedNote?.routes ?? []), deedFraudLinks()) }
         : null,
       help: privateOwner && sortedFlags.length > 0 ? mergeLinks(helpRoutes, helpLinks()) : null,
       tax: {

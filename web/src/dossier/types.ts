@@ -89,6 +89,11 @@ export interface OwnerFlag {
    * lot's own dossier entry. No citywide file lists people (docs/VERIFICATION.md D3).
    */
   parcels?: OwnerListParcel[] | null;
+  /**
+   * A flag from the weekly copy: the values its sentence was written from (docs/CONTRACTS.md
+   * section 6), so a page in another language can write the sentence in its own words.
+   */
+  data?: Record<string, unknown> | null;
 }
 
 /** The City's list of public property: which agency, its status, and side yard eligibility. */
