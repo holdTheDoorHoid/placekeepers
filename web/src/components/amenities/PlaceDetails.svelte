@@ -38,7 +38,7 @@
   }
   ul {
     margin: 2px 0;
-    padding-left: 18px;
+    padding-inline-start: 18px;
   }
   p {
     margin: 2px 0;

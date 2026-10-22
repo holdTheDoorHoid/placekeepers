@@ -25,6 +25,56 @@
   --pk-radius: 8px;
   --pk-shadow: 0 2px 12px rgba(16, 24, 32, 0.18);
   --pk-font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  /* The side a line of text ends on, for gradients that fade at the end of a row: the right in
+     English, the left in Arabic (below). Logical properties handle the rest of the layout. */
+  --pk-end: right;
+}
+
+/* Arabic reads right to left (issue #49): the page mirrors through logical properties, and these
+   few physical values follow. The map, its controls and the charts keep their own directions. */
+:root[dir='rtl'] {
+  --pk-end: left;
+}
+
+/* Charts draw their axes left to right in every language, so their labels keep their places. */
+:root[dir='rtl'] svg {
+  direction: ltr;
+}
+
+/* Fonts for the scripts English system fonts may not cover (issue #49). Only fonts already on the
+   visitor's device: never a font server, which would tell a third party about every visit. Each
+   list starts with the system's own font, so Latin letters, numbers and English look as they do on
+   every other page, and continues with the fonts each system ships for the script: macOS and iOS,
+   Windows, Android and ChromeOS, then common Linux fonts. */
+:lang(zh-Hans) {
+  font-family: system-ui, -apple-system, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei',
+    'Noto Sans CJK SC', 'Noto Sans SC', 'Source Han Sans SC', 'WenQuanYi Micro Hei', sans-serif;
+}
+:lang(km) {
+  font-family: system-ui, -apple-system, 'Segoe UI', 'Khmer Sangam MN', 'Khmer MN', 'Leelawadee UI', 'Khmer UI', 'Noto Sans Khmer',
+    'Khmer OS System', 'Khmer OS', sans-serif;
+}
+:lang(ar) {
+  font-family: system-ui, -apple-system, 'Segoe UI', 'SF Arabic', 'Geeza Pro', 'Noto Sans Arabic', 'Noto Naskh Arabic', Tahoma,
+    Arial, sans-serif;
+}
+/* Khmer stacks vowels and consonants above and below the line, and Arabic has tall letters and
+   dots: both need taller lines to stay readable. Letter spacing would break Arabic's joined letters. */
+:root:lang(km) body {
+  line-height: 1.75;
+}
+:root:lang(km) :is(h1, h2, h3, h4) {
+  line-height: 1.5;
+}
+:root:lang(ar) body {
+  line-height: 1.65;
+}
+:root:lang(ar) :is(h1, h2, h3, h4) {
+  line-height: 1.45;
+}
+:lang(ar),
+:lang(km) {
+  letter-spacing: normal;
 }
 
 *,
@@ -97,7 +147,7 @@ a:hover {
 
 .skip-link {
   position: absolute;
-  left: 8px;
+  inset-inline-start: 8px;
   top: -100px;
   z-index: 100;
   background: var(--pk-bg);
@@ -292,7 +342,7 @@ input[type='radio'] {
 /* The "Choose file" button of a file input, as big and as clear as the site's other buttons. */
 input[type='file']::file-selector-button {
   min-height: 40px;
-  margin-right: 10px;
+  margin-inline-end: 10px;
   padding: 6px 14px;
   border: 1px solid var(--pk-accent);
   border-radius: var(--pk-radius);
@@ -329,7 +379,7 @@ table {
 
 th,
 td {
-  text-align: left;
+  text-align: start;
   padding: 6px 8px;
   border-bottom: 1px solid var(--pk-surface-2);
   vertical-align: top;
@@ -341,7 +391,7 @@ th {
 }
 
 caption {
-  text-align: left;
+  text-align: start;
   font-weight: 600;
   padding: 0 0 6px;
 }

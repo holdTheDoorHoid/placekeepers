@@ -154,19 +154,19 @@
   }
   .ask {
     padding: 6px 10px;
-    border-left: 3px solid var(--pk-accent);
+    border-inline-start: 3px solid var(--pk-accent);
     border-radius: var(--pk-radius);
     background: var(--pk-accent-soft);
   }
   .links,
   .sites {
     margin: 2px 0 6px;
-    padding-left: 1.2em;
+    padding-inline-start: 1.2em;
     font-size: 0.875rem;
   }
   .overlays {
     margin: 2px 0 6px;
-    padding-left: 1.2em;
+    padding-inline-start: 1.2em;
   }
   .overlays li {
     margin-bottom: 6px;
@@ -184,10 +184,10 @@
   .appeal {
     margin-bottom: 8px;
     padding: 6px 10px;
-    border-left: 3px solid var(--pk-surface-2);
+    border-inline-start: 3px solid var(--pk-surface-2);
   }
   .appeal.upcoming {
-    border-left-color: var(--pk-accent);
+    border-inline-start-color: var(--pk-accent);
     background: var(--pk-accent-soft);
   }
   .appeal p {
@@ -195,7 +195,7 @@
   }
   .badge {
     display: inline-block;
-    margin-right: 6px;
+    margin-inline-end: 6px;
     padding: 0 6px;
     border-radius: 999px;
     background: var(--pk-accent);

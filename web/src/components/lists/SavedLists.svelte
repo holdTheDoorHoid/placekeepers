@@ -262,7 +262,7 @@
     border-bottom: 1px solid var(--pk-surface-2);
   }
   .places li .button {
-    margin-left: auto;
+    margin-inline-start: auto;
   }
   .link {
     padding: 4px 0;
@@ -272,7 +272,7 @@
     font: inherit;
     text-decoration: underline;
     cursor: pointer;
-    text-align: left;
+    text-align: start;
   }
   h4 {
     margin-top: 12px;

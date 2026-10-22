@@ -126,7 +126,7 @@ function flag(v: unknown): OwnerFlag | null {
   const parcels = Array.isArray(data.parcels)
     ? data.parcels.map(parseOwnerListParcel).filter((p): p is OwnerListParcel => p !== null)
     : null;
-  return { id, text: body, careful: text(v.careful), nextStep: text(v.next_step), links: links(v.links), list, parcels };
+  return { id, text: body, careful: text(v.careful), nextStep: text(v.next_step), links: links(v.links), list, parcels, data };
 }
 
 function cityOwned(v: unknown): CityOwned | null {

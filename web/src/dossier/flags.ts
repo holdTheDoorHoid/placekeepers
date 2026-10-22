@@ -25,11 +25,12 @@ import {
   TANGLED_TITLE_FUND_URL,
   TAX_CENTER_URL,
 } from '../config/links.ts';
+import { markFallback } from '../i18n/marks.ts';
 import { formatDate, formatMoney, strings } from '../strings.ts';
-import { yearOf } from './dates.ts';
+import { addMonths, yearOf } from './dates.ts';
 import { absentee, isPrivate, placeName, possibleEstate, type Absentee } from './owners.ts';
 import { plain } from './plain.ts';
-import { fastResales, lastSale, sheriffSales, type Resales } from './transfers.ts';
+import { RESALE_MONTHS, fastResales, lastSale, sheriffSales, type Resales } from './transfers.ts';
 import type { FlagNote, LiEvent, Link, OwnerFlag, OwnerType, Transfer } from './types.ts';
 
 /** Every flag id, in the order a lot page lists them. */
@@ -147,9 +148,30 @@ export function mergeLinks(...lists: Link[][]): Link[] {
  * its links, the links of its routes, and the links its kind always carries. The possible estate
  * flag always reads exactly as docs/ETHICS.md.
  */
-export function completeFlag(flag: OwnerFlag, note: FlagNote | null = null, routeLinks: Link[] = []): OwnerFlag {
+export function completeFlag(
+  flag: OwnerFlag,
+  note: FlagNote | null = null,
+  routeLinks: Link[] = [],
+  options: { ownWords?: boolean } = {},
+): OwnerFlag {
   const parts = flagParts(flag.id);
   const estate = flag.id === 'possible_estate';
+  if (options.ownWords) {
+    // A page in another language (issue #49): the page's own careful note, next step and link
+    // names, which the catalogs translate. The weekly copy's English is kept, marked as English,
+    // only where the page has no words of its own.
+    const english = (text: string | null | undefined) => (text ? markFallback(text) : null);
+    const englishLinks = (links: Link[]) => links.map((l) => ({ ...l, label: markFallback(l.label) }));
+    return {
+      id: flag.id,
+      text: estate ? f.possible_estate.text : flag.text,
+      careful: estate ? f.possible_estate.careful : (parts?.careful ?? english(note?.careful ?? flag.careful)),
+      nextStep: estate ? f.possible_estate.next : (parts?.nextStep ?? english(note?.nextStep ?? flag.nextStep)),
+      links: mergeLinks(flagLinks(flag.id), routeLinks, englishLinks(flag.links), englishLinks(note?.links ?? [])),
+      list: flag.list ?? null,
+      parcels: flag.parcels ?? null,
+    };
+  }
   return {
     id: flag.id,
     text: estate ? f.possible_estate.text : flag.text,
@@ -179,7 +201,7 @@ export function sheriffText(sales: { date: string; price: number | null }[]): st
     f.sheriff_sales.sale(formatDate(s.date) ?? s.date, s.price ? formatMoney(s.price) : null);
   if (sales.length === 1) return f.sheriff_sales.one(one(sales[0]!));
   const items = sales.map(one);
-  return f.sheriff_sales.many(sales.length, `${items.slice(0, -1).join('; ')}; and ${items[items.length - 1]}`);
+  return f.sheriff_sales.many(sales.length, f.sheriff_sales.andLast(items.slice(0, -1).join('; '), items[items.length - 1]!));
 }
 
 export function resaleText(r: Resales): string {
@@ -230,6 +252,77 @@ export function violationsText(li: LiFacts): string {
   if (li.openViolations === 1) return f.open_violations.one(when, what);
   const text = f.open_violations.many(li.openViolations);
   return when ? `${text} ${f.open_violations.mostRecent(when, what)}` : text;
+}
+
+const isRecord = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
+const dataNumber = (v: unknown): number | null => (typeof v === 'number' && Number.isFinite(v) ? v : null);
+const dataText = (v: unknown): string | null => (typeof v === 'string' && v.trim() ? v.trim() : null);
+
+/**
+ * A weekly copy flag's sentence written again from its data (docs/CONTRACTS.md section 6) with
+ * the page's own templates, so it reads in the page's language. The pipeline writes the same
+ * sentence in English beside the data; this returns null where the data cannot say it, and the
+ * caller keeps the English. `asOf` is the day the weekly copy was built (for fast resales).
+ */
+export function flagTextFromData(id: string, data: Record<string, unknown>, asOf: string | null): string | null {
+  const day = (v: unknown) => {
+    const d = dataText(v);
+    return d ? (formatDate(d) ?? d) : null;
+  };
+  switch (id) {
+    case 'absentee': {
+      const scope = dataText(data.scope);
+      const place = dataText(data.place);
+      if (scope === 'out_of_state') return place ? f.absentee.outOfState(place) : f.absentee.outsidePennsylvania;
+      if (scope === 'outside_city') {
+        const city = place?.replace(/,\s*PA$/i, '') || null;
+        return city ? f.absentee.outsideCity(city) : f.absentee.outsideCityUnknown;
+      }
+      if (scope === 'po_box_in_city') return f.absentee.poBox;
+      if (scope === 'elsewhere_in_city') return f.absentee.elsewhere;
+      return null;
+    }
+    case 'possible_estate':
+      return f.possible_estate.text;
+    case 'tax_debt_2025': {
+      const total = dataNumber(data.total_due);
+      return total === null ? null : f.tax_debt_2025.text(formatMoney(total), dataNumber(data.years));
+    }
+    case 'sheriff_sales': {
+      const sales = (Array.isArray(data.sales) ? data.sales : [])
+        .filter(isRecord)
+        .map((s) => ({ date: dataText(s.date), price: dataNumber(s.price) }))
+        .filter((s): s is { date: string; price: number | null } => s.date !== null);
+      return sales.length ? sheriffText(sales) : null;
+    }
+    case 'years_since_sale': {
+      const year = dataNumber(data.year);
+      if (year === null) return null;
+      return data.sold === false ? f.years_since_sale.notSoldSince(year) : f.years_since_sale.lastSold(year);
+    }
+    case 'many_parcels': {
+      const n = dataNumber(data.count);
+      return n === null ? null : f.many_parcels.text(n);
+    }
+    case 'fast_resales': {
+      const dates = (Array.isArray(data.dates) ? data.dates : []).map(dataText).filter((d): d is string => d !== null).sort();
+      if (dates.length < 2 || !asOf) return null;
+      const last = dates[dates.length - 1]!;
+      const resales: Resales = { count: dataNumber(data.count) ?? dates.length, first: dates[0]!, last, recent: last >= addMonths(asOf, -RESALE_MONTHS) };
+      return resaleText(resales);
+    }
+    case 'open_violations': {
+      const n = dataNumber(data.count);
+      if (!n) return null;
+      return violationsText({ openViolations: n, lastOpen: dataText(data.last), lastOpenTitle: dataText(data.title), unsafeSince: null, dangerousSince: null });
+    }
+    case 'unsafe':
+      return f.unsafe.text(day(data.since));
+    case 'imminently_dangerous':
+      return f.imminently_dangerous.text(day(data.since));
+    default:
+      return null;
+  }
 }
 
 /** Flags from the owner's live property record: absentee and possible estate, for private owners only. */

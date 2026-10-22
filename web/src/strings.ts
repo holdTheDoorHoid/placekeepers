@@ -1,50 +1,60 @@
-// Every piece of interface text lives here, so the site can be translated (Spanish first)
-// and checked for plain language in one place. Text that the registry defines (layer
-// labels, descriptions, routes, sources) comes from registry/*.yaml instead.
+// Every piece of interface text lives here, so the site can be translated and checked for plain
+// language in one place. Text that the registry defines (layer labels, descriptions, routes,
+// sources) comes from registry/*.yaml instead.
+//
+// This English object is the source of every translation. Each other language has a catalog in
+// src/i18n/locales/<code>.ts with the same keys, written into this object when a page opens in
+// that language (src/i18n/boot.ts); a key a catalog lacks keeps its English text. So: add new
+// text here as before, and it appears in English in every language until a translator gets to
+// it. docs/TRANSLATING.md explains the rest.
 //
 // House style: plain words a neighbor understands, and no dashes as punctuation.
-// tests/strings.test.ts enforces the dash rule.
+// tests/strings.test.ts enforces the dash rule, here and in every catalog.
 
+import {
+  CITY_TIME_ZONE,
+  decimalFormat,
+  formatDateIn,
+  moneyFormat,
+  numberFormat,
+  timeFormat,
+} from './i18n/locale.ts';
 import type { Evidence } from './registry/types.ts';
 
-const dateFormat = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeZone: 'America/New_York' });
-const dayFormat = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeZone: 'UTC' });
-const shortDateFormat = new Intl.DateTimeFormat('en-US', {
-  month: 'short',
-  day: 'numeric',
-  year: 'numeric',
-  timeZone: 'America/New_York',
-});
-const numberFormat = new Intl.NumberFormat('en-US');
-
-/** Formats a date or timestamp in words, for example "October 5, 2026". Returns null if unreadable. */
+/**
+ * Formats a date or timestamp in words in the page's language, for example "October 5, 2026".
+ * Returns null if unreadable.
+ */
 export function formatDate(value: string | null | undefined, style: 'long' | 'short' = 'long'): string | null {
   if (!value) return null;
   // A bare date (2026-10-01) has no time zone; show it as written.
   if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
     const d = new Date(`${value}T12:00:00Z`);
-    return Number.isNaN(d.getTime()) ? null : style === 'long' ? dayFormat.format(d) : shortDateFormat.format(d);
+    return Number.isNaN(d.getTime()) ? null : formatDateIn(d, style, 'UTC');
   }
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return null;
-  return style === 'long' ? dateFormat.format(d) : shortDateFormat.format(d);
+  return formatDateIn(d, style, CITY_TIME_ZONE);
 }
 
+/** A number in the page's language: "1,234" in English. */
 export function formatNumber(n: number): string {
-  return numberFormat.format(n);
+  return numberFormat().format(n);
 }
 
-const moneyFormat = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
-const timeFormat = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' });
+/** A number with exactly `digits` decimals in the page's language: "0.4" in English, "0,4" in French. */
+export function formatDecimal(n: number, digits: number): string {
+  return decimalFormat(digits).format(n);
+}
 
 /** Whole dollars, for example "$1,500"; half a dollar rounds up, as on the City's property page. */
 export function formatMoney(n: number): string {
-  return moneyFormat.format(Math.round(n));
+  return moneyFormat().format(Math.round(n));
 }
 
 /** A time of day in Philadelphia, for example "2:14 PM". */
 export function formatTime(ms: number): string {
-  return timeFormat.format(new Date(ms));
+  return timeFormat().format(new Date(ms));
 }
 
 /** CITY WORDS become "City words": for descriptions the City writes in capitals. */
@@ -65,8 +75,8 @@ function giveOrTake(margin: number | null, unit: 'points' | 'homes'): string {
 
 /** A straight line distance in words: "220 meters", "1.2 kilometers". */
 export function distanceWords(meters: number): string {
-  if (meters < 1000) return `${formatNumber(Math.round(meters / 10) * 10)} meters`;
-  return `${(Math.round(meters / 100) / 10).toFixed(1)} kilometers`;
+  if (meters < 1000) return strings.units.meters(Math.round(meters / 10) * 10);
+  return strings.units.kilometers(Math.round(meters / 100) / 10);
 }
 
 /** A change in percent in words: "up 61%", "down 3%", "unchanged". */
@@ -98,6 +108,38 @@ export const strings = {
   content: {
     /** The name screen readers give a table box on a content page, which scrolls sideways. */
     tableLabel: 'Table, scrolls sideways',
+    // Where the Contact page asks for a memorial to come down (content/contact.md, the token
+    // {{REMOVAL_EMAIL}}; plugins/content.ts). Markdown: keep the [words](address) links whole.
+    removalEmail: (email: string) =>
+      `Email us at [${email}](mailto:${email}). We do not use a public form for this, because a removal request is personal and private.`,
+    removalComingSoon: (issueUrl: string) =>
+      `A private email address for these requests is coming soon. Until it exists, the map shows no names at all, and you can ask in a [GitHub issue](${issueUrl}). Anyone can read a GitHub issue, so write only the memorial's id or where it is: you do not need to give a name, a reason or who you are.`,
+  },
+
+  // The language picker, the first visit offer and the note on every translated page
+  // (src/i18n/, src/components/language/). The offer's own words are in each language's line
+  // of src/i18n/languages.ts, since it shows before the page changes language.
+  language: {
+    button: 'Language',
+    /** The picker button's full name for screen readers, with the language in use. */
+    buttonLabel: (name: string) => `Language: ${name}. Choose another language`,
+    title: 'Language',
+    intro: 'Choose the language for this site. The page opens again in that language, and this browser remembers your choice.',
+    inUse: 'In use',
+    /** Beside a language that is not finished yet; only the dev server and testers see these. */
+    notReady: 'Translation in progress',
+    listLabel: 'Languages',
+    aiNote: 'Translated with the help of AI and not yet checked by a native speaker.',
+    fixLink: 'Fix a translation',
+    /** On a page whose translation does not exist yet, shown above the English text. */
+    pageInEnglish: 'This page is not translated yet, so it is shown in English.',
+    offerLabel: 'Language offer',
+  },
+
+  /** Lengths in words (distanceWords). */
+  units: {
+    meters: (n: number) => `${formatNumber(n)} meters`,
+    kilometers: (km: number) => `${formatDecimal(km, 1)} kilometers`,
   },
 
   header: {
@@ -196,7 +238,7 @@ export const strings = {
     showMore: 'Show more places',
     distance: (meters: number, fromYou: boolean) => {
       const feet = meters * 3.28084;
-      const far = feet < 1000 ? `${formatNumber(Math.max(10, Math.round(feet / 10) * 10))} feet` : `${(feet / 5280).toFixed(1)} miles`;
+      const far = feet < 1000 ? `${formatNumber(Math.max(10, Math.round(feet / 10) * 10))} feet` : `${formatDecimal(feet / 5280, 1)} miles`;
       return `About ${far} from ${fromYou ? 'you' : 'the middle of the map'}`;
     },
   },
@@ -466,6 +508,8 @@ export const strings = {
     yes: 'yes',
     no: 'no',
     termsLine: (url: string) => `Placekeepers export: for community care and lawful action only. Read the terms of use first: ${url}`,
+    /** Added to a download made in another language: its column names stay in English (no commas). */
+    englishColumns: 'Column names are in English in every language so files can be combined and read back.',
     madeLine: (n: number, title: string, day: string, dataDay: string | null) =>
       `${plural(n, 'place', 'places')} from ${title}. Made on ${day}${dataDay ? ` from the weekly data of ${dataDay}` : ''}.`,
     ownerLine:
@@ -1553,6 +1597,8 @@ export const strings = {
     loadFailed: 'The numbers could not be loaded. Check your connection and try again.',
     retry: 'Try again',
     missing: 'The numbers are not published yet. They appear after the next weekly data refresh.',
+    /** A record the City's list gives no status (the pipeline's key "No status"). */
+    noStatus: 'No status',
     agencyLabel: 'Agency',
     agencyHelp: 'Every section below follows this choice, except the City\'s own counts by program and the weekly count of listed lots.',
     agencies: {
@@ -1768,6 +1814,8 @@ export const strings = {
     } as Record<string, string>,
     problems: 'Problems in the status file',
     notesTitle: 'Notes from the latest refresh',
+    /** Above the notes on a page in another language: the notes themselves stay in English. */
+    notesInEnglish: 'These notes are written in English, for the people who keep the map running.',
     basemapLabel: { ok: 'Up to date', failing: 'Not available' } as Record<string, string>,
     basemapMade: (date: string) =>
       `The weekly refresh makes a new copy of the base map about once a month. This copy was made from OpenStreetMap on ${date}.`,
@@ -2053,6 +2101,32 @@ export const strings = {
       individual: 'The owner name looks like a person\'s name.',
       publicName: (label: string) => `City records name ${label} as the owner.`,
       markerReason: (marker: string) => `The owner name includes "${marker}".`,
+      /** When the City's list of public property and the owner names disagree (the pipeline's agency_reason). */
+      agencyConflict: (contact: string) => `City property records name a different owner, so ask ${contact} which is current.`,
+      agencyContacts: { PUB: 'the Land Bank', PLB: 'the Land Bank', PRA: 'PHDC', PHDC: 'PHDC' } as Record<string, string>,
+      /** Public bodies an owner name can name (src/dossier/owners.ts), as "City records name ... as the owner." */
+      publicBodies: {
+        land_bank: 'the Philadelphia Land Bank',
+        redevelopment_authority: 'the Philadelphia Redevelopment Authority',
+        pha: 'the Philadelphia Housing Authority',
+        housing_authority: 'a housing authority',
+        phdc: 'the Philadelphia Housing Development Corporation (PHDC)',
+        pha_or_phdc: 'the Philadelphia Housing Authority or PHDC (the name is cut short)',
+        city: 'the City of Philadelphia',
+        school_district: 'the School District of Philadelphia',
+        community_college: 'the Community College of Philadelphia',
+        septa: 'SEPTA',
+        commonwealth: 'the Commonwealth of Pennsylvania',
+        phfa: 'the Pennsylvania Housing Finance Agency',
+        united_states: 'the United States government',
+        hud: 'the U.S. Department of Housing and Urban Development',
+        veterans_affairs: 'the U.S. Department of Veterans Affairs',
+        paid: 'the Philadelphia Authority for Industrial Development',
+        port_authority: 'the Philadelphia Regional Port Authority',
+        district_attorney: "the Philadelphia District Attorney's Office",
+        public_authority: 'a public authority',
+        pgw: 'Philadelphia Gas Works',
+      },
       markers: {
         TR: 'TR, short for trustee',
         TRS: 'TRS, short for trustees',
@@ -2180,6 +2254,9 @@ export const strings = {
         next: 'If you know the family, the Tangled Title Fund (up to $6,500 in legal help) and Philadelphia VIP can help them keep it. Families can also sign up for the City\'s free Fraud Guard alerts.',
       },
       tax_debt_2025: {
+        /** The pipeline writes this sentence in English; a page in another language builds it from the flag's data. */
+        text: (amount: string, years: number | null) =>
+          `As of July 2025, City records showed ${amount} in unpaid real estate taxes${years ? ` from ${plural(years, 'tax year', 'tax years')}` : ''}.`,
         careful:
           'This is the last public record, from July 9, 2025, not today\'s balance: the owner may have paid since, or owe more. About three or more years of unpaid taxes can lead to a sheriff sale, where a lot neighbors care for can be sold to an outside buyer.',
         next: 'Check today\'s balance on the City\'s Tax Center before you rely on this. If your block cares for this lot, Grounded in Philly\'s guide to sheriff sales explains the risk and what you can do.',
@@ -2189,6 +2266,8 @@ export const strings = {
         one: (sale: string) => `Sold at sheriff sale on ${sale}.`,
         many: (n: number, sales: string) => `Sold at sheriff sale ${n} times: ${sales}.`,
         sale: (date: string, price: string | null) => (price ? `${date}, for ${price}` : date),
+        /** The last of several sales: "May 14, 2019, for $12,300; and June 2, 2021". */
+        andLast: (others: string, last: string) => `${others}; and ${last}`,
         careful:
           'At a sheriff sale the winning bid clears old debts on the property, so a lot neighbors have cared for can pass to an outside buyer. A past sale does not mean the property is for sale now.',
         next: 'If your block cares for this lot, read Grounded in Philly\'s guide to sheriff sales and ask the Garden Justice Legal Initiative for free legal help.',

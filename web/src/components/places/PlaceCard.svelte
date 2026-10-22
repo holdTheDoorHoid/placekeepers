@@ -109,7 +109,7 @@
     color: var(--pk-text);
     font: inherit;
     font-weight: 700;
-    text-align: left;
+    text-align: start;
     cursor: pointer;
   }
   .open::after {

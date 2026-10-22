@@ -119,7 +119,7 @@
   output {
     flex: none;
     width: 4.5em;
-    text-align: right;
+    text-align: end;
     font-size: 0.9rem;
   }
   details {

@@ -48,7 +48,7 @@
     background: none;
     color: var(--pk-accent);
     font: inherit;
-    text-align: left;
+    text-align: start;
     text-decoration: underline;
     cursor: pointer;
   }

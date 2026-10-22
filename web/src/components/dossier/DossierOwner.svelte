@@ -108,7 +108,7 @@
   }
   .links {
     margin: 4px 0 8px;
-    padding-left: 1.2em;
+    padding-inline-start: 1.2em;
     font-size: 0.875rem;
   }
 </style>

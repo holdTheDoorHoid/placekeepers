@@ -17,6 +17,10 @@
   import { formatDate, strings } from '../strings.ts';
   import Dialog from '../components/common/Dialog.svelte';
   import SiteNav from '../components/common/SiteNav.svelte';
+  import { isSourceLocale } from '../i18n/locale.ts';
+  import LanguageOffer from '../components/language/LanguageOffer.svelte';
+  import LanguagePicker from '../components/language/LanguagePicker.svelte';
+  import TranslationNote from '../components/language/TranslationNote.svelte';
 
   let { registry }: { registry: Registry } = $props();
 
@@ -46,9 +50,14 @@
 <div class="page">
   <header>
     <a class="back" href={config.siteBase}>{s.back}</a>
-    <button class="button quiet small menu" type="button" aria-haspopup="dialog" onclick={() => (menuOpen = true)}
-      >{strings.nav.menu}</button
-    >
+    <div class="tools">
+      <LanguagePicker />
+      <button class="button quiet small menu" type="button" aria-haspopup="dialog" onclick={() => (menuOpen = true)}
+        >{strings.nav.menu}</button
+      >
+    </div>
+    <LanguageOffer />
+    <TranslationNote />
     <h1>{s.pageTitle}</h1>
     <p>{s.intro}</p>
   </header>
@@ -103,7 +112,10 @@
       {#if manifest.notes.length}
         <section class="notes" aria-labelledby="pk-notes-title">
           <h2 id="pk-notes-title">{s.notesTitle}</h2>
-          <ul>
+          <!-- The refresh writes its notes in English for the people who maintain the map, so they
+               stay English in every language, marked for screen readers (issue #49). -->
+          {#if !isSourceLocale()}<p class="muted small">{s.notesInEnglish}</p>{/if}
+          <ul lang="en" dir="ltr">
             {#each manifest.notes as note, i (i)}<li>{note}</li>{/each}
           </ul>
         </section>
@@ -146,8 +158,14 @@
   .back {
     font-weight: 600;
   }
-  .menu {
-    margin-left: auto;
+  .tools {
+    display: flex;
+    gap: 8px;
+    margin-inline-start: auto;
+  }
+  header :global(.offer),
+  header :global(.translation-note) {
+    flex-basis: 100%;
   }
   .summary {
     display: flex;
@@ -164,18 +182,18 @@
   .source {
     padding: 12px 14px;
     border: 1px solid var(--pk-surface-2);
-    border-left: 6px solid var(--pk-border);
+    border-inline-start: 6px solid var(--pk-border);
     border-radius: var(--pk-radius);
   }
   .source[data-status='ok'] {
-    border-left-color: var(--pk-ok-ink);
+    border-inline-start-color: var(--pk-ok-ink);
   }
   .source[data-status='stale'] {
-    border-left-color: #b07d12;
+    border-inline-start-color: #b07d12;
   }
   .source[data-status='failing'],
   .source[data-status='unknown'] {
-    border-left-color: var(--pk-fail-ink);
+    border-inline-start-color: var(--pk-fail-ink);
   }
   .title {
     display: flex;
@@ -210,7 +228,7 @@
   }
   .details {
     margin: 4px 0 6px;
-    padding-left: 18px;
+    padding-inline-start: 18px;
     font-size: 0.925rem;
   }
   .meta {
@@ -228,7 +246,7 @@
     font-size: 1.1rem;
   }
   .notes ul {
-    padding-left: 20px;
+    padding-inline-start: 20px;
   }
   footer {
     margin-top: 24px;

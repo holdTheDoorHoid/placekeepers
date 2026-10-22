@@ -72,7 +72,7 @@
     z-index: 1;
     margin: 4px 0;
     padding: 4px 8px;
-    border-left: 3px solid var(--pk-note-ink);
+    border-inline-start: 3px solid var(--pk-note-ink);
     background: var(--pk-note-bg);
     color: var(--pk-note-ink);
     font-size: 0.875rem;
@@ -93,7 +93,7 @@
   }
   ul {
     margin: 0 0 2px;
-    padding-left: 1.2em;
+    padding-inline-start: 1.2em;
   }
   .checked {
     font-size: 0.8rem;

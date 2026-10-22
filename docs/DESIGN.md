@@ -74,7 +74,8 @@ for research and docs, Opus agents for engineering.
 8. **Warn, don't block; design misuse out.** Risky facts appear with context that points toward
    protective, lawful uses.
 9. **Plain words first.** Every screen leads with a sentence a neighbor understands. Detail is one tap
-   away. All interface text lives in one strings file so translation (Spanish first) is possible.
+   away. All interface text lives in one strings file, the English source of every translation:
+   Spanish and eight more languages (owner, 2026-10-21; section 8.3, "Languages").
 10. **Low upkeep.** Static site, scheduled pipeline, no servers, no accounts, no paid services, no
     tracking.
 
@@ -1470,6 +1471,31 @@ Every source has an adapter, a registry entry, a license note, an expected caden
 - No analytics, no cookies, no accounts. Saved lists live in browser storage with export and import.
 - Accessibility: WCAG AA contrast, colorblind safe palettes, keyboard navigation, and the ranked list
   as an accessible alternative to the map.
+- Languages (M5.5, issue #49, built 2026-10-21): English and the nine languages the owner chose,
+  Spanish, Chinese in simplified characters, Vietnamese, Russian, Portuguese (Brazil), Haitian
+  Creole, Khmer, French and Arabic. English stays the source: `web/src/strings.ts`,
+  `registry/*.yaml` and `content/*.md`; each language has its own catalog
+  (`web/src/i18n/locales/<code>.ts`, mirroring the strings key for key), registry text
+  (`registry/i18n/<code>.yaml`, by id) and pages (`content/<code>/`), so translators never share a
+  file. A language button in every top bar and in Settings switches the site and reloads it; the
+  choice is remembered in this browser and carried in links as `?lang=`. A first visit from a
+  browser set to one of the languages is asked, in that language, whether to switch, and nothing
+  changes until the visitor answers. Every page decides its language before it draws
+  (`web/src/i18n/boot.ts`), writes the catalog into the strings, and downloads only its own
+  language. A missing translation shows the English, marked with `lang="en"` so screen readers
+  switch voice; plurals come from `Intl.PluralRules`, and dates and numbers from `Intl` in the
+  visitor's language, in Philadelphia time (Haitian Creole, which Intl lacks, has its own month
+  names). Arabic sets `dir="rtl"`: the styles use start and end rather than left and right, so the
+  page mirrors, while the map, its controls and the charts keep their directions; English inside an
+  Arabic page reads left to right, and addresses and names keep their order. Chinese, Khmer and
+  Arabic use the fonts already on the visitor's device, never a font server. Until a native speaker
+  has checked a language, its pages say it was translated with the help of AI, with a link to the
+  "Fix a translation" form. Downloads keep English column names, with a translated note saying so.
+  The owner flags and owner type reason of the weekly copy are written again in the page's language
+  from the codes beside them; the refresh's notes for maintainers and the City's own words stay as
+  written (docs/CONTRACTS.md section 10). A language is listed in the picker once its `ready` flag
+  is on (`web/src/i18n/languages.ts`); before that, `?lang=` opens it for checking.
+  docs/TRANSLATING.md explains how to translate and check a language.
 
 ### 8.4 Automation and health
 

@@ -199,7 +199,7 @@
     gap: 4px 12px;
     margin: 0 0 8px;
     padding: 8px 10px;
-    border-left: 4px solid var(--pk-accent);
+    border-inline-start: 4px solid var(--pk-accent);
     border-radius: var(--pk-radius);
     background: var(--pk-accent-soft);
     font-size: 0.9rem;

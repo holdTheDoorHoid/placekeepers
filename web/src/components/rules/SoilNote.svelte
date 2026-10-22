@@ -18,7 +18,7 @@
   .soil-note {
     margin: 4px 0 8px;
     padding: 6px 10px;
-    border-left: 3px solid var(--pk-stale-ink);
+    border-inline-start: 3px solid var(--pk-stale-ink);
     border-radius: var(--pk-radius);
     background: var(--pk-stale-bg);
   }

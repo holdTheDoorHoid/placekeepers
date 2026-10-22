@@ -5,6 +5,7 @@
 // ignored (newer pipelines may add some), wrongly typed values become "unknown" with a
 // problem noted, and only a missing or unreadable file, or a schema it cannot read, stops it.
 
+import { asEnglish } from '../i18n/marks.ts';
 import { parseWatchSummary, type WatchSummary } from '../displacement/watch.ts';
 import type { Layer, Registry, Source } from '../registry/types.ts';
 import { formatDate, formatNumber, strings } from '../strings.ts';
@@ -429,7 +430,7 @@ export function describeStatus(row: StatusRow): StatusText {
     if (e.rows !== null) details.push(s.rows(e.rows));
     const newest = formatDate(e.newest_record);
     if (newest) details.push(s.newest(newest));
-    if (e.message) details.push(s.message(e.message));
+    if (e.message) details.push(s.message(asEnglish(e.message)));
   }
   return { label: s.statusLabel[row.status], summary, details };
 }
@@ -456,7 +457,7 @@ function describePictureStatus(row: StatusRow): StatusText {
     const attempt = formatDate(e.last_attempt);
     if (attempt && e.last_attempt !== e.last_success) details.push(s.lastAttempt(attempt));
     if (e.rows !== null) details.push(h.services(e.rows));
-    if (e.message) details.push(s.message(e.message));
+    if (e.message) details.push(s.message(asEnglish(e.message)));
   }
   return { label: s.statusLabel[row.status], summary, details };
 }

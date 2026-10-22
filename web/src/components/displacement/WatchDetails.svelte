@@ -89,7 +89,7 @@
   .signs,
   .links {
     margin: 0 0 4px;
-    padding-left: 18px;
+    padding-inline-start: 18px;
   }
   .signs li {
     margin-bottom: 4px;
@@ -99,6 +99,6 @@
   }
   .parts {
     margin: 2px 0 0;
-    padding-left: 18px;
+    padding-inline-start: 18px;
   }
 </style>

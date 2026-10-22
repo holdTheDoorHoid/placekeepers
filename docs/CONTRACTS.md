@@ -396,6 +396,40 @@ the City for nothing and lot pages show the weekly snapshot, labeled with its da
 1860 atlas, whose tiles come from the City's ArcGIS tile server (`https://tiles.arcgis.com`) only
 once someone turns such a layer on, and never while this option is off.
 
+### `registry/i18n/<code>.yaml`: registry text in other languages
+
+Added 2026-10-21 by M5.5 (issue #49). One file per language (`es`, `zh-Hans`, `vi`, `ru`, `pt-BR`,
+`ht`, `km`, `fr`, `ar`), holding translations of the visitor facing words of the registry by id.
+Only the web app reads them; the pipeline never does (it reads `registry/*.yaml` by name, and a
+folder is not a registry file). English in `registry/*.yaml` stays the source: a field a file
+leaves out shows the English.
+
+```yaml
+layers:
+  vacant_parcels:
+    label: ...
+    settings:
+      min_confidence:
+        label: ...
+        options:
+          "3": ...
+routes:
+  garden_agreement:
+    steps: [...]                      # as many as the English route has
+    links:
+      "https://www.phila.gov/...": ...  # keyed by the link's address
+```
+
+The fields allowed are `groups` (`label`, `description`), `sources` (`name`, `publisher`),
+`layers` (`label`, `description`, settings by id with `label` and options by value), `lenses`
+(`label`, `description`, factors by id with `label` and `explain`, presets by id with `label`),
+`suggestions` (`label`, `summary`, `cost`), `routes` (`label`, `who`, `warning`, `cost`,
+`timeline`, `steps`, links by address), `partners` (`one_line`) and `options` (`label`,
+`description`, options by value); `web/src/i18n/registry-text.ts` holds the list. An id or field the
+registry does not have, or a list of steps of another length, is left out by the build with a
+warning and fails `web/tests/i18n.test.ts`. Renaming an id therefore means renaming it in these
+files too. docs/TRANSLATING.md explains them for translators.
+
 ## 2. Published data layout
 
 The pipeline writes everything under one data root (`--out`, default `build/data`). The site serves it
@@ -2139,3 +2173,23 @@ series survives from week to week; if the saved snapshots are ever lost, it star
 
 Without the `land_conveyances` snapshot the file is not written and the build notes say so; the page
 then says the numbers are not published yet.
+
+## 10. Text in other languages
+
+Added 2026-10-21 by M5.5 (issue #49). No published file changed shape: every English field the
+pipeline writes stays, and the English site uses it as before. On a page in another language the
+web app writes these words itself, from codes and values already published beside them:
+
+| Published English | On a page in another language | What the pipeline must keep |
+|---|---|---|
+| `owner.flags[].text` (section 6) | Written again from the flag's `id` and `data` with the page's templates (`web/src/dossier/flags.ts`, `flagTextFromData`); fast resales are dated against the build's `generated_at`. Where the data cannot say it, the English text shows, marked as English. | Every flag's `data` as section 6 lists it, complete; a new flag needs a template in `web/src/strings.ts` (`dossier.flags`) |
+| `owner.type_reason` (section 6) | Worked out again from `owner.names` and `owner.city_owned.agency` by the pipeline's own rule (`web/src/dossier/owners.ts`, `ownerTypeWithAgency`), used when it gives the same `type`, else the English, marked | The names and agency it was worked out from, and the rule shared with `web/src/dossier/owners.ts` (checked against `pipeline/tests/fixtures/wording_parity.json`) |
+| `dossiers/common.json`: `flags.<id>.careful`, `next_step`, link labels, `notices.deed_fraud` | Not used: the page's own translated words for each flag id and the notice; the routes it names still add their links | The ids |
+| `manifest.json` `notes` and `sources.<id>.message` (section 3) | Shown in English, marked as English, under a line saying the refresh writes its notes for the people who maintain the map | Nothing new |
+| `manifest.json` `displacement.mva` | Shown as written (the report's title), marked as English | Nothing new |
+| `tables/land_bank.json` status key `No status` (section 9) | A translated label (`landBank.noStatus`) | The key `No status` for a record with no status |
+| Place names with words of ours in tile properties: stops' "(far side)" and similar, shelters' "corner", memorials' "block of" (section 4) | Shown as written, inside the name | Nothing new; giving these words codes would be a later change |
+
+Downloads (CSV and GeoJSON) keep their English column names in every language and add a translated
+line to their notes saying so; their values are in the page's language.
+

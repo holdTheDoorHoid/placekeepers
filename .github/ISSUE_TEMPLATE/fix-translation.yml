@@ -1,0 +1,51 @@
+name: Fix a translation
+description: Tell us about words on the site that read wrong, or mean something else, in your language.
+title: "Translation: "
+labels: ["translation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping. The site's translations were made with the help of AI and have not
+        yet been checked by a native speaker, so they can read wrong or say something we did not
+        mean. You can write this form in your own language.
+
+        Anyone can read a GitHub issue, so please do not write your address or anything else
+        about yourself.
+  - type: input
+    id: language
+    attributes:
+      label: Language
+      description: The language of the page. The site fills this in when you come from its link.
+      placeholder: "Spanish (es)"
+    validations:
+      required: true
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      description: Which page, or which part of the map (for example "a lot page" or "Settings").
+      placeholder: "/placekeepers/about/"
+    validations:
+      required: false
+  - type: textarea
+    id: wrong
+    attributes:
+      label: The words that are wrong
+      description: Copy the words as the site shows them, if you can.
+    validations:
+      required: true
+  - type: textarea
+    id: better
+    attributes:
+      label: Better words
+      description: How it should read in your language.
+    validations:
+      required: false
+  - type: textarea
+    id: meaning
+    attributes:
+      label: What it should mean, if you can say it in English
+      description: Optional. It helps us check the fix with other speakers.
+    validations:
+      required: false

@@ -13,6 +13,10 @@
   import DossierPrint from './components/dossier/DossierPrint.svelte';
   import FieldView from './components/field/FieldView.svelte';
   import Header from './components/Header.svelte';
+  import LanguageOffer from './components/language/LanguageOffer.svelte';
+  import TranslationNote from './components/language/TranslationNote.svelte';
+  import { currentLocale } from './i18n/locale.ts';
+  import { plainText } from './i18n/marks.ts';
   import MapView from './components/MapView.svelte';
   import SettingsDrawer from './components/SettingsDrawer.svelte';
 
@@ -64,7 +68,7 @@
   // The browser tab and a printed page carry the lot's address.
   $effect(() => {
     const title = store.dossierView?.title;
-    document.title = title ? `${title} | ${strings.app.name}` : strings.app.name;
+    document.title = plainText(title ? `${title} | ${strings.app.name}` : strings.app.name);
   });
 
   // An open lot page knows its address: cards, the ranked list and saved lists can use it too.
@@ -117,6 +121,15 @@
     noteHidden = true;
     writeItem(NOTE_KEY, 'hidden');
   }
+
+  // The note that a language was translated with the help of AI hides the same way, once per
+  // language; Settings always shows it again, under Language.
+  const aiNoteKey = `${NOTE_KEY}-ai-${currentLocale()}`;
+  let aiNoteHidden = $state(readItem(aiNoteKey) === 'hidden');
+  function hideAiNote() {
+    aiNoteHidden = true;
+    writeItem(aiNoteKey, 'hidden');
+  }
 </script>
 
 <div class="app">
@@ -130,6 +143,8 @@
     }}>{strings.app.skipToList}</a
   >
   <Header {store} onOpenSettings={() => (settingsOpen = true)}>
+    <LanguageOffer compact />
+    {#if !aiNoteHidden}<TranslationNote compact onHide={hideAiNote} />{/if}
     {#if !noteHidden}
       <div class="sample">
         {#if sample}<p role="note">{strings.app.sampleData}</p>{:else}<p role="note">
@@ -206,7 +221,7 @@
       justify-content: space-between;
     }
     .sample p {
-      text-align: left;
+      text-align: start;
     }
   }
   .stage {

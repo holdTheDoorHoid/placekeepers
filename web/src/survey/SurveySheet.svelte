@@ -184,7 +184,7 @@
   td {
     padding: 6px;
     border: 1px solid var(--pk-surface-2);
-    text-align: left;
+    text-align: start;
     vertical-align: top;
   }
   thead th {
@@ -202,7 +202,7 @@
   }
   .c-num {
     width: 2.5em;
-    text-align: right;
+    text-align: end;
   }
   .c-yn,
   .c-rp {
@@ -222,7 +222,7 @@
     display: inline-flex;
     align-items: center;
     gap: 3px;
-    margin-right: 6px;
+    margin-inline-end: 6px;
     min-height: 28px;
     cursor: pointer;
   }
@@ -279,7 +279,8 @@
     tr {
       position: relative;
       margin: 0 0 10px;
-      padding: 8px 10px 10px 40px;
+      padding: 8px 10px 10px;
+      padding-inline-start: 40px;
       border: 1px solid var(--pk-surface-2);
       border-radius: var(--pk-radius);
     }
@@ -291,7 +292,7 @@
     }
     .c-num {
       position: absolute;
-      left: 8px;
+      inset-inline-start: 8px;
       top: 8px;
       width: 26px;
       font-weight: 700;
@@ -308,7 +309,7 @@
     }
     .tick {
       min-height: 36px;
-      margin-right: 12px;
+      margin-inline-end: 12px;
     }
     .tick .short {
       display: none;
@@ -331,6 +332,11 @@
       margin: 0;
       font: 8.5pt/1.25 var(--pk-font);
       color: #000;
+    }
+    /* Khmer and Arabic need taller lines (app.css), on paper too. */
+    :global(:root:lang(km)) .part,
+    :global(:root:lang(ar)) .part {
+      line-height: 1.55;
     }
     .skip {
       display: none;
@@ -416,7 +422,7 @@
     }
     .tick {
       min-height: 0;
-      margin-right: 3px;
+      margin-inline-end: 3px;
       gap: 1px;
     }
     .tick input {

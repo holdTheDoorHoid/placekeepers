@@ -264,7 +264,7 @@
     font-size: 0.875rem;
   }
   .num {
-    text-align: right;
+    text-align: end;
     font-variant-numeric: tabular-nums;
   }
   .nowrap {
@@ -275,7 +275,7 @@
   }
   .story {
     margin: 0 0 8px;
-    padding-left: 1.2em;
+    padding-inline-start: 1.2em;
   }
   .story li {
     margin-bottom: 4px;
@@ -328,15 +328,16 @@
     display: grid;
     grid-template-columns: 4.2em 1fr;
     gap: 8px;
-    padding: 4px 0 4px 8px;
-    border-left: 3px solid var(--pk-surface-2);
+    padding: 4px 0;
+    padding-inline-start: 8px;
+    border-inline-start: 3px solid var(--pk-surface-2);
   }
   .event.kind-deed {
-    border-left-color: var(--pk-accent);
+    border-inline-start-color: var(--pk-accent);
   }
   .event.kind-demolition,
   .event.kind-notice {
-    border-left-color: var(--pk-stale-ink);
+    border-inline-start-color: var(--pk-stale-ink);
   }
   .date {
     color: var(--pk-muted);
@@ -353,11 +354,11 @@
   }
   .items {
     margin: 2px 0 0;
-    padding-left: 1.1em;
+    padding-inline-start: 1.1em;
   }
   .items .status {
     display: inline;
-    margin-left: 6px;
+    margin-inline-start: 6px;
   }
   .open {
     display: inline-block;
@@ -370,7 +371,7 @@
   }
   .li-summary {
     margin: 0 0 6px;
-    padding-left: 1.2em;
+    padding-inline-start: 1.2em;
     font-size: 0.9rem;
   }
   caption {

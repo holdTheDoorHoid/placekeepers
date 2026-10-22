@@ -2,13 +2,17 @@
 // file to HTML, and serves the result to the app as the module "virtual:placekeepers/content".
 // Markdown parsing happens here, in Node, so the browser never downloads a markdown parser; the
 // client bundle only ever gets plain HTML strings.
+//
+// Pages in other languages live in content/<code>/<slug>.md with the same file names, and are
+// served one language at a time by plugins/translations.ts through readContentPages(dir, code).
 
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { marked } from 'marked';
 import type { Plugin } from 'vite';
 import { REMOVAL_EMAIL } from '../src/content/removal-email.ts';
+import type { Catalog } from '../src/i18n/catalog.ts';
 import { strings } from '../src/strings.ts';
 import { findDashViolations } from '../src/style/no-dashes.ts';
 
@@ -23,14 +27,36 @@ const RESOLVED_ID = '\0' + VIRTUAL_ID;
 const REMOVAL_EMAIL_TOKEN = '{{REMOVAL_EMAIL}}';
 // Until the address exists, no text promises one (docs/VERIFICATION.md, decision D7): the page says
 // a private address is coming soon and that meanwhile a request can be made in a GitHub issue,
-// which anyone can read.
-const REMOVAL_ISSUE_URL = 'https://github.com/holdTheDoorHoid/placekeepers/issues/new?template=memorial-removal.yml';
-const REMOVAL_EMAIL_FALLBACK = `A private email address for these requests is coming soon. Until it exists, the map shows no names at all, and you can ask in a [GitHub issue](${REMOVAL_ISSUE_URL}). Anyone can read a GitHub issue, so write only the memorial's id or where it is: you do not need to give a name, a reason or who you are.`;
+// which anyone can read. The sentences live in web/src/strings.ts (content.removalEmail and
+// content.removalComingSoon), so each language's catalog can translate them.
+export const REMOVAL_ISSUE_URL = 'https://github.com/holdTheDoorHoid/placekeepers/issues/new?template=memorial-removal.yml';
 
-function renderRemovalEmail(): string {
-  return REMOVAL_EMAIL
-    ? `Email us at [${REMOVAL_EMAIL}](mailto:${REMOVAL_EMAIL}). We do not use a public form for this, because a removal request is personal and private.`
-    : REMOVAL_EMAIL_FALLBACK;
+/** The words a page in another language takes from its catalog, English where it has none. */
+export interface PageWords {
+  tableLabel: string;
+  removalEmail: (email: string) => string;
+  removalComingSoon: (issueUrl: string) => string;
+}
+
+const ENGLISH_WORDS: PageWords = {
+  tableLabel: strings.content.tableLabel,
+  removalEmail: strings.content.removalEmail,
+  removalComingSoon: strings.content.removalComingSoon,
+};
+
+/** A language's page words from its catalog; English words are wrapped to say they are English. */
+export function pageWords(catalog: Catalog | null): PageWords {
+  const own = catalog?.content;
+  const english = (text: string) => `<span lang="en">${text}</span>`;
+  return {
+    tableLabel: own?.tableLabel ?? ENGLISH_WORDS.tableLabel,
+    removalEmail: own?.removalEmail ?? ((email) => english(ENGLISH_WORDS.removalEmail(email))),
+    removalComingSoon: own?.removalComingSoon ?? ((url) => english(ENGLISH_WORDS.removalComingSoon(url))),
+  };
+}
+
+function renderRemovalEmail(words: PageWords): string {
+  return REMOVAL_EMAIL ? words.removalEmail(REMOVAL_EMAIL) : words.removalComingSoon(REMOVAL_ISSUE_URL);
 }
 
 /**
@@ -39,28 +65,36 @@ function renderRemovalEmail(): string {
  * arrow keys scroll it too (WCAG 2.1.1), and it is named for screen readers: a group rather than a
  * landmark, so pages with many tables do not fill the list of landmarks.
  */
-export function wrapTables(html: string): string {
+export function wrapTables(html: string, label: string = ENGLISH_WORDS.tableLabel): string {
   return html
-    .replaceAll('<table>', `<div class="table-scroll" tabindex="0" role="group" aria-label="${strings.content.tableLabel}"><table>`)
+    .replaceAll('<table>', `<div class="table-scroll" tabindex="0" role="group" aria-label="${label.replaceAll('"', '&quot;')}"><table>`)
     .replaceAll('</table>', '</table></div>');
 }
 
-function markdownFiles(dir: string): string[] {
+/** The content page files in a folder: every Markdown file but the README. */
+export function markdownFiles(dir: string): string[] {
+  if (!existsSync(dir)) return [];
   return readdirSync(dir)
     .filter((name) => name.endsWith('.md') && name !== 'README.md')
     .sort();
 }
 
-/** Reads, style checks, and renders every content page. Throws one error listing every problem. */
-export function readContentPages(dir: string = CONTENT_DIR): Record<string, string> {
+/**
+ * Reads, style checks, and renders every content page, in English, or with `language` the pages
+ * in content/<code>/ with that language's words. Throws one error listing every problem.
+ */
+export function readContentPages(dir: string = CONTENT_DIR, language?: { code: string; words: PageWords }): Record<string, string> {
   const pages: Record<string, string> = {};
   const problems: string[] = [];
+  const folder = language ? resolve(dir, language.code) : dir;
+  const words = language?.words ?? ENGLISH_WORDS;
+  const shown = language ? `content/${language.code}/` : 'content/';
 
-  for (const name of markdownFiles(dir)) {
+  for (const name of markdownFiles(folder)) {
     const slug = name.slice(0, -3);
-    const raw = readFileSync(resolve(dir, name), 'utf8').replaceAll(REMOVAL_EMAIL_TOKEN, renderRemovalEmail());
-    for (const problem of findDashViolations(raw)) problems.push(`content/${name} has a ${problem}`);
-    pages[slug] = wrapTables(marked.parse(raw, { async: false }) as string);
+    const raw = readFileSync(resolve(folder, name), 'utf8').replaceAll(REMOVAL_EMAIL_TOKEN, renderRemovalEmail(words));
+    for (const problem of findDashViolations(raw)) problems.push(`${shown}${name} has a ${problem}`);
+    pages[slug] = wrapTables(marked.parse(raw, { async: false }) as string, words.tableLabel);
   }
 
   if (problems.length) {

@@ -29,7 +29,7 @@
 <style>
   .streets {
     margin: 0;
-    padding-left: 18px;
+    padding-inline-start: 18px;
   }
   .streets li {
     margin-bottom: 6px;
@@ -41,7 +41,7 @@
     display: inline-block;
     width: 18px;
     height: 6px;
-    margin-right: 6px;
+    margin-inline-end: 6px;
     vertical-align: middle;
     border-radius: 3px;
   }

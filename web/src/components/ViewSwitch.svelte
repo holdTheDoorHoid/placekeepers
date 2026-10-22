@@ -45,7 +45,7 @@
     cursor: pointer;
   }
   label + label {
-    border-left: 1px solid var(--pk-accent);
+    border-inline-start: 1px solid var(--pk-accent);
   }
   label.active {
     background: var(--pk-accent);

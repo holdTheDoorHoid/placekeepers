@@ -108,7 +108,7 @@
   }
   output {
     min-width: 3ch;
-    text-align: right;
+    text-align: end;
   }
   .range-row input {
     flex: 1 1 auto;

@@ -3,6 +3,7 @@
   // with a lot page open, only this is printed.
   import type { DossierView } from '../../dossier/build.ts';
   import { printModel } from '../../dossier/print.ts';
+  import { currentLanguage, isSourceLocale } from '../../i18n/locale.ts';
   import { strings } from '../../strings.ts';
 
   let { view, now = new Date() }: { view: DossierView; now?: Date } = $props();
@@ -107,6 +108,8 @@
 
   <footer>
     <p><strong>{m.notLegalAdvice}</strong></p>
+    <!-- A printed page in another language says how it was translated, like the screen (issue #49). -->
+    {#if !isSourceLocale() && !currentLanguage().reviewed}<p class="meta">{strings.language.aiNote}</p>{/if}
   </footer>
 </article>
 
@@ -114,6 +117,11 @@
   .print-sheet {
     font: 9pt/1.25 var(--pk-font);
     color: #000;
+  }
+  /* Khmer and Arabic need taller lines (app.css), on paper too. */
+  :global(:root:lang(km)) .print-sheet,
+  :global(:root:lang(ar)) .print-sheet {
+    line-height: 1.55;
   }
   .brand {
     margin: 0;
@@ -141,7 +149,7 @@
   ul,
   ol {
     margin: 0 0 3px;
-    padding-left: 1.3em;
+    padding-inline-start: 1.3em;
   }
   .meta {
     color: #333;
@@ -160,14 +168,14 @@
     font-size: 8pt;
   }
   caption {
-    text-align: left;
+    text-align: start;
     font-weight: 600;
   }
   th,
   td {
     padding: 2px 4px;
     border-bottom: 1px solid #ccc;
-    text-align: left;
+    text-align: start;
     vertical-align: top;
   }
   .sources {

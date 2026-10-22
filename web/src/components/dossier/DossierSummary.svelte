@@ -64,7 +64,7 @@
   .flood {
     margin-top: 10px;
     padding: 6px 10px;
-    border-left: 4px solid #2171b5;
+    border-inline-start: 4px solid #2171b5;
     border-radius: var(--pk-radius);
     background: var(--pk-surface);
   }
@@ -76,7 +76,7 @@
   }
   .links {
     margin: 0 0 4px;
-    padding-left: 1.2em;
+    padding-inline-start: 1.2em;
   }
   .links li {
     margin: 2px 0;

@@ -9,6 +9,7 @@
 // protective). A place knows its watch area from `dw` on its tile (lots and SEPTA's stops) or
 // `displacement.signs` in its lot dossier, the same bits as the area's `w`.
 
+import { asEnglish } from '../i18n/marks.ts';
 import { displacementCaution } from '../config/suggestions.ts';
 import type { Manifest } from '../data/manifest.ts';
 import type { Registry, Route } from '../registry/types.ts';
@@ -402,7 +403,9 @@ export function describeArea(properties: Record<string, unknown>, summary: Watch
     id: 'mva',
     holds: (bits & SIGNS.mva) !== 0,
     title: d.signTitle.mva,
-    text: mb > 0 ? d.mvaText(mr, mb, summary?.mva ?? null) : d.mvaNone,
+    // The edition's name is the title of the City's report, as the pipeline copies it from the
+    // registry: kept in English, marked, on a page in another language (issue #49).
+    text: mb > 0 ? d.mvaText(mr, mb, summary?.mva ? asEnglish(summary.mva) : null) : d.mvaNone,
   });
   // Rent burden (owner, 2026-10-09), with its margin of error beside it.
   const rb = num(properties.rb);

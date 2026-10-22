@@ -32,55 +32,58 @@ export function matchForm(name: string | null | undefined): string {
   return plain.split(/\s+/).filter(Boolean).join(' ');
 }
 
+/** A public body's key in strings.dossier.ownerType.publicBodies, where its name is written. */
+type PublicBody = keyof typeof strings.dossier.ownerType.publicBodies;
+
 interface PublicPattern {
   type: OwnerType;
   regex: RegExp;
-  label: string;
+  label: PublicBody;
 }
 
-const P = (type: OwnerType, pattern: string, label: string): PublicPattern => ({ type, regex: new RegExp(pattern), label });
+const P = (type: OwnerType, pattern: string, label: PublicBody): PublicPattern => ({ type, regex: new RegExp(pattern), label });
 
 const PUBLIC_PATTERNS: PublicPattern[] = [
-  P('land_bank', String.raw`\bLAND BANK\b`, 'the Philadelphia Land Bank'),
+  P('land_bank', String.raw`\bLAND BANK\b`, 'land_bank'),
   // Also the misspellings OPA carries ("REDEVEL AUTH OF PHILA", "REDEVLOPMENT AUTHORITY").
-  P('redevelopment_authority', String.raw`\bREDEV\w* AUTH|\bPHILA(DELPHIA)? REDEVELOP`, 'the Philadelphia Redevelopment Authority'),
-  P('housing_authority', String.raw`\bPHILA(DELPHIA)? HOUSING AUTH`, 'the Philadelphia Housing Authority'),
-  P('housing_authority', String.raw`\bHOUSING AUTH`, 'a housing authority'),
-  P('other_public', String.raw`\bPHDC\b|\bPHILA(DELPHIA)? HOUSING DEV`, 'the Philadelphia Housing Development Corporation (PHDC)'),
-  P('other_public', String.raw`^PHILA(DELPHIA)? HOUSING$`, 'the Philadelphia Housing Authority or PHDC (the name is cut short)'),
-  P('city', String.raw`\bCITY OF PHI?LA|\bPHILA(DELPHIA)? CITY OF\b|\bFAIRMOUNT PARK COMM`, 'the City of Philadelphia'),
+  P('redevelopment_authority', String.raw`\bREDEV\w* AUTH|\bPHILA(DELPHIA)? REDEVELOP`, 'redevelopment_authority'),
+  P('housing_authority', String.raw`\bPHILA(DELPHIA)? HOUSING AUTH`, 'pha'),
+  P('housing_authority', String.raw`\bHOUSING AUTH`, 'housing_authority'),
+  P('other_public', String.raw`\bPHDC\b|\bPHILA(DELPHIA)? HOUSING DEV`, 'phdc'),
+  P('other_public', String.raw`^PHILA(DELPHIA)? HOUSING$`, 'pha_or_phdc'),
+  P('city', String.raw`\bCITY OF PHI?LA|\bPHILA(DELPHIA)? CITY OF\b|\bFAIRMOUNT PARK COMM`, 'city'),
   P(
     'other_public',
     String.raw`\bSCHOOL DIST(RICT)? OF PHILA|\bPHILA(DELPHIA)? SCHOOL DIST|\bBOARD OF (PUBLIC )?EDUCATION\b`,
-    'the School District of Philadelphia',
+    'school_district',
   ),
-  P('other_public', String.raw`\bCOMM(UNITY)? COLLEGE OF PHIL`, 'the Community College of Philadelphia'),
-  P('other_public', String.raw`\bSEPTA\b|\bSOUTHEASTERN PENN\w* TRANS`, 'SEPTA'),
+  P('other_public', String.raw`\bCOMM(UNITY)? COLLEGE OF PHIL`, 'community_college'),
+  P('other_public', String.raw`\bSEPTA\b|\bSOUTHEASTERN PENN\w* TRANS`, 'septa'),
   P(
     'other_public',
     String.raw`\bCOMMONWEALTH (OF )?P(ENN\w*|A)\b|\bCOMM OF PENN|\bGENERAL STATE AUTH|\bSTATE OF PENN` + String.raw`|\bPENNDOT\b|\bDEP(AR)?T(MENT)? OF TRANSP`,
-    'the Commonwealth of Pennsylvania',
+    'commonwealth',
   ),
-  P('other_public', String.raw`\bHOUSING FINANCE AGENCY\b|\bPHFA\b`, 'the Pennsylvania Housing Finance Agency'),
-  P('other_public', String.raw`\bUNITED STATES OF AMERICA\b|\bUNITED STATES POSTAL|\bU S POSTAL|^U S A$`, 'the United States government'),
-  P('other_public', String.raw`\bSEC(RETARY)? OF HOUSING|\bHOUSING (AND|&) URBAN DEV`, 'the U.S. Department of Housing and Urban Development'),
-  P('other_public', String.raw`\bVET(ERANS?)? AFF|\bVETERANS ADMIN`, 'the U.S. Department of Veterans Affairs'),
+  P('other_public', String.raw`\bHOUSING FINANCE AGENCY\b|\bPHFA\b`, 'phfa'),
+  P('other_public', String.raw`\bUNITED STATES OF AMERICA\b|\bUNITED STATES POSTAL|\bU S POSTAL|^U S A$`, 'united_states'),
+  P('other_public', String.raw`\bSEC(RETARY)? OF HOUSING|\bHOUSING (AND|&) URBAN DEV`, 'hud'),
+  P('other_public', String.raw`\bVET(ERANS?)? AFF|\bVETERANS ADMIN`, 'veterans_affairs'),
   // OPA writes this one many ways, often cut short: "PHILA AUTH IND DEV", "PHILA AUTH & IND DEV",
   // "PHILADELPHIA AUTHORITY FO".
   P(
     'other_public',
     String.raw`\bAUTH(ORITY)? FOR IND(USTRIAL)? DEV|\bP A I D\b|\bPHILA(DELPHIA)? AUTH(ORITY)?\b`,
-    'the Philadelphia Authority for Industrial Development',
+    'paid',
   ),
-  P('other_public', String.raw`\bPHILA(DELPHIA)? REG\w* POR`, 'the Philadelphia Regional Port Authority'),
-  P('other_public', String.raw`\bOFFICE OF THE DISTRICT AT|\bDISTRICT ATTORNEY`, "the Philadelphia District Attorney's Office"),
+  P('other_public', String.raw`\bPHILA(DELPHIA)? REG\w* POR`, 'port_authority'),
+  P('other_public', String.raw`\bOFFICE OF THE DISTRICT AT|\bDISTRICT ATTORNEY`, 'district_attorney'),
   P(
     'other_public',
     String.raw`\bPARKING AUTH|\bPORT AUTH|\bREGIONAL PORT\b|\bCONVENTION CENTER AUTH|\bTURNPIKE COMM` +
       String.raw`|\bMUNICIPAL AUTH|\bIND(USTRIAL)? DEV(ELOPMENT)? AUTH|\bSCHOOL (BLDG|BUILDING) AUTH`,
-    'a public authority',
+    'public_authority',
   ),
-  P('other_public', String.raw`\bGAS WORKS\b`, 'Philadelphia Gas Works'),
+  P('other_public', String.raw`\bGAS WORKS\b`, 'pgw'),
 ];
 
 const FOR_PROFIT = /\b(L ?L ?C|P ?L ?L ?C|L ?L ?L ?P|L ?L ?P|LTD|LIMITED|GP)\b|\b(LP)\b|\b(L P|L ?L)$/;
@@ -162,7 +165,7 @@ export function ownerTypeFromNames(names: string[]): OwnerTypeResult {
   const joined = matchForm(names.filter(Boolean).join(' '));
   if (!joined) return { type: 'unknown', reason: r.noName };
   for (const pattern of PUBLIC_PATTERNS) {
-    if (pattern.regex.test(joined)) return { type: pattern.type, reason: r.publicName(pattern.label) };
+    if (pattern.regex.test(joined)) return { type: pattern.type, reason: r.publicName(r.publicBodies[pattern.label]) };
   }
   let found = FOR_PROFIT.exec(joined);
   if (found) return { type: 'company', reason: markerReason(firstGroup(found).replace(/ /g, '')) };
@@ -175,6 +178,27 @@ export function ownerTypeFromNames(names: string[]): OwnerTypeResult {
   const words = plain.split(' ').filter((w) => w && w !== '&' && w !== 'AND');
   if (UNKNOWN_NAME.test(joined) || /\d/.test(plain) || words.length < 2) return { type: 'unknown', reason: r.unclear };
   return { type: 'individual', reason: r.individual };
+}
+
+/** The City's list of public property names these agencies as owners (the pipeline's AGENCY_TYPES). */
+const AGENCY_TYPES: Record<string, OwnerType> = { PUB: 'city', PLB: 'land_bank', PRA: 'redevelopment_authority', PHDC: 'other_public' };
+
+/**
+ * The owner type as the weekly copy works it out (the pipeline's owner_type): the agency on the
+ * City's list of public property first, saying to ask which owner is current when the owner names
+ * look private; otherwise the owner names. A page in another language writes the weekly copy's
+ * reason again with this, in its own words.
+ */
+export function ownerTypeWithAgency(names: string[], agency: string | null): OwnerTypeResult {
+  const fromNames = ownerTypeFromNames(names);
+  const code = (agency ?? '').trim().toUpperCase();
+  const type = AGENCY_TYPES[code];
+  if (!type) return fromNames;
+  const o = strings.dossier.owner;
+  const r = strings.dossier.ownerType;
+  const first = o.cityListNames(o.agencies[code] ?? code);
+  const conflict = fromNames.type === 'individual' || fromNames.type === 'company' || fromNames.type === 'nonprofit';
+  return { type, reason: conflict ? `${first} ${r.agencyConflict(r.agencyContacts[code] ?? code)}` : first };
 }
 
 function isOrganization(unit: string): boolean {

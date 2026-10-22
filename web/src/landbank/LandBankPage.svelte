@@ -22,6 +22,9 @@
   import { formatDate, formatMoney, formatNumber, sentenceCase, strings } from '../strings.ts';
   import Dialog from '../components/common/Dialog.svelte';
   import SiteNav from '../components/common/SiteNav.svelte';
+  import LanguageOffer from '../components/language/LanguageOffer.svelte';
+  import LanguagePicker from '../components/language/LanguagePicker.svelte';
+  import TranslationNote from '../components/language/TranslationNote.svelte';
   import LineChart from './LineChart.svelte';
   import StackedColumns from './StackedColumns.svelte';
   import {
@@ -111,6 +114,8 @@
   const districtMax = $derived(Math.max(1, ...districtRows.map((d) => d.n)));
 
   function statusLabel(status: string): string {
+    // The pipeline's own key for a blank status on the City's list (docs/CONTRACTS.md section 9).
+    if (status === 'No status') return t.noStatus;
     const known = strings.dossier.owner.cityStatuses[statusKey(status)];
     return known ? sentenceCase(known[0]) : plain(sentenceCase(status));
   }
@@ -145,7 +150,12 @@
 <div class="page">
   <header>
     <a class="back" href={config.siteBase}>{t.back}</a>
-    <button class="button quiet small menu" type="button" aria-haspopup="dialog" onclick={() => (menuOpen = true)}>{strings.nav.menu}</button>
+    <div class="tools">
+      <LanguagePicker />
+      <button class="button quiet small menu" type="button" aria-haspopup="dialog" onclick={() => (menuOpen = true)}>{strings.nav.menu}</button>
+    </div>
+    <LanguageOffer />
+    <TranslationNote />
     <h1>{t.pageTitle}</h1>
     <p>{t.intro}</p>
   </header>
@@ -497,8 +507,14 @@
   .back {
     font-weight: 600;
   }
-  .menu {
-    margin-left: auto;
+  .tools {
+    display: flex;
+    gap: 8px;
+    margin-inline-start: auto;
+  }
+  header :global(.offer),
+  header :global(.translation-note) {
+    flex-basis: 100%;
   }
   section {
     margin: 24px 0;
@@ -558,15 +574,17 @@
     display: block;
     height: 100%;
     min-width: 2px;
-    border-radius: 0 4px 4px 0;
+    border-radius: 0;
+    border-start-end-radius: 4px;
+    border-end-end-radius: 4px;
   }
   .bar-value {
-    text-align: right;
+    text-align: end;
     font-variant-numeric: tabular-nums;
   }
   .sources a,
   section > p > a {
-    margin-left: 4px;
+    margin-inline-start: 4px;
   }
   .visually-hidden {
     position: absolute;
