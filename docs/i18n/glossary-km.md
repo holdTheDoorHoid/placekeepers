@@ -135,3 +135,27 @@ Left as the translator wrote them, for the native reviewer to confirm or change:
 "may" (it can also read "probably"), "ការអនុញ្ញាត" (permission) for "blessing" in the memorial
 lines, "ស្លាប់" (died) for "killed", "អាចសុំបាន" (can be asked for) for "available", "ឱកាស" for
 "chance" in the flood lines, and "សន្មតថាបានចុះហត្ថលេខា" for "supposedly signed".
+
+## Catch up pass (2026-10-22)
+
+Changed by the orchestrator's instruction, after the checker's note above: "listed as available"
+now reads as the City's own status label, not as "you can ask for it". The Khmer is
+ចុះបញ្ជីថា “អាចរកបាន” (listed as “available”), with the word in curly quotes so it reads as the
+City's label, and "not available" is មិន “អាចរកបាន”. "អាចសុំបាន" (can be asked for) is no longer
+used for this. The Land Bank's own rule that it may still say no stays beside it
+(`dossier.listing.decline`).
+
+New terms for who represents you, packets, letters, flyers and projects:
+
+| English | Khmer | Note |
+|---|---|---|
+| elected officials | មន្ត្រីជាប់ឆ្នោត | |
+| ward, division (voting) | វួដ (ward), ផ្នែក (division) | loan word for ward; committee people: អ្នកតំណាងគណៈកម្មាធិការ (committee people) |
+| Council member | សមាជិក Council | City Council stays in English; at large: ទូទាំងទីក្រុង (at large) |
+| state representative, state senator | តំណាងរដ្ឋ, សមាជិកព្រឹទ្ធសភារដ្ឋ | Member of Congress: សមាជិក Congress |
+| packet | កញ្ចប់ឯកសារ | |
+| flyer | ខិត្តប័ណ្ណ | |
+| letter | លិខិត | "Dear property owner": សូមគោរពជូនម្ចាស់ទ្រព្យសម្បត្តិ |
+| a lawyer has not reviewed it, not legal advice | មេធាវីមិនទាន់បានពិនិត្យ... នៅឡើយទេ។ វាមិនមែនជាដំបូន្មានផ្នែកច្បាប់ទេ។ | the "yet" is kept (មិនទាន់ ... នៅឡើយ) |
+| projects neighbors finished | គម្រោងដែលអ្នកជិតខាងបានបញ្ចប់ | the layer, the form and the timeline use the same words |
+| elected officials' offices | ការិយាល័យ | official offices only; no personal phone or email |
