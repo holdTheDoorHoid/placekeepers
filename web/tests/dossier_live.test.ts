@@ -116,7 +116,8 @@ describe('opening a lot page', () => {
     await settle();
     expect(dossier.shard.status).toBe('found');
     expect(Object.values(dossier.live).every((p) => p.status === 'idle')).toBe(true);
-    expect(city.asked.filter((k) => !k.startsWith('dossiers/'))).toEqual([]);
+    // Only our own files: the dossier shard and, since M5.1, who represents each lot.
+    expect(city.asked.filter((k) => !k.startsWith('dossiers/') && k !== 'tables/contacts.json')).toEqual([]);
   });
 
   it('gives up on a slow City after the time limit, so the page falls back to the snapshot', async () => {

@@ -1,0 +1,191 @@
+{
+  "schema": 1,
+  "generated_at": "2026-10-04T10:03:12Z",
+  "council": {
+    "5": {
+      "name": "Jordan Sample",
+      "offices": [
+        {
+          "address": "1400 John F Kennedy Blvd, City Hall Rm 586, Philadelphia, PA 19107",
+          "phone": "215-555-0105"
+        },
+        {
+          "address": "2815 Example Ave, Philadelphia, PA 19121",
+          "phone": "215-555-0155"
+        }
+      ],
+      "website": "https://example.org/council/jordan-sample",
+      "source": "city_elected_officials",
+      "checked": "2026-10-04"
+    },
+    "7": {
+      "name": "Avery Example",
+      "offices": [
+        {
+          "address": "1400 John F Kennedy Blvd, City Hall Rm 484, Philadelphia, PA 19107",
+          "phone": "215-555-0107"
+        }
+      ],
+      "website": "https://example.org/council/avery-example",
+      "source": "city_elected_officials",
+      "checked": "2026-10-04",
+      "role": "Council President"
+    }
+  },
+  "council_at_large": [
+    {
+      "name": "Casey Sample",
+      "offices": [
+        {
+          "address": "1400 John F Kennedy Blvd, City Hall Rm 577, Philadelphia, PA 19107",
+          "phone": "215-555-0120"
+        }
+      ],
+      "website": "https://example.org/council/casey-sample",
+      "source": "city_elected_officials",
+      "checked": "2026-10-04"
+    },
+    {
+      "name": "Morgan Example",
+      "offices": [
+        {
+          "address": "1400 John F Kennedy Blvd, City Hall Rm 592, Philadelphia, PA 19107",
+          "phone": "215-555-0121"
+        }
+      ],
+      "website": "https://example.org/council/morgan-example",
+      "source": "city_elected_officials",
+      "checked": "2026-10-04"
+    }
+  ],
+  "house": {
+    "181": {
+      "name": "Riley Sample",
+      "offices": [
+        {
+          "address": "1501 N Example St., Philadelphia, PA 19121",
+          "phone": "215-555-0181"
+        }
+      ],
+      "website": "https://example.org/house/riley-sample",
+      "source": "pa_legislators",
+      "checked": "2026-10-04"
+    },
+    "195": {
+      "name": "Taylor Example",
+      "offices": [
+        {
+          "address": "2835 Sample Ave., Philadelphia, PA 19130",
+          "phone": "215-555-0195"
+        }
+      ],
+      "website": "https://example.org/house/taylor-example",
+      "source": "pa_legislators",
+      "checked": "2026-10-04"
+    },
+    "197": {
+      "name": "Quinn Sample",
+      "offices": [
+        {
+          "address": "635 W Example Ave., Philadelphia, PA 19140",
+          "phone": "215-555-0197"
+        }
+      ],
+      "website": "https://example.org/house/quinn-sample",
+      "source": "pa_legislators",
+      "checked": "2026-10-04"
+    }
+  },
+  "senate": {
+    "3": {
+      "name": "Drew Example",
+      "offices": [
+        {
+          "address": "4458 Sample Ave., Philadelphia, PA 19140",
+          "phone": "215-555-0103"
+        }
+      ],
+      "website": "https://example.org/senate/drew-example",
+      "source": "pa_legislators",
+      "checked": "2026-10-04"
+    }
+  },
+  "congress": {
+    "2": {
+      "name": "Harper Sample",
+      "offices": [
+        {
+          "address": "5675 N Example St., Suite 180, Philadelphia, PA 19120",
+          "phone": "215-555-0202"
+        },
+        {
+          "address": "1502 Longworth House Office Building Washington DC 20515",
+          "phone": "202-555-0102"
+        }
+      ],
+      "website": "https://example.org/congress/harper-sample",
+      "source": "us_legislators",
+      "checked": "2026-10-04"
+    },
+    "3": {
+      "name": "Rowan Example",
+      "offices": [
+        {
+          "address": "7174 Sample Ave., Philadelphia, PA 19138",
+          "phone": "215-555-0203"
+        },
+        {
+          "address": "1105 Longworth House Office Building Washington DC 20515",
+          "phone": "202-555-0103"
+        }
+      ],
+      "website": "https://example.org/congress/rowan-example",
+      "source": "us_legislators",
+      "checked": "2026-10-04"
+    }
+  },
+  "rcos": {
+    "54": {
+      "name": "Sample Street Block Association",
+      "address": "1200 N Sample St, Philadelphia, PA 19122",
+      "preferred": "Phone",
+      "contact": {
+        "name": "Sam Example",
+        "phone": "215-555-0154"
+      },
+      "source": "rco_contacts",
+      "checked": "2026-10-04"
+    },
+    "203": {
+      "name": "Example Avenue Neighbors",
+      "address": "1300 N Example Ave, Philadelphia, PA 19122",
+      "meeting": "Example Branch Library, 1310 N Example Ave",
+      "preferred": "Email",
+      "contact": {
+        "name": "Pat Sample",
+        "phone": "215-555-0203",
+        "email": "neighbors@example.org"
+      },
+      "website": "https://example.org/neighbors",
+      "source": "rco_contacts",
+      "checked": "2026-10-04"
+    },
+    "310": {
+      "name": "North Sample Civic Council",
+      "address": "1500 N Sample St, Philadelphia, PA 19121",
+      "meeting": "Sample Recreation Center",
+      "preferred": "Email",
+      "contact": {
+        "name": "Lee Example",
+        "email": "civic@example.org"
+      },
+      "source": "rco_contacts",
+      "checked": "2026-10-04"
+    }
+  },
+  "vacant": {
+    "house": [
+      "201"
+    ]
+  }
+}

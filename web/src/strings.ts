@@ -524,6 +524,61 @@ export const strings = {
     importLeftOut: (n: number, limit: number) => `${plural(n, 'place was', 'places were')} left out: a list holds up to ${formatNumber(limit)}.`,
   },
 
+  // Who represents a lot (M5.1, issue #45; src/represent/contacts.ts): the lot page's section, the
+  // packet's contacts page and the letters. Official offices only, each with its source and the
+  // day it was last checked.
+  represent: {
+    title: 'Who represents you',
+    intro: 'The people elected for this address, with their official offices. Call or write them about this lot.',
+    ward: (ward: string, division: string) => `Ward ${ward}, division ${division}`,
+    wardOnly: (ward: string) => `Ward ${ward}`,
+    wardHelp: 'Your ward and division decide where you vote and who your neighborhood\'s committee people are.',
+    district: (n: string) => `District ${n}`,
+    offices: {
+      council: 'City Council',
+      house: 'Pennsylvania House',
+      senate: 'Pennsylvania Senate',
+      congress: 'U.S. House of Representatives',
+    } as Record<string, string>,
+    titles: {
+      council: 'Council member',
+      house: 'State representative',
+      senate: 'State senator',
+      congress: 'Member of Congress',
+    } as Record<string, string>,
+    office: 'Office',
+    phone: 'Phone',
+    website: 'Website',
+    vacant: 'No member is listed for this seat right now. The seat may be empty until an election.',
+    notWorkedOut: 'We could not work out this district for the lot this week.',
+    notInBuild: 'This week\'s copy was built without this list of members, so we cannot name who holds the seat.',
+    atLargeTitle: 'Council members at large',
+    atLarge: 'Seven more Council members are elected by the whole city and represent every address:',
+    rcoTitle: 'Registered Community Organizations',
+    rcoIntro: 'The City notifies these organizations about zoning appeals here. They are a good first call for a neighborhood project.',
+    noRco: 'No Registered Community Organization covers this lot, as the City draws them.',
+    rcosNotInBuild: 'This week\'s copy was built without the community organizations, so we cannot list them.',
+    rcoUnknown: (n: number) => `${plural(n, 'more organization covers', 'more organizations cover')} this lot, but this week's copy has no contact for ${n === 1 ? 'it' : 'them'}.`,
+    rcoAddress: 'Address',
+    rcoMeeting: 'Meets at',
+    rcoPreferred: 'Prefers',
+    rcoContact: 'Contact',
+    rcoAsPublished: 'Contacts as the City publishes them for the public.',
+    checked: (who: string, when: string) => `${who}, checked ${when}`,
+    sourceNames: {
+      city_elected_officials: 'City of Philadelphia, its list of elected officials',
+      pa_legislators: 'Open States',
+      us_legislators: 'congress-legislators project',
+      rco_contacts: 'Philadelphia City Planning Commission',
+    } as Record<string, string>,
+    loading: 'Looking up who represents this lot.',
+    unlisted:
+      'We work out who represents each lot weekly, for the lots on our list. Atlas, the City\'s map, shows the elected officials for any address.',
+    missing: 'This week\'s copy does not say who represents this lot. Atlas, the City\'s map, shows the elected officials for any address.',
+    atlas: 'Elected officials for this address on Atlas, the City\'s map',
+    officialOnly: 'Only official offices are listed: no personal phone numbers or email addresses.',
+  },
+
   // The caution beside every greening suggestion (docs/ETHICS.md, "Displacement", word for word;
   // docs/VERIFICATION.md, decision D12), and the displacement watch (M4.1, src/displacement/):
   // in a watch area the card adds the area's signs and the ways to protect neighbors.

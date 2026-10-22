@@ -20,6 +20,7 @@ from typing import Any
 
 from placekeepers.cache import atomic_write_json
 from placekeepers.context import Context
+from placekeepers.publish.contacts import ContactsResult, build_contacts
 from placekeepers.publish.dossiers import DossierResult, build_dossiers
 from placekeepers.publish.land_bank import LandBankResult, build_land_bank
 from placekeepers.publish.layers import builder_for
@@ -64,6 +65,8 @@ class PublishResult:
     stop_table: StopTableResult | None = None
     #: the numbers of "The Land Bank in numbers" (publish/land_bank.py, M4.4)
     land_bank: LandBankResult | None = None
+    #: who represents each lot: tables/contacts.json (publish/contacts.py, M5.1)
+    contacts: ContactsResult | None = None
 
 
 def geojson_name(file: str, source_layer: str) -> str:
@@ -259,6 +262,10 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
         notes.extend(displacement_notes(ctx))
         result.dossiers = build_dossiers(ctx, statuses, staging, as_of)
         notes.extend(result.dossiers.notes)
+        result.contacts = build_contacts(
+            ctx, statuses, staging, result.dossiers.represent_used, as_of
+        )
+        notes.extend(result.contacts.notes)
         result.route_sheets = build_route_sheets(ctx, statuses, staging, as_of)
         notes.extend(result.route_sheets.notes)
         result.stop_table = build_stop_table(ctx, statuses, staging)

@@ -25,6 +25,7 @@ import { loadCommon, loadShard, shardLocation } from './shard.ts';
 import { isTimelineKind, type TimelineKind } from './timeline.ts';
 import type { DossierNotes } from './types.ts';
 import { readItem, writeItem } from '../state/storage.ts';
+import { loadContacts, type ContactsState } from '../represent/contacts.ts';
 
 /** The kinds of record a reader switched off in the timeline, remembered in this browser only. */
 export const TIMELINE_HIDDEN_KEY = 'timeline-hidden';
@@ -80,6 +81,8 @@ export class DossierController {
   history = $state.raw<HistoryState>({ status: 'idle' });
   /** The kinds of record the reader switched off in the timeline. */
   hiddenKinds = $state.raw<TimelineKind[]>(readHidden());
+  /** Who holds each seat and the community organizations' contacts (tables/contacts.json, M5.1), loaded once. */
+  contacts = $state.raw<ContactsState>({ status: 'idle' });
 
   private readonly deps: DossierDeps;
   private historyRun: Promise<void> | null = null;
@@ -115,6 +118,17 @@ export class DossierController {
     this.history = { status: 'idle' };
     this.historyRun = null;
     this.start(false);
+    void this.loadContacts();
+  }
+
+  /** Fetches tables/contacts.json once per visit (it is small, and every lot page names its representatives). */
+  loadContacts(): Promise<void> {
+    if (this.contacts.status === 'ready' || this.contacts.status === 'loading' || this.contacts.status === 'missing') return Promise.resolve();
+    this.contacts = { status: 'loading' };
+    return (async () => {
+      const manifest = await this.deps.manifest();
+      this.contacts = await loadContacts(this.deps.dataBase, manifest?.files ?? null, this.deps.fetchImpl);
+    })();
   }
 
   close(): void {

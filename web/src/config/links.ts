@@ -60,6 +60,11 @@ export function atlasUrl(opa: string): string {
   return `https://atlas.phila.gov/${encodeURIComponent(opa)}`;
 }
 
+/** Atlas's "Voting" view of an address: its ward and division, polling place and elected officials. */
+export function atlasVotingUrl(opa: string): string {
+  return `https://atlas.phila.gov/${encodeURIComponent(opa)}/voting`;
+}
+
 function coords(lng: number, lat: number): string {
   return `${lat.toFixed(6)},${lng.toFixed(6)}`;
 }

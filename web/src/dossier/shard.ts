@@ -5,6 +5,7 @@
 // never a crash. It keeps only the fields the contract names and copies them into new objects, so
 // any other key in the file (a price estimate, a note about a person) can never reach the page.
 
+import { parseRepresent } from '../represent/contacts.ts';
 import type { Manifest } from '../data/manifest.ts';
 import { cityDate } from './dates.ts';
 import { parseOwnerListParcel } from './owners-table.ts';
@@ -420,6 +421,7 @@ export function parseShardParcel(raw: unknown, where = 'parcel', problems: strin
     appeals: missing.includes('appeals') ? null : (list(raw.appeals, parseAppeal, `${where}.appeals`, problems) ?? []),
     missing,
     lotSize: lotSize(raw.lot_size),
+    represent: parseRepresent(raw.represent),
   };
 }
 

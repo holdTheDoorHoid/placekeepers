@@ -36,6 +36,7 @@ import {
   streetsStopsFixtures,
 } from './streetstops-fixtures.mjs';
 import { HISTORIC_LAYERS, HISTORIC_SOURCES, REDLINING_FILE, REDLINING_LICENSE, redliningFixture } from './historic-fixtures.mjs';
+import { REPRESENT_SOURCES } from './represent-fixtures.mjs';
 
 const FIXTURES = new URL('../fixtures/', import.meta.url);
 const ROOT = new URL('data/', FIXTURES);
@@ -772,6 +773,8 @@ const manifest = {
     ...Object.fromEntries(Object.entries(HISTORIC_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
     // Streets and stops (M4.5)
     ...Object.fromEntries(Object.entries(STREETS_STOPS_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
+    // Who represents each lot (M5.1)
+    ...Object.fromEntries(Object.entries(REPRESENT_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
   },
   layers: {
     vacant_parcels: {

@@ -659,6 +659,87 @@
       "rows": 758,
       "newest_record": null,
       "message": null
+    },
+    "political_divisions": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 1703,
+      "newest_record": null,
+      "message": null
+    },
+    "pa_house_districts": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 26,
+      "newest_record": null,
+      "message": null
+    },
+    "pa_senate_districts": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 7,
+      "newest_record": null,
+      "message": null
+    },
+    "us_house_districts": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 3,
+      "newest_record": null,
+      "message": null
+    },
+    "pa_legislators": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 253,
+      "newest_record": null,
+      "message": null
+    },
+    "us_legislators": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 19,
+      "newest_record": null,
+      "message": null
+    },
+    "us_legislator_offices": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 65,
+      "newest_record": null,
+      "message": null
+    },
+    "city_elected_officials": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 17,
+      "newest_record": null,
+      "message": null
+    },
+    "rco_contacts": {
+      "status": "ok",
+      "last_attempt": "2026-10-04T10:00:05Z",
+      "last_success": "2026-10-04T10:00:05Z",
+      "stale_since": null,
+      "rows": 240,
+      "newest_record": null,
+      "message": null
     }
   },
   "layers": {
@@ -1272,6 +1353,10 @@
     "tables/owners.json": {
       "bytes": 1279,
       "sha256": "14ee4ed8f01714f174c4c98afb31c045d9577bdeeb1e7f3159a7d54377363ace"
+    },
+    "tables/contacts.json": {
+      "bytes": 5143,
+      "sha256": "631722a6deb09190805b033d7a329d2777ef86bb8d2aac6d5c36efcf04ef4fdd"
     }
   },
   "dossiers": {
@@ -1280,7 +1365,7 @@
       "9900"
     ],
     "files": 1,
-    "bytes": 28851,
+    "bytes": 30798,
     "history": {
       "files": 1,
       "bytes": 1949,
