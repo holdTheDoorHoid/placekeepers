@@ -8,7 +8,7 @@ Placekeepers est une carte gratuite pour les personnes qui prennent soin de leur
 
 **Ce n'est pas un outil pour trouver de bonnes affaires immobilières.** Vous n'y trouverez aucune estimation du prix d'achat d'un terrain, ni aucun moyen de trier les terrains selon la facilité avec laquelle on pourrait les prendre à leur propriétaire.
 
-**Ce n'est pas un outil de police.** Placekeepers ne suggère jamais d'appeler la police ni de demander plus de contrôles. Sa seule suggestion à la Ville est Philly311, et seulement pour des problèmes physiques, comme un bâtiment vacant ouvert ou un lampadaire éteint.
+**Ce n'est pas un outil de police.** Placekeepers ne suggère jamais d'appeler la police ni de demander que la loi soit appliquée plus sévèrement. Sa seule suggestion à la Ville est Philly311, et seulement pour des problèmes physiques, comme un bâtiment vacant ouvert ou un lampadaire éteint.
 
 **Ce n'est pas un avis juridique.** Pour tout ce qui concerne le fait de posséder, d'acheter ou de jardiner sur un terrain qui n'est pas le vôtre, lisez [Comment faire](../how/) et parlez à l'aide juridique gratuite vers laquelle cette page vous oriente.
 

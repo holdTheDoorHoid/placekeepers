@@ -1113,7 +1113,7 @@ routes:
       "https://www.phila.gov/services/property-lots-housing/submit-a-service-request-with-311/":
         label: "Philly311"
   ghost_bike_request:
-    label: "Demander à la Bicycle Coalition un ghost bike ou un mémorial"
+    label: "Se renseigner auprès de la Bicycle Coalition au sujet d'un ghost bike ou d'un mémorial"
     who: "La famille, ou des amis avec la bénédiction de la famille"
     steps:
       - "Parlez d'abord avec la famille. Un mémorial n'est installé qu'avec sa bénédiction."
@@ -1145,7 +1145,7 @@ routes:
     label: "Interroger le bureau des transports de la Ville (OTIS)"
     who: "Toute personne"
     steps:
-      - "Écrivez à le Bureau des systèmes de transport et d'infrastructure (OTIS) à otis@phila.gov, en nommant le coin de rue et ce que vous y voyez."
+      - "Écrivez au Bureau des systèmes de transport et d'infrastructure (OTIS) à otis@phila.gov, en nommant le coin de rue et ce que vous y voyez."
       - "Demandez ce que la Ville autorise à ce coin de rue et comment le demander."
     cost: "Gratuit"
     timeline: "Non précisé"
@@ -1170,7 +1170,7 @@ routes:
     steps:
       - "Trouvez un mur qui fait face au terrain et qui se voit bien de la rue, et demandez à son propriétaire s'il accueillerait volontiers une fresque."
       - "Avec l'accord du propriétaire, remplissez le formulaire de demande de mur sur la page de contact de Mural Arts Philadelphia. Il pose des questions sur le mur, le soutien des voisins et pourquoi une fresque compte à cet endroit."
-      - "Tout ce qui se trouve dans la rue ou sur le trottoir, sur la voie publique, passe aussi par l'Commission des arts de la Ville."
+      - "Tout ce qui se trouve dans la rue ou sur le trottoir, sur la voie publique, passe aussi par la Commission des arts de la Ville."
     cost: "Demande gratuite"
     timeline: "Des mois"
     links:
@@ -1356,9 +1356,9 @@ routes:
     steps:
       - "Faites votre demande sur le Philadelphia Tax Center (tax-services.phila.gov), où une demande combinée couvre les programmes d'allègement fiscal de la Ville, ou appelez la Homestead Hotline au 215 686 9200, ou envoyez le formulaire par la poste au Département du revenu, P.O. Box 52817, Philadelphia, PA 19115."
       - "L'exonération retire 100 000 $ de la valeur évaluée du logement pour la facture d'impôts, ce qui fait économiser jusqu'à 1 399 $ par an."
-      - "Faites votre demande avant le 1er décembre (avant le 1er octobre pour la voir sur la prochaine facture). Une fois acceptée, il n'est plus nécessaire de refaire la demande, sauf si l'acte change."
+      - "Faites votre demande au plus tard le 1er décembre (au plus tard le 1er octobre pour la voir sur la prochaine facture). Une fois acceptée, il n'est plus nécessaire de refaire la demande, sauf si l'acte change."
     cost: "Gratuit"
-    timeline: "À déposer avant le 1er décembre de chaque année"
+    timeline: "À déposer au plus tard le 1er décembre de chaque année"
     links:
       "https://www.phila.gov/services/payments-assistance-taxes/taxes/property-and-real-estate-taxes/get-real-estate-tax-relief/get-the-homestead-exemption/":
         label: "Ville de Philadelphie : obtenir la Homestead Exemption"

@@ -44,7 +44,7 @@ Nous ne classons jamais les quartiers selon la violence qu'ils ont connue. La ca
 
 ## Pas de police
 
-Placekeepers ne suggère jamais d'appeler la police ni de demander plus de contrôles. Là où la carte suggère de contacter la Ville, c'est par Philly311, et seulement pour des problèmes physiques, comme un bâtiment vacant ouvert, un dépôt sauvage ou un lampadaire en panne. La carte ne montre et ne suggère rien sur les personnes sans abri.
+Placekeepers ne suggère jamais d'appeler la police ni de demander que la loi soit appliquée plus sévèrement. Là où la carte suggère de contacter la Ville, c'est par Philly311, et seulement pour des problèmes physiques, comme un bâtiment vacant ouvert, un dépôt sauvage ou un lampadaire en panne. La carte ne montre et ne suggère rien sur les personnes sans abri.
 
 ## Rester attentif aux déplacements d'habitants
 

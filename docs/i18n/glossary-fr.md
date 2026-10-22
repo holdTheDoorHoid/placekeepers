@@ -156,3 +156,7 @@ Not translated, because the City's French pages do not exist or do not agree wit
 | "died" (owner) | The possible estate text says « Il se peut que le propriétaire enregistré soit décédé », never that the owner died. |
 | police, tickets, enforcement | Never suggested. The only mentions are quotations of what the map does not do ("Ce n'est pas un outil de police"). |
 | "token" and "nominal" prices | « prix symbolique », never "prix nominal". |
+| "enforcement" | « que la loi soit appliquée plus sévèrement ». Never « contrôles », which only means checks and so narrows the sentences that say the map never asks for enforcement (About and Use this responsibly). Added by the back translation check, `docs/i18n/check-fr.md`. |
+| "by" a date (a deadline) | « au plus tard le », never « avant le », which can read as leaving out the day itself (Homestead Exemption: December 1 and October 1). |
+| "ask about" a ghost bike or memorial | « se renseigner au sujet de », not « demander un », so an inquiry never reads as a request for one. |
+| "bids on it" (the City's competitive bid status) | « des offres pour ce terrain », without « acquérir », so the status does not read as an invitation to buy. |
