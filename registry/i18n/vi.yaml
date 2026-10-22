@@ -335,3 +335,432 @@ lenses:
         label: Các trạm đông khách nhất trước
       heat_and_shade:
         label: Nóng và bóng mát
+
+routes:
+  land_bank_garden_agreement:
+    label: Thỏa thuận hoặc giấy phép làm vườn từ Land Bank
+    who: >-
+      Bất kỳ ai cho Urban Garden Agreement giá $1; các nhóm có một tổ chức phi lợi nhuận bảo trợ
+      cho Community Garden License
+    steps:
+      - Kiểm tra xem Land Bank hoặc Thành phố có phải là chủ sở hữu lô đất không.
+      - >-
+        Đọc hướng dẫn xin phép sử dụng đất của Thành phố của Grounded in Philly.
+      - Nộp đơn cho Land Bank, hoặc tham dự trước một trong các buổi hội thảo trực tuyến miễn phí của họ.
+    cost: >-
+      $1 (Urban Garden Agreement), $25 mỗi năm (Individual Garden Agreement), hoặc bảo hiểm và một
+      đơn vị bảo trợ (Community Garden License)
+    timeline: Vài tuần cho các thỏa thuận ngắn hạn; vài tháng cho một giấy phép
+    links:
+      "https://phillylandbank.org/":
+        label: Philadelphia Land Bank
+      "https://groundedinphilly.org/get-permission-to-use-land-city/":
+        label: >-
+          Grounded in Philly: xin phép sử dụng đất của Thành phố
+  ask_the_owner:
+    label: Xin phép chủ sở hữu
+    who: Bất kỳ ai
+    steps:
+      - Tìm địa chỉ gửi thư của chủ sở hữu trên trang lô đất.
+      - Viết thư xin phép dọn dẹp và xanh hóa lô đất, và đề nghị một thỏa thuận đơn giản bằng văn bản.
+      - Nhờ Garden Justice Legal Initiative xem xét mọi thỏa thuận trước khi bạn ký.
+    cost: Miễn phí
+    timeline: Tùy thuộc vào chủ sở hữu
+    links:
+      "https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/":
+        label: Garden Justice Legal Initiative
+  community_landcare:
+    label: Chăm sóc một lô đất cùng PHS Community LandCare
+    who: Các nhóm cư dân
+    steps:
+      - Liên hệ PHS về Community LandCare.
+    cost: Cần xác nhận với PHS
+    timeline: Cần xác nhận với PHS
+    links:
+      "https://phsonline.org/":
+        label: Pennsylvania Horticultural Society
+  report_to_311:
+    label: Báo cho Philly311
+    who: Bất kỳ ai
+    steps:
+      - Báo tòa nhà để ngỏ, đổ rác trái phép, vẽ bậy lên tường, hoặc đèn đường hay đèn hẻm bị tắt cho Philly311 qua mạng, qua ứng dụng, hoặc bằng cách gọi 311.
+      - Giữ lại số yêu cầu dịch vụ và kiểm tra lại sau.
+    cost: Miễn phí
+    timeline: Vài ngày đến vài tuần
+    links:
+      "https://www.phila.gov/services/property-lots-housing/submit-a-service-request-with-311/":
+        label: Philly311
+  ghost_bike_request:
+    label: Hỏi Bicycle Coalition về xe đạp trắng tưởng niệm (ghost bike) hoặc nơi tưởng niệm
+    who: Gia đình, hoặc bạn bè có sự đồng ý của gia đình
+    steps:
+      - Hãy nói chuyện với gia đình trước. Một nơi tưởng niệm chỉ được dựng lên khi gia đình đồng ý.
+      - Với một người thiệt mạng khi đi xe đạp, hãy điền mẫu yêu cầu ghost bike của Bicycle Coalition. Cùng mẫu đó cũng dùng để yêu cầu sửa hoặc thay một chiếc ghost bike.
+      - Families for Safe Streets, do Bicycle Coalition điều hành, hỗ trợ các gia đình sau một vụ tai nạn và chia sẻ một hướng dẫn tài nguyên sau tai nạn.
+      - Hãy lên kế hoạch xem ai sẽ chăm sóc nơi tưởng niệm về lâu dài.
+    cost: Miễn phí để yêu cầu
+    timeline: Không nêu
+    links:
+      "https://bicyclecoalition.org/what-is-a-ghost-bike/":
+        label: >-
+          Bicycle Coalition: ghost bike là gì
+      "https://forms.gle/HBtY1hG4xcdVJKNb8":
+        label: Mẫu yêu cầu ghost bike
+      "https://bicyclecoalition.org/programs/families-for-safe-streets/":
+        label: Families for Safe Streets Greater Philadelphia
+  traffic_calming_request:
+    label: Yêu cầu làm chậm xe cho một đường phố khu dân cư
+    who: Cư dân của dãy phố, chủ yếu cho con đường họ đang sống
+    steps:
+      - Kiểm tra xem đường phố có đủ điều kiện không trên bản đồ làm chậm xe của Thành phố, hoặc bằng cách gọi 311.
+      - Gửi yêu cầu làm chậm xe trực tuyến của Thành phố.
+      - Nếu Thành phố chọn yêu cầu, hãy thu thập chữ ký của 60 phần trăm số hộ trên dãy phố, mỗi hộ một chữ ký.
+    cost: Miễn phí để yêu cầu
+    timeline: Thành phố chấm điểm các yêu cầu ba lần mỗi năm và thường lắp đệm giảm tốc từ tháng 5 đến tháng 10
+    links:
+      "https://www.phila.gov/services/streets-sidewalks-alleys/request-traffic-calming-for-a-residential-street/":
+        label: >-
+          Thành phố Philadelphia: yêu cầu làm chậm xe
+  otis_contact:
+    label: Hỏi văn phòng giao thông của Thành phố (OTIS)
+    who: Bất kỳ ai
+    steps:
+      - Viết thư cho Office of Transportation and Infrastructure Systems theo địa chỉ otis@phila.gov, nêu tên góc đường và những gì bạn thấy ở đó.
+      - Hỏi Thành phố cho phép những gì ở góc đường này và cách yêu cầu.
+    cost: Miễn phí
+    timeline: Không nêu
+    links:
+      "https://visionzerophl.com/":
+        label: Vision Zero Philadelphia
+  treephilly_yard_trees:
+    label: Nhận cây miễn phí từ đợt phát cây của TreePhilly
+    who: >-
+      Cư dân Philadelphia, cho cây trồng xuống đất trên bất động sản tư nhân, như một lô đất bạn
+      sở hữu hoặc một lô đất tư nhân mà chủ sở hữu đồng ý bằng văn bản
+    steps:
+      - >-
+        Đăng ký nhận bản tin của TreePhilly để biết khi nào mở đăng ký. Các đợt phát cây diễn ra vào
+        mùa xuân (tháng 3 đến tháng 5) và mùa thu (tháng 9 đến tháng 12) ở các mã ZIP ưu tiên.
+      - >-
+        Đăng ký với nhóm cộng đồng đang tổ chức một đợt phát cây gần bạn. Việc đăng ký mở khoảng
+        hai tuần đến một tháng trước đợt phát cây và đóng khi cây hết.
+      - >-
+        Nhận cây, cao từ 2 đến 10 feet trong một xô 5 gallon, kèm một túi phân phủ gốc miễn phí, và
+        trồng nó xuống đất. Cây được phát không được đặt trong chậu, trên vỉa hè hay bất cứ nơi nào
+        khác trên đất công của lề đường (public right of way).
+    cost: Miễn phí
+    timeline: Đợt phát cây mùa xuân hoặc mùa thu tiếp theo
+    links:
+      "https://treephilly.org/yard-trees/":
+        label: >-
+          TreePhilly: cây trồng trong sân nhà
+  mural_arts_wall_request:
+    label: Hỏi Mural Arts về một bức tranh tường trên một bức tường
+    who: >-
+      Chủ sở hữu bức tường, cùng những hàng xóm ủng hộ. Bất kỳ ai cũng có thể bắt đầu bằng cách
+      hỏi chủ sở hữu
+    steps:
+      - Tìm một bức tường hướng ra lô đất và dễ nhìn thấy từ đường phố, và hỏi chủ sở hữu xem họ có chào đón một bức tranh tường không.
+      - Khi chủ sở hữu đồng ý, hãy điền mẫu yêu cầu bức tường trên trang liên hệ của Mural Arts Philadelphia. Mẫu hỏi về bức tường, sự ủng hộ của hàng xóm và vì sao một bức tranh tường quan trọng ở đó.
+      - Mọi thứ trên đường phố hoặc trên vỉa hè, tức đất công của lề đường, cũng phải gửi đến Art Commission của Thành phố.
+    cost: Miễn phí để nộp đơn
+    timeline: Vài tháng
+    links:
+      "https://muralarts.org/contact/":
+        label: >-
+          Mural Arts Philadelphia: trang liên hệ, có mẫu xin tranh tường trên tường của bạn
+  public_space_mini_grant:
+    label: Nộp đơn xin khoản tài trợ nhỏ cho không gian công cộng của Feet First Philly
+    who: >-
+      Hàng xóm và các nhóm cộng đồng. Chương trình ưu tiên các cộng đồng ít được đầu tư hơn cho
+      đường phố và dịch vụ của Thành phố
+    steps:
+      - >-
+        Đọc thư mời đề xuất (request for proposals) trên trang tài trợ nhỏ của Feet First Philly.
+        Các dự án phải làm cho khu phố an toàn hơn và dễ đi bộ, đi xe lăn hơn; hãy hỏi Feet First
+        Philly xem một chỗ ngồi trên một lô đất có đủ điều kiện không.
+      - Nộp đơn khi đợt đang mở. Việc nộp đơn mở vào tháng 8 và hạn chót là tháng 10.
+      - Hãy chuẩn bị gửi một báo cáo ngắn vào giữa kỳ và một báo cáo khác vào cuối kỳ.
+    cost: >-
+      Các khoản tài trợ từ $500 đến $2,500, một phần do Department of Public Health tài trợ
+    timeline: Việc nộp đơn mở vào tháng 8 và hạn chót là tháng 10 mỗi năm
+    links:
+      "https://feetfirstphilly.org/public-space-enhancement-mini-grant-2/":
+        label: >-
+          Feet First Philly: khoản tài trợ nhỏ để cải thiện không gian công cộng
+  land_bank_side_yard:
+    label: Nhận làm sân hông hoặc sân sau (chỉ dành cho chủ nhà bên cạnh)
+    who: >-
+      Chủ căn nhà bên cạnh, và chỉ khi danh sách của Thành phố đánh dấu lô đất đủ điều kiện làm
+      sân hông
+    steps:
+      - Kiểm tra xem bạn có phải là chủ căn nhà bên cạnh không và lô đất có được đánh dấu đủ điều kiện làm sân hông không.
+      - Đọc trang sân hông và sân sau của Land Bank và nộp đơn.
+      - Hãy chuẩn bị chờ lâu. Sau khi nhân viên xem xét, hội đồng quản trị Land Bank và Hội đồng Thành phố phải phê duyệt.
+    cost: >-
+      Một mức giá danh nghĩa. Lô đất phải luôn là sân hông, theo một khoản thế chấp 30 năm với giá
+      trị thẩm định của nó, khoản này được xóa nếu các quy tắc được giữ; Thành phố có thể lấy lại
+      lô đất nếu các quy tắc không được giữ
+    timeline: >-
+      Nhân viên đặt mục tiêu trả lời trong 120 ngày, sau đó hội đồng quản trị Land Bank và Hội đồng
+      Thành phố quyết định. Chỉ có 67 lô đất được chuyển nhượng theo cách này trên toàn thành phố
+      từ năm 2020 đến 2023
+    links:
+      "https://phillylandbank.org/side-or-rear-yards/":
+        label: >-
+          Philadelphia Land Bank: sân hông hoặc sân sau
+  contact_phdc:
+    label: Hỏi PHDC về thửa đất này
+    who: Bất kỳ ai
+    steps:
+      - Liên hệ PHDC và nêu địa chỉ của thửa đất cùng số tài khoản OPA của nó.
+      - Hỏi ai quản lý thửa đất, nó có sẵn không, và hàng xóm có thể chăm sóc nó như thế nào.
+      - Nếu bạn không chắc nên hỏi ai, hãy bắt đầu với Land Bank (land@phdc.phila.gov, 215 448 3034).
+    cost: Miễn phí để hỏi
+    timeline: Chưa rõ. Các lô đất của Redevelopment Authority chưa có hướng đi nào được công bố cho hàng xóm
+    links:
+      "https://phdcphila.org/":
+        label: PHDC
+      "https://phillylandbank.org/":
+        label: Philadelphia Land Bank
+  garden_adverse_possession:
+    label: Chiếm hữu đối nghịch (adverse possession) để làm vườn (luật năm 2024)
+    who: >-
+      Cư dân, nhóm hoặc tổ chức phi lợi nhuận ở Philadelphia đã làm vườn trên một lô đất thuộc sở
+      hữu tư nhân
+    steps:
+      - >-
+        Kiểm tra các điều kiện của luật năm 2024 (53 Pa.C.S. mục 1143, có hiệu lực từ ngày 6 tháng
+        9 năm 2024): đất thuộc sở hữu tư nhân rộng nửa mẫu Anh (acre) trở xuống, 10 năm sử dụng
+        trong đó ít nhất 5 năm làm vườn, và không có công trình cố định (hàng rào và nhà kho được
+        phép).
+      - Đọc hướng dẫn về chiếm hữu đối nghịch của Grounded in Philly.
+      - >-
+        Nhờ Garden Justice Legal Initiative giới thiệu một luật sư. Hướng đi này cần một vụ kiện
+        xác lập quyền sở hữu (quiet title).
+    cost: Một luật sư và chi phí tòa án. Mọi khoản nợ gắn với đất (lien) vẫn còn nguyên trên đất
+    timeline: Ít nhất 10 năm sử dụng, rồi một vụ kiện
+    links:
+      "https://groundedinphilly.org/how-to-obtain-land-adverse-possession/":
+        label: >-
+          Grounded in Philly: chiếm hữu đối nghịch
+      "https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/":
+        label: Garden Justice Legal Initiative
+  conservatorship:
+    label: Conservatorship (quyền quản lý tài sản thay chủ) theo Act 135
+    who: Một tổ chức phi lợi nhuận hoặc một người nộp đơn thỉnh cầu lên tòa án
+    warning: >-
+      Conservatorship (quyền quản lý tài sản thay chủ) có thể lấy mất tài sản khỏi chủ sở hữu của
+      nó. Các nhà nghiên cứu nhận thấy nó được dùng nhiều một cách không tương xứng ở những khu phố
+      đang trải qua gentrification (giá nhà đất tăng khiến người dân lâu năm khó ở lại). Hãy nói
+      chuyện với Garden Justice Legal Initiative trước khi bạn cân nhắc dùng nó.
+    steps:
+      - Hãy nói chuyện với Garden Justice Legal Initiative trước mọi việc khác.
+      - Hãy hỏi trước xem việc viết thư cho chủ sở hữu, hoặc giúp một gia đình giữ lại bất động sản, có đáp ứng được cùng nhu cầu đó không.
+      - >-
+        Hiểu các điều kiện của luật: tòa án chỉ có thể chỉ định một người quản lý (conservator) cho
+        một bất động sản đã không có người ở hợp pháp trong 12 tháng, không đang được rao bán,
+        không đang bị tịch thu thế chấp (foreclosure), và không được mua trong 6 tháng gần đây.
+    cost: >-
+      Chi phí tòa án và sửa chữa. Từ năm 2014, người nộp đơn có thể được trả khoản lớn nhất trong
+      ba khoản: $2,500, 20% chi phí, hoặc 20% giá bán
+    timeline: Một vụ kiện ra tòa; hãy hỏi trợ giúp pháp lý xem sẽ mất bao lâu
+    links:
+      "https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/":
+        label: Garden Justice Legal Initiative
+  tangled_title_help:
+    label: Giúp một gia đình giữ lại ngôi nhà thừa kế (Tangled Title Fund)
+    who: >-
+      Các gia đình có ngôi nhà vẫn đứng tên một người thân đã qua đời, với thu nhập hộ gia đình tối
+      đa 80% mức trung bình của khu vực; bất động sản phải là nhà của người nộp đơn
+    steps:
+      - Liên hệ Tangled Title Fund tại Philadelphia VIP (tangledtitlefund@gmail.com, 215 523 9553).
+      - Quỹ chi trả tối đa $6,500 cho chi phí pháp lý để làm rõ quyền sở hữu, và thêm tối đa $3,500 cho thuế chuyển nhượng, tùy từng trường hợp.
+    cost: Miễn phí cho gia đình trong giới hạn của quỹ; gia đình tự trả phần vượt quá
+    timeline: Ai đến trước được phục vụ trước
+    links:
+      "https://phillyvip.org/tangled-title-fund/":
+        label: >-
+          Philadelphia VIP: Tangled Title Fund
+  fraud_guard:
+    label: Đăng ký nhận cảnh báo Fraud Guard miễn phí của Thành phố
+    who: Chủ sở hữu bất động sản và gia đình của họ
+    steps:
+      - Đăng ký Fraud Guard bằng một cái tên và một địa chỉ email.
+      - Thành phố gửi một email khi có một giấy tờ ghi tên bạn được đăng ký, để một chứng thư giả được phát hiện sớm.
+      - Câu hỏi gửi đến Sở Hồ sơ (Department of Records) theo số 215 686 2290, records.info@phila.gov.
+    cost: Miễn phí
+    timeline: Cảnh báo đến khoảng 30 ngày sau khi một giấy tờ được đăng ký
+    links:
+      "https://www.phila.gov/2022-09-06-own-property-in-philadelphia-get-free-deed-fraud-protection-with-fraud-guard/":
+        label: >-
+          Thành phố Philadelphia: Fraud Guard
+  bus_shelter_request:
+    label: Đề nghị Thành phố làm một mái che trạm xe buýt
+    who: Bất kỳ ai
+    steps:
+      - Ghi lại số trạm SEPTA của trạm (trên biển báo, và trên bản đồ này), góc đường, và số người lên xe ở đó mỗi ngày trong tuần.
+      - Viết thư cho Office of Transportation and Infrastructure Systems (OTIS) của Thành phố theo địa chỉ otis@phila.gov, hoặc gọi 215-686-9003. OTIS điều hành chương trình mái che trạm xe buýt của Thành phố; không có mẫu yêu cầu công khai.
+      - Gửi bản sao cho văn phòng khu vực Hội đồng Thành phố của bạn, và cũng báo cho SEPTA, qua mẫu góp ý trực tuyến của họ hoặc số 215-580-7800.
+    cost: Miễn phí để hỏi
+    timeline: Không nêu. OTIS gửi các vị trí mái che mới đến Art Commission của Thành phố để xem xét (tám vị trí vào tháng 12 năm 2025)
+    links:
+      "https://www.phila.gov/media/20240521160603/RFI-OTIS-street-furniture-20240521.pdf":
+        label: >-
+          Yêu cầu cung cấp thông tin của OTIS về đồ dùng đường phố (tháng 5 năm 2024), kèm mục tiêu về mái che của Thành phố
+      "https://www.phila.gov/media/20251205094032/Bus-Shelter-Upgrades-submission.pdf":
+        label: >-
+          Tám mái che trạm xe buýt mới được gửi đến Art Commission (tháng 12 năm 2025)
+      "https://wwww.septa.org/customer-service/comment-form/":
+        label: Mẫu góp ý của SEPTA
+      "https://phlcouncil.com/council-members/":
+        label: >-
+          Hội đồng Thành phố Philadelphia: thành viên Hội đồng và văn phòng của từng khu vực
+  stop_bench_request:
+    label: Đề nghị Thành phố đặt một ghế ngồi ở một trạm
+    who: Bất kỳ ai
+    steps:
+      - Ghi lại số trạm SEPTA của trạm (trên biển báo, và trên bản đồ này) và góc đường.
+      - Viết thư cho OTIS theo địa chỉ otis@phila.gov, hoặc gọi 215-686-9003, và đề nghị đặt một ghế ngồi ở trạm. Ghế ngồi ở các trạm thuộc chương trình đồ dùng đường phố của Thành phố; chúng tôi không tìm thấy mẫu yêu cầu công khai nào.
+      - Gửi bản sao cho văn phòng khu vực Hội đồng Thành phố của bạn.
+    cost: Miễn phí để hỏi
+    timeline: Không nêu
+    links:
+      "https://www.phila.gov/media/20240521160603/RFI-OTIS-street-furniture-20240521.pdf":
+        label: >-
+          Yêu cầu cung cấp thông tin của OTIS về đồ dùng đường phố (tháng 5 năm 2024)
+      "https://phlcouncil.com/council-members/":
+        label: >-
+          Hội đồng Thành phố Philadelphia: thành viên Hội đồng và văn phòng của từng khu vực
+  street_tree_request:
+    label: Xin một cây ven đường miễn phí
+    who: >-
+      Chủ sở hữu ngôi nhà, cơ sở kinh doanh, lô đất hoặc bất động sản khác mà cây sẽ đứng phía
+      trước; hàng xóm có thể nhờ chủ sở hữu xin
+    steps:
+      - >-
+        Cây ven đường được trồng trên vỉa hè phía trước một bất động sản khi chủ sở hữu yêu cầu.
+        Hãy nói chuyện với chủ của các tòa nhà bên cạnh chỗ đó. Với một lô đất trống, hãy hỏi chủ
+        sở hữu mà trang lô đất của nó nêu tên, hoặc hỏi Land Bank nếu lô đất thuộc Thành phố hoặc
+        Land Bank.
+      - >-
+        Chủ sở hữu xin một cây ven đường miễn phí từ Street Tree Management Division của Parks and
+        Recreation, qua mạng, qua email StreetTree.Info@phila.gov, hoặc qua điện thoại 215-685-4363.
+      - >-
+        Một chuyên viên cây xanh (arborist) của Thành phố đến xem để quyết định loại cây nào phù
+        hợp. Thành phố trồng miễn phí vào một mùa trồng cây (giữa tháng 4 đến giữa tháng 6, hoặc
+        giữa tháng 10 đến giữa tháng 11) và tưới nước, phủ gốc cho cây trong năm đầu. Sau đó,
+        TreePhilly đề nghị tưới khoảng 20 gallon nước mỗi tuần từ tháng 3 đến tháng 12.
+    cost: Miễn phí
+    timeline: Mùa trồng cây tiếp theo sau khi chuyên viên cây xanh đến xem
+    links:
+      "https://www.phila.gov/services/trees-parks-the-environment/tree-related-services/get-a-street-tree/":
+        label: >-
+          Thành phố Philadelphia: xin một cây ven đường
+      "https://treephilly.org/street-trees/":
+        label: >-
+          TreePhilly: cây ven đường
+  streetcomplete_survey:
+    label: Khảo sát trạm bằng StreetComplete
+    who: >-
+      Bất kỳ ai có điện thoại Android (một bản thử nghiệm đầu tiên cho iPhone đã xuất hiện vào
+      tháng 9 năm 2026)
+    steps:
+      - Cài ứng dụng StreetComplete miễn phí và tạo một tài khoản OpenStreetMap miễn phí để câu trả lời của bạn được công bố.
+      - Tại trạm, chạm vào dấu của ứng dụng và trả lời các câu hỏi của nó về mái che, ghế ngồi, đèn và số của trạm.
+      - Nếu ứng dụng không có câu hỏi nào ở trạm, hãy thêm trạm bằng lớp phủ Things của nó, hoặc để lại một ghi chú để một người vẽ bản đồ khác làm.
+    cost: Miễn phí
+    timeline: Câu trả lời đến bản đồ này trong khoảng một tuần
+    links:
+      "https://holdthedoorhoid.github.io/placekeepers/streetcomplete/":
+        label: >-
+          Placekeepers: khảo sát trạm xe buýt
+      "https://streetcomplete.app/":
+        label: StreetComplete
+  neighborhood_gardens_trust:
+    label: Giữ một vườn cộng đồng mãi mãi (Neighborhood Gardens Trust)
+    who: Những người làm vườn có vườn cộng đồng đã phát triển ít nhất ba mùa
+    steps:
+      - >-
+        Kiểm tra các tiêu chí của quỹ: một khu vườn hoạt động ít nhất ba mùa trồng trọt, những
+        người làm vườn có khả năng duy trì nó, mối liên hệ với các nhóm như một tổ chức phát triển
+        cộng đồng, một nhà thờ hay một trường học, và sự ủng hộ của hàng xóm và thành viên Hội đồng
+        Thành phố của khu vực.
+      - >-
+        Nộp đơn bằng đơn xin vườn trực tuyến của quỹ, hoặc mẫu có thể in. Quỹ trả lời trong khoảng
+        hai tuần, rồi đến thăm khu vườn và đưa nó ra hội đồng quản trị.
+      - >-
+        Khi được chấp thuận, quỹ làm việc với Thành phố để có được mảnh đất và giữ nó để hàng xóm
+        có thể tiếp tục làm vườn, có bảo hiểm trách nhiệm và hỗ trợ về nước và bảo trì. Câu hỏi
+        gọi 215 988 1630 hoặc gửi ngtrust@pennhort.org.
+    cost: Miễn phí để nộp đơn
+    timeline: Một câu trả lời trong khoảng hai tuần; việc có được mảnh đất mất nhiều thời gian hơn
+    links:
+      "https://ngtrust.org/preservation/":
+        label: >-
+          Neighborhood Gardens Trust: bảo tồn vườn
+  community_land_trust:
+    label: Giữ nhà ở và đất giá phải chăng mãi mãi (community land trust, quỹ đất cộng đồng)
+    who: Hàng xóm, các nhóm cộng đồng và tổ chức phi lợi nhuận
+    steps:
+      - >-
+        Tìm hiểu cách một community land trust hoạt động: một tổ chức phi lợi nhuận sở hữu đất mãi
+        mãi, các gia đình mua hoặc thuê nhà trên đó, và một hợp đồng thuê đất dài hạn giữ cho mỗi
+        căn nhà có giá phải chăng khi nó được bán lại.
+      - >-
+        Nói chuyện với một quỹ đất đã hoạt động ở Philadelphia, như Community Justice Land Trust
+        của Women's Community Revitalization Project, nơi nắm giữ các ngôi nhà ở Point Breeze,
+        Grays Ferry, Mantua, Germantown, Port Richmond và Haddington.
+      - Hỏi Garden Justice Legal Initiative xem một quỹ đất có thể nắm giữ một khu vườn hoặc lô đất mà nhóm của bạn đã chăm sóc như thế nào.
+    cost: Miễn phí để hỏi
+    timeline: Dài; các dự án của một quỹ đất mất nhiều năm
+    links:
+      "https://groundedsolutions.org/strengthening-neighborhoods/community-land-trusts":
+        label: >-
+          Grounded Solutions Network: quỹ đất cộng đồng
+      "https://www.wcrpphila.org/cjlt":
+        label: >-
+          Women's Community Revitalization Project: Community Justice Land Trust
+  homestead_exemption:
+    label: Giảm hóa đơn thuế của chủ nhà (Miễn Thuế Nhà cửa vườn tược, Homestead Exemption, của Thành phố)
+    who: >-
+      Bất kỳ ai sở hữu nhà ở Philadelphia và sống ở đó làm nhà ở chính, kể cả khi còn thế chấp
+      hoặc nợ thuế; không áp dụng cho nhà đang hưởng ưu đãi giảm thuế 10 năm (tax abatement)
+    steps:
+      - >-
+        Nộp đơn trên Philadelphia Tax Center (tax-services.phila.gov), nơi một đơn gộp bao gồm các
+        chương trình hỗ trợ thuế của Thành phố, hoặc gọi đường dây Homestead Hotline theo số 215
+        686 9200, hoặc gửi mẫu đơn qua thư cho Department of Revenue, P.O. Box 52817, Philadelphia,
+        PA 19115.
+      - Khoản miễn thuế này trừ $100,000 khỏi giá trị định giá của ngôi nhà để tính hóa đơn thuế, tiết kiệm tối đa $1,399 mỗi năm.
+      - Nộp đơn trước ngày 1 tháng 12 (trước ngày 1 tháng 10 để thấy nó trên hóa đơn kế tiếp). Khi đã được chấp nhận, không cần nộp lại trừ khi chứng thư thay đổi.
+    cost: Miễn phí
+    timeline: Hạn chót ngày 1 tháng 12 mỗi năm
+    links:
+      "https://www.phila.gov/services/payments-assistance-taxes/taxes/property-and-real-estate-taxes/get-real-estate-tax-relief/get-the-homestead-exemption/":
+        label: >-
+          Thành phố Philadelphia: nhận Miễn Thuế Nhà cửa vườn tược (Homestead Exemption)
+  longtime_owner_occupants:
+    label: Giới hạn mức định giá cho chủ nhà ở lâu năm (Chương trình Longtime Owner Occupants của Thành phố, LOOP)
+    who: >-
+      Các chủ nhà đã sống trong nhà ít nhất 10 năm, có mức định giá tăng ít nhất 50 phần trăm trong
+      một năm hoặc 75 phần trăm trong năm năm, với thu nhập hộ gia đình dưới giới hạn của Thành
+      phố (chẳng hạn $103,050 cho một người hoặc $147,200 cho bốn người vào năm 2026), đang đóng
+      thuế đầy đủ hoặc đang theo một thỏa thuận trả góp
+    steps:
+      - >-
+        Nộp đơn trên Philadelphia Tax Center (tax-services.phila.gov) bằng đơn gộp của Thành phố,
+        hoặc gọi 215 686 9200, gửi email revenue@phila.gov, hoặc gửi mẫu đơn qua thư cho Department
+        of Revenue, P.O. Box 53190, Philadelphia, PA 19105.
+      - >-
+        LOOP giới hạn mức định giá mà hóa đơn thuế dùng, ở mức 1,5 lần năm trước hoặc 1,75 lần giá
+        trị thấp nhất trong năm năm gần nhất, chừng nào chủ sở hữu còn đủ điều kiện.
+      - >-
+        Nộp đơn trước hạn chót hằng năm của Thành phố (ngày 30 tháng 9 trong những năm gần đây);
+        trang của Thành phố cho biết hạn hiện tại.
+    cost: Miễn phí
+    timeline: Một hạn chót hằng năm, ngày 30 tháng 9 trong những năm gần đây
+    links:
+      "https://www.phila.gov/services/payments-assistance-taxes/payment-plans-and-assistance-programs/income-based-programs-for-residents/apply-for-the-longtime-owner-occupants-program-loop/":
+        label: >-
+          Thành phố Philadelphia: nộp đơn xin LOOP
