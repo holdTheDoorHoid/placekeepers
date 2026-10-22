@@ -59,6 +59,12 @@ The choices every Spanish text on the site follows: the interface catalog
 | memorial | memorial | plural memoriales |
 | warming or cooling site | sitio para calentarse o refrescarse | |
 | brownfield | brownfield (un terreno que pudo haber tenido contaminación) | explained once per passage; never "limpio" or "seguro" |
+| community garden | jardín comunitario | "jardín" for a garden of any kind; "huerto" is not used, so one word covers food and flowers. Garden agreement: acuerdo de jardín |
+| ghost bike | bicicleta blanca (ghost bike) | the English name stays in parentheses so families can find the Bicycle Coalition's form |
+| Block Captain, Playstreet, parklet | Capitán de Cuadra (Block Captain), Playstreet (calle de juego), parklet | program names stay, with a short gloss the first time |
+| rank (of a place under a lens) | posición | "La posición es la parte de los lugares del mapa con menos" |
+| priority / need | prioridad / necesidad | |
+| the owner (of the project) | el responsable del proyecto | never "dueño", which is the owner of a property |
 | score | puntaje | |
 | settings | ajustes | |
 | link | enlace | |
@@ -77,5 +83,24 @@ in English. They are inconsistent about the Free Library, so that name stays too
 
 ## Lookups on phila.gov (Spanish pages) used for the names above
 
-Homestead Exemption, LOOP, Registered Community Organizations, Fraud Guard and deed fraud, Office
-of Property Assessment, Zoning Board of Adjustment, Philly311, Parks and Recreation.
+Ten lookups in all: Homestead Exemption, LOOP, Registered Community Organizations, Fraud Guard and
+deed fraud, Office of Property Assessment, Zoning Board of Adjustment and Licenses and
+Inspections, Philly311, Parks and Recreation, Free Library, and the Land Bank (which has no Spanish
+page worth following, see above).
+
+## Choices a reviewer should know about
+
+- **Brownfield.** The word has no Spanish equivalent that neighbors know, so the soil note says
+  `"brownfield" (un terreno que pudo haber tenido contaminación)` and the layer description opens
+  with a one sentence meaning. The gloss never says the ground is clean or safe; it is the only
+  addition to a word for word passage.
+- **Conservatorship.** "administración judicial (conservatorship)": the English word stays so a
+  neighbor can search for it. The warning keeps ETHICS.md's three sentences in order.
+- **Possible estate.** "La persona que figura como dueña en los registros puede haber fallecido":
+  gender neutral and never "dueño fallecido" or "sin herederos".
+- **Reasons the City's servers failed** (`failure.*`) are written as clauses with no subject
+  ("no hubo respuesta a tiempo"), so they fit after "Problema con los servidores de la Ciudad"
+  whether one server or several are named. English leans on a past tense that does not show number.
+- **Survey sheet words** inside the StreetComplete app and the OpenStreetMap editor are given in
+  the app's English, with the Spanish meaning beside them, since the app speaks the phone's
+  language and the editor the browser's.
