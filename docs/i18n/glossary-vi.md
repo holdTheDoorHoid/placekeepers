@@ -148,3 +148,22 @@ wording of four texts. Two of the changes set a rule worth keeping:
 - The `join` templates use the Vietnamese "và" for lists ("a, b và c", "a; b; và c") and the plain
   colon for labels.
 - Miles are "dặm", and a survey duration is "khoảng 2 giờ 15 phút".
+
+## "Did it work?" page (M5.4, 2026-10-22)
+
+New terms for the page that compares places that got care with places that did not
+(`didit.*` in the catalog, and the two yearly sources in the registry text).
+
+| English | Vietnamese | Note |
+|---|---|---|
+| care (work done at a place: "got care", "after care") | chăm sóc | the same word as the rest of the site; greening, cleaning and sealing, and demolition are all "chăm sóc" on this page, as the English calls them all "care" |
+| we could not tell (the check failed) | Chúng tôi không thể kết luận | a plain admission, never "không có tác dụng" (no effect) and never "có hiệu quả" (it worked); "too few to tell" is "quá ít để kết luận", as in the sales and homes lines |
+| does not show that care caused it | không cho thấy rằng việc chăm sóc đã gây ra | "không cho thấy" is as strong as "does not show"; never "chứng minh" (prove) |
+| the real evidence | bằng chứng thực sự | the two randomized trials ("thử nghiệm ngẫu nhiên", as on the Why this works page); observational comparisons "có thể gây hiểu lầm" (can mislead, not will) |
+| 90 percent interval | dải 90 phần trăm | written "từ ít hơn 6,2% đến nhiều hơn 0,2%"; "khoảng" alone would read "about" |
+| more, fewer than expected | nhiều hơn, ít hơn | "nhiều hơn 3,2%", "ít hơn 6,2%", and "không thay đổi" for no change |
+| comparison places | các nơi so sánh | the similar places that did not get care |
+| the ring (200 to 400 meters out) | vòng quanh mỗi địa điểm | |
+| check (placebo, ring, later care) | phép kiểm tra | "đạt" and "không đạt" |
+| half year | nửa đầu năm, nửa cuối năm | "nửa đầu năm 2017" |
+| chance (the 1 in 10 that looks like a change) | yếu tố ngẫu nhiên | as the Why this works page says "loại trừ yếu tố ngẫu nhiên" |
