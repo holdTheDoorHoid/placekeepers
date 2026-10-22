@@ -3,29 +3,44 @@
 Key terms for the Arabic translation of Placekeepers, so the interface catalog
 (`web/src/i18n/locales/ar.ts`), the registry text (`registry/i18n/ar.yaml`) and the content pages
 (`content/ar/`) all use the same word for the same thing. Plain Modern Standard Arabic, polite and
-simple. Western digits, Arabic punctuation, no dashes as punctuation. The reader is addressed with
-the masculine singular imperative, the usual convention for interface text, meant for everyone.
+simple, readable by speakers of any dialect.
 
 ## Style decisions
 
-- Quotation marks are straight double quotes, as in the English.
-- Counted nouns follow Arabic number rules through `plural()`: a number word for one and two, a
-  plural for 3 to 10, a singular accusative for 11 to 99, a singular for 100 and more.
-- Proper names stay in Latin letters: Placekeepers, Philly311, LandCare, PHS LandCare, Community
-  LandCare, SEPTA, Fraud Guard, Tangled Title Fund, Philadelphia VIP, Garden Justice Legal
-  Initiative, Neighborhood Gardens Trust, Land Bank, PHDC, PECO, PennDOT, StreetComplete,
-  OpenStreetMap, GitHub, FEMA, Census Bureau programs as named in English.
-- "Land Bank" stays Latin everywhere. phila.gov's machine translated Arabic page writes it as
-  "بنك فيلادلفيا لاند", a transliteration, which is not adopted: a visitor looks for the English
-  name on signs and City sites.
+- **Address.** The reader is addressed in the masculine singular imperative (اختر، افتح، اضغط),
+  the usual convention for interface text, meant for everyone. No gendered second person verbs
+  are used in sentences that describe what "you" did, so the text reads the same for anyone.
+- **Numbers and punctuation.** Western digits, as the site formats them. Arabic punctuation
+  (، ؛ ؟). No dashes as punctuation and no tatweel (the stretching letter) before a Latin name:
+  a prefix such as بـ or لـ is never attached to a name in Latin letters, the sentence is
+  rephrased instead. Quotation marks are straight double quotes, as in the English.
+- **Counted nouns** follow Arabic number rules through `plural()`: a number word for one and two
+  (مكان واحد، مكانان), a plural for 3 to 10 (3 أماكن), a singular accusative for 11 to 99
+  (11 مكانًا) and a singular for 100 and more (100 مكان). The counted nouns live in constants at
+  the top of `ar.ts`.
+- **Proper names stay in Latin letters:** Placekeepers, Philly311, LandCare, PHS LandCare,
+  Community LandCare, SEPTA, Fraud Guard, Tangled Title Fund, Philadelphia VIP, Garden Justice
+  Legal Initiative, Neighborhood Gardens Trust, Land Bank, Philadelphia Land Bank, PHDC, OTIS,
+  PECO, PennDOT, FEMA, EPA, StreetComplete, OpenStreetMap, GitHub, Mural Arts, TreePhilly,
+  Bicycle Coalition, Families for Safe Streets, Feet First Philly, Grounded in Philly, Clean &
+  Green Philly, Code for Philly. A program or board whose English name a visitor will meet on
+  City pages keeps it in parentheses after the Arabic, for example "اتفاقية الحديقة الحضرية
+  (Urban Garden Agreement)" and "مجلس تعديلات تقسيم المناطق (Zoning Board of Adjustment)".
+- **"Land Bank"** stays Latin everywhere. phila.gov's Arabic page for it (machine translated)
+  writes "بنك فيلادلفيا لاند", a transliteration that is not adopted: a visitor looks for the
+  English name on signs and on City sites.
+- **App labels** that StreetComplete and the OpenStreetMap editor show (Things, Create new note,
+  Yes, No, Uh…, Shelter, Save, Upload) stay in English where a page tells the reader which button
+  to press, with a note that the app may show them in Arabic on an Arabic phone.
 
 ## Names the City publishes in Arabic (phila.gov/ar, checked 2026-10-21)
 
-| English | Arabic used | Source |
+| English | Arabic used | Where seen |
 |---|---|---|
 | Department of Licenses and Inspections (L&I) | إدارة التراخيص والتفتيش (L&I) | phila.gov/ar L&I page. In short interface text, "L&I" alone. |
 | Office of Property Assessment (OPA) | مكتب تقييم الممتلكات | phila.gov/ar OPA page |
-| Homestead Exemption | إعفاء Homestead | the City keeps "Homestead" in Latin letters |
+| Department of Records | قسم السجلات | phila.gov/ar Department of Records page (title and heading) |
+| Homestead Exemption | إعفاء Homestead | the City keeps "Homestead" in Latin letters on its Arabic pages |
 | Register of Wills | سجل الوصايا | phila.gov/ar |
 | Sheriff | الشريف | phila.gov/ar |
 | zoning permits | تصاريح تقسيم المناطق | phila.gov/ar L&I page |
@@ -34,20 +49,33 @@ the masculine singular imperative, the usual convention for interface text, mean
 | real estate tax | ضريبة العقارات | phila.gov/ar |
 | City Council | مجلس المدينة | phila.gov/ar |
 
+Not found on phila.gov in Arabic (the translator's own rendering, kept the same everywhere):
+Parks and Recreation = إدارة الحدائق والترفيه; Streets Department = إدارة الشوارع; Water
+Department = إدارة المياه; Department of Planning and Development = إدارة التخطيط والتنمية;
+City Planning Commission = لجنة التخطيط العمراني; Office of Transportation and Infrastructure
+Systems = مكتب النقل ونظم البنية التحتية (OTIS); Historical Commission = لجنة الآثار
+التاريخية; Office of Emergency Management = مكتب إدارة الطوارئ; Division of Safe Neighborhoods
+= إدارة الأحياء الآمنة; Redevelopment Authority = هيئة إعادة التطوير; Housing Authority = هيئة
+الإسكان; Art Commission = لجنة الفنون.
+
+The City's Arabic pages write "deed" as "سند". This translation writes **صك (الملكية)** for a
+deed and keeps **سند ملكية** for a title (a tangled title is "سند ملكية متشابك"), so the two
+words stay apart; both are plain Modern Standard Arabic.
+
 ## Key terms
 
 | English | Arabic |
 |---|---|
-| vacant lot | قطعة أرض فارغة (plural قطع أرض فارغة) |
+| vacant lot | قطعة أرض فارغة (قطع أرض فارغة) |
 | vacant land | أرض فارغة |
 | vacant building | مبنى فارغ |
 | vacant parcel | قطعة فارغة |
-| lot (land) | قطعة أرض |
+| lot page | صفحة القطعة |
 | parcel | القطعة |
 | place | مكان (أماكن) |
-| lot page | صفحة القطعة |
 | neighbor, neighborhood | جار (جيران)، حي |
 | block (a stretch of street) | مقطع شارع (مقاطع شوارع) |
+| in view (on the map) | ظاهر على الخريطة |
 | map, layer, legend | الخريطة، طبقة (طبقات)، مفتاح الخريطة |
 | setting | إعداد (إعدادات) |
 | filter | عامل تصفية (عوامل التصفية) |
@@ -59,28 +87,36 @@ the masculine singular imperative, the usual convention for interface text, mean
 | field view, analysis view | العرض الميداني، عرض التحليل |
 | organizer | منظِّم (المنظِّمون) |
 | first legal step | أول خطوة قانونية |
-| legal route | مسار قانوني (المسارات القانونية) |
+| legal route, lawful route | مسار قانوني (المسارات القانونية) |
 | permission | إذن |
 | suggestion | اقتراح (الاقتراحات) |
+| evidence badge | شارة الأدلة: قوية، متوسطة، متباينة، ضعيفة، لا يتعلق بالعنف، سياق |
 | displacement | التهجير السكني (people pushed out of their homes by rising prices) |
 | displacement watch | رصد التهجير السكني |
 | displacement watch area | منطقة رصد التهجير السكني |
+| sign (of rising prices) | مؤشر |
+| gentrification | تغيّر سكاني بفعل ارتفاع الأسعار (gentrification) |
 | greening | التخضير |
+| placemaking | تهيئة الأماكن |
 | community garden | حديقة مجتمعية |
 | memorial (for a person killed) | نصب تذكاري (نُصُب تذكارية) |
+| public memorial list, public memorial | قائمة تأبين عامة، التأبين العام |
 | crash | حادث |
 | High Injury Network | شبكة الشوارع الأكثر إصابات |
 | killed or seriously injured | قُتل أو أُصيب إصابة جسيمة |
+| people shot | من تعرّضوا لإطلاق نار |
 | bus stop | موقف حافلة (مواقف الحافلات) |
+| transit | النقل العام |
 | shelter (at a stop) | مظلة |
 | route (bus) | خط |
 | owner, owner of record | مالك، المالك المسجّل |
-| owner type | نوع المالك |
+| owner flag | إشارة المالك |
 | possible estate | تركة محتملة |
 | deed | صك الملكية |
-| deed fraud | الاحتيال على صكوك الملكية |
+| deed theft, deed fraud | سرقة صكوك الملكية، الاحتيال على الصكوك |
 | tangled title | سند ملكية متشابك |
 | conservatorship | الحراسة القضائية |
+| adverse possession | التملك بالتقادم |
 | side yard | الفناء الجانبي |
 | Registered Community Organization (RCO) | المنظمة المجتمعية المسجّلة |
 | census tract | منطقة التعداد |
@@ -91,10 +127,18 @@ the masculine singular imperative, the usual convention for interface text, mean
 | permit | تصريح |
 | appeal | طعن |
 | hearing | جلسة استماع |
-| zoning | تقسيم المناطق |
-| brownfield | براونفيلد (أرض ملوّثة سابقًا) |
+| zoning, overlay | تقسيم المناطق، نطاق إضافي |
+| brownfield | براونفيلد (أرض يُحتمل تلوثها) |
 | sheriff sale | بيع الشريف |
-| evidence (strong, moderate, mixed, weak) | أدلة (قوية، متوسطة، متباينة، ضعيفة) |
+| redlining | الخط الأحمر (redlining) |
 | 311 report | بلاغ إلى 311 |
 | GitHub issue | بلاغ على GitHub |
-| care (as in "where care is needed") | عناية، رعاية |
+| care (as in "where care is needed") | عناية |
+
+Lens names: violence reduction = خفض العنف; heat and shade = الحرارة والظل; placemaking =
+تهيئة الأماكن; street safety = سلامة الشوارع; transit comfort = راحة النقل العام. A lens is
+always named "عدسة" plus its name (عدسة خفض العنف).
+
+Never softened: the brownfield note says "أعمال تنظيف" (cleanup work) and "أرض يُحتمل تلوثها"
+(land that may be contaminated), never "نظيفة" or "آمنة"; the possible estate passage says "قد
+يكون المالك المسجّل قد توفي" (may have died), never that the owner died.

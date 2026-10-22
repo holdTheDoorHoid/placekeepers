@@ -100,7 +100,7 @@ sources:
     publisher: مدينة فيلادلفيا، مكتب النقل ونظم البنية التحتية
   real_estate_transfers:
     name: عمليات نقل العقارات
-    publisher: مدينة فيلادلفيا، إدارة السجلات
+    publisher: مدينة فيلادلفيا، قسم السجلات
   assessment_history:
     name: سجل التقييمات
     publisher: مدينة فيلادلفيا، مكتب تقييم الممتلكات
@@ -279,7 +279,7 @@ sources:
     publisher: وزارة الزراعة الأمريكية، بيانات متاجر SNAP
   real_estate_sales:
     name: مبيعات العقارات في المدينة كلها
-    publisher: مدينة فيلادلفيا، إدارة السجلات
+    publisher: مدينة فيلادلفيا، قسم السجلات
   assessment_values:
     name: القيم السوقية المقدّرة في المدينة كلها، لسنتين ضريبيتين
     publisher: مدينة فيلادلفيا، مكتب تقييم الممتلكات
@@ -317,7 +317,7 @@ sources:
     publisher: وكالة حماية البيئة الأمريكية
   land_conveyances:
     name: الصكوك الصادرة عن جهات الأراضي في المدينة منذ 2014
-    publisher: مدينة فيلادلفيا، إدارة السجلات
+    publisher: مدينة فيلادلفيا، قسم السجلات
   land_conveyed_by_fy:
     name: >-
       العقارات التي نُقلت ملكيتها بحسب البرنامج والسنة المالية، من 2017 إلى 2023 (لوحة إدارة
@@ -1734,7 +1734,7 @@ routes:
     steps:
       - اشترك في Fraud Guard باسم وعنوان بريد إلكتروني.
       - ترسل المدينة بريدًا إلكترونيًا حين يُسجَّل مستند يذكر اسمك، فيُكتشف الصك المزوّر مبكرًا.
-      - "تُوجَّه الأسئلة إلى إدارة السجلات (215 686 2290، records.info@phila.gov)."
+      - "تُوجَّه الأسئلة إلى قسم السجلات (215 686 2290، records.info@phila.gov)."
     links:
       "https://www.phila.gov/2022-09-06-own-property-in-philadelphia-get-free-deed-fraud-protection-with-fraud-guard/":
         label: "مدينة فيلادلفيا: Fraud Guard"
