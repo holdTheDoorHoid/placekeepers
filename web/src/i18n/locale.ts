@@ -72,6 +72,15 @@ export function timeFormat(): Intl.DateTimeFormat {
   return cached('time', (intl) => new Intl.DateTimeFormat(intl, { hour: 'numeric', minute: '2-digit', timeZone: CITY_TIME_ZONE }));
 }
 
+/**
+ * A time on a clock rather than a moment: SEPTA's "6:50 AM" or a hearing's "3:30 PM", shown in
+ * the page language's own way ("6:50", "6:50 a.m.") whatever time zone the visitor is in. Format
+ * a Date made with Date.UTC(1970, 0, 1, hours, minutes).
+ */
+export function clockFormat(): Intl.DateTimeFormat {
+  return cached('clock', (intl) => new Intl.DateTimeFormat(intl, { hour: 'numeric', minute: '2-digit', timeZone: 'UTC' }));
+}
+
 /** The plural category of a count in the page's language ("one", "few", "many", "other" ...). */
 export function pluralCategory(n: number): Intl.LDMLPluralRule {
   return cached('plural', (intl) => new Intl.PluralRules(intl)).select(n);

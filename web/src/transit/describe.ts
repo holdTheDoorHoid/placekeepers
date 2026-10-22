@@ -3,7 +3,7 @@
 // the component so the wording can be tested. A stop without a SEPTA count says so; nothing is
 // ever estimated.
 
-import { strings } from '../strings.ts';
+import { formatClock, strings } from '../strings.ts';
 
 const MODE_BUS = 1;
 const MODE_TROLLEY = 2;
@@ -42,13 +42,13 @@ function vehicleKey(kind: StopKind): string {
   return kind === 'metro' || kind === 'rail' ? 'train' : kind;
 }
 
-/** A time of SEPTA's service day, which runs past midnight: 410 is "6:50 AM", 1530 "1:30 AM". */
+/**
+ * A time of SEPTA's service day, which runs past midnight, in the page's language: 410 is "6:50 AM"
+ * in English and "6:50" in Portuguese, 1530 is "1:30 AM" and "1:30".
+ */
 export function clock(minutes: number): string {
   const day = ((minutes % 1440) + 1440) % 1440;
-  const hours = Math.floor(day / 60);
-  const mins = day % 60;
-  const twelve = hours % 12 === 0 ? 12 : hours % 12;
-  return `${twelve}:${String(mins).padStart(2, '0')} ${hours < 12 ? 'AM' : 'PM'}`;
+  return formatClock(Math.floor(day / 60), day % 60);
 }
 
 /** "a bus about every 12 minutes", or "only 2 buses" when so few come that an average misleads. */

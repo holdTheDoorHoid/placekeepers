@@ -13,6 +13,7 @@
 
 import {
   CITY_TIME_ZONE,
+  clockFormat,
   decimalFormat,
   formatDateIn,
   moneyFormat,
@@ -58,6 +59,14 @@ export function formatTime(ms: number): string {
 }
 
 /** CITY WORDS become "City words": for descriptions the City writes in capitals. */
+/**
+ * A time on the clock in the page's language, from hours (0 to 23) and minutes: "6:50 AM" in
+ * English, "6:50" in Portuguese. For times the City or SEPTA write down, not moments.
+ */
+export function formatClock(hours: number, minutes: number): string {
+  return clockFormat().format(new Date(Date.UTC(1970, 0, 1, hours, minutes)));
+}
+
 export function sentenceCase(text: string): string {
   const lower = text.toLowerCase().replace(/\s+/g, ' ').trim();
   return lower ? lower[0]!.toUpperCase() + lower.slice(1) : lower;
