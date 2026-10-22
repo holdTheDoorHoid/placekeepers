@@ -2033,7 +2033,7 @@ const fr: Catalog = {
       cityListNames: (agency) => `La liste de la Ville des propriétés publiques nomme ${agency} comme propriétaire.`,
       cityListStatus: (status) => `Son statut sur cette liste : ${status}.`,
       cityStatuses: {
-        'OWNED - AVAILABLE': ['indiqué comme disponible', 'La Land Bank le montre sur sa carte des propriétés que les gens peuvent demander.'],
+        'OWNED - AVAILABLE': ['indiqué comme disponible', 'La Land Bank le montre sur sa carte des propriétés pour lesquelles les gens peuvent déposer une demande.'],
         'OWNED - AVAILABLE (GARDEN AGREEMENT)': ['indiqué comme disponible pour un accord de jardin', "Il est proposé pour le jardinage dans le cadre d'un accord avec la Land Bank."],
         'OWNED - AVAILABLE (NO CONSTRUCTION PERMITTED)': ['indiqué comme disponible, sans construction autorisée', "Il est proposé, mais rien ne peut y être construit."],
         'OWNED - AVAILABLE (NOT FOR SY)': ['indiqué comme disponible, mais pas comme jardin latéral', "Il est proposé, mais pas au voisin d'à côté comme jardin latéral."],

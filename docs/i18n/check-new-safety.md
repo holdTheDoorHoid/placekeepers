@@ -165,3 +165,27 @@ word in curly quotes, as the glossary decided, and the old wording "អាចស
 is gone from every listed place. Contact page: says people can write in Khmer and that we read it
 with a translation tool; promises no reply.
 
+## French (fr)
+
+Checked 109 items. Same meaning: 107. Changed: 2, both fixed. The narrow no break spaces before
+colons, semicolons, question marks and the dollar sign were not touched.
+
+| Key or place | French text | Back translation | English | What changed |
+|---|---|---|---|---|
+| `content/fr/posting.md`, Where to post a flyer, "Your own window, door or fence" | "Votre propre propriété, c'est à vous d'y afficher ce que vous voulez." | Your own property, it is for you to post there whatever you want. | Your own property is yours to post on. | Strengthened. "Whatever you want" is not in English and reads as no limit at all, on a page about what the law does limit (the next sentence is about the window sign limit). Now "Vous pouvez afficher sur votre propre propriété." |
+| `dossier.owner.cityStatuses.OWNED - AVAILABLE`, second text | "La Land Bank le montre sur sa carte des propriétés que les gens peuvent demander." | The Land Bank shows it on its map of properties that people can ask for. | The Land Bank shows it on its map of properties people can apply for. | Reads as an invitation. "Demander" is the casual "ask for", close to the "you can ask for it" wording the owner ruled out for the listed status. Every other language has the formal "apply" (a request that goes through a process). Now "pour lesquelles les gens peuvent déposer une demande". |
+
+Small differences, kept:
+
+| Place | French | Back translation | English | Why kept |
+|---|---|---|---|---|
+| Where to post a flyer, hand delivery bullet | "toute porte portant la mention «pas de publicité»" | any door marked "no advertising" | any door posted "no flyers" | It is the sign a French reader actually sees on a door, with the same meaning. |
+| `letters.owner.ask` | "Des voisins de cette rue" | Some neighbors of this street | Neighbors on this block | "Rue" is a street, "block" is a few of them. It is only the opening of a letter the user can edit. |
+| Where to post a flyer, the library bullet | "considère comme gênant" | considers bothersome | lists as disruptive | A little milder, same rule, not a safety line. |
+
+Listed as available: every place says "indiqué comme disponible" (indicated as available) or
+"répertorié", the City's own label, never an offer. For a native speaker to look at: the "zone de
+vigilance" name for the displacement watch is older wording that I did not change, but "vigilance"
+can sound like policing. Contact page: says people can write in French and that we read it with a
+translation tool; promises no reply.
+
