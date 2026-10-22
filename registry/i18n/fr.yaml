@@ -985,3 +985,81 @@ lenses:
         label: "Les arrêts les plus fréquentés d'abord"
       heat_and_shade:
         label: "Chaleur et ombre"
+
+suggestions:
+  clean_and_green:
+    label: "Nettoyer et verdir ce terrain (clean and green)"
+    summary: "Enlever les déchets, niveler, semer de l'herbe et planter quelques arbres, ajouter une clôture basse à poteaux et à lisse, et tondre régulièrement."
+    cost: "Environ 1 100 $ à 1 500 $ au départ et 150 $ à 300 $ par an (à confirmer avec PHS)"
+  seal_abandoned_building:
+    label: "Faire sceller ce bâtiment"
+    summary: "Signaler un bâtiment abandonné ouvert pour que la Ville scelle ses portes et ses fenêtres."
+    cost: "Signalement gratuit"
+  plant_shade_trees:
+    label: "Planter des arbres d'ombre sur ce terrain et le long de celui-ci"
+    summary: "Moins d'arbres donnent de l'ombre à cette zone qu'autour d'au moins la moitié des lieux de cette carte (relevé du couvert arboré de la Ville, 2018). Les arbres rafraîchissent une rue par leur ombre et par l'eau que leurs feuilles dégagent. La Ville plante des arbres de rue gratuits dans le trottoir quand le propriétaire d'un bien le demande, et TreePhilly distribue des arbres gratuits à planter en pleine terre sur un terrain privé. Choisissez des arbres qui grandiront, pour qu'ils donnent de l'ombre à la rue et que les voisins puissent encore voir de l'autre côté du terrain."
+    cost: "Arbres gratuits de la Ville et de TreePhilly. Les jeunes arbres ont besoin d'environ 20 gallons d'eau (environ 75 litres) par semaine de mars à décembre"
+  cool_green_lot:
+    label: "Verdir ce terrain pour rafraîchir la rue"
+    summary: "Selon l'indice de vulnérabilité à la chaleur de la Ville, la chaleur de l'été frappe les gens ici plus durement qu'autour d'au moins la moitié des lieux de cette carte. La terre nue, le gravier et les gravats absorbent le soleil, alors que l'herbe, les massifs de jardin et surtout les arbres gardent un terrain plus frais et donnent de l'ombre au trottoir à côté. Quoi que devienne ce terrain, un jardin, un terrain nettoyé et verdi ou un jardin latéral, plantez-y des arbres d'ombre, et gardez-les hauts pour que le terrain reste ouvert à la vue."
+    cost: "D'arbres gratuits (TreePhilly) jusqu'à environ 1 100 $ à 1 500 $ au départ pour un nettoyage et verdissement complet (à confirmer avec PHS)"
+  seating_and_shade:
+    label: "Aménager un endroit pour s'asseoir à l'ombre"
+    summary: "Plus de personnes habitent à moins de 5 minutes à pied de ce terrain qu'autour d'au moins la moitié des lieux de cette carte. Quelques bancs ou une table de pique-nique sous des arbres d'ombre peuvent en faire un endroit où les voisins s'arrêtent, se reposent et se rencontrent. Demandez aux voisins ce qu'ils utiliseraient, choisissez des sièges solides, et plantez des arbres qui grandiront pour que le terrain reste ouvert à la vue. Prévoyez qui l'entretiendra."
+    cost: "D'arbres gratuits (TreePhilly) et d'un banc construit à partir d'un plan libre jusqu'à quelques milliers de dollars. Les mini-subventions pour l'espace public de Feet First Philly donnent de 500 $ à 2 500 $"
+  community_garden:
+    label: "Lancer un jardin communautaire"
+    summary: "Ce terrain est plus loin d'un parc qu'au moins la moitié des lieux de cette carte, et au moins 1 000 personnes habitent à moins de 5 minutes à pied. Un jardin communautaire donne aux voisins de l'espace vert, de la nourriture et des fleurs, et une raison de se rencontrer. Il faut des jardiniers qui reviennent chaque semaine, de l'eau et la permission d'utiliser le terrain. Une fois qu'un jardin fonctionne, le Neighborhood Gardens Trust peut aider à le garder jardin pour de bon."
+    cost: "De quelques bacs surélevés jusqu'à quelques milliers de dollars avec la terre, une clôture et l'eau. L'Urban Garden Agreement de la Land Bank coûte 1 $"
+  art_request:
+    label: "Se renseigner sur une fresque ou une autre œuvre d'art"
+    summary: "Beaucoup de gens habitent autour de ce terrain, et aucune œuvre de la liste Percent for Art de la Ville ni de Wikidata ne se trouve à moins de 5 minutes à pied. Ces listes oublient beaucoup de fresques, donc regardez d'abord la couche Art public et la propre liste de fresques de Mural Arts. Un mur nu face au terrain pourrait accueillir une fresque : Mural Arts reçoit les demandes des propriétaires de murs sur son propre site. L'art est bienvenu pour la beauté et la fierté ; aucune étude ne le lie à moins de violence."
+    cost: "Demande gratuite à Mural Arts"
+  report_dumping:
+    label: "Signaler le dépôt sauvage à Philly311"
+    summary: "Quelqu'un a interrogé Philly311 sur un dépôt sauvage dans un tronçon de rue en face de ce terrain au cours des 90 derniers jours, et la demande est encore ouverte. Si les déchets sont toujours là, ajoutez votre propre demande, avec une photo, pour que la Ville les enlève. Un signalement concerne les déchets, jamais la personne qui les a laissés."
+    cost: "Signalement gratuit"
+  report_dark_light:
+    label: "Signaler le lampadaire éteint à Philly311"
+    summary: "Quelqu'un a demandé à Philly311 de réparer un lampadaire de rue ou de ruelle éteint dans un tronçon de rue en face de ce terrain, au cours des 90 derniers jours, et la demande est encore ouverte. Si la lumière est toujours éteinte, ajoutez votre propre demande, avec le numéro du poteau s'il en a un. Une rue éclairée aide les voisins à utiliser la rue et le terrain après la tombée de la nuit."
+    cost: "Signalement gratuit"
+  report_graffiti:
+    label: "Signaler les graffitis à Philly311"
+    summary: "Quelqu'un a demandé à Philly311 d'enlever des graffitis dans un tronçon de rue en face de ce terrain au cours des 90 derniers jours, et la demande est encore ouverte. S'ils sont toujours là, ajoutez votre propre demande, avec une photo, pour que la Ville puisse les nettoyer. Si les voisins préfèrent de l'art sur ce mur, demandez à son propriétaire au sujet d'une fresque."
+    cost: "Signalement gratuit"
+  memorial_or_ghost_bike:
+    label: "Un mémorial ou un ghost bike"
+    summary: "Un mémorial rend hommage à la personne qui est morte et rappelle à tous ceux qui passent de ralentir. Pour une personne tuée à vélo, la Bicycle Coalition peut installer un ghost bike, un vélo peint en blanc."
+    cost: "Faible ; une demande de ghost bike est gratuite"
+  traffic_calming_petition:
+    label: "Demander la modération de la circulation dans cette rue résidentielle"
+    summary: "Les voisins peuvent demander à la Ville des coussins ralentisseurs dans une rue résidentielle. La Ville note les demandes trois fois par an à partir des données d'accidents, et si cette rue est choisie, 60 pour cent du tronçon signe une pétition. Les artères, les routes de l'État, et les rues courtes, raides et sinueuses n'y sont pas admissibles."
+    cost: "Demande gratuite"
+  daylighting_check:
+    label: "Vérifier que ce coin est dégagé sur 20 pieds"
+    summary: "La loi de Pennsylvanie interdit déjà de stationner à moins de 20 pieds d'un passage piéton à une intersection, et à moins de 30 pieds d'un panneau stop ou d'un feu, pour que les conducteurs et les personnes qui traversent puissent se voir. Si des voitures se garent là, demandez à la Ville de dégager le coin avec de la peinture, des poteaux ou des jardinières. Signalez un lampadaire éteint ici à Philly311."
+    cost: "Demande gratuite"
+  asphalt_art_check:
+    label: "Art sur l'asphalte à ce coin, vérifier d'abord auprès de la Ville"
+    summary: "Une étude d'intersections peintes a constaté moins d'accidents impliquant des personnes à pied et à vélo, mais elle n'avait pas de groupe de comparaison et a été financée par le parrain du programme. En 2025, le gouvernement fédéral a commencé à presser les États de retirer l'art sur les passages piétons, et Philadelphie n'a pas de procédure de permis pour cela. Vérifiez auprès de la Ville avant de peindre quoi que ce soit."
+    cost: "Inconnu ; il n'y a pas de procédure de la Ville pour le chiffrer"
+  stop_survey:
+    label: "Relever cet arrêt avec StreetComplete"
+    summary: "Personne n'a encore noté si cet arrêt a un abribus ou un banc, ou bien OpenStreetMap et la liste des abribus de la Ville ne s'accordent pas sur son abribus. Chacun peut le savoir en quelques minutes avec l'application de téléphone gratuite StreetComplete, et les réponses arrivent sur cette carte en environ une semaine. Si l'application n'a aucune question ici, l'arrêt n'est pas encore dans OpenStreetMap : ajoutez-le avec la couche Things de l'application, ou laissez une note."
+    cost: "Gratuit ; environ trois minutes par arrêt"
+  stop_shelter_request:
+    label: "Demander un abribus à la Ville pour cet arrêt"
+    summary: "Un relevé n'a trouvé aucun abribus ici, et la liste des abribus de la Ville n'en a pas non plus ici. Le programme d'abribus de la Ville, géré par son bureau des transports (OTIS), construit des abribus payés par la publicité qui s'y trouve et vise à les placer aux 15 pour cent d'arrêts de bus les plus fréquentés. Il n'y a pas de formulaire de demande public, donc écrivez à OTIS avec le numéro de l'arrêt et le nombre de personnes qui montent ici."
+    cost: "Demande gratuite"
+  stop_bench_request:
+    label: "Demander un banc à la Ville pour cet arrêt"
+    summary: "Un relevé n'a trouvé aucun banc ici. Les bancs aux arrêts relèvent du programme de mobilier urbain de la Ville, géré par OTIS, et nous n'avons trouvé aucun moyen public d'en demander un, donc écrivez à OTIS avec le numéro de l'arrêt. Un banc que vous construisez vous-même demande une permission, et la démarche de permis de la Ville pour un banc sur un trottoir n'est pas encore confirmée."
+    cost: "Demande gratuite"
+  stop_streetlight_report:
+    label: "Signaler un lampadaire éteint à cet arrêt"
+    summary: "OpenStreetMap dit que cet arrêt n'est pas éclairé. Si un lampadaire ici est éteint, signalez-le à Philly311. Le programme actuel d'éclairage public de la Ville remplace des lumières mais n'en ajoute pas de nouvelles, donc un arrêt sans aucune lumière est une question pour OTIS."
+    cost: "Signalement gratuit"
+  stop_shade_trees:
+    label: "Planter des arbres d'ombre près de cet arrêt"
+    summary: "Peu d'arbres donnent de l'ombre à cet arrêt. La Ville plante des arbres de rue gratuits dans le trottoir devant une maison ou un commerce quand son propriétaire le demande, et les arrose la première année. Demandez aux propriétaires des bâtiments à côté de l'arrêt d'en demander un ; les voisins peuvent aider à l'arroser ensuite."
+    cost: "Arbres de rue gratuits pour les propriétaires"
