@@ -284,7 +284,7 @@ const ptBR: Catalog = {
           ? 'Todos os fatores estão desligados. Ligue um para colorir os pontos de ônibus e de bonde.'
           : 'Todos os fatores estão desligados. Ligue um para colorir os lotes.',
     explainToggle: 'Por que este fator',
-    shown: (layer, lens) => `Mostrando agora "${layer}", colorido pela lente ${lens.toLowerCase()}.`,
+    shown: (layer, lens) => `Mostrando agora "${layer}", colorido pela lente de ${lens.toLowerCase()}.`,
     notShown: (layer) => `O mapa não está mostrando esta lente em "${layer}" agora.`,
     showOnMap: 'Mostrar no mapa',
     legendLow: 'Prioridade menor',
@@ -448,7 +448,7 @@ const ptBR: Catalog = {
       `${pl(n, '# lugar', '# lugares')} de ${title}. Gerado em ${day}${dataDay ? ` a partir dos dados semanais de ${dataDay}` : ''}.`,
     ownerLine:
       'Os nomes e endereços de correspondência dos proprietários estão como a Prefeitura os publica. Toda sinalização sobre o proprietário tem uma nota de cuidado e um próximo passo de proteção: leia-os na página do lote antes de agir. Não é aconselhamento jurídico.',
-    scoreLine: (lens, weights) => `As pontuações usam a lente ${lens} com estes pesos: ${weights}.`,
+    scoreLine: (lens, weights) => `As pontuações usam a lente de ${lens.toLowerCase()} com estes pesos: ${weights}.`,
     greeningLine: (caution) => `Sobre as sugestões de áreas verdes: ${caution}`,
     placemakingLine: (caution) => `Sobre jardins, bancos e arte: ${caution}`,
   },
@@ -628,7 +628,7 @@ const ptBR: Catalog = {
 
   legend: {
     parcelsFill: 'Cor de preenchimento: prioridade na sua combinação de lentes',
-    parcelsFillLens: (lens) => `Cor de preenchimento: prioridade na lente ${lens.toLowerCase()}`,
+    parcelsFillLens: (lens) => `Cor de preenchimento: prioridade na lente de ${lens.toLowerCase()}`,
     parcelsSure: 'Contorno: quanta certeza temos de que está vazio',
     sureHigh: 'Muito provavelmente vazio',
     sureMedium: 'Provavelmente vazio',
@@ -1912,7 +1912,7 @@ const ptBR: Catalog = {
       landcare: 'Já mantido pelo PHS LandCare.',
       landcareSince: (year) => `Já mantido pelo PHS LandCare desde ${year}.`,
       garden: 'Já há pessoas cultivando aqui. Pergunte a elas antes de planejar qualquer coisa.',
-      lensLine: (lens) => `Prioridade na lente ${lens.toLowerCase()}, a lente pela qual o mapa colore os lotes.`,
+      lensLine: (lens) => `Prioridade na lente de ${lens.toLowerCase()}, a lente pela qual o mapa colore os lotes.`,
       flood: {
         1: 'Parte deste lote fica na planície de inundação da FEMA com 1 por cento de chance por ano, onde uma enchente tem pelo menos 1 chance em 100 a cada ano. Isso é um motivo para cuidado, não parte de nenhuma pontuação: as plantas aqui precisam aguentar solo encharcado, qualquer construção precisa seguir as regras da Prefeitura para planícies de inundação, e criar áreas verdes que absorvem a chuva ajuda.',
         2: 'Parte deste lote fica na área da FEMA com 0,2 por cento de chance de enchente por ano, onde uma enchente tem 1 chance em 500 a cada ano. Isso é um motivo para cuidado, não parte de nenhuma pontuação: as plantas aqui devem aguentar solo encharcado, e criar áreas verdes que absorvem a chuva ajuda.',
