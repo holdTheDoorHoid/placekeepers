@@ -1345,6 +1345,107 @@ layers: they wait for the Athenaeum of Philadelphia's permission. A swipe to com
 by side: not built; the strength setting and the slider cover most of it. Details in
 DATA_SOURCES.md.
 
+### 5.12 Organizing tools
+
+Phase 5 (issue #19). Tools for neighbors who have found a place and want to act on it together. They
+run in the visitor's browser like everything else: no accounts, no servers, and nothing a person
+types ever leaves the browser.
+
+**Who represents you, as built (M5.1, issue #45, 2026-10-21).** What the owner will see on every lot
+page on our list, in a new section near the end, "Who represents you":
+
+- The lot's **ward and division** ("Ward 37, division 12"), which decide where neighbors vote and
+  who their committee people are.
+- Its **City Council member**, **state representative**, **state senator** and **member of
+  Congress**, each with the district, the official office address and phone, and the official
+  website, and under each one where it comes from and the day that source was last checked. The
+  seven Council members elected at large follow in one line. Only official offices: never a
+  personal phone, email or social media account, even where a source holds one.
+- The **Registered Community Organizations** whose area covers the lot, with what the City
+  publishes for reaching each one (its address, where it meets, how it prefers to be contacted, and
+  its primary contact's name, phone and email), as the owner decided ("as the City publishes its
+  contact"). The contact's own address and the alternate contact are not downloaded.
+- A seat with no member listed says so ("The seat may be empty until an election"); it is never
+  filled with an older name. A district we could not work out, or a list missing from the weekly
+  copy, is said plainly, never left blank.
+- A link to Atlas's "Voting" view of the address, the City's own page for the same facts. A parcel
+  without a dossier says these are worked out weekly for the lots on our list and links Atlas.
+- The one page print adds the ward and division and each member's name in one line.
+
+Where the facts come from (docs/DATA_SOURCES.md, "Who represents each lot"): the City's political
+divisions; the Census Bureau's TIGER/Line districts for the state House and Senate and Congress
+(the file of the Congress now sitting); Open States for the General Assembly; the
+congress-legislators project for Congress; the City's own list of elected officials, the one Atlas
+shows, for City Council (its General Assembly rows lagged behind, so those come from Open States);
+and the community organizations' contacts from the City's layer, read weekly. Each lot is placed by
+its point; at the city's edge a neighboring county's district file can reach a few points (seven of
+583,680 parcels on 2026-10-21), so only districts with real area inside the City's boundary count,
+and such a point takes the nearest one. Every seat is rebuilt from the newest copies each week, so
+a seat that changes hands shows the new person after the next weekly refresh.
+
+**Packets, as built (M5.1).** What the owner will see:
+
+- **"Make a packet"** beside every saved list (in both views), and **"Make a packet of these
+  places"** above the analysis view's ranked list (the first 50 in its order). The packet opens in
+  its own tab; what it holds goes after "#" in its address, or, for the places on the map, into this
+  browser's storage just before, so no server is told. A packet holds up to 50 places and says how
+  many it left out.
+- **A cover page**: the list's name, the day, how many places, a small map with each place's number
+  (drawn once as a picture from our own base map, so it prints the same in every browser), and a
+  contents list, the date of the weekly copy and the lens the suggestions follow. The lens can be
+  changed on the packet page.
+- **The displacement card once, at the front**, when any place's page carries a caution inside a
+  watch area: the caution sentences word for word, each watch area the packet touches with its
+  signs and the places in it, and the ways to protect neighbors with their addresses and the day
+  each was checked. Each such page carries the one line caution with "See "Displacement watch" at
+  the front of this packet." (docs/ETHICS.md, "once per page or view": the packet is one view.)
+- **Who to contact**: each community organization, Council office, state representative, state
+  senator and member of Congress once, with the places in the packet it covers, then the members at
+  large, and each place's ward and division. Every contact shows its source and the day it was last
+  checked.
+- **One page per place**: the address and parcel number; any hearing still to come; the vacancy
+  call with its reasons and confidence; the owner type and the flags exactly as docs/ETHICS.md
+  allows them on that parcel (the possible estate flag in full, the note when flags are held back,
+  and the deed fraud notice wherever the owner may be a person); the box of a lot listed as
+  available; the ways to get permission in the order to try them, each with its first step, and the
+  conservatorship warning word for word before that route; the suggestions under the chosen lens
+  with their evidence and cost, each greening and placemaking card's caution and the brownfield soil
+  note; the rules for this lot; who represents it; whether the letter to the owner is offered (and
+  why not); and a short "What we could not check" line. The owner's names and mailing address are
+  left off the pages: they stay on the lot page and in the City's records, so a packet passed around
+  a meeting does not carry them.
+- On paper: Letter size, black and white, each part on pages of its own, each place on one page
+  (checked for ten lots in Chromium: no page longer than the paper and no text cut off). On a phone
+  the same packet reads as cards that scroll.
+- The packet is made only from the weekly copy, the same for everyone that week, and asks no other
+  server; each page says to check the lot page online for today's records.
+
+**Letters, as built (M5.1).** The owner decided (2026-10-21) that letter templates ship now, low
+stakes only, marked as not yet reviewed by a lawyer. What the owner will see on the letters page
+(from "Write a letter" on a lot page or a packet):
+
+- At the top of the page and at the top of every printed letter: "A lawyer has not reviewed this
+  letter yet. It is not legal advice.", with Grounded in Philly's request for legal help (Garden
+  Justice Legal Initiative).
+- Four letters: to the lot's owner, asking permission to care for it for a while (a cleanup, a
+  garden, a place to sit); to the district Council office, asking support for a side yard (only
+  from the neighbor next door), a Land Bank lot or a cleanup; to a Registered Community
+  Organization, introducing the project and asking for time at a meeting; and a follow up on a
+  Philly311 request that stayed open, with the request number, addressed to the Council office.
+  Names and addresses are filled in from the weekly copy, labeled with its date, and every field
+  can be changed.
+- **The letter to an owner** is offered exactly where the flags about the owner may show: an
+  organization always, an owner who may be a person only on a parcel the map calls vacant with
+  high or medium confidence. Public land is asked through the Land Bank's programs instead, and the
+  page points to the Council letter. When the letter is not offered, the page says why. It never
+  mentions buying, prices, taxes owed, death or estates: words about an estate in the owner's name
+  or mailing address as the City publishes them are left out, so such a letter begins "Dear property
+  owner". It is written one lot at a time; there is no way to make owner letters for a whole list.
+- The site never sends anything (docs/ETHICS.md, "Things we do not build"). What a person types
+  stays in this browser under `placekeepers:v1:letters`, never in the address bar, and "Clear
+  everything I typed" removes it. An end to end test types into every letter, prints, reloads and
+  checks that no request carried any of it.
+
 ## 6. Finding vacant land without depending on one source
 
 The City's vacancy indicator stopped being accurate in June 2024, and that alone ended the original

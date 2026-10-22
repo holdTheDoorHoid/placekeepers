@@ -121,6 +121,16 @@ message naming the service, and the weekly refresh opens the usual issue after t
 the older photos the City hosts for DVRPC and the U.S. Geological Survey on the same server, with
 their terms recorded as not stated (`unstated`).
 
+A `url` endpoint may name a Census Bureau TIGER/Line file for Pennsylvania (added 2026-10-21 by
+M5.1): `https://www2.census.gov/geo/tiger/TIGER<year>/<FOLDER>/tl_<year>_42_<layer>.zip`. The
+registry names the file in use; each run its adapter (`adapters/represent.py`, `TigerDistricts`)
+asks for the same file of every newer year up to the current one and takes the newest that exists,
+so a new year's file comes in without a registry edit. A Congressional file is named for its
+Congress (`cd119`): the adapter asks for the file of the Congress sitting on the day of the run
+(the 119th until January 3, 2027), from the newest year that has it, and keeps `congress` in the
+snapshot. A `json` file may also be a list of records a source specific adapter flattens
+(`us_legislators`, `us_legislator_offices`).
+
 ### `registry/licenses.yaml`
 
 ```yaml
@@ -439,6 +449,7 @@ data/
       <route id>.json     one route's stops in order, each direction, with the id of the OpenStreetMap stop at each
     stop_amenities.json   what OpenStreetMap says at each stop it knows, by its id (section 8; Open Database License; decision D1)
     land_bank.json        The Land Bank in numbers: conveyances by year, agency, buyer type, program and district, the City's counts by program, and the weekly count of listed lots (section 9; aggregates only; added 2026-10-09 by M4.4)
+    contacts.json         who represents each lot: the members in each seat a lot lies in, with official offices, and the community organizations' contacts (section 10; added 2026-10-21 by M5.1)
   dossiers/
     <first four digits of the OPA account>.json
     common.json           the parts of every flag that are the same for all parcels (section 6)
@@ -1704,6 +1715,26 @@ under a mile). The lot page says them as a measure, never as a judgment of what 
 live lookup of the owner asks for the same two columns. (OPA's weekly copy holds them from the
 first refresh after 2026-10-09.)
 
+**`represent`** (added 2026-10-21 by M5.1, issue #45; only when some district is known): who
+represents the lot, by number, the people named once in `tables/contacts.json` (section 10):
+
+```json
+"represent": {"ward": "37", "division": "3712", "council": "7", "house": "195", "senate": "3",
+              "congress": "3", "rcos": [54, 203]}
+```
+
+`division`: the City's political division as four digits, ward then division (the City writes
+"719" for ward 7, division 19; it is written "0719" here); `ward`: the ward, without a leading zero;
+`council`, `house`, `senate`, `congress`: the City Council, Pennsylvania House, Pennsylvania Senate
+and U.S. House districts, as text without leading zeros; `rcos`: the City's ids (`lni_id`) of every
+Registered Community Organization whose area covers the lot, lowest first. Each is the shape
+covering the parcel's OPA point (the lowest number where shapes overlap at an edge). The state and
+Congressional districts are first limited to those with at least half a square kilometer inside the
+City's Council districts, and a point within 250 meters of the city that none of them covers takes
+the nearest one (`derive/represent.py`). A key is left out when its source had no snapshot this
+week or no shape covers the point; the lot page then says it could not work it out. Never a name:
+seats change hands, and names live in one file.
+
 **`rules`** (added 2026-10-09 by M4.6, issue #42; only when a rule applies): what City and federal
 records say applies to the lot, joined by its shape (the vacancy model's shape, else the Water
 Department's, else its OPA point; `derive/lot_rules.py`):
@@ -2139,3 +2170,66 @@ series survives from week to week; if the saved snapshots are ever lost, it star
 
 Without the `land_conveyances` snapshot the file is not written and the build notes say so; the page
 then says the numbers are not published yet.
+
+## 10. Who represents each lot (`tables/contacts.json`)
+
+Added 2026-10-21 by M5.1 (issue #45; `pipeline/src/placekeepers/publish/contacts.py`). One small
+file, fetched once by a lot page or a packet, naming the people and organizations the dossiers'
+`represent` (section 6) point to. Only the seats and organizations some lot on our list lies in
+are written (on 2026-10-21: 10 Council districts, 7 members at large, 26 House, 7 Senate and 3
+Congressional districts, and 240 organizations; 102 kB, 23 kB compressed).
+
+```json
+{
+  "schema": 1,
+  "generated_at": "2026-10-21T15:00:00Z",
+  "council": {"7": {"name": "Quetcy Lozada",
+                    "offices": [{"address": "1400 John F Kennedy Blvd, City Hall Rm 484, Philadelphia, PA 19107",
+                                 "phone": "215-686-3448"}],
+                    "website": "https://phlcouncil.com/QuetcyLozada/",
+                    "source": "city_elected_officials", "checked": "2026-10-21"}},
+  "council_at_large": [{"name": "Nina Ahmad", "offices": [], "website": "...", "source": "...", "checked": "..."}],
+  "house": {"195": {"name": "...", "offices": [], "website": "...", "source": "pa_legislators", "checked": "..."}},
+  "senate": {"3": {}},
+  "congress": {"3": {}},
+  "rcos": {"203": {"name": "Example Avenue Neighbors", "address": "1300 N Example Ave, Philadelphia, PA 19122",
+                   "meeting": "Example Branch Library", "preferred": "Email",
+                   "contact": {"name": "Pat Sample", "phone": "215-555-0203", "email": "neighbors@example.org"},
+                   "website": "https://example.org/neighbors", "source": "rco_contacts", "checked": "2026-10-21"}},
+  "vacant": {"house": ["201"]}
+}
+```
+
+A seat: `name` as its source writes it; `role` (only City Council, a leadership role the City lists,
+such as "Council President"); `offices`, each with `address` and `phone` (written 215-686-3448)
+when known: for City Council the office in City Hall, then a district office where the City lists
+one; for the General Assembly the district office, then the Capitol office, as Open States lists
+them; for Congress the district offices in Philadelphia (or every one in Pennsylvania when none is
+in the city), then the Washington office; `website`, an https link (for the General Assembly the
+member's page on palegis.us); `source`, the registry source id; and `checked`, the day in
+Philadelphia that source's copy was fetched. Keys are district numbers as text. Never a personal
+email, phone, social media account, photo, birth date or biography: the adapters do not download
+them.
+
+A community organization, by the City's `lni_id`: `name`; `address` (the organization's), `meeting`
+(where it meets), `preferred` (how it prefers to be contacted) and `contact` (its primary contact's
+`name`, `phone` with any extension, and `email`), as the City publishes them (owner, 2026-10-21); its
+`website`; `source` and `checked`. Never the primary contact's own address or the alternate contact.
+When the City lists an organization twice, the record registered last is kept.
+
+`vacant` lists, by kind, the districts some lot lies in whose seat has no member in the source this
+week; the lot page then says the seat may be empty, and never shows an older name. Each run builds
+the file from the newest copies, so a seat that changes hands shows the new person after the next
+weekly refresh. A kind whose source had no snapshot is left out of the file, and pages say they
+cannot name who holds those seats this week.
+
+The browser reads it with `web/src/represent/contacts.ts` (forgiving: unknown keys, unsafe links
+and malformed entries are left out). Without the file the lot page and packets say this week's copy
+does not say who represents the lot and link Atlas's "Voting" view.
+
+**Kept in the browser (added 2026-10-21 by M5.1).** Two more keys under `placekeepers:v1:`: `letters`
+(`{"version": 1, "sender": {"senderName", "group", "contact"}, "drafts": {"<template>:<opa or ->":
+{fields}}}`, at most 40 drafts and 2,000 characters a field; what a person types into a letter,
+never sent anywhere, removed by "Clear everything I typed") and `packet-view` (`{"name", "created",
+"places": [saved places as in saved lists]}`: the places the analysis view hands to a packet tab,
+replaced each time).

@@ -303,7 +303,7 @@
             {#if lot.reasons.length}<ul>{#each lot.reasons as reason (reason)}<li>{reason}.</li>{/each}</ul>{/if}
 
             <h3>{t.sections.owner}</h3>
-            <p>{t.ownerType(lot.ownerType)}{#if lot.cityOwned} {lot.cityOwned}{/if}</p>
+            <p>{[t.ownerType(lot.ownerType), lot.cityOwned].filter(Boolean).join(' ')}</p>
             {#each lot.flags as flag (flag.title + flag.text)}<p><strong>{flag.title}:</strong> {flag.text}</p>{/each}
             {#if lot.held}<p class="note">{lot.held}</p>{/if}
             {#if lot.deedFraud}<p class="note">{lot.deedFraud}</p>{/if}

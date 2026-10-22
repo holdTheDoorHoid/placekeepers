@@ -713,7 +713,7 @@ export const strings = {
     loading: 'Reading the weekly copy…',
     gate: {
       public:
-        'This lot is public land. Ask through the Land Bank\'s programs for neighbors instead, or write to your Council office for support: choose that letter above.',
+        'This lot is public land. Ask through the Land Bank\'s programs for neighbors instead, or ask your Council office for support: there is a letter for that.',
       not_sure:
         'We are not sure this lot is vacant, and it may be someone\'s home, so the site does not offer a letter to its owner. If you know the lot is empty, look again in person, and ask neighbors who the owner is.',
       no_owner: 'The City\'s records name no owner for this lot, so there is no one to address this letter to.',

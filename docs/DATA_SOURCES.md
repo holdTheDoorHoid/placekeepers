@@ -717,6 +717,51 @@ status. The weekly refresh keeps the file with the snapshot. The series starts w
 of 2026-10-04: 1,687 records listed as available on 1,639 parcels, 1,291 of them open to a
 neighbor as a side yard.
 
+### Who represents each lot (M5.1, issue #45, sources checked 2026-10-21)
+
+For "Who represents you" on the lot page, and the contacts page of a packet (DESIGN.md section
+5.12). Every officeholder source keeps only the seat, the name, the official office address and
+phone, and the official website (`pipeline/src/placekeepers/adapters/represent.py`); each lot's
+districts are worked out by its point (`derive/represent.py`) and the people are written once in
+`tables/contacts.json` (CONTRACTS.md section 10).
+
+| Source id | Where | What we keep | Measured on 2026-10-21 | Health |
+|---|---|---|---|---|
+| `political_divisions` | City ArcGIS `Political_Divisions`, layer 0 | `division_num` (ward then division, such as "3412"; "719" for ward 7) and the shape | 1,703 divisions, last edited 2026-09-10 | At least 1,650, no more than 3 percent fewer |
+| `pa_house_districts` | Census Bureau TIGER/Line, `TIGER2026/SLDL/tl_2026_42_sldl.zip` (3.8 MB) | The districts reaching Philadelphia: number, name, GEOID, year | 41 kept, 26 with real area in the city | At least 25 |
+| `pa_senate_districts` | `TIGER2026/SLDU/tl_2026_42_sldu.zip` (1.8 MB) | The same | 11 kept, 7 in the city | At least 6 |
+| `us_house_districts` | `TIGER2025/CD/tl_2025_42_cd119.zip` (1.2 MB): the 2026 files hold only the 120th Congress's districts, which take their seats on January 3, 2027 | The same, with the Congress | 5 kept, 3 in the city (2, 3, 5) | At least 3 |
+| `pa_legislators` | Open States, `data.openstates.org/people/current/pa.csv` (266 kB, updated about daily, CC0) | Name, chamber, district, the district and Capitol offices' addresses and phones, and links. Never email, social media, photos, birth dates, gender or biographies | 253 members (203 House, 50 Senate); every Philadelphia seat filled, including two the City's own list had blank (195 and 201) | At least 240, no more than 5 percent fewer |
+| `us_legislators` | `unitedstates/congress-legislators`, `legislators-current.json` (1.5 MB, CC0) | Pennsylvania's members: bioguide id, name, House or Senate, district, term, website, Washington office and phone | 19 members | At least 15 |
+| `us_legislator_offices` | the same project, `legislators-district-offices.json` (CC0) | Each Pennsylvania district office's address, suite, city, ZIP code and phone; never hours, fax numbers or map points | 65 offices | At least 20 |
+| `city_elected_officials` | City Carto `elected_officials` (the list Atlas shows in its "Voting" view), City Council rows only | Office, district, name, leadership role, website, the City Hall office and a district office with phones. Never email or fax | 17 rows: 10 district members, 7 at large | At least 15, no more than 15 percent fewer |
+| `rco_contacts` | City ArcGIS `Zoning_RCO`, layer 0, read weekly | Name, type, the organization's address, meeting place, preferred contact method, primary contact's name, phone (with extension) and email, website, registration dates, shape. Never the primary contact's own address or the alternate contact | 240 organizations, last edited 2026-10-21 | At least 200, no more than 15 percent fewer |
+
+- **Why these and not others.** The issue named TIGER/Line for districts (public domain, current
+  districts), congress-legislators and Open States for officeholders (both CC0), and the site's own
+  City data for City Council. The City's `elected_officials` table also lists the General Assembly,
+  but on 2026-10-21 two Philadelphia House seats there were blank and its `next_election` years had
+  not moved since 2024, while Open States listed the members elected since; so the General
+  Assembly comes from Open States and only City Council from the City's list. The City also
+  publishes its own House, Senate and Congressional district layers (`State_House_Rep_2022`,
+  `State_Senate_2022`, `US_Congressional_2022`), not used, as the issue asked for TIGER/Line.
+- **The city's edge.** TIGER/Line's district lines and the City's boundary differ by a few meters,
+  so a neighboring county's district reaches seven of the 583,680 parcels' points (one each in
+  House 18, 153 and 164, Senate 6 and 26, and Congress 1 and 4, each with under 0.1 square
+  kilometers inside the city). Only districts with at least half a square kilometer inside the
+  City's Council districts are used, and those points take the nearest; with that, every parcel
+  in the city gets a House, Senate and Congressional district, 583,677 a ward and division and
+  Council district, and 581,663 at least one community organization.
+- **Community organizations' contacts.** The map's boundaries layer still reads
+  `community_organizations`, which never downloads contacts (decided 2026-10-04). The owner's
+  decision for this milestone (issue #45: "as the City publishes its contact") adds `rco_contacts`,
+  a second reading of the same layer with the fields the City publishes for reaching each
+  organization, the same ones Atlas shows. The contacts' own addresses and the alternate contacts
+  are left out on purpose.
+- **Terms.** Open States' data and the congress-legislators project are CC0 (their repositories'
+  licenses, checked 2026-10-21); TIGER/Line files are U.S. government works; the City's layers and
+  table are under the City's open data terms. All are credited on the Data status page.
+
 ## Sources checked 2026-10-08
 
 The owner asked to bring four community and City sources onto the map. A check of each one's

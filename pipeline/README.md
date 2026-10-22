@@ -113,6 +113,12 @@ the City's public places and 311 conditions (`adapters/city_places.py`, `adapter
 | `mapping_inequality_1937` | Mapping Inequality's GeoJSON of the 1937 map of Philadelphia (frozen, M4.3) | Each area's label, grade and shape, under CC BY-NC 2.5, published in a file of its own; never the area descriptions |
 | `acs_rent_burden`, `acs_rent`, `acs_income`, `acs_occupancy`, `acs_vacancy` | Census Bureau bulk tables B25070, B25064, B19013, B25002 and B25004, 2020 to 2024 (M4.7) | Counts and medians per tract and for the city, with margins of error |
 | `warming_cooling_sites`, `ppr_playgrounds` | City ArcGIS `Warming_Cooling_Sites_PUBLICVIEW` and `PPR_Playgrounds` (M4.7) | Each site as listed (status, hours, services, access), credited nowhere on the map as the owner decided; each playground's park, ages and year installed |
+| `political_divisions` | City ArcGIS `Political_Divisions` (M5.1) | Each division's number (ward then division) and shape |
+| `pa_house_districts`, `pa_senate_districts`, `us_house_districts` | Census Bureau TIGER/Line files for Pennsylvania; each run takes the newest year's file, and for Congress the file of the Congress now sitting (M5.1) | The districts reaching Philadelphia: number, name, GEOID, year and shape |
+| `pa_legislators` | Open States' current people file for Pennsylvania (CC0, M5.1) | Name, chamber, district, office addresses and phones, links; never email, social media, photos, birth dates or biographies |
+| `us_legislators`, `us_legislator_offices` | The congress-legislators project's current members and district offices (CC0, M5.1) | Pennsylvania's members: name, chamber, district, website, Washington and district offices with phones; never birthdays, hours or fax numbers |
+| `city_elected_officials` | Carto `elected_officials`, City Council rows (M5.1) | Each member's name, district, role, website, City Hall and district offices with phones; never email or fax |
+| `rco_contacts` | City ArcGIS `Zoning_RCO`, read weekly (M5.1) | The organizations' contacts as the City publishes them: address, meeting place, preferred method, primary contact's name, phone and email; never the contact's own address or the alternate contact |
 | `pba_laser` | Philly Bike Action's Laser Vision map data (`bikeaction.org/tools/laser/map_data/`), once a week, one request per kind of report for the trailing 12 months, with Philly Bike Action's permission (issue #37) | Each report's H3 cell at resolution 10 and its kind, never its point, with the window's first and last day. 26,060 reports on 2026-10-08, in 33 seconds |
 
 **Candidate parcels.** Transfers, assessments and violations are too large to download for the
@@ -466,6 +472,12 @@ shows (about 78,000; docs/CONTRACTS.md section 6), with the rules in `derive/`:
 * **Transfers** (`derive/transfers.py`): every deed, newest first; mortgages are left out.
 * **Routes** (`derive/routes.py`): by owner and context, the lawful route first. Conservatorship,
   with its abuse warning, only for a private parcel called vacant with high or medium confidence.
+
+* **Who represents it** (`derive/represent.py`, `publish/contacts.py`, M5.1): each dossier's
+  `represent` names its ward and division, Council, state House, state Senate and Congressional
+  districts and the community organizations covering its point, by number; `tables/contacts.json`
+  names the members in those seats, with official offices only, and each organization's contact,
+  each with its source and the day it was checked.
 
 Each flag's careful note and next step are the same for every parcel, so they are written once,
 in `dossiers/common.json`, not once per parcel. Files are named by the first four digits of the OPA
