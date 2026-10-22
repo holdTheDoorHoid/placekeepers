@@ -1731,6 +1731,7 @@ export const strings = {
     report: 'See the report and its photos on GitHub',
     source: 'Read more about it',
     openLot: 'Open the lot page',
+    showLayer: 'Show projects neighbors finished on the map',
     privacy: 'The map never shows who sent a report, only a group name they chose to show.',
     // The lot page
     section: 'Projects here',

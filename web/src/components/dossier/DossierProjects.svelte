@@ -36,7 +36,7 @@
     </ul>
     <p class="muted small">{p.oneLot} {p.privacy}</p>
     {#if onShowLayer}
-      <button class="button quiet small" type="button" onclick={() => onShowLayer('projects')}>{strings.dossier.nearby.showLayer(strings.projects.timelineToggle)}</button>
+      <button class="button quiet small" type="button" onclick={() => onShowLayer('projects')}>{p.showLayer}</button>
     {/if}
   {/if}
   <p class="tell">
