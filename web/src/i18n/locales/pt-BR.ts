@@ -2968,8 +2968,6 @@ const ptBR: Catalog = {
     timelineText: (kind, group) => (group ? `${kind}, por ${group}` : kind),
     printTitle: 'Projetos concluídos pelos vizinhos aqui',
   },
-
-  // @@END@@
 };
 
 export default ptBR;
