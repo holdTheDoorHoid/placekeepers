@@ -1,0 +1,1729 @@
+# Vietnamese (vi) translations of the visitor facing words in registry/*.yaml, by id. English in
+# registry/*.yaml is the source; anything left out here shows the English. Which fields may be
+# translated, and the shape of this file, are in docs/TRANSLATING.md and
+# web/src/i18n/registry-text.ts. The key terms are in docs/i18n/glossary-vi.md.
+
+groups:
+  lots:
+    label: Lô đất và tòa nhà
+    description: Các lô đất trống và tòa nhà bỏ hoang, và những gì có thể làm với chúng.
+  care:
+    label: Sự chăm sóc đang diễn ra
+    description: Các lô đất đã có người chăm sóc, vườn, công viên và những nơi khác mà người dân đã trông nom.
+  displacement:
+    label: Giá cả và biện pháp bảo vệ
+    description: Nơi giá cả đang tăng, để việc xanh hóa và các cải thiện khác có thể đi cùng các biện pháp bảo vệ cho những hàng xóm đang sống ở đó hiện nay.
+  rules:
+    label: Quy định về đất và các phiên điều trần
+    description: Các khu và bất động sản lịch sử, các lớp phủ quy hoạch, các phiên điều trần sắp diễn ra về các lô đất và tòa nhà, và các địa điểm brownfield của liên bang.
+  streets:
+    label: Đường phố và nơi tưởng niệm
+    description: High Injury Network, các vụ tai nạn, những người đã thiệt mạng trên đường phố của chúng ta, và các cột trên đường phố, biện pháp làm chậm xe và nhân viên hướng dẫn học sinh qua đường mà Thành phố liệt kê.
+  transit:
+    label: Xe buýt và tàu
+    description: Các trạm và tuyến của SEPTA, xe chạy thường xuyên đến đâu, bao nhiêu người lên xe, và trạm nào có mái che hoặc ghế ngồi, theo danh sách mái che của Thành phố và OpenStreetMap.
+  heat:
+    label: Nóng, cây xanh và ngập lụt
+    description: Cái nóng mùa hè tác động mạnh thế nào lên từng khu phố, các cây mà Thành phố trông coi trên đường phố và trong công viên, và nơi FEMA dự kiến có ngập lụt.
+  amenities:
+    label: Ghế ngồi, nước, nhà vệ sinh và hơn nữa
+    description: Chỗ để ngồi, uống nước, dùng nhà vệ sinh hoặc mượn một cuốn sách, theo OpenStreetMap, và các vòi uống nước trong công viên.
+  public_places:
+    label: Thư viện, trung tâm sinh hoạt và hồ bơi
+    description: Các chi nhánh Free Library, trung tâm sinh hoạt, hồ bơi và khu vòi phun nước của Parks and Recreation, và các điểm sưởi ấm và tránh nóng của Thành phố, như Thành phố liệt kê.
+  conditions:
+    label: Vấn đề đã báo cho 311
+    description: Đổ rác trái phép, đèn bị tắt và vẽ bậy lên tường mà người dân đã báo cho Philly311 trong 90 ngày qua, đếm theo đoạn phố.
+  placemaking:
+    label: Nghệ thuật và tạo không gian cộng đồng
+    description: Tranh tường, tượng điêu khắc, tranh ghép mảnh và nghệ thuật công cộng khác, từ Thành phố, OpenStreetMap và Wikidata, và các sân chơi của Thành phố.
+  walking:
+    label: Đi bộ, đi xe đạp và con người
+    description: Mỗi khu vực dễ đi bộ đến đâu, có bao nhiêu người và địa điểm hằng ngày trong một quãng đi bộ ngắn, và mỗi con đường căng thẳng đến đâu đối với người đi xe đạp.
+  then_and_now:
+    label: Trước đây và bây giờ
+    description: Trước đây một dãy phố có gì, và quá khứ còn lại gì. Các ảnh chụp từ trên không từ năm 1959 và bản đồ atlas năm 1860 chỉ tải từ máy chủ của Thành phố khi được bật; bản đồ redlining năm 1937 đến từ trang web này.
+  safety_context:
+    label: Nơi cần được chăm sóc nhiều nhất
+    description: Bối cảnh cho thấy nơi các cải thiện nhiều khả năng giúp được nhiều nhất.
+  boundaries:
+    label: Ranh giới
+    description: Các khu vực của Hội đồng Thành phố, các tổ chức cộng đồng và các khu phố.
+  basemap:
+    label: Bản đồ nền
+    description: Đường phố, tòa nhà và địa danh nằm bên dưới mọi thứ khác.
+
+options:
+  live_city_data:
+    label: Lấy dữ liệu trực tiếp của Thành phố
+    description: >-
+      Khi bạn mở một trang lô đất hoặc tìm một địa chỉ, trình duyệt của bạn hỏi các máy chủ
+      công khai của Thành phố Philadelphia để lấy các hồ sơ mới nhất: chủ sở hữu, các vụ bán,
+      các lần định giá, các lần kiểm tra và các kháng cáo. Các yêu cầu này đi thẳng từ thiết bị
+      của bạn đến Thành phố, không bao giờ qua Placekeepers, và các máy chủ của Thành phố thấy
+      chúng giống như thấy một lượt truy cập vào trang web bất động sản của chính Thành phố.
+      Các ảnh chụp từ trên không của Thành phố và bản đồ atlas năm 1860 của nó, trong mục
+      "Trước đây và bây giờ", cũng đến thẳng từ máy chủ của Thành phố, nhưng chỉ khi bạn bật một
+      trong số chúng. Hãy tắt tùy chọn này để chỉ dùng bản sao hằng tuần của dữ liệu mà
+      Placekeepers công bố. Việc tìm địa chỉ, mở một thửa đất không có trong danh sách của chúng
+      tôi, và các ảnh cũ cùng bản đồ atlas cần tùy chọn này được bật.
+
+partners:
+  phs:
+    one_line: LandCare, Community LandCare và Philly Spring Cleanup.
+  gjli:
+    one_line: Giúp đỡ pháp lý miễn phí và các hướng dẫn về việc sử dụng đất trống.
+  ngt:
+    one_line: Bảo tồn các vườn cộng đồng vĩnh viễn.
+  land_bank:
+    one_line: Các chương trình của Thành phố cho lô đất trống, kể cả sân hông và vườn.
+  bike_coalition:
+    one_line: Vận động Vision Zero, xe đạp trắng tưởng niệm (ghost bike) và Families for Safe Streets.
+  feet_first:
+    one_line: Vận động cho người đi bộ, khảo sát đường đi bộ và các khoản tài trợ nhỏ cho không gian công cộng.
+  treephilly:
+    one_line: 'Chương trình trồng cây của Parks and Recreation: cây trồng ven đường và cây trong sân nhà miễn phí.'
+  mural_arts:
+    one_line: 'Tranh tường khắp thành phố; chủ tường có thể xin một bức.'
+
+lenses:
+  violence:
+    label: Giảm bạo lực
+    description: >-
+      Nơi việc dọn dẹp, xanh hóa hoặc bịt kín nhiều khả năng nhất sẽ làm giảm bạo lực súng đạn ở
+      gần đó, dựa trên các thử nghiệm ngẫu nhiên ở Philadelphia.
+    factors:
+      untreated_vacancy:
+        label: Lô đất trống hoặc tòa nhà bỏ hoang để ngỏ chưa được xử lý
+        explain: >-
+          Các thử nghiệm ngẫu nhiên ở Philadelphia thấy rằng xanh hóa các lô đất trống và lắp cửa ra
+          vào, cửa sổ còn dùng được cho các ngôi nhà bỏ hoang đã làm giảm bạo lực súng đạn ở gần
+          đó. Những nơi đã được xử lý như vậy được 0 điểm: các lô đất do PHS LandCare chăm sóc, và
+          các tòa nhà mà chủ sở hữu đã sửa cửa ra vào và cửa sổ sau một thông báo vi phạm của L&I.
+          Mọi lô đất trống hay tòa nhà khác được 100 điểm.
+      shootings_nearby:
+        label: Các vụ nổ súng gần đó trong ba năm qua
+        explain: >-
+          Số người bị bắn trong ba năm qua trong phạm vi khoảng một phần tư dặm (ô lục giác của nơi
+          đó và sáu ô quanh nó), từ hồ sơ nạn nhân bị bắn của Police Department. Thứ hạng là tỷ lệ
+          các địa điểm trên bản đồ có ít hơn. Các thử nghiệm đo được ít vụ nổ súng hơn quanh những
+          nơi được xử lý, nên sự chăm sóc giúp ích nhiều nhất ở nơi có xảy ra nổ súng.
+      poverty:
+        label: Tỷ lệ nghèo của khu phố
+        explain: >-
+          Tỷ lệ người sống dưới mức nghèo trong khu điều tra dân số (census tract) của nơi đó (khảo
+          sát của Cục Điều tra Dân số Hoa Kỳ, 2020 đến 2024). Thứ hạng là tỷ lệ các địa điểm trên
+          bản đồ nằm trong các khu có tỷ lệ thấp hơn. Trong thử nghiệm trên toàn thành phố, mức
+          giảm bạo lực súng đạn được thấy ở các khu phố dưới mức nghèo.
+      canopy_gap:
+        label: Ít cây xanh ở gần
+        explain: >-
+          Tán cây phủ trên đất trong phạm vi khoảng một phần tư dặm, từ khảo sát tán cây năm 2018
+          của Thành phố. Thứ hạng là tỷ lệ các địa điểm trên bản đồ có nhiều cây hơn xung quanh,
+          nên càng ít cây thì xếp càng cao. Cây ven đường được liên hệ với ít tội phạm hơn, nhưng
+          bằng chứng không thống nhất và tùy thuộc vào vị trí trồng.
+    presets:
+      research:
+        label: Dựa trên nghiên cứu
+      vacancy_only:
+        label: Chỉ xét việc bỏ trống
+  heat:
+    label: Nóng và bóng mát
+    description: >-
+      Nơi trồng cây hoặc xanh hóa một lô đất trống sẽ làm mát cho nhiều người nhất: các lô đất ở
+      những khu phố nơi cái nóng mùa hè tác động mạnh nhất đến người dân, ít bóng mát xung quanh,
+      và có nhiều người cảm nhận được sự khác biệt.
+    factors:
+      heat_vulnerability:
+        label: Mức dễ bị tổn thương do nóng của khu phố
+        explain: >-
+          Cái nóng mùa hè tác động mạnh đến mức nào lên người dân trong khu điều tra dân số của lô
+          đất, từ Chỉ số Dễ bị Tổn thương do Nóng (Heat Vulnerability Index) của Thành phố (Sở Y tế
+          Công cộng và Văn phòng Phát triển Bền vững, dữ liệu 2017 đến 2019): khu đó nóng đến đâu
+          vào những ngày hè, theo đo đạc của vệ tinh, cùng với số người sống ở đó có nguy cơ cao
+          hơn khi trời nóng, theo tuổi, sức khỏe, thu nhập và nhiều yếu tố khác. Thứ hạng là tỷ lệ
+          các địa điểm trên bản đồ nằm trong các khu có điểm thấp hơn.
+      few_trees:
+        label: Ít cây xanh ở gần
+        explain: >-
+          Tán cây phủ trên đất trong phạm vi khoảng một phần tư dặm, từ khảo sát tán cây năm 2018
+          của Thành phố, cùng cách đo mà góc nhìn giảm bạo lực dùng. Thứ hạng là tỷ lệ các địa
+          điểm trên bản đồ có nhiều cây hơn xung quanh, nên càng ít cây thì xếp càng cao. Cây làm
+          mát đường phố bằng bóng của chúng và lượng nước lá cây thải ra. Các nghiên cứu đều cho
+          thấy chúng làm mát vào ban ngày, nhiều nhất ở nơi tán cây phủ hơn khoảng 40 phần trăm một
+          dãy phố, và ít hơn vào ban đêm.
+      few_street_trees:
+        label: Ít cây của Thành phố trên dãy phố
+        explain: >-
+          Cây trong phạm vi 100 mét quanh lô đất theo danh mục cây năm 2025 của Parks and
+          Recreation, tức là các cây mà Thành phố trông coi trên đường phố và trong công viên,
+          không phải cây trong sân nhà riêng. Thứ hạng là tỷ lệ các địa điểm trên bản đồ có nhiều
+          cây loại này hơn xung quanh, nên càng ít cây thì xếp càng cao. Cây ven đường che bóng cho
+          vỉa hè nơi người ta đi bộ và đứng chờ.
+      people_nearby:
+        label: Số người sẽ được hưởng lợi
+        explain: >-
+          Số cư dân trên mỗi km vuông đất trong khu điều tra dân số của lô đất (khảo sát của Cục
+          Điều tra Dân số Hoa Kỳ, 2020 đến 2024). Thứ hạng là tỷ lệ các địa điểm trên bản đồ nằm
+          trong các khu có ít người hơn. Nhiều người hơn sẽ cảm nhận được sự mát mẻ. Dân số chỉ cho
+          biết một cải thiện sẽ đến được với ai; tự nó không bao giờ là thước đo nhu cầu.
+    presets:
+      balanced:
+        label: Cân bằng
+      people_at_risk:
+        label: Những người có nguy cơ cao nhất
+      fewest_trees:
+        label: Ít cây nhất
+  placemaking:
+    label: Tạo không gian cộng đồng
+    description: >-
+      Nơi một lô đất trống nhiều khả năng nhất sẽ trở thành một nơi công cộng mà người ta dùng
+      mỗi ngày, như một khu vườn, một công viên nhỏ, một chỗ ngồi dưới bóng mát hoặc một chỗ cho
+      nghệ thuật: các lô đất có nhiều hàng xóm và địa điểm sinh hoạt hằng ngày trong một quãng đi
+      bộ ngắn, ở xa công viên và xa nghệ thuật công cộng. Đây là về việc sử dụng và sự chào đón,
+      không phải về tội phạm.
+    factors:
+      neighbors:
+        label: Số người trong vòng 5 phút đi bộ
+        explain: >-
+          Có bao nhiêu người sống trong vòng 5 phút đi bộ của lô đất, tính là 400 mét theo đường
+          thẳng, từ điều tra dân số 2020. Thứ hạng là tỷ lệ các địa điểm trên bản đồ có ít người
+          hơn xung quanh. Nhiều hàng xóm hơn nghĩa là có nhiều người hơn để một khu vườn, một chiếc
+          ghế hay một bức tranh tường phục vụ. Dân số chỉ cho biết một dự án sẽ đến được với ai.
+      everyday_places:
+        label: Các địa điểm hằng ngày trong vòng 10 phút đi bộ
+        explain: >-
+          Có bao nhiêu trong bảy loại địa điểm hằng ngày nằm trong vòng 10 phút đi bộ, tính là 800
+          mét theo đường thẳng: một thư viện, một trung tâm sinh hoạt, một hồ bơi hoặc khu vòi phun
+          nước, một vòi uống nước trong công viên, một trường học, một cửa hàng tạp hóa hoặc chợ
+          nhận SNAP, và một trạm xe buýt, xe điện hoặc tàu. Thứ hạng là tỷ lệ các địa điểm trên bản
+          đồ có ít hơn. Những người trên đường đến các nơi này đi ngang qua lô đất. Việc người đi
+          đường giúp ích cho một nơi công cộng mới đến đâu tùy thuộc vào con đường và nơi đó, nên
+          bằng chứng không thống nhất.
+      walkability:
+        label: Mức dễ đi bộ
+        explain: >-
+          Chỉ số Dễ đi bộ Quốc gia (National Walkability Index) của EPA cho nhóm khối của lô đất:
+          góc phố, trạm xe công cộng gần đến đâu, và nhà ở, việc làm và cửa hàng được hòa trộn tốt
+          đến đâu (dữ liệu khoảng 2017 đến 2019). Thứ hạng là tỷ lệ các địa điểm trên bản đồ nằm
+          trong các khu kém dễ đi bộ hơn. Nơi nào người ta đi bộ nhiều, sẽ có nhiều người hơn dùng
+          một nơi trên lô đất. Các nghiên cứu về những nơi dễ đi bộ thấy các mối tương quan có ý
+          nghĩa tùy theo nơi đó, nên bằng chứng không thống nhất.
+      far_from_park:
+        label: Xa công viên
+        explain: >-
+          Khoảng cách theo đường thẳng từ lô đất đến rìa của đất công viên gần nhất của Parks and
+          Recreation: công viên, sân chơi, trung tâm sinh hoạt, quảng trường, đường xanh và khu
+          thiên nhiên, nhưng không tính bãi làm việc, sân gôn hay dải phân cách có trồng cây. Thứ
+          hạng là tỷ lệ các địa điểm trên bản đồ gần một công viên hơn, nên càng xa càng xếp cao.
+          Một lô đất xa công viên có thể mang đến cho hàng xóm không gian mở mà họ đang thiếu.
+      no_art_nearby:
+        label: Không có nghệ thuật công cộng ở gần
+        explain: >-
+          Khoảng cách theo đường thẳng từ lô đất đến tác phẩm nghệ thuật công cộng gần nhất trong
+          danh sách Percent for Art của Thành phố hoặc trong Wikidata, không tính các tác phẩm bên
+          trong tòa nhà. Thứ hạng là tỷ lệ các địa điểm trên bản đồ gần một tác phẩm hơn, nên càng
+          xa càng xếp cao. Hai danh sách này chỉ có một phần nghệ thuật của thành phố: các bức
+          tranh tường của Mural Arts và các tác phẩm chỉ có trên OpenStreetMap không có trong đó,
+          nên hãy xem cả lớp Nghệ thuật công cộng. Nghệ thuật được chào đón vì vẻ đẹp và niềm tự
+          hào; không có nghiên cứu nào liên hệ nó với việc giảm bạo lực.
+      commercial_corridor:
+        label: Trên hoặc gần một trục thương mại
+        explain: >-
+          Điểm tối đa, 100, khi lô đất nằm trên một trong các trục thương mại của Thành phố, tức
+          các con phố và khu mua sắm mà Planning Commission đã khảo sát từ 2011 đến 2017, hoặc
+          trong vòng 50 mét từ một trục, và 0 trong các trường hợp còn lại. Các cửa hàng đưa người
+          qua lại lô đất mỗi ngày. Những con phố mua sắm đông đúc cũng có thể kéo theo vấn đề, nên
+          bằng chứng không thống nhất.
+    presets:
+      balanced:
+        label: Cân bằng
+      most_neighbors:
+        label: Nhiều hàng xóm nhất
+      where_people_walk:
+        label: Nơi người ta đã đi bộ nhiều
+      far_from_a_park:
+        label: Xa công viên
+  street_safety:
+    label: An toàn đường phố
+    description: >-
+      Các đoạn phố nơi người đi bộ và đi xe đạp có nhiều nguy cơ nhất, dựa trên hồ sơ tai nạn,
+      High Injury Network của Thành phố và các trường học ở gần.
+    factors:
+      high_injury_network:
+        label: Nằm trong High Injury Network
+        explain: Thành phố nhận thấy phần lớn số ca tử vong và bị thương nặng do giao thông xảy ra trên các con đường này, chiếm khoảng 12 phần trăm mọi đường phố ở Philadelphia.
+      walking_cycling_harm:
+        label: Người thiệt mạng hoặc bị thương nặng khi đi bộ hoặc đi xe đạp, 5 năm qua
+        explain: Đếm số người thiệt mạng hoặc bị thương nặng khi đi bộ hoặc đi xe đạp trên đoạn phố này hoặc ở các góc của nó, trong năm năm gần nhất của hồ sơ tai nạn của PennDOT. Thứ hạng là tỷ lệ các đoạn phố trên toàn thành phố có ít hơn.
+      recent_death:
+        label: Có người thiệt mạng ở đây trong 2 năm qua
+        explain: Một ca tử vong trên đoạn phố này hoặc ở các góc của nó trong hai năm qua, từ hồ sơ tai nạn chết người của Police Department, được cập nhật hằng đêm.
+      school_nearby:
+        label: Có trường học trong vòng 400 mét
+        explain: Trẻ em đi bộ đến và từ trường học ở đây. 400 mét là khoảng năm phút đi bộ.
+    presets:
+      research:
+        label: Dựa trên nghiên cứu
+      recorded_harm:
+        label: Chỉ xét thiệt hại đã ghi nhận
+  transit_comfort:
+    label: Thoải mái khi đi xe công cộng
+    description: >-
+      Các trạm xe buýt và xe điện nơi một mái che, một ghế ngồi hoặc bóng mát sẽ giúp hành khách
+      nhiều nhất: các trạm đông khách, các trạm mà khảo sát thấy không có chỗ che hay chỗ ngồi,
+      các trạm ít bóng mát ở những khu phố nóng, các trạm nằm trên High Injury Network, và các
+      trạm phải chờ lâu. Nơi nào chưa có ai khảo sát một trạm, mái che và ghế ngồi của trạm được
+      tính nửa điểm.
+    factors:
+      riders:
+        label: Số người lên xe mỗi ngày trong tuần
+        explain: >-
+          Có bao nhiêu người lên xe ở đây vào một ngày trong tuần trung bình, từ số đếm riêng của
+          SEPTA. Thứ hạng là tỷ lệ các trạm có ít hành khách hơn. Nhiều hành khách hơn nghĩa là có
+          nhiều người hơn được giúp bởi một mái che hay một ghế ngồi; Thành phố đặt mục tiêu lắp
+          mái che ở 15 phần trăm trạm xe buýt đông khách nhất. Các trạm mà SEPTA chưa đếm thì được
+          bỏ ra khỏi yếu tố này.
+      no_shelter:
+        label: Không có mái che
+        explain: >-
+          100 nơi một cuộc khảo sát thấy không có mái che, 0 nơi có mái che, cả trạm nằm dưới mái,
+          hoặc danh sách mái che trạm xe buýt riêng của Thành phố có một mái che ở đó (bất kể
+          OpenStreetMap nói gì). Nơi nào chưa có ai khảo sát trạm thì được tính là 50, nửa điểm, để
+          một trạm không bao giờ bị chấm là thiếu một mái che mà nó có thể có; hãy khảo sát để
+          biết. Trong một nghiên cứu ở Minneapolis và Saint Paul, hành khách ở các trạm không có
+          ghế hay mái che cảm thấy thời gian chờ của họ dài hơn thực tế.
+      no_bench:
+        label: Không có ghế ngồi
+        explain: >-
+          100 nơi một cuộc khảo sát thấy không có ghế, 0 nơi có ghế, và 50, nửa điểm, nơi chưa có
+          ai khảo sát trạm. Cũng nghiên cứu đó thấy một chiếc ghế làm thời gian chờ có cảm giác
+          ngắn hơn.
+      little_shade:
+        label: Ít bóng mát ở gần
+        explain: >-
+          Tán cây phủ trên đất quanh trạm, trong một khu vực rộng cỡ hai dãy phố, từ khảo sát tán
+          cây năm 2018 của Thành phố. Thứ hạng là tỷ lệ các trạm có nhiều cây hơn xung quanh, nên
+          càng ít cây thì xếp càng cao. Bóng mát làm mát những người chờ dưới nắng, nhưng nó giúp
+          được đến đâu tùy thuộc vào khí hậu và vào thứ tạo ra bóng mát.
+      heat:
+        label: Khu phố nóng vào mùa hè
+        explain: >-
+          Khu điều tra dân số của trạm nóng đến đâu vào những ngày hè, từ phần mức chịu nóng của
+          Heat Vulnerability Index của Thành phố (nhiệt độ bề mặt đo bằng vệ tinh và phần khu đó
+          được lát nền, xây dựng hoặc có cây xanh). Thứ hạng là tỷ lệ các trạm nằm trong các khu
+          mát hơn.
+      high_injury_network:
+        label: Nằm trên High Injury Network
+        explain: >-
+          Trạm nằm trên hoặc ở một trong các con đường nơi xảy ra phần lớn số ca tử vong và bị
+          thương nặng do giao thông ở Philadelphia, nên nhiều hành khách phải băng qua đường đó để
+          đến trạm hoặc rời trạm. Các nghiên cứu ở nơi khác thấy các vụ tai nạn liên quan đến
+          người đi bộ tập trung ở các trạm xe buýt đông khách trên những con đường rộng, nơi một
+          lối băng qua đường an toàn quan trọng nhất.
+      long_wait:
+        label: Chờ lâu vào buổi trưa
+        explain: >-
+          Thời gian điển hình giữa các chuyến xe buýt hoặc xe điện từ 10 giờ sáng đến 2 giờ chiều
+          các ngày trong tuần, từ lịch chạy của SEPTA. Thứ hạng là tỷ lệ các trạm có thời gian chờ
+          ngắn hơn. Chờ lâu là lúc một chỗ ngồi và một mái che quan trọng nhất. Các trạm không có
+          xe chạy vào buổi trưa được bỏ ra khỏi yếu tố này.
+    presets:
+      balanced:
+        label: Cân bằng
+      busiest_first:
+        label: Các trạm đông khách nhất trước
+      heat_and_shade:
+        label: Nóng và bóng mát
+
+routes:
+  land_bank_garden_agreement:
+    label: Thỏa thuận hoặc giấy phép làm vườn từ Land Bank
+    who: >-
+      Bất kỳ ai cho Urban Garden Agreement giá $1; các nhóm có một tổ chức phi lợi nhuận bảo trợ
+      cho Community Garden License
+    steps:
+      - Kiểm tra xem Land Bank hoặc Thành phố có phải là chủ sở hữu lô đất không.
+      - >-
+        Đọc hướng dẫn xin phép sử dụng đất của Thành phố của Grounded in Philly.
+      - Nộp đơn cho Land Bank, hoặc tham dự trước một trong các buổi hội thảo trực tuyến miễn phí của họ.
+    cost: >-
+      $1 (Urban Garden Agreement), $25 mỗi năm (Individual Garden Agreement), hoặc bảo hiểm và một
+      đơn vị bảo trợ (Community Garden License)
+    timeline: Vài tuần cho các thỏa thuận ngắn hạn; vài tháng cho một giấy phép
+    links:
+      "https://phillylandbank.org/":
+        label: Philadelphia Land Bank
+      "https://groundedinphilly.org/get-permission-to-use-land-city/":
+        label: >-
+          Grounded in Philly: xin phép sử dụng đất của Thành phố
+  ask_the_owner:
+    label: Xin phép chủ sở hữu
+    who: Bất kỳ ai
+    steps:
+      - Tìm địa chỉ gửi thư của chủ sở hữu trên trang lô đất.
+      - Viết thư xin phép dọn dẹp và xanh hóa lô đất, và đề nghị một thỏa thuận đơn giản bằng văn bản.
+      - Nhờ Garden Justice Legal Initiative xem xét mọi thỏa thuận trước khi bạn ký.
+    cost: Miễn phí
+    timeline: Tùy thuộc vào chủ sở hữu
+    links:
+      "https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/":
+        label: Garden Justice Legal Initiative
+  community_landcare:
+    label: Chăm sóc một lô đất cùng PHS Community LandCare
+    who: Các nhóm cư dân
+    steps:
+      - Liên hệ PHS về Community LandCare.
+    cost: Cần xác nhận với PHS
+    timeline: Cần xác nhận với PHS
+    links:
+      "https://phsonline.org/":
+        label: Pennsylvania Horticultural Society
+  report_to_311:
+    label: Báo cho Philly311
+    who: Bất kỳ ai
+    steps:
+      - Báo tòa nhà để ngỏ, đổ rác trái phép, vẽ bậy lên tường, hoặc đèn đường hay đèn hẻm bị tắt cho Philly311 qua mạng, qua ứng dụng, hoặc bằng cách gọi 311.
+      - Giữ lại số yêu cầu dịch vụ và kiểm tra lại sau.
+    cost: Miễn phí
+    timeline: Vài ngày đến vài tuần
+    links:
+      "https://www.phila.gov/services/property-lots-housing/submit-a-service-request-with-311/":
+        label: Philly311
+  ghost_bike_request:
+    label: Hỏi Bicycle Coalition về xe đạp trắng tưởng niệm (ghost bike) hoặc nơi tưởng niệm
+    who: Gia đình, hoặc bạn bè có sự đồng ý của gia đình
+    steps:
+      - Hãy nói chuyện với gia đình trước. Một nơi tưởng niệm chỉ được dựng lên khi gia đình đồng ý.
+      - Với một người thiệt mạng khi đi xe đạp, hãy điền mẫu yêu cầu ghost bike của Bicycle Coalition. Cùng mẫu đó cũng dùng để yêu cầu sửa hoặc thay một chiếc ghost bike.
+      - Families for Safe Streets, do Bicycle Coalition điều hành, hỗ trợ các gia đình sau một vụ tai nạn và chia sẻ một hướng dẫn tài nguyên sau tai nạn.
+      - Hãy lên kế hoạch xem ai sẽ chăm sóc nơi tưởng niệm về lâu dài.
+    cost: Miễn phí để yêu cầu
+    timeline: Không nêu
+    links:
+      "https://bicyclecoalition.org/what-is-a-ghost-bike/":
+        label: >-
+          Bicycle Coalition: ghost bike là gì
+      "https://forms.gle/HBtY1hG4xcdVJKNb8":
+        label: Mẫu yêu cầu ghost bike
+      "https://bicyclecoalition.org/programs/families-for-safe-streets/":
+        label: Families for Safe Streets Greater Philadelphia
+  traffic_calming_request:
+    label: Yêu cầu làm chậm xe cho một đường phố khu dân cư
+    who: Cư dân của dãy phố, chủ yếu cho con đường họ đang sống
+    steps:
+      - Kiểm tra xem đường phố có đủ điều kiện không trên bản đồ làm chậm xe của Thành phố, hoặc bằng cách gọi 311.
+      - Gửi yêu cầu làm chậm xe trực tuyến của Thành phố.
+      - Nếu Thành phố chọn yêu cầu, hãy thu thập chữ ký của 60 phần trăm số hộ trên dãy phố, mỗi hộ một chữ ký.
+    cost: Miễn phí để yêu cầu
+    timeline: Thành phố chấm điểm các yêu cầu ba lần mỗi năm và thường lắp đệm giảm tốc từ tháng 5 đến tháng 10
+    links:
+      "https://www.phila.gov/services/streets-sidewalks-alleys/request-traffic-calming-for-a-residential-street/":
+        label: >-
+          Thành phố Philadelphia: yêu cầu làm chậm xe
+  otis_contact:
+    label: Hỏi văn phòng giao thông của Thành phố (OTIS)
+    who: Bất kỳ ai
+    steps:
+      - Viết thư cho Office of Transportation and Infrastructure Systems theo địa chỉ otis@phila.gov, nêu tên góc đường và những gì bạn thấy ở đó.
+      - Hỏi Thành phố cho phép những gì ở góc đường này và cách yêu cầu.
+    cost: Miễn phí
+    timeline: Không nêu
+    links:
+      "https://visionzerophl.com/":
+        label: Vision Zero Philadelphia
+  treephilly_yard_trees:
+    label: Nhận cây miễn phí từ đợt phát cây của TreePhilly
+    who: >-
+      Cư dân Philadelphia, cho cây trồng xuống đất trên bất động sản tư nhân, như một lô đất bạn
+      sở hữu hoặc một lô đất tư nhân mà chủ sở hữu đồng ý bằng văn bản
+    steps:
+      - >-
+        Đăng ký nhận bản tin của TreePhilly để biết khi nào mở đăng ký. Các đợt phát cây diễn ra vào
+        mùa xuân (tháng 3 đến tháng 5) và mùa thu (tháng 9 đến tháng 12) ở các mã ZIP ưu tiên.
+      - >-
+        Đăng ký với nhóm cộng đồng đang tổ chức một đợt phát cây gần bạn. Việc đăng ký mở khoảng
+        hai tuần đến một tháng trước đợt phát cây và đóng khi cây hết.
+      - >-
+        Nhận cây, cao từ 2 đến 10 feet trong một xô 5 gallon, kèm một túi phân phủ gốc miễn phí, và
+        trồng nó xuống đất. Cây được phát không được đặt trong chậu, trên vỉa hè hay bất cứ nơi nào
+        khác trên đất công của lề đường (public right of way).
+    cost: Miễn phí
+    timeline: Đợt phát cây mùa xuân hoặc mùa thu tiếp theo
+    links:
+      "https://treephilly.org/yard-trees/":
+        label: >-
+          TreePhilly: cây trồng trong sân nhà
+  mural_arts_wall_request:
+    label: Hỏi Mural Arts về một bức tranh tường trên một bức tường
+    who: >-
+      Chủ sở hữu bức tường, cùng những hàng xóm ủng hộ. Bất kỳ ai cũng có thể bắt đầu bằng cách
+      hỏi chủ sở hữu
+    steps:
+      - Tìm một bức tường hướng ra lô đất và dễ nhìn thấy từ đường phố, và hỏi chủ sở hữu xem họ có chào đón một bức tranh tường không.
+      - Khi chủ sở hữu đồng ý, hãy điền mẫu yêu cầu bức tường trên trang liên hệ của Mural Arts Philadelphia. Mẫu hỏi về bức tường, sự ủng hộ của hàng xóm và vì sao một bức tranh tường quan trọng ở đó.
+      - Mọi thứ trên đường phố hoặc trên vỉa hè, tức đất công của lề đường, cũng phải gửi đến Art Commission của Thành phố.
+    cost: Miễn phí để nộp đơn
+    timeline: Vài tháng
+    links:
+      "https://muralarts.org/contact/":
+        label: >-
+          Mural Arts Philadelphia: trang liên hệ, có mẫu xin tranh tường trên tường của bạn
+  public_space_mini_grant:
+    label: Nộp đơn xin khoản tài trợ nhỏ cho không gian công cộng của Feet First Philly
+    who: >-
+      Hàng xóm và các nhóm cộng đồng. Chương trình ưu tiên các cộng đồng ít được đầu tư hơn cho
+      đường phố và dịch vụ của Thành phố
+    steps:
+      - >-
+        Đọc thư mời đề xuất (request for proposals) trên trang tài trợ nhỏ của Feet First Philly.
+        Các dự án phải làm cho khu phố an toàn hơn và dễ đi bộ, đi xe lăn hơn; hãy hỏi Feet First
+        Philly xem một chỗ ngồi trên một lô đất có đủ điều kiện không.
+      - Nộp đơn khi đợt đang mở. Việc nộp đơn mở vào tháng 8 và hạn chót là tháng 10.
+      - Hãy chuẩn bị gửi một báo cáo ngắn vào giữa kỳ và một báo cáo khác vào cuối kỳ.
+    cost: >-
+      Các khoản tài trợ từ $500 đến $2,500, một phần do Department of Public Health tài trợ
+    timeline: Việc nộp đơn mở vào tháng 8 và hạn chót là tháng 10 mỗi năm
+    links:
+      "https://feetfirstphilly.org/public-space-enhancement-mini-grant-2/":
+        label: >-
+          Feet First Philly: khoản tài trợ nhỏ để cải thiện không gian công cộng
+  land_bank_side_yard:
+    label: Nhận làm sân hông hoặc sân sau (chỉ dành cho chủ nhà bên cạnh)
+    who: >-
+      Chủ căn nhà bên cạnh, và chỉ khi danh sách của Thành phố đánh dấu lô đất đủ điều kiện làm
+      sân hông
+    steps:
+      - Kiểm tra xem bạn có phải là chủ căn nhà bên cạnh không và lô đất có được đánh dấu đủ điều kiện làm sân hông không.
+      - Đọc trang sân hông và sân sau của Land Bank và nộp đơn.
+      - Hãy chuẩn bị chờ lâu. Sau khi nhân viên xem xét, hội đồng quản trị Land Bank và Hội đồng Thành phố phải phê duyệt.
+    cost: >-
+      Một mức giá danh nghĩa. Lô đất phải luôn là sân hông, theo một khoản thế chấp 30 năm với giá
+      trị thẩm định của nó, khoản này được xóa nếu các quy tắc được giữ; Thành phố có thể lấy lại
+      lô đất nếu các quy tắc không được giữ
+    timeline: >-
+      Nhân viên đặt mục tiêu trả lời trong 120 ngày, sau đó hội đồng quản trị Land Bank và Hội đồng
+      Thành phố quyết định. Chỉ có 67 lô đất được chuyển nhượng theo cách này trên toàn thành phố
+      từ năm 2020 đến 2023
+    links:
+      "https://phillylandbank.org/side-or-rear-yards/":
+        label: >-
+          Philadelphia Land Bank: sân hông hoặc sân sau
+  contact_phdc:
+    label: Hỏi PHDC về thửa đất này
+    who: Bất kỳ ai
+    steps:
+      - Liên hệ PHDC và nêu địa chỉ của thửa đất cùng số tài khoản OPA của nó.
+      - Hỏi ai quản lý thửa đất, nó có sẵn không, và hàng xóm có thể chăm sóc nó như thế nào.
+      - Nếu bạn không chắc nên hỏi ai, hãy bắt đầu với Land Bank (land@phdc.phila.gov, 215 448 3034).
+    cost: Miễn phí để hỏi
+    timeline: Chưa rõ. Các lô đất của Redevelopment Authority chưa có hướng đi nào được công bố cho hàng xóm
+    links:
+      "https://phdcphila.org/":
+        label: PHDC
+      "https://phillylandbank.org/":
+        label: Philadelphia Land Bank
+  garden_adverse_possession:
+    label: Chiếm hữu đối nghịch (adverse possession) để làm vườn (luật năm 2024)
+    who: >-
+      Cư dân, nhóm hoặc tổ chức phi lợi nhuận ở Philadelphia đã làm vườn trên một lô đất thuộc sở
+      hữu tư nhân
+    steps:
+      - >-
+        Kiểm tra các điều kiện của luật năm 2024 (53 Pa.C.S. mục 1143, có hiệu lực từ ngày 6 tháng
+        9 năm 2024): đất thuộc sở hữu tư nhân rộng nửa mẫu Anh (acre) trở xuống, 10 năm sử dụng
+        trong đó ít nhất 5 năm làm vườn, và không có công trình cố định (hàng rào và nhà kho được
+        phép).
+      - Đọc hướng dẫn về chiếm hữu đối nghịch của Grounded in Philly.
+      - >-
+        Nhờ Garden Justice Legal Initiative giới thiệu một luật sư. Hướng đi này cần một vụ kiện
+        xác lập quyền sở hữu (quiet title).
+    cost: Một luật sư và chi phí tòa án. Mọi khoản nợ gắn với đất (lien) vẫn còn nguyên trên đất
+    timeline: Ít nhất 10 năm sử dụng, rồi một vụ kiện
+    links:
+      "https://groundedinphilly.org/how-to-obtain-land-adverse-possession/":
+        label: >-
+          Grounded in Philly: chiếm hữu đối nghịch
+      "https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/":
+        label: Garden Justice Legal Initiative
+  conservatorship:
+    label: Conservatorship (quyền quản lý tài sản thay chủ) theo Act 135
+    who: Một tổ chức phi lợi nhuận hoặc một người nộp đơn thỉnh cầu lên tòa án
+    warning: >-
+      Conservatorship (quyền quản lý tài sản thay chủ) có thể lấy mất tài sản khỏi chủ sở hữu của
+      nó. Các nhà nghiên cứu nhận thấy nó được dùng nhiều một cách không tương xứng ở những khu phố
+      đang trải qua gentrification (giá nhà đất tăng khiến người dân lâu năm khó ở lại). Hãy nói
+      chuyện với Garden Justice Legal Initiative trước khi bạn cân nhắc dùng nó.
+    steps:
+      - Hãy nói chuyện với Garden Justice Legal Initiative trước mọi việc khác.
+      - Hãy hỏi trước xem việc viết thư cho chủ sở hữu, hoặc giúp một gia đình giữ lại bất động sản, có đáp ứng được cùng nhu cầu đó không.
+      - >-
+        Hiểu các điều kiện của luật: tòa án chỉ có thể chỉ định một người quản lý (conservator) cho
+        một bất động sản đã không có người ở hợp pháp trong 12 tháng, không đang được rao bán,
+        không đang bị tịch thu thế chấp (foreclosure), và không được mua trong 6 tháng gần đây.
+    cost: >-
+      Chi phí tòa án và sửa chữa. Từ năm 2014, người nộp đơn có thể được trả khoản lớn nhất trong
+      ba khoản: $2,500, 20% chi phí, hoặc 20% giá bán
+    timeline: Một vụ kiện ra tòa; hãy hỏi trợ giúp pháp lý xem sẽ mất bao lâu
+    links:
+      "https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/":
+        label: Garden Justice Legal Initiative
+  tangled_title_help:
+    label: Giúp một gia đình giữ lại ngôi nhà thừa kế (Tangled Title Fund)
+    who: >-
+      Các gia đình có ngôi nhà vẫn đứng tên một người thân đã qua đời, với thu nhập hộ gia đình tối
+      đa 80% mức trung bình của khu vực; bất động sản phải là nhà của người nộp đơn
+    steps:
+      - Liên hệ Tangled Title Fund tại Philadelphia VIP (tangledtitlefund@gmail.com, 215 523 9553).
+      - Quỹ chi trả tối đa $6,500 cho chi phí pháp lý để làm rõ quyền sở hữu, và thêm tối đa $3,500 cho thuế chuyển nhượng, tùy từng trường hợp.
+    cost: Miễn phí cho gia đình trong giới hạn của quỹ; gia đình tự trả phần vượt quá
+    timeline: Ai đến trước được phục vụ trước
+    links:
+      "https://phillyvip.org/tangled-title-fund/":
+        label: >-
+          Philadelphia VIP: Tangled Title Fund
+  fraud_guard:
+    label: Đăng ký nhận cảnh báo Fraud Guard miễn phí của Thành phố
+    who: Chủ sở hữu bất động sản và gia đình của họ
+    steps:
+      - Đăng ký Fraud Guard bằng một cái tên và một địa chỉ email.
+      - Thành phố gửi một email khi có một giấy tờ ghi tên bạn được đăng ký, để một chứng thư giả được phát hiện sớm.
+      - Câu hỏi gửi đến Sở Hồ sơ (Department of Records) theo số 215 686 2290, records.info@phila.gov.
+    cost: Miễn phí
+    timeline: Cảnh báo đến khoảng 30 ngày sau khi một giấy tờ được đăng ký
+    links:
+      "https://www.phila.gov/2022-09-06-own-property-in-philadelphia-get-free-deed-fraud-protection-with-fraud-guard/":
+        label: >-
+          Thành phố Philadelphia: Fraud Guard
+  bus_shelter_request:
+    label: Đề nghị Thành phố làm một mái che trạm xe buýt
+    who: Bất kỳ ai
+    steps:
+      - Ghi lại số trạm SEPTA của trạm (trên biển báo, và trên bản đồ này), góc đường, và số người lên xe ở đó mỗi ngày trong tuần.
+      - Viết thư cho Office of Transportation and Infrastructure Systems (OTIS) của Thành phố theo địa chỉ otis@phila.gov, hoặc gọi 215-686-9003. OTIS điều hành chương trình mái che trạm xe buýt của Thành phố; không có mẫu yêu cầu công khai.
+      - Gửi bản sao cho văn phòng khu vực Hội đồng Thành phố của bạn, và cũng báo cho SEPTA, qua mẫu góp ý trực tuyến của họ hoặc số 215-580-7800.
+    cost: Miễn phí để hỏi
+    timeline: Không nêu. OTIS gửi các vị trí mái che mới đến Art Commission của Thành phố để xem xét (tám vị trí vào tháng 12 năm 2025)
+    links:
+      "https://www.phila.gov/media/20240521160603/RFI-OTIS-street-furniture-20240521.pdf":
+        label: >-
+          Yêu cầu cung cấp thông tin của OTIS về đồ dùng đường phố (tháng 5 năm 2024), kèm mục tiêu về mái che của Thành phố
+      "https://www.phila.gov/media/20251205094032/Bus-Shelter-Upgrades-submission.pdf":
+        label: >-
+          Tám mái che trạm xe buýt mới được gửi đến Art Commission (tháng 12 năm 2025)
+      "https://wwww.septa.org/customer-service/comment-form/":
+        label: Mẫu góp ý của SEPTA
+      "https://phlcouncil.com/council-members/":
+        label: >-
+          Hội đồng Thành phố Philadelphia: thành viên Hội đồng và văn phòng của từng khu vực
+  stop_bench_request:
+    label: Đề nghị Thành phố đặt một ghế ngồi ở một trạm
+    who: Bất kỳ ai
+    steps:
+      - Ghi lại số trạm SEPTA của trạm (trên biển báo, và trên bản đồ này) và góc đường.
+      - Viết thư cho OTIS theo địa chỉ otis@phila.gov, hoặc gọi 215-686-9003, và đề nghị đặt một ghế ngồi ở trạm. Ghế ngồi ở các trạm thuộc chương trình đồ dùng đường phố của Thành phố; chúng tôi không tìm thấy mẫu yêu cầu công khai nào.
+      - Gửi bản sao cho văn phòng khu vực Hội đồng Thành phố của bạn.
+    cost: Miễn phí để hỏi
+    timeline: Không nêu
+    links:
+      "https://www.phila.gov/media/20240521160603/RFI-OTIS-street-furniture-20240521.pdf":
+        label: >-
+          Yêu cầu cung cấp thông tin của OTIS về đồ dùng đường phố (tháng 5 năm 2024)
+      "https://phlcouncil.com/council-members/":
+        label: >-
+          Hội đồng Thành phố Philadelphia: thành viên Hội đồng và văn phòng của từng khu vực
+  street_tree_request:
+    label: Xin một cây ven đường miễn phí
+    who: >-
+      Chủ sở hữu ngôi nhà, cơ sở kinh doanh, lô đất hoặc bất động sản khác mà cây sẽ đứng phía
+      trước; hàng xóm có thể nhờ chủ sở hữu xin
+    steps:
+      - >-
+        Cây ven đường được trồng trên vỉa hè phía trước một bất động sản khi chủ sở hữu yêu cầu.
+        Hãy nói chuyện với chủ của các tòa nhà bên cạnh chỗ đó. Với một lô đất trống, hãy hỏi chủ
+        sở hữu mà trang lô đất của nó nêu tên, hoặc hỏi Land Bank nếu lô đất thuộc Thành phố hoặc
+        Land Bank.
+      - >-
+        Chủ sở hữu xin một cây ven đường miễn phí từ Street Tree Management Division của Parks and
+        Recreation, qua mạng, qua email StreetTree.Info@phila.gov, hoặc qua điện thoại 215-685-4363.
+      - >-
+        Một chuyên viên cây xanh (arborist) của Thành phố đến xem để quyết định loại cây nào phù
+        hợp. Thành phố trồng miễn phí vào một mùa trồng cây (giữa tháng 4 đến giữa tháng 6, hoặc
+        giữa tháng 10 đến giữa tháng 11) và tưới nước, phủ gốc cho cây trong năm đầu. Sau đó,
+        TreePhilly đề nghị tưới khoảng 20 gallon nước mỗi tuần từ tháng 3 đến tháng 12.
+    cost: Miễn phí
+    timeline: Mùa trồng cây tiếp theo sau khi chuyên viên cây xanh đến xem
+    links:
+      "https://www.phila.gov/services/trees-parks-the-environment/tree-related-services/get-a-street-tree/":
+        label: >-
+          Thành phố Philadelphia: xin một cây ven đường
+      "https://treephilly.org/street-trees/":
+        label: >-
+          TreePhilly: cây ven đường
+  streetcomplete_survey:
+    label: Khảo sát trạm bằng StreetComplete
+    who: >-
+      Bất kỳ ai có điện thoại Android (một bản thử nghiệm đầu tiên cho iPhone đã xuất hiện vào
+      tháng 9 năm 2026)
+    steps:
+      - Cài ứng dụng StreetComplete miễn phí và tạo một tài khoản OpenStreetMap miễn phí để câu trả lời của bạn được công bố.
+      - Tại trạm, chạm vào dấu của ứng dụng và trả lời các câu hỏi của nó về mái che, ghế ngồi, đèn và số của trạm.
+      - Nếu ứng dụng không có câu hỏi nào ở trạm, hãy thêm trạm bằng lớp phủ Things của nó, hoặc để lại một ghi chú để một người vẽ bản đồ khác làm.
+    cost: Miễn phí
+    timeline: Câu trả lời đến bản đồ này trong khoảng một tuần
+    links:
+      "https://holdthedoorhoid.github.io/placekeepers/streetcomplete/":
+        label: >-
+          Placekeepers: khảo sát trạm xe buýt
+      "https://streetcomplete.app/":
+        label: StreetComplete
+  neighborhood_gardens_trust:
+    label: Giữ một vườn cộng đồng mãi mãi (Neighborhood Gardens Trust)
+    who: Những người làm vườn có vườn cộng đồng đã phát triển ít nhất ba mùa
+    steps:
+      - >-
+        Kiểm tra các tiêu chí của quỹ: một khu vườn hoạt động ít nhất ba mùa trồng trọt, những
+        người làm vườn có khả năng duy trì nó, mối liên hệ với các nhóm như một tổ chức phát triển
+        cộng đồng, một nhà thờ hay một trường học, và sự ủng hộ của hàng xóm và thành viên Hội đồng
+        Thành phố của khu vực.
+      - >-
+        Nộp đơn bằng đơn xin vườn trực tuyến của quỹ, hoặc mẫu có thể in. Quỹ trả lời trong khoảng
+        hai tuần, rồi đến thăm khu vườn và đưa nó ra hội đồng quản trị.
+      - >-
+        Khi được chấp thuận, quỹ làm việc với Thành phố để có được mảnh đất và giữ nó để hàng xóm
+        có thể tiếp tục làm vườn, có bảo hiểm trách nhiệm và hỗ trợ về nước và bảo trì. Câu hỏi
+        gọi 215 988 1630 hoặc gửi ngtrust@pennhort.org.
+    cost: Miễn phí để nộp đơn
+    timeline: Một câu trả lời trong khoảng hai tuần; việc có được mảnh đất mất nhiều thời gian hơn
+    links:
+      "https://ngtrust.org/preservation/":
+        label: >-
+          Neighborhood Gardens Trust: bảo tồn vườn
+  community_land_trust:
+    label: Giữ nhà ở và đất giá phải chăng mãi mãi (community land trust, quỹ đất cộng đồng)
+    who: Hàng xóm, các nhóm cộng đồng và tổ chức phi lợi nhuận
+    steps:
+      - >-
+        Tìm hiểu cách một community land trust hoạt động: một tổ chức phi lợi nhuận sở hữu đất mãi
+        mãi, các gia đình mua hoặc thuê nhà trên đó, và một hợp đồng thuê đất dài hạn giữ cho mỗi
+        căn nhà có giá phải chăng khi nó được bán lại.
+      - >-
+        Nói chuyện với một quỹ đất đã hoạt động ở Philadelphia, như Community Justice Land Trust
+        của Women's Community Revitalization Project, nơi nắm giữ các ngôi nhà ở Point Breeze,
+        Grays Ferry, Mantua, Germantown, Port Richmond và Haddington.
+      - Hỏi Garden Justice Legal Initiative xem một quỹ đất có thể nắm giữ một khu vườn hoặc lô đất mà nhóm của bạn đã chăm sóc như thế nào.
+    cost: Miễn phí để hỏi
+    timeline: Dài; các dự án của một quỹ đất mất nhiều năm
+    links:
+      "https://groundedsolutions.org/strengthening-neighborhoods/community-land-trusts":
+        label: >-
+          Grounded Solutions Network: quỹ đất cộng đồng
+      "https://www.wcrpphila.org/cjlt":
+        label: >-
+          Women's Community Revitalization Project: Community Justice Land Trust
+  homestead_exemption:
+    label: Giảm hóa đơn thuế của chủ nhà (Miễn Thuế Nhà cửa vườn tược, Homestead Exemption, của Thành phố)
+    who: >-
+      Bất kỳ ai sở hữu nhà ở Philadelphia và sống ở đó làm nhà ở chính, kể cả khi còn thế chấp
+      hoặc nợ thuế; không áp dụng cho nhà đang hưởng ưu đãi giảm thuế 10 năm (tax abatement)
+    steps:
+      - >-
+        Nộp đơn trên Philadelphia Tax Center (tax-services.phila.gov), nơi một đơn gộp bao gồm các
+        chương trình hỗ trợ thuế của Thành phố, hoặc gọi đường dây Homestead Hotline theo số 215
+        686 9200, hoặc gửi mẫu đơn qua thư cho Department of Revenue, P.O. Box 52817, Philadelphia,
+        PA 19115.
+      - Khoản miễn thuế này trừ $100,000 khỏi giá trị định giá của ngôi nhà để tính hóa đơn thuế, tiết kiệm tối đa $1,399 mỗi năm.
+      - Nộp đơn trước ngày 1 tháng 12 (trước ngày 1 tháng 10 để thấy nó trên hóa đơn kế tiếp). Khi đã được chấp nhận, không cần nộp lại trừ khi chứng thư thay đổi.
+    cost: Miễn phí
+    timeline: Hạn chót ngày 1 tháng 12 mỗi năm
+    links:
+      "https://www.phila.gov/services/payments-assistance-taxes/taxes/property-and-real-estate-taxes/get-real-estate-tax-relief/get-the-homestead-exemption/":
+        label: >-
+          Thành phố Philadelphia: nhận Miễn Thuế Nhà cửa vườn tược (Homestead Exemption)
+  longtime_owner_occupants:
+    label: Giới hạn mức định giá cho chủ nhà ở lâu năm (Chương trình Longtime Owner Occupants của Thành phố, LOOP)
+    who: >-
+      Các chủ nhà đã sống trong nhà ít nhất 10 năm, có mức định giá tăng ít nhất 50 phần trăm trong
+      một năm hoặc 75 phần trăm trong năm năm, với thu nhập hộ gia đình dưới giới hạn của Thành
+      phố (chẳng hạn $103,050 cho một người hoặc $147,200 cho bốn người vào năm 2026), đang đóng
+      thuế đầy đủ hoặc đang theo một thỏa thuận trả góp
+    steps:
+      - >-
+        Nộp đơn trên Philadelphia Tax Center (tax-services.phila.gov) bằng đơn gộp của Thành phố,
+        hoặc gọi 215 686 9200, gửi email revenue@phila.gov, hoặc gửi mẫu đơn qua thư cho Department
+        of Revenue, P.O. Box 53190, Philadelphia, PA 19105.
+      - >-
+        LOOP giới hạn mức định giá mà hóa đơn thuế dùng, ở mức 1,5 lần năm trước hoặc 1,75 lần giá
+        trị thấp nhất trong năm năm gần nhất, chừng nào chủ sở hữu còn đủ điều kiện.
+      - >-
+        Nộp đơn trước hạn chót hằng năm của Thành phố (ngày 30 tháng 9 trong những năm gần đây);
+        trang của Thành phố cho biết hạn hiện tại.
+    cost: Miễn phí
+    timeline: Một hạn chót hằng năm, ngày 30 tháng 9 trong những năm gần đây
+    links:
+      "https://www.phila.gov/services/payments-assistance-taxes/payment-plans-and-assistance-programs/income-based-programs-for-residents/apply-for-the-longtime-owner-occupants-program-loop/":
+        label: >-
+          Thành phố Philadelphia: nộp đơn xin LOOP
+
+suggestions:
+  clean_and_green:
+    label: Dọn dẹp và xanh hóa lô đất này
+    summary: Dọn rác, san phẳng, trồng cỏ và vài cây, lắp hàng rào thấp bằng cột và thanh ngang, và cắt cỏ thường xuyên.
+    cost: Khoảng $1,100 đến $1,500 ban đầu và $150 đến $300 mỗi năm (cần xác nhận với PHS)
+  seal_abandoned_building:
+    label: Nhờ bịt kín tòa nhà này
+    summary: Báo một tòa nhà bỏ hoang để ngỏ để Thành phố bịt kín cửa ra vào và cửa sổ của nó.
+    cost: Miễn phí để báo
+  plant_shade_trees:
+    label: Trồng cây bóng mát trên và dọc theo lô đất này
+    summary: >-
+      Ở khu vực này có ít cây che bóng hơn quanh ít nhất một nửa số địa điểm trên bản đồ này
+      (khảo sát tán cây năm 2018 của Thành phố). Cây làm mát một dãy phố bằng bóng của chúng và
+      lượng nước lá cây thải ra. Thành phố trồng miễn phí cây ven đường trên vỉa hè khi chủ sở hữu
+      bất động sản yêu cầu, và TreePhilly phát miễn phí cây để trồng xuống đất trên đất tư nhân.
+      Hãy chọn những cây sẽ cao lớn, để chúng che bóng cho đường phố mà hàng xóm vẫn nhìn xuyên
+      qua lô đất được.
+    cost: Cây miễn phí từ Thành phố và TreePhilly. Cây non cần khoảng 20 gallon nước mỗi tuần từ tháng 3 đến tháng 12
+  cool_green_lot:
+    label: Xanh hóa lô đất này để làm mát dãy phố
+    summary: >-
+      Theo chỉ số dễ bị tổn thương do nóng của Thành phố, cái nóng mùa hè tác động lên người dân ở
+      đây mạnh hơn quanh ít nhất một nửa số địa điểm trên bản đồ này. Đất trống, sỏi và gạch vụn
+      hấp thụ nắng, trong khi cỏ, luống vườn và nhất là cây giữ cho lô đất mát hơn và che bóng cho
+      vỉa hè bên cạnh. Dù lô đất này trở thành gì, một khu vườn, một lô đất đã được dọn dẹp và xanh
+      hóa hay một sân hông, hãy trồng cây bóng mát trong đó, và giữ cho cây cao để lô đất vẫn
+      thoáng tầm nhìn.
+    cost: Từ cây miễn phí (TreePhilly) đến khoảng $1,100 đến $1,500 ban đầu cho một lô dọn dẹp và xanh hóa đầy đủ (cần xác nhận với PHS)
+  seating_and_shade:
+    label: Làm một chỗ ngồi dưới bóng mát
+    summary: >-
+      Có nhiều người sống trong vòng 5 phút đi bộ của lô đất này hơn quanh ít nhất một nửa số địa
+      điểm trên bản đồ này. Vài chiếc ghế hoặc một bàn dã ngoại dưới những cây bóng mát có thể
+      biến nó thành nơi hàng xóm dừng chân, nghỉ ngơi và gặp nhau. Hãy hỏi hàng xóm xem họ sẽ dùng
+      gì, chọn ghế chắc chắn, và trồng những cây sẽ cao lớn để lô đất vẫn thoáng tầm nhìn. Hãy lên
+      kế hoạch xem ai sẽ giữ cho nó sạch.
+    cost: >-
+      Từ cây miễn phí (TreePhilly) và một chiếc ghế đóng theo mẫu thiết kế mở đến vài nghìn đô la.
+      Các khoản tài trợ nhỏ cho không gian công cộng của Feet First Philly là $500 đến $2,500
+  community_garden:
+    label: Bắt đầu một vườn cộng đồng
+    summary: >-
+      Lô đất này ở xa công viên hơn ít nhất một nửa số địa điểm trên bản đồ này, và có ít nhất
+      1.000 người sống trong vòng 5 phút đi bộ. Một vườn cộng đồng mang đến cho hàng xóm không
+      gian xanh, rau quả và hoa, và một lý do để gặp nhau. Nó cần những người làm vườn quay lại
+      mỗi tuần, nước, và sự cho phép sử dụng đất. Khi một khu vườn đã hoạt động, Neighborhood
+      Gardens Trust có thể giúp giữ nó làm vườn mãi mãi.
+    cost: >-
+      Từ vài luống vườn nâng cao đến vài nghìn đô la với đất, hàng rào và nước. Urban Garden
+      Agreement của Land Bank giá $1
+  art_request:
+    label: Hỏi về một bức tranh tường hoặc nghệ thuật khác
+    summary: >-
+      Nhiều người sống quanh lô đất này, và không có tác phẩm nào trong danh sách Percent for Art
+      của Thành phố hay trong Wikidata nằm trong vòng 5 phút đi bộ. Những danh sách đó bỏ sót
+      nhiều bức tranh tường, nên hãy xem lớp Nghệ thuật công cộng và danh sách tranh tường riêng
+      của Mural Arts trước. Một bức tường trống hướng ra lô đất có thể có một bức tranh tường:
+      Mural Arts nhận yêu cầu từ chủ các bức tường trên trang web riêng của họ. Nghệ thuật được
+      chào đón vì vẻ đẹp và niềm tự hào; không có nghiên cứu nào liên hệ nó với việc giảm bạo lực.
+    cost: Miễn phí để hỏi Mural Arts
+  report_dumping:
+    label: Báo việc đổ rác trái phép cho Philly311
+    summary: >-
+      Có người đã hỏi Philly311 về việc đổ rác trái phép trên một đoạn phố mà lô đất này nhìn ra
+      trong 90 ngày qua, và yêu cầu vẫn còn đang mở. Nếu rác vẫn còn đó, hãy gửi yêu cầu của riêng
+      bạn, kèm một tấm ảnh, để Thành phố dọn đi. Một báo cáo là về đống rác, không bao giờ về
+      người đã bỏ nó.
+    cost: Miễn phí để báo
+  report_dark_light:
+    label: Báo đèn đường bị tắt cho Philly311
+    summary: >-
+      Có người đã nhờ Philly311 sửa một đèn đường hoặc đèn hẻm bị tắt trên một đoạn phố mà lô đất
+      này nhìn ra, trong 90 ngày qua, và yêu cầu vẫn còn đang mở. Nếu đèn vẫn tắt, hãy gửi yêu cầu
+      của riêng bạn, kèm số của cột nếu có. Một con phố có đèn giúp hàng xóm dùng con phố và lô
+      đất sau khi trời tối.
+    cost: Miễn phí để báo
+  report_graffiti:
+    label: Báo việc vẽ bậy lên tường cho Philly311
+    summary: >-
+      Có người đã nhờ Philly311 xóa hình vẽ bậy trên một đoạn phố mà lô đất này nhìn ra trong 90
+      ngày qua, và yêu cầu vẫn còn đang mở. Nếu nó vẫn còn đó, hãy gửi yêu cầu của riêng bạn, kèm
+      một tấm ảnh, để Thành phố có thể tẩy sạch. Nếu hàng xóm muốn có nghệ thuật trên bức tường đó
+      hơn, hãy hỏi chủ sở hữu về một bức tranh tường.
+    cost: Miễn phí để báo
+  memorial_or_ghost_bike:
+    label: Một nơi tưởng niệm hoặc một chiếc ghost bike
+    summary: >-
+      Một nơi tưởng niệm tôn vinh người đã mất và nhắc mọi người đi ngang qua hãy đi chậm lại. Với
+      một người thiệt mạng khi đi xe đạp, Bicycle Coalition có thể đặt một chiếc ghost bike, một
+      chiếc xe đạp sơn màu trắng.
+    cost: Thấp; yêu cầu một chiếc ghost bike là miễn phí
+  traffic_calming_petition:
+    label: Đề nghị làm chậm xe trên đường phố khu dân cư này
+    summary: >-
+      Hàng xóm có thể đề nghị Thành phố làm đệm giảm tốc trên một đường phố khu dân cư. Thành phố
+      chấm điểm các yêu cầu ba lần mỗi năm dựa trên dữ liệu tai nạn, và nếu con đường này được
+      chọn, 60 phần trăm dãy phố ký một bản kiến nghị. Các đường huyết mạch (arterial), đường cao
+      tốc của tiểu bang, các đường ngắn, dốc và cong thì không đủ điều kiện.
+    cost: Miễn phí để yêu cầu
+  daylighting_check:
+    label: Kiểm tra xem góc đường này có thoáng trong 20 feet không
+    summary: >-
+      Luật Pennsylvania đã cấm đỗ xe trong vòng 20 feet từ một vạch qua đường ở giao lộ, và trong
+      vòng 30 feet từ một biển dừng hoặc tín hiệu giao thông, để người lái xe và người băng qua
+      đường nhìn thấy nhau. Nếu xe đỗ ở đó, hãy hỏi Thành phố về việc làm thoáng góc đường bằng
+      sơn, cột hoặc chậu cây. Hãy báo đèn đường bị tắt ở đây cho Philly311.
+    cost: Miễn phí để hỏi
+  asphalt_art_check:
+    label: Nghệ thuật vẽ trên mặt đường ở góc này, hãy hỏi Thành phố trước
+    summary: >-
+      Một nghiên cứu về các giao lộ được sơn thấy ít vụ tai nạn liên quan đến người đi bộ và đi xe
+      đạp hơn, nhưng nó không có nhóm đối chứng và do nhà tài trợ của chương trình chi trả. Năm
+      2025, chính phủ liên bang bắt đầu thúc giục các tiểu bang gỡ bỏ nghệ thuật trên vạch qua
+      đường, và Philadelphia không có quy trình cấp phép cho nó. Hãy hỏi Thành phố trước khi sơn
+      bất cứ thứ gì.
+    cost: Chưa rõ; Thành phố không có quy trình nào để định giá
+  stop_survey:
+    label: Khảo sát trạm này bằng StreetComplete
+    summary: >-
+      Chưa có ai ghi lại trạm này có mái che hay ghế ngồi không, hoặc OpenStreetMap và danh sách
+      mái che trạm xe buýt của Thành phố không thống nhất về mái che của nó. Bất kỳ ai cũng có thể
+      tìm hiểu trong vài phút bằng ứng dụng điện thoại StreetComplete miễn phí, và câu trả lời đến
+      bản đồ này trong khoảng một tuần. Nếu ứng dụng không có câu hỏi nào ở đây, trạm chưa có
+      trong OpenStreetMap: hãy thêm nó bằng lớp phủ Things của ứng dụng, hoặc để lại một ghi chú.
+    cost: Miễn phí; khoảng ba phút mỗi trạm
+  stop_shelter_request:
+    label: Đề nghị Thành phố làm mái che ở trạm này
+    summary: >-
+      Một cuộc khảo sát thấy không có mái che ở đây, và danh sách mái che trạm xe buýt của Thành
+      phố cũng không có mái che nào ở đây. Chương trình mái che trạm xe buýt của Thành phố, do văn
+      phòng giao thông (OTIS) điều hành, xây các mái che do tiền quảng cáo trên đó chi trả và đặt
+      mục tiêu lắp ở 15 phần trăm trạm xe buýt đông khách nhất. Không có mẫu yêu cầu công khai,
+      nên hãy viết thư cho OTIS kèm số trạm và số người lên xe ở đây.
+    cost: Miễn phí để hỏi
+  stop_bench_request:
+    label: Đề nghị Thành phố đặt ghế ngồi ở trạm này
+    summary: >-
+      Một cuộc khảo sát thấy không có ghế ngồi ở đây. Ghế ngồi ở các trạm thuộc chương trình đồ
+      dùng đường phố của Thành phố, do OTIS điều hành, và chúng tôi không tìm thấy cách công khai
+      nào để yêu cầu, nên hãy viết thư cho OTIS kèm số trạm. Một chiếc ghế tự bạn làm cần có sự
+      cho phép, và con đường xin giấy phép của Thành phố cho một chiếc ghế trên vỉa hè vẫn chưa
+      được xác nhận.
+    cost: Miễn phí để hỏi
+  stop_streetlight_report:
+    label: Báo đèn đường bị tắt ở trạm này
+    summary: >-
+      OpenStreetMap cho biết trạm này không có đèn chiếu sáng. Nếu một đèn đường ở đây bị tắt, hãy
+      báo cho Philly311. Chương trình đèn đường hiện nay của Thành phố thay đèn nhưng không thêm
+      đèn mới, nên một trạm hoàn toàn không có đèn là câu hỏi dành cho OTIS.
+    cost: Miễn phí để báo
+  stop_shade_trees:
+    label: Trồng cây bóng mát cạnh trạm này
+    summary: >-
+      Có ít cây che bóng cho trạm này. Thành phố trồng miễn phí cây ven đường trên vỉa hè trước
+      một ngôi nhà hoặc cơ sở kinh doanh khi chủ sở hữu yêu cầu, và tưới nước cho chúng trong năm
+      đầu. Hãy nhờ chủ của các tòa nhà bên cạnh trạm yêu cầu một cây; sau đó hàng xóm có thể giúp
+      tưới.
+    cost: Cây ven đường miễn phí cho chủ sở hữu bất động sản
+
+layers:
+  vacant_parcels:
+    label: "Lô đất trống và tòa nhà bỏ trống"
+    description: "Các thửa đất có lẽ là bỏ trống, kèm mức chắc chắn của chúng tôi và lý do. Kết hợp chỉ báo bỏ trống của Thành phố với hồ sơ của cơ quan định giá, dấu vết tòa nhà, các vụ phá dỡ, các hồ sơ của L&I và bản đồ sử dụng đất, để không nguồn nào một mình làm sai được."
+    settings:
+      min_confidence:
+        label: "Hiện các thửa đất mà chúng tôi chắc ít nhất ở mức này"
+        options:
+          "1":
+            label: "Bất kỳ dấu hiệu bỏ trống nào"
+          "2":
+            label: "Có lẽ hoặc rất có thể là bỏ trống"
+          "3":
+            label: "Chỉ những nơi rất có thể là bỏ trống"
+      kinds:
+        label: "Hiện"
+        options:
+          "both":
+            label: "Lô đất và tòa nhà"
+          "lots":
+            label: "Chỉ lô đất"
+          "buildings":
+            label: "Chỉ tòa nhà"
+      listed:
+        label: "Được các cơ quan quản lý đất của Thành phố ghi là có sẵn"
+        options:
+          "any":
+            label: "Mọi thửa đất"
+          "available":
+            label: "Chỉ những thửa được ghi là có sẵn"
+      lens:
+        label: "Tô màu các lô đất theo"
+        options:
+          "violence":
+            label: "Góc nhìn giảm bạo lực"
+          "heat":
+            label: "Góc nhìn nóng và bóng mát"
+          "placemaking":
+            label: "Góc nhìn tạo không gian cộng đồng"
+  hin_2025:
+    label: "High Injury Network"
+    description: "Những con đường nơi xảy ra phần lớn số ca tử vong và bị thương nặng do giao thông ở Philadelphia, theo bản đồ của chương trình Vision Zero của Thành phố năm 2025."
+  shootings_hex:
+    label: "Các vụ nổ súng, đếm theo khu vực"
+    description: "Các nạn nhân bị bắn trong khoảng thời gian đã chọn, đếm trên mỗi ô lục giác rộng cỡ hai dãy phố. Hiện ra để hướng sự chăm sóc đến nơi giúp được nhiều nhất, không phải để gán cho các nơi cái nhãn nguy hiểm."
+    settings:
+      window:
+        label: "Khoảng thời gian"
+        options:
+          "m12":
+            label: "12 tháng qua"
+          "m36":
+            label: "3 năm qua"
+  landcare_lots:
+    label: "Các lô đất do PHS LandCare chăm sóc"
+    description: "Các lô đất trống mà Pennsylvania Horticultural Society đã dọn dẹp, xanh hóa và tiếp tục cắt cỏ, qua LandCare và Community LandCare. Đây là sự chăm sóc mà các thử nghiệm ở Philadelphia đã kiểm chứng."
+  gardens:
+    label: "Vườn cộng đồng"
+    description: "Các vườn cộng đồng và nông trại được PHS hoặc Neighborhood Gardens Trust hỗ trợ, và các vườn đã đăng ký với Parks and Recreation. Người dân đã chăm sóc những nơi này, nên chúng không bao giờ được hiện là bỏ trống."
+  council_districts:
+    label: "Các khu vực của Hội đồng Thành phố"
+    description: "Mười khu vực của Hội đồng Thành phố như được vẽ năm 2024, để bạn biết nên liên hệ văn phòng nào."
+    settings:
+      names:
+        label: "Hiện tên"
+  community_organizations:
+    label: "Tổ chức Cộng đồng Đã đăng ký (RCO)"
+    description: "Các nhóm khu phố đã đăng ký với Thành phố, được thông báo về các thay đổi quy hoạch trong khu vực của họ. Khu vực của các nhóm thường chồng lên nhau."
+    settings:
+      names:
+        label: "Hiện tên"
+  neighborhoods:
+    label: "Các khu phố"
+    description: "Tên và ranh giới các khu phố, từ bản đồ khu phố của OpenDataPhilly do Abaca Labs thực hiện."
+    settings:
+      names:
+        label: "Hiện tên"
+  segments:
+    label: "An toàn đường phố, từng đoạn phố"
+    description: "Mỗi đoạn phố được tô màu theo góc nhìn an toàn đường phố: có nằm trong High Injury Network không, có bao nhiêu người thiệt mạng hoặc bị thương nặng ở đó khi đi bộ hoặc đi xe đạp trong năm năm gần nhất của hồ sơ PennDOT, có ai thiệt mạng ở đó trong hai năm qua không, và có trường học trong vòng 400 mét không. Hãy kéo các thanh trượt của góc nhìn để đổi cách kết hợp. Một đoạn phố cũng cho biết Thành phố liệt kê bao nhiêu cột dọc theo nó và bao nhiêu đèn trên đó là đèn LED, và các biện pháp làm chậm xe mà Thành phố liệt kê ở đó."
+    settings:
+      min_score:
+        label: "Hiện các đoạn phố có điểm ít nhất"
+        options:
+          "1":
+            label: "Bất kỳ điểm nào trên không"
+          "20":
+            label: "20 trên 100"
+          "40":
+            label: "40 trên 100"
+          "60":
+            label: "60 trên 100"
+  crashes:
+    label: "Các vụ tai nạn"
+    description: "Các vụ tai nạn báo cho PennDOT ở Philadelphia từ 2015 đến 2024, tô màu theo mức người bị thương nặng đến đâu. Hãy chọn các năm, mức người bị thương, và những ai có liên quan. Hồ sơ của PennDOT đến sau các vụ tai nạn khoảng một năm, nên các ca tử vong gần đây nhất hiện ra dưới dạng nơi tưởng niệm."
+    settings:
+      years:
+        label: "Các năm"
+        options:
+          "latest":
+            label: "Năm gần nhất của hồ sơ"
+          "recent":
+            label: "Năm năm gần nhất"
+          "all":
+            label: "Mọi năm từ 2015"
+      severity:
+        label: "Mức người bị thương nặng đến đâu"
+        options:
+          "3":
+            label: "Có người thiệt mạng"
+          "2":
+            label: "Có người thiệt mạng hoặc bị thương nặng"
+          "1":
+            label: "Có người bị thương"
+          "0":
+            label: "Mọi vụ tai nạn"
+      mode:
+        label: "Những ai có liên quan"
+        options:
+          "all":
+            label: "Mọi người"
+          "walk_cycle":
+            label: "Người đi bộ hoặc đi xe đạp"
+          "walk":
+            label: "Người đi bộ"
+          "cycle":
+            label: "Người đi xe đạp"
+          "motorcycle":
+            label: "Người đi xe máy"
+  memorials:
+    label: "Tưởng niệm"
+    description: "Những người đã thiệt mạng trên đường phố của chúng ta khi đi bộ, đi xe đạp hoặc đi xe scooter, theo hồ sơ của Police Department về các ca tử vong trong tai nạn giao thông từ năm 2019, mỗi người được đánh dấu lặng lẽ tại nơi xảy ra. Một cái tên chỉ xuất hiện khi một danh sách tưởng niệm công khai đã nêu nó, và bất kỳ ai cũng có thể yêu cầu gỡ một cái tên hoặc một dấu."
+    settings:
+      show_names:
+        label: "Hiện tên"
+      all_fatal:
+        label: "Cũng tưởng nhớ những người thiệt mạng khi đi ô tô và xe máy"
+  parking_reports:
+    label: "Các vấn đề đỗ xe đã được báo (Laser Vision)"
+    description: "Nơi những người dùng ứng dụng Laser Vision của Philly Bike Action báo có xe chắn vỉa hè, vạch qua đường, góc đường, lối dốc vỉa hè và làn xe đạp trong 12 tháng đến ngày ghi ở chú giải, đếm theo khu vực rộng cỡ một dãy phố. Nó cho thấy nơi những người dùng một ứng dụng báo vấn đề, không phải mọi vấn đề. Khu vực có ít hơn 5 báo cáo bị bỏ ra, để không bao giờ lộ một báo cáo riêng lẻ nào. Nhiều báo cáo ở một chỗ là bằng chứng cho các cách sửa vật lý: mở rộng lề đường, cột chắn, góc phố thoáng tầm nhìn, làn xe đạp có bảo vệ và khu vực bốc dỡ hàng."
+    settings:
+      kind:
+        label: "Hiện các báo cáo về xe"
+        options:
+          "all":
+            label: "Chắn đường theo bất kỳ cách nào trong số này"
+          "sidewalk":
+            label: "Trên vỉa hè"
+          "bike_lane":
+            label: "Trong làn xe đạp"
+          "crosswalk":
+            label: "Trên vạch qua đường"
+          "corner":
+            label: "Ở góc đường"
+          "ramp":
+            label: "Chắn lối dốc vỉa hè"
+  street_poles:
+    label: "Cột trên đường phố và các đèn mà Thành phố liệt kê"
+    description: "Mọi cột trên đường phố mà Streets Department liệt kê, cùng các đèn được liệt kê trên đó: đèn LED, đèn natri cao áp loại cũ, hoặc một đèn thuộc loại mà họ không nêu tên. Nhiều cột, như cột của PECO và cột của tín hiệu giao thông, không liệt kê đèn nào. Đây là những gì Thành phố đã lắp đặt, không phải đèn có sáng đêm nay hay không: hãy báo đèn tắt cho Philly311 kèm số của cột. Hiện khi phóng to, rộng vài dãy phố."
+    settings:
+      show:
+        label: "Hiện"
+        options:
+          "all":
+            label: "Mọi cột"
+          "lamps":
+            label: "Các cột có đèn mà Thành phố liệt kê"
+          "not_led":
+            label: "Các đèn mà Thành phố không liệt kê là LED"
+  traffic_calming:
+    label: "Biện pháp làm chậm xe mà Thành phố liệt kê"
+    description: "Các đệm, gờ và bục giảm tốc mà Streets Department đã lắp để làm chậm xe trên các đường phố khu dân cư, kèm ngày mỗi cái được lắp. Hàng xóm có thể đề nghị Thành phố làm chúng trên một đường phố khu dân cư; các đường huyết mạch (arterial) và đường của tiểu bang không đủ điều kiện. Một đoạn phố cho biết nó có bao nhiêu cái và từ khi nào, và một đoạn trong High Injury Network nơi có người bị thương cho biết khi nào chưa ghi nhận cái nào."
+  crossing_guards:
+    label: "Các vị trí nhân viên hướng dẫn học sinh qua đường"
+    description: "Các góc đường nơi Thành phố bố trí một nhân viên hướng dẫn học sinh qua đường, một dịch vụ an toàn giúp trẻ em và mọi người khác băng qua đường gần trường học vào đầu và cuối giờ học. Mỗi vị trí nêu góc đường của nó và trường học gần nhất trong vòng 400 mét."
+  basemap:
+    label: "Bản đồ nền"
+    description: "Đường phố, tòa nhà, công viên, sông hồ và địa danh từ OpenStreetMap, nằm bên dưới mọi thứ khác. Hãy chọn kiểu màu xám để dữ liệu nổi bật, hoặc tắt bản đồ nền."
+    settings:
+      look:
+        label: "Kiểu hiển thị"
+        options:
+          "light":
+            label: "Sáng, có màu"
+          "muted":
+            label: "Màu xám, để dữ liệu nổi bật"
+  transit_stops:
+    label: "Trạm xe buýt và xe điện"
+    description: "Mọi trạm xe buýt và xe điện của SEPTA ở Philadelphia, từ lịch chạy hiện hành của SEPTA: các tuyến dừng ở đó, xe buýt hoặc xe điện đến thường xuyên thế nào vào một ngày thường trong tuần, thứ Bảy và Chủ Nhật, khi nào xe bắt đầu và ngừng chạy, và bao nhiêu người lên xe ở đó vào một ngày trong tuần trung bình, từ số đếm riêng của SEPTA. Mỗi trạm cho thấy hành khách thấy gì ở đó nơi OpenStreetMap biết, một mái che nơi danh sách riêng của Thành phố có, mức ưu tiên của nó theo góc nhìn Thoải mái khi đi xe công cộng, và những gì hàng xóm có thể làm. Các ga tàu điện ngầm, El và Regional Rail có thể được thêm trong phần cài đặt."
+    settings:
+      service:
+        label: "Hiện các trạm có"
+        options:
+          "all":
+            label: "Bất kỳ chuyến nào"
+          "frequent":
+            label: "Xe chạy thường xuyên: cứ 15 phút một chuyến hoặc thường hơn vào buổi trưa"
+          "long_wait":
+            label: "Phải chờ lâu: thưa hơn cứ 30 phút một chuyến vào buổi trưa"
+      color:
+        label: "Tô màu các trạm theo"
+        options:
+          "lens":
+            label: "Mức ưu tiên theo góc nhìn Thoải mái khi đi xe công cộng"
+          "wait":
+            label: "Xe buýt hoặc tàu đến thường xuyên thế nào vào buổi trưa"
+          "boardings":
+            label: "Bao nhiêu người lên xe mỗi ngày trong tuần"
+      stations:
+        label: "Hiện thêm các ga tàu điện ngầm, El và Regional Rail"
+  transit_routes:
+    label: "Các tuyến xe buýt, xe điện và tàu"
+    description: "Các con đường và đường ray mà mỗi tuyến SEPTA đi qua ở Philadelphia, từ lịch chạy hiện hành của SEPTA, tô màu theo loại phương tiện. Hãy chọn các tuyến thường xuyên để xem nơi xe buýt hoặc tàu đến ít nhất cứ 15 phút một chuyến vào buổi trưa."
+    settings:
+      service:
+        label: "Hiện các tuyến"
+        options:
+          "all":
+            label: "Mọi tuyến"
+          "frequent":
+            label: "Các tuyến thường xuyên: cứ 15 phút một chuyến hoặc thường hơn vào buổi trưa"
+  stop_amenities:
+    label: "Mái che và ghế ngồi ở các trạm"
+    description: "Những gì hành khách thấy ở các trạm xe buýt và xe điện mà OpenStreetMap biết: một mái che hoặc mái lợp, một ghế ngồi nhưng không có mái che, không có cả hai, hoặc chưa khảo sát. \"Chưa khảo sát\" nghĩa là chưa có ai ghi lại; điều đó không có nghĩa là trạm không có gì. Cho đến nay OpenStreetMap chỉ có khoảng một trong mười trạm (danh sách đầy đủ các trạm của SEPTA là một lớp riêng). Hàng xóm có thể khảo sát các trạm bằng ứng dụng điện thoại StreetComplete, và câu trả lời của họ xuất hiện ở đây trong khoảng một tuần."
+    settings:
+      show:
+        label: "Hiện"
+        options:
+          "all":
+            label: "Mọi trạm"
+          "surveyed":
+            label: "Các trạm đã có người khảo sát"
+          "unsurveyed":
+            label: "Các trạm chưa khảo sát"
+  city_shelters:
+    label: "Các mái che trạm xe buýt mà Thành phố liệt kê"
+    description: "Các mái che trạm xe buýt trong danh sách riêng của Thành phố, do Thành phố lắp đặt và bảo trì cùng đối tác quảng cáo của mình, kèm trạm SEPTA mà mỗi mái che phục vụ. Một trạm có mái che của Thành phố được tính là có mái che trong góc nhìn Thoải mái khi đi xe công cộng. Nơi OpenStreetMap cho biết một trạm không có mái che nhưng Thành phố liệt kê có, trang của trạm cho biết hai nguồn không thống nhất, và một cuộc khảo sát sẽ giải quyết việc đó. Danh sách thay đổi lần gần nhất vào tháng 1 năm 2025, nên một mái che mới lắp hoặc đã dỡ từ đó có thể bị thiếu."
+  heat_tracts:
+    label: "Mức dễ bị tổn thương do nóng theo khu phố"
+    description: "Cái nóng mùa hè tác động mạnh thế nào lên người dân trong mỗi khu điều tra dân số, từ Chỉ số Dễ bị Tổn thương do Nóng (Heat Vulnerability Index) của Thành phố (Sở Y tế Công cộng và Văn phòng Phát triển Bền vững, dữ liệu 2017 đến 2019). Chỉ số gộp mức chịu nóng, tức khu đó nóng đến đâu vào những ngày hè theo đo đạc của vệ tinh, và độ nhạy với nóng, tức số người sống ở đó có nguy cơ cao hơn khi trời nóng (mười hai thước đo về tuổi, sức khỏe, thu nhập, học vấn, ngôn ngữ và chủng tộc, như Thành phố đã xây dựng chỉ số). Các khu được tô đậm nhạt theo từng phần năm của thành phố, phần năm đậm nhất là có nhiều nguy cơ nhất. Mức chịu nóng và độ nhạy có thể được hiện riêng trong phần cài đặt."
+    settings:
+      measure:
+        label: "Tô đậm nhạt các khu theo"
+        options:
+          "vulnerability":
+            label: "Mức dễ bị tổn thương do nóng: cái nóng và những người có nguy cơ gộp lại"
+          "exposure":
+            label: "Mức chịu nóng: nóng đến đâu"
+          "sensitivity":
+            label: "Độ nhạy với nóng: bao nhiêu người có nguy cơ khi trời nóng"
+      priority:
+        label: "Viền các khu mà Thành phố đánh giá là rất cao"
+  city_trees:
+    label: "Cây ven đường và trong công viên"
+    description: "Mọi cây trong danh mục cây của Parks and Recreation (2025): các cây mà Thành phố trông coi trên vỉa hè và trong công viên, không phải cây trong sân nhà riêng, kèm loại và kích thước thân của mỗi cây. Hiện khi phóng to, rộng vài dãy phố. Các cây nhỏ, thân rộng dưới 4 inch, thường là cây non, và TreePhilly đề nghị cây non được tưới khoảng 20 gallon nước mỗi tuần từ tháng 3 đến tháng 12."
+    settings:
+      show:
+        label: "Hiện"
+        options:
+          "all":
+            label: "Mọi cây"
+          "big":
+            label: "Cây bóng mát lớn: thân rộng ít nhất 12 inch"
+          "small":
+            label: "Cây nhỏ: thân rộng dưới 4 inch, thường là cây non"
+  floodplain:
+    label: "Vùng ngập lụt"
+    description: "Nơi các bản đồ lũ của FEMA dự kiến có ngập lụt, như Thành phố công bố (2023): vùng ngập có xác suất 1 phần trăm mỗi năm, nơi mỗi năm có ít nhất 1 trên 100 khả năng xảy ra lũ, và khu vực có xác suất 0,2 phần trăm mỗi năm bên cạnh nó (thường được gọi là vùng ngập 100 năm và 500 năm). Mọi thứ xây ở đó phải theo quy định vùng ngập lụt của Thành phố. Xanh hóa giúp thấm nước mưa thì có ích ở đó, với các cây chịu được đất ẩm ướt."
+    settings:
+      zones:
+        label: "Hiện"
+        options:
+          "both":
+            label: "Cả khu vực xác suất 1 phần trăm và 0,2 phần trăm mỗi năm"
+          "high":
+            label: "Chỉ vùng ngập có xác suất 1 phần trăm mỗi năm"
+  benches:
+    label: "Ghế ngồi, như được vẽ trong OpenStreetMap"
+    description: "Chỗ để ngồi: các ghế ngồi mà mọi người đã thêm vào OpenStreetMap, bản đồ miễn phí mà ai cũng có thể cải thiện, kèm việc mỗi ghế có tựa lưng hay không nơi bản đồ cho biết. OpenStreetMap còn thiếu nhiều ghế, nên một con phố không thấy ghế nào vẫn có thể có một số. Bất kỳ ai cũng có thể thêm một chiếc ghế bằng ứng dụng điện thoại StreetComplete, và nó xuất hiện ở đây trong khoảng một tuần."
+  picnic_tables:
+    label: "Bàn dã ngoại, như được vẽ trong OpenStreetMap"
+    description: "Các bàn dã ngoại mà mọi người đã thêm vào OpenStreetMap, phần lớn trong công viên, kèm việc mỗi bàn có nằm dưới mái hay không nơi bản đồ cho biết. OpenStreetMap còn thiếu nhiều bàn. Bất kỳ ai cũng có thể thêm một bàn bằng ứng dụng điện thoại StreetComplete, và nó xuất hiện ở đây trong khoảng một tuần."
+  drinking_water:
+    label: "Nước uống, như được vẽ trong OpenStreetMap"
+    description: "Các vòi uống nước và vòi nước mà mọi người đã thêm vào OpenStreetMap, kèm việc có đổ đầy chai được không nơi bản đồ cho biết. OpenStreetMap chỉ biết vài chục cái trong thành phố, nên các vòi uống nước mà Parks and Recreation liệt kê là một lớp riêng. Bất kỳ ai cũng có thể thêm một vòi uống nước bằng ứng dụng điện thoại StreetComplete, và nó xuất hiện ở đây trong khoảng một tuần."
+  toilets:
+    label: "Nhà vệ sinh công cộng, như được vẽ trong OpenStreetMap"
+    description: "Các nhà vệ sinh mà mọi người đã thêm vào OpenStreetMap, kèm ai được dùng, có thu phí không và có lối cho xe lăn không nơi bản đồ cho biết. Các nhà vệ sinh không mở cho công chúng bị bỏ ra. OpenStreetMap biết chưa đến một trăm cái trong thành phố. Bất kỳ ai cũng có thể thêm một cái bằng ứng dụng điện thoại StreetComplete, và nó xuất hiện ở đây trong khoảng một tuần."
+  bookcases:
+    label: "Thư viện nhỏ miễn phí, như được vẽ trong OpenStreetMap"
+    description: "Các tủ sách công cộng, thường gọi là thư viện nhỏ miễn phí (little free library), nơi ai cũng có thể lấy hoặc để lại một cuốn sách, như mọi người đã thêm vào OpenStreetMap. Nhiều cái còn thiếu. Bất kỳ ai cũng có thể thêm một cái bằng ứng dụng điện thoại StreetComplete, và nó xuất hiện ở đây trong khoảng một tuần."
+  park_water:
+    label: "Vòi uống nước trong công viên"
+    description: "Các vòi uống nước và điểm đổ đầy chai nước ở công viên và trung tâm sinh hoạt, như Philadelphia Parks and Recreation liệt kê. Cái nằm bên trong một trung tâm sinh hoạt dùng được khi trung tâm mở cửa."
+  libraries:
+    label: "Các chi nhánh Free Library"
+    description: "Mọi địa điểm của Free Library of Philadelphia mà Thành phố liệt kê, kèm địa chỉ, số điện thoại và liên kết đến trang xem giờ mở cửa. Thư viện miễn phí và mở cho mọi người."
+  recreation_centers:
+    label: "Các trung tâm sinh hoạt"
+    description: "Nơi Philadelphia Parks and Recreation tổ chức các chương trình: trung tâm sinh hoạt, trung tâm cho người lớn tuổi và trung tâm giáo dục môi trường, kèm việc mỗi nơi có phòng tập thể dục hay không, như Thành phố liệt kê."
+  pools:
+    label: "Hồ bơi và khu vòi phun nước"
+    description: "Các hồ bơi, khu vòi phun nước (sprayground) và vòi phun nước của Thành phố, những nơi để giải nhiệt vào ngày nóng, kèm việc mỗi nơi có hoạt động trong năm nay hay không, như Philadelphia Parks and Recreation liệt kê. Hồ bơi chỉ mở vào mùa hè; hãy hỏi Parks and Recreation về giờ mở cửa của tuần này."
+    settings:
+      show:
+        label: "Hiện"
+        options:
+          "in_service":
+            label: "Chỉ những nơi hoạt động trong năm nay"
+          "all":
+            label: "Tất cả, cả những nơi không hoạt động"
+  cooling_centers:
+    label: "Điểm tránh nóng và sưởi ấm"
+    description: "Những nơi mà Office of Emergency Management của Thành phố liệt kê là điểm sưởi ấm hoặc tránh nóng: thư viện, trung tâm sinh hoạt, đối tác cộng đồng và các trung tâm cộng đồng của Philadelphia Housing Authority, kèm việc mỗi nơi được ghi là đang mở hay không, giờ mở cửa và những gì nơi đó cung cấp, như được liệt kê vào ngày bản đồ này sao chép danh sách gần nhất. Không phải thông tin trực tiếp: các điểm mở và đóng theo thời tiết, nên hãy gọi cho điểm đó hoặc Philly311 trước khi đi. Một thư viện hoặc trung tâm sinh hoạt cũng là một điểm sẽ chỉ hiện một lần."
+    settings:
+      kind:
+        label: "Các điểm cho"
+        options:
+          "any":
+            label: "Nóng hoặc lạnh"
+          "cooling":
+            label: "Tránh nóng khi thời tiết nóng"
+          "warming":
+            label: "Sưởi ấm khi thời tiết lạnh"
+      show:
+        label: "Hiện"
+        options:
+          "all":
+            label: "Tất cả, mở hay đóng như được ghi"
+          "open":
+            label: "Chỉ những nơi được ghi là đang mở"
+  dumping:
+    label: "Đổ rác trái phép đã báo cho 311"
+    description: "Các đoạn phố nơi có người đã hỏi Philly311 về việc đổ rác trái phép trong 90 ngày qua, kèm số yêu cầu và có yêu cầu nào còn đang mở không. Đếm theo đoạn phố, không bao giờ theo địa chỉ, và không có gì về người đã báo. Một yêu cầu cho thấy có người đã để ý và nhờ giúp; một số đoạn phố nhờ thường xuyên hơn những đoạn khác, nên ít yêu cầu không có nghĩa là đoạn phố sạch."
+    settings:
+      show:
+        label: "Hiện các đoạn phố có"
+        options:
+          "any":
+            label: "Bất kỳ yêu cầu nào trong 90 ngày qua"
+          "open":
+            label: "Một yêu cầu còn đang mở"
+  dark_lights:
+    label: "Đèn đường và đèn hẻm đã báo bị tắt"
+    description: "Các đoạn phố nơi có người đã nhờ Philly311 sửa một đèn đường hoặc đèn hẻm bị tắt trong 90 ngày qua, kèm số yêu cầu và có yêu cầu nào còn đang mở không, bên cạnh các cột và đèn mà Thành phố liệt kê dọc đoạn phố. Đếm theo đoạn phố, không bao giờ theo địa chỉ, và không có gì về người đã báo."
+    settings:
+      show:
+        label: "Hiện các đoạn phố có"
+        options:
+          "any":
+            label: "Bất kỳ yêu cầu nào trong 90 ngày qua"
+          "open":
+            label: "Một yêu cầu còn đang mở"
+  graffiti:
+    label: "Vẽ bậy lên tường đã báo cho 311"
+    description: "Các đoạn phố nơi có người đã nhờ Philly311 xóa hình vẽ bậy trong 90 ngày qua, kèm số yêu cầu và có yêu cầu nào còn đang mở không. Đếm theo đoạn phố, không bao giờ theo địa chỉ, và không có gì về người đã báo."
+    settings:
+      show:
+        label: "Hiện các đoạn phố có"
+        options:
+          "any":
+            label: "Bất kỳ yêu cầu nào trong 90 ngày qua"
+          "open":
+            label: "Một yêu cầu còn đang mở"
+  public_art:
+    label: "Nghệ thuật công cộng"
+    description: "Tranh tường, tượng điêu khắc và tượng, tranh ghép mảnh và nghệ thuật công cộng khác, từ danh sách Percent for Art của Thành phố, OpenStreetMap và Wikidata. Khi hai hoặc ba nguồn cùng liệt kê một tác phẩm, bản đồ chỉ hiện nó một lần và liên kết đến từng nguồn. Các tác phẩm tưởng nhớ một người chỉ được hiện như tác phẩm tưởng niệm, không có tên. Mural Arts Philadelphia giữ danh sách tranh tường lớn nhất của thành phố trên trang web riêng của họ; điều khoản của họ không cho phép sao chép, nên bản đồ liên kết đến đó thay vì chép lại. Nếu thiếu một tác phẩm, hãy thêm nó vào OpenStreetMap và nó xuất hiện ở đây trong khoảng một tuần."
+    settings:
+      murals:
+        label: "Tranh tường và tranh vẽ trên tường"
+      sculptures:
+        label: "Tượng điêu khắc và tượng"
+      mosaics:
+        label: "Tranh ghép mảnh (mosaic)"
+      other:
+        label: "Các loại nghệ thuật khác"
+      inside:
+        label: "Các tác phẩm bên trong tòa nhà"
+  playgrounds:
+    label: "Sân chơi"
+    description: "Các sân chơi mà Philadelphia Parks and Recreation liệt kê, kèm độ tuổi mà mỗi sân dành cho và năm lắp đặt khi Thành phố cho biết. Một công viên thường có hai sân, một cho trẻ nhỏ hơn và một cho trẻ lớn hơn. Trang của một lô đất nêu tên sân chơi gần nhất và khoảng cách theo đường thẳng."
+  walkability:
+    label: "Mỗi khu vực dễ đi bộ đến đâu (EPA)"
+    description: "Chỉ số Dễ đi bộ Quốc gia (National Walkability Index) của Cơ quan Bảo vệ Môi trường Hoa Kỳ (EPA) cho mỗi nhóm khối điều tra dân số, một khu vực vài dãy phố, từ Smart Location Database của họ (2021, từ dữ liệu khoảng 2017 đến 2019). Nó chấm từ 1 đến 20 mức một khu vực hỗ trợ việc đi bộ tốt đến đâu, dựa trên bốn thước đo: có bao nhiêu góc phố, trạm xe công cộng gần nhất cách bao xa, và hai thước đo về mức hòa trộn của nhà ở, việc làm và cửa hàng. Các khu vực được tô đậm nhạt theo từng phần năm số nhóm khối của Philadelphia, hoặc theo các hạng riêng của EPA, so sánh với cả nước. Mỗi thước đo có thể được hiện riêng trong phần cài đặt. Các nhóm khối được cắt theo phần đất của thành phố, nên sông vẫn để trống."
+    settings:
+      measure:
+        label: "Tô đậm nhạt các khu vực theo"
+        options:
+          "index":
+            label: "Chỉ số dễ đi bộ: cả bốn thước đo gộp lại"
+          "corners":
+            label: "Góc phố: các đường phố kết nối với nhau đến đâu"
+          "transit":
+            label: "Xe công cộng: trạm gần nhất cách bao xa"
+          "mix":
+            label: "Mức hòa trộn của nhà ở, việc làm và cửa hàng"
+      compare:
+        label: "So sánh với"
+        options:
+          "city":
+            label: "Philadelphia: từng phần năm số nhóm khối của thành phố"
+          "nation":
+            label: "Cả nước: các hạng riêng của EPA"
+  walking_distance:
+    label: "Người và địa điểm trong khoảng đi bộ"
+    description: "Với mỗi ô lục giác rộng cỡ hai dãy phố: có bao nhiêu người sống trong vòng 5 phút đi bộ từ giữa ô, theo điều tra dân số 2020; có bao nhiêu trong bảy loại địa điểm hằng ngày nằm trong vòng 10 phút đi bộ (một thư viện, một trung tâm sinh hoạt, một hồ bơi hoặc khu vòi phun nước, một vòi uống nước trong công viên, một trường học, một cửa hàng tạp hóa hoặc chợ nhận SNAP, và một trạm xe buýt, xe điện hoặc tàu); hoặc có bao nhiêu góc phố trong vòng 5 phút đi bộ. 5 phút đi bộ được tính là 400 mét và 10 phút đi bộ là 800 mét theo đường thẳng, xa hơn một chút so với đi bộ dọc các đường phố và cắt qua đường ray, đường cao tốc và sông mà người đi bộ không qua được."
+    settings:
+      measure:
+        label: "Tô đậm nhạt các ô lục giác theo"
+        options:
+          "people":
+            label: "Số người sống trong vòng 5 phút đi bộ"
+          "places":
+            label: "Các loại địa điểm hằng ngày trong vòng 10 phút đi bộ"
+          "corners":
+            label: "Các góc phố trong vòng 5 phút đi bộ"
+  traffic_stress:
+    label: "Mức căng thẳng giao thông cho người đi xe đạp (DVRPC)"
+    description: "Mỗi con đường căng thẳng đến đâu khi đi xe đạp, theo đánh giá của Delaware Valley Regional Planning Commission dựa trên số làn, tốc độ xe chạy và loại làn xe đạp, nếu có: mức 1 phù hợp với phần lớn mọi người ở mọi lứa tuổi, mức 2 với phần lớn người lớn, mức 3 chỉ với người đi xe tự tin, và mức 4 chỉ với những người gan dạ nhất. Nơi hai chiều của một con đường khác nhau, chiều căng thẳng hơn được hiện. Các đánh giá đến từ các mô hình của DVRPC và giới hạn tốc độ đã niêm yết, không phải từ việc đi xe qua từng con đường."
+    settings:
+      show:
+        label: "Hiện"
+        options:
+          "all":
+            label: "Mọi con đường DVRPC đánh giá"
+          "stressful":
+            label: "Chỉ các đường căng thẳng: mức 3 và 4"
+          "calm":
+            label: "Chỉ các đường êm: mức 1 và 2"
+  displacement_watch:
+    label: "Theo dõi nguy cơ phải dọn đi: các dấu hiệu cho thấy giá đang tăng"
+    description: "Các khu vực (khu điều tra dân số) có ít nhất hai trong các dấu hiệu sau, trong đó ít nhất một dấu hiệu nói về chính giá cả (ba dấu hiệu đầu): nhà bán được giá cao hơn nhiều so với năm năm trước, nhanh hơn mức chung của cả thành phố; giá trị định giá của Thành phố tăng nhanh hơn nhiều so với mức chung của thành phố; Phân tích Giá trị Thị trường (Market Value Analysis) của Thành phố thấy giá đang vượt khỏi tầm với của cư dân lâu năm; các công ty mua nhiều căn trong số nhà đã bán; ít nhất ba trong năm căn nhà là nhà thuê; hoặc nhiều người thuê nhà phải trả một nửa thu nhập hoặc hơn cho tiền thuê (do chủ sở hữu bổ sung ngày 9 tháng 10 năm 2026). Xanh hóa và các cải thiện khác có thể làm giá tăng thêm, nên khi một gợi ý xanh hóa một lô đất, trồng cây, làm một chỗ ngồi, bắt đầu một khu vườn hoặc xin nghệ thuật, hoặc một lô đất mà Thành phố liệt kê là có sẵn, nằm trong một trong các khu vực này, thẻ của nó có thêm các cách bảo vệ hàng xóm. Đây là các dấu hiệu trong hồ sơ công, không phải dự báo, và nó không nói gì về những người sống ở đây. Hãy chạm vào một khu vực để xem các dấu hiệu của nó và những gì đã được đo cho từng dấu hiệu, và, như bối cảnh, tiền thuê nhà ở giữa, thu nhập hộ gia đình ở giữa và số căn nhà bỏ trống, từ khảo sát của Cục Điều tra Dân số Hoa Kỳ; mọi con số khảo sát đều kèm biên độ sai số."
+    settings:
+      shade:
+        label: "Tô đậm nhạt các khu vực (tắt thì chỉ hiện đường viền)"
+  historic_districts:
+    label: "Các khu lịch sử"
+    description: "Các khu lịch sử địa phương của Philadelphia Historical Commission. Thay đổi đối với các tòa nhà và lô đất trong một khu có thể cần Commission xem xét, kể cả một bức tranh tường, một hàng rào hay một khu vườn: hãy hỏi Commission trước (215 686 7660). Thành phố đề nghị mọi người xác nhận tình trạng lịch sử của một bất động sản với Commission. Hãy chạm vào một khu để xem tên và ngày được chỉ định."
+  historic_properties:
+    label: "Các bất động sản trong danh bạ di tích lịch sử"
+    description: "Các bất động sản trong Philadelphia Register of Historic Places, mỗi nơi là một thửa đất riêng, được liệt kê riêng hoặc như một phần của một khu lịch sử (hiện khi phóng to). Thay đổi ở đây có thể cần Historical Commission xem xét: hãy hỏi họ trước (215 686 7660)."
+  zoning_overlays:
+    label: "Các lớp phủ quy hoạch (zoning overlay)"
+    description: "Các khu vực nơi Zoning Code thêm các quy định riêng lên trên quy hoạch cơ bản: bảo tồn khu phố, các đường thương mại, bảo vệ chống lũ và sườn dốc, giới hạn lát nền gần Wissahickon, chiều cao gần sân bay, biển hiệu và hơn nữa. Nhiều lớp chồng lên nhau, và một vài lớp bao phủ phần lớn thành phố. Hãy chạm vào một chỗ để thấy mọi lớp phủ ở đó, kèm mục của nó trong Zoning Code. Các lớp phủ có thể thay đổi điều được phép; hãy hỏi Thành phố trước khi bạn lên kế hoạch."
+    settings:
+      show:
+        label: "Hiện"
+        options:
+          "all":
+            label: "Các khu lớp phủ và các quy định đặc biệt khác"
+          "districts":
+            label: "Chỉ các khu lớp phủ"
+  hearings:
+    label: "Các phiên điều trần sắp diễn ra"
+    description: "Các phiên điều trần được ấn định trước Zoning Board of Adjustment, L&I Review Board, Board of Building Standards và các hội đồng khác của Thành phố về một bất động sản, từ hồ sơ kháng cáo của Thành phố, kèm ngày, giờ và loại kháng cáo. Bất kỳ ai cũng có thể tham gia một phiên điều trần về quy hoạch (zoning); hãy chạm vào một phiên để xem cách tham gia và để mở trang của lô đất. Người nộp một kháng cáo chỉ được hiện trên trang riêng của lô đất đó, không bao giờ trên bản đồ."
+    settings:
+      boards:
+        label: "Hiện"
+        options:
+          "all":
+            label: "Mọi hội đồng"
+          "zoning":
+            label: "Chỉ Zoning Board of Adjustment"
+  brownfields:
+    label: "Các địa điểm brownfield (EPA)"
+    description: "Các bất động sản nơi một khoản trợ cấp brownfield của liên bang đã chi trả cho một đợt đánh giá hoặc dọn dẹp, từ hồ sơ của EPA. Brownfield là đất từng dùng cho công nghiệp, có thể còn ô nhiễm. Đây không phải bản đồ của mọi vùng đất bị ô nhiễm, và nó không cho biết một địa điểm hiện nay có bị ô nhiễm hay không. Hãy xét nghiệm đất trước khi trồng thực phẩm trên hoặc gần một địa điểm như vậy."
+  aerial_photos:
+    label: "Ảnh chụp từ trên không theo năm"
+    description: "Các bức ảnh chụp từ trên không của cả thành phố, chụp từ máy bay: ảnh của chính Thành phố cho mọi năm họ có từ 1996 (mỗi mùa xuân, phần lớn các năm từ tháng 3 đến tháng 5), và các ảnh cũ hơn do Thành phố lưu trữ, từ Delaware Valley Regional Planning Commission (1959 và 1975) và U.S. Geological Survey (1999). Hãy trượt qua các năm để xem trước đây một dãy phố có gì: những ngôi nhà đã bị phá, những lô đất đã được dọn, những khu vườn đã lớn lên. Các ảnh đến thẳng từ máy chủ của Thành phố khi lớp này được bật, và được vẽ bên dưới mọi thứ khác trên bản đồ. Các năm cũ kém sắc nét hơn, và các ảnh cho đến năm 2000 là ảnh đen trắng."
+    settings:
+      year:
+        label: "Năm"
+        options:
+          "1959":
+            label: "1959"
+          "1975":
+            label: "1975"
+          "1996":
+            label: "1996"
+          "1999":
+            label: "1999"
+          "2000":
+            label: "2000"
+          "2004":
+            label: "2004"
+          "2005":
+            label: "2005"
+          "2008":
+            label: "2008"
+          "2009":
+            label: "2009"
+          "2010":
+            label: "2010"
+          "2011":
+            label: "2011"
+          "2012":
+            label: "2012"
+          "2014":
+            label: "2014"
+          "2015":
+            label: "2015"
+          "2016":
+            label: "2016"
+          "2017":
+            label: "2017"
+          "2018":
+            label: "2018"
+          "2019":
+            label: "2019"
+          "2020":
+            label: "2020"
+          "2022":
+            label: "2022"
+          "2023":
+            label: "2023"
+          "2024":
+            label: "2024"
+          "2025":
+            label: "2025"
+      opacity:
+        label: "Độ đậm của ảnh, theo phần trăm"
+  atlas_1860:
+    label: "Bản đồ atlas năm 1860 (Hexamer và Locher)"
+    description: "Bản đồ atlas Philadelphia năm 1860 của Hexamer và Locher, vẽ từng dãy phố cùng các tòa nhà và lô đất, được Greater Philadelphia GeoHistory Network ghép khớp với bản đồ ngày nay và do Thành phố lưu trữ. Nó chỉ bao phủ Center City và Northern Liberties. Hãy giảm độ đậm của nó để nhìn thấy các đường phố ngày nay xuyên qua nó. Nó đến thẳng từ máy chủ của Thành phố khi lớp này được bật."
+    settings:
+      opacity:
+        label: "Độ đậm của bản đồ atlas, theo phần trăm"
+  redlining_1937:
+    label: "Bản đồ redlining năm 1937 (các xếp loại HOLC)"
+    description: "Năm 1937, một cơ quan liên bang, Home Owners' Loan Corporation (HOLC), xếp loại các khu dân cư của Philadelphia từ A đến D theo mức an toàn mà họ cho là có khi cho vay mua nhà ở đó. Các xếp loại này dựa vào việc ai sống trong mỗi khu: các khu có các gia đình người Da đen và nhiều gia đình nhập cư sinh sống thường bị xếp loại D và khoanh viền đỏ, đó là nguồn gốc của từ redlining. Lớp này hiện các khu và xếp loại năm 1937 như Mapping Inequality đã vẽ lại. Các xếp loại là bản ghi về cách cơ quan đó đánh giá các nơi vào năm 1937; chúng không nói gì về những người đang sống ở đó ngày nay. Hãy chạm vào một khu để xem xếp loại của nó và liên kết đến bản mô tả năm 1937 tại Mapping Inequality. Chỉ dùng phi thương mại."
+    settings:
+      shade:
+        label: "Tô đậm nhạt các khu (tắt thì chỉ hiện đường viền và xếp loại)"
+
+sources:
+  opa_properties:
+    name: "Bất động sản của OPA"
+    publisher: "Thành phố Philadelphia, Office of Property Assessment"
+  pwd_parcels:
+    name: "Các thửa đất của Water Department"
+    publisher: "Philadelphia Water Department"
+  vacant_indicators_land:
+    name: "Chỉ báo bất động sản bỏ trống, đất"
+    publisher: "Thành phố Philadelphia"
+  vacant_indicators_bldg:
+    name: "Chỉ báo bất động sản bỏ trống, tòa nhà"
+    publisher: "Thành phố Philadelphia"
+  shootings:
+    name: "Các nạn nhân bị bắn"
+    publisher: "Philadelphia Police Department"
+  high_injury_network:
+    name: "High Injury Network của Vision Zero 2025"
+    publisher: "Thành phố Philadelphia, Office of Transportation and Infrastructure Systems"
+  real_estate_transfers:
+    name: "Các vụ chuyển nhượng bất động sản"
+    publisher: "Thành phố Philadelphia, Department of Records"
+  assessment_history:
+    name: "Lịch sử định giá"
+    publisher: "Thành phố Philadelphia, Office of Property Assessment"
+  li_violations:
+    name: "Các vi phạm quy định của L&I"
+    publisher: "Thành phố Philadelphia, Department of Licenses and Inspections"
+  li_complaints:
+    name: "Các khiếu nại gửi L&I"
+    publisher: "Thành phố Philadelphia, Department of Licenses and Inspections"
+  li_permits:
+    name: "Giấy phép xây dựng và quy hoạch của L&I"
+    publisher: "Thành phố Philadelphia, Department of Licenses and Inspections"
+  li_unsafe:
+    name: "Các tòa nhà không an toàn"
+    publisher: "Thành phố Philadelphia, Department of Licenses and Inspections"
+  li_imminently_dangerous:
+    name: "Các tòa nhà nguy hiểm cận kề"
+    publisher: "Thành phố Philadelphia, Department of Licenses and Inspections"
+  li_clean_and_seal:
+    name: "Lệnh công việc dọn dẹp và bịt kín"
+    publisher: "Thành phố Philadelphia, Department of Licenses and Inspections"
+  li_demolitions:
+    name: "Các vụ phá dỡ tòa nhà"
+    publisher: "Thành phố Philadelphia, Department of Licenses and Inspections"
+  building_footprints:
+    name: "Dấu vết (diện tích nền) của các tòa nhà"
+    publisher: "Thành phố Philadelphia, Department of Licenses and Inspections"
+  land_use:
+    name: "Sử dụng đất"
+    publisher: "Philadelphia City Planning Commission"
+  city_owned_property:
+    name: "Bất động sản thuộc sở hữu của Thành phố"
+    publisher: "Thành phố Philadelphia, Department of Planning and Development"
+  phs_landcare:
+    name: "Các lô đất của PHS LandCare"
+    publisher: "Pennsylvania Horticultural Society, qua Thành phố Philadelphia"
+  gardens_phs_ngt:
+    name: "Các vườn được PHS và Neighborhood Gardens Trust hỗ trợ"
+    publisher: "Pennsylvania Horticultural Society và Neighborhood Gardens Trust"
+  gardens_registered:
+    name: "Các vườn cộng đồng đã đăng ký"
+    publisher: "Philadelphia Parks and Recreation"
+  ppr_properties:
+    name: "Các bất động sản của Parks and Recreation"
+    publisher: "Philadelphia Parks and Recreation"
+  zoning_base_districts:
+    name: "Các khu quy hoạch cơ bản"
+    publisher: "Philadelphia City Planning Commission"
+  council_districts:
+    name: "Các khu vực của Hội đồng Thành phố 2024"
+    publisher: "Thành phố Philadelphia"
+  community_organizations:
+    name: "Các Tổ chức Cộng đồng Đã đăng ký (RCO)"
+    publisher: "Philadelphia City Planning Commission"
+  neighborhoods:
+    name: "Các khu phố của Philadelphia"
+    publisher: "Abaca Labs, qua OpenDataPhilly"
+  acs_poverty:
+    name: "Tỷ lệ nghèo theo khu điều tra dân số (ACS 2020 đến 2024)"
+    publisher: "Cục Điều tra Dân số Hoa Kỳ (U.S. Census Bureau), American Community Survey"
+  cagp_tax_2025:
+    name: "Nợ thuế tính đến tháng 7 năm 2025 (Clean & Green Philly)"
+    publisher: "Clean & Green Philly, Code for Philly"
+  crashes_2020_2024:
+    name: "Các vụ tai nạn, 2020 đến 2024 (dữ liệu PennDOT, bản sao của Thành phố)"
+    publisher: "Thành phố Philadelphia, từ hồ sơ tai nạn của Pennsylvania Department of Transportation"
+  crashes_2016_2020:
+    name: "Các vụ tai nạn, 2016 đến 2020 (dữ liệu PennDOT, bản sao của Thành phố)"
+    publisher: "Thành phố Philadelphia, từ hồ sơ tai nạn của Pennsylvania Department of Transportation"
+  crashes_2007_2017:
+    name: "Các vụ tai nạn, 2015 (dữ liệu PennDOT, bản sao của Thành phố cho 2007 đến 2017)"
+    publisher: "Thành phố Philadelphia, từ hồ sơ tai nạn của Pennsylvania Department of Transportation"
+  fatal_crashes:
+    name: "Các vụ tai nạn chết người"
+    publisher: "Philadelphia Police Department, Accident Investigation Unit"
+  schools:
+    name: "Trường học"
+    publisher: "Thành phố Philadelphia, Planning Commission"
+  street_centerlines:
+    name: "Đường tim phố"
+    publisher: "Thành phố Philadelphia, Streets Department"
+  memorial_names:
+    name: "Tên trên các nơi tưởng niệm, được chọn lọc thủ công"
+    publisher: "Placekeepers, từ các danh sách tưởng niệm công khai như TrafficVictimsPHL của Bicycle Coalition"
+  pba_laser:
+    name: "Các vấn đề đỗ xe đã được báo qua Laser Vision"
+    publisher: "Philly Bike Action"
+  census_tracts_2020:
+    name: "Các khu điều tra dân số 2020"
+    publisher: "Thành phố Philadelphia, Planning Commission, từ U.S. Census Bureau"
+  tree_canopy_2018:
+    name: "Tán cây 2008 đến 2018"
+    publisher: "Thành phố Philadelphia, Parks and Recreation, cùng University of Vermont Spatial Analysis Laboratory"
+  street_trees:
+    name: "Danh mục cây ven đường"
+    publisher: "Thành phố Philadelphia, Parks and Recreation"
+  fema_floodplain:
+    name: "Vùng ngập lụt của FEMA (2023)"
+    publisher: "Federal Emergency Management Agency, do Thành phố Philadelphia công bố"
+  basemap_openstreetmap:
+    name: "Bản đồ nền từ OpenStreetMap"
+    publisher: "Những người đóng góp cho OpenStreetMap, trong một tệp bản đồ do Protomaps dựng"
+  septa_gtfs:
+    name: "Lịch chạy của SEPTA (GTFS)"
+    publisher: "Southeastern Pennsylvania Transportation Authority (SEPTA)"
+  septa_ridership_bus:
+    name: "Số hành khách ở các trạm xe buýt của SEPTA"
+    publisher: "Southeastern Pennsylvania Transportation Authority (SEPTA)"
+  septa_ridership_trolley:
+    name: "Số hành khách ở các trạm xe điện của SEPTA"
+    publisher: "Southeastern Pennsylvania Transportation Authority (SEPTA)"
+  osm_philadelphia:
+    name: "OpenStreetMap ở Philadelphia (trạm xe buýt, mái che, ghế ngồi, nước, nhà vệ sinh và hơn nữa)"
+    publisher: "Những người đóng góp cho OpenStreetMap, từ bản trích Pennsylvania của Geofabrik"
+  heat_vulnerability:
+    name: "Mức dễ bị tổn thương do nóng theo khu điều tra dân số"
+    publisher: "Thành phố Philadelphia, Department of Public Health và Office of Sustainability"
+  library_locations:
+    name: "Các địa điểm của Free Library"
+    publisher: "Thành phố Philadelphia, cho Free Library of Philadelphia"
+  ppr_program_sites:
+    name: "Các địa điểm chương trình của Parks and Recreation"
+    publisher: "Thành phố Philadelphia, Parks and Recreation"
+  ppr_swimming_pools:
+    name: "Các hồ bơi của Parks and Recreation"
+    publisher: "Thành phố Philadelphia, Parks and Recreation"
+  ppr_spraygrounds:
+    name: "Các khu vòi phun nước của Parks and Recreation"
+    publisher: "Thành phố Philadelphia, Parks and Recreation"
+  ppr_hydration_stations:
+    name: "Các điểm lấy nước của Parks and Recreation"
+    publisher: "Thành phố Philadelphia, Parks and Recreation"
+  philly311_conditions:
+    name: "Các yêu cầu gửi Philly311 về đổ rác, đèn tắt và vẽ bậy lên tường"
+    publisher: "Thành phố Philadelphia, Philly311"
+  bus_shelters:
+    name: "Các mái che trạm xe buýt"
+    publisher: "Thành phố Philadelphia, Office of Transportation and Infrastructure Systems"
+  street_poles:
+    name: "Các cột trên đường phố"
+    publisher: "Thành phố Philadelphia, Streets Department (Street Lighting Division)"
+  traffic_calming:
+    name: "Các thiết bị làm chậm xe"
+    publisher: "Thành phố Philadelphia, Streets Department"
+  crossing_guards:
+    name: "Các vị trí nhân viên hướng dẫn học sinh qua đường"
+    publisher: "Thành phố Philadelphia, Streets Department"
+  percent_for_art:
+    name: "Bộ sưu tập Percent for Art"
+    publisher: "Thành phố Philadelphia, Department of Planning and Development"
+  wikidata_art:
+    name: "Nghệ thuật công cộng trong Wikidata"
+    publisher: "Những người đóng góp cho Wikidata (Wikimedia Foundation)"
+  commercial_corridors:
+    name: "Các trục thương mại của Philadelphia"
+    publisher: "Thành phố Philadelphia, Department of Planning and Development"
+  epa_walkability:
+    name: "Chỉ số Dễ đi bộ Quốc gia (Smart Location Database của EPA)"
+    publisher: "U.S. Environmental Protection Agency, Office of Community Revitalization"
+  census_blocks_2020:
+    name: "Dân số theo khối điều tra dân số (điều tra dân số 2020)"
+    publisher: "U.S. Census Bureau, dữ liệu phân chia khu vực của Điều tra Dân số 2020 (P.L. 94-171)"
+  dvrpc_lts:
+    name: "Mức căng thẳng giao thông cho xe đạp (Level of Traffic Stress của DVRPC)"
+    publisher: "Delaware Valley Regional Planning Commission (DVRPC)"
+  snap_retailers:
+    name: "Các cửa hàng thực phẩm nhận SNAP (USDA)"
+    publisher: "U.S. Department of Agriculture, dữ liệu về các nhà bán lẻ SNAP"
+  real_estate_sales:
+    name: "Các vụ bán bất động sản, toàn thành phố"
+    publisher: "Thành phố Philadelphia, Department of Records"
+  assessment_values:
+    name: "Giá trị thị trường được định giá, toàn thành phố, hai năm thuế"
+    publisher: "Thành phố Philadelphia, Office of Property Assessment"
+  acs_tenure:
+    name: "Người thuê nhà và chủ nhà theo khu điều tra dân số (ACS 2020 đến 2024)"
+    publisher: "Cục Điều tra Dân số Hoa Kỳ (U.S. Census Bureau), American Community Survey"
+  market_value_analysis:
+    name: "Phân tích Giá trị Thị trường (Market Value Analysis) 2026"
+    publisher: "Reinvestment Fund, cho Department of Planning and Development của Thành phố Philadelphia"
+  li_history:
+    name: "Hồ sơ L&I cho dòng thời gian của lô đất"
+    publisher: "Thành phố Philadelphia, Department of Licenses and Inspections"
+  cagp_vacant_land_2024:
+    name: "Danh sách đất trống, tháng 6 năm 2024 (L&I, do Clean & Green Philly lưu giữ)"
+    publisher: "Thành phố Philadelphia, Department of Licenses and Inspections, do Clean & Green Philly (Code for Philly) lưu giữ"
+  cagp_vacant_buildings_2024:
+    name: "Danh sách tòa nhà bỏ trống, tháng 6 năm 2024 (Clean & Green Philly)"
+    publisher: "Clean & Green Philly, Code for Philly"
+  historic_districts:
+    name: "Các khu lịch sử địa phương"
+    publisher: "Philadelphia Historical Commission"
+  historic_sites:
+    name: "Philadelphia Register of Historic Places, các bất động sản"
+    publisher: "Philadelphia Historical Commission"
+  zoning_overlays:
+    name: "Các lớp phủ quy hoạch"
+    publisher: "Philadelphia City Planning Commission"
+  appeals:
+    name: "Các kháng cáo lên Zoning Board, L&I Review Board và các hội đồng khác"
+    publisher: "Thành phố Philadelphia, Department of Licenses and Inspections"
+  epa_brownfields:
+    name: "Các bất động sản brownfield của EPA (ACRES), Philadelphia"
+    publisher: "United States Environmental Protection Agency"
+  land_conveyances:
+    name: "Các chứng thư từ các cơ quan quản lý đất của Thành phố từ năm 2014"
+    publisher: "Thành phố Philadelphia, Department of Records"
+  land_conveyed_by_fy:
+    name: "Các bất động sản được chuyển nhượng theo chương trình và năm tài chính, 2017 đến 2023 (bảng điều khiển Land Management)"
+    publisher: "Thành phố Philadelphia, Department of Planning and Development (Land Management)"
+  city_aerial_photos:
+    name: "Ảnh chụp từ trên không theo năm (orthophoto)"
+    publisher: "Thành phố Philadelphia, Office of Innovation and Technology"
+  dvrpc_aerial_photos:
+    name: "Ảnh chụp từ trên không năm 1959 và 1975"
+    publisher: "Delaware Valley Regional Planning Commission, do Thành phố Philadelphia lưu trữ"
+  usgs_aerial_photos_1999:
+    name: "Ảnh chụp từ trên không năm 1999"
+    publisher: "U.S. Geological Survey, do Thành phố Philadelphia lưu trữ"
+  city_atlas_1860:
+    name: "Bản đồ atlas năm 1860 của Hexamer và Locher"
+    publisher: "Greater Philadelphia GeoHistory Network, do Thành phố Philadelphia lưu trữ"
+  mapping_inequality_1937:
+    name: "Mapping Inequality: bản đồ HOLC năm 1937 của Philadelphia"
+    publisher: "University of Richmond, Digital Scholarship Lab"
+  acs_rent_burden:
+    name: "Tiền thuê nhà theo phần trăm thu nhập, theo khu điều tra dân số (ACS 2020 đến 2024)"
+    publisher: "Cục Điều tra Dân số Hoa Kỳ (U.S. Census Bureau), American Community Survey"
+  acs_occupancy:
+    name: "Nhà có người ở và nhà bỏ trống theo khu điều tra dân số (ACS 2020 đến 2024)"
+    publisher: "Cục Điều tra Dân số Hoa Kỳ (U.S. Census Bureau), American Community Survey"
+  acs_vacancy:
+    name: "Vì sao nhà bỏ trống, theo khu điều tra dân số (ACS 2020 đến 2024)"
+    publisher: "Cục Điều tra Dân số Hoa Kỳ (U.S. Census Bureau), American Community Survey"
+  acs_income:
+    name: "Thu nhập hộ gia đình ở giữa theo khu điều tra dân số (ACS 2020 đến 2024)"
+    publisher: "Cục Điều tra Dân số Hoa Kỳ (U.S. Census Bureau), American Community Survey"
+  acs_rent:
+    name: "Tiền thuê nhà ở giữa theo khu điều tra dân số (ACS 2020 đến 2024)"
+    publisher: "Cục Điều tra Dân số Hoa Kỳ (U.S. Census Bureau), American Community Survey"
+  warming_cooling_sites:
+    name: "Các điểm sưởi ấm và tránh nóng"
+    publisher: "Thành phố Philadelphia, Office of Emergency Management"
+  ppr_playgrounds:
+    name: "Các sân chơi"
+    publisher: "Thành phố Philadelphia, Parks and Recreation"

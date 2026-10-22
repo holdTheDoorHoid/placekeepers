@@ -1,11 +1,2515 @@
 // Vietnamese (vi): the interface text of web/src/strings.ts, key for key.
 //
-// Empty until a translator fills it in (issue #49, part B). Every key left out shows the English
-// text. How to translate, and how to check the result, is in docs/TRANSLATING.md; the Spanish
-// catalog (es.ts) shows the form. Import plural() and the formatters from '../format.ts' as needed.
+// Translated for issue #49, part B. Every key left out shows the English text. How to translate,
+// and how to check the result, is in docs/TRANSLATING.md; the key terms are in
+// docs/i18n/glossary-vi.md. Vietnamese has no plural forms, so plural() takes only `other`.
+//
+// Rules: keep each key's meaning and every value a template shows (the tests check), no dashes
+// as punctuation, and proper names as they are (Placekeepers, Philly311, LandCare).
 
 import type { Catalog } from '../catalog.ts';
+import { formatDecimal, formatNumber, plural } from '../format.ts';
+import { distanceWords } from '../../strings.ts';
 
-const vi: Catalog = {};
+/** A change in percent in words: "tăng 61%", "giảm 3%", "không đổi". */
+function changeWords(n: number): string {
+  if (n > 0) return `tăng ${formatNumber(n)}%`;
+  if (n < 0) return `giảm ${formatNumber(-n)}%`;
+  return 'không đổi';
+}
+
+/** " (cộng trừ 6 điểm phần trăm)", or nothing when there is no margin: a survey's margin of error. */
+function giveOrTake(margin: number | null, unit: 'points' | 'homes'): string {
+  if (margin === null) return '';
+  return ` (cộng trừ ${unit === 'points' ? `${formatNumber(margin)} điểm phần trăm` : formatNumber(margin)})`;
+}
+
+const vi: Catalog = {
+  app: {
+    name: 'Placekeepers',
+    tagline: 'Bản đồ miễn phí cho những người hàng xóm ở Philadelphia chăm sóc dãy phố của mình.',
+    mapLabel: 'Bản đồ Philadelphia. Danh sách các địa điểm và nơi tưởng niệm trên trang này cho thấy cùng nội dung bằng chữ.',
+    loadingMap: 'Đang tải bản đồ',
+    mapFailed: 'Bản đồ không khởi động được trên trình duyệt này. Hãy thử trình duyệt khác, hoặc cập nhật trình duyệt này.',
+    sampleData: 'Dữ liệu mẫu để thử nghiệm. Đây không phải những địa điểm thật.',
+    earlyPreview: 'Phiên bản 0.4: bản công khai đầu tiên. Hãy xác nhận thông tin với Thành phố trước khi hành động.',
+    followAlong: 'Theo dõi dự án',
+    skipToList: 'Chuyển đến danh sách địa điểm',
+    hideNote: 'Ẩn',
+    hideNoteLabel: 'Ẩn ghi chú này',
+    close: 'Đóng',
+    notAffiliated: 'Không trực thuộc Thành phố Philadelphia hay SEPTA. Không phải tư vấn pháp lý.',
+    licenses: 'Mã nguồn: GPL-3.0. Dữ liệu: mỗi nguồn có giấy phép riêng. Nội dung viết: Creative Commons BY-SA 4.0.',
+  },
+
+  content: {
+    tableLabel: 'Bảng, cuộn sang ngang',
+    removalEmail: (email) =>
+      `Hãy gửi email cho chúng tôi theo địa chỉ [${email}](mailto:${email}). Chúng tôi không dùng biểu mẫu công khai cho việc này, vì yêu cầu gỡ bỏ là chuyện riêng tư.`,
+    removalComingSoon: (issueUrl) =>
+      `Địa chỉ email riêng cho các yêu cầu này sắp có. Cho đến khi có, bản đồ không hiện bất kỳ cái tên nào, và bạn có thể gửi yêu cầu qua một [issue trên GitHub](${issueUrl}). Ai cũng đọc được một issue trên GitHub, nên bạn chỉ cần ghi số nhận dạng của nơi tưởng niệm hoặc nơi đó ở đâu: bạn không cần nêu tên, lý do hay bạn là ai.`,
+  },
+
+  language: {
+    button: 'Ngôn ngữ',
+    buttonLabel: (name) => `Ngôn ngữ: ${name}. Chọn ngôn ngữ khác`,
+    title: 'Ngôn ngữ',
+    intro: 'Chọn ngôn ngữ cho trang web này. Trang sẽ mở lại bằng ngôn ngữ đó, và trình duyệt này sẽ nhớ lựa chọn của bạn.',
+    inUse: 'Đang dùng',
+    notReady: 'Đang dịch',
+    listLabel: 'Các ngôn ngữ',
+    aiNote: 'Được dịch với sự hỗ trợ của AI và chưa được người bản ngữ kiểm tra.',
+    fixLink: 'Sửa một bản dịch',
+    pageInEnglish: 'Trang này chưa được dịch, nên đang hiện bằng tiếng Anh.',
+    offerLabel: 'Đề nghị đổi ngôn ngữ',
+  },
+
+  units: {
+    meters: (n) => `${formatNumber(n)} mét`,
+    kilometers: (km) => `${formatDecimal(km, 1)} km`,
+  },
+
+  header: {
+    settings: 'Cài đặt',
+    share: 'Sao chép liên kết',
+    shareDone: 'Đã sao chép liên kết. Ai mở liên kết này cũng sẽ thấy đúng bản đồ này.',
+    shareDoneNoMap: 'Đã sao chép liên kết. Liên kết không có vị trí của bản đồ, vì bản đồ đang hiện nơi bạn đang đứng.',
+    shareFailed: 'Không sao chép được liên kết. Hãy sao chép địa chỉ từ trình duyệt của bạn.',
+    dataStatus: 'Tình trạng dữ liệu',
+  },
+
+  nav: {
+    menu: 'Menu',
+    menuTitle: 'Menu của trang web',
+    menuLabel: 'Các trang của trang web',
+    map: 'Bản đồ',
+    landBank: 'Land Bank qua các con số',
+    pages: [
+      { slug: 'about', label: 'Giới thiệu' },
+      { slug: 'why', label: 'Vì sao cách này hiệu quả' },
+      { slug: 'how', label: 'Cách thực hiện' },
+      { slug: 'responsibly', label: 'Hãy dùng có trách nhiệm' },
+      { slug: 'vacant-land', label: 'Cách chúng tôi tìm đất trống' },
+      { slug: 'streetcomplete', label: 'Khảo sát trạm xe buýt' },
+      { slug: 'terms', label: 'Điều khoản' },
+      { slug: 'privacy', label: 'Quyền riêng tư' },
+      { slug: 'contact', label: 'Liên hệ' },
+    ],
+  },
+
+  views: {
+    groupLabel: 'Chọn chế độ xem',
+    field: 'Ngoài phố',
+    analysis: 'Phân tích',
+    fieldLong: 'Chế độ xem ngoài phố',
+    analysisLong: 'Chế độ xem phân tích',
+    fieldHint: 'Dành cho lúc bạn đang đứng ngay trên dãy phố: các địa điểm gần đây và bước hợp pháp đầu tiên.',
+    analysisHint: 'Dành cho người tổ chức: góc nhìn, bộ lọc, chi tiết và danh sách xếp hạng.',
+    auto: 'Chọn chế độ xem theo cỡ màn hình của tôi',
+    autoHint: 'Điện thoại dùng chế độ xem ngoài phố; màn hình lớn hơn dùng chế độ xem phân tích.',
+  },
+
+  freshness: {
+    checking: 'Đang kiểm tra dữ liệu',
+    ok: (date) => `Dữ liệu ngày ${date}`,
+    stale: 'Một số dữ liệu đã cũ',
+    failing: 'Một số dữ liệu không tải được',
+    unknown: 'Chưa rõ tình trạng dữ liệu',
+  },
+
+  field: {
+    nearMe: 'Gần tôi',
+    nearMeBusy: 'Đang tìm vị trí của bạn',
+    nearMeDenied: 'Vị trí đang bị tắt đối với trang web này. Bạn vẫn có thể tự kéo bản đồ.',
+    nearMeUnavailable: 'Thiết bị của bạn không tìm được vị trí. Bạn vẫn có thể tự kéo bản đồ.',
+    nearMeUnsupported: 'Trình duyệt này không thể chia sẻ vị trí của bạn. Bạn vẫn có thể tự kéo bản đồ.',
+    nearMeOutside: 'Có vẻ bạn đang ở ngoài Philadelphia. Bản đồ này chỉ bao phủ Philadelphia.',
+    nearMePrivacy: 'Vị trí của bạn chỉ nằm trên thiết bị của bạn. Placekeepers không bao giờ gửi nó đi đâu và không bao giờ đưa nó vào liên kết.',
+    youAreHere: 'Bạn đang ở đây',
+    stopLocation: 'Ngừng dùng vị trí của tôi',
+    locationInUse: 'Đang dùng vị trí của bạn. Vị trí chỉ ở trên thiết bị này, và không có trong liên kết bạn sao chép.',
+    stop: 'Ngừng',
+    myLists: 'Danh sách của tôi',
+    listsTitle: 'Danh sách đã lưu',
+    chipsLabel: 'Các lớp chính',
+    moreLayers: 'Thêm lớp',
+    layersTitle: 'Các lớp',
+  },
+
+  chips: {
+    lots: 'Lô đất',
+    streets: 'Đường phố',
+    memorials: 'Tưởng niệm',
+    stops: 'Trạm xe buýt',
+    comingSoon: 'sắp có',
+  },
+
+  sheet: {
+    title: 'Những việc bạn có thể làm gần đây',
+    show: 'Hiện các địa điểm gần đây',
+    hide: 'Ẩn các địa điểm gần đây',
+    countLabel: (n) => plural(n, { other: '# địa điểm' }),
+    zoomIn: 'Hãy di chuyển hoặc phóng to bản đồ đến một khu phố để thấy các địa điểm gần đây.',
+    finding: 'Đang tìm các địa điểm gần đây.',
+    noLotsLayer: 'Hãy bật lớp Lô đất hoặc Trạm xe buýt để thấy các địa điểm gần đây.',
+    nothingHere: 'Không có lô đất trống hay tòa nhà bỏ trống nào khớp với cài đặt của bạn ở phần này của bản đồ.',
+    nothingHereStops: 'Không có lô đất trống, tòa nhà bỏ trống hay trạm xe buýt nào khớp với cài đặt của bạn ở phần này của bản đồ.',
+    noStopsHere: 'Không có trạm xe buýt hay xe điện nào khớp với cài đặt của bạn ở phần này của bản đồ.',
+    showOnMap: 'Hiện trên bản đồ',
+    openLotPage: 'Mở trang của lô đất',
+    nearestToYou: 'Gần bạn nhất xếp trước.',
+    nearestToCenter: 'Gần giữa bản đồ nhất xếp trước. Hãy di chuyển bản đồ, hoặc nhấn Gần tôi.',
+    noneWithSuggestion: 'Không có nơi nào ở đây có gợi ý đang bật. Hãy bật gợi ý trong Cài đặt, hoặc di chuyển bản đồ.',
+    showMore: 'Hiện thêm địa điểm',
+    distance: (meters, fromYou) => {
+      const feet = meters * 3.28084;
+      const far = feet < 1000 ? `${formatNumber(Math.max(10, Math.round(feet / 10) * 10))} feet` : `${formatDecimal(feet / 5280, 1)} dặm`;
+      return `Cách ${fromYou ? 'bạn' : 'giữa bản đồ'} khoảng ${far}`;
+    },
+  },
+
+  place: {
+    kindLot: 'Lô đất trống',
+    kindBuilding: 'Tòa nhà bỏ trống',
+    kindUnknown: 'Thửa đất bỏ trống',
+    parcel: (id) => `Thửa đất ${id}`,
+    priority: (score, lens) => `Điểm ưu tiên ${score} trên 100 theo góc nhìn "${lens}"`,
+    mainReason: (label) => `Lý do chính: ${label}.`,
+    bestSuggestion: 'Việc bạn có thể làm',
+    firstStep: 'Bước hợp pháp đầu tiên',
+    cost: (cost) => `Chi phí: ${cost}`,
+    confidence: { 1: 'Chúng tôi chưa chắc lắm là nơi này bỏ trống', 2: 'Có lẽ là bỏ trống', 3: 'Rất có thể là bỏ trống' },
+    confidenceTitle: 'Chúng tôi chắc đến đâu',
+    ownerTitle: 'Loại chủ sở hữu',
+    landcare: 'Đã được PHS LandCare chăm sóc',
+    listed: 'Được các cơ quan quản lý đất của Thành phố ghi là có sẵn',
+    suggestionsTitle: 'Gợi ý',
+    clearSelection: 'Bỏ chọn',
+    selectedTitle: 'Địa điểm đã chọn',
+  },
+
+  ownerTypes: {
+    0: 'Không rõ',
+    1: 'Cá nhân',
+    2: 'Công ty',
+    3: 'Thành phố Philadelphia',
+    4: 'Philadelphia Land Bank',
+    5: 'Cơ quan Tái phát triển (Redevelopment Authority)',
+    6: 'Cơ quan quản lý nhà ở',
+    7: 'Tổ chức phi lợi nhuận',
+    8: 'Cơ quan công khác',
+  },
+
+  why: {
+    title: 'Vì sao có điểm này',
+    caption: 'Giá trị của mỗi yếu tố từ 0 đến 100, mức quan trọng của nó, và số điểm nó cộng vào điểm tổng',
+    intro: 'Điểm này là trung bình có tính theo mức quan trọng của các yếu tố này. Mỗi yếu tố chạy từ 0 đến 100, trong đó 100 nghĩa là cần được chú ý nhất.',
+    factor: 'Yếu tố',
+    value: 'Trên 100',
+    weight: 'Mức quan trọng',
+    adds: 'Cộng thêm',
+    noData: 'chưa có dữ liệu',
+    off: 'tắt',
+    total: 'Điểm',
+    missingNote: 'Yếu tố nào chưa có dữ liệu cho địa điểm này thì không được tính vào mức trung bình của nơi đó.',
+  },
+
+  reasons: {
+    title: 'Vì sao chúng tôi cho rằng nơi này bỏ trống',
+    againstTitle: 'Điều khiến chúng tôi băn khoăn',
+    notPublished: 'Lý do cho địa điểm này chưa được công bố.',
+    city_land: (date) =>
+      date ? `Thành phố liệt kê đây có thể là đất trống (danh sách ngày ${date})` : 'Thành phố liệt kê đây có thể là đất trống',
+    city_building: (date) =>
+      date
+        ? `Thành phố liệt kê đây có thể là tòa nhà bỏ trống (danh sách ngày ${date})`
+        : 'Thành phố liệt kê đây có thể là tòa nhà bỏ trống',
+    assessor_vacant_land: 'Cơ quan định giá phân loại đây là đất trống',
+    no_building: 'Không có tòa nhà nào trên thửa đất này',
+    demolished: (year) =>
+      year ? `Đã phá dỡ năm ${year}, và từ đó chưa xây gì` : 'Đã phá dỡ, và từ đó chưa xây gì',
+    vacant_lot_record: 'L&I đã ghi nhận một vi phạm hoặc một khiếu nại về lô đất trống trong hai năm qua',
+    landcare: 'Nằm trong PHS LandCare, chương trình chăm sóc các lô đất trống',
+    sealed: (year) =>
+      year ? `Thành phố đã bịt kín năm ${year}, và từ đó chưa có giấy phép` : 'Thành phố đã bịt kín, và từ đó chưa có giấy phép',
+    unsafe: 'L&I liệt kê là không an toàn, và từ đó chưa có giấy phép',
+    imminently_dangerous: 'L&I tuyên bố là nguy hiểm cận kề, và từ đó chưa có giấy phép',
+    vacant_building_record: 'L&I đã ghi nhận một vi phạm hoặc một khiếu nại về tòa nhà bỏ trống trong hai năm qua',
+    assessor_exterior: 'Cơ quan định giá ghi nhận bên ngoài là bỏ trống hoặc đã bịt kín',
+    built_since: (year) =>
+      year
+        ? `Một giấy phép xây dựng mới đã được cấp năm ${year}, nên có thể bây giờ đã có một tòa nhà ở đó`
+        : 'Một giấy phép xây dựng mới đã được cấp, nên có thể bây giờ đã có một tòa nhà ở đó',
+    construction_starting: (year) =>
+      year
+        ? `Một giấy phép xây dựng mới đã được cấp năm ${year}, nên có thể việc xây dựng đang bắt đầu`
+        : 'Một giấy phép xây dựng mới đã được cấp, nên có thể việc xây dựng đang bắt đầu',
+    side_yard: 'Chủ của căn nhà có người ở bên cạnh cũng là chủ của nơi này, nên có thể đây là sân hông',
+    land_use_shows_use: 'Bản đồ sử dụng đất của Thành phố cho thấy nơi này đang được sử dụng',
+    recent_permit: 'Một giấy phép xây dựng hoặc phân vùng đã được cấp trong hai năm qua',
+    building_stands: 'Có dấu vết một tòa nhà trên thửa đất, dù hồ sơ ghi là đất trống',
+    homestead: 'Chủ sở hữu có Miễn Thuế Nhà cửa vườn tược (Homestead Exemption): hồ sơ của Thành phố cho biết có người ở đây, hoặc từng ở',
+  },
+
+  lens: {
+    title: 'Góc nhìn',
+    presets: 'Mẫu có sẵn',
+    presetActive: 'đang dùng',
+    weightLabel: (factor) => `Mức quan trọng của ${factor}`,
+    weightValue: (w) => (w === 0 ? 'Tắt' : `${w} trên 5`),
+    resetWeights: 'Đặt lại mức quan trọng',
+    allOff: 'Mọi yếu tố đều đang tắt. Hãy bật một yếu tố để tô màu các lô đất.',
+    allOffFor: (appliesTo) =>
+      appliesTo === 'segment'
+        ? 'Mọi yếu tố đều đang tắt. Hãy bật một yếu tố để tô màu các đoạn đường.'
+        : appliesTo === 'stop'
+          ? 'Mọi yếu tố đều đang tắt. Hãy bật một yếu tố để tô màu các trạm xe buýt và xe điện.'
+          : 'Mọi yếu tố đều đang tắt. Hãy bật một yếu tố để tô màu các lô đất.',
+    explainToggle: 'Vì sao có yếu tố này',
+    shown: (layer, lens) => `Đang hiện "${layer}", tô màu theo góc nhìn "${lens}".`,
+    notShown: (layer) => `Hiện bản đồ không dùng góc nhìn này trên "${layer}".`,
+    showOnMap: 'Hiện trên bản đồ',
+    legendLow: 'Ưu tiên thấp hơn',
+    legendHigh: 'Ưu tiên cao hơn',
+    legendNoData: 'Chưa có điểm',
+  },
+
+  filters: {
+    title: 'Bộ lọc',
+    intro:
+      'Chọn các thẻ để thu hẹp các lô đất trên bản đồ, danh sách xếp hạng và biểu đồ. Nhóm nào không chọn thẻ nào thì hiện tất cả.',
+    ownerType: 'Loại chủ sở hữu',
+    landcare: 'Đã thuộc LandCare',
+    inLandcare: 'Do PHS LandCare chăm sóc',
+    notInLandcare: 'Chưa thuộc LandCare',
+    confidence: 'Chúng tôi chắc đến đâu',
+    kind: 'Lô đất hay tòa nhà',
+    listed: 'Do các cơ quan quản lý đất của Thành phố liệt kê',
+    clear: 'Xóa bộ lọc',
+    showAll: 'Hiện tất cả',
+    noneSelected: (group) => `Chưa chọn gì trong mục "${group}", nên không có lô đất nào được hiện.`,
+    narrowedNote: (n) => `${formatNumber(n)} bộ lọc từ chế độ xem phân tích đang thu hẹp các địa điểm này.`,
+  },
+
+  permission: {
+    title: 'Bước đầu tiên để xin phép',
+    short: {
+      0: 'Chưa có hướng đi rõ ràng',
+      1: 'Community LandCare',
+      2: 'Thỏa thuận hoặc giấy phép làm vườn',
+      3: 'Hỏi PHDC',
+      4: 'Hỏi cơ quan công',
+      5: 'Hỏi chủ sở hữu',
+    },
+    long: {
+      0: 'Chưa có hướng đi rõ ràng: hồ sơ của Thành phố không ghi tên chủ sở hữu',
+      1: 'PHS LandCare đã chăm sóc nơi này: tham gia Community LandCare',
+      2: 'Thành phố hoặc Land Bank là chủ sở hữu: thỏa thuận hoặc giấy phép làm vườn',
+      3: 'Redevelopment Authority hoặc PHDC là chủ sở hữu: hãy hỏi PHDC',
+      4: 'Cơ quan quản lý nhà ở hoặc một cơ quan công khác là chủ sở hữu: hãy hỏi cơ quan đó',
+      5: 'Chủ sở hữu tư nhân: hãy hỏi chủ sở hữu',
+    },
+    notPublished: 'Chưa được công bố',
+    filterHelp:
+      'Nên hỏi ai trước, dựa trên chủ sở hữu mà hồ sơ của Thành phố ghi tên. Đây là một loại bước đi, không phải thước đo khả năng ai đó sẽ đồng ý.',
+    noRoute: 'Chưa có hướng đi rõ ràng: hồ sơ của Thành phố không ghi tên chủ sở hữu. Trang của lô đất cho biết những gì chúng tôi biết.',
+    seeLotPage: 'Trang của lô đất liệt kê các hướng đi hợp pháp cho địa điểm này.',
+  },
+
+  layers: {
+    title: 'Các lớp',
+    show: (label) => `Hiện ${label}`,
+    details: 'Về lớp này',
+    settings: 'Cài đặt của lớp',
+    sources: 'Nguồn',
+    legend: 'Chú giải',
+    license: 'Giấy phép',
+    noData: 'Chưa công bố dữ liệu',
+    dataError: 'Không tải được lớp này.',
+    resetAll: 'Đặt lại về mặc định',
+    resetDone: 'Các cài đặt đã trở về mặc định.',
+    guide: 'Bạn có thể giúp cải thiện lớp này như thế nào',
+  },
+
+  settings: {
+    title: 'Cài đặt',
+    intro:
+      'Mọi thứ trên bản đồ đều là một cài đặt. Lựa chọn của bạn được lưu trong trình duyệt này và trong liên kết, trừ các lựa chọn về quyền riêng tư, chỉ được lưu trong trình duyệt này.',
+    viewTitle: 'Chế độ xem',
+    layersTitle: 'Các lớp và cài đặt của chúng',
+    lensTitle: 'Mức quan trọng trong góc nhìn',
+    suggestionsTitle: 'Gợi ý được hiện',
+    suggestionShow: (label) => `Hiện "${label}"`,
+    resetTitle: 'Bắt đầu lại',
+    resetHelp: 'Đưa mọi lớp, cài đặt và mức quan trọng về mặc định của chế độ xem này, và xóa bản đã lưu trong trình duyệt này.',
+    reset: 'Đặt lại về mặc định',
+    storageNote: 'Chỉ lưu trong trình duyệt này. Placekeepers không có tài khoản, cookie hay theo dõi.',
+  },
+
+  analysis: {
+    leftTitle: 'Góc nhìn, bộ lọc và các lớp',
+    rightTitle: 'Chi tiết',
+    openLeft: 'Góc nhìn và các lớp',
+    openRight: 'Chi tiết',
+    closePanel: 'Đóng bảng',
+    areaTitle: 'Trong phần này của bản đồ',
+    areaLots: (n) => plural(n, { other: '# lô đất trống' }),
+    areaBuildings: (n) => plural(n, { other: '# tòa nhà bỏ trống' }),
+    areaHigh: (n) => `${formatNumber(n)} nơi trong số đó rất có thể là bỏ trống`,
+    areaLandcare: (n) => `${formatNumber(n)} nơi đã được PHS LandCare chăm sóc`,
+    areaEmpty: 'Không có lô đất trống hay tòa nhà bỏ trống nào khớp với cài đặt của bạn ở đây. Hãy thử thu nhỏ bản đồ hoặc đổi bộ lọc.',
+    areaHint: 'Hãy chọn một lô đất trên bản đồ hoặc trong danh sách để xem vì sao nó có điểm như vậy.',
+    sampleArea:
+      'Khi thu nhỏ đến mức này, bản đồ chỉ hiện một phần mẫu của các lô đất trống và tòa nhà bỏ trống, nên ở đây không đếm chúng. Hãy phóng to để đếm mọi địa điểm.',
+    sampleList:
+      'Hãy phóng to để liệt kê mọi địa điểm. Khi thu nhỏ đến mức này, bản đồ chỉ hiện một phần mẫu của các lô đất trống và tòa nhà bỏ trống, nên một danh sách hay biểu đồ ở đây sẽ bỏ sót một số địa điểm.',
+    sampleTab: 'phóng to',
+    tableCaption: 'Các địa điểm đang xem, xếp hạng theo cách kết hợp góc nhìn hiện tại',
+    rank: 'Hạng',
+    place: 'Địa điểm',
+    score: 'Điểm',
+    reason: 'Lý do chính',
+    save: 'Lưu',
+    sortHighFirst: 'Điểm cao nhất xếp trước. Chọn để đưa điểm thấp nhất lên trước.',
+    sortLowFirst: 'Điểm thấp nhất xếp trước. Chọn để đưa điểm cao nhất lên trước.',
+    tableEmpty: 'Không có gì để xếp hạng trong khung nhìn.',
+    noScores: 'Điểm ưu tiên chưa được công bố, nên danh sách này xếp theo số thửa đất.',
+    tableMore: (shown, total) =>
+      `Đang hiện ${formatNumber(shown)} nơi đầu tiên trong ${formatNumber(total)}. Hãy phóng to hoặc thu hẹp bộ lọc để xem phần còn lại, hoặc tải xuống tất cả.`,
+    drawerLabel: 'Các địa điểm đang xem',
+    tabTable: 'Danh sách xếp hạng',
+    tabPlot: 'Nhu cầu và bước đầu tiên',
+    tabLists: 'Danh sách đã lưu',
+    tabMemorials: 'Tưởng niệm',
+    tabBlocks: 'Các đoạn phố',
+  },
+
+  plot: {
+    title: 'Nhu cầu và bước đầu tiên để xin phép',
+    intro:
+      'Mỗi chấm là một địa điểm đang xem. Theo chiều ngang: mức ưu tiên của nó theo cách kết hợp góc nhìn của bạn, từ 0 đến 100. Theo chiều dọc: bước đầu tiên để xin phép, tức là một loại bước đi, không phải thước đo khả năng ai đó sẽ đồng ý. Chọn một chấm để mở trang lô đất của nó.',
+    axisX: 'Mức ưu tiên theo cách kết hợp góc nhìn của bạn',
+    empty: 'Không có địa điểm nào đang xem để vẽ.',
+    noScore: (n) => `${plural(n, { other: '# địa điểm' })} chưa có điểm nên không được hiện.`,
+    noStep: (n) => `${plural(n, { other: '# địa điểm' })} chưa có bước đầu tiên được công bố nên không được hiện.`,
+    dot: (place, score, step) => `${place}: ưu tiên ${score}. ${step}.`,
+    tableNote: 'Danh sách xếp hạng hiện cùng các địa điểm đó, với cùng bước đầu tiên, dành cho bàn phím và trình đọc màn hình.',
+    capped: (shown, total) =>
+      `Đang hiện ${formatNumber(shown)} địa điểm có điểm cao nhất trong ${formatNumber(total)} địa điểm đang xem. Hãy phóng to để xem tất cả.`,
+    summary: (rows) => `Các địa điểm đang xem theo bước đầu tiên để xin phép: ${rows}.`,
+    rowSummary: (label, n) => `${label}, ${plural(n, { other: '# địa điểm' })}`,
+  },
+
+  // Downloads of places in view or of a saved list. The notes at the top of a CSV file avoid
+  // commas where they can, so they stay on one line in a spreadsheet.
+  export: {
+    title: 'Tải xuống các địa điểm này',
+    help: (limit) =>
+      `Một tệp có tối đa ${formatNumber(limit)} địa điểm và những gì trang lô đất nói về chủ sở hữu, kể cả các cảnh báo về chủ sở hữu. Dòng đầu tiên chỉ đến điều khoản sử dụng.`,
+    csv: 'Tải CSV',
+    geojson: 'Tải GeoJSON',
+    inView: 'Các địa điểm đang xem',
+    working: (done, total) => `Đang thu thập thông tin về chủ sở hữu: ${formatNumber(done)} trong ${formatNumber(total)} tệp`,
+    done: (n) => `Đã tải xuống ${plural(n, { other: '# địa điểm' })}.`,
+    leftOut: (n, limit) =>
+      `${plural(n, { other: '# địa điểm nữa' })} đã bị bỏ ra, vì một lần tải xuống chứa tối đa ${formatNumber(limit)} địa điểm. Hãy phóng to hoặc thu hẹp bộ lọc để tải phần còn lại.`,
+    withoutDetails: (n) => `${plural(n, { other: '# địa điểm' })} chưa có thông tin được công bố, nên các cột về chủ sở hữu của chúng để trống.`,
+    nothing: 'Không có địa điểm nào để tải xuống.',
+    sampleOff: 'Tệp tải xuống chứa mọi địa điểm đang xem, mà khi thu nhỏ đến mức này bản đồ chỉ hiện một phần mẫu. Hãy phóng to để tải xuống.',
+    failed: 'Không tạo được tệp tải xuống. Hãy thử lại sau một lát.',
+    yes: 'có',
+    no: 'không',
+    termsLine: (url) => `Tệp xuất từ Placekeepers: chỉ dành cho việc chăm sóc cộng đồng và hành động hợp pháp. Hãy đọc điều khoản sử dụng trước: ${url}`,
+    englishColumns: 'Tên các cột bằng tiếng Anh trong mọi ngôn ngữ để các tệp có thể được ghép lại và đọc lại.',
+    madeLine: (n, title, day, dataDay) =>
+      `${plural(n, { other: '# địa điểm' })} từ ${title}. Tạo ngày ${day}${dataDay ? ` từ dữ liệu hằng tuần ngày ${dataDay}` : ''}.`,
+    ownerLine:
+      'Tên chủ sở hữu và địa chỉ gửi thư đúng như Thành phố công bố. Mỗi cảnh báo về chủ sở hữu có một ghi chú thận trọng và một bước tiếp theo mang tính bảo vệ: hãy đọc chúng trên trang lô đất trước khi hành động. Không phải tư vấn pháp lý.',
+    scoreLine: (lens, weights) => `Điểm dùng góc nhìn "${lens}" với các mức quan trọng sau: ${weights}.`,
+    greeningLine: (caution) => `Về các gợi ý xanh hóa: ${caution}`,
+    placemakingLine: (caution) => `Về khu vườn, chỗ ngồi và nghệ thuật: ${caution}`,
+  },
+
+  lists: {
+    title: 'Danh sách đã lưu',
+    privacy:
+      'Các danh sách chỉ nằm trong trình duyệt này, trên thiết bị này. Không có gì được gửi đi đâu cả. Để chuyển một danh sách sang thiết bị khác hoặc chia sẻ nó, hãy tải xuống dưới dạng tệp rồi mở tệp đó ở nơi kia.',
+    notKept:
+      'Lúc này trình duyệt này không lưu được danh sách, có thể do đang dùng cửa sổ riêng tư hoặc bộ nhớ bị chặn. Hãy tải danh sách của bạn xuống trước khi đóng trang.',
+    empty: 'Chưa có danh sách nào. Hãy lưu một địa điểm từ thẻ của nó, từ danh sách xếp hạng hoặc từ trang lô đất của nó, và một danh sách sẽ bắt đầu.',
+    inUse: 'Danh sách đang dùng',
+    defaultName: 'Danh sách của tôi',
+    untitled: 'Danh sách',
+    newList: 'Danh sách mới',
+    newName: 'Tên cho danh sách mới',
+    create: 'Tạo danh sách',
+    rename: 'Đổi tên',
+    renameLabel: 'Tên mới cho danh sách này',
+    saveName: 'Lưu tên',
+    cancel: 'Hủy',
+    delete: 'Xóa danh sách này',
+    made: (name) => `Đã tạo danh sách "${name}". Các địa điểm bạn lưu từ giờ sẽ vào danh sách này.`,
+    renamed: (name) => `Danh sách giờ có tên "${name}".`,
+    deleted: (name) => `Đã xóa "${name}" khỏi trình duyệt này.`,
+    confirmDelete: (name, n) =>
+      `Xóa "${name}" và ${plural(n, { other: '# địa điểm' })} của nó khỏi trình duyệt này? Không thể lấy lại, trừ khi bạn đã tải xuống.`,
+    count: (n) => plural(n, { other: '# địa điểm' }),
+    noPlaces: 'Danh sách này đang trống. Hãy lưu các địa điểm từ thẻ của chúng, từ danh sách xếp hạng hoặc từ trang lô đất của chúng.',
+    open: (place) => `Mở trang lô đất của ${place}`,
+    remove: 'Bỏ ra',
+    removeLabel: (place) => `Bỏ ${place} khỏi danh sách`,
+    save: 'Lưu vào danh sách của tôi',
+    saveShort: 'Lưu',
+    savedShort: 'Đã lưu',
+    saveShortLabel: (place, list) => `Lưu ${place} vào ${list}`,
+    saveTo: (name) => `Lưu vào ${name}`,
+    saved: (name) => `Đã lưu vào ${name}`,
+    savedLabel: (name) => `Đã lưu vào ${name}. Chọn để bỏ ra.`,
+    added: (name) => `Đã lưu vào "${name}". Các danh sách chỉ nằm trong trình duyệt này.`,
+    removed: (name) => `Đã bỏ khỏi "${name}".`,
+    full: (limit) => `Danh sách này đã đầy: một danh sách chứa tối đa ${formatNumber(limit)} địa điểm.`,
+    tooMany: (limit) => `Trình duyệt này giữ tối đa ${formatNumber(limit)} danh sách. Hãy xóa một danh sách để tạo thêm.`,
+    download: 'Tải danh sách này xuống',
+    importTitle: 'Mở một tệp danh sách',
+    importHelp: 'Một tệp CSV hoặc GeoJSON đã tải xuống từ Placekeepers, hoặc bất kỳ tệp văn bản nào gồm các số thửa đất chín chữ số.',
+    imported: (name, n) => `Đã mở "${name}" với ${plural(n, { other: '# địa điểm' })}.`,
+    importFailed: 'Tệp đó không có số thửa đất nào mà chúng tôi đọc được.',
+    importTooBig: 'Tệp đó quá lớn để là một danh sách.',
+    importLeftOut: (n, limit) => `${plural(n, { other: '# địa điểm' })} đã bị bỏ ra: một danh sách chứa tối đa ${formatNumber(limit)} địa điểm.`,
+  },
+
+  displacement: {
+    caution: 'Xanh hóa có thể làm tăng giá cả ở khu vực lân cận. Hãy cân nhắc kết hợp với các biện pháp bảo vệ.',
+    placemakingCaution:
+      'Khu vườn, chỗ ngồi và tác phẩm nghệ thuật mới có thể khiến một dãy phố được nhiều người muốn đến hơn, và làm tăng giá cả cùng tiền thuê nhà ở khu vực lân cận. Hãy kết hợp chúng với các biện pháp bảo vệ cho những hàng xóm đang thuê nhà hoặc đang nợ thuế.',
+    protections: 'Các cách bảo vệ hàng xóm',
+    inWatch: (signs) => `Nơi này nằm trong khu vực theo dõi nguy cơ phải dọn đi, với các dấu hiệu cho thấy giá đang tăng ở đây: ${signs}.`,
+    protectionsTitle: 'Các biện pháp bảo vệ nên đi kèm',
+    jumpToWatch: 'Xem các dấu hiệu ở đây và các cách bảo vệ hàng xóm',
+    jumpToProtections: 'Xem các cách bảo vệ hàng xóm',
+    listIntro:
+      'Một số địa điểm này nằm trong khu vực theo dõi nguy cơ phải dọn đi, với các dấu hiệu trong hồ sơ công cho thấy giá đang tăng ở đó. Thẻ của mỗi nơi nêu các dấu hiệu của khu vực của nơi đó.',
+    printSeeAbove: 'Xem mục "Theo dõi nguy cơ phải dọn đi" ở trên.',
+    protectionLabels: {
+      neighborhood_gardens_trust: 'Neighborhood Gardens Trust',
+      community_land_trust: 'Quỹ đất cộng đồng (community land trust)',
+      homestead_exemption: 'Miễn Thuế Nhà cửa vườn tược (Homestead Exemption) của Thành phố',
+      longtime_owner_occupants: 'Chương trình Longtime Owner Occupants (LOOP) của Thành phố, giảm thuế cho chủ nhà ở lâu năm',
+      tangled_title_help: 'Giúp khi giấy tờ nhà đất bị rối (tangled title)',
+    },
+    checked: (date) => `đã kiểm tra ngày ${date}`,
+    signShort: {
+      prices: 'giá nhà tăng nhanh hơn mức chung của cả thành phố',
+      assessments: 'giá trị định giá của Thành phố tăng nhanh hơn mức chung của cả thành phố',
+      mva: 'Phân tích Giá trị Thị trường (Market Value Analysis) của Thành phố cho thấy giá nhà đang vượt khỏi tầm với của những cư dân lâu năm',
+      companies: 'các công ty mua nhiều căn trong số nhà đã bán',
+      renters: 'ít nhất ba trong năm căn nhà là nhà thuê',
+      rent_burden: 'nhiều người thuê nhà phải trả một nửa thu nhập hoặc hơn cho tiền thuê',
+    },
+    heading: 'Các dấu hiệu cho thấy giá đang tăng ở đây',
+    areaTitle: (tract) => `Khu điều tra dân số (census tract) ${tract}`,
+    around: (place) => `Quanh ${place}`,
+    signsHere: 'Dấu hiệu ở đây',
+    alsoMeasured: 'Cũng đã đo, nhưng không phải dấu hiệu ở đây',
+    signTitle: {
+      prices: 'Giá bán nhà',
+      assessments: 'Giá trị định giá của Thành phố',
+      mva: 'Phân tích Giá trị Thị trường (Market Value Analysis) của Thành phố',
+      companies: 'Người mua là công ty',
+      renters: 'Người thuê nhà',
+      rent_burden: 'Người thuê nhà trả một nửa thu nhập hoặc hơn cho tiền thuê',
+    },
+    span: (a0, a1, b0, b1) => `các đợt bán từ ${a0} đến ${a1} và từ ${b0} đến ${b1}`,
+    pricesText: (p0, p1, change, city, span) =>
+      `Mức giá ở giữa của các căn nhà đã bán đi từ ${p0} đến ${p1}, ${changeWords(change)}${city === null ? '' : `, so với ${changeWords(city)} trên toàn thành phố`}${span ? ` (${span})` : ''}.`,
+    companiesText: (share, sales, city) =>
+      `Các công ty đã mua ${share}% trong ${formatNumber(sales)} căn nhà bán ra trong ba năm qua${city === null ? '' : `, so với ${city}% trên toàn thành phố`}.`,
+    assessmentsText: (change, homes, city, years) =>
+      `Giá trị thị trường của căn nhà ở giữa theo định giá của Thành phố ${changeWords(change)}${years ? ` từ ${years[0]} đến ${years[1]}` : ''} (${plural(homes, { other: '# căn nhà' })})${city === null ? '' : `, so với ${changeWords(city)} trên toàn thành phố`}.`,
+    rentersText: (share, city, years) =>
+      `${share}% số căn nhà có người ở tại đây là nhà thuê${city === null ? '' : `, so với ${city}% trên toàn thành phố`}${years ? ` (khảo sát của Cục Điều tra Dân số Hoa Kỳ, ${years[0]} đến ${years[1]})` : ''}.`,
+    mvaText: (rising, groups, edition) =>
+      rising > 0
+        ? `Trong ${rising} trên ${plural(groups, { other: '# nhóm khối (block group)' })} ở đây, ${edition ?? 'Market Value Analysis'} của Reinvestment Fund cho Thành phố thấy áp lực đang tăng: giá nhà đang vượt khỏi tầm với của mức thu nhập của cư dân lâu năm.`
+        : `Trong cả ${plural(groups, { other: '# nhóm khối (block group)' })} ở đây, ${edition ?? 'Market Value Analysis'} đều không thấy áp lực đang tăng.`,
+    mvaNone: 'Phân tích Giá trị Thị trường (Market Value Analysis) không bao phủ khu vực này.',
+    tooFewSales: (earlier, recent, needed) =>
+      `Có quá ít căn nhà được bán để kết luận (${formatNumber(earlier)} và ${formatNumber(recent)}; cần ít nhất ${formatNumber(needed)} trong mỗi giai đoạn).`,
+    tooFewHomes: 'Có quá ít căn nhà có giá trị trong cả hai năm để kết luận.',
+    tooFewHouseholds: 'Có quá ít hộ gia đình trong khảo sát của Cục Điều tra Dân số để kết luận.',
+    rule: 'Một khu vực nằm trong diện theo dõi khi có ít nhất hai trong các dấu hiệu này, và ít nhất một trong số đó nói về giá cả: giá bán, giá trị định giá hoặc Phân tích Giá trị Thị trường.',
+    meaning: 'Xanh hóa và các cải thiện khác ở đây có thể làm giá tăng thêm. Hãy kết hợp chúng với các biện pháp bảo vệ cho những hàng xóm đang sống ở đây hiện nay.',
+    cannotTell:
+      'Đây là các dấu hiệu trong hồ sơ công, không phải dự báo. Chúng không cho biết ai đã chuyển đi hay vì sao, hay ai đang sống ở đây; các con số của khảo sát Cục Điều tra Dân số là trung bình của năm năm, nên không cho biết tiền thuê nhà hiện nay là bao nhiêu. Một khu vực nằm ngoài diện theo dõi vẫn có thể chịu giá tăng.',
+    contextTitle: 'Tiền thuê nhà, thu nhập và nhà bỏ trống ở đây',
+    contextIntro: (years) =>
+      `Từ khảo sát của Cục Điều tra Dân số Hoa Kỳ${years ? `, ${years[0]} đến ${years[1]}` : ''}. Thông tin tham khảo cho hàng xóm, không phải dấu hiệu: các con số này không làm thay đổi khu vực nào.`,
+    contextNoisy:
+      'Đây là các ước tính từ khảo sát một số căn nhà trong năm năm, nên ở một khu vực nhỏ chúng chỉ là con số gần đúng: con số thật nhiều khả năng nằm trong biên độ sai số được ghi (biên độ sai số của Cục Điều tra Dân số, ở mức tin cậy 90 phần trăm).',
+    contextTitles: {
+      rent: 'Tiền thuê nhà ở giữa',
+      income: 'Thu nhập hộ gia đình ở giữa',
+      vacant: 'Nhà bỏ trống',
+    },
+    burdenText: (share, margin, households, city, years) =>
+      `${share}% trong ${formatNumber(households)} hộ thuê nhà ở đây trả một nửa thu nhập hoặc hơn cho tiền thuê và tiền điện nước${giveOrTake(margin, 'points')}${city === null ? '' : `, so với ${city}% trên toàn thành phố`}${years ? ` (khảo sát của Cục Điều tra Dân số Hoa Kỳ, ${years[0]} đến ${years[1]})` : ''}. Tiền thuê tăng ảnh hưởng nặng nhất đến họ.`,
+    burdenTooFew: 'Có quá ít hộ thuê nhà trong khảo sát của Cục Điều tra Dân số để kết luận.',
+    rentText: (rent, margin, city) =>
+      `${rent} một tháng, gồm các khoản điện nước người thuê trả${margin ? ` (cộng trừ ${margin})` : ''}${city ? `, so với ${city} trên toàn thành phố` : ''}.`,
+    rentNone: 'Khảo sát của Cục Điều tra Dân số có quá ít câu trả lời ở đây để tính tiền thuê nhà ở giữa.',
+    incomeText: (income, margin, city) =>
+      `${income} một năm${margin ? ` (cộng trừ ${margin})` : ''}${city ? `, so với ${city} trên toàn thành phố` : ''}.`,
+    incomeNone: 'Khảo sát của Cục Điều tra Dân số có quá ít câu trả lời ở đây để tính thu nhập ở giữa.',
+    vacantText: (vacant, homes, share, margin, city) =>
+      `${formatNumber(vacant)} trong ${formatNumber(homes)} căn nhà ở đây, tức ${share}%${giveOrTake(margin, 'points')}${city === null ? '' : `, so với ${city}% trên toàn thành phố`}.`,
+    vacantTooFew: 'Có quá ít căn nhà trong khảo sát của Cục Điều tra Dân số để kết luận.',
+    whyEmpty: 'Vì sao chúng bỏ trống',
+    whyRows: {
+      vr: 'Cho thuê',
+      vs: 'Rao bán',
+      vn: 'Đã cho thuê hoặc đã bán, chưa có người dọn vào',
+      vz: 'Dùng theo mùa hoặc thỉnh thoảng',
+      vo: 'Bị giữ ngoài thị trường vì lý do khác, như sửa chữa, rắc rối pháp lý của gia đình hoặc bị bỏ hoang',
+    },
+    whyRow: (label, n, margin) => `${label}: ${formatNumber(n)}${giveOrTake(margin, 'homes')}`,
+    legendArea: 'Một khu vực có dấu hiệu giá đang tăng',
+    legendTap: 'Chạm vào bên trong một khu vực, hoặc sát mép của nó, để xem các dấu hiệu.',
+    legendNote: 'Các dấu hiệu trong hồ sơ công, không phải dự báo. Các thẻ xanh hóa, khu vườn, chỗ ngồi và nghệ thuật trong những khu vực này có thêm các cách bảo vệ hàng xóm.',
+    exportColumn: (signs) => `Khu vực theo dõi nguy cơ phải dọn đi: ${signs}`,
+    exportLine: (caution, links) => `Về xanh hóa trong các khu vực theo dõi nguy cơ phải dọn đi: ${caution} Các cách bảo vệ hàng xóm: ${links}`,
+    placemakingExportLine: (caution, links) =>
+      `Về khu vườn, chỗ ngồi và nghệ thuật trong các khu vực theo dõi nguy cơ phải dọn đi: ${caution} Các cách bảo vệ hàng xóm: ${links}`,
+    watchTitle: 'Theo dõi nguy cơ phải dọn đi',
+  },
+
+  evidence: {
+    strong: { label: 'Bằng chứng mạnh', meaning: 'Một thử nghiệm ngẫu nhiên, tốt nhất là ở Philadelphia, đã tìm thấy tác dụng này.' },
+    moderate: {
+      label: 'Bằng chứng vừa phải',
+      meaning: 'Các so sánh trước và sau được thực hiện cẩn thận, có đối chiếu với các khu vực khác, đã tìm thấy tác dụng này.',
+    },
+    mixed: { label: 'Bằng chứng không thống nhất', meaning: 'Các nghiên cứu tốt không đồng ý với nhau, hoặc tác dụng tùy theo hoàn cảnh.' },
+    weak: { label: 'Bằng chứng yếu', meaning: 'Chỉ có các khảo sát về cảm nhận hoặc mối tương quan, hoặc một nghiên cứu nhỏ.' },
+    not_violence: {
+      label: 'Không liên quan đến bạo lực',
+      meaning: 'Có giá trị vì những lý do khác. Không có tuyên bố nào về bạo lực.',
+    },
+    context: {
+      label: 'Bối cảnh',
+      meaning: 'Thông tin nền cho thấy nơi sự chăm sóc có thể giúp được nhiều nhất. Đây không phải tuyên bố về điều gì có hiệu quả.',
+    },
+  },
+
+  legend: {
+    parcelsFill: 'Màu tô: mức ưu tiên theo cách kết hợp góc nhìn của bạn',
+    parcelsFillLens: (lens) => `Màu tô: mức ưu tiên theo góc nhìn "${lens}"`,
+    parcelsSure: 'Đường viền: chúng tôi chắc đến đâu rằng nơi này bỏ trống',
+    sureHigh: 'Rất có thể là bỏ trống',
+    sureMedium: 'Có lẽ là bỏ trống',
+    sureLow: 'Chưa chắc lắm',
+    parcelPoint: 'Chấm: khi thu nhỏ là một phần mẫu các thửa đất bỏ trống; khi phóng to là một thửa đất chưa có hình dạng trên bản đồ',
+    parcelsListed:
+      'Chỉ hiện các thửa đất mà các cơ quan quản lý đất của Thành phố ghi là có sẵn. Thửa đất nào bản đồ không coi là bỏ trống thì không được vẽ; bản đồ riêng của Land Bank hiện từng thửa.',
+    selected: 'Địa điểm đã chọn',
+    landcare: 'Lô đất do PHS LandCare chăm sóc: đã có người chăm',
+    garden: 'Vườn cộng đồng hoặc nông trại',
+    hin: 'Đường nằm trong High Injury Network (mạng lưới đường có nhiều người bị thương nặng)',
+    hexIntro: (window) => `Số người bị bắn, theo từng ô lục giác, ${window.toLowerCase()}`,
+    hexNone: 'Ô lục giác nào không có vụ nổ súng thì để trống.',
+    countBin: (lo, hi) =>
+      hi === null ? `${formatNumber(lo)} trở lên` : lo === hi ? formatNumber(lo) : `${formatNumber(lo)} đến ${formatNumber(hi)}`,
+    segmentsFill: 'Màu đường: điểm an toàn đường phố theo cách kết hợp góc nhìn của bạn',
+    segmentsShown: (min) =>
+      min <= 1 ? 'Mọi đoạn phố có điểm trên 0 đều được hiện.' : `Các đoạn phố có điểm từ ${formatNumber(min)} trên 100 trở lên được hiện.`,
+    segmentsZoom:
+      'Khi thu nhỏ, chỉ vẽ các đoạn phố có ghi nhận thiệt hại hoặc nằm trong High Injury Network. Hãy phóng to để xem phần còn lại.',
+    crashSeverity: {
+      3: 'Có người thiệt mạng',
+      2: 'Có người bị thương nặng',
+      1: 'Có người bị thương',
+      0: 'Không ghi nhận ai bị thương',
+    },
+    crashesZoom: 'Hãy phóng to để xem các vụ tai nạn không có ai bị thương nặng.',
+    crashesSource: 'Từ hồ sơ tai nạn của PennDOT, thường đến sau vụ tai nạn khoảng một năm.',
+    memorial: 'Một người thiệt mạng khi đi bộ, đi xe đạp hoặc đi xe scooter',
+    memorialEveryone: 'Một người thiệt mạng trong một vụ tai nạn giao thông',
+    memorialNames: 'Vòng tròn đầy hơn nghĩa là một danh sách tưởng niệm công khai có nêu tên người này. Hãy mở dấu trên bản đồ để đọc.',
+    memorialNamesWaiting: 'Chưa hiện tên nào. Tên chỉ xuất hiện khi các gia đình đã có cách riêng tư để yêu cầu gỡ tên xuống.',
+    memorialNamesHidden: 'Tên đang được ẩn.',
+    stopShelter: 'Có mái che trạm, hoặc cả trạm nằm dưới mái',
+    stopBench: 'Có ghế ngồi, nhưng chưa ghi nhận mái che trên bản đồ',
+    stopNeither: 'Không có mái che và không có ghế ngồi',
+    stopUnknown: 'Chưa khảo sát: OpenStreetMap chưa cho biết',
+    stopSurvey: 'Cách khảo sát một trạm bằng StreetComplete',
+    stopsCoverage: 'Ở đây chỉ hiện các trạm mà ai đó đã thêm vào OpenStreetMap, nên nhiều trạm chưa được hiện.',
+    stopSurveyRoute: 'In phiếu khảo sát cho cả một tuyến',
+  },
+
+  streets: {
+    popupLabel: 'Về địa điểm này trên bản đồ',
+    detailsTitle: (style) =>
+      style === 'memorials'
+        ? 'Nơi tưởng niệm'
+        : style === 'crashes'
+          ? 'Vụ tai nạn'
+          : style === 'street_segments'
+            ? 'Đoạn phố'
+            : style === 'transit_stops'
+              ? 'Trạm'
+              : style === 'transit_routes'
+                ? 'Tuyến'
+                : style === 'stop_amenities'
+                  ? 'Mái che và ghế ngồi'
+                  : style === 'city_trees'
+                    ? 'Cây'
+                    : style === 'amenity'
+                      ? 'Như được vẽ trong OpenStreetMap'
+                      : style === 'public_place'
+                        ? 'Địa điểm'
+                        : style === 'condition'
+                          ? 'Đã báo cho 311'
+                          : style === 'public_art'
+                            ? 'Nghệ thuật công cộng'
+                            : style === 'traffic_stress'
+                              ? 'Mức căng thẳng giao thông cho xe đạp'
+                              : style === 'parking_reports'
+                                ? 'Các vấn đề đỗ xe đã được báo'
+                                : style === 'city_shelters'
+                                  ? 'Mái che trạm xe buýt'
+                                  : style === 'street_poles'
+                                    ? 'Cột trên đường phố'
+                                    : style === 'traffic_calming'
+                                      ? 'Biện pháp làm chậm xe'
+                                      : style === 'crossing_guards'
+                                        ? 'Nhân viên hướng dẫn học sinh qua đường'
+                                        : style === 'redlining'
+                                          ? 'Bản đồ phân loại khu dân cư (redlining) năm 1937'
+                                          : 'Chi tiết',
+    memorialTitle: 'Để tưởng nhớ',
+    peopleHere: (n) => `${plural(n, { other: '# người' })} được tưởng nhớ ở đây`,
+    killed: {
+      walk: 'Thiệt mạng khi đi bộ',
+      bike: 'Thiệt mạng khi đi xe đạp',
+      scooter: 'Thiệt mạng khi đi xe scooter',
+      motorcycle: 'Thiệt mạng khi đi xe máy',
+      other: 'Thiệt mạng trong một vụ tai nạn giao thông',
+    },
+    killedOn: (what, date) => `${what} vào ngày ${date}.`,
+    memorialSource: 'Đọc trang tưởng niệm công khai',
+    blessing: 'Chỉ khi gia đình đồng ý.',
+    families: 'Families for Safe Streets hỗ trợ các gia đình sau một vụ tai nạn.',
+    canDo: 'Hàng xóm có thể làm gì ở đây',
+    firstStep: 'Bước đầu tiên',
+    cost: (cost) => `Chi phí: ${cost}`,
+    memorialsNearby: 'Các nơi tưởng niệm gần đây',
+    memorialsInView: 'Các nơi tưởng niệm đang xem',
+    memorialsIntro: 'Mỗi nơi tưởng nhớ một người đã thiệt mạng trong một vụ tai nạn giao thông. Hãy mở một nơi để đọc thêm.',
+    memorialCount: (n) => plural(n, { other: '# nơi tưởng niệm' }),
+    memorialsMore: (n) => `Còn ${plural(n, { other: '# nơi tưởng niệm' })} nữa trong khung nhìn. Hãy phóng to để liệt kê chúng ở đây.`,
+    memorialsLayerOff: 'Hãy bật lớp Tưởng niệm để liệt kê các nơi tưởng niệm đang xem.',
+    memorialsNone: 'Không có nơi tưởng niệm nào ở phần này của bản đồ.',
+    blocksNearby: 'Các đoạn phố gần đây',
+    blocksInView: 'Các đoạn phố đang xem',
+    blocksIntro: 'Mỗi đoạn phố được vẽ trên bản đồ, với mức ưu tiên an toàn đường phố và lý do chính. Hãy mở một đoạn để đọc vì sao.',
+    blockCount: (n) => plural(n, { other: '# đoạn phố' }),
+    blockNoScore: 'Chưa có điểm an toàn đường phố.',
+    blocksMore: (n) => `Còn ${plural(n, { other: '# đoạn phố' })} nữa trong khung nhìn. Hãy phóng to để liệt kê chúng ở đây.`,
+    blocksLayerOff: (layer) => `Hãy bật lớp "${layer}" để liệt kê các đoạn phố đang xem.`,
+    blocksNone: 'Không có đoạn phố nào được vẽ ở phần này của bản đồ.',
+    crashesNearby: 'Các vụ tai nạn gần đây',
+    crashesInView: 'Các vụ tai nạn đang xem',
+    crashesIntro: 'Từ hồ sơ tai nạn của PennDOT, theo cách các cài đặt của lớp tai nạn chọn. Hãy mở một vụ để đọc thêm.',
+    crashCount: (n) => plural(n, { other: '# vụ tai nạn' }),
+    crashesMore: (n) => `Còn ${plural(n, { other: '# vụ tai nạn' })} nữa trong khung nhìn. Hãy phóng to để liệt kê chúng ở đây.`,
+    crashNear: (street) => `Gần ${street}`,
+    crashesNone: 'Không có vụ tai nạn nào được vẽ ở phần này của bản đồ.',
+    removal: 'Yêu cầu gỡ bỏ',
+    removalNote: (hasEmail) =>
+      hasEmail
+        ? 'Ai cũng có thể yêu cầu chúng tôi gỡ nơi tưởng niệm này xuống, qua email riêng. Chúng tôi làm việc đó mà không hỏi lý do.'
+        : 'Ai cũng có thể yêu cầu chúng tôi gỡ nơi tưởng niệm này xuống mà không cần nêu lý do. Địa chỉ email riêng cho việc này sắp có; trong thời gian chờ, trang Liên hệ cho biết cách gửi yêu cầu qua một issue trên GitHub, mà ai cũng đọc được.',
+    crashTitle: (year) => `Vụ tai nạn năm ${year}`,
+    crashesHere: (n) => `${plural(n, { other: '# vụ tai nạn' })} tại điểm này`,
+    involved: 'Những ai liên quan',
+    involvedModes: {
+      walk: 'người đi bộ',
+      bike: 'người đi xe đạp',
+      motorcycle: 'người đi xe máy',
+      scooter: 'người đi xe scooter',
+    },
+    involvedOthers: 'người đi ô tô hoặc các phương tiện khác',
+    crashSource: 'Từ hồ sơ tai nạn của PennDOT.',
+    segmentScore: (score, lens) => `${lens}: ${score} trên 100 theo cách kết hợp góc nhìn của bạn`,
+    segmentNoScore: 'Đoạn phố này chưa có điểm an toàn đường phố.',
+    onHin: 'Nằm trong High Injury Network',
+    ksi: (n) =>
+      `${plural(n, { other: '# người' })} thiệt mạng hoặc bị thương nặng khi đi bộ hoặc đi xe đạp trên đoạn phố này hoặc ở các góc của nó, trong năm năm gần nhất của hồ sơ PennDOT`,
+    noKsi: 'Không có ai được ghi nhận là thiệt mạng hoặc bị thương nặng khi đi bộ hoặc đi xe đạp ở đây trong năm năm gần nhất của hồ sơ PennDOT',
+    killed2: (n) => `${plural(n, { other: '# người' })} thiệt mạng ở đây trong hai năm qua`,
+    school: 'Có trường học trong phạm vi 400 mét',
+  },
+
+  streetsStops: {
+    shelterLegend: 'Một mái che trong danh sách của Thành phố, vẽ thành vòng quanh trạm của nó',
+    shelterLegendLens: 'Trạm có mái che của Thành phố được tính là có mái che trong góc nhìn Thoải mái khi đi xe công cộng.',
+    shelterLegendDate: 'Thành phố thay đổi danh sách lần gần nhất vào tháng 1 năm 2025, nên một mái che mới lắp hoặc đã dỡ từ đó có thể bị thiếu.',
+    shelterTitle: 'Một mái che trạm xe buýt trong danh sách của Thành phố',
+    shelterAt: (stop) => `Mái che này phục vụ trạm SEPTA ${stop}.`,
+    shelterListed: (number) => `Thành phố liệt kê nó với số trạm ${number}.`,
+    shelterByNumber: 'Được ghép với trạm SEPTA theo số trạm trong danh sách của Thành phố.',
+    shelterByPlace: 'Được ghép với trạm SEPTA gần nhất, trong vòng 15 mét: danh sách của Thành phố không có số trạm nào khớp.',
+    shelterNoStop: 'Chúng tôi không tìm thấy trạm SEPTA nào mà nó phục vụ: nó cách mọi trạm hơn 15 mét, hoặc trạm của nó đã đóng.',
+    shelterDigital: 'Bảng quảng cáo của nó là một màn hình kỹ thuật số.',
+    shelterLens: 'Trạm mà nó phục vụ được tính là có mái che trong góc nhìn Thoải mái khi đi xe công cộng.',
+    shelterPartner: 'Thành phố lắp đặt và bảo trì các mái che này cùng đối tác quảng cáo của mình, và tiền quảng cáo chi trả cho việc đó.',
+    shelterSource:
+      'Từ danh sách mái che trạm xe buýt của Thành phố (Văn phòng Hệ thống Giao thông và Hạ tầng, Office of Transportation and Infrastructure Systems).',
+    sheltersHere: (n) => `${plural(n, { other: '# mái che' })} tại điểm này`,
+
+    poleLed: 'Một đèn LED mà Thành phố liệt kê',
+    poleOther: 'Một đèn natri cao áp loại cũ',
+    poleUnknown: 'Một đèn thuộc loại mà Thành phố không nêu tên',
+    poleNone: 'Một cột không có đèn nào được liệt kê, như cột tín hiệu hoặc cột điện',
+    polesNote: 'Các đèn mà Thành phố liệt kê, chứ không cho biết đêm nay đèn có sáng không. Hãy báo đèn tắt cho Philly311.',
+    polesZoom: 'Hãy phóng to đến vài dãy phố để thấy các cột.',
+    poleTitle: (number) => (number ? `Cột trên đường phố ${number}` : 'Một cột trên đường phố không có số được liệt kê'),
+    poleKind: {
+      0: 'Thành phố không liệt kê đèn nào trên cột này.',
+      1: 'Thành phố liệt kê một đèn LED trên cột này.',
+      2: 'Thành phố liệt kê một đèn natri cao áp loại cũ trên cột này.',
+      3: 'Thành phố liệt kê một đèn trên cột này, nhưng không nêu loại.',
+    },
+    poleOwner: {
+      1: 'Sở Đường phố (Streets Department) của Thành phố sở hữu cột này.',
+      2: 'PECO sở hữu cột này.',
+      3: 'PennDOT sở hữu cột này.',
+      4: 'Một bên không phải Thành phố, PECO hay PennDOT sở hữu cột này.',
+    },
+    poleReport: (number) => `Nếu đèn ở đây tắt, hãy cho Philly311 biết số cột, ${number}.`,
+    poleReportNoNumber: 'Nếu đèn ở đây tắt, hãy cho Philly311 biết đèn ở đâu.',
+    polesHere: (n) => `${plural(n, { other: '# cột' })} tại điểm này`,
+    poleSource: 'Từ danh sách cột trên đường phố của Sở Đường phố (Streets Department), được làm mới mỗi tuần.',
+
+    calmingLegend: 'Một đệm, gờ hoặc bục giảm tốc',
+    calmingLegendNote: 'Hàng xóm có thể đề nghị Thành phố làm biện pháp làm chậm xe trên một đường phố khu dân cư.',
+    zoomStreets: 'Hãy phóng to đến vài khu phố để thấy chúng.',
+    calmingTitle: 'Biện pháp làm chậm xe',
+    calmingWhat: 'Một đệm, gờ hoặc bục giảm tốc mà Sở Đường phố liệt kê, để làm chậm xe.',
+    calmingOn: (street) => `Trên ${street}`,
+    calmingSince: (date) => `Được lắp ngày ${date}.`,
+    calmingHere: (n) => `${plural(n, { other: '# thiết bị' })} tại điểm này`,
+    calmingSource: 'Từ danh sách các thiết bị làm chậm xe của Sở Đường phố.',
+
+    guardLegend: 'Một góc đường nơi Thành phố bố trí nhân viên hướng dẫn học sinh qua đường',
+    guardLegendNote: 'Nhân viên hướng dẫn qua đường giúp trẻ em và mọi người khác băng qua đường gần trường học vào đầu và cuối giờ học.',
+    guardTitle: 'Nhân viên hướng dẫn học sinh qua đường',
+    guardHere: 'Thành phố bố trí một nhân viên hướng dẫn học sinh qua đường ở góc này.',
+    guardSchool: (school) => `Trường học gần nhất trong danh sách của Thành phố, trong vòng 400 mét: ${school}.`,
+    guardWhat: 'Nhân viên hướng dẫn qua đường giúp trẻ em và mọi người khác băng qua đường an toàn gần trường học vào đầu và cuối giờ học.',
+    guardsHere: (n) => `${plural(n, { other: '# vị trí' })} tại điểm này`,
+    guardSource: 'Từ danh sách các vị trí nhân viên hướng dẫn học sinh qua đường của Thành phố.',
+
+    blockPoles: (poles, lamps, led) =>
+      lamps === 0
+        ? `Thành phố liệt kê ${plural(poles, { other: '# cột' })} dọc theo đoạn phố này, không có đèn nào được liệt kê trên các cột đó.`
+        : `Thành phố liệt kê ${plural(poles, { other: '# cột' })} dọc theo đoạn phố này, ${formatNumber(lamps)} cột có đèn, ${led === lamps ? (lamps === 1 ? 'và đó là đèn LED' : 'tất cả đều là đèn LED') : `${formatNumber(led)} trong số đó là đèn LED`}.`,
+    blockNoPoles: 'Thành phố không liệt kê cột nào trên đường phố dọc theo đoạn phố này.',
+    blockCalming: (n, year) =>
+      year
+        ? `Có biện pháp làm chậm xe ở đây từ năm ${year}: Thành phố liệt kê ${plural(n, { other: '# đệm, gờ hoặc bục giảm tốc' })} trên đoạn phố này.`
+        : `Thành phố liệt kê ${plural(n, { other: '# đệm, gờ hoặc bục giảm tốc' })} trên đoạn phố này.`,
+    blockNoCalming: 'Chưa ghi nhận biện pháp làm chậm xe nào ở đây.',
+    blockArterial:
+      'Đệm giảm tốc của Thành phố dành cho các đường phố khu dân cư. Với một con đường như thế này, hãy hỏi Văn phòng Hệ thống Giao thông và Hạ tầng của Thành phố (Office of Transportation and Infrastructure Systems) về những thay đổi khác.',
+    memorialCalming: (n, year) =>
+      year
+        ? `Có biện pháp làm chậm xe trên đoạn phố này từ năm ${year}: Thành phố liệt kê ${plural(n, { other: '# thiết bị' })}.`
+        : `Thành phố liệt kê ${plural(n, { other: '# thiết bị làm chậm xe' })} trên đoạn phố này.`,
+    memorialNoCalming: 'Chưa ghi nhận biện pháp làm chậm xe nào trên đoạn phố này.',
+    lightsPoles: (poles, lamps, led) =>
+      lamps === 0
+        ? `Thành phố liệt kê ${plural(poles, { other: '# cột' })} dọc theo đoạn phố này, không có đèn nào được liệt kê.`
+        : `Dọc theo đoạn phố này, Thành phố liệt kê ${plural(lamps, { other: '# cột' })} có đèn, ${led === lamps ? (lamps === 1 ? 'và đó là đèn LED' : 'tất cả đều là đèn LED') : `${formatNumber(led)} trong số đó là đèn LED`}. Hãy bật "Cột trên đường phố và các đèn mà Thành phố liệt kê" và phóng to để tìm số của từng cột.`,
+    stopLamps: (lamps, led) =>
+      lamps === 0
+        ? 'Thành phố không liệt kê cột nào có đèn trong vòng 30 mét quanh trạm này.'
+        : `Thành phố liệt kê ${plural(lamps, { other: '# cột' })} có đèn trong vòng 30 mét quanh trạm này, ${led === lamps ? (lamps === 1 ? 'và đó là đèn LED' : 'tất cả đều là đèn LED') : `${formatNumber(led)} trong số đó là đèn LED`}.`,
+    cityShelter: (n) => `Danh sách mái che trạm xe buýt của Thành phố có ${formatNumber(n)} mái che ở đây.`,
+    noCityShelter: 'Không có mái che nào ở đây trong danh sách mái che trạm xe buýt của Thành phố, vốn chỉ gồm các mái che do Thành phố vận hành cùng đối tác quảng cáo.',
+    disagree:
+      'Danh sách của Thành phố có một mái che ở đây, nhưng OpenStreetMap lại ghi là không có. Một trong hai có thể đã cũ: một cuộc khảo sát sẽ giải quyết việc này. Trong lúc chờ, mức ưu tiên vẫn tính mái che của Thành phố.',
+    cityShelterLens: 'Mức ưu tiên có tính mái che của Thành phố.',
+    answerCityShelter: 'Chưa khảo sát trong OpenStreetMap, nhưng có trong danh sách của Thành phố',
+  },
+
+  parking: {
+    kinds: {
+      all: 'Xe cản đường',
+      sidewalk: 'Trên vỉa hè',
+      bike_lane: 'Trong làn xe đạp',
+      crosswalk: 'Trên vạch qua đường',
+      corner: 'Ở góc đường',
+      ramp: 'Chắn lối dốc vỉa hè',
+    },
+    window: (start, end) => `Từ ${start} đến ${end}`,
+    windowUnknown: 'Trong 12 tháng',
+    heatTitle: (window) => `Khi thu nhỏ: nơi các báo cáo tập trung. ${window}.`,
+    fewer: 'Ít báo cáo hơn',
+    more: 'Nhiều báo cáo hơn',
+    binsTitle: 'Khi phóng to: số báo cáo trong mỗi khu vực rộng cỡ một dãy phố',
+    bins: (low, high) => (high === null ? `${formatNumber(low)} trở lên` : `${formatNumber(low)} đến ${formatNumber(high)}`),
+    threshold: (min) => `Các khu vực có ít hơn ${min} báo cáo bị bỏ ra, để không lộ báo cáo riêng lẻ nào. Hãy phóng to và chạm vào một khu vực để xem số liệu của nó.`,
+    oneApp: 'Nơi những người dùng một ứng dụng, Laser Vision của Philly Bike Action, báo có xe cản đường. Không phải vấn đề nào cũng được báo.',
+    title: 'Khu vực này, rộng cỡ một dãy phố',
+    summary: (n, window) => `${plural(n, { other: '# báo cáo' })} về xe cản đường. ${window}.`,
+    count: (n) => formatNumber(n),
+    fewerThan: (min) => `ít hơn ${min}`,
+    byKind: 'Theo loại',
+    meaning:
+      'Đây là các báo cáo từ những người dùng một ứng dụng, nên chúng cho thấy nơi những người đó thấy xe cản đường, chứ không phải mọi vấn đề. Một loại có ít hơn 5 báo cáo ở đây thì không được nêu thành con số, để không lộ báo cáo riêng lẻ nào.',
+    fixes:
+      'Nhiều báo cáo ở một chỗ là bằng chứng cho các cách sửa vật lý: mở rộng lề đường, cột chắn, góc phố thoáng tầm nhìn, làn xe đạp có bảo vệ và khu vực bốc dỡ hàng.',
+    askCity: 'Hỏi Thành phố về một cách sửa',
+    source: 'Từ bản đồ Laser Vision của Philly Bike Action',
+    refreshed: 'Được đếm lại mỗi tuần, với sự cho phép của Philly Bike Action.',
+  },
+
+  transit: {
+    waitTitle: 'Xe buýt hoặc tàu đến thường xuyên thế nào vào buổi trưa các ngày trong tuần',
+    waitBins: [
+      'Cứ 10 phút một chuyến hoặc thường hơn',
+      'Cứ 11 đến 15 phút một chuyến',
+      'Cứ 16 đến 30 phút một chuyến',
+      'Cứ 31 đến 60 phút một chuyến',
+      'Ít hơn một chuyến mỗi giờ',
+    ],
+    noMidday: 'Không có chuyến nào từ 10 giờ sáng đến 2 giờ chiều các ngày trong tuần',
+    boardingsTitle: 'Số người lên xe ở đây vào một ngày trong tuần trung bình',
+    boardingBins: ['1.000 trở lên', '200 đến 999', '50 đến 199', '10 đến 49', 'Ít hơn 10'],
+    noCount: 'SEPTA chưa có số đếm cho trạm này',
+    boardingsNote: 'Từ số đếm riêng của SEPTA, thường chậm hơn lịch chạy một hoặc hai mùa.',
+    station: 'Ga tàu điện ngầm, tàu điện trên cao (El) hoặc Regional Rail',
+    zoomNote: 'Hãy phóng to đến vài khu phố để thấy các trạm.',
+    lensTitle: 'Mức ưu tiên theo góc nhìn Thoải mái khi đi xe công cộng',
+    lensUnsurveyed: 'Nơi nào chưa có ai khảo sát trạm, mái che và ghế ngồi của trạm được tính nửa điểm.',
+    lensCityShelter: 'Trạm có mái che trong danh sách của Thành phố được tính là có mái che.',
+    lensStations: 'Góc nhìn này chỉ chấm điểm các trạm xe buýt và xe điện, nên các ga được vẽ rỗng.',
+    lensTunnel: 'Các trạm xe điện trong đường hầm dưới Center City và University City cũng được vẽ rỗng: góc nhìn này bỏ chúng ra, như bỏ các ga.',
+    findTitle: 'Hành khách thấy gì ở đây',
+    notInOsm: 'Chúng tôi chưa tìm thấy trạm nào khớp trong OpenStreetMap, nên chưa ai ghi lại trạm có mái che hay ghế ngồi không.',
+    matchedByNumber: 'Được ghép với trạm OpenStreetMap có cùng số trạm, ở cùng một chỗ.',
+    matchedByPlace: 'Được ghép với trạm OpenStreetMap ở cùng một chỗ, trong vòng 15 mét.',
+    halfway: 'Những câu trả lời "chưa khảo sát" được tính nửa điểm (50 trên 100) trong điểm số cho đến khi có người ghi lại.',
+    canopy: (percent) =>
+      `Tán cây phủ khoảng ${formatNumber(percent)} phần trăm đất quanh trạm, trong một khu vực rộng cỡ hai dãy phố (khảo sát tán cây năm 2018 của Thành phố).`,
+    onHin: 'Trạm nằm trong High Injury Network, những con đường nơi xảy ra phần lớn số ca tử vong và bị thương nặng do giao thông ở Philadelphia.',
+    noScore: 'Góc nhìn Thoải mái khi đi xe công cộng chỉ chấm điểm các trạm xe buýt và xe điện.',
+    tunnelStation: 'Trạm xe điện này nằm dưới lòng đất, trong đường hầm, nên góc nhìn Thoải mái khi đi xe công cộng bỏ nó ra, như bỏ các ga tàu điện ngầm và tàu hỏa.',
+    answersLoading: 'Đang tải những gì OpenStreetMap cho biết về trạm này.',
+    answersUnavailable: 'Lúc này không tải được những gì OpenStreetMap cho biết về trạm này, nên mái che và ghế ngồi của trạm được tính là chưa khảo sát.',
+    canDo: 'Hàng xóm có thể làm gì ở đây',
+    routeDetails: 'Các bước, thông tin liên hệ và liên kết',
+    surveyGuide: 'Cách khảo sát một trạm bằng StreetComplete',
+    osmSource: 'Mái che, ghế ngồi và đèn từ OpenStreetMap, © những người đóng góp cho OpenStreetMap, cập nhật mỗi tuần.',
+    routeBus: 'Tuyến xe buýt',
+    routeTrolley: 'Tuyến xe điện',
+    routeMetro: 'Tàu điện ngầm hoặc El',
+    routeRail: 'Regional Rail',
+    allRoutes: 'Nơi nhiều tuyến dùng chung một con đường, các đường tuyến chồng lên nhau.',
+    frequentRoutes: 'Chỉ gồm các tuyến có xe buýt hoặc tàu cứ 15 phút một chuyến hoặc thường hơn vào buổi trưa các ngày trong tuần.',
+    detailsTitle: 'Trạm',
+    stationName: (name) => `Ga ${name}`,
+    stopsHere: (n) => `${plural(n, { other: '# trạm' })} tại điểm này`,
+    kinds: {
+      bus: 'Trạm xe buýt',
+      trolley: 'Trạm xe điện',
+      busTrolley: 'Trạm xe buýt và xe điện',
+      metro: 'Ga tàu điện ngầm hoặc El',
+      rail: 'Ga Regional Rail',
+    },
+    vehicles: { bus: 'chuyến xe buýt', trolley: 'chuyến xe điện', busTrolley: 'chuyến xe buýt hoặc xe điện', train: 'chuyến tàu' },
+    vehiclesMany: { bus: 'chuyến xe buýt', trolley: 'chuyến xe điện', busTrolley: 'chuyến xe buýt hoặc xe điện', train: 'chuyến tàu' },
+    routes: (list) => `Các tuyến: ${list}.`,
+    route: (name) => `Tuyến ${name}.`,
+    howOften: 'Mức thường xuyên',
+    every: (vehicle, minutes) =>
+      minutes <= 1 ? `cứ khoảng một phút có một ${vehicle}` : `cứ khoảng ${formatNumber(minutes)} phút có một ${vehicle}`,
+    only: (one, many, n) => (n === 1 ? `chỉ có một ${one}` : `chỉ có ${formatNumber(n)} ${many}`),
+    peak: (text) => `Sáng các ngày trong tuần từ 7 đến 9 giờ: ${text}.`,
+    midday: (day, text) => `${day} từ 10 giờ sáng đến 2 giờ chiều: ${text}.`,
+    noService: (day) => `${day} từ 10 giờ sáng đến 2 giờ chiều: không có.`,
+    days: { wk: 'Các ngày trong tuần', sa: 'Thứ Bảy', su: 'Chủ Nhật' },
+    trips: (wk, sa, su) =>
+      `${plural(wk, { other: '# chuyến khởi hành' })} vào một ngày thường trong tuần, ${formatNumber(sa)} chuyến vào thứ Bảy và ${formatNumber(su)} chuyến vào Chủ Nhật.`,
+    busiest: (n) => `Giờ đông nhất các ngày trong tuần: ${plural(n, { other: '# chuyến khởi hành' })}.`,
+    firstLast: (first, last) => `Các ngày trong tuần, chuyến đầu khởi hành lúc ${first} và chuyến cuối lúc ${last}.`,
+    afterMidnight: (time) => `${time} sau nửa đêm`,
+    allNight: 'Các ngày trong tuần, xe chạy suốt đêm.',
+    evening: (n) =>
+      n === 0 ? 'Không có chuyến nào sau 8 giờ tối các ngày trong tuần.' : `Sau 8 giờ tối các ngày trong tuần: ${plural(n, { other: '# chuyến khởi hành' })}.`,
+    noWeekday: 'Không có xe chạy các ngày trong tuần.',
+    riders: 'Hành khách',
+    boardings: (n, period) =>
+      n === 0
+        ? `Hầu như không ai lên xe ở đây vào một ngày trong tuần trung bình (số đếm của SEPTA, ${period}).`
+        : `Khoảng ${plural(n, { other: '# người' })} lên xe ở đây vào một ngày trong tuần trung bình (số đếm của SEPTA, ${period}).`,
+    countedAt: (id) => `Được đếm tại trạm SEPTA ${id}, trạm mà trạm này đã thay thế.`,
+    noBoardings: 'SEPTA chưa có số đếm cho trạm này. Các trạm mới và các trạm đổi số sẽ có khi SEPTA công bố đợt đếm tiếp theo.',
+    noStationCounts: 'SEPTA không công bố số đếm cho từng sân ga tàu điện ngầm hoặc El.',
+    noRailCounts: 'SEPTA đếm hành khách Regional Rail theo ga mỗi năm một lần; bản đồ này chưa hiện các số đếm đó.',
+    stopNumber: (id) => `Số trạm SEPTA ${id}.`,
+    formerNumbers: (ids) => `Trước đó nó là trạm SEPTA ${ids}.`,
+    wheelchair: {
+      1: 'SEPTA ghi trạm này có thể tiếp cận bằng xe lăn.',
+      2: 'SEPTA ghi trạm này không thể tiếp cận bằng xe lăn.',
+    },
+    source: 'Từ lịch chạy của SEPTA cho một tuần điển hình. Thời gian chờ là mức trung bình: xe buýt hay đi dồn lại và khoảng trống giữa các chuyến có thể dài ra.',
+  },
+
+  stopAmenities: {
+    unnamed: 'Một trạm không có tên trong OpenStreetMap',
+    number: (ref) => `Số trạm ${ref}`,
+    served: { 1: 'Trạm xe buýt', 2: 'Trạm xe điện', 3: 'Trạm xe buýt và xe điện' },
+    comfort: {
+      3: 'Có mái che trạm, hoặc cả trạm nằm dưới mái',
+      2: 'Có ghế ngồi, nhưng chưa ghi nhận mái che trên bản đồ',
+      1: 'Không có mái che và không có ghế ngồi',
+      0: 'Chưa khảo sát',
+    },
+    factsTitle: 'OpenStreetMap cho biết gì',
+    answers: {
+      sh: 'Mái che',
+      bn: 'Ghế ngồi',
+      bi: 'Thùng rác',
+      lt: 'Có đèn chiếu sáng ban đêm',
+      tp: 'Lát gạch xúc giác cho người khiếm thị',
+      wc: 'Lối đi cho xe lăn',
+      db: 'Bảng giờ xe',
+      cv: 'Cả trạm nằm dưới mái',
+    },
+    yes: 'Có',
+    no: 'Không',
+    limited: 'Hạn chế',
+    unknown: 'Chưa khảo sát',
+    nearby: 'được vẽ riêng ngay cạnh trạm',
+    unknownNote: '"Chưa khảo sát" nghĩa là chưa có ai ghi lại. Điều đó không có nghĩa là trạm không có gì.',
+    survey: 'Cách khảo sát trạm này bằng StreetComplete',
+    openOsm: 'Xem trạm này trên OpenStreetMap',
+    surveyRoute: 'Khảo sát cả một tuyến bằng phiếu có thể in',
+    source: 'Từ OpenStreetMap, © những người đóng góp cho OpenStreetMap, cập nhật mỗi tuần.',
+  },
+
+  heat: {
+    tractsTitle: {
+      vulnerability: 'Mức dễ bị tổn thương do nóng: cái nóng và những người có nguy cơ, theo khu điều tra dân số',
+      exposure: 'Mức chịu nóng: mùa hè mỗi khu điều tra dân số nóng đến đâu',
+      sensitivity: 'Độ nhạy với nóng: bao nhiêu người trong mỗi khu điều tra dân số có nguy cơ khi trời nóng',
+    },
+    fifths: {
+      vulnerability: [
+        'Một phần năm số khu ít dễ bị tổn thương nhất',
+        'Ít dễ bị tổn thương hơn',
+        'Một phần năm ở giữa',
+        'Dễ bị tổn thương hơn',
+        'Một phần năm số khu dễ bị tổn thương nhất',
+      ],
+      exposure: ['Một phần năm số khu mát nhất', 'Mát hơn', 'Một phần năm ở giữa', 'Nóng hơn', 'Một phần năm số khu nóng nhất'],
+      sensitivity: [
+        'Một phần năm số khu có ít người có nguy cơ nhất',
+        'Ít hơn',
+        'Một phần năm ở giữa',
+        'Nhiều hơn',
+        'Một phần năm số khu có nhiều người có nguy cơ nhất',
+      ],
+    },
+    priority: 'Có viền: các khu mà Thành phố đánh giá là rất dễ bị tổn thương do nóng',
+    tractsNone: 'Các khu mà chỉ số không báo cáo, như công viên lớn và sân bay, được để trống.',
+    tractsSource:
+      'Từ Chỉ số Dễ bị Tổn thương do Nóng (Heat Vulnerability Index) của Thành phố (Sở Y tế Công cộng và Văn phòng Phát triển Bền vững), dữ liệu từ 2017 đến 2019.',
+    treeBig: 'Một cây của Thành phố: chấm càng lớn, thân cây càng to',
+    treeSmall: 'Một cây nhỏ, thường là cây non cần được tưới nước',
+    treesZoom: 'Hãy phóng to đến vài dãy phố để thấy các cây.',
+    treesYards: 'Cây trong sân nhà riêng không có trong danh mục của Thành phố, nên một dãy phố có thể nhiều bóng mát hơn vẻ ngoài ở đây.',
+    floodHigh: 'Vùng ngập có xác suất 1 phần trăm mỗi năm: mỗi năm có ít nhất 1 trên 100 khả năng xảy ra lũ',
+    floodway: 'Lòng thoát lũ (floodway): dòng chảy được giữ thông để nước lũ đi qua',
+    floodModerate: 'Vùng có xác suất 0,2 phần trăm mỗi năm: 1 trên 500 khả năng mỗi năm',
+    floodCare:
+      'Một lý do để cẩn trọng, không bao giờ là một phần của điểm số: cây trồng ở đó phải chịu được đất ẩm ướt, và mọi công trình xây dựng phải theo quy định vùng ngập lụt của Thành phố.',
+    treeUnnamed: 'Một cây mà danh mục không nêu tên',
+    treeTrunk: (inches) => `Thân cây rộng khoảng ${formatNumber(inches)} inch ở độ cao ngang ngực.`,
+    treeNoTrunk: 'Danh mục không cho biết kích thước thân cây.',
+    treeYoung: 'Theo TreePhilly, một cây non cần khoảng 20 gallon nước mỗi tuần từ tháng 3 đến tháng 12.',
+    treesHere: (n) => `${plural(n, { other: '# cây' })} tại điểm này`,
+    treeSource: 'Từ danh mục cây của Sở Công viên và Giải trí (Parks and Recreation), gồm các cây Thành phố trông coi trên đường phố và trong công viên.',
+  },
+
+  art: {
+    legend: {
+      mural: 'Tranh tường và tranh vẽ trên tường',
+      sculpture: 'Tượng điêu khắc và tượng',
+      mosaic: 'Tranh ghép mảnh (mosaic)',
+      other: 'Các loại khác: tác phẩm sắp đặt, đài phun nước, đài kỷ niệm và hơn nữa',
+    },
+    allOff: 'Mọi loại hình nghệ thuật đều đang bị tắt trong cài đặt của lớp này.',
+    insideHidden: 'Các tác phẩm bên trong tòa nhà được ẩn.',
+    memorialNote: 'Các tác phẩm tưởng nhớ một người được hiện mà không có tên.',
+    coverage:
+      'Từ danh sách Percent for Art của Thành phố, OpenStreetMap và Wikidata. Nhiều bức tranh tường chưa có trong đó; Mural Arts Philadelphia giữ danh sách lớn nhất trên trang web riêng của họ.',
+    kinds: {
+      0: 'Một tác phẩm nghệ thuật công cộng',
+      1: 'Một bức tranh tường',
+      2: 'Một bức tranh',
+      3: 'Nghệ thuật đường phố',
+      4: 'Một tác phẩm mosaic',
+      5: 'Một tượng điêu khắc',
+      6: 'Một bức tượng',
+      7: 'Một tượng bán thân',
+      8: 'Một phù điêu',
+      9: 'Một tác phẩm sắp đặt',
+      10: 'Một đài phun nước',
+      11: 'Một đài kỷ niệm',
+      12: 'Một nơi tưởng niệm',
+      13: 'Kính màu',
+      14: 'Một tấm bảng ghi dấu',
+    },
+    untitled: 'Chưa ghi nhận tên tác phẩm.',
+    by: (artist) => `Tác giả: ${artist}.`,
+    made: (year) => `Được làm năm ${year}.`,
+    medium: (medium) => `Chất liệu: ${medium}.`,
+    where: (place) => `Vị trí: ${place}.`,
+    inside: 'Ở bên trong một tòa nhà, nên chỉ xem được khi tòa nhà mở cửa.',
+    memorialTitle: 'Tác phẩm tưởng niệm',
+    memorialText:
+      'Tác phẩm này tưởng nhớ một người. Placekeepers không hiện tên trên các nơi tưởng niệm; các nguồn bên dưới cho biết thêm về nó.',
+    worksHere: (n) => `${plural(n, { other: '# tác phẩm nghệ thuật' })} tại điểm này`,
+    sourcesTitle: 'Nguồn',
+    cityRecord: 'Hồ sơ của Thành phố về tác phẩm này (PDF)',
+    cityList: 'Danh sách Percent for Art của Thành phố',
+    openOsm: 'Xem trên OpenStreetMap',
+    openWikidata: 'Xem trên Wikidata',
+    openWikipedia: 'Đọc về nó trên Wikipedia',
+    website: (site) => `Thêm về nó trên ${site}`,
+    siteNames: {
+      'associationforpublicart.org': 'trang web của Association for Public Art',
+      'muralarts.org': 'trang web của Mural Arts Philadelphia',
+      'philart.net': 'philart.net',
+    },
+    muralArts: 'Tìm trong danh sách tranh tường riêng của Mural Arts Philadelphia',
+    fix: 'Thiếu hoặc sai? Hãy thêm hoặc sửa trên OpenStreetMap; thay đổi sẽ đến bản đồ này trong khoảng một tuần.',
+    fixLink: 'Chỉnh sửa trên OpenStreetMap',
+    credit: 'Nghệ thuật công cộng từ Thành phố Philadelphia, OpenStreetMap (© những người đóng góp cho OpenStreetMap) và Wikidata.',
+  },
+
+  survey: {
+    pageTitle: 'Khảo sát một tuyến',
+    intro:
+      'Chọn một tuyến xe buýt hoặc xe điện của SEPTA và một hướng đi để có phiếu khảo sát: các trạm của tuyến ở Philadelphia theo thứ tự, những gì OpenStreetMap hiện đang cho thấy ở mỗi trạm, và các ô để điền. Hãy in ra, hoặc đánh dấu các ô trên điện thoại khi bạn đi.',
+    guideLink: 'Cách khảo sát trạm xe buýt',
+    loading: 'Đang tải các tuyến…',
+    loadFailed: 'Không tải được danh sách các tuyến. Hãy kiểm tra kết nối và thử lại.',
+    notPublished: 'Phiếu khảo sát chưa được công bố. Chúng sẽ xuất hiện sau lần cập nhật hằng tuần tới.',
+    sheetFailed: 'Không tải được phiếu của tuyến này. Hãy kiểm tra kết nối và thử lại.',
+    retry: 'Thử lại',
+    routeLabel: 'Tuyến',
+    routePlaceholder: 'Chọn một tuyến',
+    buses: 'Các tuyến xe buýt',
+    trolleys: 'Các tuyến xe điện',
+    directionLabel: 'Hướng đi',
+    partsLabel: 'Chia cho',
+    partsChoice: (n) => (n === 1 ? 'một người hoặc một cặp' : `${n} người hoặc cặp`),
+    directionTo: (dir, to) => `${dir} đến ${to}`,
+    towards: (to) => `Hướng về ${to}`,
+    directionNumber: (n) => `Hướng ${n}`,
+    stopCount: (n) => plural(n, { other: '# trạm' }),
+    title: (route, direction) => `Tuyến ${route}, ${direction}`,
+    summary: (stops, miles) =>
+      `${plural(stops, { other: '# trạm' })} ở Philadelphia, ${miles} từ trạm đầu đến trạm cuối theo đường thẳng.`,
+    outside: (n) => `${plural(n, { other: '# trạm' })} nữa nằm ngoài Philadelphia và không có trên phiếu này.`,
+    answersMissing:
+      'Lúc này không tải được những gì OpenStreetMap cho biết về các trạm này, nên các trạm mà nó biết được hiện là chưa khảo sát.',
+    statusTitle: 'OpenStreetMap hiện cho thấy gì',
+    status: {
+      shelter: 'Mái che',
+      bench: 'Chỉ có ghế',
+      neither: 'Không có gì',
+      unsurveyed: 'Chưa khảo sát',
+      missing: 'Không tìm thấy trong OpenStreetMap',
+    },
+    statusLong: {
+      shelter: 'có mái che hoặc mái lợp',
+      bench: 'có ghế ngồi nhưng chưa ghi nhận mái che',
+      neither: 'không có cả hai',
+      unsurveyed: 'có trong OpenStreetMap nhưng chưa khảo sát',
+      missing: 'không tìm thấy trong OpenStreetMap',
+    },
+    estimateTitle: 'Mất bao lâu',
+    estimate: (time) => `Ước tính của chúng tôi: ${time} cho một người hoặc một cặp.`,
+    estimateBasis:
+      'Đây là ước tính của chúng tôi, không phải số đo: đi bộ khoảng 3 dặm một giờ từ trạm này sang trạm khác, và khoảng một phút ở mỗi trạm. Thời gian đến trạm đầu tiên và về nhà là tính thêm.',
+    trolleyTunnel:
+      'Các tuyến xe điện T1 đến T5 chạy dưới lòng đất ở đầu Center City của chúng, trong một đường hầm có các ga từ 13th Street đến 37th Street. Hãy bỏ qua các ga đó: cuộc khảo sát này dành cho các trạm trên đường phố.',
+    asOf: (osm, schedules) =>
+      [osm ? `Những gì OpenStreetMap cho thấy tính đến ${osm}.` : null, schedules ? `Các trạm lấy từ lịch chạy của SEPTA (${schedules}).` : null]
+        .filter(Boolean)
+        .join(' '),
+    print: 'In phiếu',
+    printAll: 'In mọi phần',
+    printPart: (n) => `Chỉ in phần ${n}`,
+    part: (n, of) => `Phần ${n} trên ${of}`,
+    partStops: (first, last) => (first === last ? `trạm ${first}` : `các trạm ${first} đến ${last}`),
+    partEstimate: (time, miles) => `Ước tính của chúng tôi: ${time} (đi bộ ${miles}).`,
+    sheetFor: (route, direction) => `Phiếu khảo sát: tuyến ${route}, ${direction}`,
+    howToFill:
+      'Đánh dấu C (có) hoặc K (không) cho mỗi thứ bạn thấy ở trạm. Có đèn nghĩa là ban đêm có đèn chiếu sáng trạm: một bóng đèn trong mái che hoặc một cột đèn đường ngay cạnh đó. Cần sửa nghĩa là mái che, ghế, biển báo hoặc thùng rác bị hỏng. Nếu bạn không chắc, hãy để trống ô: xin đừng đoán.',
+    nameLine: 'Họ tên:',
+    dateLine: 'Ngày:',
+    columns: {
+      number: '#',
+      stop: 'Trạm',
+      now: 'OpenStreetMap hiện nay',
+      sh: 'Mái che',
+      bn: 'Ghế ngồi',
+      bi: 'Thùng rác',
+      lt: 'Có đèn',
+      rp: 'Cần sửa',
+      nt: 'Ghi chú',
+    },
+    yes: 'Có',
+    no: 'Không',
+    yesShort: 'C',
+    noShort: 'K',
+    stopNumber: (sid) => `Trạm SEPTA ${sid}`,
+    answerLabel: (n, name, question, answer) => `Trạm ${n}, ${name}: ${question}, ${answer}`,
+    repairLabel: (n, name) => `Trạm ${n}, ${name}: cần sửa`,
+    notesLabel: (n, name) => `Trạm ${n}, ${name}: ghi chú`,
+    openOsm: 'Xem trên OpenStreetMap',
+    editOsm: 'Sửa',
+    answered: (n, of) => `Bạn đã điền ${formatNumber(n)} trong ${plural(of, { other: '# trạm' })} trên thiết bị này.`,
+    kept: 'Những gì bạn đánh dấu và gõ ở đây chỉ nằm trong trình duyệt này, trên thiết bị này. Không có gì được gửi đi đâu cả.',
+    notKept: 'Trình duyệt này không lưu những gì bạn đánh dấu, nên chúng sẽ mất nếu bạn rời trang. Hãy in phiếu ra hoặc viết lại.',
+    clear: 'Xóa những gì tôi đã điền',
+    clearConfirm: 'Xóa mọi ô và ghi chú bạn đã điền cho hướng đi này?',
+    safetyTitle: 'Trước khi đi: hãy giữ an toàn',
+    safety: [
+      'Hãy đứng trên vỉa hè. Đừng bao giờ đứng giữa lòng đường hoặc bước vào làn xe buýt để xem một trạm.',
+      'Hãy đi ban ngày, và đi cùng một người bạn.',
+      'Hãy dừng chân trước khi nhìn phiếu này hoặc điện thoại, và nhìn lên trước khi băng qua đường.',
+      'Hãy tránh sang một bên để hành khách có thể chờ và lên xe. Đừng chụp ảnh người khác.',
+    ],
+    answersTitle: 'Đưa câu trả lời của bạn vào OpenStreetMap',
+    withApp:
+      'Với ứng dụng StreetComplete: trả lời các câu hỏi của nó về mỗi trạm ngay khi bạn đứng ở đó. Câu trả lời của bạn đi thẳng vào OpenStreetMap.',
+    withoutApp: 'Nếu không có ứng dụng trên điện thoại, hãy dùng trình chỉnh sửa riêng của OpenStreetMap trên máy tính khi về nhà:',
+    editorSteps: [
+      'Đăng nhập tại openstreetmap.org. Tài khoản là miễn phí.',
+      'Mở lại trang này và dùng liên kết Sửa bên cạnh mỗi trạm. Trình chỉnh sửa mở ra với trạm đó đã được chọn.',
+      'Trong bảng bên trái, hãy nhấp vào ô Shelter (mái che). Dưới "Add field:", hãy thêm Bench (ghế), Waste Bin (thùng rác) và Lit (có đèn), và nhấp vào các ô của chúng nữa. Mỗi ô đổi theo mỗi lần nhấp: Yes (có), rồi No (không), rồi trở lại Unknown (chưa biết).',
+      'Nhấp Save, viết một ghi chú ngắn về việc bạn đã làm, chẳng hạn "Surveyed bus stop shelters and benches", rồi nhấp Upload.',
+    ],
+    notFound:
+      'Nếu phiếu ghi "Không tìm thấy trong OpenStreetMap", trước hết hãy nhìn kỹ quanh trạm trong trình chỉnh sửa: nó có thể được vẽ cách đó vài bước chân. Nếu thật sự thiếu, hãy nhấp Point, đặt điểm lên vỉa hè cạnh biển của trạm, và chọn Bus Stop.',
+    repairNote:
+      'OpenStreetMap không ghi lại hư hỏng, nên mục "Cần sửa" và ghi chú của bạn chỉ ở lại với nhóm của bạn. Chúng hữu ích khi bạn trao đổi với SEPTA hoặc Thành phố về một trạm.',
+    updates: 'Placekeepers đọc OpenStreetMap vào mỗi thứ Hai, nên câu trả lời của bạn sẽ đến bản đồ của chúng tôi và các phiếu này trong khoảng một tuần.',
+    printedFrom: 'In từ Placekeepers, bản đồ miễn phí cho hàng xóm ở Philadelphia. Các trạm từ SEPTA; dữ liệu bản đồ © những người đóng góp cho OpenStreetMap.',
+    routeTitle: (route) => `Tuyến ${route}`,
+    routesHere: (n) => `${plural(n, { other: '# tuyến' })} ở đây`,
+    surveyThisRoute: 'Khảo sát các trạm của tuyến này để tìm mái che và ghế ngồi',
+  },
+
+  amenities: {
+    legend: {
+      benches: 'Một ghế ngồi',
+      picnic_tables: 'Một bàn dã ngoại',
+      drinking_water: 'Nước uống',
+      toilets: 'Một nhà vệ sinh công cộng',
+      bookcases: 'Một thư viện nhỏ miễn phí (Little Free Library)',
+    },
+    mappedNote: 'Ở đây chỉ hiện những gì mọi người đã thêm vào OpenStreetMap, nên nhiều thứ còn thiếu.',
+    addMissing: 'Cách thêm những gì còn thiếu',
+    titles: {
+      benches: 'Ghế ngồi',
+      picnic_tables: 'Bàn dã ngoại',
+      drinking_water: 'Nước uống',
+      toilets: 'Nhà vệ sinh công cộng',
+      bookcases: 'Thư viện nhỏ miễn phí (Little Free Library)',
+    },
+    facts: {
+      br: ['Có tựa lưng', 'Không có tựa lưng'],
+      cv: ['Có mái che', 'Không có mái che'],
+      bt: ['Có thể đổ đầy chai ở đây', 'Không dùng để đổ đầy chai'],
+      sn: ['Chỉ một phần của năm', 'Quanh năm'],
+      in: ['Trong nhà', 'Ngoài trời'],
+      fee: ['Có thu phí', 'Miễn phí'],
+      ct: ['Có bàn thay tã', 'Không có bàn thay tã'],
+    },
+    access: { 1: 'Mở cho mọi người', 2: 'Chỉ dành cho khách hàng' },
+    wheelchair: {
+      1: 'Xe lăn vào được',
+      0: 'Xe lăn không vào được',
+      2: 'Xe lăn vào được một phần',
+    },
+    hours: (text) => `Giờ mở cửa như được vẽ trên bản đồ: ${text}`,
+    nothingMore: 'OpenStreetMap chưa cho biết thêm về nơi này.',
+    unknownNote: 'Điều gì không được liệt kê là điều chưa biết. Điều đó không có nghĩa câu trả lời là không.',
+    openOsm: 'Xem trên OpenStreetMap',
+    fix: 'Thiếu hoặc sai? Cách sửa',
+    source: 'Như được vẽ trong OpenStreetMap, © những người đóng góp cho OpenStreetMap, cập nhật mỗi tuần.',
+  },
+
+  places: {
+    legend: {
+      park_water: 'Một vòi uống nước trong công viên',
+      libraries: 'Một chi nhánh Free Library',
+      recreation_centers: 'Một trung tâm sinh hoạt (recreation center)',
+      playgrounds: 'Một sân chơi',
+    },
+    poolLegend: { 1: 'Một hồ bơi', 2: 'Một khu vui chơi vòi phun nước', 3: 'Một vòi phun nước' },
+    notInService: 'Năm nay không hoạt động',
+    poolsShown: { in_service: 'Chỉ hiện những nơi đang hoạt động trong năm nay.', all: 'Vòng tròn rỗng là nơi năm nay không hoạt động.' },
+    recreationKinds: {
+      1: 'Trung tâm sinh hoạt',
+      2: 'Trung tâm cho người lớn tuổi',
+      3: 'Trung tâm giáo dục môi trường',
+    },
+    poolKinds: { 1: 'Hồ bơi', 2: 'Khu vui chơi vòi phun nước', 3: 'Vòi phun nước' },
+    waterKinds: { 1: 'Vòi uống nước', 2: 'Điểm đổ đầy chai nước' },
+    status: { 1: 'Hoạt động trong năm nay', 0: 'Không hoạt động trong năm nay' },
+    statusUnknown: 'Parks and Recreation không cho biết năm nay nơi này có hoạt động hay không.',
+    indoor: { 1: 'Trong nhà', 0: 'Ngoài trời' },
+    waterIndoor: 'Bên trong một tòa nhà: mở cửa khi tòa nhà mở.',
+    accessible: { 1: 'Được ghi là người khuyết tật tiếp cận được', 0: 'Không được ghi là tiếp cận được' },
+    opened: (date) => `Mở cửa cho mùa này từ ngày ${date}.`,
+    gym: 'Có phòng tập thể dục.',
+    noBuilding: 'Một địa điểm chương trình không có tòa nhà riêng.',
+    inPark: (park) => `Trong ${park}.`,
+    phone: (number) => `Điện thoại: ${number}`,
+    libraryPage: 'Giờ mở cửa và sự kiện trên trang web của Free Library',
+    seasonNote: 'Hồ bơi chỉ mở vào mùa hè. Hãy hỏi Parks and Recreation về giờ mở cửa của tuần này.',
+    source: {
+      libraries: 'Từ danh sách các địa điểm của Free Library of Philadelphia do Thành phố công bố.',
+      parks: 'Từ Philadelphia Parks and Recreation, như Thành phố công bố.',
+    },
+    cooling: {
+      legendOpen: 'Một điểm sưởi ấm hoặc tránh nóng được ghi là đang mở',
+      legendClosed: 'Được ghi là đã đóng, hoặc không có trạng thái',
+      kindShown: {
+        any: 'Các điểm cho thời tiết nóng và thời tiết lạnh.',
+        cooling: 'Chỉ các điểm tránh nóng, cho thời tiết nóng.',
+        warming: 'Chỉ các điểm sưởi ấm, cho thời tiết lạnh.',
+      },
+      asListed: (copied, changed) =>
+        `${copied ? `Như Thành phố đã liệt kê vào ngày ${copied}` : 'Như Thành phố đã liệt kê vào lần gần nhất bản đồ này sao chép danh sách'}${changed ? ` (danh sách thay đổi lần gần nhất vào ngày ${changed})` : ''}. Không phải thông tin trực tiếp: các điểm mở và đóng theo thời tiết, nên hãy gọi cho điểm đó hoặc gọi 311 trước khi đi.`,
+      oneMarker: 'Một thư viện hoặc trung tâm sinh hoạt cũng là một điểm sưởi ấm hoặc tránh nóng sẽ chỉ hiện một lần, như một điểm.',
+      kinds: {
+        1: 'Chi nhánh Free Library',
+        2: 'Địa điểm của Parks and Recreation',
+        3: 'Đối tác cộng đồng',
+        4: 'Trung tâm cộng đồng của Philadelphia Housing Authority',
+      },
+      title: 'Điểm sưởi ấm hoặc tránh nóng',
+      status: { 1: 'Được ghi là đang mở', 0: 'Được ghi là đã đóng' },
+      statusUnknown: 'Không có trạng thái được ghi',
+      both: 'Được ghi là điểm sưởi ấm và điểm tránh nóng',
+      cooling: 'Được ghi là điểm tránh nóng',
+      warming: 'Được ghi là điểm sưởi ấm',
+      neither: 'Không được ghi là điểm sưởi ấm hay điểm tránh nóng',
+      hours: (hours) => `Giờ mở cửa như được ghi: ${hours}`,
+      services: (services) => `Nơi này cung cấp, như được ghi: ${services}`,
+      capacity: (n) => `Có chỗ cho ${formatNumber(n)} người, như được ghi`,
+      water: 'Có điểm lấy nước',
+      restroom: 'Có nhà vệ sinh công cộng',
+      also: {
+        lib: (name) => `Cũng có trên bản đồ là một chi nhánh Free Library: ${name}.`,
+        rec: (name) => `Cũng có trên bản đồ là một địa điểm của Parks and Recreation: ${name}.`,
+      },
+      alsoSite: 'Thành phố cũng liệt kê nơi này là một điểm sưởi ấm hoặc tránh nóng.',
+    },
+    playgrounds: {
+      kind: 'Sân chơi',
+      ages: { 1: 'Cho trẻ từ 2 đến 5 tuổi', 2: 'Cho trẻ từ 5 đến 12 tuổi', 3: 'Cho trẻ từ 2 đến 12 tuổi' },
+      installed: (year) => `Lắp đặt năm ${year}`,
+    },
+  },
+
+  conditions: {
+    legend: {
+      dumping: 'Đổ rác trái phép',
+      dark_lights: 'Một đèn đường hoặc đèn hẻm bị tắt',
+      graffiti: 'Vẽ bậy lên tường (graffiti)',
+    },
+    legendOpen: (what) => `${what}: còn yêu cầu đang mở`,
+    legendClosed: (what) => `${what}: mọi yêu cầu đã đóng`,
+    legendSize: 'Vòng tròn càng lớn nghĩa là càng có nhiều yêu cầu trên đoạn phố đó.',
+    legendWindow: 'Các yêu cầu gửi Philly311 trong 90 ngày qua, đếm theo đoạn phố, không bao giờ theo địa chỉ.',
+    openOnly: 'Chỉ hiện các đoạn phố có yêu cầu còn đang mở.',
+    titles: {
+      dumping: 'Đã báo đổ rác trái phép',
+      dark_lights: 'Đã báo đèn bị tắt',
+      graffiti: 'Đã báo vẽ bậy lên tường',
+    },
+    summary: (n, open) =>
+      `${plural(n, { other: '# yêu cầu' })} gửi Philly311 trong 90 ngày qua, ${open === 0 ? 'không có yêu cầu nào còn đang mở' : `${formatNumber(open)} yêu cầu còn đang mở`}.`,
+    newest: (date) => `Yêu cầu mới nhất được gửi ngày ${date}.`,
+    alley: (n, total) =>
+      n === total ? (n === 1 ? 'Yêu cầu đó là về một đèn hẻm.' : 'Tất cả đều là về đèn hẻm.') : `${formatNumber(n)} yêu cầu trong số đó là về đèn hẻm.`,
+    block: (street) => `Trên đoạn phố này của ${street}.`,
+    byBlock: 'Đếm theo đoạn phố, không bao giờ theo địa chỉ, và không hiện bất cứ điều gì về người đã báo.',
+    meaning: 'Một yêu cầu cho thấy có người đã để ý và nhờ Thành phố giúp. Một số đoạn phố nhờ thường xuyên hơn những đoạn khác.',
+    report: 'Báo cho Philly311',
+    source: 'Từ hồ sơ 311 của Thành phố (Philly311), được làm mới mỗi tuần.',
+  },
+
+  walk: {
+    walkTitle: {
+      index: 'Mỗi khu vực dễ đi bộ đến đâu (chỉ số dễ đi bộ của EPA)',
+      corners: 'Góc phố: các đường phố kết nối với nhau đến đâu (EPA)',
+      transit: 'Trạm xe công cộng gần nhất cách bao xa (EPA)',
+      mix: 'Nhà ở, việc làm và cửa hàng được hòa trộn tốt đến đâu (EPA)',
+    },
+    walkCompared: {
+      city: 'So sánh trong phạm vi Philadelphia: mỗi sắc độ gồm khoảng một phần năm số nhóm khối (block group) của thành phố.',
+      nation: 'So sánh với cả nước, như EPA xếp hạng mọi nhóm khối trên toàn nước Mỹ.',
+    },
+    walkFifths: {
+      index: ['Một phần năm ít dễ đi bộ nhất', 'Kém dễ đi bộ hơn', 'Một phần năm ở giữa', 'Dễ đi bộ hơn', 'Một phần năm dễ đi bộ nhất'],
+      corners: ['Ít góc phố nhất', 'Ít hơn', 'Một phần năm ở giữa', 'Nhiều hơn', 'Nhiều góc phố nhất'],
+      transit: ['Xa trạm xe công cộng nhất', 'Xa hơn', 'Một phần năm ở giữa', 'Gần hơn', 'Gần trạm xe công cộng nhất'],
+      mix: ['Ít hòa trộn nhất', 'Ít hòa trộn hơn', 'Một phần năm ở giữa', 'Hòa trộn nhiều hơn', 'Hòa trộn nhiều nhất'],
+    },
+    walkNationFifths: ['Một phần năm thấp nhất cả nước', 'Dưới mức giữa', 'Một phần năm ở giữa', 'Trên mức giữa', 'Một phần năm cao nhất cả nước'],
+    walkClasses: [
+      'Ít dễ đi bộ nhất: chỉ số từ 1 đến 5,75',
+      'Dưới mức trung bình: 5,76 đến 10,5',
+      'Trên mức trung bình: 10,51 đến 15,25',
+      'Dễ đi bộ nhất: 15,26 đến 20',
+    ],
+    walkNationNote:
+      'So với cả nước, gần như toàn bộ Philadelphia ở mức trên trung bình hoặc thuộc nhóm dễ đi bộ nhất, nên so sánh trong phạm vi thành phố cho thấy rõ hơn những khác biệt của nó.',
+    walkParts:
+      'Chỉ số chấm điểm từ 1 đến 20. Góc phố và xe công cộng mỗi thứ chiếm một phần ba, còn hai thước đo về mức hòa trộn của nhà ở, việc làm và cửa hàng mỗi thứ chiếm một phần sáu.',
+    walkSource: 'Từ Smart Location Database (2021) của EPA, xây dựng từ dữ liệu khoảng 2017 đến 2019.',
+
+    reachTitle: {
+      people: 'Số người sống trong vòng 5 phút đi bộ (điều tra dân số 2020)',
+      places: 'Các loại địa điểm hằng ngày trong vòng 10 phút đi bộ',
+      corners: 'Các góc phố trong vòng 5 phút đi bộ',
+    },
+    reachBins: {
+      people: ['Dưới 1.000 người', '1.000 đến 2.499', '2.500 đến 3.999', '4.000 đến 5.999', '6.000 trở lên'],
+      places: ['2 loại hoặc ít hơn trong 7 loại', '3 hoặc 4 loại', '5 loại', '6 loại', 'Cả 7 loại'],
+      corners: ['Dưới 10 góc phố', '10 đến 24', '25 đến 49', '50 đến 74', '75 trở lên'],
+    },
+    reachKinds:
+      'Bảy loại: một thư viện, một trung tâm sinh hoạt, một hồ bơi hoặc khu vòi phun nước đang hoạt động, một vòi uống nước trong công viên, một trường học, một cửa hàng tạp hóa hoặc chợ nhận SNAP, và một trạm xe buýt, xe điện hoặc tàu.',
+    reachCorners: 'Một góc phố là nơi ba đường phố trở lên mà người ta đi bộ được gặp nhau. Nhiều góc phố hơn nghĩa là các dãy phố ngắn hơn và có nhiều đường đi bộ hơn để đến một nơi.',
+    reachMeasured:
+      'Được đếm từ giữa mỗi ô lục giác theo đường thẳng: 400 mét cho 5 phút đi bộ, 800 mét cho 10 phút đi bộ. Khoảng đó xa hơn một chút so với đi bộ dọc các đường phố, và nó cắt qua đường ray, đường cao tốc và sông.',
+    reachSource: {
+      people: 'Số người lấy từ điều tra dân số 2020, đếm theo khối.',
+      places: 'Các địa điểm lấy từ Thành phố, Parks and Recreation, USDA và SEPTA. Các địa điểm ngay bên kia ranh giới thành phố không được tính.',
+      corners: 'Các góc phố lấy từ đường tim phố của Thành phố.',
+    },
+
+    stressLevels: {
+      1: 'Mức 1: đủ êm để phần lớn mọi người ở mọi lứa tuổi đi được',
+      2: 'Mức 2: ổn với phần lớn người lớn',
+      3: 'Mức 3: chỉ dành cho người đi xe tự tin',
+      4: 'Mức 4: chỉ dành cho những người đi xe gan dạ nhất',
+    },
+    stressShown: {
+      stressful: 'Chỉ hiện các đường căng thẳng, mức 3 và 4.',
+      calm: 'Chỉ hiện các đường êm, mức 1 và 2.',
+    },
+    stressZoom: 'Khi thu nhỏ, bản đồ hiện các đường căng thẳng và các đường có làn xe đạp hoặc đường mòn. Hãy phóng to để thấy mọi đường.',
+    stressSource:
+      'Từ mạng lưới Level of Traffic Stress (mức căng thẳng giao thông) của Delaware Valley Regional Planning Commission (DVRPC): được chấm theo số làn, tốc độ xe chạy và loại làn xe đạp, chứ không phải bằng cách đi xe qua từng đường.',
+    stressTitle: (level) => `Mức ${level} trên 4`,
+    stressMeaning: {
+      1: 'Đủ êm để phần lớn mọi người ở mọi lứa tuổi đi được, kể cả trẻ em.',
+      2: 'Ổn với phần lớn người lớn: hơi căng thẳng vì xe cộ.',
+      3: 'Chỉ người đi xe tự tin mới thấy thoải mái ở đây.',
+      4: 'Xe đông và chạy nhanh: chỉ dành cho những người đi xe gan dạ nhất.',
+    },
+    stressOtherWay: (level) => `Đi chiều ngược lại êm hơn: mức ${level}.`,
+    facilities: {
+      0: 'Không có làn xe đạp',
+      1: 'Một tuyến đường xe đạp có biển báo',
+      2: 'Vạch chia sẻ làn (sharrows)',
+      3: 'Một làn xe đạp',
+      4: 'Một làn xe đạp có dải đệm',
+      5: 'Một làn xe đạp có bảo vệ',
+      6: 'Một đường mòn hoặc lối đi tách khỏi xe cộ',
+    },
+    stressSpeed: (mph) => `Xe cộ chạy khoảng ${formatNumber(mph)} dặm một giờ, theo giới hạn tốc độ hoặc ước tính của DVRPC.`,
+    stressLanes: (n) => `Tổng cộng ${plural(n, { other: '# làn' })}.`,
+    streetsHere: (n) => `${plural(n, { other: '# đường phố' })} ở đây`,
+    stressDetailsSource: 'Từ mạng lưới Level of Traffic Stress của DVRPC, được chấm theo số làn, tốc độ và làn xe đạp.',
+  },
+
+  landBank: {
+    pageTitle: 'Land Bank qua các con số',
+    back: 'Quay lại bản đồ',
+    intro:
+      'Số bất động sản mà Philadelphia Land Bank và các cơ quan quản lý đất khác của Thành phố đã chuyển nhượng, theo từng năm, từ hồ sơ chứng thư (deed) của chính Thành phố. Chỉ có số đếm và tổng: không có tên và không có địa chỉ.',
+    loading: 'Đang tải các con số',
+    loadFailed: 'Không tải được các con số. Hãy kiểm tra kết nối và thử lại.',
+    retry: 'Thử lại',
+    missing: 'Các con số chưa được công bố. Chúng sẽ xuất hiện sau lần làm mới dữ liệu hằng tuần tới.',
+    noStatus: 'Không có trạng thái',
+    agencyLabel: 'Cơ quan',
+    agencyHelp: 'Mọi phần bên dưới đều theo lựa chọn này, trừ số đếm theo chương trình của chính Thành phố và số đếm hằng tuần của các lô đất được liệt kê.',
+    agencies: {
+      all: 'Cả bốn cơ quan',
+      PLB: 'Philadelphia Land Bank',
+      PRA: 'Redevelopment Authority',
+      PHDC: 'PHDC',
+      PUB: 'Thành phố Philadelphia',
+    },
+    agencyLong: {
+      all: 'bốn cơ quan quản lý đất cộng lại',
+      PLB: 'Philadelphia Land Bank',
+      PRA: 'Philadelphia Redevelopment Authority',
+      PHDC: 'Philadelphia Housing Development Corporation (PHDC)',
+      PUB: 'Thành phố Philadelphia',
+    },
+    headline: (agency, n, deeds, from, to) =>
+      `Trong hồ sơ chứng thư của Thành phố từ ${from} đến ${to}, ${agency} đã chuyển nhượng ${plural(n, { other: '# bất động sản' })} trong ${plural(deeds, { other: '# chứng thư' })}.`,
+    movedAll: (n) =>
+      `Không được tính: ${plural(n, { other: '# lần chuyển' })} một bất động sản từ cơ quan này sang cơ quan khác, như từ Thành phố sang Land Bank.`,
+    moved: (received, handed) =>
+      `Cơ quan này cũng nhận ${plural(received, { other: '# bất động sản' })} từ các cơ quan khác và chuyển ${formatNumber(handed)} sang họ. Những lần chuyển đó không được tính là chuyển nhượng.`,
+    whatCounts:
+      'Ở đây, một lần chuyển nhượng là một chứng thư từ một cơ quan quản lý đất cho một bên nằm ngoài bốn cơ quan: một người, một công ty, một tổ chức phi lợi nhuận, hoặc một cơ quan công khác như Philadelphia Housing Authority. Mỗi bất động sản được tính một lần. Các bản sửa lỗi, việc gỡ bỏ các hạn chế cũ, việc chuyển giữa các cơ quan và các thỏa thuận được ghi như chứng thư đều bị loại ra.',
+    partial: (year, date) => `${year} chỉ tính đến ${date}: hồ sơ chứng thư của Thành phố chậm khoảng tám tuần.`,
+    noNames: 'Chúng tôi chỉ đọc tên người mua để phân biệt một người với một công ty và để kiểm tra ngôi nhà bên cạnh. Chúng tôi không giữ tên nào cả.',
+    showNumbers: 'Hiện các con số',
+    tableLabel: (what) => `Các con số: ${what}`,
+    downloadCsv: 'Tải CSV',
+    year: 'Năm',
+    total: 'Tổng',
+    properties: 'Bất động sản',
+    chartLabel: (what, from, to, max) => `${what}, từ ${from} đến ${to}. Năm cao nhất có ${max}. Các con số tương tự có trong bảng bên dưới biểu đồ.`,
+    perYear: {
+      title: 'Số lần chuyển nhượng mỗi năm',
+      caption: 'Số bất động sản được chuyển nhượng mỗi năm. Một chứng thư có thể chuyển nhượng nhiều bất động sản.',
+      deeds: 'Chứng thư',
+    },
+    buyers: {
+      title: 'Người mua là ai',
+      caption:
+        'Loại của mỗi người mua, đọc từ cái tên mà chứng thư ghi. Một tổ chức phi lợi nhuận chỉ được tính là tổ chức phi lợi nhuận khi tên của nó nói như vậy; nhiều tổ chức phi lợi nhuận có tên giống công ty và được tính là công ty.',
+      groups: {
+        individual: 'Cá nhân',
+        company: 'Công ty',
+        nonprofit: 'Tổ chức phi lợi nhuận',
+        public: 'Các cơ quan công khác',
+        unknown: 'Chưa rõ',
+      },
+      share: (label, pct) => `${label}: ${pct}%`,
+      shares: 'Tỷ lệ trong tất cả bất động sản được chuyển nhượng trong những năm này',
+    },
+    programs: {
+      title: 'Theo chương trình',
+      caption:
+        'Các chứng thư không cho biết một lần chuyển nhượng đi qua chương trình nào. Có một trường hợp có thể suy ra: một lô đất đơn được chuyển cho một người sở hữu căn nhà tiếp giáp với nó thì nhiều khả năng là sân hông hoặc sân sau. Biểu đồ này đếm các lô đó, và đó là suy luận của chúng tôi. Phần còn lại không thể biết từ hồ sơ, và điều đó không có nghĩa chúng không phải là sân hông.',
+      series: 'Sân hông hoặc sân sau, theo suy luận của chúng tôi',
+      checked:
+        'Cách chúng tôi kiểm tra (ngày 9 tháng 10 năm 2026): 10 lô đất trong số này, chọn ngẫu nhiên từ 2019 đến 2026, được tra cứu bằng tay. Ở cả 10 lô, người mua là chủ sở hữu ghi trong hồ sơ của căn nhà bên cạnh hoặc phía sau lô đất và nhận thư ở đó. Việc từng lô có đi qua chương trình sân hông hay không vẫn là suy luận của chúng tôi.',
+      compare: (cityTotal, ours, oursPlb, from, to) =>
+        `Trong các năm tài chính từ ${from} đến ${to}, bảng điều khiển của chính Thành phố đếm ${formatNumber(cityTotal)} sân hông. Từ các chứng thư, chúng tôi suy ra ${formatNumber(ours)} từ cả bốn cơ quan, trong đó ${formatNumber(oursPlb)} từ Land Bank.`,
+      cityTitle: 'Số đếm theo chương trình của chính Thành phố',
+      cityCaption: (edited) =>
+        `Từ bảng điều khiển Land Management của Thành phố, theo năm tài chính (tháng 7 đến tháng 6). Cập nhật lần gần nhất ${edited}, nên năm cuối chưa đầy đủ, và với nhà ở, nó đếm số căn nhà được xây, không phải số bất động sản.`,
+      fy: 'Năm tài chính',
+      sideYards: 'Sân hông',
+      gardens: 'Vườn hoặc không gian mở',
+      business: 'Mở rộng kinh doanh',
+      homesBelow30: 'Nhà ở, dưới 30% thu nhập trung bình của khu vực',
+      homes60to80: 'Nhà ở, 60% đến 80%',
+      homes80to120: 'Nhà ở, 80% đến 120%',
+      homesMarket: 'Nhà ở, giá thị trường',
+      oursPlb: 'Suy luận về sân hông của chúng tôi, Land Bank',
+      oursAll: 'Suy luận về sân hông của chúng tôi, cả bốn cơ quan',
+      fyLabel: (fy) => `${fy - 1} đến ${fy}`,
+    },
+    prices: {
+      title: 'Giá ghi trên chứng thư',
+      caption: (max) =>
+        `Giá là con số mà chứng thư ghi cho mỗi bất động sản (phần của nó khi một chứng thư bao gồm nhiều bất động sản). Đó không phải lúc nào cũng là số tiền đã trả: một số chương trình bán với giá tượng trưng và bảo vệ việc sử dụng lô đất bằng một khoản thế chấp 30 năm, và chứng thư sân hông thường ghi giá trị định giá của lô đất. Giá ở giữa là mức có một nửa số giá thấp hơn và một nửa cao hơn. "Tượng trưng" nghĩa là ${max} hoặc ít hơn.`,
+      priced: 'Có giá',
+      median: 'Giá ở giữa',
+      nominal: 'Giá tượng trưng',
+      none: 'Không ghi giá',
+      summary: (median, pct) => `Giá ở giữa trong những năm này: ${median}. ${pct}% được chuyển nhượng với giá tượng trưng.`,
+    },
+    districts: {
+      title: 'Theo khu vực của Hội đồng Thành phố (council district)',
+      caption:
+        'Các bất động sản nằm ở đâu, theo ranh giới các khu vực của Hội đồng Thành phố hiện nay. Ranh giới khu vực thay đổi sau mỗi lần điều tra dân số, nên các năm trước cũng được đặt theo ranh giới hiện nay.',
+      district: 'Khu vực',
+      districtName: (n) => `Khu vực ${n}`,
+      noLocation: 'Không có vị trí trong hồ sơ',
+      allYears: 'Tất cả các năm',
+      chartLabel: 'Số bất động sản được chuyển nhượng trong mỗi khu vực của Hội đồng Thành phố. Các con số tương tự có trong bảng bên dưới.',
+    },
+    listed: {
+      title: 'Các lô đất được liệt kê là có sẵn, theo từng tuần',
+      caption: (from) =>
+        `Danh sách tài sản công của Thành phố, cũng là danh sách mà bản đồ tài sản của Land Bank hiện, được đếm mỗi tuần khi bản sao của chúng tôi được làm mới. Số đếm bắt đầu từ ${from}; không có số đếm hằng tuần nào trước đó.`,
+      date: 'Ngày của danh sách',
+      records: 'Được liệt kê là có sẵn',
+      parcels: 'Thửa đất',
+      sideYard: 'Mở cho hàng xóm làm sân hông',
+      oneWeek: 'Biểu đồ sẽ xuất hiện khi có hai tuần để so sánh.',
+      byStatus: (date) => `Mọi lô đất trong danh sách theo trạng thái, ${date}`,
+      status: 'Trạng thái',
+      count: 'Hồ sơ',
+      chartLabel: (from, to) => `Các lô đất được liệt kê là có sẵn mỗi tuần, từ ${from} đến ${to}. Các con số tương tự có trong bảng bên dưới.`,
+      mapLink: 'Bản đồ các bất động sản được liệt kê của Land Bank',
+    },
+    limits: {
+      title: 'Những điều các con số này không cho thấy',
+      items: [
+        'Người nộp đơn đã chờ bao lâu, có bao nhiêu người nộp đơn, hoặc bao nhiêu người bị từ chối. Hồ sơ công chỉ có chứng thư, không có đơn.',
+        'Chương trình đứng sau phần lớn các lần chuyển nhượng. Chứng thư không cho biết; sân hông và sân sau là suy luận của chúng tôi, và số đếm theo chương trình của chính Thành phố dừng lại ở tháng 4 năm 2023.',
+        'Điều gì đã được xây hoặc trồng sau đó, hay các hạn chế của một lô đất có được giữ hay không.',
+        'Người mua rốt cuộc đã trả bao nhiêu. Chứng thư ghi một mức giá, và một số chương trình kết hợp giá tượng trưng với khoản thế chấp 30 năm.',
+        'Đất mà các cơ quan cho thuê hoặc cấp phép, như các thỏa thuận làm vườn. Không có chứng thư nào ghi những việc đó.',
+        'Các chứng thư trước năm 2014, và các chứng thư trong khoảng tám tuần gần đây mà Thành phố chưa công bố.',
+      ],
+    },
+    sources: {
+      title: 'Nguồn và ngày tháng',
+      deeds: (fetched, last) =>
+        `Chứng thư: Thành phố Philadelphia, Department of Records, các vụ chuyển nhượng bất động sản, đọc ngày ${fetched}; chứng thư mới nhất đề ngày ${last}.`,
+      programs: (edited) =>
+        `Số đếm theo chương trình: Thành phố Philadelphia, Department of Planning and Development, bảng điều khiển Land Management, cập nhật lần gần nhất ${edited}.`,
+      listed:
+        'Các lô đất được liệt kê: Thành phố Philadelphia, Department of Planning and Development (Land Management), như bản đồ tài sản của Philadelphia Land Bank hiển thị.',
+      districts: 'Khu vực của Hội đồng Thành phố: Thành phố Philadelphia, ranh giới hiện nay.',
+      neighbours:
+        'Cho suy luận về sân hông: danh sách chủ sở hữu của Thành phố (Office of Property Assessment) và hình dạng thửa đất (Water Department).',
+      board: 'Chương trình nghị sự của hội đồng quản trị Land Bank, liệt kê từng lần chuyển nhượng theo chương trình',
+      council: 'Các dự luật của Hội đồng Thành phố, nơi Hội đồng phê duyệt từng lần chuyển nhượng của Land Bank',
+      method: 'Cách chúng tôi đếm, chi tiết',
+      deedsLink: 'Các vụ chuyển nhượng bất động sản của Thành phố',
+      programsLink: 'Bảng của bảng điều khiển Land Management của Thành phố',
+    },
+    csv: {
+      years: (agency) => `Số lần chuyển nhượng theo năm và theo cơ quan (cả bốn cơ quan và từng cơ quan; trang này đã hiện ${agency}).`,
+      districts: 'Số lần chuyển nhượng theo khu vực của Hội đồng Thành phố (ranh giới hiện nay) và theo năm, cho cả bốn cơ quan và từng cơ quan.',
+      programs: 'Số đếm theo chương trình và năm tài chính của chính Thành phố, bên cạnh suy luận về sân hông của chúng tôi.',
+      listed: 'Các lô đất trong danh sách tài sản công của Thành phố được liệt kê là có sẵn, mỗi tuần từ khi bắt đầu đếm.',
+      counts: 'Chỉ có số đếm: không có tên, không có địa chỉ và không có số thửa đất.',
+      dates: (fetched, last) => `Chứng thư đọc ngày ${fetched}; chứng thư mới nhất đề ngày ${last}.`,
+      file: (part, day) => `placekeepers-land-bank-${part}-${day}.csv`,
+    },
+  },
+
+  basemap: {
+    missing: 'Bản đồ nền không có sẵn, nên tên đường phố và địa danh bị ẩn. Các lớp dữ liệu vẫn hoạt động.',
+    unavailable: 'Bản đồ nền không có sẵn ở đây, nên bản đồ hiện một nền trơn.',
+    legend: 'Đường phố, tòa nhà, công viên, sông hồ và địa danh, có màu.',
+    legendMuted: 'Đường phố, tòa nhà, công viên, sông hồ và địa danh, màu xám, để dữ liệu nổi bật.',
+  },
+
+  credits: {
+    basemap:
+      '<a href="https://protomaps.com" target="_blank" rel="noopener noreferrer">Protomaps</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>',
+    data: (statusUrl) => `Dữ liệu: Thành phố Philadelphia và <a href="${statusUrl}">các nguồn khác</a>`,
+  },
+
+  status: {
+    pageTitle: 'Tình trạng dữ liệu',
+    intro: 'Placekeepers làm mới dữ liệu mỗi tuần. Nếu một nguồn bị hỏng, bản đồ giữ bản sao tốt gần nhất và cho biết ở đây.',
+    back: 'Quay lại bản đồ',
+    loading: 'Đang tải tình trạng dữ liệu',
+    loadFailed: 'Chúng tôi không tải được tệp tình trạng dữ liệu. Bản đồ vẫn có thể hoạt động với dữ liệu cũ hơn.',
+    retry: 'Thử lại',
+    builtOn: (date) => `Lần làm mới gần nhất: ${date}`,
+    buildId: (id) => `Bản dựng ${id}`,
+    summaryAllOk: 'Mọi nguồn đều cập nhật.',
+    summary: (stale, failing, missing) => {
+      const parts: string[] = [];
+      if (stale) parts.push(`${plural(stale, { other: '# nguồn' })} đã cũ`);
+      if (failing) parts.push(`${plural(failing, { other: '# nguồn' })} không hoạt động`);
+      if (missing) parts.push(`${plural(missing, { other: '# nguồn' })} chưa được tải về`);
+      return `${parts.join(', ')}.`;
+    },
+    statusLabel: {
+      ok: 'Đã cập nhật',
+      stale: 'Đã cũ',
+      failing: 'Không hoạt động',
+      missing: 'Chưa tải về',
+      unknown: 'Không rõ',
+    },
+    staleSince: (date) => `Đang dùng bản sao tốt gần nhất, từ ${date}.`,
+    staleNoDate: 'Đang dùng bản sao tốt gần nhất.',
+    failingText: 'Hiện không có bản sao dùng được, nên các lớp cần nó có thể bị thiếu.',
+    missingText: 'Nguồn này chưa được tải về.',
+    unknownText: 'Tệp tình trạng báo một điều mà chúng tôi không nhận ra.',
+    lastSuccess: (date) => `Lần tải tốt gần nhất: ${date}`,
+    neverSucceeded: 'Chưa có lần tải nào tốt',
+    lastAttempt: (date) => `Lần thử gần nhất: ${date}`,
+    rows: (n) => `${plural(n, { other: '# bản ghi' })}`,
+    newest: (date) => `Bản ghi mới nhất: ${date}`,
+    message: (text) => `Ghi chú từ lần làm mới: ${text}`,
+    publisher: 'Đơn vị công bố',
+    homepage: 'Nguồn gốc của dữ liệu',
+    license: 'Giấy phép',
+    cadence: {
+      daily: 'Đơn vị công bố cập nhật hằng ngày',
+      weekly: 'Đơn vị công bố cập nhật hằng tuần',
+      monthly: 'Đơn vị công bố cập nhật hằng tháng',
+      yearly: 'Đơn vị công bố cập nhật hằng năm',
+      irregular: 'Đơn vị công bố thỉnh thoảng mới cập nhật',
+      frozen: 'Đơn vị công bố không còn cập nhật',
+    },
+    problems: 'Vấn đề trong tệp tình trạng',
+    notesTitle: 'Ghi chú từ lần làm mới gần nhất',
+    notesInEnglish: 'Các ghi chú này được viết bằng tiếng Anh, dành cho những người giữ cho bản đồ hoạt động.',
+    basemapLabel: { ok: 'Đã cập nhật', failing: 'Không có sẵn' },
+    basemapMade: (date) =>
+      `Việc làm mới hằng tuần tạo một bản sao mới của bản đồ nền khoảng mỗi tháng một lần. Bản sao này được tạo từ OpenStreetMap ngày ${date}.`,
+    basemapNoDate: 'Việc làm mới hằng tuần tạo một bản sao mới của bản đồ nền khoảng mỗi tháng một lần.',
+    basemapMissing: 'Bản đồ nền không có sẵn trên bản sao này của trang web, nên bản đồ hiện một nền trơn. Các lớp dữ liệu vẫn hoạt động.',
+  },
+
+  search: {
+    label: 'Tìm một địa chỉ, một giao lộ hoặc một số thửa đất',
+    placeholder: 'Địa chỉ, giao lộ hoặc số thửa đất',
+    button: 'Tìm',
+    searching: 'Đang tìm',
+    tooShort: 'Hãy gõ một địa chỉ, như 1234 Market St, hoặc hai đường phố cắt nhau, như Broad và Girard.',
+    notFound:
+      'Thành phố không tìm thấy nơi đó. Hãy thử số nhà và tên đường, hai đường phố cắt nhau, hoặc một số thửa đất chín chữ số.',
+    failed: (reason) => `Dịch vụ địa chỉ của Thành phố ${reason}. Hãy thử lại sau một lát.`,
+    liveOff:
+      'Việc tìm địa chỉ phải hỏi dịch vụ địa chỉ của Thành phố, mà dữ liệu trực tiếp của Thành phố đang tắt trong Cài đặt. Bạn vẫn có thể tìm bằng số thửa đất chín chữ số.',
+    resultsTitle: 'Chọn một nơi',
+    resultsCount: (n) => plural(n, { other: '# nơi khớp' }),
+    intersection: 'Giao lộ',
+    showing: (label) => `Đang hiện ${label} trên bản đồ.`,
+    noParcel: (label) => `Đang hiện ${label} trên bản đồ. Thành phố không có hồ sơ thửa đất cho đúng địa chỉ này.`,
+    privacy: 'Các lần tìm đi từ trình duyệt của bạn thẳng đến Thành phố Philadelphia.',
+  },
+
+  pick: {
+    looking: 'Đang tra cứu thửa đất này với Thành phố',
+    nothing: 'Thành phố không có thửa đất nào ở điểm này. Hãy chạm vào một lô đất hoặc một tòa nhà.',
+    liveOff: 'Để mở một thửa đất không có trong danh sách của chúng tôi, hãy bật "Lấy dữ liệu trực tiếp của Thành phố" trong Cài đặt.',
+    failed: (reason) => `Bản đồ thửa đất của Thành phố ${reason}. Hãy thử lại sau một lát.`,
+  },
+
+  historic: {
+    liveOff:
+      'Những hình ảnh này đến thẳng từ máy chủ của Thành phố, nên chỉ bật được khi "Lấy dữ liệu trực tiếp của Thành phố" đang bật (trong Cài đặt, mục "Quyền riêng tư và dữ liệu trực tiếp").',
+    refused: 'Ảnh chụp từ trên không cũ và bản đồ atlas năm 1860 đến từ máy chủ của Thành phố. Hãy bật dữ liệu trực tiếp của Thành phố trong Cài đặt để xem chúng.',
+    serverError: 'Máy chủ hình ảnh của Thành phố không gửi đủ mọi phần của bức ảnh này. Hãy thử lại sau.',
+    photoYear: (year) => `Ảnh chụp từ trên không năm ${year}, chụp từ máy bay.`,
+    gaps1975: 'Các ảnh năm 1975 có những khoảng trống ở cực nam thành phố, quanh sân bay và Navy Yard.',
+    termsNotStated:
+      'Đơn vị công bố không nêu điều khoản sử dụng cho những ảnh này; chúng được hiện như Thành phố lưu trữ, có ghi nguồn, và sẽ được gỡ xuống nếu đơn vị công bố yêu cầu.',
+    blackAndWhite: (year) => `Các ảnh năm ${year} là ảnh đen trắng.`,
+    under: 'Ảnh nằm dưới mọi lớp khác. Hãy giảm độ đậm của nó để nhìn thấy các đường phố ngày nay xuyên qua nó.',
+    atlasCoverage: 'Bản đồ atlas chỉ bao phủ Center City và Northern Liberties.',
+    atlasCredit: 'Bản đồ atlas được Greater Philadelphia GeoHistory Network ghép khớp với bản đồ ngày nay và được Thành phố Philadelphia lưu trữ với sự cho phép của họ.',
+    sliderRange: (first, last) => `Từ ${first} đến ${last}`,
+    lotTitle: 'Ảnh chụp từ trên không cũ',
+    lotButton: 'Xem lô đất này trong các ảnh chụp từ trên không cũ',
+    lotHelp: (year) =>
+      `Mở bản đồ tại lô đất này với ảnh chụp từ trên không năm ${year}, cũ nhất trên bản đồ này. Hãy trượt qua các năm kể từ đó trong mục "Trước đây và bây giờ" ở phần các lớp.`,
+    lotLiveOff: 'Các ảnh đến thẳng từ máy chủ của Thành phố, nên cần dữ liệu trực tiếp của Thành phố, mà hiện đang tắt.',
+    shown: (year) => `Ảnh chụp từ trên không năm ${year} đang bật. Hãy trượt qua các năm trong mục "Trước đây và bây giờ" ở phần các lớp.`,
+    statusOk: 'Mọi dịch vụ hình ảnh đều trả lời ở lần kiểm tra hằng tuần gần nhất. Các hình ảnh tải thẳng từ máy chủ của Thành phố khi có người bật lớp của chúng.',
+    statusStale: (date) =>
+      `Ở lần kiểm tra hằng tuần gần nhất, không phải dịch vụ hình ảnh nào cũng trả lời, nên một số hình ảnh có thể không hiện. Mỗi dịch vụ đều trả lời lần cuối vào ngày ${date}.`,
+    statusFailing: 'Các dịch vụ hình ảnh không trả lời ở lần kiểm tra hằng tuần, nên các hình ảnh có thể không hiện.',
+    services: (n) => `${plural(n, { other: '# dịch vụ hình ảnh' })} đã được kiểm tra`,
+    lastCheck: (date) => `Lần kiểm tra gần nhất mà mọi dịch vụ đều trả lời: ${date}`,
+  },
+
+  redlining: {
+    detailsTitle: 'Bản đồ phân loại khu dân cư (redlining) năm 1937',
+    grades: {
+      A: 'A, được xếp loại "tốt nhất" năm 1937',
+      B: 'B, được xếp loại "vẫn đáng ưa chuộng"',
+      C: 'C, được xếp loại "chắc chắn đang suy giảm"',
+      D: 'D, được xếp loại "nhiều rủi ro" và khoanh viền đỏ: bị khoanh đỏ (redlined)',
+    },
+    ungraded: 'Không được xếp loại (đất công nghiệp và thương mại)',
+    area: (label, grade) => `Khu ${label}, được xếp loại ${grade} năm 1937`,
+    areaUngraded: (label) => `${label}: một khu mà bản đồ năm 1937 để không xếp loại`,
+    context:
+      'Năm 1937, một cơ quan liên bang, Home Owners\' Loan Corporation, xếp loại các khu dân cư của thành phố từ A đến D theo mức an toàn mà họ cho là có khi cho vay mua nhà ở đó. Các xếp loại này dựa vào việc ai sống trong mỗi khu: các khu có các gia đình người Da đen và nhiều gia đình nhập cư sinh sống thường bị xếp loại D và khoanh viền đỏ. Việc vay tiền ở những nơi đó khó hơn trong nhiều thập kỷ, và cách làm này được gọi là redlining.',
+    notToday: 'Các xếp loại này là bản ghi về cách một cơ quan liên bang đánh giá các nơi vào năm 1937. Chúng không nói gì về những người đang sống ở đó ngày nay.',
+    legendTap: 'Chạm vào một khu để xem xếp loại của nó và liên kết đến bản mô tả năm 1937.',
+    description: (label) => `Đọc bản mô tả năm 1937 của khu ${label} tại Mapping Inequality`,
+    descriptionNote: 'Các bản mô tả năm 1937 không được sao chép vào đây: chúng ở lại trên Mapping Inequality, cùng với lịch sử xung quanh.',
+    credit:
+      'Các khu và xếp loại lấy từ Mapping Inequality: Redlining in New Deal America, do Robert K. Nelson, LaDale Winling và các cộng sự thực hiện, University of Richmond Digital Scholarship Lab. Placekeepers chỉ hiện các khu và xếp loại.',
+    homepageLabel: 'Mapping Inequality: Philadelphia',
+    nonCommercial: 'Chỉ dùng phi thương mại. Được cấp phép theo Creative Commons Attribution NonCommercial 2.5, tách biệt với phần còn lại của dữ liệu bản đồ.',
+    licenseLabel: 'CC BY-NC 2.5',
+    statusNote: 'Chỉ dùng phi thương mại: nguồn này được cấp phép cho mục đích phi thương mại, nên trang web công bố nó trong một tệp riêng và không bao giờ đưa vào một tệp tải xuống.',
+  },
+
+  options: {
+    title: 'Quyền riêng tư và dữ liệu trực tiếp',
+    privacyLink: 'Placekeepers bảo vệ quyền riêng tư của bạn như thế nào',
+    turnOn: 'Bật dữ liệu trực tiếp của Thành phố',
+    resetNote: 'Lựa chọn của bạn về dữ liệu trực tiếp của Thành phố vẫn giữ nguyên.',
+  },
+
+  failure: {
+    timeout: 'đã không trả lời kịp lúc',
+    network: 'không kết nối được',
+    http: 'trả lời bằng một lỗi',
+    bad_data: 'gửi về một câu trả lời mà chúng tôi không đọc được',
+    not_found: 'không có hồ sơ về nơi đó',
+    aborted: 'chưa được hỏi',
+    empty: 'chưa được hỏi',
+  },
+
+  rulesMap: {
+    legend: {
+      district: 'Khu lịch sử',
+      property: 'Có trong danh bạ di tích lịch sử',
+      overlay: 'Lớp phủ quy hoạch (zoning overlay)',
+      supplemental: 'Quy định đặc biệt khác của Zoning Code',
+      hearingZoning: 'Phiên điều trần về quy hoạch (zoning)',
+      hearingOther: 'Phiên điều trần trước một hội đồng khác',
+      brownfield: 'Địa điểm brownfield của EPA',
+    },
+    notes: {
+      historic: 'Thay đổi ở đây có thể cần Historical Commission xem xét; hãy hỏi họ trước.',
+      overlays: 'Các lớp phủ chồng lên nhau, và một vài lớp bao phủ phần lớn thành phố. Chạm vào một chỗ để thấy mọi lớp phủ ở đó.',
+      hearings: 'Chạm vào một phiên điều trần để xem cách tham gia và để mở trang của lô đất.',
+      brownfields: 'Không phải bản đồ của mọi vùng đất bị ô nhiễm. Hãy xét nghiệm đất trước khi trồng thực phẩm trên hoặc gần một địa điểm như vậy.',
+    },
+    districtTitle: (name) => name,
+    designated: (date) => `Được chỉ định ngày ${date}.`,
+    noDate: 'Lớp dữ liệu của Thành phố không cho biết ngày chỉ định.',
+    propertyTitle: 'Có trong Philadelphia Register of Historic Places (danh bạ di tích lịch sử Philadelphia)',
+    listedOn: (date) => `Được đưa vào danh bạ riêng lẻ ngày ${date}.`,
+    listedAlone: 'Được đưa vào danh bạ riêng lẻ.',
+    inDistrict: (district, date) => `Thuộc ${district}${date ? `, được chỉ định ngày ${date}` : ''}.`,
+    overlaysHere: (n) => (n === 1 ? 'Một lớp phủ ở đây' : `${formatNumber(n)} lớp phủ ở đây`),
+    hearingTitle: (board) => `Phiên điều trần của ${board}`,
+    hearingWhen: (date, time) => `${date}${time ? `, lúc ${time}` : ''}`,
+    hearingsHere: (n) => `${formatNumber(n)} phiên điều trần ở đây`,
+    about: (address) => `Về ${address}.`,
+    rco: (name) => `Tổ chức Cộng đồng Đã đăng ký (RCO) đã được thông báo: ${name}.`,
+    openLot: 'Mở trang của lô đất này',
+    namesNote: 'Người nộp đơn kháng cáo chỉ được hiện trên trang của lô đất.',
+    brownfieldTitle: 'Địa điểm brownfield của EPA',
+  },
+
+  dossier: {
+    pageTitle: 'Trang lô đất',
+    loading: 'Đang tải trang lô đất',
+    parcel: (opa) => `Tài khoản OPA ${opa}`,
+    printButton: 'In trang lô đất này',
+    showOnMap: 'Hiện trên bản đồ',
+    close: 'Đóng trang lô đất',
+    clear: 'Bỏ chọn',
+    retry: 'Thử hỏi lại Thành phố',
+    notFound: 'Chúng tôi không tìm thấy thửa đất này trong hồ sơ của Thành phố hay trong bản chụp hằng tuần của chúng tôi.',
+    noData:
+      'Thửa đất này không có trong bản chụp hằng tuần của chúng tôi, và dữ liệu trực tiếp của Thành phố đang tắt, nên chưa có gì để hiện.',
+    sections: {
+      summary: 'Tóm tắt',
+      actions: 'Việc bạn có thể làm',
+      rules: 'Các quy định cho lô đất này',
+      owner: 'Ai là chủ sở hữu',
+      history: 'Lịch sử',
+      nearby: 'Gần đây',
+      sources: 'Nguồn và độ mới của dữ liệu',
+    },
+    contents: 'Trên trang này',
+
+    provenance: {
+      live: (time) => `Trực tiếp từ Thành phố lúc ${time}.`,
+      snapshot: (date) => `Từ bản chụp hằng tuần ngày ${date}.`,
+      snapshotNoDate: 'Từ bản chụp hằng tuần.',
+      map: 'Từ dữ liệu hằng tuần của bản đồ.',
+      checking: 'Đang kiểm tra xem Thành phố có hồ sơ mới hơn không.',
+      asking: 'Đang hỏi Thành phố.',
+      failedSnapshot: (reason, date) => `Máy chủ của Thành phố ${reason}, nên đây là bản chụp hằng tuần ngày ${date}.`,
+      failedNothing: (reason) => `Máy chủ của Thành phố ${reason}, nên lúc này không thể hiện phần này.`,
+      offSnapshot: (date) => `Dữ liệu trực tiếp của Thành phố đang tắt, nên đây là bản chụp hằng tuần ngày ${date}.`,
+      offNothing: 'Dữ liệu trực tiếp của Thành phố đang tắt, và bản chụp hằng tuần của chúng tôi không có phần này.',
+      none: 'Không có hồ sơ nào để hiện.',
+    },
+    banner: {
+      live: 'Trực tiếp từ Thành phố Philadelphia.',
+      loading: 'Đang hỏi Thành phố về các hồ sơ mới nhất.',
+      off: (date) => `Dữ liệu trực tiếp của Thành phố đang tắt. Trang này hiện bản chụp hằng tuần ngày ${date}.`,
+      offNoDate: 'Dữ liệu trực tiếp của Thành phố đang tắt. Trang này hiện bản chụp hằng tuần.',
+      partial: 'Một số lần tra cứu Thành phố không thành công. Các phần đó hiện bản chụp hằng tuần, hoặc không hiện gì, và nói rõ như vậy.',
+      failed: 'Máy chủ của Thành phố không trả lời. Trang này hiện những gì bản chụp hằng tuần của chúng tôi có.',
+    },
+
+    summary: {
+      kind: { lot: 'Lô đất trống', building: 'Tòa nhà bỏ trống' },
+      notListed: 'Không có trong danh sách lô đất trống và tòa nhà bỏ trống của chúng tôi',
+      notListedHelp: 'Nếu bạn nghĩ thửa đất này bỏ trống, hãy báo một chỉnh sửa ở bên dưới.',
+      noDetails: 'Chưa công bố thông tin chi tiết',
+      noPublishedDetails: 'Chúng tôi chưa công bố thông tin chi tiết cho thửa đất này, nên trang này hiện những gì máy chủ của Thành phố nói vào lúc này.',
+      confidence: {
+        high: 'Rất có thể là bỏ trống',
+        medium: 'Có lẽ là bỏ trống',
+        low: 'Chúng tôi chưa chắc lắm là nơi này bỏ trống',
+      },
+      confidenceTitle: 'Chúng tôi chắc đến đâu',
+      signals: (n) => `${plural(n, { other: '# hồ sơ độc lập của Thành phố' })} đồng ý rằng nơi này bỏ trống.`,
+      cityCalls: (category) => `Hồ sơ tài sản của Thành phố gọi nó là: ${category}.`,
+      lotSize: (frontage, depth) =>
+        `Cơ quan định giá của Thành phố ghi nhận nó rộng khoảng ${formatNumber(Math.round(frontage))} feet mặt phố và sâu ${formatNumber(Math.round(depth))} feet.`,
+      landcare: 'Đã được PHS LandCare chăm sóc.',
+      landcareSince: (year) => `Đã được PHS LandCare chăm sóc từ năm ${year}.`,
+      garden: 'Đã có người làm vườn ở đây. Hãy hỏi họ trước khi lên kế hoạch gì.',
+      lensLine: (lens) => `Mức ưu tiên theo góc nhìn "${lens}", góc nhìn mà bản đồ dùng để tô màu các lô đất.`,
+      flood: {
+        1: 'Một phần lô đất này nằm trong vùng ngập có xác suất 1 phần trăm mỗi năm của FEMA, nơi mỗi năm có ít nhất 1 trên 100 khả năng xảy ra lũ. Đó là một lý do để cẩn trọng, không phải một phần của bất kỳ điểm số nào: cây trồng ở đây phải chịu được đất ẩm ướt, mọi công trình xây dựng phải theo quy định vùng ngập lụt của Thành phố, và xanh hóa giúp thấm nước mưa thì có ích.',
+        2: 'Một phần lô đất này nằm trong vùng ngập có xác suất 0,2 phần trăm mỗi năm của FEMA, nơi mỗi năm có 1 trên 500 khả năng xảy ra lũ. Đó là một lý do để cẩn trọng, không phải một phần của bất kỳ điểm số nào: cây trồng ở đây nên chịu được đất ẩm ướt, và xanh hóa giúp thấm nước mưa thì có ích.',
+      },
+      floodTitle: 'Nguy cơ ngập lụt',
+      linksTitle: 'Xem trên các trang web khác',
+      propertyPage: 'Trang bất động sản của Thành phố',
+      atlas: 'Atlas, bản đồ của Thành phố về địa chỉ này',
+      googleMaps: 'Google Maps',
+      streetView: 'Google Street View',
+      linksNote: 'Các liên kết này mở các trang web khác. Placekeepers liên kết đến ảnh đường phố nhưng không bao giờ sao chép chúng.',
+    },
+
+    actions: {
+      intro: 'Hãy bắt đầu với hướng đi hợp pháp. Mỗi hướng đi cho biết ai có thể làm và ai có thể giúp.',
+      route: 'Hướng đi hợp pháp',
+      steps: 'Các bước',
+      who: 'Ai có thể làm',
+      cost: 'Chi phí',
+      timeline: 'Mất bao lâu',
+      lastChecked: (date) => `Kiểm tra lần cuối ${date}.`,
+      toConfirm: 'Còn phải xác nhận với tổ chức được nêu ở đây.',
+      partners: 'Ai có thể giúp',
+      otherRoutes: 'Các hướng đi hợp pháp khác cho thửa đất này',
+      none: 'Chưa có gợi ý nào cho nơi này.',
+      notListed:
+        'Thửa đất này không có trong danh sách lô đất trống và tòa nhà bỏ trống mà chúng tôi cho là có khả năng, nên chúng tôi không có gợi ý nào cho nó. Trang Cách thực hiện giải thích các hướng đi hợp pháp cho bất kỳ lô đất nào.',
+      howTo: 'Cách thực hiện',
+      conservatorshipWarning:
+        'Conservatorship (quyền quản lý tài sản thay chủ) có thể lấy mất tài sản khỏi chủ sở hữu của nó. Các nhà nghiên cứu nhận thấy nó được dùng nhiều một cách không tương xứng ở những khu phố đang trải qua gentrification (giá nhà đất tăng khiến người dân lâu năm khó ở lại). Hãy nói chuyện với Garden Justice Legal Initiative trước khi bạn cân nhắc dùng nó.',
+      notLegalAdvice: 'Placekeepers không phải là tư vấn pháp lý. Hãy hỏi các tổ chức được nêu ở đây trước khi bạn hành động.',
+    },
+
+    listing: {
+      title: 'Được các cơ quan quản lý đất của Thành phố ghi là có sẵn',
+      text: (date) => `Vào ngày ${date}, danh sách đất công của Thành phố cho thấy bất động sản này là có sẵn.`,
+      textNoDate: 'Danh sách đất công của Thành phố cho thấy bất động sản này là có sẵn.',
+      variants: {
+        'OWNED - AVAILABLE (GARDEN AGREEMENT)': 'Bất động sản này được đưa ra cho thỏa thuận làm vườn.',
+        'OWNED - AVAILABLE (NO CONSTRUCTION PERMITTED)': 'Không được phép xây gì trên đó.',
+        'OWNED - AVAILABLE (NOT FOR SY)': 'Không được đưa ra như một sân hông.',
+      },
+      sideYardLead: 'Nếu bạn là chủ căn nhà bên cạnh, hãy bắt đầu với chương trình sân hông:',
+      decline:
+        'Việc được liệt kê không có nghĩa là Land Bank sẽ đồng ý. Land Bank quyết định từng yêu cầu riêng và có thể từ chối bất kỳ việc bán hay cho thuê nào, kể cả với một bất động sản mà họ liệt kê là có sẵn.',
+      changes: 'Danh sách thay đổi thường xuyên. Hãy kiểm tra bản đồ của Land Bank trước khi bạn hành động.',
+      map: 'Bản đồ các bất động sản có sẵn của Land Bank',
+      credit: 'Danh sách: Thành phố Philadelphia, Department of Planning and Development (Land Management), như bản đồ của Philadelphia Land Bank hiển thị.',
+    },
+
+    ownerType: {
+      noName: 'Hồ sơ của Thành phố không ghi tên chủ sở hữu.',
+      unclear: 'Chúng tôi không thể biết từ cái tên này chủ sở hữu thuộc loại nào.',
+      individual: 'Tên chủ sở hữu trông giống tên một người.',
+      publicName: (label) => `Hồ sơ của Thành phố ghi ${label} là chủ sở hữu.`,
+      markerReason: (marker) => `Tên chủ sở hữu có chứa "${marker}".`,
+      agencyConflict: (contact) => `Hồ sơ tài sản của Thành phố ghi một chủ sở hữu khác, nên hãy hỏi ${contact} xem ai là chủ hiện tại.`,
+      agencyContacts: { PUB: 'Land Bank', PLB: 'Land Bank', PRA: 'PHDC', PHDC: 'PHDC' },
+      publicBodies: {
+        land_bank: 'Philadelphia Land Bank',
+        redevelopment_authority: 'Philadelphia Redevelopment Authority',
+        pha: 'Philadelphia Housing Authority',
+        housing_authority: 'một cơ quan quản lý nhà ở',
+        phdc: 'Philadelphia Housing Development Corporation (PHDC)',
+        pha_or_phdc: 'Philadelphia Housing Authority hoặc PHDC (tên bị cắt ngắn)',
+        city: 'Thành phố Philadelphia',
+        school_district: 'School District of Philadelphia',
+        community_college: 'Community College of Philadelphia',
+        septa: 'SEPTA',
+        commonwealth: 'Khối Thịnh vượng chung Pennsylvania (Commonwealth of Pennsylvania)',
+        phfa: 'Pennsylvania Housing Finance Agency',
+        united_states: 'chính phủ Hoa Kỳ',
+        hud: 'Bộ Phát triển Nhà ở và Đô thị Hoa Kỳ (HUD)',
+        veterans_affairs: 'Bộ Cựu chiến binh Hoa Kỳ',
+        paid: 'Philadelphia Authority for Industrial Development',
+        port_authority: 'Philadelphia Regional Port Authority',
+        district_attorney: 'Văn phòng Biện lý Quận Philadelphia (District Attorney\'s Office)',
+        public_authority: 'một cơ quan công quyền',
+        pgw: 'Philadelphia Gas Works',
+      },
+      markers: {
+        TR: 'TR, viết tắt của trustee (người được ủy thác)',
+        TRS: 'TRS, viết tắt của trustees (những người được ủy thác)',
+        TRST: 'TRST, viết tắt của trust (quỹ ủy thác)',
+        'T U W': 'T/U/W, một quỹ ủy thác lập theo di chúc',
+        FBO: 'FBO, vì lợi ích của',
+        CO: 'CO, viết tắt của company (công ty)',
+        LP: 'LP, một công ty hợp danh hữu hạn (limited partnership)',
+        LLP: 'LLP, một công ty hợp danh trách nhiệm hữu hạn (limited liability partnership)',
+        LTD: 'LTD, viết tắt của limited (trách nhiệm hữu hạn)',
+        LL: 'LL, dạng viết tắt của LLC',
+        GP: 'GP, một thành viên hợp danh (general partner)',
+        'N A': 'N A, một ngân hàng quốc gia',
+        FB: 'FB, dạng viết tắt của FBO',
+        CDC: 'CDC, một tổ chức phát triển cộng đồng (community development corporation)',
+      },
+      labels: {
+        individual: 'Một cá nhân',
+        company: 'Một công ty',
+        city: 'Thành phố Philadelphia',
+        land_bank: 'Philadelphia Land Bank',
+        redevelopment_authority: 'Philadelphia Redevelopment Authority',
+        housing_authority: 'Một cơ quan quản lý nhà ở',
+        nonprofit: 'Một tổ chức phi lợi nhuận',
+        other_public: 'Một cơ quan công khác',
+        unknown: 'Không rõ từ hồ sơ của Thành phố',
+      },
+    },
+
+    owner: {
+      names: 'Chủ sở hữu, như Thành phố công bố',
+      noNames: 'Hồ sơ của Thành phố không ghi tên chủ sở hữu.',
+      mailing: 'Địa chỉ gửi thư, như Thành phố công bố',
+      noMailing: 'Không có địa chỉ gửi thư trong hồ sơ.',
+      type: 'Loại chủ sở hữu',
+      flagsTitle: 'Hồ sơ của Thành phố gợi ý điều gì',
+      noFlags: 'Không có gì trong hồ sơ của Thành phố cần ghi chú về chủ sở hữu này.',
+      heldBack:
+        'Chúng tôi không chắc thửa đất này bỏ trống, nên có thể đó là nhà của ai đó. Các ghi chú về một chủ sở hữu có thể là một người (họ nhận thư ở đâu, có thể là di sản thừa kế, nợ thuế, các thửa đất khác họ sở hữu) chỉ xuất hiện trên các thửa đất mà chúng tôi cho là rất có thể hoặc có lẽ là bỏ trống.',
+      ownerChanged:
+        'Hồ sơ của Thành phố ghi một chủ sở hữu khác với bản chụp hằng tuần của chúng tôi, nên các ghi chú về chủ sở hữu trước đó đã được bỏ ra.',
+      parts: { meaning: 'Điều này có nghĩa là gì', careful: 'Hãy thận trọng', next: 'Một bước tiếp theo thận trọng' },
+      flagTitles: {
+        absentee: 'Chủ sở hữu nhận thư ở đâu',
+        possible_estate: 'Có thể là di sản thừa kế',
+        tax_debt_2025: 'Nợ thuế tính đến tháng 7 năm 2025',
+        sheriff_sales: 'Các lần bán đấu giá do Sheriff tổ chức trước đây',
+        years_since_sale: 'Số năm kể từ lần bán gần nhất',
+        many_parcels: 'Chủ sở hữu của nhiều thửa đất bỏ trống',
+        fast_resales: 'Bán lại nhanh',
+        open_violations: 'Các vi phạm L&I còn mở',
+        unsafe: 'Tòa nhà không an toàn',
+        imminently_dangerous: 'Tòa nhà nguy hiểm cận kề',
+      },
+      otherFlag: 'Một ghi chú từ hồ sơ của Thành phố',
+      taxTitle: 'Thuế',
+      taxNoDebt:
+        'Thành phố không còn công bố số dư thuế của từng bất động sản dưới dạng dữ liệu mở. Bản chụp tháng 7 năm 2025 mà chúng tôi có không cho thấy thuế chưa đóng ở đây.',
+      taxUnknown: 'Thành phố không còn công bố số dư thuế của từng bất động sản dưới dạng dữ liệu mở.',
+      taxHeld:
+        'Thành phố không còn công bố số dư thuế của từng bất động sản dưới dạng dữ liệu mở. Bản chụp tháng 7 năm 2025 của chúng tôi chỉ được hiện, với một chủ sở hữu có thể là một người, trên các thửa đất mà chúng tôi cho là rất có thể hoặc có lẽ là bỏ trống.',
+      taxCenter: 'Kiểm tra số dư hôm nay trên Tax Center của Thành phố',
+      deedFraudTitle: 'Bảo vệ bất động sản này khỏi nạn đánh cắp chứng thư (deed theft)',
+      deedFraud:
+        'Đánh cắp chứng thư (deed theft) xảy ra khi có người nộp một chứng thư giả để chiếm một bất động sản, thường là nơi mà chủ sở hữu đã qua đời hoặc sống ở nơi khác. Chủ sở hữu và gia đình có thể đăng ký nhận cảnh báo Fraud Guard miễn phí của Thành phố, sẽ gửi một email khi có một giấy tờ ghi tên họ được đăng ký. Từ tháng 11 năm 2025, Thành phố cũng tự động chặn các chứng thư mà người bán đã qua đời từ trước lúc họ được cho là đã ký.',
+      fraudGuard: 'Đăng ký nhận cảnh báo Fraud Guard miễn phí của Thành phố',
+      deedCheck: 'Cơ chế kiểm tra tự động của Thành phố để ngăn gian lận chứng thư',
+      helpTitle: 'Giúp đỡ cho chủ sở hữu và gia đình',
+      seeList: 'Xem các thửa đất của chủ sở hữu này trong danh sách của chúng tôi',
+      cityListTitle: 'Danh sách tài sản công của Thành phố',
+      cityList: 'Thửa đất này nằm trong danh sách tài sản công của Thành phố.',
+      cityListNames: (agency) => `Danh sách tài sản công của Thành phố ghi ${agency} là chủ sở hữu.`,
+      cityListStatus: (status) => `Trạng thái của nó trong danh sách: ${status}.`,
+      cityStatuses: {
+        'OWNED - AVAILABLE': ['được liệt kê là có sẵn', 'Land Bank hiện nó trên bản đồ các bất động sản mà mọi người có thể nộp đơn.'],
+        'OWNED - AVAILABLE (GARDEN AGREEMENT)': [
+          'được liệt kê là có sẵn cho thỏa thuận làm vườn',
+          'Bất động sản này được đưa ra để làm vườn theo một thỏa thuận với Land Bank.',
+        ],
+        'OWNED - AVAILABLE (NO CONSTRUCTION PERMITTED)': [
+          'được liệt kê là có sẵn, không cho phép xây dựng',
+          'Bất động sản này được đưa ra, nhưng không được xây gì trên đó.',
+        ],
+        'OWNED - AVAILABLE (NOT FOR SY)': [
+          'được liệt kê là có sẵn, nhưng không phải như một sân hông',
+          'Bất động sản này được đưa ra, nhưng không phải cho người hàng xóm bên cạnh làm sân hông.',
+        ],
+        'OWNED - ON HOLD FOR AHD': [
+          'được giữ cho nhà ở giá phải chăng',
+          'Bất động sản này được để dành cho nhà ở giá phải chăng, nên hiện không được đưa ra cho hàng xóm.',
+        ],
+        'OWNED - NOT AVAILABLE': ['không có sẵn', 'Các cơ quan quản lý đất của Thành phố hiện không đưa nó ra.'],
+        'OWNED - PROCESSING APPLICANT, NOT AVAILABLE': [
+          'đã có người nộp đơn',
+          'Một đơn xin nó đang được xem xét, nên hiện không đưa ra cho ai khác.',
+        ],
+        'OWNED - MANAGED AND NOT AVAILABLE': ['đang được quản lý và không có sẵn', 'Một cơ quan trông coi nó và không đưa nó ra.'],
+        'OWNED - ON HOLD': ['tạm giữ', 'Hiện chưa được đưa ra.'],
+        'OWNED - SALE PENDING': ['đang chờ bán', 'Một vụ bán đang được tiến hành, nên không đưa ra cho ai khác.'],
+        'UNKNOWN - RESEARCH PENDING': ['chưa rõ', 'Các cơ quan quản lý đất của Thành phố vẫn đang tìm hiểu.'],
+        'OWNED - RFP RELEASED': ['được đưa ra để phát triển', 'Các cơ quan quản lý đất của Thành phố đã kêu gọi các đề xuất để phát triển nó.'],
+        'OWNED - ON HOLD FOR HOME SD': [
+          'được giữ cho một chương trình nhà ở',
+          'Bất động sản này được giữ cho một chương trình mà danh sách gọi là HOME SD, nên hiện không được đưa ra cho hàng xóm.',
+        ],
+        'OWNED - HELD FOR CITY COUNCIL MEMBER': [
+          'được giữ cho thành viên Hội đồng của khu vực',
+          'Bất động sản này được giữ cho thành viên Hội đồng Thành phố của khu vực, nên hiện không được đưa ra. Văn phòng của thành viên đó có thể cho biết lý do.',
+        ],
+        'OWNED - TO BE FEATURED SOON': ['sắp được đưa ra', 'Các cơ quan quản lý đất của Thành phố dự định sắp đưa nó ra.'],
+        'OWNED - NOT AVAILABLE (GSI PROJECT)': [
+          'để dành cho công trình thoát nước mưa xanh',
+          'Bất động sản này được giữ cho việc trồng cây mà Water Department xây dựng để thấm nước mưa.',
+        ],
+        'OWNED - COMPETITIVE BID POSTED': ['được đưa ra qua đấu thầu cạnh tranh', 'Các cơ quan quản lý đất của Thành phố đã kêu gọi đấu thầu cho nó.'],
+      },
+      sideYard: 'Thành phố đánh dấu nó đủ điều kiện cho chương trình sân hông, dành cho chủ căn nhà bên cạnh.',
+      agencies: {
+        PUB: 'Thành phố Philadelphia',
+        PLB: 'Philadelphia Land Bank',
+        PRA: 'Philadelphia Redevelopment Authority',
+        PHDC: 'Philadelphia Housing Development Corporation (PHDC)',
+      },
+      tangledTitle: 'Tangled Title Fund, do Philadelphia VIP điều hành',
+      sheriffGuide: 'Grounded in Philly: sheriff sales (các vụ bán đấu giá do Sheriff tổ chức)',
+      gjli: 'Garden Justice Legal Initiative, nơi giúp đỡ pháp lý miễn phí',
+    },
+    flags: {
+      absentee: {
+        outOfState: (where) => `Chủ sở hữu nhận thư ở nơi khác: ${where} (ngoài tiểu bang).`,
+        outsidePennsylvania: 'Chủ sở hữu nhận thư ở nơi khác: ngoài Pennsylvania.',
+        outsideCity: (city) => `Chủ sở hữu nhận thư ở nơi khác: ${city}, PA (ngoài Philadelphia).`,
+        outsideCityUnknown: 'Chủ sở hữu nhận thư ở nơi khác: ngoài Philadelphia.',
+        poBox: 'Chủ sở hữu nhận thư ở nơi khác: một hộp thư bưu điện ở Philadelphia.',
+        elsewhere: 'Chủ sở hữu nhận thư ở nơi khác: một địa chỉ khác ở Philadelphia.',
+        careful:
+          'Đây là địa chỉ mà Thành phố gửi hóa đơn thuế đến. Nó có thể đã cũ, hoặc thuộc về một người thân, một luật sư hay một người quản lý, và một chủ sở hữu sống ở nơi khác có thể không biết tình trạng của bất động sản ngày nay.',
+        next: 'Hãy viết thư cho chủ sở hữu theo địa chỉ này để hỏi trước khi bạn làm bất cứ điều gì trên bất động sản, và nhờ Garden Justice Legal Initiative xem xét mọi thỏa thuận trước khi bạn ký.',
+      },
+      possible_estate: {
+        text: 'Chủ sở hữu ghi trong hồ sơ có thể đã qua đời.',
+        careful: 'Các thành viên trong gia đình có thể vẫn còn quyền đối với bất động sản này mà không biết.',
+        next: 'Nếu bạn quen gia đình đó, Tangled Title Fund (hỗ trợ pháp lý lên đến $6,500) và Philadelphia VIP có thể giúp họ giữ lại nó. Các gia đình cũng có thể đăng ký nhận cảnh báo Fraud Guard miễn phí của Thành phố.',
+      },
+      tax_debt_2025: {
+        text: (amount, years) =>
+          `Tính đến tháng 7 năm 2025, hồ sơ của Thành phố cho thấy ${amount} tiền thuế bất động sản chưa đóng${years ? ` từ ${plural(years, { other: '# năm thuế' })}` : ''}.`,
+        careful:
+          'Đây là hồ sơ công khai cuối cùng, từ ngày 9 tháng 7 năm 2025, không phải số dư hôm nay: chủ sở hữu có thể đã đóng từ đó, hoặc còn nợ nhiều hơn. Chậm đóng thuế khoảng ba năm trở lên có thể dẫn đến một vụ bán đấu giá do Sheriff tổ chức, khi đó một lô đất mà hàng xóm chăm sóc có thể bị bán cho một người mua từ bên ngoài.',
+        next: 'Hãy kiểm tra số dư hôm nay trên Tax Center của Thành phố trước khi bạn dựa vào thông tin này. Nếu dãy phố của bạn đang chăm sóc lô đất này, hướng dẫn về các vụ bán đấu giá do Sheriff tổ chức của Grounded in Philly giải thích rủi ro và những gì bạn có thể làm.',
+      },
+      sheriff_sales: {
+        one: (sale) => `Đã bán trong một vụ bán đấu giá do Sheriff tổ chức ngày ${sale}.`,
+        many: (n, sales) => `Đã bán trong các vụ bán đấu giá do Sheriff tổ chức ${n} lần: ${sales}.`,
+        sale: (date, price) => (price ? `${date}, với giá ${price}` : date),
+        andLast: (others, last) => `${others}; và ${last}`,
+        careful:
+          'Ở một vụ bán đấu giá do Sheriff tổ chức, giá thầu thắng cuộc xóa các khoản nợ cũ trên bất động sản, nên một lô đất mà hàng xóm đã chăm sóc có thể chuyển sang một người mua từ bên ngoài. Một vụ bán trong quá khứ không có nghĩa là bất động sản đang được rao bán bây giờ.',
+        next: 'Nếu dãy phố của bạn đang chăm sóc lô đất này, hãy đọc hướng dẫn về các vụ bán đấu giá do Sheriff tổ chức của Grounded in Philly và nhờ Garden Justice Legal Initiative giúp đỡ pháp lý miễn phí.',
+      },
+      years_since_sale: {
+        lastSold: (year) => `Lần bán gần nhất vào năm ${year}.`,
+        notSoldSince: (year) => `Không được bán trên thị trường mở từ ít nhất năm ${year}.`,
+        careful:
+          'Các vụ bán với giá tượng trưng và các vụ bán đấu giá do Sheriff tổ chức không được tính ở đây; toàn bộ lịch sử ở bên dưới. Nhiều ngôi nhà được truyền lại trong gia đình mà không có vụ bán mới, nên một khoảng thời gian dài kể từ lần bán không có nghĩa là chủ sở hữu đã từ bỏ bất động sản.',
+        next: 'Nếu một gia đình đã thừa kế bất động sản mà không có chứng thư mới, Tangled Title Fund và Philadelphia VIP có thể giúp họ làm rõ quyền sở hữu và giữ lại nó.',
+      },
+      many_parcels: {
+        text: (n) => `Chủ sở hữu này nắm giữ ${n} thửa đất bỏ trống trong thành phố.`,
+        careful:
+          'Chúng tôi ghép các chủ sở hữu theo tên chính xác của họ trong hồ sơ của Thành phố, nên một chủ sở hữu có thể xuất hiện với nhiều cách viết khác nhau và hai chủ sở hữu có thể trùng tên. Nắm giữ đất trống tự nó không phải là sai trái.',
+        next: 'Hãy dùng danh sách để xem các thửa đất khác của chủ sở hữu này, rồi xin phép theo cách hợp pháp: viết thư cho chủ sở hữu, và nhờ Garden Justice Legal Initiative xem xét mọi thỏa thuận.',
+      },
+      fast_resales: {
+        since: (n, year) => `Đã bán ${n} lần từ năm ${year}.`,
+        inYear: (n, year) => `Đã bán ${n} lần trong năm ${year}.`,
+        between: (n, first, last) => `Đã bán ${n} lần từ ${first} đến ${last}.`,
+        careful:
+          'Việc bán lại nhanh có thể có nghĩa là bất động sản đang được mua đi bán lại để kiếm lời, và đôi khi là chứng thư giả. Nhưng cũng có thể là chuyện bình thường, chẳng hạn một gia đình bán ngôi nhà thừa kế và người mua bán lại sau khi sửa chữa.',
+        next: 'Hãy xem ai bán và ai mua trong lịch sử bên dưới. Chủ sở hữu và gia đình có thể đăng ký nhận cảnh báo Fraud Guard miễn phí của Thành phố để biết khi có giấy tờ ghi tên họ.',
+      },
+      open_violations: {
+        one: (when, what) => `L&I liệt kê 1 vi phạm còn mở${what ? `, về ${what}` : ''}${when ? `, từ ${when}` : ''}.`,
+        many: (n) => `L&I liệt kê ${n} vi phạm còn mở.`,
+        mostRecent: (when, what) => (what ? `Vi phạm gần nhất, từ ${when}, là về ${what}.` : `Vi phạm gần nhất là từ ${when}.`),
+        careful:
+          'Một vi phạm là một thông báo gửi cho chủ sở hữu, người có thể không có đủ khả năng để sửa, và tình trạng có thể đã thay đổi kể từ lần kiểm tra.',
+        next: 'Hãy báo các vấn đề vật lý, như đổ rác hoặc một tòa nhà để ngỏ, cho Philly311. Nếu bạn biết chủ sở hữu, hãy cho họ biết: họ có thể chưa thấy thông báo.',
+      },
+      unsafe: {
+        text: (since) => (since ? `L&I liệt kê tòa nhà này là không an toàn, từ ${since}.` : 'L&I liệt kê tòa nhà này là không an toàn.'),
+        careful: 'Hãy tránh xa và giữ trẻ em tránh xa: L&I thấy công trình này không an toàn. Đừng vào bên trong hay tự mình tìm cách bịt kín nó.',
+        next: 'Nếu có thể vào được, hãy báo cho Philly311 để Thành phố có thể bịt kín nó.',
+      },
+      imminently_dangerous: {
+        text: (since) =>
+          since ? `L&I liệt kê tòa nhà này là nguy hiểm cận kề, từ ${since}.` : 'L&I liệt kê tòa nhà này là nguy hiểm cận kề.',
+        careful: 'L&I thấy công trình này có thể sụp đổ bất cứ lúc nào. Hãy tránh xa nó, và giữ người khác tránh xa.',
+        next: 'Hãy báo mọi thay đổi, như gạch rơi hoặc một cánh cửa mở, cho Philly311.',
+      },
+    },
+
+    history: {
+      transfersTitle: 'Các vụ mua bán và chuyển nhượng',
+      transfersCaption: 'Mọi vụ mua bán và chuyển nhượng được ghi nhận của bất động sản này, mới nhất trước',
+      date: 'Ngày',
+      document: 'Giấy tờ',
+      documentAndPrice: 'Giấy tờ và giá',
+      fromAndTo: 'Từ và đến',
+      price: 'Giá',
+      from: 'Từ',
+      to: 'Đến',
+      noDate: 'Không có ngày',
+      noPrice: 'Không ghi nhận',
+      share: (n) => `phần của bất động sản này trong một chứng thư cho ${n} bất động sản`,
+      more: (n) => `và ${plural(n, { other: '# bên khác' })}`,
+      noTransfers: 'Không có chứng thư nào trong hồ sơ.',
+      notInCopy: (parts) =>
+        `Bản sao hằng tuần của chúng tôi không bao gồm ${parts.length > 1 ? `${parts.slice(0, -1).join(', ')} và ${parts[parts.length - 1]}` : parts[0]} cho thửa đất này, nên trang này không thể cho biết có hay không.`,
+      partialParts: { transfers: 'hồ sơ chứng thư', assessments: 'các lần định giá', li: 'hồ sơ vi phạm L&I' },
+      notInCopyOff: 'Dữ liệu trực tiếp của Thành phố có thể cho thấy chúng.',
+      notInCopyFailed: 'Thành phố không trả lời. Hãy thử lại để xem chúng.',
+      recordsNote: 'Hồ sơ chứng thư của Thành phố đầy đủ từ năm 2000 trở đi. Các vụ bán cũ hơn có thể bị thiếu.',
+      datesNote:
+        'Mỗi ngày là ngày ghi trên chứng thư và mỗi giá được làm tròn đến đô la, như trang bất động sản của Thành phố hiển thị; Thành phố ghi nhận một chứng thư vài ngày hoặc vài tuần sau đó. Khi một chứng thư bao gồm nhiều bất động sản, giá là phần của bất động sản này.',
+      documents: {
+        DEED: 'Chứng thư (deed)',
+        'DEED SHERIFF': 'Chứng thư của Sheriff',
+        "SHERIFF'S DEED": 'Chứng thư của Sheriff',
+        'DEED MISCELLANEOUS': 'Chứng thư khác',
+        'MISCELLANEOUS DEED': 'Chứng thư khác',
+        'DEED MISCELLANEOUS TAXABLE': 'Chứng thư khác, có chịu thuế',
+        'MISCELLANEOUS DEED TAXABLE': 'Chứng thư khác, có chịu thuế',
+        'DEED LAND BANK': 'Chứng thư của Land Bank',
+        'DEED OF CONDEMNATION': 'Chứng thư trưng thu (condemnation)',
+        'DEED - DECEASED': 'Chứng thư từ một di sản',
+        'DEED - ADVERSE POSSESSION': 'Chứng thư do chiếm hữu đối nghịch (adverse possession)',
+        'DEED RTT - OTHER': 'Chứng thư thuộc loại khác',
+        'CERTIFICATE OF STOCK TRANSFER': 'Giấy chứng nhận chuyển nhượng cổ phần',
+      },
+      assessmentsTitle: 'Các lần định giá của Thành phố',
+      assessmentsCaption: 'Mức định giá giá trị thị trường của Thành phố, theo năm',
+      year: 'Năm',
+      marketValue: 'Giá trị thị trường được định giá',
+      noValue: 'Không ghi nhận',
+      noAssessments: 'Không có lần định giá nào trong hồ sơ.',
+      assessmentNote: 'Định giá là ước tính của Thành phố về giá trị thị trường để tính thuế bất động sản. Đó không phải giá bán.',
+      chartLabel: (first, last, low, high) =>
+        `Biểu đồ định giá của Thành phố từ ${first} đến ${last}, từ ${low} đến ${high}. Các con số tương tự có trong bảng bên dưới.`,
+      open: 'Còn mở',
+      liSummaryOpen: (n) => plural(n, { other: '# vi phạm còn mở' }),
+      liSummaryLast: (date) => `Vi phạm gần nhất: ${date}.`,
+      liUnsafe: 'L&I liệt kê tòa nhà này là không an toàn.',
+      liUnsafeSince: (date) => `L&I liệt kê tòa nhà này là không an toàn, từ ${date}.`,
+      liDangerous: 'L&I liệt kê tòa nhà này là nguy hiểm cận kề.',
+      liDangerousSince: (date) => `L&I liệt kê tòa nhà này là nguy hiểm cận kề, từ ${date}.`,
+      liSince2016: (n) => `${plural(n, { other: '# vi phạm' })} được ghi nhận từ năm 2016.`,
+      liSealed: (date) => `Thành phố dọn dẹp và bịt kín lần gần nhất ngày ${date}.`,
+      liDemolished: (date) => `Lần phá dỡ gần nhất hoàn tất ngày ${date}.`,
+      liNeither: 'Không được liệt kê là không an toàn hay nguy hiểm cận kề.',
+      liNowTitle: 'L&I hôm nay',
+      earlyDeed: 'Trước năm 2000: từ các hồ sơ mà Thành phố cho biết có thể chưa đầy đủ.',
+      timeline: {
+        storyTitle: 'Câu chuyện của lô đất này',
+        storySource: (source) => `Từ ${source}.`,
+        noStory: 'Các hồ sơ chúng tôi có chưa kể được một câu chuyện nào về lô đất này.',
+        title: 'Dòng thời gian',
+        caption: 'Mọi thứ có trong hồ sơ của bất động sản này, mới nhất trước, theo năm',
+        intro: 'Các vụ bán, hồ sơ L&I, kháng cáo và hồ sơ bỏ trống trong một danh sách, mới nhất trước. Hãy tắt một loại để ẩn nó.',
+        appeal: (board, kind) => (kind ? `${board}: ${kind}` : board),
+        appealHearing: (date) => `phiên điều trần ${date}`,
+        show: 'Hiện trong dòng thời gian',
+        loading: 'Đang tải dòng thời gian từ bản sao hằng tuần.',
+        failed: 'Không tải được dòng thời gian từ bản sao hằng tuần.',
+        unpublished: 'Bản sao này của bản đồ chưa có tệp dòng thời gian.',
+        liMissing: 'Bản sao hằng tuần của chúng tôi không bao gồm hồ sơ L&I cho thửa đất này, nên dòng thời gian không thể cho biết có hay không.',
+        liMissingOff: 'Dữ liệu trực tiếp của Thành phố có thể cho thấy chúng.',
+        none: 'Không có hồ sơ nào trong dòng thời gian.',
+        allHidden: 'Mọi loại hồ sơ đều đang bị tắt.',
+        moreYears: (n) => `Hiện ${plural(n, { other: '# năm trước đó' })}`,
+        fewerYears: 'Chỉ hiện các năm gần đây',
+        noDate: 'Không có ngày',
+        future: 'Thành phố ghi ngày này ở tương lai; hồ sơ của họ có thể sai.',
+        printTitle: 'Dòng thời gian, 10 hồ sơ mới nhất',
+        recordColumn: 'Hồ sơ',
+        whatColumn: 'Điều đã xảy ra',
+        printWaiting: 'Trang lô đất trực tuyến có toàn bộ dòng thời gian; nó chưa được tải khi trang này được in.',
+        printMore: (n) => `${plural(n, { other: '# hồ sơ cũ hơn' })} trên trang lô đất trực tuyến.`,
+        noPrice: 'không ghi nhận giá',
+        to: (names) => `cho ${names}`,
+        times: (n) => `(${formatNumber(n)} lần)`,
+        permit: 'Giấy phép',
+        permitFor: (type, work) => `${type} cho ${work}`,
+        violation: 'Vi phạm',
+        demolition: 'Phá dỡ',
+        byCity: 'do Thành phố thực hiện',
+        privatePermit: 'theo một giấy phép tư nhân',
+        demolitionWork: {
+          city: 'Thành phố phá dỡ',
+          complete: 'Phá dỡ hoàn toàn',
+          small: 'Phá dỡ một tòa nhà tối đa 3 tầng',
+          large: 'Phá dỡ một tòa nhà trên 3 tầng hoặc 40 feet',
+          tank: 'Dỡ bỏ bồn chứa',
+        },
+        cleanSeal: 'Do Thành phố dọn dẹp và bịt kín',
+        cleanSealClip: 'Do Community Life Improvement Program của Thành phố dọn dẹp và bịt kín',
+        kinds: {
+          deed: 'Chứng thư',
+          violation: 'Vi phạm',
+          permit: 'Giấy phép',
+          demolition: 'Phá dỡ',
+          unsafe: 'Thông báo tòa nhà không an toàn',
+          imminently_dangerous: 'Thông báo tòa nhà nguy hiểm cận kề',
+          clean_seal: 'Dọn dẹp và bịt kín',
+          appeal: 'Kháng cáo',
+          vacancy: 'Hồ sơ bỏ trống',
+        },
+        toggles: {
+          deed: 'Các vụ mua bán và chuyển nhượng',
+          violation: 'Vi phạm',
+          permit: 'Giấy phép',
+          demolition: 'Các vụ phá dỡ',
+          clean_seal: 'Dọn dẹp và bịt kín',
+          notice: 'Thông báo không an toàn và nguy hiểm cận kề',
+          appeal: 'Kháng cáo',
+          vacancy: 'Hồ sơ bỏ trống và chăm sóc',
+        },
+        lists: {
+          city_land: 'Có trong danh sách đất trống của Thành phố',
+          city_building: 'Có trong danh sách tòa nhà bỏ trống của Thành phố',
+          june_2024_land: 'Có trong danh sách đất trống của L&I tháng 6 năm 2024, do Clean & Green Philly lưu giữ',
+          june_2024_building: 'Có trong danh sách tòa nhà bỏ trống tháng 6 năm 2024 của chính Clean & Green Philly',
+        },
+        landcare: (program) =>
+          program === 'community_landcare'
+            ? 'Hàng xóm bắt đầu chăm sóc lô đất này cùng PHS Community LandCare'
+            : 'PHS LandCare bắt đầu chăm sóc lô đất này',
+        story: {
+          cityDemolished: (year) => `Một tòa nhà từng đứng ở đây cho đến năm ${year}, khi Thành phố phá dỡ nó.`,
+          privateDemolished: (year) => `Một tòa nhà từng đứng ở đây cho đến năm ${year}, khi nó bị phá dỡ theo một giấy phép tư nhân.`,
+          newConstruction: (year) => `L&I đã cấp một giấy phép xây dựng mới ở đây vào năm ${year}.`,
+          dangerous: (date) => `L&I đã liệt kê tòa nhà là nguy hiểm cận kề từ ${date}.`,
+          unsafe: (date) => `L&I đã liệt kê tòa nhà là không an toàn từ ${date}.`,
+          sealed: (year, n) =>
+            n > 1
+              ? `Thành phố cử đội dọn dẹp và bịt kín đến đây lần gần nhất vào năm ${year}; đã làm vậy ${formatNumber(n)} lần.`
+              : `Thành phố đã cử đội dọn dẹp và bịt kín đến đây vào năm ${year}.`,
+          sheriff: (year) => `Nơi này đã được bán trong một vụ bán đấu giá do Sheriff tổ chức năm ${year}.`,
+          cityList: (land, date, june) =>
+            `Danh sách ${land ? 'đất trống' : 'tòa nhà bỏ trống'} của Thành phố ngày ${date} có bao gồm nó${june ? ', cũng như một danh sách tháng 6 năm 2024' : ''}.`,
+          juneList: (land) =>
+            land ? 'Danh sách đất trống của L&I tháng 6 năm 2024 có bao gồm nó.' : 'Danh sách tòa nhà bỏ trống của Clean & Green Philly tháng 6 năm 2024 có bao gồm nó.',
+          landcare: (year, program) =>
+            program === 'community_landcare' ? `Hàng xóm đã chăm sóc nó cùng PHS Community LandCare từ năm ${year}.` : `PHS LandCare đã chăm sóc nó từ năm ${year}.`,
+          sources: {
+            demolitions: 'hồ sơ phá dỡ của L&I',
+            permits: 'hồ sơ giấy phép của L&I',
+            notices: 'hồ sơ tòa nhà không an toàn và nguy hiểm cận kề của L&I',
+            cleanSeal: 'hồ sơ dọn dẹp và bịt kín của L&I',
+            deeds: 'hồ sơ chứng thư của Thành phố',
+            lists: (june) =>
+              june ? 'danh sách bất động sản bỏ trống của Thành phố, và danh sách tháng 6 năm 2024 của L&I do Clean & Green Philly lưu giữ' : 'danh sách bất động sản bỏ trống của Thành phố',
+            june: (land) => (land ? 'danh sách tháng 6 năm 2024 của L&I, do Clean & Green Philly lưu giữ' : 'danh sách tháng 6 năm 2024 của Clean & Green Philly'),
+            landcare: 'danh sách các lô đất mà PHS LandCare chăm sóc',
+          },
+        },
+      },
+    },
+
+    nearby: {
+      intro: 'Những gì xung quanh lô đất này, để sự chăm sóc có thể đến nơi giúp được nhiều nhất.',
+      careNote: 'Các số đếm này cho thấy nơi cần được chăm sóc nhiều nhất. Chúng không nói gì về những người sống ở đây.',
+      areaSnapshot: 'Trong khu vực quanh lô đất này, rộng cỡ hai dãy phố',
+      within500: 'Trong vòng 500 feet quanh lô đất này',
+      s12: (n) => `${plural(n, { other: '# người' })} bị bắn trong 12 tháng qua`,
+      s36: (n) => `${plural(n, { other: '# người' })} bị bắn trong 3 năm qua`,
+      killed: (n) => `${plural(n, { other: '# người' })} thiệt mạng trong các vụ tai nạn giao thông từ năm 2019`,
+      landcare: (n) => `${plural(n, { other: '# lô đất' })} do PHS LandCare chăm sóc`,
+      gardens: (n) => `${plural(n, { other: '# vườn cộng đồng' })}`,
+      hearings: (n) => `${plural(n, { other: '# phiên điều trần' })} sắp diễn ra về các bất động sản khác`,
+      playgroundHeading: 'Sân chơi gần nhất',
+      playground: (name, meters) =>
+        `${name}, cách khoảng ${distanceWords(meters)} theo đường thẳng${meters <= 400 ? ', trong vòng 5 phút đi bộ' : meters <= 800 ? ', trong vòng 10 phút đi bộ' : ''}.`,
+      none: 'Chưa có số đếm gần đây cho nơi này.',
+      showLayer: (label) => `Hiện ${label} trên bản đồ`,
+    },
+
+    sources: {
+      intro: 'Mỗi phần của trang này đến từ đâu, và nó mới đến mức nào.',
+      live: (time) => `trực tiếp từ Thành phố lúc ${time}`,
+      snapshot: (date) => `bản chụp hằng tuần ngày ${date}`,
+      snapshotNoDate: 'bản chụp hằng tuần',
+      newest: (date) => `hồ sơ mới nhất ${date}`,
+      taxSnapshot: 'bản chụp cuối cùng của Clean & Green Philly, ngày 9 tháng 7 năm 2025',
+      by: (publisher) => `từ ${publisher}`,
+      correction: 'Báo một chỉnh sửa',
+      correctionHelp: 'Mở một biểu mẫu trên GitHub, đã điền sẵn thửa đất này. Để gửi cần một tài khoản GitHub miễn phí.',
+      ownerNote:
+        'Nếu bạn là chủ bất động sản này và một hồ sơ của Thành phố về nó bị sai, cơ quan của Thành phố giữ hồ sơ đó có thể sửa tại nguồn: Office of Property Assessment cho tên chủ sở hữu, địa chỉ gửi thư và các lần định giá, Department of Records cho chứng thư, và Licenses and Inspections cho vi phạm và giấy phép.',
+    },
+
+    ownerList: {
+      title: 'Các thửa đất của chủ sở hữu này trong danh sách của chúng tôi',
+      intro: (names) => `Các thửa đất trong danh sách của chúng tôi mà chủ sở hữu được ghi là ${names}.`,
+      others: 'Các thửa đất khác trong danh sách của chúng tôi mà chủ sở hữu được ghi dưới cùng những tên như thửa này.',
+      loading: 'Đang tải danh sách',
+      missing: 'Danh sách này hiện không có.',
+      open: (address) => `Mở trang lô đất của ${address}`,
+      kind: (kind, confidence) => (confidence ? `${kind}, ${confidence.toLowerCase()}` : kind),
+    },
+
+    print: {
+      printed: (date) => `In từ Placekeepers ngày ${date}.`,
+      recent: 'Lịch sử gần đây',
+      moreOnline: (n) => `${plural(n, { other: '# hồ sơ khác' })} trên trang lô đất trực tuyến.`,
+      lastAssessment: (year, value) => `Định giá của Thành phố cho năm ${year}: ${value}.`,
+      moreSources: (n) => `${plural(n, { other: '# nguồn khác' })} trên trang lô đất trực tuyến.`,
+      taxCenter: (url) => `Số dư hôm nay: Tax Center của Thành phố, ${url}`,
+      rules: 'Các quy định cho lô đất này',
+    },
+
+    rules: {
+      intro:
+        'Hồ sơ của Thành phố và liên bang cho biết điều gì áp dụng cho lô đất này: chỉ định lịch sử, quy hoạch phân vùng (zoning) và các lớp phủ của nó, hồ sơ brownfield, và các kháng cáo lên các hội đồng của Thành phố. Không điều nào trong số này cho biết có được xây gì ở đây hay không. Hãy hỏi cơ quan được nêu trước khi bạn lên kế hoạch bất cứ điều gì.',
+      notOnList:
+        'Các quy định được tìm ra mỗi tuần cho các lô đất trong danh sách của chúng tôi, và thửa đất này không có trong đó. Atlas, bản đồ của Thành phố, cho thấy quy hoạch và các lớp phủ của nó, và Historical Commission có thể cho biết nó có phải là di tích lịch sử hay không.',
+      hearingTitle: 'Sắp có một phiên điều trần',
+      hearingSet: (board, date, time) => `Một phiên điều trần của ${board} về lô đất này được ấn định vào ngày ${date}${time ? `, lúc ${time}` : ''}.`,
+      hearingBoard: { zoning: 'Zoning Board of Adjustment', li_review: 'L&I Review Board', building: 'Board of Building Standards', other: 'hội đồng Thành phố khác' },
+      seeAppeal: 'Xem đơn kháng cáo',
+      historicTitle: 'Chỉ định lịch sử',
+      inDistrict: (district, date) => `Lô đất này nằm trong ${district}${date ? `, được chỉ định ngày ${date}` : ''}.`,
+      districtName: (name) => (/district/i.test(name) ? name : `khu lịch sử ${name}`),
+      listed: (date) => `Bất động sản này được liệt kê riêng trong Philadelphia Register of Historic Places từ ${date}.`,
+      listedNoDate: 'Bất động sản này được liệt kê riêng trong Philadelphia Register of Historic Places.',
+      listedInDistrict: (district) => `Bất động sản này nằm trong Philadelphia Register of Historic Places như một phần của ${district}.`,
+      askFirst:
+        'Thay đổi ở đây có thể cần Historical Commission xem xét; hãy hỏi họ trước. Với một bức tranh tường hoặc một khu vườn, hãy hỏi Commission trước khi bắt đầu.',
+      contact: 'Philadelphia Historical Commission: 215 686 7660, preservation@phila.gov.',
+      confirm: 'Thành phố đề nghị mọi người xác nhận tình trạng lịch sử của một bất động sản với Commission.',
+      commissionSite: 'Trang web của Historical Commission',
+      projectReview: 'Cách Commission xem xét công việc trên các bất động sản lịch sử',
+      findHistoric: 'Tìm một bất động sản hoặc khu lịch sử',
+      notHistoric: 'Hồ sơ của Historical Commission không liệt kê lô đất này là lịch sử. Hãy hỏi Commission cho chắc.',
+      zoningTitle: 'Quy hoạch phân vùng (zoning)',
+      base: (code, group) => `Quy hoạch cơ bản: ${code}${group ? `, ${group}` : ''}.`,
+      zoningGroups: {
+        'RESIDENTIAL/MULTI-FAMILY/RESIDENTIAL MIXED-USE': 'một khu dân cư',
+        'COMMERCIAL/COMMERCIAL MIXED-USE': 'một khu thương mại và sử dụng hỗn hợp',
+        'INDUSTRIAL/INDUSTRIAL MIXED-USE': 'một khu công nghiệp',
+        'SPECIAL PURPOSE': 'một khu mục đích đặc biệt, như công viên, cơ sở tổ chức hoặc sân bay',
+      },
+      basePending: 'Một dự luật đang chờ ở Hội đồng Thành phố sẽ thay đổi nó.',
+      readBill: 'Đọc dự luật',
+      overlaysIntro: (n) => (n === 1 ? 'Một lớp phủ thêm quy định riêng của nó ở đây:' : `${formatNumber(n)} lớp phủ thêm quy định riêng của chúng ở đây:`),
+      noOverlays: 'Không có lớp phủ quy hoạch nào bao phủ lô đất này.',
+      overlayKinds: { 1: 'Khu lớp phủ', 2: 'Quy định đặc biệt', 3: 'Giới hạn lát nền' },
+      readRule: (section) => (section ? `Đọc quy định: Zoning Code mục ${section}` : 'Đọc quy định trong Zoning Code'),
+      sunset: (date) => `Dự kiến chấm dứt ngày ${date}.`,
+      pending: (bill) => `Một dự luật đang chờ ở Hội đồng Thành phố${bill ? `, Dự luật ${bill},` : ''} sẽ thay đổi nó.`,
+      zoningNote:
+        'Quy hoạch và các lớp phủ có thể thay đổi điều được phép trên một lô đất. Bản đồ của Thành phố có thể chậm hơn các dự luật mới, nên hãy kiểm tra với văn phòng quy hoạch của Thành phố trước khi bạn lên kế hoạch.',
+      zoningHelp: 'Hỗ trợ về quy hoạch và kế hoạch của Thành phố',
+      atlasZoning: 'Địa chỉ này trên Atlas, bản đồ của Thành phố',
+      overlayMeaning: {
+        '/CTR': 'Các quy định thêm cho Center City: việc sử dụng đất, biển hiệu, chiều cao tòa nhà, chỗ đỗ xe và mặt tiền phố.',
+        '/NCO': 'Các quy định giữ cho các tòa nhà mới và phần xây thêm phù hợp với khu phố này.',
+        '/NCA': 'Các quy định cho các cửa hàng và cách sử dụng đất dọc theo con phố thương mại này.',
+        '/TOC': 'Các quy định gần một ga tàu, ưu tiên nhà ở và cửa hàng gần phương tiện công cộng.',
+        '/NIS': 'Các quy định về nơi một cơ sở tiêm chích có giám sát có thể mở. Nó bao phủ phần lớn thành phố.',
+        '/MIN': 'Các quy định về nhà ở giá phải chăng trong các dự án nhà ở mới.',
+        '/AHP': 'Các quy định khuyến khích giữ lại nhà ở giá phải chăng.',
+        '/AHC': 'Giới hạn chiều cao gần sân bay.',
+        '/HHC': 'Giới hạn chiều cao gần một sân bay trực thăng.',
+        '/ENV': 'Các quy định bảo vệ các đặc điểm thiên nhiên như cây cối, sườn dốc và suối.',
+        '/WWO': 'Các quy định bảo vệ Wissahickon Creek và các nhánh suối của nó.',
+        '/DRC': 'Các quy định cho đất dọc theo sông Delaware.',
+        '/CDO': 'Các quy định cho bờ sông Central Delaware.',
+        '/FNE': 'Các quy định thêm cho Far Northeast.',
+        '/NE': 'Các quy định thêm cho Northeast.',
+        '/UED': 'Các quy định về màn hình chiếu sáng lớn và biển hiệu.',
+        council: 'Các quy định thêm mà Hội đồng Thành phố đặt ra cho một phần của một khu vực Hội đồng.',
+        flood: 'Các quy định chống lũ: giới hạn việc xây dựng và san lấp đất ở nơi lũ lên tới.',
+        steep: 'Giới hạn việc xây dựng và san nền trên sườn dốc.',
+        coverage: 'Giới hạn phần lô đất có thể bị che phủ bởi tòa nhà và lát nền, để bảo vệ Wissahickon Creek.',
+        animal: 'Một khu vực mà Zoning Code cho phép người dân nuôi một số vật nuôi trang trại, theo các quy định của nó.',
+        signs: 'Các quy định về biển hiệu và bảng quảng cáo.',
+        childCare: 'Các quy định về dịch vụ giữ trẻ gia đình tại nhà.',
+        parking: 'Các quy định về số chỗ đỗ xe mà các tòa nhà mới cần.',
+        loading: 'Các quy định về khu vực bốc dỡ hàng cho các tòa nhà.',
+        dispensary: 'Các quy định về việc một cửa hàng thuốc cần sa y tế có thể ở gần các nơi khác đến mức nào.',
+        institutional: 'Các quy định cho các cơ sở tổ chức dọc Germantown Avenue.',
+        pump: 'Các quy định gần một trạm bơm nước.',
+        floorArea: 'Các quy định về tổng diện tích sàn mà các tòa nhà có thể có.',
+        waterfront: 'Khoảng lùi xây dựng dọc bờ sông.',
+        overlay: 'Một khu lớp phủ thêm các quy định riêng của nó lên trên quy hoạch cơ bản ở đây.',
+        supplemental: 'Một quy định đặc biệt mà Zoning Code thêm cho khu vực này.',
+      },
+      brownfieldTitle: 'Hồ sơ brownfield',
+      brownfield:
+        'Hồ sơ ghi nhận một đợt đánh giá hoặc dọn dẹp brownfield của liên bang (brownfield là đất từng dùng cho công nghiệp, có thể còn ô nhiễm) tại hoặc gần địa chỉ này. Hãy xét nghiệm đất trước khi trồng thực phẩm.',
+      brownfieldSite: (name, feet) => `${name}, cách lô đất này khoảng ${formatNumber(feet)} feet`,
+      onLot: 'trên lô đất này',
+      brownfieldMore: (n) => `và ${plural(n, { other: '# hồ sơ khác' })} trong phạm vi khoảng 330 feet`,
+      brownfieldNote: 'Hồ sơ của EPA cho thấy nơi một khoản trợ cấp brownfield của liên bang đã chi trả cho công việc. Chúng không cho biết hiện nay trong lòng đất có gì.',
+      soilTest: 'Xét nghiệm đất của Penn State Extension',
+      gardenGuide: 'Hướng dẫn của EPA về làm vườn trong đất thành phố',
+      epaRecord: 'Hồ sơ này tại EPA',
+      appealsTitle: 'Kháng cáo và phiên điều trần',
+      appealsIntro: 'Các kháng cáo lên các hội đồng của Thành phố về bất động sản này, mới nhất trước, như Thành phố công bố.',
+      noAppeals: 'Không có kháng cáo nào lên các hội đồng của Thành phố trong hồ sơ của bất động sản này.',
+      appealsMissing: 'Bản sao hằng tuần của chúng tôi được dựng mà không có hồ sơ kháng cáo của Thành phố, nên trang này không thể cho biết có hay không.',
+      appealsMissingOff: 'Dữ liệu trực tiếp của Thành phố có thể cho thấy chúng.',
+      boards: {
+        zoning: 'Zoning Board of Adjustment',
+        li_review: 'L&I Review Board',
+        building: 'Board of Building Standards',
+        other: 'Một hội đồng khác của Thành phố',
+      },
+      comingUp: 'Sắp tới',
+      filed: (date) => `Nộp ngày ${date}`,
+      hearingOn: (date, time, upcoming) => `${upcoming ? 'Phiên điều trần được ấn định vào' : 'Phiên điều trần'} ${date}${time ? `, lúc ${time}` : ''}`,
+      decidedOn: (date) => `Quyết định ngày ${date}`,
+      status: (status) => `Trạng thái: ${status}`,
+      decision: (decision) => `Quyết định: ${decision}`,
+      rco: (name) => `Thành phố đã thông báo cho tổ chức cộng đồng đã đăng ký (RCO) này: ${name}.`,
+      filedBy: 'Người nộp',
+      ownerNamed: 'Chủ sở hữu được nêu tên',
+      namesNote: 'Tên được ghi như Thành phố công bố. Chúng chỉ xuất hiện trên trang của lô đất này, không bao giờ trên bản đồ hay trong các tệp tải xuống.',
+      grounds: 'Đọc đơn kháng cáo và căn cứ của nó tại Thành phố (lịch sử bất động sản của L&I)',
+      takePart: {
+        zoning: 'Cách tham gia một phiên điều trần về quy hoạch (zoning)',
+        li_review: 'L&I Review Board',
+        building: 'Board of Building Standards',
+        other: 'Lịch kháng cáo của Thành phố',
+      },
+      calendar: 'Lịch các phiên điều trần của Thành phố',
+      decisions: {
+        'GRANTED/PROV': 'Được chấp thuận kèm điều kiện',
+        'DENIED/PROV': 'Bị từ chối kèm điều kiện',
+        'DISMI/ENFORC': 'Bị bác bỏ',
+        'ADMIN/REVIEW': 'Chuyển sang xem xét hành chính',
+        'HELD/INFO': 'Hoãn để lấy thêm thông tin',
+        NEWHEARNOT: 'Không cho phép điều trần lại',
+        BOARDAKNOWL: 'Hội đồng đã ghi nhận',
+        'LATE-APPRVD': 'Kháng cáo trễ được chấp thuận',
+        'CITY AFFIRMED': 'Quyết định của Thành phố được giữ nguyên',
+        AFFIRMED: 'Quyết định của Thành phố được giữ nguyên',
+      },
+      missing: {
+        historic:
+          'Bản sao hằng tuần của chúng tôi được dựng mà không có danh bạ di tích lịch sử, nên trang này không thể cho biết lô đất này có phải là di tích lịch sử hay không. Hãy hỏi Historical Commission.',
+        overlays: 'Bản sao hằng tuần của chúng tôi được dựng mà không có các lớp phủ quy hoạch, nên trang này không thể liệt kê chúng. Atlas, bản đồ của Thành phố, cho thấy chúng.',
+        brownfields: 'Bản sao hằng tuần của chúng tôi được dựng mà không có hồ sơ brownfield của EPA, nên trang này không thể cho biết gần đây có hồ sơ nào hay không.',
+      },
+      none: 'Không hồ sơ nào trong số này nêu tên lô đất này.',
+    },
+  },
+
+};
 
 export default vi;
