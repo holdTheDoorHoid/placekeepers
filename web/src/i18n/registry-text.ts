@@ -12,12 +12,16 @@
 //         min_confidence:
 //           label: ...
 //           options:
-//             "3": ...
+//             "3":                              # keyed by the option's value
+//               label: ...
 //   routes:
 //     garden_agreement:
 //       steps: [first step, second step, ...]   # as many as English has
 //       links:
-//         "https://www.phila.gov/...": ...      # keyed by the link's address
+//         "https://www.phila.gov/...":          # keyed by the link's address
+//           label: ...
+//
+// An option or a link is never a plain string: its words go under `label`.
 //
 // Ids, addresses, numbers, licenses, attributions and partner names are never translated.
 

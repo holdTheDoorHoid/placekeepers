@@ -103,12 +103,12 @@ once a native speaker has checked the language.
    |---|---|
    | `groups` | `label`, `description` |
    | `sources` | `name`, `publisher` |
-   | `layers` | `label`, `description`; `settings` by id, each `label` and `options` by value |
+   | `layers` | `label`, `description`; `settings` by id, each `label` and `options` by value, each option's `label` |
    | `lenses` | `label`, `description`; `factors` by id with `label` and `explain`; `presets` by id with `label` |
    | `suggestions` | `label`, `summary`, `cost` |
-   | `routes` | `label`, `who`, `warning`, `cost`, `timeline`; `steps` as a list as long as English's; `links` keyed by the link's address, each the link's words |
+   | `routes` | `label`, `who`, `warning`, `cost`, `timeline`; `steps` as a list as long as English's; `links` keyed by the link's address, each with the link's words as `label` |
    | `partners` | `one_line` |
-   | `options` | `label`, `description`; `options` by value |
+   | `options` | `label`, `description`; `options` by value, each option's `label` |
 
    Ids, addresses, licenses, attributions and partner names are never translated.
 5. **Content pages.** Copy `content/<page>.md` to `content/<code>/<page>.md` and translate it.
