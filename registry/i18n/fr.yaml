@@ -1,0 +1,323 @@
+# French (fr) translations of the visitor facing words in registry/*.yaml, by id. English in
+# registry/*.yaml is the source; anything left out here shows the English. Which fields may be
+# translated, and the shape of this file, are in docs/TRANSLATING.md and
+# web/src/i18n/registry-text.ts. The key terms are fixed in docs/i18n/glossary-fr.md.
+
+groups:
+  lots:
+    label: "Terrains et bâtiments"
+    description: "Terrains vacants et bâtiments abandonnés, et ce qu'on pourrait en faire."
+  care:
+    label: "Soins déjà en cours"
+    description: "Terrains déjà entretenus, jardins, parcs et autres lieux dont des gens s'occupent déjà."
+  displacement:
+    label: "Prix et protections"
+    description: "Là où les prix montent, pour que le verdissement et d'autres améliorations soient associés à des protections pour les voisins qui y habitent maintenant."
+  rules:
+    label: "Règles du terrain et audiences"
+    description: "Quartiers et propriétés historiques, zonages superposés, audiences à venir sur des terrains et des bâtiments, et sites brownfield fédéraux."
+  streets:
+    label: "Rues et mémoriaux"
+    description: "Le réseau High Injury Network, les accidents, les personnes tuées dans nos rues, et les poteaux de rue, les aménagements de modération de la circulation et les brigadiers scolaires que la Ville répertorie."
+  transit:
+    label: "Bus et trains"
+    description: "Arrêts et lignes de la SEPTA, la fréquence du service, le nombre de personnes qui montent, et les arrêts qui ont un abribus ou un banc, d'après la liste des abribus de la Ville et OpenStreetMap."
+  heat:
+    label: "Chaleur, arbres et inondations"
+    description: "À quel point la chaleur de l'été frappe chaque quartier, les arbres que la Ville entretient dans ses rues et ses parcs, et les endroits où la FEMA prévoit des inondations."
+  amenities:
+    label: "Bancs, eau, toilettes et plus"
+    description: "Des endroits pour s'asseoir, boire de l'eau, utiliser des toilettes ou emprunter un livre, tels que cartographiés dans OpenStreetMap, et les fontaines à boire des parcs."
+  public_places:
+    label: "Bibliothèques, centres de loisirs et piscines"
+    description: "Les bibliothèques de la Free Library, les centres de loisirs, piscines et aires de jeux d'eau de Parks and Recreation, et les refuges de la Ville contre le froid ou la chaleur, tels que la Ville les répertorie."
+  conditions:
+    label: "Problèmes signalés au 311"
+    description: "Dépôts sauvages, lumières éteintes et graffitis que des gens ont signalés à Philly311 au cours des 90 derniers jours, comptés par tronçon de rue."
+  placemaking:
+    label: "Art et création de lieux"
+    description: "Fresques, sculptures, mosaïques et autre art public, de la Ville, d'OpenStreetMap et de Wikidata, et les aires de jeux de la Ville."
+  walking:
+    label: "Marche, vélo et habitants"
+    description: "À quel point chaque zone est praticable à pied, combien de personnes et de lieux du quotidien se trouvent à courte distance à pied, et à quel point chaque rue est stressante pour les personnes à vélo."
+  then_and_now:
+    label: "Hier et aujourd'hui"
+    description: "Ce qui se trouvait dans une rue avant, et ce qu'il reste du passé. Les photos aériennes depuis 1959 et l'atlas de 1860 se chargent depuis les serveurs de la Ville seulement quand on les active ; la carte du redlining de 1937 vient de ce site."
+  safety_context:
+    label: "Là où le soin est le plus nécessaire"
+    description: "Du contexte qui montre où les améliorations aideront probablement le plus."
+  boundaries:
+    label: "Limites"
+    description: "Districts du Conseil municipal, organisations communautaires et quartiers."
+  basemap:
+    label: "Fond de carte"
+    description: "Rues, bâtiments et noms de lieux, sous tout le reste."
+
+sources:
+  opa_properties:
+    name: "Propriétés de l'OPA"
+    publisher: "Ville de Philadelphie, Office of Property Assessment"
+  pwd_parcels:
+    name: "Parcelles du Water Department"
+    publisher: "Philadelphia Water Department"
+  vacant_indicators_land:
+    name: "Indicateurs de propriétés vacantes, terrains"
+    publisher: "Ville de Philadelphie"
+  vacant_indicators_bldg:
+    name: "Indicateurs de propriétés vacantes, bâtiments"
+    publisher: "Ville de Philadelphie"
+  shootings:
+    name: "Victimes de fusillades"
+    publisher: "Philadelphia Police Department"
+  high_injury_network:
+    name: "Réseau Vision Zero High Injury Network 2025"
+    publisher: "Ville de Philadelphie, Office of Transportation and Infrastructure Systems"
+  real_estate_transfers:
+    name: "Transferts de biens immobiliers"
+    publisher: "Ville de Philadelphie, Department of Records"
+  assessment_history:
+    name: "Historique des évaluations"
+    publisher: "Ville de Philadelphie, Office of Property Assessment"
+  li_violations:
+    name: "Infractions au code relevées par L&I"
+    publisher: "Ville de Philadelphie, Department of Licenses and Inspections"
+  li_complaints:
+    name: "Plaintes reçues par L&I"
+    publisher: "Ville de Philadelphie, Department of Licenses and Inspections"
+  li_permits:
+    name: "Permis de construire et de zonage de L&I"
+    publisher: "Ville de Philadelphie, Department of Licenses and Inspections"
+  li_unsafe:
+    name: "Bâtiments non sûrs"
+    publisher: "Ville de Philadelphie, Department of Licenses and Inspections"
+  li_imminently_dangerous:
+    name: "Bâtiments en danger imminent"
+    publisher: "Ville de Philadelphie, Department of Licenses and Inspections"
+  li_clean_and_seal:
+    name: "Ordres de travaux de nettoyage et de scellement"
+    publisher: "Ville de Philadelphie, Department of Licenses and Inspections"
+  li_demolitions:
+    name: "Démolitions de bâtiments"
+    publisher: "Ville de Philadelphie, Department of Licenses and Inspections"
+  building_footprints:
+    name: "Empreintes des bâtiments"
+    publisher: "Ville de Philadelphie, Department of Licenses and Inspections"
+  land_use:
+    name: "Occupation du sol"
+    publisher: "Philadelphia City Planning Commission"
+  city_owned_property:
+    name: "Propriétés appartenant à la Ville"
+    publisher: "Ville de Philadelphie, Department of Planning and Development"
+  phs_landcare:
+    name: "Terrains de PHS LandCare"
+    publisher: "Pennsylvania Horticultural Society, via la Ville de Philadelphie"
+  gardens_phs_ngt:
+    name: "Jardins soutenus par PHS et le Neighborhood Gardens Trust"
+    publisher: "Pennsylvania Horticultural Society et Neighborhood Gardens Trust"
+  gardens_registered:
+    name: "Jardins communautaires enregistrés"
+    publisher: "Philadelphia Parks and Recreation"
+  ppr_properties:
+    name: "Propriétés de Parks and Recreation"
+    publisher: "Philadelphia Parks and Recreation"
+  zoning_base_districts:
+    name: "Districts de zonage de base"
+    publisher: "Philadelphia City Planning Commission"
+  council_districts:
+    name: "Districts du Conseil municipal 2024"
+    publisher: "Ville de Philadelphie"
+  community_organizations:
+    name: "Organisations communautaires enregistrées (RCO)"
+    publisher: "Philadelphia City Planning Commission"
+  neighborhoods:
+    name: "Quartiers de Philadelphie"
+    publisher: "Abaca Labs, via OpenDataPhilly"
+  acs_poverty:
+    name: "Taux de pauvreté par secteur de recensement (ACS 2020 à 2024)"
+    publisher: "Bureau du recensement des États-Unis (U.S. Census Bureau), American Community Survey"
+  cagp_tax_2025:
+    name: "Dette d'impôts en juillet 2025 (Clean & Green Philly)"
+    publisher: "Clean & Green Philly, Code for Philly"
+  crashes_2020_2024:
+    name: "Accidents, 2020 à 2024 (données de PennDOT, copie de la Ville)"
+    publisher: "Ville de Philadelphie, d'après les registres d'accidents du Pennsylvania Department of Transportation"
+  crashes_2016_2020:
+    name: "Accidents, 2016 à 2020 (données de PennDOT, copie de la Ville)"
+    publisher: "Ville de Philadelphie, d'après les registres d'accidents du Pennsylvania Department of Transportation"
+  crashes_2007_2017:
+    name: "Accidents, 2015 (données de PennDOT, copie de la Ville de 2007 à 2017)"
+    publisher: "Ville de Philadelphie, d'après les registres d'accidents du Pennsylvania Department of Transportation"
+  fatal_crashes:
+    name: "Accidents mortels"
+    publisher: "Philadelphia Police Department, Accident Investigation Unit"
+  schools:
+    name: "Écoles"
+    publisher: "Ville de Philadelphie, Planning Commission"
+  street_centerlines:
+    name: "Axes des rues"
+    publisher: "Ville de Philadelphie, Streets Department"
+  memorial_names:
+    name: "Noms des mémoriaux, choisis à la main"
+    publisher: "Placekeepers, d'après des listes de mémoriaux publiques comme TrafficVictimsPHL de la Bicycle Coalition"
+  pba_laser:
+    name: "Problèmes de stationnement signalés avec Laser Vision"
+    publisher: "Philly Bike Action"
+  census_tracts_2020:
+    name: "Secteurs de recensement 2020"
+    publisher: "Ville de Philadelphie, Planning Commission, d'après le Bureau du recensement des États-Unis (U.S. Census Bureau)"
+  tree_canopy_2018:
+    name: "Couvert arboré 2008 à 2018"
+    publisher: "Ville de Philadelphie, Parks and Recreation, avec le University of Vermont Spatial Analysis Laboratory"
+  street_trees:
+    name: "Inventaire des arbres de rue"
+    publisher: "Ville de Philadelphie, Parks and Recreation"
+  fema_floodplain:
+    name: "Zone inondable de la FEMA (2023)"
+    publisher: "Federal Emergency Management Agency, publié par la Ville de Philadelphie"
+  basemap_openstreetmap:
+    name: "Fond de carte d'OpenStreetMap"
+    publisher: "OpenStreetMap contributors, dans un fichier de carte construit par Protomaps"
+  septa_gtfs:
+    name: "Horaires de la SEPTA (GTFS)"
+    publisher: "Southeastern Pennsylvania Transportation Authority (SEPTA)"
+  septa_ridership_bus:
+    name: "Fréquentation des arrêts de bus de la SEPTA"
+    publisher: "Southeastern Pennsylvania Transportation Authority (SEPTA)"
+  septa_ridership_trolley:
+    name: "Fréquentation des arrêts de tramway de la SEPTA"
+    publisher: "Southeastern Pennsylvania Transportation Authority (SEPTA)"
+  osm_philadelphia:
+    name: "OpenStreetMap à Philadelphie (arrêts de bus, abribus, bancs, eau, toilettes et plus)"
+    publisher: "OpenStreetMap contributors, d'après l'extrait de la Pennsylvanie de Geofabrik"
+  heat_vulnerability:
+    name: "Vulnérabilité à la chaleur par secteur de recensement"
+    publisher: "Ville de Philadelphie, Department of Public Health et Office of Sustainability"
+  library_locations:
+    name: "Emplacements de la Free Library"
+    publisher: "Ville de Philadelphie, pour la Free Library of Philadelphia"
+  ppr_program_sites:
+    name: "Sites de programmes de Parks and Recreation"
+    publisher: "Ville de Philadelphie, Parks and Recreation"
+  ppr_swimming_pools:
+    name: "Piscines de Parks and Recreation"
+    publisher: "Ville de Philadelphie, Parks and Recreation"
+  ppr_spraygrounds:
+    name: "Aires de jeux d'eau de Parks and Recreation"
+    publisher: "Ville de Philadelphie, Parks and Recreation"
+  ppr_hydration_stations:
+    name: "Points d'eau de Parks and Recreation"
+    publisher: "Ville de Philadelphie, Parks and Recreation"
+  philly311_conditions:
+    name: "Demandes à Philly311 sur les dépôts sauvages, les lumières éteintes et les graffitis"
+    publisher: "Ville de Philadelphie, Philly311"
+  bus_shelters:
+    name: "Abribus"
+    publisher: "Ville de Philadelphie, Office of Transportation and Infrastructure Systems"
+  street_poles:
+    name: "Poteaux de rue"
+    publisher: "Ville de Philadelphie, Streets Department (Street Lighting Division)"
+  traffic_calming:
+    name: "Dispositifs de modération de la circulation"
+    publisher: "Ville de Philadelphie, Streets Department"
+  crossing_guards:
+    name: "Emplacements de brigadiers scolaires"
+    publisher: "Ville de Philadelphie, Streets Department"
+  percent_for_art:
+    name: "Collection Percent for Art"
+    publisher: "Ville de Philadelphie, Department of Planning and Development"
+  wikidata_art:
+    name: "Art public dans Wikidata"
+    publisher: "Contributeurs de Wikidata (Wikimedia Foundation)"
+  commercial_corridors:
+    name: "Axes commerciaux de Philadelphie"
+    publisher: "Ville de Philadelphie, Department of Planning and Development"
+  epa_walkability:
+    name: "Indice national de marchabilité (Smart Location Database de l'EPA)"
+    publisher: "U.S. Environmental Protection Agency, Office of Community Revitalization"
+  census_blocks_2020:
+    name: "Habitants par îlot de recensement (recensement de 2020)"
+    publisher: "Bureau du recensement des États-Unis (U.S. Census Bureau), données de redécoupage du recensement de 2020 (P.L. 94-171)"
+  dvrpc_lts:
+    name: "Stress de la circulation à vélo (Level of Traffic Stress de la DVRPC)"
+    publisher: "Delaware Valley Regional Planning Commission (DVRPC)"
+  snap_retailers:
+    name: "Magasins d'alimentation qui acceptent le SNAP (USDA)"
+    publisher: "U.S. Department of Agriculture, données sur les détaillants SNAP"
+  real_estate_sales:
+    name: "Ventes immobilières, dans toute la ville"
+    publisher: "Ville de Philadelphie, Department of Records"
+  assessment_values:
+    name: "Valeurs marchandes évaluées, dans toute la ville, deux années d'imposition"
+    publisher: "Ville de Philadelphie, Office of Property Assessment"
+  acs_tenure:
+    name: "Locataires et propriétaires par secteur de recensement (ACS 2020 à 2024)"
+    publisher: "Bureau du recensement des États-Unis (U.S. Census Bureau), American Community Survey"
+  market_value_analysis:
+    name: "Market Value Analysis 2026 (analyse de la valeur marchande)"
+    publisher: "Reinvestment Fund, pour le Department of Planning and Development de la Ville de Philadelphie"
+  li_history:
+    name: "Registres de L&I pour la chronologie du terrain"
+    publisher: "Ville de Philadelphie, Department of Licenses and Inspections"
+  cagp_vacant_land_2024:
+    name: "Liste des terrains vacants, juin 2024 (L&I, tenue par Clean & Green Philly)"
+    publisher: "Ville de Philadelphie, Department of Licenses and Inspections, tenue par Clean & Green Philly (Code for Philly)"
+  cagp_vacant_buildings_2024:
+    name: "Liste des bâtiments vacants, juin 2024 (Clean & Green Philly)"
+    publisher: "Clean & Green Philly, Code for Philly"
+  historic_districts:
+    name: "Quartiers historiques locaux"
+    publisher: "Philadelphia Historical Commission"
+  historic_sites:
+    name: "Philadelphia Register of Historic Places, propriétés"
+    publisher: "Philadelphia Historical Commission"
+  zoning_overlays:
+    name: "Zonages superposés"
+    publisher: "Philadelphia City Planning Commission"
+  appeals:
+    name: "Appels devant le Zoning Board, le L&I Review Board et d'autres comités"
+    publisher: "Ville de Philadelphie, Department of Licenses and Inspections"
+  epa_brownfields:
+    name: "Propriétés brownfield de l'EPA (ACRES), Philadelphie"
+    publisher: "United States Environmental Protection Agency"
+  land_conveyances:
+    name: "Actes des agences foncières de la Ville depuis 2014"
+    publisher: "Ville de Philadelphie, Department of Records"
+  land_conveyed_by_fy:
+    name: "Propriétés cédées par programme et par exercice, 2017 à 2023 (tableau de bord Land Management)"
+    publisher: "Ville de Philadelphie, Department of Planning and Development (Land Management)"
+  city_aerial_photos:
+    name: "Photographies aériennes par année (orthophotos)"
+    publisher: "Ville de Philadelphie, Office of Innovation and Technology"
+  dvrpc_aerial_photos:
+    name: "Photographies aériennes de 1959 et 1975"
+    publisher: "Delaware Valley Regional Planning Commission, hébergées par la Ville de Philadelphie"
+  usgs_aerial_photos_1999:
+    name: "Photographies aériennes de 1999"
+    publisher: "U.S. Geological Survey, hébergées par la Ville de Philadelphie"
+  city_atlas_1860:
+    name: "Atlas Hexamer et Locher de 1860"
+    publisher: "Greater Philadelphia GeoHistory Network, hébergé par la Ville de Philadelphie"
+  mapping_inequality_1937:
+    name: "Mapping Inequality : la carte de la HOLC de 1937 pour Philadelphie"
+    publisher: "University of Richmond, Digital Scholarship Lab"
+  acs_rent_burden:
+    name: "Loyer en part du revenu par secteur de recensement (ACS 2020 à 2024)"
+    publisher: "Bureau du recensement des États-Unis (U.S. Census Bureau), American Community Survey"
+  acs_occupancy:
+    name: "Logements habités et vides par secteur de recensement (ACS 2020 à 2024)"
+    publisher: "Bureau du recensement des États-Unis (U.S. Census Bureau), American Community Survey"
+  acs_vacancy:
+    name: "Pourquoi les logements sont vides, par secteur de recensement (ACS 2020 à 2024)"
+    publisher: "Bureau du recensement des États-Unis (U.S. Census Bureau), American Community Survey"
+  acs_income:
+    name: "Revenu médian des ménages par secteur de recensement (ACS 2020 à 2024)"
+    publisher: "Bureau du recensement des États-Unis (U.S. Census Bureau), American Community Survey"
+  acs_rent:
+    name: "Loyer médian par secteur de recensement (ACS 2020 à 2024)"
+    publisher: "Bureau du recensement des États-Unis (U.S. Census Bureau), American Community Survey"
+  warming_cooling_sites:
+    name: "Refuges contre le froid et contre la chaleur"
+    publisher: "Ville de Philadelphie, Office of Emergency Management"
+  ppr_playgrounds:
+    name: "Aires de jeux"
+    publisher: "Ville de Philadelphie, Parks and Recreation"
