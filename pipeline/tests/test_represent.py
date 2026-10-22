@@ -692,3 +692,88 @@ def test_the_new_sources_are_registered_with_licenses_and_health_rules(context_f
         "rco_contacts",
     ):
         assert ctx.registry.sources[source_id].cadence == "weekly"
+
+
+# The City's own sources, through their adapters --------------------------------------------------
+
+
+def test_the_citys_elected_officials_download_only_council_columns_and_no_email(
+    context_factory, tmp_path: Path
+) -> None:
+    from .conftest import FakeCarto
+
+    rows = [
+        {
+            "cartodb_id": i + 1,
+            **{k: (None if v is None else str(v)) for k, v in row.items()},
+            "email": "x@phila.gov",
+        }
+        for i, row in enumerate(council_rows())
+    ]
+    server = FakeCarto(tables={"elected_officials": rows})
+    ctx = context_factory(handler=server, now=NOW)
+    source = ctx.registry.sources["city_elected_officials"]
+    fetch_source(ctx, source)
+    validate_source(ctx, source)
+    query = next(q for q in server.queries if not q.startswith("SELECT count"))
+    assert "email" not in query and "fax" not in query
+    assert "office IN ('city_council', 'city_council_at_large')" in query
+    # Four rows are fewer than the health rule's 15: the copy is refused and no seat is guessed.
+    status = {s.id: s for s in all_statuses(ctx)}["city_elected_officials"]
+    assert status.status != "ok"
+
+
+def test_divisions_and_organizations_download_with_their_field_lists(context_factory) -> None:
+    from .conftest import FakeArcgis, Router, arcgis_feature
+
+    def fields(names: list[str]) -> list[dict[str, str]]:
+        return [
+            {"name": n, "type": "esriFieldTypeOID" if n == "objectid" else "esriFieldTypeString"}
+            for n in names
+        ]
+
+    divisions = FakeArcgis(
+        fields=fields(["objectid", "division_num", "short_div_num"]),
+        features=[
+            arcgis_feature(
+                {"objectid": i, "division_num": f"{3400 + i}", "short_div_num": str(i)},
+                box(-75.2, 39.9, -75.1, 40.0),
+            )
+            for i in range(1, 4)
+        ],
+    )
+    rco_fields = [*RcoContacts.out_fields, "primary_address", "alternate_name", "alternate_email"]
+    rcos = FakeArcgis(
+        fields=fields(list(dict.fromkeys(rco_fields))),
+        features=[
+            arcgis_feature(
+                {
+                    "objectid": 1,
+                    "lni_id": "203",
+                    "organization_name": "Example Neighbors",
+                    "primary_address": "9 Home St",
+                    "alternate_email": "alt@example.org",
+                },
+                box(-75.2, 39.9, -75.1, 40.0),
+            )
+        ],
+    )
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return (divisions if "Political_Divisions" in request.url.path else rcos)(request)
+
+    ctx = context_factory(handler=Router(services_arcgis_com=handler), now=NOW)
+    for source_id in ("political_divisions", "rco_contacts"):
+        fetch_source(ctx, ctx.registry.sources[source_id])
+        validate_source(ctx, ctx.registry.sources[source_id])
+    # Three divisions and one organization are far fewer than the health rules need (1,650 and
+    # 200), so neither copy is used: a broken download never replaces the map's districts.
+    statuses = {s.id: s for s in all_statuses(ctx)}
+    assert statuses["political_divisions"].status != "ok"
+    assert statuses["rco_contacts"].status != "ok"
+    asked = [
+        str(r.url)
+        for r in rcos.requests
+        if r.url.path.endswith("/query") and "outFields" in r.url.params
+    ]
+    assert asked and all("primary_address" not in r and "alternate" not in r for r in asked)

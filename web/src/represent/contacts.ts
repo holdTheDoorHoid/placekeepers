@@ -268,6 +268,8 @@ export interface RepresentView {
   /** Said when the lot lies in no community organization's area, or they could not be checked. */
   rcoNote: string | null;
   councilAtLarge: Seat[];
+  /** Where the members at large come from and when it was last checked. */
+  atLargeSource: string | null;
   links: Link[];
 }
 
@@ -296,7 +298,16 @@ export function rcoRows(represent: Represent | null, table: ContactsTable): { ro
  * with no dossier, whose districts are worked out weekly only for the lots on our list.
  */
 export function representView(represent: Represent | null, contacts: ContactsState, opts: { listed: boolean; atlas: Link }): RepresentView {
-  const base = { ward: wardText(represent), rows: [] as SeatRow[], rcos: [] as RcoRow[], rcosUnknown: 0, rcoNote: null, councilAtLarge: [] as Seat[], links: [opts.atlas] };
+  const base = {
+    ward: wardText(represent),
+    rows: [] as SeatRow[],
+    rcos: [] as RcoRow[],
+    rcosUnknown: 0,
+    rcoNote: null,
+    councilAtLarge: [] as Seat[],
+    atLargeSource: null,
+    links: [opts.atlas],
+  };
   if (!opts.listed) return { ...base, status: 'unlisted' };
   if (contacts.status === 'idle' || contacts.status === 'loading') return { ...base, status: 'loading' };
   if (contacts.status !== 'ready' || !represent) return { ...base, status: 'missing' };
@@ -311,5 +322,12 @@ export function representView(represent: Represent | null, contacts: ContactsSta
     rcosUnknown: rcos.unknown,
     rcoNote,
     councilAtLarge: table.councilAtLarge,
+    atLargeSource: atLargeSource(table),
   };
+}
+
+/** The source line of the members at large (they all come from one list). */
+export function atLargeSource(table: ContactsTable): string | null {
+  const first = table.councilAtLarge[0];
+  return first ? sourceLine(first.source, first.checked) : null;
 }

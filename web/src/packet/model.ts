@@ -15,7 +15,7 @@ import { signsText, protectionLinks, type ProtectionLink } from '../displacement
 import type { ShardParcel } from '../dossier/types.ts';
 import { ownerLetterGate, type OwnerLetterGate } from '../letters/gate.ts';
 import type { Registry } from '../registry/types.ts';
-import { rcoRows, seatRows, wardText, type ContactsState, type ContactsTable, type RcoContact, type SeatKind, type SeatRow } from '../represent/contacts.ts';
+import { atLargeSource, rcoRows, seatRows, wardText, type ContactsState, type ContactsTable, type RcoContact, type SeatKind, type SeatRow } from '../represent/contacts.ts';
 import { formatDate, strings } from '../strings.ts';
 
 /** The most lots one packet holds: about 60 printed pages. */
@@ -103,6 +103,7 @@ export interface PacketContacts {
   rcos: PacketContactGroup<{ rco: RcoContact; source: string }>[];
   seats: Record<SeatKind, PacketContactGroup<SeatRow>[]>;
   councilAtLarge: ContactsTable['councilAtLarge'];
+  atLargeSource: string | null;
   /** Each lot's ward and division, in lot order. */
   wards: { n: number; title: string; ward: string | null }[];
   /** Lots whose districts are not in the weekly copy. */
@@ -267,7 +268,7 @@ export function packetContacts(lots: PacketLotInput[], contacts: ContactsState):
   const table = contacts.status === 'ready' ? contacts.table : null;
   const seats = { council: [], house: [], senate: [], congress: [] } as Record<SeatKind, PacketContactGroup<SeatRow>[]>;
   const wards = lots.map((lot, i) => ({ n: i + 1, title: lot.view.title, ward: wardText(lot.parcel?.represent ?? null) }));
-  if (!table) return { status: 'missing', rcos: [], seats, councilAtLarge: [], wards, unknown: lots.map((_, i) => i + 1) };
+  if (!table) return { status: 'missing', rcos: [], seats, councilAtLarge: [], atLargeSource: null, wards, unknown: lots.map((_, i) => i + 1) };
   const rcoEntries: { key: string; item: { rco: RcoContact; source: string }; n: number }[] = [];
   const seatEntries: Record<SeatKind, { key: string; item: SeatRow; n: number }[]> = { council: [], house: [], senate: [], congress: [] };
   const unknown: number[] = [];
@@ -285,7 +286,7 @@ export function packetContacts(lots: PacketLotInput[], contacts: ContactsState):
     seats[kind] = group(seatEntries[kind]).sort((a, b) => Number(a.key.replace(/\D/g, '')) - Number(b.key.replace(/\D/g, '')));
   }
   const rcos = group(rcoEntries).sort((a, b) => a.item.rco.name.localeCompare(b.item.rco.name));
-  return { status: 'ready', rcos, seats, councilAtLarge: table.councilAtLarge, wards, unknown };
+  return { status: 'ready', rcos, seats, councilAtLarge: table.councilAtLarge, atLargeSource: atLargeSource(table), wards, unknown };
 }
 
 export interface PacketInput {

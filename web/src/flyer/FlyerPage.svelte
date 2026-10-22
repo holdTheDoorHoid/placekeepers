@@ -150,7 +150,7 @@
             <div class="middle">
               {#if at}
                 <div class="map">
-                  <StaticMapView points={[{ lng: at[0], lat: at[1], label: '' }]} width={fields.size === 'half' ? 220 : 400} height={fields.size === 'half' ? 120 : 260} maxZoom={17} marker="pin" alt={t.mapAlt(address ?? opa)} />
+                  <StaticMapView points={[{ lng: at[0], lat: at[1], label: '' }]} width={fields.size === 'half' ? 220 : 400} height={fields.size === 'half' ? 120 : 260} maxZoom={16.5} marker="pin" alt={t.mapAlt(address ?? opa)} />
                 </div>
               {/if}
               {#if hopes.length}

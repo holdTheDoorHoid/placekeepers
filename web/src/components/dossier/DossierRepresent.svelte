@@ -29,6 +29,7 @@
       {r.atLarge}
       {#each represent.councilAtLarge as seat, i (seat.name)}{#if seat.website}<a href={seat.website} target="_blank" rel="noopener noreferrer">{seat.name}</a>{:else}{seat.name}{/if}{i < represent.councilAtLarge.length - 1 ? ', ' : '.'}{/each}
     </p>
+    {#if represent.atLargeSource}<p class="muted small">{represent.atLargeSource}</p>{/if}
   {/if}
 
   <h4>{r.rcoTitle}</h4>

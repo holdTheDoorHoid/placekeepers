@@ -270,6 +270,7 @@
                 {strings.represent.atLarge}
                 {packet.contacts.councilAtLarge.map((s) => `${s.name}${s.offices[0]?.phone ? ` (${s.offices[0].phone})` : ''}`).join('; ')}.
               </p>
+              {#if packet.contacts.atLargeSource}<p class="meta">{packet.contacts.atLargeSource}</p>{/if}
             {/if}
             <h3>{t.wardsTitle}</h3>
             <p class="meta">{t.wardsIntro}</p>
