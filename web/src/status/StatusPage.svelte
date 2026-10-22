@@ -17,6 +17,9 @@
   import { formatDate, strings } from '../strings.ts';
   import Dialog from '../components/common/Dialog.svelte';
   import SiteNav from '../components/common/SiteNav.svelte';
+  import LanguageOffer from '../components/language/LanguageOffer.svelte';
+  import LanguagePicker from '../components/language/LanguagePicker.svelte';
+  import TranslationNote from '../components/language/TranslationNote.svelte';
 
   let { registry }: { registry: Registry } = $props();
 
@@ -46,9 +49,14 @@
 <div class="page">
   <header>
     <a class="back" href={config.siteBase}>{s.back}</a>
-    <button class="button quiet small menu" type="button" aria-haspopup="dialog" onclick={() => (menuOpen = true)}
-      >{strings.nav.menu}</button
-    >
+    <div class="tools">
+      <LanguagePicker />
+      <button class="button quiet small menu" type="button" aria-haspopup="dialog" onclick={() => (menuOpen = true)}
+        >{strings.nav.menu}</button
+      >
+    </div>
+    <LanguageOffer />
+    <TranslationNote />
     <h1>{s.pageTitle}</h1>
     <p>{s.intro}</p>
   </header>
@@ -146,8 +154,14 @@
   .back {
     font-weight: 600;
   }
-  .menu {
-    margin-left: auto;
+  .tools {
+    display: flex;
+    gap: 8px;
+    margin-inline-start: auto;
+  }
+  header :global(.offer),
+  header :global(.translation-note) {
+    flex-basis: 100%;
   }
   .summary {
     display: flex;

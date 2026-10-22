@@ -22,6 +22,9 @@
   import { formatDate, formatMoney, formatNumber, sentenceCase, strings } from '../strings.ts';
   import Dialog from '../components/common/Dialog.svelte';
   import SiteNav from '../components/common/SiteNav.svelte';
+  import LanguageOffer from '../components/language/LanguageOffer.svelte';
+  import LanguagePicker from '../components/language/LanguagePicker.svelte';
+  import TranslationNote from '../components/language/TranslationNote.svelte';
   import LineChart from './LineChart.svelte';
   import StackedColumns from './StackedColumns.svelte';
   import {
@@ -145,7 +148,12 @@
 <div class="page">
   <header>
     <a class="back" href={config.siteBase}>{t.back}</a>
-    <button class="button quiet small menu" type="button" aria-haspopup="dialog" onclick={() => (menuOpen = true)}>{strings.nav.menu}</button>
+    <div class="tools">
+      <LanguagePicker />
+      <button class="button quiet small menu" type="button" aria-haspopup="dialog" onclick={() => (menuOpen = true)}>{strings.nav.menu}</button>
+    </div>
+    <LanguageOffer />
+    <TranslationNote />
     <h1>{t.pageTitle}</h1>
     <p>{t.intro}</p>
   </header>
@@ -497,8 +505,14 @@
   .back {
     font-weight: 600;
   }
-  .menu {
-    margin-left: auto;
+  .tools {
+    display: flex;
+    gap: 8px;
+    margin-inline-start: auto;
+  }
+  header :global(.offer),
+  header :global(.translation-note) {
+    flex-basis: 100%;
   }
   section {
     margin: 24px 0;

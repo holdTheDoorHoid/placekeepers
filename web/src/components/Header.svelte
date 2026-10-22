@@ -5,8 +5,11 @@
   import type { AppStore } from '../state/store.svelte.ts';
   import { encodeState } from '../state/url.ts';
   import { strings } from '../strings.ts';
+  import { languageQuery } from '../i18n/choose.ts';
+  import { currentLocale } from '../i18n/locale.ts';
   import Dialog from './common/Dialog.svelte';
   import SiteNav from './common/SiteNav.svelte';
+  import LanguagePicker from './language/LanguagePicker.svelte';
   import ViewSwitch from './ViewSwitch.svelte';
 
   let { store, onOpenSettings, children }: { store: AppStore; onOpenSettings: () => void; children?: Snippet } = $props();
@@ -20,7 +23,8 @@
   async function share() {
     // While the person's location is in use, the map position would show where they are.
     const located = store.mapPrivate;
-    const url = `${location.origin}${location.pathname}#${encodeState(store.registry, $state.snapshot(store.state), { includeMap: !located })}`;
+    // A page in another language keeps ?lang= in the link, so it opens in the same language.
+    const url = `${location.origin}${location.pathname}${languageQuery(currentLocale())}#${encodeState(store.registry, $state.snapshot(store.state), { includeMap: !located })}`;
     try {
       await navigator.clipboard.writeText(url);
       store.say(located ? strings.header.shareDoneNoMap : strings.header.shareDone);
@@ -43,6 +47,7 @@
     </h1>
     <ViewSwitch {store} />
     <div class="actions">
+      <LanguagePicker />
       <button class="button quiet small" type="button" aria-haspopup="dialog" onclick={() => (menuOpen = true)}
         >{strings.nav.menu}</button
       >
@@ -110,7 +115,7 @@
     align-items: center;
     justify-content: flex-end;
     gap: 6px 8px;
-    margin-left: auto;
+    margin-inline-start: auto;
   }
   .freshness {
     display: inline-flex;
@@ -201,14 +206,14 @@
     }
     .settings {
       order: 2;
-      margin-left: auto;
+      margin-inline-start: auto;
     }
     .actions {
       order: 3;
       width: 100%;
       flex-wrap: nowrap;
       justify-content: space-between;
-      margin-left: 0;
+      margin-inline-start: 0;
     }
     /* The data date shares its row with Menu and Copy link: smaller, and cut short with "..." on
        screen if it still does not fit (the Data status page it links to says it in full). */

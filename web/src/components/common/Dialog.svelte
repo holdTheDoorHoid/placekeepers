@@ -44,8 +44,10 @@
 </dialog>
 
 <style>
+  /* The drawer opens from the end of the line: the right in English, the left in Arabic. */
   .drawer {
-    margin: 0 0 0 auto;
+    margin: 0;
+    margin-inline-start: auto;
     padding: 0;
     width: min(440px, 100vw);
     max-width: 100vw;

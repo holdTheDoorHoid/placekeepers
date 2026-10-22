@@ -4,6 +4,7 @@ import { defineConfig } from 'vite';
 import { contentPlugin } from './plugins/content.ts';
 import { dataRootPlugin } from './plugins/data-root.ts';
 import { registryPlugin } from './plugins/registry.ts';
+import { translationsPlugin } from './plugins/translations.ts';
 
 // End to end tests (playwright.config.ts) build the same production site into dist-e2e/ without
 // public/, which holds only a local copy of the data root, so the tests always read the committed
@@ -17,7 +18,7 @@ export default defineConfig({
   // The map, the data status page, every content page, and real 404s for missing files, as on
   // Pages. Each content page is its own entry below, following the pattern status/index.html set.
   appType: 'mpa',
-  plugins: [registryPlugin(), contentPlugin(), dataRootPlugin(), svelte()],
+  plugins: [registryPlugin(), contentPlugin(), translationsPlugin(), dataRootPlugin(), svelte()],
   // True only in the end to end tests' build, which may hand the tests a few things to watch
   // (src/components/MapView.svelte). The published site is built with it false, and the code
   // behind it is dropped from the bundle.

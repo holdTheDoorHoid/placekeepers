@@ -7,21 +7,32 @@
   import { strings } from '../strings.ts';
   import Dialog from '../components/common/Dialog.svelte';
   import SiteNav from '../components/common/SiteNav.svelte';
+  import LanguageOffer from '../components/language/LanguageOffer.svelte';
+  import LanguagePicker from '../components/language/LanguagePicker.svelte';
+  import TranslationNote from '../components/language/TranslationNote.svelte';
 
-  let { slug, html }: { slug: string; html: string } = $props();
+  // inEnglish: the page has no translation yet in the site's language, so its English text is
+  // shown, marked as English for screen readers, under a note saying so.
+  let { slug, html, inEnglish = false }: { slug: string; html: string; inEnglish?: boolean } = $props();
   let menuOpen = $state(false);
 </script>
 
 <div class="page">
   <header class="topbar">
     <a class="brand" href={config.siteBase}>{strings.app.name}</a>
-    <button class="button quiet small" type="button" aria-haspopup="dialog" onclick={() => (menuOpen = true)}>
-      {strings.nav.menu}
-    </button>
+    <div class="tools">
+      <LanguagePicker />
+      <button class="button quiet small" type="button" aria-haspopup="dialog" onclick={() => (menuOpen = true)}>
+        {strings.nav.menu}
+      </button>
+    </div>
   </header>
 
+  <LanguageOffer />
+  <TranslationNote {inEnglish} />
+
   <!-- The page's own Markdown supplies the heading (an <h1>), so none is added here. -->
-  <main class="prose">
+  <main class="prose" lang={inEnglish ? 'en' : undefined} dir={inEnglish ? 'ltr' : undefined}>
     {@html html}
   </main>
 
@@ -46,6 +57,10 @@
     padding: 12px 0;
     margin-bottom: 8px;
     border-bottom: 1px solid var(--pk-surface-2);
+  }
+  .tools {
+    display: flex;
+    gap: 8px;
   }
   .brand {
     font-size: 1.15rem;
@@ -75,7 +90,7 @@
   }
   .prose :global(ul),
   .prose :global(ol) {
-    padding-left: 22px;
+    padding-inline-start: 22px;
   }
   .prose :global(li) {
     margin-bottom: 0.3em;
@@ -83,7 +98,7 @@
   .prose :global(blockquote) {
     margin: 0.8em 0;
     padding: 2px 14px;
-    border-left: 4px solid var(--pk-accent);
+    border-inline-start: 4px solid var(--pk-accent);
     color: var(--pk-muted);
   }
   .prose :global(table) {

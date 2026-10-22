@@ -1,50 +1,60 @@
-// Every piece of interface text lives here, so the site can be translated (Spanish first)
-// and checked for plain language in one place. Text that the registry defines (layer
-// labels, descriptions, routes, sources) comes from registry/*.yaml instead.
+// Every piece of interface text lives here, so the site can be translated and checked for plain
+// language in one place. Text that the registry defines (layer labels, descriptions, routes,
+// sources) comes from registry/*.yaml instead.
+//
+// This English object is the source of every translation. Each other language has a catalog in
+// src/i18n/locales/<code>.ts with the same keys, written into this object when a page opens in
+// that language (src/i18n/boot.ts); a key a catalog lacks keeps its English text. So: add new
+// text here as before, and it appears in English in every language until a translator gets to
+// it. docs/TRANSLATING.md explains the rest.
 //
 // House style: plain words a neighbor understands, and no dashes as punctuation.
-// tests/strings.test.ts enforces the dash rule.
+// tests/strings.test.ts enforces the dash rule, here and in every catalog.
 
+import {
+  CITY_TIME_ZONE,
+  decimalFormat,
+  formatDateIn,
+  moneyFormat,
+  numberFormat,
+  timeFormat,
+} from './i18n/locale.ts';
 import type { Evidence } from './registry/types.ts';
 
-const dateFormat = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeZone: 'America/New_York' });
-const dayFormat = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeZone: 'UTC' });
-const shortDateFormat = new Intl.DateTimeFormat('en-US', {
-  month: 'short',
-  day: 'numeric',
-  year: 'numeric',
-  timeZone: 'America/New_York',
-});
-const numberFormat = new Intl.NumberFormat('en-US');
-
-/** Formats a date or timestamp in words, for example "October 5, 2026". Returns null if unreadable. */
+/**
+ * Formats a date or timestamp in words in the page's language, for example "October 5, 2026".
+ * Returns null if unreadable.
+ */
 export function formatDate(value: string | null | undefined, style: 'long' | 'short' = 'long'): string | null {
   if (!value) return null;
   // A bare date (2026-10-01) has no time zone; show it as written.
   if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
     const d = new Date(`${value}T12:00:00Z`);
-    return Number.isNaN(d.getTime()) ? null : style === 'long' ? dayFormat.format(d) : shortDateFormat.format(d);
+    return Number.isNaN(d.getTime()) ? null : formatDateIn(d, style, 'UTC');
   }
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return null;
-  return style === 'long' ? dateFormat.format(d) : shortDateFormat.format(d);
+  return formatDateIn(d, style, CITY_TIME_ZONE);
 }
 
+/** A number in the page's language: "1,234" in English. */
 export function formatNumber(n: number): string {
-  return numberFormat.format(n);
+  return numberFormat().format(n);
 }
 
-const moneyFormat = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
-const timeFormat = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' });
+/** A number with exactly `digits` decimals in the page's language: "0.4" in English, "0,4" in French. */
+export function formatDecimal(n: number, digits: number): string {
+  return decimalFormat(digits).format(n);
+}
 
 /** Whole dollars, for example "$1,500"; half a dollar rounds up, as on the City's property page. */
 export function formatMoney(n: number): string {
-  return moneyFormat.format(Math.round(n));
+  return moneyFormat().format(Math.round(n));
 }
 
 /** A time of day in Philadelphia, for example "2:14 PM". */
 export function formatTime(ms: number): string {
-  return timeFormat.format(new Date(ms));
+  return timeFormat().format(new Date(ms));
 }
 
 /** CITY WORDS become "City words": for descriptions the City writes in capitals. */
@@ -65,8 +75,8 @@ function giveOrTake(margin: number | null, unit: 'points' | 'homes'): string {
 
 /** A straight line distance in words: "220 meters", "1.2 kilometers". */
 export function distanceWords(meters: number): string {
-  if (meters < 1000) return `${formatNumber(Math.round(meters / 10) * 10)} meters`;
-  return `${(Math.round(meters / 100) / 10).toFixed(1)} kilometers`;
+  if (meters < 1000) return strings.units.meters(Math.round(meters / 10) * 10);
+  return strings.units.kilometers(Math.round(meters / 100) / 10);
 }
 
 /** A change in percent in words: "up 61%", "down 3%", "unchanged". */
@@ -98,6 +108,38 @@ export const strings = {
   content: {
     /** The name screen readers give a table box on a content page, which scrolls sideways. */
     tableLabel: 'Table, scrolls sideways',
+    // Where the Contact page asks for a memorial to come down (content/contact.md, the token
+    // {{REMOVAL_EMAIL}}; plugins/content.ts). Markdown: keep the [words](address) links whole.
+    removalEmail: (email: string) =>
+      `Email us at [${email}](mailto:${email}). We do not use a public form for this, because a removal request is personal and private.`,
+    removalComingSoon: (issueUrl: string) =>
+      `A private email address for these requests is coming soon. Until it exists, the map shows no names at all, and you can ask in a [GitHub issue](${issueUrl}). Anyone can read a GitHub issue, so write only the memorial's id or where it is: you do not need to give a name, a reason or who you are.`,
+  },
+
+  // The language picker, the first visit offer and the note on every translated page
+  // (src/i18n/, src/components/language/). The offer's own words are in each language's line
+  // of src/i18n/languages.ts, since it shows before the page changes language.
+  language: {
+    button: 'Language',
+    /** The picker button's full name for screen readers, with the language in use. */
+    buttonLabel: (name: string) => `Language: ${name}. Choose another language`,
+    title: 'Language',
+    intro: 'Choose the language for this site. The page opens again in that language, and this browser remembers your choice.',
+    inUse: 'In use',
+    /** Beside a language that is not finished yet; only the dev server and testers see these. */
+    notReady: 'Translation in progress',
+    listLabel: 'Languages',
+    aiNote: 'Translated with the help of AI and not yet checked by a native speaker.',
+    fixLink: 'Fix a translation',
+    /** On a page whose translation does not exist yet, shown above the English text. */
+    pageInEnglish: 'This page is not translated yet, so it is shown in English.',
+    offerLabel: 'Language offer',
+  },
+
+  /** Lengths in words (distanceWords). */
+  units: {
+    meters: (n: number) => `${formatNumber(n)} meters`,
+    kilometers: (km: number) => `${formatDecimal(km, 1)} kilometers`,
   },
 
   header: {
@@ -196,7 +238,7 @@ export const strings = {
     showMore: 'Show more places',
     distance: (meters: number, fromYou: boolean) => {
       const feet = meters * 3.28084;
-      const far = feet < 1000 ? `${formatNumber(Math.max(10, Math.round(feet / 10) * 10))} feet` : `${(feet / 5280).toFixed(1)} miles`;
+      const far = feet < 1000 ? `${formatNumber(Math.max(10, Math.round(feet / 10) * 10))} feet` : `${formatDecimal(feet / 5280, 1)} miles`;
       return `About ${far} from ${fromYou ? 'you' : 'the middle of the map'}`;
     },
   },
@@ -466,6 +508,8 @@ export const strings = {
     yes: 'yes',
     no: 'no',
     termsLine: (url: string) => `Placekeepers export: for community care and lawful action only. Read the terms of use first: ${url}`,
+    /** Added to a download made in another language: its column names stay in English (no commas). */
+    englishColumns: 'Column names are in English in every language so files can be combined and read back.',
     madeLine: (n: number, title: string, day: string, dataDay: string | null) =>
       `${plural(n, 'place', 'places')} from ${title}. Made on ${day}${dataDay ? ` from the weekly data of ${dataDay}` : ''}.`,
     ownerLine:

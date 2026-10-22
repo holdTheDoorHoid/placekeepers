@@ -8,6 +8,8 @@
   import Dialog from './common/Dialog.svelte';
   import EvidenceBadge from './common/EvidenceBadge.svelte';
   import LayerList from './layers/LayerList.svelte';
+  import LanguageList from './language/LanguageList.svelte';
+  import TranslationNote from './language/TranslationNote.svelte';
   import LensPanel from './lens/LensPanel.svelte';
   import DisplacementNote from './places/DisplacementNote.svelte';
   import BlessingNote from './streets/BlessingNote.svelte';
@@ -29,6 +31,12 @@
 
 <Dialog bind:open title={strings.settings.title} id="pk-settings">
   <p class="muted small">{strings.settings.intro}</p>
+
+  <section aria-labelledby="pk-settings-language">
+    <h3 id="pk-settings-language">{strings.language.title}</h3>
+    <TranslationNote />
+    <LanguageList idPrefix="pk-settings-language" />
+  </section>
 
   <section aria-labelledby="pk-settings-view">
     <h3 id="pk-settings-view">{strings.settings.viewTitle}</h3>
@@ -170,7 +178,8 @@
     font-weight: 600;
   }
   .option-setting p {
-    margin: 4px 0 0 28px;
+    margin: 4px 0 0;
+    margin-inline-start: 28px;
   }
   .suggestion {
     padding: 6px 0;
@@ -186,7 +195,8 @@
   }
   .suggestion p,
   .suggestion .note {
-    margin: 2px 0 0 28px;
+    margin: 2px 0 0;
+    margin-inline-start: 28px;
   }
   .note {
     margin-top: 8px;

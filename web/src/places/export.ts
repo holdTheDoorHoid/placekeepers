@@ -19,6 +19,8 @@ import { loadCommon, loadShard, shardLocation } from '../dossier/shard.ts';
 import { PUBLIC_OWNER_TYPES, type DossierNotes, type ShardParcel } from '../dossier/types.ts';
 import type { Registry } from '../registry/types.ts';
 import type { AppState } from '../state/defaults.ts';
+import { isSourceLocale } from '../i18n/locale.ts';
+import { plainText } from '../i18n/marks.ts';
 import { formatDate, strings } from '../strings.ts';
 import { describePlace, parcelLensOf } from './rank.ts';
 
@@ -236,6 +238,8 @@ export async function gatherExport(input: ExportInput): Promise<ExportResult> {
     e.termsLine(`${input.siteUrl}terms/`),
     e.madeLine(rows.length, input.title, formatDate(input.now.toISOString()) ?? '', dataDate),
     e.ownerLine,
+    // In another language the columns keep their English names (issue #49), and the file says so.
+    ...(isSourceLocale() ? [] : [e.englishColumns]),
     ...(lens ? [e.scoreLine(lens.label, weights)] : []),
     ...(rows.some((row) => greening.has(row.suggestion)) ? [e.greeningLine(strings.displacement.caution)] : []),
     ...(rows.some((row) => placemaking.has(row.suggestion)) ? [e.placemakingLine(strings.displacement.placemakingCaution)] : []),
@@ -333,9 +337,9 @@ export function exportFileName(title: string, now: Date, extension: 'csv' | 'geo
   return `placekeepers-${slug || 'places'}-${day}.${extension}`;
 }
 
-/** Hands a file to the browser to save. */
+/** Hands a file to the browser to save, without the marks that tell English text on the page apart. */
 export function saveFile(name: string, text: string, type: string): void {
-  const url = URL.createObjectURL(new Blob([text], { type }));
+  const url = URL.createObjectURL(new Blob([plainText(text)], { type }));
   const link = document.createElement('a');
   link.href = url;
   link.download = name;

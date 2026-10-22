@@ -15,6 +15,18 @@ declare module 'virtual:placekeepers/content' {
   export default pages;
 }
 
+declare module 'virtual:placekeepers/registry-text/*' {
+  /** One language's registry text, from registry/i18n/<code>.yaml (src/i18n/registry-text.ts). */
+  const text: import('./i18n/registry-text.ts').RegistryText;
+  export default text;
+}
+
+declare module 'virtual:placekeepers/content/*' {
+  /** One language's content pages, from content/<code>/*.md, by slug, as HTML. */
+  const pages: Record<string, string>;
+  export default pages;
+}
+
 interface ImportMetaEnv {
   /** Where the published data lives. Relative paths resolve against the site base. Default "./data/". */
   readonly VITE_DATA_BASE?: string;
