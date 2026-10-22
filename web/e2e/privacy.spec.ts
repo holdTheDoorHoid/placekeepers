@@ -328,6 +328,20 @@ test.describe('privacy', () => {
     for (const link of await page.locator('a[target="_blank"]').all()) await expect(link).toHaveAttribute('rel', 'noopener noreferrer');
   });
 
+  test('Did it work? asks no other server and keeps nothing', async ({ page, context }) => {
+    // Added by M5.4 (issue #48): the page reads one file of the site's own and only links out.
+    const seen = watchOrigins(context);
+    await page.route(/^https?:\/\/(?!localhost[:/])/, (route) => route.abort());
+    await page.goto('./did-it-work/');
+    await expect(page.getByRole('heading', { name: 'The short answer' })).toBeVisible();
+    const local = new URL(page.url()).origin;
+    expect([...seen.origins].filter((origin) => origin !== local)).toEqual([]);
+    expect(seen.urls.filter((url) => url.startsWith(local) && url.includes('/data/'))).toEqual([expect.stringMatching(/\/data\/tables\/didit\.json$/)]);
+    const kept = await page.evaluate(() => ({ local: Object.keys(localStorage), session: Object.keys(sessionStorage), cookie: document.cookie }));
+    expect(kept).toEqual({ local: [], session: [], cookie: '' });
+    for (const link of await page.locator('a[target="_blank"]').all()) await expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+  });
+
   test('links that open a new tab carry no opener and no referrer', async ({ page }, info) => {
     await open(page, `v=a&m=18/${LOT.lat}/${LOT.lng}&p=${LOT.id}`);
     await expect(page.locator('#pk-right')).toContainText('Who owns it');

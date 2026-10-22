@@ -311,6 +311,12 @@ them as where care helps most, and never ranks people or neighborhoods by danger
 6. Check the surrounding blocks too, in case problems moved.
 7. Say plainly which kind of comparison you made.
 
+Placekeepers makes this kind of comparison itself, citywide, for PHS LandCare greening, the City's
+clean and seal crews, City demolitions and projects neighbors finished: the "Did it work?" page and
+[DIDIT_METHOD.md](DIDIT_METHOD.md) (M5.4, 2026-10-21). Its first results show no drop in shootings,
+dumping or complaints nearby that the records can vouch for, which says more about what records
+can show than about care: the trials above remain the evidence.
+
 ## References
 
 The full annotated list, with verification status for every entry, is in

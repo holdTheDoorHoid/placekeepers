@@ -489,6 +489,9 @@ data/
     land_bank.json        The Land Bank in numbers: conveyances by year, agency, buyer type, program and district, the City's counts by program, and the weekly count of listed lots (section 9; aggregates only; added 2026-10-09 by M4.4)
     projects.json         projects neighbors finished that the map shows, with the month each was finished
                           and the day it was approved (section 10; added 2026-10-21 by M5.3)
+    didit.json            "Did it work?": the yearly study's citywide comparisons, copied from the
+                          repository's data/didit/results.json, with this week's count of projects
+                          (section 12; added 2026-10-21 by M5.4)
   dossiers/
     <first four digits of the OPA account>.json
     common.json           the parts of every flag that are the same for all parcels (section 6)
@@ -643,6 +646,11 @@ published data root in place and touches only: the files `tiles/projects.pmtiles
 GitHub, `rows` the approved reports read), and the notes about the projects, which all begin
 "Projects neighbors finished: " (plus `projects has nothing to show yet` when none is shown).
 `build_id`, `generated_at` and everything else stay as the weekly publish wrote them.
+
+The weekly publish copies `data/didit/results.json` from the repository to `tables/didit.json`
+(added 2026-10-21 by M5.4, section 12) and lists it in `files`. When the repository has no results,
+or they cannot be read, the file is not written and a note beginning "Did it work?: " says why.
+The quick publish of projects never touches it.
 
 `notes` (added 2026-10-04 by M0.2) is a list of plain sentences about the build, possibly empty:
 data quality remarks, a layer with no usable data yet, or `tiles skipped: tippecanoe not installed`.
@@ -2318,3 +2326,74 @@ property list cut to `parcel_number`, `location`, `lat` and `lng`; nothing about
 `projects.yml` as the artifact `project-inputs`, kept 14 days with the site data. They are never
 published on the site.
 
+## 12. Did it work? (`data/didit/` and `tables/didit.json`)
+
+Added 2026-10-21 by M5.4 (issue #48). The study (docs/DIDIT_METHOD.md) runs only with `pk didit`,
+yearly or on demand, and writes two files **in the repository**, committed and reviewed like code:
+
+- `data/didit/results.json`: every comparison's numbers and verdict, below;
+- `data/didit/totals.csv`: each comparison summed by area, from which
+  `placekeepers.didit.study.reproduce` recomputes every published number, intervals included
+  (`pipeline/tests/test_didit.py` runs it on the committed files).
+
+The weekly publish copies `results.json` unchanged to `tables/didit.json` and adds `projects_now`
+(below). Neither file names a place: no parcel, address, point or area name, only counts, shares
+and anonymous area numbers (checked by the tests). Written by `placekeepers/didit/study.py`
+(`write`) and `placekeepers/publish/didit.py`.
+
+```json
+{
+  "schema": 1,
+  "generated": "2026-10-21",
+  "data_through": "2026-06-30",
+  "method": {"years_before": 2, "years_after": 2, "radius_m": 200, "ring_m": 400, "place_m": 100,
+             "max_distance_m": 3000, "min_distance_m": 400, "comparison_places": 5,
+             "count_caliper": 0.5, "poverty_caliper": 5.0, "level": 0.9, "draws": 2000,
+             "seed": 20261021, "scale": 60, "placebo_shift_halves": 9},
+  "rules": {"min_places": 100, "min_areas": 20, "min_placebo": 100},
+  "outcomes": {"shootings": {"records": 17943, "first": "2015-01-01", "last": "2026-10-01",
+                             "first_half": "2015-1", "own_square_left_out": false}},
+  "kinds": [
+    {"id": "landcare", "records": 12459, "dated": 8568, "undated": 3891,
+     "by_program": {"PLC": {"records": 8169, "dated": 7742}},
+     "places_with_care": 1556, "places_with_undated_care": 1313,
+     "results": [
+       {"outcome": "shootings", "verdict": "check_failed", "check": "failed",
+        "around_verdict": "no_clear_change", "cohorts": ["2017-1", "2024-1"],
+        "eligible": 688, "dropped": 65, "controls": 1333,
+        "main": {"places": 623, "areas": 30, "before": 4123, "after": 3389, "expected": 3284.0,
+                 "percent": 3.2, "low": -3.2, "high": 12.2, "per_place_year": 0.084,
+                 "per_low": -0.085, "per_high": 0.307, "balance": 0.981},
+        "around": {}, "later": {}, "placebo": {},
+        "naive": -17.8}
+     ]}
+  ],
+  "projects_now": {"as_of": "2026-10-26", "shown": 0, "ready": 0, "ready_before": "2024-06"}
+}
+```
+
+| Field | Meaning |
+|---|---|
+| `generated` | the day `pk didit` ran (Philadelphia) |
+| `data_through` | the last day of the last half year every outcome covers in full |
+| `method` | the constants of `placekeepers/didit/method.py` and `study.py` as run; `draws` and `seed` are what a reproduction needs; `scale` is the factor of the comparison sums in `totals.csv` |
+| `rules` | the verdict rules' thresholds |
+| `outcomes` | per outcome (`shootings`, `dumping`, `complaints`): events read, the first and last day, the first complete half year (`YYYY-1` is January to June, `YYYY-2` July to December), and whether the place's own square is left out |
+| `kinds` | in the order `landcare`, `clean_seal`, `demolition`, `projects`, each with what its records hold (`records`, `dated`, `undated`; `by_program` for LandCare, `by_year` for the others; `read` for projects, false when no projects table was given) and one result per outcome |
+| `verdict` | `fewer`, `more`, `no_clear_change`, `check_failed` or `too_few` (rules in docs/DIDIT_METHOD.md) |
+| `check` | the placebo: `passed`, `failed`, or `too_few` places to run it |
+| `around_verdict` | `fewer`, `more` or `no_clear_change` for the ring 200 to 400 meters out, or `null` |
+| `cohorts` | the first and last half year of care compared, or `null` |
+| `eligible`, `dropped`, `controls` | cared for places with a full window, those left out for want of a comparison place, and distinct comparison places used |
+| `main`, `around`, `later`, `placebo` | each an estimate: `places` and `areas` compared, events `before` and `after` near the cared for places, `expected` after (one decimal), `percent` change with its 90 percent interval `low` and `high` (one decimal), the change per cared for place per year with its interval (three decimals), and `balance`, the comparison places' count before as a share of the cared for places' (three decimals); `percent` and the intervals are `null` when nothing could be compared |
+| `naive` | the change at the cared for places alone, in percent (one decimal), or `null` |
+| `projects_now` | added by the weekly publish: the day, the projects the map shows (`tables/projects.json`), how many were finished by `ready_before` (the last month with two full years of records after it), or `null` when the publish wrote no projects table |
+
+**`data/didit/totals.csv`**: columns `kind`, `outcome`, `comparison` (`main`, `around`, `later`,
+`placebo`), `area` (0, 1, 2 ... in the order the estimate uses; not an H3 cell), `places`, `t_pre`,
+`t_post` (events near the cared for places in the area, before and after), `c_pre`, `c_post` (the
+sum over those places of their comparison places' average count, times `scale`, a whole number).
+A comparison with no places has no rows.
+
+The page (`web/did-it-work/`) reads `tables/didit.json` and writes every sentence itself from these
+codes and numbers; a lot page reads nothing from it.
