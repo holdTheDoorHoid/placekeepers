@@ -138,3 +138,13 @@ wording of four texts. Two of the changes set a rule worth keeping:
 | Council member | Thành viên Hội đồng Thành phố | state representative = dân biểu tiểu bang, state senator = thượng nghị sĩ tiểu bang, Member of Congress = dân biểu Quốc hội Hoa Kỳ |
 | projects neighbors finished | các dự án hàng xóm đã hoàn thành | layer and form name |
 | lawyer has not reviewed it | chưa có luật sư nào xem xét lá thư này, và đây không phải là tư vấn pháp lý | |
+
+## Catch up pass 2 (2026-10-22)
+
+- Department of Sanitation = Sở Vệ sinh, the name phila.gov's Vietnamese page for the department
+  uses. The Philadelphia More Beautiful Committee stays in English (the City's Vietnamese page is
+  machine translated and gives two different renderings). Block Captain is now credited to it in
+  `content/vi/how.md`.
+- The `join` templates use the Vietnamese "và" for lists ("a, b và c", "a; b; và c") and the plain
+  colon for labels.
+- Miles are "dặm", and a survey duration is "khoảng 2 giờ 15 phút".

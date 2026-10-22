@@ -67,6 +67,16 @@ const vi: Catalog = {
   units: {
     meters: (n) => `${formatNumber(n)} mét`,
     kilometers: (km) => `${formatDecimal(km, 1)} km`,
+    miles: (miles) => `${formatDecimal(miles, 1)} dặm`,
+    lessThanMiles: (miles) => `dưới ${formatDecimal(miles, 1)} dặm`,
+  },
+
+  join: {
+    labelled: (label, value) => `${label}: ${value}`,
+    colon: (label) => `${label}:`,
+    and: (items) => (items.length <= 1 ? items.join('') : `${items.slice(0, -1).join(', ')} và ${items.at(-1)}`),
+    long: (items) => (items.length <= 1 ? items.join('') : `${items.slice(0, -1).join('; ')}; và ${items.at(-1)}`),
+    names: (names) => names.join(' và '),
   },
 
   header: {
@@ -639,6 +649,9 @@ const vi: Catalog = {
 
   flyer: {
     pageTitle: 'Làm tờ rơi cho hàng xóm',
+    language: 'Ngôn ngữ của tờ rơi',
+    languageHelp: 'In tờ rơi bằng ngôn ngữ mà hàng xóm của bạn đọc. Những gì bạn gõ được in đúng như bạn đã gõ.',
+    withEnglish: 'Thêm tiếng Anh bên cạnh, trong một cột thứ hai',
     make: 'Làm tờ rơi cho hàng xóm',
     intro:
       'Một biển báo cho hàng rào của một lô đất trống: nó cho người đi ngang qua biết rằng hàng xóm quan tâm đến nơi này và cách tìm nhau. Bạn chọn nội dung của nó và in ở đây. Không có gì được gửi đi đâu cả.',
@@ -698,6 +711,12 @@ const vi: Catalog = {
 
   letters: {
     pageTitle: 'Viết một lá thư',
+    yourName: '[tên của bạn]',
+    language: 'Ngôn ngữ của lá thư',
+    languageHelp:
+      'Các văn phòng, tổ chức cộng đồng và chủ sở hữu mà những lá thư này gửi đến phần lớn đọc tiếng Anh, nên lá thư được in bằng tiếng Anh trừ khi bạn chọn ngôn ngữ của mình.',
+    translationTitle: 'Lá thư của bạn bằng ngôn ngữ của bạn',
+    translationNote: 'Để bạn biết mình ký gì. Chỉ lá thư ở trên được in; bản dịch này ở lại trên màn hình của bạn.',
     intro:
       'Các lá thư bạn điền và in ở đây. Trang web không bao giờ gửi bất cứ thứ gì: bạn tự gửi thư qua bưu điện, qua email hoặc đem đến tận tay. Những gì bạn gõ chỉ ở lại trong trình duyệt này.',
     unreviewed: 'Chưa có luật sư nào xem xét lá thư này. Đây không phải là tư vấn pháp lý.',
@@ -1453,6 +1472,8 @@ const vi: Catalog = {
 
   survey: {
     pageTitle: 'Khảo sát một tuyến',
+    duration: (hours, minutes) =>
+      `khoảng ${[hours ? plural(hours, { other: '# giờ' }) : '', minutes || !hours ? `${formatNumber(minutes)} phút` : ''].filter(Boolean).join(' ')}`,
     intro:
       'Chọn một tuyến xe buýt hoặc xe điện của SEPTA và một hướng đi để có phiếu khảo sát: các trạm của tuyến ở Philadelphia theo thứ tự, những gì OpenStreetMap hiện đang cho thấy ở mỗi trạm, và các ô để điền. Hãy in ra, hoặc đánh dấu các ô trên điện thoại khi bạn đi.',
     guideLink: 'Cách khảo sát trạm xe buýt',

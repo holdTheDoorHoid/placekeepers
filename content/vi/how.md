@@ -186,7 +186,7 @@ trên trang [Hãy dùng có trách nhiệm](../responsibly/).
 | Làm chậm xe trên một đường phố khu dân cư (gờ giảm tốc và những thứ tương tự) | Streets Department | 60% dãy phố ký một bản kiến nghị | Miễn phí để hỏi | Được xem xét ba lần mỗi năm; lắp từ tháng 5 đến tháng 10 |
 | Tổ chức một buổi tiệc dãy phố hoặc một sự kiện trên đường | Streets Department và police district | 75% số hộ cho một buổi tiệc dãy phố, 90% cho các sự kiện khác | $25 đến $150 | Nộp đơn trước 21 ngày |
 | Tổ chức một Playstreet (phố vui chơi) trong mùa hè | Parks and Recreation | Kiến nghị 75%, một người giám sát là cư dân, một con phố nhỏ một chiều | Miễn phí | Chỉ vào mùa hè |
-| Trở thành một Block Captain (trưởng dãy phố) và tổ chức các buổi dọn dẹp | Streets Department | 51% dãy phố ký | Miễn phí | Tối đa ba buổi dọn dẹp có tổ chức mỗi mùa hè, có cung cấp dụng cụ |
+| Trở thành một Block Captain (trưởng dãy phố) và tổ chức các buổi dọn dẹp | Sở Vệ sinh (Department of Sanitation, Philadelphia More Beautiful Committee) | 51% dãy phố ký | Miễn phí | Tối đa ba buổi dọn dẹp có tổ chức mỗi mùa hè, có cung cấp dụng cụ |
 | Tham gia Philly Spring Cleanup | Streets Department và PHS | Đăng ký | Chổi, găng tay và túi miễn phí | Mùa xuân |
 | Xây một parklet (công viên nhỏ thay chỗ đỗ xe) | OTIS | Chứng minh có sự ủng hộ của cộng đồng và có bảo hiểm | Không nêu | Theo mùa, từ tháng 4 đến tháng 11; việc xem xét có thể mất nhiều tháng |
 | Xin một cây ven đường miễn phí | Parks and Recreation (TreePhilly) | Chủ sở hữu bất động sản mà cây sẽ đứng phía trước yêu cầu | Miễn phí: Thành phố trồng và tưới nước trong năm đầu | Mùa trồng cây tiếp theo |
