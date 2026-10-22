@@ -111,6 +111,14 @@ and Recreation), 水务部 (Water Department), 公共卫生部 (Department of Pu
 | license | 授权条款 | a named license is "GPL-3.0 许可证" |
 | report a correction | 报告更正 | |
 | GitHub issue | GitHub 议题 | |
+| flyer (for neighbors) | 传单 | the page label is "制作给邻居的传单" |
+| packet (to print or share) | 资料包 | |
+| letter (the four templates) | 信 | the letters print in Chinese, see the note below |
+| ward, division | 选举区（ward）, 投票分区（division） | |
+| committee people | 党派委员会成员（committee people） | |
+| representatives, offices | 市议员, 州众议员, 州参议员, 国会议员 | |
+| projects neighbors finished | 邻居们完成的项目 | the layer and its form |
+| QR code | 二维码 | |
 | Redevelopment Authority | 重建管理局 | our rendering, not the City's |
 | Philadelphia Housing Development Corporation | 费城住房发展公司 (PHDC) | our rendering; PHDC alone on the City's site |
 | Philadelphia Housing Authority | 费城住房管理局 | our rendering |
@@ -150,3 +158,14 @@ changes them again should change every place the passage appears.
 - The survey sheet's time and distance ("about 1 hour 15 minutes", "0.4 miles") come from code
   that writes English (`web/src/survey/sheet.ts`), so they appear in English inside a Chinese
   sentence.
+
+## Added in the catch up pass (2026-10-22)
+
+- The letters (`letters.*`) are translated into Chinese, so a letter filled in on a Chinese page
+  prints in Chinese. An owner or a Council office may read only English, so the orchestrator may
+  want an English print option later.
+- The safety lines are kept firm: the letters' "A lawyer has not reviewed this letter yet. It is not
+  legal advice" (律师还没有审阅过这封信。它不构成法律意见。), the flyer's "what you print is
+  public" warning, the posting rules (never on poles, street lights, traffic signs, trees or SEPTA
+  shelters) and the project photo rule (never a child's face, never anyone who did not agree, never a
+  license plate).
