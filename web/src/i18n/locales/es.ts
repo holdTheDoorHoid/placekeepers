@@ -9,7 +9,8 @@
 // as punctuation, and proper names as they are (Placekeepers, Philly311, LandCare).
 
 import type { Catalog } from '../catalog.ts';
-import { formatDecimal, formatMoney, formatNumber, plural } from '../format.ts';
+import { formatDecimal, formatNumber, plural } from '../format.ts';
+import { distanceWords } from '../../strings.ts';
 
 /** "subió 61%", "bajó 3%", "no cambió": a change in percent, in words. */
 function variacion(n: number): string {
@@ -185,7 +186,7 @@ const es: Catalog = {
     confidenceTitle: 'Qué tan seguros estamos',
     ownerTitle: 'Tipo de dueño',
     landcare: 'Ya lo mantiene PHS LandCare',
-    listed: 'Ofrecido por las agencias de tierras de la Ciudad',
+    listed: 'Indicado como disponible por las agencias de tierras de la Ciudad',
     suggestionsTitle: 'Sugerencias',
     clearSelection: 'Quitar la selección',
     selectedTitle: 'Lugar seleccionado',
@@ -229,7 +230,7 @@ const es: Catalog = {
       date
         ? `La Ciudad lo incluye como edificio probablemente vacío (lista del ${date})`
         : 'La Ciudad lo incluye como edificio probablemente vacío',
-    assessor_vacant_land: 'El tasador lo clasifica como terreno vacío',
+    assessor_vacant_land: 'La Oficina de Evaluación de Propiedades (OPA) lo clasifica como terreno vacío',
     no_building: 'No hay ningún edificio en la parcela',
     demolished: (year) =>
       year ? `Demolido en ${year}, y no se ha construido nada desde entonces` : 'Demolido, y no se ha construido nada desde entonces',
@@ -240,7 +241,7 @@ const es: Catalog = {
     unsafe: 'L&I lo registra como inseguro, sin permisos desde entonces',
     imminently_dangerous: 'L&I lo declaró de peligro inminente, sin permisos desde entonces',
     vacant_building_record: 'L&I registró una infracción o una queja por propiedad vacía en los últimos dos años',
-    assessor_exterior: 'El tasador anotó que su exterior está vacío o sellado',
+    assessor_exterior: 'La Oficina de Evaluación de Propiedades (OPA) anotó que su exterior está vacío o sellado',
     built_since: (year) =>
       year
         ? `En ${year} se emitió un permiso de construcción nueva, así que ahora puede haber un edificio`
@@ -289,7 +290,7 @@ const es: Catalog = {
     notInLandcare: 'No está en LandCare',
     confidence: 'Qué tan seguros estamos',
     kind: 'Lote o edificio',
-    listed: 'Ofrecidos por las agencias de tierras de la Ciudad',
+    listed: 'Indicados como disponibles por las agencias de tierras de la Ciudad',
     clear: 'Quitar los filtros',
     showAll: 'Mostrar todo',
     noneSelected: (group) => `No hay nada elegido en "${group}", así que no se muestra ningún lote.`,
@@ -636,7 +637,7 @@ const es: Catalog = {
     sureLow: 'No muy seguros',
     parcelPoint: 'Puntos: con el mapa alejado, una muestra de las parcelas vacías; de cerca, una parcela sin forma en el mapa',
     parcelsListed:
-      'Solo se muestran las parcelas que las agencias de tierras de la Ciudad ofrecen. Una parcela que el mapa no considera vacía no se dibuja; el mapa propio del Land Bank las muestra todas.',
+      'Solo se muestran las parcelas que las agencias de tierras de la Ciudad indican como disponibles. Una parcela que el mapa no considera vacía no se dibuja; el mapa propio del Land Bank las muestra todas.',
     selected: 'Lugar seleccionado',
     landcare: 'Lote mantenido por PHS LandCare: ya está cuidado',
     garden: 'Huerto o granja comunitaria',
@@ -1487,11 +1488,1079 @@ const es: Catalog = {
     stressDetailsSource: 'De la red de Nivel de Estrés del Tráfico de DVRPC, calificada según carriles, velocidades y carriles para bicicletas.',
   },
 
+  landBank: {
+    pageTitle: 'El Land Bank en números',
+    back: 'Volver al mapa',
+    intro:
+      'Cuántas propiedades han transferido el Philadelphia Land Bank y las otras agencias de tierras de la Ciudad, año por año, según los registros de escrituras de la propia Ciudad. Solo conteos y totales: sin nombres ni direcciones.',
+    loading: 'Cargando los números',
+    loadFailed: 'No se pudieron cargar los números. Revise su conexión e inténtelo de nuevo.',
+    retry: 'Intentar de nuevo',
+    missing: 'Los números todavía no se han publicado. Aparecen después de la próxima actualización semanal de los datos.',
+    noStatus: 'Sin estado',
+    agencyLabel: 'Agencia',
+    agencyHelp: 'Cada sección de abajo sigue esta elección, salvo los conteos de la propia Ciudad por programa y el conteo semanal de lotes indicados como disponibles.',
+    agencies: {
+      all: 'Las cuatro agencias',
+      PLB: 'Philadelphia Land Bank',
+      PRA: 'Autoridad de Redesarrollo',
+      PHDC: 'PHDC',
+      PUB: 'Ciudad de Filadelfia',
+    },
+    agencyLong: {
+      all: 'las cuatro agencias de tierras juntas',
+      PLB: 'el Philadelphia Land Bank',
+      PRA: 'la Autoridad de Redesarrollo de Filadelfia',
+      PHDC: 'la Philadelphia Housing Development Corporation (PHDC)',
+      PUB: 'la Ciudad de Filadelfia',
+    },
+    headline: (agency, n, deeds, from, to) =>
+      `Según los registros de escrituras de la Ciudad de ${from} a ${to}, ${plural(n, { one: '# propiedad fue transferida', other: '# propiedades fueron transferidas' })} por ${agency} en ${plural(deeds, { one: '# escritura', other: '# escrituras' })}.`,
+    movedAll: (n) =>
+      `No se cuentan: ${plural(n, { one: '# traspaso', other: '# traspasos' })} de una propiedad de una agencia a otra, por ejemplo de la Ciudad al Land Bank.`,
+    moved: (received, handed) =>
+      `También recibió ${plural(received, { one: '# propiedad', other: '# propiedades' })} de las otras agencias y les entregó ${formatNumber(handed)}. Esos traspasos no se cuentan como transferencias.`,
+    whatCounts:
+      'Una transferencia, aquí, es una escritura de una agencia de tierras a alguien fuera de las cuatro agencias: una persona, una empresa, una organización sin fines de lucro u otra entidad pública, como la Autoridad de Vivienda de Filadelfia. Cada propiedad cuenta una vez. Se dejan fuera las correcciones, las cancelaciones de restricciones antiguas, los traspasos entre las agencias y los acuerdos registrados como escrituras.',
+    partial: (year, date) => `${year} llega solo hasta el ${date}: los registros de escrituras de la Ciudad van unas ocho semanas atrasados.`,
+    noNames:
+      'Leemos los nombres de los compradores solo para distinguir a una persona de una empresa y para revisar la casa de al lado. No guardamos ninguno.',
+    showNumbers: 'Mostrar los números',
+    tableLabel: (what) => `Los números: ${what}`,
+    downloadCsv: 'Descargar CSV',
+    year: 'Año',
+    total: 'Total',
+    properties: 'Propiedades',
+    chartLabel: (what, from, to, max) =>
+      `${what}, ${from} a ${to}. El año más alto tiene ${max}. Los mismos números están en la tabla debajo del gráfico.`,
+    perYear: {
+      title: 'Transferencias por año',
+      caption: 'Propiedades transferidas cada año. Una escritura puede transferir muchas propiedades.',
+      deeds: 'Escrituras',
+    },
+    buyers: {
+      title: 'Quiénes son los compradores',
+      caption:
+        'El tipo de cada comprador, leído del nombre que registra la escritura. Una organización sin fines de lucro se cuenta como tal solo cuando su nombre lo dice; muchas organizaciones sin fines de lucro tienen nombres como los de las empresas y se cuentan como empresas.',
+      groups: {
+        individual: 'Personas',
+        company: 'Empresas',
+        nonprofit: 'Organizaciones sin fines de lucro',
+        public: 'Otras entidades públicas',
+        unknown: 'No está claro',
+      },
+      share: (label, pct) => `${label}: ${pct}%`,
+      shares: 'Parte de todas las propiedades transferidas en estos años',
+    },
+    programs: {
+      title: 'Por programa',
+      caption:
+        'Las escrituras no dicen por cuál programa pasó una transferencia. Se puede deducir una: un solo lote transferido a una persona que es dueña de una casa que lo toca es probablemente un patio lateral o trasero. Este gráfico cuenta esos lotes, una deducción nuestra. De los demás no se sabe nada por los registros, lo que no significa que no fueran patios laterales.',
+      series: 'Patios laterales o traseros, deducción nuestra',
+      checked:
+        'Cómo lo comprobamos (9 de octubre de 2026): 10 de estos lotes, elegidos al azar de 2019 a 2026, buscados a mano. En los 10, el comprador es el dueño registrado de la casa de al lado o de atrás del lote y recibe allí su correo. Si cada uno pasó por el programa de patio lateral sigue siendo una deducción nuestra.',
+      compare: (cityTotal, ours, oursPlb, from, to) =>
+        `Para los años fiscales ${from} a ${to}, el panel de la propia Ciudad contó ${formatNumber(cityTotal)} patios laterales. De las escrituras deducimos ${formatNumber(ours)} de las cuatro agencias, ${formatNumber(oursPlb)} de ellos del Land Bank.`,
+      cityTitle: 'El conteo de la propia Ciudad por programa',
+      cityCaption: (edited) =>
+        `Del panel de Land Management de la Ciudad, por año fiscal (de julio a junio). Se actualizó por última vez el ${edited}, así que el último año está incompleto, y para vivienda cuenta casas construidas, no propiedades.`,
+      fy: 'Año fiscal',
+      sideYards: 'Patios laterales',
+      gardens: 'Jardines o espacio abierto',
+      business: 'Ampliación de negocios',
+      homesBelow30: 'Viviendas, por debajo del 30% del ingreso del área',
+      homes60to80: 'Viviendas, 60% a 80%',
+      homes80to120: 'Viviendas, 80% a 120%',
+      homesMarket: 'Viviendas, a precio de mercado',
+      oursPlb: 'Nuestra deducción de patios laterales, Land Bank',
+      oursAll: 'Nuestra deducción de patios laterales, las cuatro agencias',
+      fyLabel: (fy) => `${fy - 1} a ${fy}`,
+    },
+    prices: {
+      title: 'Precios registrados en las escrituras',
+      caption: (max) =>
+        `El precio es lo que la escritura registra para cada propiedad (su parte, cuando una escritura abarcó varias). No siempre es dinero pagado: algunos programas venden por un precio simbólico y protegen el uso del lote con una hipoteca a 30 años, y las escrituras de patios laterales a menudo registran el valor tasado del lote. El precio mediano tiene la mitad de los precios por debajo y la mitad por encima. "Simbólico" significa ${max} o menos.`,
+      priced: 'Con precio',
+      median: 'Precio mediano',
+      nominal: 'Precio simbólico',
+      none: 'Sin precio registrado',
+      summary: (median, pct) => `Precio mediano en estos años: ${median}. ${pct}% se transfirieron por un precio simbólico.`,
+    },
+    districts: {
+      title: 'Por distrito del Concejo',
+      caption:
+        'Dónde están las propiedades, según los límites actuales de los distritos del Concejo. Los límites de los distritos cambian después de cada censo, así que los años anteriores también se ubican según los límites actuales.',
+      district: 'Distrito',
+      districtName: (n) => `Distrito ${n}`,
+      noLocation: 'Sin ubicación en los registros',
+      allYears: 'Todos los años',
+      chartLabel: 'Propiedades transferidas en cada distrito del Concejo. Los mismos números están en la tabla de abajo.',
+    },
+    listed: {
+      title: 'Lotes indicados como disponibles, semana por semana',
+      caption: (from) =>
+        `La lista de propiedades públicas de la Ciudad, la misma que muestra el mapa de propiedades del Land Bank, contada cada semana en que se actualizó nuestra copia. El conteo empieza el ${from}; no hay conteos semanales anteriores.`,
+      date: 'Fecha de la lista',
+      records: 'Indicados como disponibles',
+      parcels: 'Parcelas',
+      sideYard: 'Abiertos a un vecino como patio lateral',
+      oneWeek: 'Aparecerá un gráfico cuando haya dos semanas para comparar.',
+      byStatus: (date) => `Cada lote de la lista según su estado, ${date}`,
+      status: 'Estado',
+      count: 'Registros',
+      chartLabel: (from, to) =>
+        `Lotes indicados como disponibles cada semana, de ${from} a ${to}. Los mismos números están en la tabla de abajo.`,
+      mapLink: 'El mapa de propiedades de la lista del Land Bank',
+    },
+    limits: {
+      title: 'Lo que estos números no pueden mostrar',
+      items: [
+        'Cuánto esperaron los solicitantes, cuántos solicitaron o a cuántos se les dijo que no. Los registros públicos tienen escrituras, no solicitudes.',
+        'El programa detrás de la mayoría de las transferencias. Las escrituras no lo dicen; los patios laterales y traseros son una deducción nuestra, y los conteos de la propia Ciudad por programa se detienen en abril de 2023.',
+        'Lo que se construyó o se cultivó después, o si se respetaron las restricciones de un lote.',
+        'Lo que finalmente pagó un comprador. Una escritura registra un precio, y algunos programas combinan un precio simbólico con una hipoteca a 30 años.',
+        'Terrenos que las agencias arriendan o dan en licencia, como los acuerdos de jardín. Ninguna escritura los registra.',
+        'Escrituras anteriores a 2014, y escrituras de las últimas ocho semanas más o menos, que la Ciudad todavía no ha publicado.',
+      ],
+    },
+    sources: {
+      title: 'Fuentes y fechas',
+      deeds: (fetched, last) =>
+        `Escrituras: Ciudad de Filadelfia, Departamento de Registros, transferencias de bienes raíces, leídas el ${fetched}; la escritura más reciente es del ${last}.`,
+      programs: (edited) =>
+        `Conteos por programa: Ciudad de Filadelfia, Departamento de Planificación y Desarrollo, panel de Land Management, actualizado por última vez el ${edited}.`,
+      listed:
+        'Lotes de la lista: Ciudad de Filadelfia, Departamento de Planificación y Desarrollo (Land Management), tal como los muestra el mapa de propiedades del Philadelphia Land Bank.',
+      districts: 'Distritos del Concejo: Ciudad de Filadelfia, límites actuales.',
+      neighbours:
+        'Para la deducción de patios laterales: la lista de dueños de la Ciudad (Oficina de Evaluación de Propiedades) y las formas de las parcelas (Departamento de Agua).',
+      board: 'Las agendas de la junta del Land Bank, que enumeran cada disposición por programa',
+      council: 'La legislación del Concejo Municipal, donde el Concejo aprueba cada disposición del Land Bank',
+      method: 'Cómo contamos, en detalle',
+      deedsLink: 'Las transferencias de bienes raíces de la Ciudad',
+      programsLink: 'La tabla del panel de Land Management de la Ciudad',
+    },
+    csv: {
+      years: (agency) => `Transferencias por año y agencia (las cuatro agencias y cada una; esta página mostraba ${agency}).`,
+      districts: 'Transferencias por distrito del Concejo (límites actuales) y año, para las cuatro agencias y cada una.',
+      programs: 'Los conteos de la propia Ciudad por programa y año fiscal, junto a nuestra deducción de patios laterales.',
+      listed: 'Lotes de la lista de propiedades públicas de la Ciudad indicados como disponibles, cada semana desde el inicio del conteo.',
+      counts: 'Solo conteos: sin nombres, sin direcciones y sin números de parcela.',
+      dates: (fetched, last) => `Escrituras leídas el ${fetched}; la escritura más reciente es del ${last}.`,
+      file: (part, day) => `placekeepers-land-bank-${part}-${day}.csv`,
+    },
+  },
+
+  basemap: {
+    missing: 'El mapa base no está disponible, así que las calles y los nombres de lugares están ocultos. Las capas de datos siguen funcionando.',
+    unavailable: 'El mapa base no está disponible aquí, así que el mapa muestra un fondo liso.',
+    legend: 'Calles, edificios, parques, agua y nombres de lugares, en color.',
+    legendMuted: 'Calles, edificios, parques, agua y nombres de lugares, en gris, para que los datos resalten.',
+  },
+
+  credits: {
+    basemap:
+      '<a href="https://protomaps.com" target="_blank" rel="noopener noreferrer">Protomaps</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>',
+    data: (statusUrl) => `Datos: Ciudad de Filadelfia y <a href="${statusUrl}">otras fuentes</a>`,
+  },
+
+  status: {
+    pageTitle: 'Estado de los datos',
+    intro:
+      'Placekeepers actualiza sus datos cada semana. Si una fuente falla, el mapa conserva la última copia buena y lo dice aquí.',
+    back: 'Volver al mapa',
+    loading: 'Cargando el estado de los datos',
+    loadFailed: 'No pudimos cargar el archivo del estado de los datos. Puede que el mapa todavía funcione con datos más antiguos.',
+    retry: 'Intentar de nuevo',
+    builtOn: (date) => `Última actualización: ${date}`,
+    buildId: (id) => `Compilación ${id}`,
+    summaryAllOk: 'Todas las fuentes están al día.',
+    summary: (stale, failing, missing) => {
+      const parts: string[] = [];
+      if (stale) parts.push(plural(stale, { one: '# fuente está desactualizada', other: '# fuentes están desactualizadas' }));
+      if (failing) parts.push(plural(failing, { one: '# fuente no funciona', other: '# fuentes no funcionan' }));
+      if (missing) parts.push(plural(missing, { one: '# fuente todavía no se ha obtenido', other: '# fuentes todavía no se han obtenido' }));
+      return `${parts.join(', ')}.`;
+    },
+    statusLabel: {
+      ok: 'Al día',
+      stale: 'Desactualizada',
+      failing: 'No funciona',
+      missing: 'Todavía no obtenida',
+      unknown: 'Desconocido',
+    },
+    staleSince: (date) => `Se usa la última copia buena, del ${date}.`,
+    staleNoDate: 'Se usa la última copia buena.',
+    failingText: 'Ahora no hay ninguna copia utilizable, así que pueden faltar las capas que la necesitan.',
+    missingText: 'Esta fuente todavía no se ha obtenido.',
+    unknownText: 'El archivo de estado informa algo que no reconocemos.',
+    lastSuccess: (date) => `Última descarga buena: ${date}`,
+    neverSucceeded: 'Todavía no hay una descarga buena',
+    lastAttempt: (date) => `Último intento: ${date}`,
+    rows: (n) => plural(n, { one: '# registro', other: '# registros' }),
+    newest: (date) => `Registro más reciente: ${date}`,
+    message: (text) => `Nota de la actualización: ${text}`,
+    publisher: 'Publicado por',
+    homepage: 'De dónde viene',
+    license: 'Licencia',
+    cadence: {
+      daily: 'Actualizado a diario por quien lo publica',
+      weekly: 'Actualizado cada semana por quien lo publica',
+      monthly: 'Actualizado cada mes por quien lo publica',
+      yearly: 'Actualizado cada año por quien lo publica',
+      irregular: 'Actualizado de vez en cuando por quien lo publica',
+      frozen: 'Ya no lo actualiza quien lo publica',
+    },
+    problems: 'Problemas en el archivo de estado',
+    notesTitle: 'Notas de la última actualización',
+    notesInEnglish: 'Estas notas están escritas en inglés, para las personas que mantienen el mapa funcionando.',
+    basemapLabel: { ok: 'Al día', failing: 'No disponible' },
+    basemapMade: (date) =>
+      `La actualización semanal hace una copia nueva del mapa base más o menos una vez al mes. Esta copia se hizo con datos de OpenStreetMap el ${date}.`,
+    basemapNoDate: 'La actualización semanal hace una copia nueva del mapa base más o menos una vez al mes.',
+    basemapMissing:
+      'El mapa base no está disponible en esta copia del sitio, así que el mapa muestra un fondo liso. Las capas de datos siguen funcionando.',
+  },
+
+  search: {
+    label: 'Buscar una dirección, una intersección o un número de parcela',
+    placeholder: 'Dirección, intersección o número de parcela',
+    button: 'Buscar',
+    searching: 'Buscando',
+    tooShort: 'Escriba una dirección, como 1234 Market St, o dos calles que se cruzan, como Broad y Girard.',
+    notFound:
+      'La Ciudad no pudo encontrar ese lugar. Pruebe con el número de una casa y la calle, dos calles que se cruzan, o un número de parcela de nueve dígitos.',
+    failed: (reason) => `Problema con el servicio de direcciones de la Ciudad: ${reason}. Inténtelo de nuevo en un momento.`,
+    liveOff:
+      'La búsqueda de direcciones consulta el servicio de direcciones de la Ciudad, y los datos en vivo de la Ciudad están desactivados en Ajustes. Todavía puede buscar por un número de parcela de nueve dígitos.',
+    resultsTitle: 'Elija un lugar',
+    resultsCount: (n) => plural(n, { one: '# lugar coincide', other: '# lugares coinciden' }),
+    intersection: 'Intersección',
+    showing: (label) => `Mostrando ${label} en el mapa.`,
+    noParcel: (label) => `Mostrando ${label} en el mapa. La Ciudad no tiene un registro de parcela para esta dirección exacta.`,
+    privacy: 'Las búsquedas van de su navegador directo a la Ciudad de Filadelfia.',
+  },
+
+  pick: {
+    looking: 'Buscando esta parcela con la Ciudad',
+    nothing: 'La Ciudad no tiene ninguna parcela en este punto. Toque un lote o un edificio.',
+    liveOff: 'Para abrir una parcela que no está en nuestra lista, active "Traer datos en vivo de la Ciudad" en Ajustes.',
+    failed: (reason) => `Problema con el mapa de parcelas de la Ciudad: ${reason}. Inténtelo de nuevo en un momento.`,
+  },
+
+  historic: {
+    liveOff:
+      'Estas imágenes vienen directo de los servidores de la Ciudad, así que solo se pueden activar mientras "Traer datos en vivo de la Ciudad" está activado (en Ajustes, en "Privacidad y datos en vivo").',
+    refused:
+      'Las fotos aéreas antiguas y el atlas de 1860 vienen de los servidores de la Ciudad. Active los datos en vivo de la Ciudad en Ajustes para verlos.',
+    serverError: 'El servidor de imágenes de la Ciudad no envió todas las partes de esta imagen. Inténtelo más tarde.',
+    photoYear: (year) => `La foto aérea de ${year}, tomada desde un avión.`,
+    gaps1975: 'Las fotos de 1975 dejan huecos en el extremo sur de la ciudad, alrededor del aeropuerto y del Navy Yard.',
+    termsNotStated:
+      'Quien las publica no indica condiciones de uso para estas fotos; se muestran tal como la Ciudad las aloja, con su crédito, y se retiran si quien las publica lo pide.',
+    blackAndWhite: (year) => `Las fotos de ${year} son en blanco y negro.`,
+    under: 'La foto queda debajo de todas las demás capas. Baje su intensidad para ver a través de ella las calles de hoy.',
+    atlasCoverage: 'El atlas cubre solo Center City y Northern Liberties.',
+    atlasCredit:
+      'Atlas ajustado al mapa de hoy por la Greater Philadelphia GeoHistory Network y alojado por la Ciudad de Filadelfia con su permiso.',
+    sliderRange: (first, last) => `De ${first} a ${last}`,
+    lotTitle: 'Fotos aéreas antiguas',
+    lotButton: 'Ver este lote en fotos aéreas antiguas',
+    lotHelp: (year) =>
+      `Abre el mapa en este lote con la foto aérea de ${year}, la más antigua de este mapa. Pase por los años desde entonces en "Antes y ahora", en las capas.`,
+    lotLiveOff: 'Las fotos vienen directo de los servidores de la Ciudad, así que necesitan los datos en vivo de la Ciudad, que están desactivados.',
+    shown: (year) => `Las fotos aéreas de ${year} están activadas. Pase por los años en "Antes y ahora", en las capas.`,
+    statusOk:
+      'Todos los servicios de imágenes respondieron en la última revisión semanal. Las imágenes se cargan directo de los servidores de la Ciudad cuando alguien activa su capa.',
+    statusStale: (date) =>
+      `En la última revisión semanal no todos los servicios de imágenes respondieron, así que puede que algunas imágenes no se vean. Todos respondieron por última vez el ${date}.`,
+    statusFailing: 'Los servicios de imágenes no respondieron en la revisión semanal, así que puede que las imágenes no se vean.',
+    services: (n) => plural(n, { one: '# servicio de imágenes revisado', other: '# servicios de imágenes revisados' }),
+    lastCheck: (date) => `Última revisión en que todos los servicios respondieron: ${date}`,
+  },
+
+  redlining: {
+    detailsTitle: 'Mapa de redlining de 1937',
+    grades: {
+      A: 'A, calificada como "la mejor" en 1937',
+      B: 'B, calificada como "todavía deseable"',
+      C: 'C, calificada como "claramente en declive"',
+      D: 'D, calificada como "peligrosa" y delineada en rojo: con redlining',
+    },
+    ungraded: 'Sin calificación (terreno industrial y comercial)',
+    area: (label, grade) => `Área ${label}, calificada ${grade} en 1937`,
+    areaUngraded: (label) => `${label}: un área que el mapa de 1937 dejó sin calificar`,
+    context:
+      'En 1937 una agencia federal, la Home Owners\' Loan Corporation, calificó los vecindarios de la ciudad de la A a la D según qué tan seguro juzgaba que era prestar dinero para hipotecas allí. Las calificaciones dependían de quién vivía en cada área: las áreas donde vivían familias negras y muchas familias inmigrantes casi siempre recibían una D y se delineaban en rojo. Durante décadas fue más difícil conseguir préstamos allí, y esa práctica se llama redlining.',
+    notToday:
+      'Las calificaciones son un registro de cómo una agencia federal juzgó los lugares en 1937. No dicen nada sobre las personas que viven allí hoy.',
+    legendTap: 'Toque un área para ver su calificación y un enlace a su descripción de 1937.',
+    description: (label) => `Leer la descripción de 1937 del área ${label} en Mapping Inequality`,
+    descriptionNote: 'Las descripciones de 1937 no se copian aquí: se quedan en Mapping Inequality, con la historia que las rodea.',
+    credit:
+      'Áreas y calificaciones de Mapping Inequality: Redlining in New Deal America, de Robert K. Nelson, LaDale Winling y otros, University of Richmond Digital Scholarship Lab. Placekeepers muestra solo las áreas y las calificaciones.',
+    homepageLabel: 'Mapping Inequality: Philadelphia',
+    nonCommercial:
+      'Solo para uso no comercial. Con licencia Creative Commons Atribución-NoComercial 2.5, aparte del resto de los datos del mapa.',
+    licenseLabel: 'CC BY-NC 2.5',
+    statusNote:
+      'Solo para uso no comercial: esta fuente tiene licencia para uso no comercial, así que el sitio la publica en un archivo aparte y nunca en una descarga.',
+  },
+
   options: {
     title: 'Privacidad y datos en vivo',
     privacyLink: 'Cómo cuida Placekeepers su privacidad',
     turnOn: 'Activar los datos en vivo de la Ciudad',
     resetNote: 'Su elección sobre los datos en vivo de la Ciudad no cambia.',
+  },
+
+  failure: {
+    timeout: 'no hubo respuesta a tiempo',
+    network: 'no se pudo establecer la conexión',
+    http: 'la respuesta fue un error',
+    bad_data: 'la respuesta no se pudo leer',
+    not_found: 'no hay ningún registro de eso',
+    aborted: 'no se hizo la consulta',
+    empty: 'no se hizo la consulta',
+  },
+
+  rulesMap: {
+    legend: {
+      district: 'Distrito histórico',
+      property: 'En el registro histórico',
+      overlay: 'Zonificación superpuesta',
+      supplemental: 'Otra regla especial del Código de Zonificación',
+      hearingZoning: 'Audiencia de zonificación',
+      hearingOther: 'Audiencia ante otra junta',
+      brownfield: 'Sitio brownfield de la EPA',
+    },
+    notes: {
+      historic: 'Los cambios aquí pueden necesitar la revisión de la Comisión Histórica; pregúnteles primero.',
+      overlays: 'Las zonas superpuestas se traslapan, y unas pocas cubren la mayor parte de la ciudad. Toque un punto para ver cada una de las que hay allí.',
+      hearings: 'Toque una audiencia para ver cómo participar y para abrir la página del lote.',
+      brownfields: 'No es un mapa de todo el suelo contaminado. Haga analizar el suelo antes de cultivar alimentos en uno de estos sitios o cerca de él.',
+    },
+    districtTitle: (name) => name,
+    designated: (date) => `Designado el ${date}.`,
+    noDate: 'La capa de la Ciudad no da el día de la designación.',
+    propertyTitle: 'En el Registro de Lugares Históricos de Filadelfia',
+    listedOn: (date) => `Incluido por sí solo el ${date}.`,
+    listedAlone: 'Incluido por sí solo.',
+    inDistrict: (district, date) => `Parte de ${district}${date ? `, designado el ${date}` : ''}.`,
+    overlaysHere: (n) => (n === 1 ? 'Una zona superpuesta aquí' : `${formatNumber(n)} zonas superpuestas aquí`),
+    hearingTitle: (board) => `Audiencia: ${board}`,
+    hearingWhen: (date, time) => `${date}${time ? `, a las ${time}` : ''}`,
+    hearingsHere: (n) => `${formatNumber(n)} audiencias aquí`,
+    about: (address) => `Sobre ${address}.`,
+    rco: (name) => `Organización comunitaria registrada notificada: ${name}.`,
+    openLot: 'Abrir la página de este lote',
+    namesNote: 'Quién presentó la apelación se muestra solo en la página del lote.',
+    brownfieldTitle: 'Sitio brownfield de la EPA',
+  },
+
+  dossier: {
+    pageTitle: 'Página del lote',
+    loading: 'Cargando la página del lote',
+    parcel: (opa) => `Cuenta OPA ${opa}`,
+    printButton: 'Imprimir esta página del lote',
+    showOnMap: 'Mostrar en el mapa',
+    close: 'Cerrar la página del lote',
+    clear: 'Quitar la selección',
+    retry: 'Intentar de nuevo con la Ciudad',
+    notFound: 'No pudimos encontrar esta parcela en los registros de la Ciudad ni en nuestra copia semanal.',
+    noData:
+      'Esta parcela no está en nuestra copia semanal, y los datos en vivo de la Ciudad están desactivados, así que todavía no hay nada que mostrar.',
+    sections: {
+      summary: 'Resumen',
+      actions: 'Lo que puede hacer',
+      rules: 'Reglas de este lote',
+      owner: 'Quién es el dueño',
+      history: 'Historia',
+      nearby: 'Cerca',
+      sources: 'Fuentes y actualización',
+    },
+    contents: 'En esta página',
+
+    provenance: {
+      live: (time) => `En vivo desde la Ciudad a las ${time}.`,
+      snapshot: (date) => `De la copia semanal del ${date}.`,
+      snapshotNoDate: 'De la copia semanal.',
+      map: 'De los datos semanales del mapa.',
+      checking: 'Buscando registros más recientes en la Ciudad.',
+      asking: 'Consultando a la Ciudad.',
+      failedSnapshot: (reason, date) => `Problema con los servidores de la Ciudad (${reason}), así que esta es la copia semanal del ${date}.`,
+      failedNothing: (reason) => `Problema con los servidores de la Ciudad (${reason}), así que esta parte no se puede mostrar ahora.`,
+      offSnapshot: (date) => `Los datos en vivo de la Ciudad están desactivados, así que esta es la copia semanal del ${date}.`,
+      offNothing: 'Los datos en vivo de la Ciudad están desactivados, y nuestra copia semanal no cubre esta parte.',
+      none: 'No hay registros para mostrar.',
+    },
+    banner: {
+      live: 'En vivo desde la Ciudad de Filadelfia.',
+      loading: 'Consultando a la Ciudad por los registros más recientes.',
+      off: (date) => `Los datos en vivo de la Ciudad están desactivados. Esta página muestra la copia semanal del ${date}.`,
+      offNoDate: 'Los datos en vivo de la Ciudad están desactivados. Esta página muestra la copia semanal.',
+      partial: 'Algunas consultas a la Ciudad no funcionaron. Esas partes muestran la copia semanal, o nada, y lo dicen.',
+      failed: 'Los servidores de la Ciudad no respondieron. Esta página muestra lo que tiene nuestra copia semanal.',
+    },
+
+    summary: {
+      kind: { lot: 'Lote vacío', building: 'Edificio vacío' },
+      notListed: 'No está en nuestra lista de lotes y edificios vacíos',
+      notListedHelp: 'Si cree que esta parcela está vacía, reporte una corrección abajo.',
+      noDetails: 'Todavía no hay detalles publicados',
+      noPublishedDetails:
+        'No hemos publicado detalles de esta parcela, así que esta página muestra lo que dicen ahora los servidores de la Ciudad.',
+      confidence: {
+        high: 'Muy probablemente vacío',
+        medium: 'Probablemente vacío',
+        low: 'No estamos muy seguros de que esté vacío',
+      },
+      confidenceTitle: 'Qué tan seguros estamos',
+      signals: (n) =>
+        `${plural(n, { one: '# registro independiente de la Ciudad coincide', other: '# registros independientes de la Ciudad coinciden' })} en que está vacío.`,
+      cityCalls: (category) => `Los registros de propiedades de la Ciudad lo llaman: ${category}.`,
+      lotSize: (frontage, depth) =>
+        `La Oficina de Evaluación de Propiedades de la Ciudad lo registra con unos ${formatNumber(Math.round(frontage))} pies de ancho en la calle y ${formatNumber(Math.round(depth))} pies de fondo.`,
+      landcare: 'Ya lo mantiene PHS LandCare.',
+      landcareSince: (year) => `Lo mantiene PHS LandCare desde ${year}.`,
+      garden: 'Aquí ya hay gente que cultiva. Pregúnteles antes de planear algo.',
+      lensLine: (lens) => `Prioridad según el lente de ${lens.toLowerCase()}, el lente con el que el mapa colorea los lotes.`,
+      flood: {
+        1: 'Parte de este lote está en la llanura aluvial con 1 por ciento de probabilidad anual de la FEMA, donde una inundación tiene al menos 1 probabilidad en 100 cada año. Es una razón para tener cuidado, no parte de ningún puntaje: las plantas aquí deben aguantar el suelo mojado, todo lo que se construya debe seguir las reglas de la Ciudad para llanuras aluviales, y el reverdecimiento que absorbe la lluvia ayuda.',
+        2: 'Parte de este lote está en la zona de la FEMA con 0.2 por ciento de probabilidad anual de inundación, donde una inundación tiene 1 probabilidad en 500 cada año. Es una razón para tener cuidado, no parte de ningún puntaje: las plantas aquí deberían aguantar el suelo mojado, y el reverdecimiento que absorbe la lluvia ayuda.',
+      },
+      floodTitle: 'Riesgo de inundación',
+      linksTitle: 'Verlo en otros sitios',
+      propertyPage: 'La página de propiedades de la Ciudad',
+      atlas: 'Atlas, el mapa de la Ciudad de esta dirección',
+      googleMaps: 'Google Maps',
+      streetView: 'Google Street View',
+      linksNote: 'Estos enlaces abren otros sitios web. Placekeepers enlaza fotos de la calle pero nunca las copia.',
+    },
+
+    actions: {
+      intro: 'Empiece por la vía legal. Cada una dice quién puede hacerla y quién puede ayudar.',
+      route: 'La vía legal',
+      steps: 'Pasos',
+      who: 'Quién puede hacerlo',
+      cost: 'Costo',
+      timeline: 'Cuánto tarda',
+      lastChecked: (date) => `Revisado por última vez el ${date}.`,
+      toConfirm: 'Todavía falta confirmarlo con la organización que se nombra aquí.',
+      partners: 'Quién puede ayudar',
+      otherRoutes: 'Otras vías legales para esta parcela',
+      none: 'Todavía no hay ninguna sugerencia para este lugar.',
+      notListed:
+        'Esta parcela no está en nuestra lista de lotes y edificios probablemente vacíos, así que no tenemos ninguna sugerencia para ella. La página "Cómo hacerlo" explica las vías legales para cualquier lote.',
+      howTo: 'Cómo hacerlo',
+      // Word for word passage (docs/ETHICS.md, "Owner information").
+      conservatorshipWarning:
+        'La administración judicial (conservatorship) puede quitarle una propiedad a su dueño. Investigadores encontraron que se usa de forma desproporcionada en vecindarios que enfrentan gentrificación. Hable con la Garden Justice Legal Initiative antes de considerarla.',
+      notLegalAdvice: 'Placekeepers no es asesoría legal. Consulte con las organizaciones que se nombran aquí antes de actuar.',
+    },
+
+    listing: {
+      title: 'Indicado como disponible por las agencias de tierras de la Ciudad',
+      text: (date) => `El ${date}, la lista de tierras públicas de la Ciudad mostraba esta propiedad como disponible.`,
+      textNoDate: 'La lista de tierras públicas de la Ciudad muestra esta propiedad como disponible.',
+      variants: {
+        'OWNED - AVAILABLE (GARDEN AGREEMENT)': 'Se ofrece para un acuerdo de jardín.',
+        'OWNED - AVAILABLE (NO CONSTRUCTION PERMITTED)': 'No se puede construir nada en ella.',
+        'OWNED - AVAILABLE (NOT FOR SY)': 'No se ofrece como patio lateral.',
+      },
+      sideYardLead: 'Si usted es dueño de la casa de al lado, empiece por el programa de patio lateral:',
+      decline:
+        'Estar en la lista no significa que el Land Bank vaya a decir que sí. Decide cada solicitud por separado y puede rechazar cualquier venta o arrendamiento, incluso de una propiedad que indica como disponible.',
+      changes: 'La lista cambia seguido. Revise el mapa del Land Bank antes de actuar.',
+      map: 'El mapa de propiedades disponibles del Land Bank',
+      credit:
+        'Lista: Ciudad de Filadelfia, Departamento de Planificación y Desarrollo (Land Management), tal como la muestra el mapa del Philadelphia Land Bank.',
+    },
+
+    ownerType: {
+      noName: 'Los registros de la Ciudad no dan ningún nombre de dueño.',
+      unclear: 'No pudimos saber por el nombre qué tipo de dueño es.',
+      individual: 'El nombre del dueño parece el nombre de una persona.',
+      publicName: (label) => `Los registros de la Ciudad nombran como dueño a ${label}.`,
+      markerReason: (marker) => `El nombre del dueño incluye "${marker}".`,
+      agencyConflict: (contact) =>
+        `Los registros de propiedades de la Ciudad nombran a un dueño diferente, así que pregunte a ${contact} cuál es el actual.`,
+      agencyContacts: { PUB: 'el Land Bank', PLB: 'el Land Bank', PRA: 'PHDC', PHDC: 'PHDC' },
+      publicBodies: {
+        land_bank: 'el Philadelphia Land Bank',
+        redevelopment_authority: 'la Autoridad de Redesarrollo de Filadelfia',
+        pha: 'la Autoridad de Vivienda de Filadelfia',
+        housing_authority: 'una autoridad de vivienda',
+        phdc: 'la Philadelphia Housing Development Corporation (PHDC)',
+        pha_or_phdc: 'la Autoridad de Vivienda de Filadelfia o PHDC (el nombre está cortado)',
+        city: 'la Ciudad de Filadelfia',
+        school_district: 'el Distrito Escolar de Filadelfia',
+        community_college: 'el Community College of Philadelphia',
+        septa: 'SEPTA',
+        commonwealth: 'el Commonwealth de Pensilvania',
+        phfa: 'la Agencia de Financiamiento de Vivienda de Pensilvania',
+        united_states: 'el gobierno de los Estados Unidos',
+        hud: 'el Departamento de Vivienda y Desarrollo Urbano de EE. UU.',
+        veterans_affairs: 'el Departamento de Asuntos de Veteranos de EE. UU.',
+        paid: 'la Autoridad de Desarrollo Industrial de Filadelfia',
+        port_authority: 'la Autoridad Portuaria Regional de Filadelfia',
+        district_attorney: 'la Oficina del Fiscal de Distrito de Filadelfia',
+        public_authority: 'una autoridad pública',
+        pgw: 'Philadelphia Gas Works',
+      },
+      markers: {
+        TR: 'TR, abreviatura de fiduciario',
+        TRS: 'TRS, abreviatura de fiduciarios',
+        TRST: 'TRST, abreviatura de fideicomiso',
+        'T U W': 'T/U/W, un fideicomiso creado por un testamento',
+        FBO: 'FBO, para beneficio de',
+        CO: 'CO, abreviatura de compañía',
+        LP: 'LP, una sociedad limitada',
+        LLP: 'LLP, una sociedad de responsabilidad limitada',
+        LTD: 'LTD, abreviatura de limitada',
+        LL: 'LL, una versión abreviada de LLC',
+        GP: 'GP, un socio general',
+        'N A': 'N A, un banco nacional',
+        FB: 'FB, una versión abreviada de FBO',
+        CDC: 'CDC, una corporación de desarrollo comunitario',
+      },
+      labels: {
+        individual: 'Una persona',
+        company: 'Una empresa',
+        city: 'La Ciudad de Filadelfia',
+        land_bank: 'El Philadelphia Land Bank',
+        redevelopment_authority: 'La Autoridad de Redesarrollo de Filadelfia',
+        housing_authority: 'Una autoridad de vivienda',
+        nonprofit: 'Una organización sin fines de lucro',
+        other_public: 'Otra agencia pública',
+        unknown: 'No está claro en los registros de la Ciudad',
+      },
+    },
+
+    owner: {
+      names: 'Dueño, como lo publica la Ciudad',
+      noNames: 'Los registros de la Ciudad no dan ningún nombre de dueño.',
+      mailing: 'Dirección postal, como la publica la Ciudad',
+      noMailing: 'No hay dirección postal registrada.',
+      type: 'Tipo de dueño',
+      flagsTitle: 'Lo que sugieren los registros de la Ciudad',
+      noFlags: 'Nada en los registros de la Ciudad pide una nota sobre este dueño.',
+      heldBack:
+        'No estamos seguros de que esta parcela esté vacía, así que puede ser la casa de alguien. Las notas sobre un dueño que puede ser una persona (dónde recibe su correo, una posible sucesión, deuda de impuestos, otras parcelas que tiene) aparecen solo en las parcelas que consideramos muy probablemente o probablemente vacías.',
+      ownerChanged:
+        'Los registros de la Ciudad nombran a un dueño diferente del de nuestra copia semanal, así que se dejan fuera las notas que eran sobre el dueño anterior.',
+      parts: { meaning: 'Qué significa', careful: 'Tenga cuidado', next: 'Un siguiente paso con cuidado' },
+      flagTitles: {
+        absentee: 'Dónde recibe el dueño su correo',
+        possible_estate: 'Posible sucesión',
+        tax_debt_2025: 'Deuda de impuestos a julio de 2025',
+        sheriff_sales: 'Ventas pasadas del sheriff',
+        years_since_sale: 'Años desde la última venta',
+        many_parcels: 'Un dueño de muchas parcelas vacías',
+        fast_resales: 'Reventas rápidas',
+        open_violations: 'Infracciones abiertas de L&I',
+        unsafe: 'Edificio inseguro',
+        imminently_dangerous: 'Edificio de peligro inminente',
+      },
+      otherFlag: 'Una nota de los registros de la Ciudad',
+      taxTitle: 'Impuestos',
+      taxNoDebt:
+        'La Ciudad ya no publica el saldo de impuestos de cada propiedad como datos abiertos. La copia de julio de 2025 que tenemos no muestra impuestos sin pagar aquí.',
+      taxUnknown: 'La Ciudad ya no publica el saldo de impuestos de cada propiedad como datos abiertos.',
+      taxHeld:
+        'La Ciudad ya no publica el saldo de impuestos de cada propiedad como datos abiertos. Nuestra copia de julio de 2025 se muestra, para un dueño que puede ser una persona, solo en las parcelas que consideramos muy probablemente o probablemente vacías.',
+      taxCenter: 'Revise el saldo de hoy en el Tax Center de la Ciudad',
+      deedFraudTitle: 'Proteja esta propiedad del robo de escrituras',
+      // Word for word passage (docs/ETHICS.md, "Owner information").
+      deedFraud:
+        'El robo de escrituras ocurre cuando alguien presenta una escritura falsa para quedarse con una propiedad, a menudo una cuyo dueño ha fallecido o vive en otro lugar. Los dueños y las familias pueden inscribirse en las alertas gratuitas de Fraud Guard de la Ciudad, que envían un correo electrónico cuando se registra un documento que los nombra. Desde noviembre de 2025, la Ciudad también bloquea automáticamente las escrituras cuyo vendedor ya había muerto cuando supuestamente firmó.',
+      fraudGuard: 'Inscríbase en las alertas gratuitas de Fraud Guard de la Ciudad',
+      deedCheck: 'La revisión automática de la Ciudad que detiene el fraude de escrituras',
+      helpTitle: 'Ayuda para dueños y familias',
+      seeList: 'Ver las parcelas de este dueño en nuestra lista',
+      cityListTitle: 'Lista de propiedades públicas de la Ciudad',
+      cityList: 'La parcela está en la lista de propiedades públicas de la Ciudad.',
+      cityListNames: (agency) => `La lista de propiedades públicas de la Ciudad nombra a ${agency} como dueño.`,
+      cityListStatus: (status) => `Su estado allí: ${status}.`,
+      cityStatuses: {
+        'OWNED - AVAILABLE': ['indicada como disponible', 'El Land Bank la muestra en su mapa de propiedades que la gente puede solicitar.'],
+        'OWNED - AVAILABLE (GARDEN AGREEMENT)': ['indicada como disponible para un acuerdo de jardín', 'Se ofrece para cultivar bajo un acuerdo con el Land Bank.'],
+        'OWNED - AVAILABLE (NO CONSTRUCTION PERMITTED)': ['indicada como disponible, sin permitir construcción', 'Se ofrece, pero no se puede construir nada en ella.'],
+        'OWNED - AVAILABLE (NOT FOR SY)': ['indicada como disponible, pero no como patio lateral', 'Se ofrece, pero no al vecino de al lado como patio lateral.'],
+        'OWNED - ON HOLD FOR AHD': ['reservada para vivienda asequible', 'Está apartada para viviendas asequibles, así que ahora no se ofrece a los vecinos.'],
+        'OWNED - NOT AVAILABLE': ['no disponible', 'Las agencias de tierras de la Ciudad no la ofrecen ahora.'],
+        'OWNED - PROCESSING APPLICANT, NOT AVAILABLE': ['alguien ha presentado una solicitud', 'Se está revisando una solicitud, así que ahora no se ofrece a nadie más.'],
+        'OWNED - MANAGED AND NOT AVAILABLE': ['administrada y no disponible', 'Una agencia la cuida y no la ofrece.'],
+        'OWNED - ON HOLD': ['en espera', 'Por ahora no se ofrece.'],
+        'OWNED - SALE PENDING': ['venta pendiente', 'Hay una venta en trámite, así que no se ofrece a nadie más.'],
+        'UNKNOWN - RESEARCH PENDING': ['todavía no se sabe', 'Las agencias de tierras de la Ciudad todavía lo están investigando.'],
+        'OWNED - RFP RELEASED': ['ofrecida para desarrollo', 'Las agencias de tierras de la Ciudad pidieron propuestas para desarrollarla.'],
+        'OWNED - ON HOLD FOR HOME SD': ['reservada para un programa de vivienda', 'Está reservada para un programa que la lista llama HOME SD, así que ahora no se ofrece a los vecinos.'],
+        'OWNED - HELD FOR CITY COUNCIL MEMBER': ['reservada para el miembro del Concejo del distrito', 'Está reservada para el miembro del Concejo Municipal del distrito, así que ahora no se ofrece. La oficina del miembro puede decir por qué.'],
+        'OWNED - TO BE FEATURED SOON': ['se ofrecerá pronto', 'Las agencias de tierras de la Ciudad planean ofrecerla pronto.'],
+        'OWNED - NOT AVAILABLE (GSI PROJECT)': ['apartada para obras verdes de aguas pluviales', 'Está reservada para plantaciones que el Departamento de Agua construye para absorber la lluvia.'],
+        'OWNED - COMPETITIVE BID POSTED': ['ofrecida por licitación', 'Las agencias de tierras de la Ciudad pidieron ofertas por ella.'],
+      },
+      sideYard: 'La Ciudad la marca como elegible para el programa de patio lateral, para el dueño de la casa de al lado.',
+      agencies: {
+        PUB: 'la Ciudad de Filadelfia',
+        PLB: 'el Philadelphia Land Bank',
+        PRA: 'la Autoridad de Redesarrollo de Filadelfia',
+        PHDC: 'la Philadelphia Housing Development Corporation (PHDC)',
+      },
+      tangledTitle: 'El Tangled Title Fund, administrado por Philadelphia VIP',
+      sheriffGuide: 'Grounded in Philly: ventas del sheriff',
+      gjli: 'La Garden Justice Legal Initiative, para ayuda legal gratuita',
+    },
+
+    flags: {
+      absentee: {
+        outOfState: (where) => `El dueño recibe su correo en otro lugar: ${where} (fuera del estado).`,
+        outsidePennsylvania: 'El dueño recibe su correo en otro lugar: fuera de Pensilvania.',
+        outsideCity: (city) => `El dueño recibe su correo en otro lugar: ${city}, PA (fuera de Filadelfia).`,
+        outsideCityUnknown: 'El dueño recibe su correo en otro lugar: fuera de Filadelfia.',
+        poBox: 'El dueño recibe su correo en otro lugar: un apartado postal en Filadelfia.',
+        elsewhere: 'El dueño recibe su correo en otro lugar: otra dirección en Filadelfia.',
+        careful:
+          'Esta es la dirección a la que la Ciudad envía las facturas de impuestos. Puede estar desactualizada, o pertenecer a un familiar, un abogado o un administrador, y un dueño que vive en otro lugar puede no saber cómo se ve hoy la propiedad.',
+        next: 'Escriba al dueño a esta dirección para preguntarle antes de hacer algo en la propiedad, y pida a la Garden Justice Legal Initiative que revise cualquier acuerdo antes de que lo firme.',
+      },
+      // Word for word passage (docs/ETHICS.md, "Owner information"): three consecutive fixed sentences.
+      possible_estate: {
+        text: 'La persona que figura como dueña en los registros puede haber fallecido.',
+        careful: 'Es posible que los familiares todavía tengan derecho a esta propiedad y no lo sepan.',
+        next: 'Si usted conoce a la familia, el Tangled Title Fund (hasta $6,500 en ayuda legal) y Philadelphia VIP pueden ayudarla a conservarla. Las familias también pueden inscribirse en las alertas gratuitas de Fraud Guard de la Ciudad.',
+      },
+      tax_debt_2025: {
+        text: (amount, years) =>
+          `A julio de 2025, los registros de la Ciudad mostraban ${amount} en impuestos sobre bienes raíces sin pagar${years ? ` de ${plural(years, { one: '# año fiscal', other: '# años fiscales' })}` : ''}.`,
+        careful:
+          'Este es el último registro público, del 9 de julio de 2025, no el saldo de hoy: puede que el dueño haya pagado desde entonces, o que deba más. Unos tres años o más de impuestos sin pagar pueden llevar a una venta del sheriff, donde un lote que los vecinos cuidan puede venderse a un comprador de afuera.',
+        next: 'Revise el saldo de hoy en el Tax Center de la Ciudad antes de confiar en esto. Si su cuadra cuida este lote, la guía de Grounded in Philly sobre las ventas del sheriff explica el riesgo y lo que usted puede hacer.',
+      },
+      sheriff_sales: {
+        one: (sale) => `Vendido en una venta del sheriff el ${sale}.`,
+        many: (n, sales) => `Vendido en ventas del sheriff ${n} veces: ${sales}.`,
+        sale: (date, price) => (price ? `${date}, por ${price}` : date),
+        andLast: (others, last) => `${others}; y ${last}`,
+        careful:
+          'En una venta del sheriff, la oferta ganadora cancela las deudas antiguas de la propiedad, así que un lote que los vecinos han cuidado puede pasar a un comprador de afuera. Una venta pasada no significa que la propiedad esté en venta ahora.',
+        next: 'Si su cuadra cuida este lote, lea la guía de Grounded in Philly sobre las ventas del sheriff y pida ayuda legal gratuita a la Garden Justice Legal Initiative.',
+      },
+      years_since_sale: {
+        lastSold: (year) => `Vendido por última vez en ${year}.`,
+        notSoldSince: (year) => `No se ha vendido en el mercado abierto desde al menos ${year}.`,
+        careful:
+          'Aquí se dejan fuera las ventas por un precio simbólico y las ventas del sheriff; el historial completo está abajo. Muchas casas pasan de una generación a otra en las familias sin una venta nueva, así que mucho tiempo desde una venta no significa que el dueño haya abandonado la propiedad.',
+        next: 'Si una familia heredó la propiedad sin una escritura nueva, el Tangled Title Fund y Philadelphia VIP pueden ayudarla a aclarar el título y conservarla.',
+      },
+      many_parcels: {
+        text: (n) => `Este dueño tiene ${n} parcelas vacías en la ciudad.`,
+        careful:
+          'Relacionamos a los dueños por su nombre exacto en los registros de la Ciudad, así que un mismo dueño puede aparecer con varias grafías y dos dueños pueden compartir un nombre. Tener terrenos vacíos no es una falta por sí solo.',
+        next: 'Use la lista para ver las otras parcelas de este dueño, y luego pida permiso por la vía legal: escriba al dueño y pida a la Garden Justice Legal Initiative que revise cualquier acuerdo.',
+      },
+      fast_resales: {
+        since: (n, year) => `Vendido ${n} veces desde ${year}.`,
+        inYear: (n, year) => `Vendido ${n} veces en ${year}.`,
+        between: (n, first, last) => `Vendido ${n} veces de ${first} a ${last}.`,
+        careful:
+          'Las reventas rápidas pueden significar que la propiedad se está negociando para ganar dinero, y a veces una escritura falsificada. También pueden ser normales, como una familia que vende una casa heredada y el comprador que la revende después de repararla.',
+        next: 'Mire quién vendió y quién compró en el historial de abajo. Los dueños y las familias pueden inscribirse en las alertas gratuitas de Fraud Guard de la Ciudad para enterarse cuando un documento los nombra.',
+      },
+      open_violations: {
+        one: (when, what) => `L&I indica 1 infracción abierta${what ? `, por ${what}` : ''}${when ? `, del ${when}` : ''}.`,
+        many: (n) => `L&I indica ${n} infracciones abiertas.`,
+        mostRecent: (when, what) => (what ? `La más reciente, del ${when}, es por ${what}.` : `La más reciente es del ${when}.`),
+        careful:
+          'Una infracción es un aviso al dueño, que puede no tener los medios para corregirla, y la condición puede haber cambiado desde la inspección.',
+        next: 'Reporte los problemas físicos, como basura tirada o un edificio abierto, a Philly311. Si conoce al dueño, avíselo: puede que no haya visto el aviso.',
+      },
+      unsafe: {
+        text: (since) => (since ? `L&I indica que este edificio es inseguro, desde el ${since}.` : 'L&I indica que este edificio es inseguro.'),
+        careful: 'No entre y mantenga alejados a los niños: L&I encontró que la estructura es insegura. No entre en ella ni intente asegurarla usted mismo.',
+        next: 'Si se puede entrar, repórtelo a Philly311 para que la Ciudad lo selle.',
+      },
+      imminently_dangerous: {
+        text: (since) =>
+          since
+            ? `L&I indica que este edificio es de peligro inminente, desde el ${since}.`
+            : 'L&I indica que este edificio es de peligro inminente.',
+        careful: 'L&I encontró que la estructura podría fallar en cualquier momento. Manténgase alejado de ella y mantenga alejados a los demás.',
+        next: 'Reporte cualquier cambio, como ladrillos que caen o una puerta abierta, a Philly311.',
+      },
+    },
+
+    history: {
+      transfersTitle: 'Ventas y transferencias',
+      transfersCaption: 'Cada venta y transferencia registrada de esta propiedad, la más reciente primero',
+      date: 'Fecha',
+      document: 'Documento',
+      documentAndPrice: 'Documento y precio',
+      fromAndTo: 'De y a',
+      price: 'Precio',
+      from: 'De',
+      to: 'A',
+      noDate: 'Sin fecha',
+      noPrice: 'Ninguno registrado',
+      share: (n) => `la parte de esta propiedad de una escritura de ${n} propiedades`,
+      more: (n) => `y ${plural(n, { one: '# otro', other: '# otros' })}`,
+      noTransfers: 'No hay escrituras registradas.',
+      notInCopy: (parts) =>
+        `Nuestra copia semanal no incluye ${parts.length > 1 ? `${parts.slice(0, -1).join(', ')} y ${parts[parts.length - 1]}` : parts[0]} de esta parcela, así que esta página no puede decir si existen.`,
+      partialParts: { transfers: 'los registros de escrituras', assessments: 'los avalúos', li: 'los registros de infracciones de L&I' },
+      notInCopyOff: 'Los datos en vivo de la Ciudad pueden mostrarlos.',
+      notInCopyFailed: 'La Ciudad no respondió. Inténtelo de nuevo para verlos.',
+      recordsNote: 'Los registros de escrituras de la Ciudad están completos desde 2000. Puede que falten ventas más antiguas.',
+      datesNote:
+        'Cada fecha es la de la escritura y cada precio se redondea al dólar, como los muestra la página de propiedades de la Ciudad; la Ciudad registra una escritura días o semanas después. Cuando una escritura abarcó varias propiedades, el precio es la parte de esta propiedad.',
+      documents: {
+        DEED: 'Escritura',
+        'DEED SHERIFF': 'Escritura del sheriff',
+        "SHERIFF'S DEED": 'Escritura del sheriff',
+        'DEED MISCELLANEOUS': 'Escritura diversa',
+        'MISCELLANEOUS DEED': 'Escritura diversa',
+        'DEED MISCELLANEOUS TAXABLE': 'Escritura diversa, sujeta a impuesto',
+        'MISCELLANEOUS DEED TAXABLE': 'Escritura diversa, sujeta a impuesto',
+        'DEED LAND BANK': 'Escritura del Land Bank',
+        'DEED OF CONDEMNATION': 'Escritura de expropiación',
+        'DEED - DECEASED': 'Escritura de una sucesión',
+        'DEED - ADVERSE POSSESSION': 'Escritura por posesión adversa',
+        'DEED RTT - OTHER': 'Otra escritura',
+        'CERTIFICATE OF STOCK TRANSFER': 'Certificado de transferencia de acciones',
+      },
+      assessmentsTitle: 'Avalúos de la Ciudad',
+      assessmentsCaption: 'El avalúo del valor de mercado de la Ciudad, por año',
+      year: 'Año',
+      marketValue: 'Valor de mercado según el avalúo',
+      noValue: 'No registrado',
+      noAssessments: 'No hay avalúos registrados.',
+      assessmentNote: 'Un avalúo es el cálculo de la Ciudad del valor de mercado para los impuestos sobre la propiedad. No es un precio de venta.',
+      chartLabel: (first, last, low, high) =>
+        `Gráfico del avalúo de la Ciudad de ${first} a ${last}, entre ${low} y ${high}. Los mismos números están en la tabla de abajo.`,
+      open: 'Abierta',
+      liSummaryOpen: (n) => plural(n, { one: '# infracción abierta', other: '# infracciones abiertas' }),
+      liSummaryLast: (date) => `Infracción más reciente: ${date}.`,
+      liUnsafe: 'L&I indica que este edificio es inseguro.',
+      liUnsafeSince: (date) => `L&I indica que este edificio es inseguro, desde el ${date}.`,
+      liDangerous: 'L&I indica que este edificio es de peligro inminente.',
+      liDangerousSince: (date) => `L&I indica que este edificio es de peligro inminente, desde el ${date}.`,
+      liSince2016: (n) => `${plural(n, { one: '# infracción registrada', other: '# infracciones registradas' })} desde 2016.`,
+      liSealed: (date) => `La Ciudad lo limpió y selló por última vez el ${date}.`,
+      liDemolished: (date) => `La última demolición se completó el ${date}.`,
+      liNeither: 'No figura como inseguro ni como de peligro inminente.',
+      liNowTitle: 'L&I hoy',
+      earlyDeed: 'Antes de 2000: de registros que la Ciudad dice que pueden estar incompletos.',
+      timeline: {
+        storyTitle: 'La historia de este lote',
+        storySource: (source) => `De ${source}.`,
+        noStory: 'Los registros que tenemos todavía no cuentan una historia sobre este lote.',
+        title: 'Línea de tiempo',
+        caption: 'Todo lo que hay registrado de esta propiedad, lo más reciente primero, por año',
+        intro: 'Ventas, registros de L&I, apelaciones y registros de vacancia en una sola lista, lo más reciente primero. Apague un tipo para ocultarlo.',
+        appeal: (board, kind) => (kind ? `${board}: ${kind}` : board),
+        appealHearing: (date) => `audiencia ${date}`,
+        show: 'Mostrar en la línea de tiempo',
+        loading: 'Cargando la línea de tiempo de la copia semanal.',
+        failed: 'No se pudo cargar la línea de tiempo de la copia semanal.',
+        unpublished: 'Esta copia del mapa todavía no tiene archivos de línea de tiempo.',
+        liMissing: 'Nuestra copia semanal no incluye registros de L&I de esta parcela, así que la línea de tiempo no puede decir si existen.',
+        liMissingOff: 'Los datos en vivo de la Ciudad pueden mostrarlos.',
+        none: 'No hay registros en la línea de tiempo.',
+        allHidden: 'Todos los tipos de registro están apagados.',
+        moreYears: (n) => `Mostrar ${plural(n, { one: '# año anterior', other: '# años anteriores' })}`,
+        fewerYears: 'Mostrar solo los años recientes',
+        noDate: 'Sin fecha',
+        future: 'La Ciudad fechó esto en el futuro; su registro puede estar mal.',
+        printTitle: 'Línea de tiempo, los 10 registros más recientes',
+        recordColumn: 'Registro',
+        whatColumn: 'Qué pasó',
+        printWaiting: 'La página del lote en línea tiene la línea de tiempo completa; no estaba cargada cuando se imprimió esta página.',
+        printMore: (n) => `${plural(n, { one: '# registro más antiguo', other: '# registros más antiguos' })} en la página del lote en línea.`,
+        noPrice: 'sin precio registrado',
+        to: (names) => `a ${names}`,
+        times: (n) => `(${formatNumber(n)} veces)`,
+        permit: 'Permiso',
+        permitFor: (type, work) => `${type} para ${work}`,
+        violation: 'Infracción',
+        demolition: 'Demolición',
+        byCity: 'por la Ciudad',
+        privatePermit: 'con un permiso privado',
+        demolitionWork: {
+          city: 'Demolición de la Ciudad',
+          complete: 'Demolición completa',
+          small: 'Demolición de un edificio de hasta 3 pisos',
+          large: 'Demolición de un edificio de más de 3 pisos o 40 pies',
+          tank: 'Retiro de un tanque',
+        },
+        cleanSeal: 'Limpiado y sellado por la Ciudad',
+        cleanSealClip: 'Limpiado y sellado por el Community Life Improvement Program de la Ciudad',
+        kinds: {
+          deed: 'Escritura',
+          violation: 'Infracción',
+          permit: 'Permiso',
+          demolition: 'Demolición',
+          unsafe: 'Aviso de edificio inseguro',
+          imminently_dangerous: 'Aviso de edificio de peligro inminente',
+          clean_seal: 'Limpieza y sellado',
+          appeal: 'Apelación',
+          vacancy: 'Registro de vacancia',
+        },
+        toggles: {
+          deed: 'Ventas y transferencias',
+          violation: 'Infracciones',
+          permit: 'Permisos',
+          demolition: 'Demoliciones',
+          clean_seal: 'Limpieza y sellado',
+          notice: 'Avisos de edificios inseguros y de peligro inminente',
+          appeal: 'Apelaciones',
+          vacancy: 'Registros de vacancia y de cuidado',
+        },
+        lists: {
+          city_land: 'En la lista de terrenos vacíos de la Ciudad',
+          city_building: 'En la lista de edificios vacíos de la Ciudad',
+          june_2024_land: 'En la lista de terrenos vacíos de L&I de junio de 2024, tal como la mantiene Clean & Green Philly',
+          june_2024_building: 'En la propia lista de edificios vacíos de junio de 2024 de Clean & Green Philly',
+        },
+        landcare: (program) =>
+          program === 'community_landcare'
+            ? 'Los vecinos empezaron a cuidar este lote con PHS Community LandCare'
+            : 'PHS LandCare empezó a cuidar este lote',
+        story: {
+          cityDemolished: (year) => `Aquí había un edificio hasta ${year}, cuando la Ciudad lo demolió.`,
+          privateDemolished: (year) => `Aquí había un edificio hasta ${year}, cuando se demolió con un permiso privado.`,
+          newConstruction: (year) => `L&I emitió un permiso de construcción nueva aquí en ${year}.`,
+          dangerous: (date) => `L&I indica que el edificio es de peligro inminente desde el ${date}.`,
+          unsafe: (date) => `L&I indica que el edificio es inseguro desde el ${date}.`,
+          sealed: (year, n) =>
+            n > 1
+              ? `La Ciudad envió por última vez a sus cuadrillas de limpieza y sellado aquí en ${year}; lo ha hecho ${formatNumber(n)} veces.`
+              : `La Ciudad envió a sus cuadrillas de limpieza y sellado aquí en ${year}.`,
+          sheriff: (year) => `Se vendió en una venta del sheriff en ${year}.`,
+          cityList: (land, date, june) =>
+            `La lista de ${land ? 'terrenos vacíos' : 'edificios vacíos'} de la Ciudad del ${date} lo incluye${june ? ', como lo hizo una lista de junio de 2024' : ''}.`,
+          juneList: (land) =>
+            land
+              ? 'La lista de terrenos vacíos de L&I de junio de 2024 lo incluía.'
+              : 'La lista de edificios vacíos de Clean & Green Philly de junio de 2024 lo incluía.',
+          landcare: (year, program) =>
+            program === 'community_landcare'
+              ? `Los vecinos lo han cuidado con PHS Community LandCare desde ${year}.`
+              : `PHS LandCare lo ha cuidado desde ${year}.`,
+          sources: {
+            demolitions: 'los registros de demolición de L&I',
+            permits: 'los registros de permisos de L&I',
+            notices: 'los registros de edificios inseguros y de peligro inminente de L&I',
+            cleanSeal: 'los registros de limpieza y sellado de L&I',
+            deeds: 'los registros de escrituras de la Ciudad',
+            lists: (june) =>
+              june
+                ? 'la lista de propiedades vacías de la Ciudad, y la lista de L&I de junio de 2024 que mantiene Clean & Green Philly'
+                : 'la lista de propiedades vacías de la Ciudad',
+            june: (land) =>
+              land ? 'la lista de L&I de junio de 2024, mantenida por Clean & Green Philly' : 'la lista de Clean & Green Philly de junio de 2024',
+            landcare: 'la lista de PHS LandCare de los lotes que cuida',
+          },
+        },
+      },
+    },
+
+    nearby: {
+      intro: 'Lo que hay alrededor de este lote, para que el cuidado vaya donde más ayude.',
+      careNote: 'Estos conteos muestran dónde más se necesita cuidado. No dicen nada sobre las personas que viven aquí.',
+      areaSnapshot: 'En el área alrededor de este lote, de unas dos cuadras de ancho',
+      within500: 'A 500 pies o menos de este lote',
+      s12: (n) => `${plural(n, { one: '# persona baleada', other: '# personas baleadas' })} en los últimos 12 meses`,
+      s36: (n) => `${plural(n, { one: '# persona baleada', other: '# personas baleadas' })} en los últimos 3 años`,
+      killed: (n) => `${plural(n, { one: '# persona murió', other: '# personas murieron' })} en choques de tránsito desde 2019`,
+      landcare: (n) => `${plural(n, { one: '# lote mantenido', other: '# lotes mantenidos' })} por PHS LandCare`,
+      gardens: (n) => plural(n, { one: '# huerto comunitario', other: '# huertos comunitarios' }),
+      hearings: (n) => `${plural(n, { one: '# audiencia', other: '# audiencias' })} todavía por venir sobre otras propiedades`,
+      playgroundHeading: 'Parque infantil más cercano',
+      playground: (name, meters) =>
+        `${name}, a unos ${distanceWords(meters)} en línea recta${meters <= 400 ? ', a 5 minutos a pie o menos' : meters <= 800 ? ', a 10 minutos a pie o menos' : ''}.`,
+      none: 'Todavía no hay conteos cercanos para este lugar.',
+      showLayer: (label) => `Mostrar ${label} en el mapa`,
+    },
+
+    sources: {
+      intro: 'De dónde viene cada parte de esta página, y qué tan reciente es.',
+      live: (time) => `en vivo desde la Ciudad a las ${time}`,
+      snapshot: (date) => `copia semanal del ${date}`,
+      snapshotNoDate: 'copia semanal',
+      newest: (date) => `registro más reciente ${date}`,
+      taxSnapshot: 'la copia final de Clean & Green Philly, 9 de julio de 2025',
+      by: (publisher) => `de ${publisher}`,
+      correction: 'Reportar una corrección',
+      correctionHelp: 'Abre un formulario en GitHub, ya llenado con esta parcela. Para enviarlo hace falta una cuenta gratuita de GitHub.',
+      ownerNote:
+        'Si usted es dueño de esta propiedad y un registro de la Ciudad sobre ella está mal, la oficina de la Ciudad que guarda el registro puede corregirlo en su origen: la Oficina de Evaluación de Propiedades para los nombres de dueños, las direcciones postales y los avalúos, el Departamento de Registros para las escrituras, y Licencias e Inspecciones para las infracciones y los permisos.',
+    },
+
+    ownerList: {
+      title: 'Las parcelas de este dueño en nuestra lista',
+      intro: (names) => `Parcelas de nuestra lista cuyo dueño está registrado como ${names}.`,
+      others: 'Otras parcelas de nuestra lista cuyo dueño está registrado con los mismos nombres que este.',
+      loading: 'Cargando la lista',
+      missing: 'Esta lista no está disponible ahora.',
+      open: (address) => `Abrir la página del lote de ${address}`,
+      kind: (kind, confidence) => (confidence ? `${kind}, ${confidence.toLowerCase()}` : kind),
+    },
+
+    print: {
+      printed: (date) => `Impreso desde Placekeepers el ${date}.`,
+      recent: 'Historia reciente',
+      moreOnline: (n) => `${plural(n, { one: '# registro más', other: '# registros más' })} en la página del lote en línea.`,
+      lastAssessment: (year, value) => `Avalúo de la Ciudad de ${year}: ${value}.`,
+      moreSources: (n) => `${plural(n, { one: '# fuente más', other: '# fuentes más' })} en la página del lote en línea.`,
+      taxCenter: (url) => `Saldo de hoy: el Tax Center de la Ciudad, ${url}`,
+      rules: 'Reglas de este lote',
+    },
+
+    rules: {
+      intro:
+        'Lo que dicen los registros de la Ciudad y federales que se aplica a este lote: designación histórica, zonificación y sus zonas superpuestas, registros de brownfields y apelaciones ante las juntas de la Ciudad. Nada de esto dice si se puede construir algo aquí. Pregunte a la oficina que se nombra antes de planear algo.',
+      notOnList:
+        'Las reglas se calculan cada semana para los lotes de nuestra lista, y esta parcela no está en ella. Atlas, el mapa de la Ciudad, muestra su zonificación y sus zonas superpuestas, y la Comisión Histórica puede decir si es histórica.',
+      hearingTitle: 'Se acerca una audiencia',
+      hearingSet: (board, date, time) =>
+        `Hay una audiencia de ${board} sobre este lote fijada para el ${date}${time ? `, a las ${time}` : ''}.`,
+      hearingBoard: { zoning: 'zonificación', li_review: 'la Junta de Revisión de L&I', building: 'la Junta de Normas de Construcción', other: 'una junta de la Ciudad' },
+      seeAppeal: 'Ver la apelación',
+      historicTitle: 'Designación histórica',
+      inDistrict: (district, date) => `Este lote está en ${district}${date ? `, designado el ${date}` : ''}.`,
+      districtName: (name) => (/district/i.test(name) ? `el ${name}` : `el distrito histórico ${name}`),
+      listed: (date) => `Esta propiedad está incluida por sí sola en el Registro de Lugares Históricos de Filadelfia, desde el ${date}.`,
+      listedNoDate: 'Esta propiedad está incluida por sí sola en el Registro de Lugares Históricos de Filadelfia.',
+      listedInDistrict: (district) => `Esta propiedad está en el Registro de Lugares Históricos de Filadelfia como parte de ${district}.`,
+      askFirst:
+        'Los cambios aquí pueden necesitar la revisión de la Comisión Histórica; pregúnteles primero. Para un mural o un jardín, consulte a la Comisión antes de empezar.',
+      contact: 'Comisión Histórica de Filadelfia: 215 686 7660, preservation@phila.gov.',
+      confirm: 'La Ciudad pide a todos que confirmen con la Comisión el estado histórico de una propiedad.',
+      commissionSite: 'El sitio web de la Comisión Histórica',
+      projectReview: 'Cómo revisa la Comisión las obras en propiedades históricas',
+      findHistoric: 'Encontrar una propiedad o un distrito histórico',
+      notHistoric: 'Los registros de la Comisión Histórica no indican que este lote sea histórico. Pregunte a la Comisión para estar seguro.',
+      zoningTitle: 'Zonificación',
+      base: (code, group) => `Zonificación base: ${code}${group ? `, ${group}` : ''}.`,
+      zoningGroups: {
+        'RESIDENTIAL/MULTI-FAMILY/RESIDENTIAL MIXED-USE': 'un distrito residencial',
+        'COMMERCIAL/COMMERCIAL MIXED-USE': 'un distrito comercial y de uso mixto',
+        'INDUSTRIAL/INDUSTRIAL MIXED-USE': 'un distrito industrial',
+        'SPECIAL PURPOSE': 'un distrito de propósito especial, como parques, instituciones o el aeropuerto',
+      },
+      basePending: 'Un proyecto de ley pendiente en el Concejo Municipal la cambiaría.',
+      readBill: 'Leer el proyecto de ley',
+      overlaysIntro: (n) => (n === 1 ? 'Una zona superpuesta agrega sus propias reglas aquí:' : `${formatNumber(n)} zonas superpuestas agregan sus propias reglas aquí:`),
+      noOverlays: 'Ninguna zonificación superpuesta cubre este lote.',
+      overlayKinds: { 1: 'Distrito superpuesto', 2: 'Regla especial', 3: 'Límite de pavimentación' },
+      readRule: (section) => (section ? `Leer la regla: sección ${section} del Código de Zonificación` : 'Leer la regla en el Código de Zonificación'),
+      sunset: (date) => `Está previsto que termine el ${date}.`,
+      pending: (bill) => `Un proyecto de ley pendiente en el Concejo Municipal${bill ? `, el proyecto de ley ${bill},` : ''} la cambiaría.`,
+      zoningNote:
+        'La zonificación y las zonas superpuestas pueden cambiar lo que se permite en un lote. Los mapas de la Ciudad pueden ir atrasados respecto de proyectos de ley nuevos, así que consulte con la oficina de zonificación de la Ciudad antes de planear.',
+      zoningHelp: 'La ayuda de zonificación y planificación de la Ciudad',
+      atlasZoning: 'Esta dirección en Atlas, el mapa de la Ciudad',
+      overlayMeaning: {
+        '/CTR': 'Reglas adicionales para Center City: usos, letreros, alturas de edificios, estacionamiento y el frente de la calle.',
+        '/NCO': 'Reglas que mantienen los edificios y ampliaciones nuevos en armonía con este vecindario.',
+        '/NCA': 'Reglas para las tiendas y los usos a lo largo de esta calle comercial.',
+        '/TOC': 'Reglas cerca de una estación de tren que favorecen viviendas y tiendas cerca del transporte público.',
+        '/NIS': 'Reglas sobre dónde puede abrir un sitio de inyección supervisada. Cubre la mayor parte de la ciudad.',
+        '/MIN': 'Reglas sobre viviendas asequibles en la vivienda nueva.',
+        '/AHP': 'Reglas que fomentan conservar las viviendas asequibles.',
+        '/AHC': 'Límites de altura cerca del aeropuerto.',
+        '/HHC': 'Límites de altura cerca de un helipuerto.',
+        '/ENV': 'Reglas que protegen características naturales como árboles, laderas empinadas y arroyos.',
+        '/WWO': 'Reglas que protegen el Wissahickon Creek y sus arroyos.',
+        '/DRC': 'Reglas para los terrenos a lo largo del río Delaware.',
+        '/CDO': 'Reglas para la ribera central del Delaware.',
+        '/FNE': 'Reglas adicionales para el Far Northeast.',
+        '/NE': 'Reglas adicionales para el Northeast.',
+        '/UED': 'Reglas sobre pantallas y letreros grandes iluminados.',
+        council: 'Reglas adicionales que el Concejo Municipal fijó para parte de un distrito del Concejo.',
+        flood: 'Reglas de protección contra inundaciones: límites a construir y rellenar terreno donde llegan las inundaciones.',
+        steep: 'Límites a construir y nivelar en laderas empinadas.',
+        coverage: 'Limita cuánto de un lote puede cubrirse con edificios y pavimento, para proteger el Wissahickon Creek.',
+        animal: 'Un área donde el Código de Zonificación permite que la gente tenga algunos animales de granja, bajo sus reglas.',
+        signs: 'Reglas sobre letreros y vallas publicitarias.',
+        childCare: 'Reglas sobre el cuidado infantil familiar en casas.',
+        parking: 'Reglas sobre cuánto estacionamiento necesitan los edificios nuevos.',
+        loading: 'Reglas sobre las zonas de carga de los edificios.',
+        dispensary: 'Reglas sobre qué tan cerca puede estar un dispensario de marihuana medicinal de otros lugares.',
+        institutional: 'Reglas para las instituciones a lo largo de Germantown Avenue.',
+        pump: 'Reglas cerca de una estación de bombeo de agua.',
+        floorArea: 'Reglas sobre cuánta superficie construida pueden tener los edificios.',
+        waterfront: 'Distancias mínimas para construir a lo largo de la ribera.',
+        overlay: 'Un distrito superpuesto agrega sus propias reglas encima de la zonificación base aquí.',
+        supplemental: 'Una regla especial que el Código de Zonificación agrega para esta área.',
+      },
+      brownfieldTitle: 'Registros de brownfields',
+      // Word for word passage (docs/ETHICS.md, "Brownfield records"). The words in parentheses
+      // explain "brownfield" for a reader who does not know the English word; they say nothing
+      // about the ground being clean or safe.
+      brownfield:
+        'Se registró una evaluación o una limpieza federal de un "brownfield" (un terreno que pudo haber tenido contaminación) en esta dirección o cerca de ella. Haga analizar el suelo antes de cultivar alimentos.',
+      brownfieldSite: (name, feet) => `${name}, a unos ${formatNumber(feet)} pies de este lote`,
+      onLot: 'en este lote',
+      brownfieldMore: (n) => `y ${plural(n, { one: '# registro más', other: '# registros más' })} a unos 330 pies o menos`,
+      brownfieldNote:
+        'Los registros de la EPA muestran dónde una subvención federal para brownfields pagó trabajos. No dicen qué hay en el suelo hoy.',
+      soilTest: 'La prueba de suelo de Penn State Extension',
+      gardenGuide: 'La guía de la EPA para cultivar en suelo de ciudad',
+      epaRecord: 'Este registro en la EPA',
+      appealsTitle: 'Apelaciones y audiencias',
+      appealsIntro: 'Apelaciones ante las juntas de la Ciudad sobre esta propiedad, la más reciente primero, como las publica la Ciudad.',
+      noAppeals: 'No hay apelaciones ante las juntas de la Ciudad registradas para esta propiedad.',
+      appealsMissing:
+        'Nuestra copia semanal se hizo sin los registros de apelaciones de la Ciudad, así que esta página no puede decir si existen.',
+      appealsMissingOff: 'Los datos en vivo de la Ciudad pueden mostrarlos.',
+      boards: {
+        zoning: 'Junta de Ajuste de Zonificación',
+        li_review: 'Junta de Revisión de L&I',
+        building: 'Junta de Normas de Construcción',
+        other: 'Otra junta de la Ciudad',
+      },
+      comingUp: 'Próximamente',
+      filed: (date) => `Presentada el ${date}`,
+      hearingOn: (date, time, upcoming) => `${upcoming ? 'Audiencia fijada para el' : 'Audiencia el'} ${date}${time ? `, a las ${time}` : ''}`,
+      decidedOn: (date) => `Decidida el ${date}`,
+      status: (status) => `Estado: ${status}`,
+      decision: (decision) => `Decisión: ${decision}`,
+      rco: (name) => `La Ciudad notificó a esta organización comunitaria registrada: ${name}.`,
+      filedBy: 'Presentada por',
+      ownerNamed: 'Dueño nombrado',
+      namesNote: 'Los nombres son como los publica la Ciudad. Aparecen solo en la página de este lote, nunca en el mapa ni en las descargas.',
+      grounds: 'Leer la apelación y sus fundamentos en la Ciudad (historial de la propiedad de L&I)',
+      takePart: {
+        zoning: 'Cómo participar en una audiencia de zonificación',
+        li_review: 'La Junta de Revisión de L&I',
+        building: 'La Junta de Normas de Construcción',
+        other: 'El calendario de apelaciones de la Ciudad',
+      },
+      calendar: 'El calendario de audiencias de la Ciudad',
+      decisions: {
+        'GRANTED/PROV': 'Concedida con condiciones',
+        'DENIED/PROV': 'Denegada con condiciones',
+        'DISMI/ENFORC': 'Desestimada',
+        'ADMIN/REVIEW': 'Enviada a revisión administrativa',
+        'HELD/INFO': 'En espera de más información',
+        NEWHEARNOT: 'No se concedió una nueva audiencia',
+        BOARDAKNOWL: 'Reconocida por la junta',
+        'LATE-APPRVD': 'Apelación tardía aprobada',
+        'CITY AFFIRMED': 'Se mantiene la decisión de la Ciudad',
+        AFFIRMED: 'Se mantiene la decisión de la Ciudad',
+      },
+      missing: {
+        historic:
+          'Nuestra copia semanal se hizo sin el registro histórico, así que esta página no puede decir si este lote es histórico. Pregunte a la Comisión Histórica.',
+        overlays:
+          'Nuestra copia semanal se hizo sin las zonas superpuestas de zonificación, así que esta página no puede enumerarlas. Atlas, el mapa de la Ciudad, las muestra.',
+        brownfields:
+          'Nuestra copia semanal se hizo sin los registros de brownfields de la EPA, así que esta página no puede decir si hay alguno cerca.',
+      },
+      none: 'Ninguno de estos registros nombra este lote.',
+    },
   },
 };
 
