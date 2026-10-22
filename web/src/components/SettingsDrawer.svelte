@@ -8,6 +8,8 @@
   import Dialog from './common/Dialog.svelte';
   import EvidenceBadge from './common/EvidenceBadge.svelte';
   import LayerList from './layers/LayerList.svelte';
+  import { pageLanguage } from '../i18n/boot.ts';
+  import { pickerLanguages } from '../i18n/choose.ts';
   import LanguageList from './language/LanguageList.svelte';
   import TranslationNote from './language/TranslationNote.svelte';
   import LensPanel from './lens/LensPanel.svelte';
@@ -32,11 +34,13 @@
 <Dialog bind:open title={strings.settings.title} id="pk-settings">
   <p class="muted small">{strings.settings.intro}</p>
 
-  <section aria-labelledby="pk-settings-language">
-    <h3 id="pk-settings-language">{strings.language.title}</h3>
-    <TranslationNote />
-    <LanguageList idPrefix="pk-settings-language" />
-  </section>
+  {#if pickerLanguages(pageLanguage().code, pageLanguage().showAll).length > 1}
+    <section aria-labelledby="pk-settings-language">
+      <h3 id="pk-settings-language">{strings.language.title}</h3>
+      <TranslationNote />
+      <LanguageList idPrefix="pk-settings-language" />
+    </section>
+  {/if}
 
   <section aria-labelledby="pk-settings-view">
     <h3 id="pk-settings-view">{strings.settings.viewTitle}</h3>

@@ -1,6 +1,8 @@
 <script lang="ts">
   // The language button in every page's top bar: a globe and the language in use, in its own
   // name ("English", "Español", "中文"), shortened on a phone. It opens the list of languages.
+  import { pageLanguage } from '../../i18n/boot.ts';
+  import { pickerLanguages } from '../../i18n/choose.ts';
   import { currentLanguage } from '../../i18n/locale.ts';
   import { strings } from '../../strings.ts';
   import Dialog from '../common/Dialog.svelte';
@@ -8,9 +10,12 @@
 
   let open = $state(false);
   const language = currentLanguage();
+  const page = pageLanguage();
+  // Until a second language is ready, there is nothing to choose, so no button.
+  const choices = pickerLanguages(page.code, page.showAll).length;
 </script>
 
-<button
+{#if choices > 1}<button
   class="button quiet small picker"
   type="button"
   aria-haspopup="dialog"
@@ -27,7 +32,7 @@
 <Dialog bind:open title={strings.language.title} id="pk-language">
   <p class="muted small">{strings.language.intro}</p>
   <LanguageList idPrefix="pk-language" />
-</Dialog>
+</Dialog>{/if}
 
 <style>
   .picker {

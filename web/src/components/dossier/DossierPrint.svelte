@@ -3,6 +3,7 @@
   // with a lot page open, only this is printed.
   import type { DossierView } from '../../dossier/build.ts';
   import { printModel } from '../../dossier/print.ts';
+  import { currentLanguage, isSourceLocale } from '../../i18n/locale.ts';
   import { strings } from '../../strings.ts';
 
   let { view, now = new Date() }: { view: DossierView; now?: Date } = $props();
@@ -107,6 +108,8 @@
 
   <footer>
     <p><strong>{m.notLegalAdvice}</strong></p>
+    <!-- A printed page in another language says how it was translated, like the screen (issue #49). -->
+    {#if !isSourceLocale() && !currentLanguage().reviewed}<p class="meta">{strings.language.aiNote}</p>{/if}
   </footer>
 </article>
 
