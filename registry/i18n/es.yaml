@@ -1398,3 +1398,21 @@ routes:
       "https://www.phila.gov/services/payments-assistance-taxes/payment-plans-and-assistance-programs/income-based-programs-for-residents/apply-for-the-longtime-owner-occupants-program-loop/":
         label: "Ciudad de Filadelfia: solicite LOOP"
 
+
+partners:
+  phs:
+    one_line: "LandCare, Community LandCare y Philly Spring Cleanup."
+  gjli:
+    one_line: "Ayuda legal gratuita y guías para usar terrenos vacíos."
+  ngt:
+    one_line: "Conserva los jardines comunitarios de forma permanente."
+  land_bank:
+    one_line: "Programas de la Ciudad para lotes vacíos, incluidos los patios laterales y los jardines."
+  bike_coalition:
+    one_line: "Defensa de Vision Zero, bicicletas blancas (ghost bikes) y Families for Safe Streets."
+  feet_first:
+    one_line: "Defensa de los peatones, auditorías de caminabilidad y mini subsidios para espacios públicos."
+  treephilly:
+    one_line: "El programa de plantación de árboles de Parques y Recreación: árboles de calle y de patio gratis."
+  mural_arts:
+    one_line: "Murales en toda la ciudad; los dueños de paredes pueden pedir uno."
