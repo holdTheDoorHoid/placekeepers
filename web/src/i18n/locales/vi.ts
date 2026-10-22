@@ -8,7 +8,7 @@
 // as punctuation, and proper names as they are (Placekeepers, Philly311, LandCare).
 
 import type { Catalog } from '../catalog.ts';
-import { formatDecimal, formatNumber, plural } from '../format.ts';
+import { formatDate, formatDecimal, formatNumber, plural } from '../format.ts';
 import { distanceWords } from '../../strings.ts';
 
 /** A change in percent in words: "tăng 61%", "giảm 3%", "không đổi". */
@@ -91,6 +91,7 @@ const vi: Catalog = {
       { slug: 'responsibly', label: 'Hãy dùng có trách nhiệm' },
       { slug: 'vacant-land', label: 'Cách chúng tôi tìm đất trống' },
       { slug: 'streetcomplete', label: 'Khảo sát trạm xe buýt' },
+      { slug: 'posting', label: 'Dán tờ rơi ở đâu' },
       { slug: 'terms', label: 'Điều khoản' },
       { slug: 'privacy', label: 'Quyền riêng tư' },
       { slug: 'contact', label: 'Liên hệ' },
@@ -478,6 +479,354 @@ const vi: Catalog = {
     importLeftOut: (n, limit) => `${plural(n, { other: '# địa điểm' })} đã bị bỏ ra: một danh sách chứa tối đa ${formatNumber(limit)} địa điểm.`,
   },
 
+  represent: {
+    title: 'Ai đại diện cho bạn',
+    intro: 'Những người được bầu cho địa chỉ này, cùng văn phòng chính thức của họ. Hãy gọi hoặc viết cho họ về lô đất này.',
+    ward: (ward, division) => `Ward ${ward}, division ${division}`,
+    wardOnly: (ward) => `Ward ${ward}`,
+    wardHelp:
+      'Ward (khu bầu cử) và division (tiểu khu bầu cử) của bạn quyết định nơi bạn bỏ phiếu và ai là các committee people (ủy viên ủy ban) của khu phố bạn.',
+    district: (n) => `Khu vực ${n}`,
+    offices: {
+      council: 'Hội đồng Thành phố (City Council)',
+      house: 'Hạ viện Pennsylvania',
+      senate: 'Thượng viện Pennsylvania',
+      congress: 'Hạ viện Hoa Kỳ',
+    },
+    titles: {
+      council: 'Thành viên Hội đồng Thành phố',
+      house: 'Dân biểu tiểu bang',
+      senate: 'Thượng nghị sĩ tiểu bang',
+      congress: 'Dân biểu Quốc hội Hoa Kỳ',
+    },
+    office: 'Văn phòng',
+    phone: 'Điện thoại',
+    website: 'Trang web',
+    vacant: 'Hiện chưa có thành viên nào được liệt kê cho ghế này. Ghế có thể bỏ trống cho đến khi có một cuộc bầu cử.',
+    notWorkedOut: 'Tuần này chúng tôi chưa xác định được khu vực của lô đất này.',
+    notInBuild: 'Bản sao tuần này được dựng mà không có danh sách thành viên này, nên chúng tôi không thể nêu ai đang giữ ghế.',
+    atLargeTitle: 'Các thành viên Hội đồng đại diện toàn thành phố (at large)',
+    atLarge: 'Bảy thành viên Hội đồng nữa do cả thành phố bầu ra và đại diện cho mọi địa chỉ:',
+    rcoTitle: 'Tổ chức Cộng đồng Đã đăng ký (RCO)',
+    rcoIntro: 'Thành phố thông báo cho các tổ chức này về các kháng cáo quy hoạch ở đây. Họ là nơi nên gọi đầu tiên cho một dự án khu phố.',
+    noRco: 'Không có Tổ chức Cộng đồng Đã đăng ký nào bao phủ lô đất này, theo cách Thành phố vẽ ranh giới của họ.',
+    rcosNotInBuild: 'Bản sao tuần này được dựng mà không có các tổ chức cộng đồng, nên chúng tôi không thể liệt kê họ.',
+    rcoUnknown: (n) => `${plural(n, { other: '# tổ chức nữa' })} bao phủ lô đất này, nhưng bản sao tuần này không có thông tin liên hệ cho họ.`,
+    rcoAddress: 'Địa chỉ',
+    rcoMeeting: 'Họp tại',
+    rcoPreferred: 'Ưu tiên',
+    rcoContact: 'Liên hệ',
+    rcoAsPublished: 'Thông tin liên hệ như Thành phố công bố cho công chúng.',
+    checked: (who, when) => `${who}, đã kiểm tra ngày ${when}`,
+    sourceNames: {
+      city_elected_officials: 'Thành phố Philadelphia, danh sách các quan chức dân cử của Thành phố',
+      pa_legislators: 'Open States',
+      us_legislators: 'dự án congress-legislators',
+      rco_contacts: 'Philadelphia City Planning Commission',
+    },
+    loading: 'Đang tra cứu ai đại diện cho lô đất này.',
+    unlisted:
+      'Chúng tôi xác định ai đại diện cho mỗi lô đất hằng tuần, cho các lô đất trong danh sách của chúng tôi. Atlas, bản đồ của Thành phố, cho thấy các quan chức dân cử của bất kỳ địa chỉ nào.',
+    missing: 'Bản sao tuần này không cho biết ai đại diện cho lô đất này. Atlas, bản đồ của Thành phố, cho thấy các quan chức dân cử của bất kỳ địa chỉ nào.',
+    atlas: 'Các quan chức dân cử của địa chỉ này trên Atlas, bản đồ của Thành phố',
+    officialOnly: 'Với các quan chức dân cử, chỉ các văn phòng chính thức được liệt kê: không có số điện thoại hay địa chỉ email cá nhân.',
+    officesMove: 'Văn phòng đôi khi chuyển đi trước khi các danh sách cập nhật kịp: trang web của mỗi thành viên có địa chỉ và số điện thoại mới nhất.',
+  },
+
+  packet: {
+    pageTitle: 'Làm một bộ hồ sơ',
+    intro:
+      'Một bộ hồ sơ để in hoặc chia sẻ tại một cuộc họp: một trang bìa có bản đồ, người cần liên hệ, và một trang cho mỗi địa điểm, kèm những gì trang lô đất nói về nó. Nó được tạo ngay trong trình duyệt này từ bản sao hằng tuần của chúng tôi về hồ sơ của Thành phố; không có gì được gửi đi đâu cả.',
+    make: 'Làm một bộ hồ sơ',
+    makeHelp: 'Mở một bộ hồ sơ có thể in của các địa điểm này trong một thẻ mới.',
+    makeFromView: 'Làm một bộ hồ sơ cho các địa điểm này',
+    makeFromViewHelp: (limit) => `${formatNumber(limit)} nơi đứng đầu danh sách xếp hạng, theo thứ tự của nó.`,
+    viewName: 'Các địa điểm trên bản đồ',
+    chooseList: 'Các địa điểm trong bộ hồ sơ',
+    fromView: (name, n) => `${name} (${plural(n, { other: '# địa điểm' })}, từ bản đồ)`,
+    noLists: 'Trình duyệt này chưa có danh sách đã lưu nào. Hãy lưu các địa điểm từ bản đồ, rồi quay lại, hoặc mở một bộ hồ sơ từ chế độ xem phân tích.',
+    emptyList: 'Danh sách này chưa có địa điểm nào.',
+    lensLabel: 'Gợi ý theo góc nhìn',
+    print: 'In bộ hồ sơ',
+    printHelp: 'In trên giấy Letter, đen trắng: một trang cho mỗi địa điểm, sau trang bìa và trang liên hệ.',
+    backToMap: 'Quay lại bản đồ',
+    loading: (done, total) => `Đang đọc bản sao hằng tuần: ${formatNumber(done)} trong ${formatNumber(total)} tệp.`,
+    failed: 'Không tải được một phần của bản sao hằng tuần. Hãy kiểm tra kết nối và thử lại.',
+    retry: 'Thử lại',
+    leftOut: (n, limit) =>
+      `Một bộ hồ sơ chứa tối đa ${formatNumber(limit)} địa điểm, nên ${plural(n, { other: '# địa điểm trong danh sách này' })} bị bỏ ra. Hãy làm một danh sách nhỏ hơn cho phần còn lại.`,
+    coverKicker: 'Bộ hồ sơ Placekeepers',
+    made: (date) => `Làm ngày ${date}`,
+    count: (n) => plural(n, { other: '# địa điểm' }),
+    dataFrom: (date) => `Từ bản sao hằng tuần của chúng tôi về hồ sơ của Thành phố ngày ${date}. Trang lô đất trực tuyến của mỗi lô có hồ sơ của hôm nay.`,
+    lensUsed: (lens) => `Gợi ý theo góc nhìn: ${lens}.`,
+    contentsTitle: 'Trong bộ hồ sơ này',
+    contents: {
+      contacts: 'Người cần liên hệ',
+    },
+    mapTitle: 'Các địa điểm nằm ở đâu',
+    mapAlt: (n) => `Một bản đồ của ${plural(n, { other: '# địa điểm' })}, được đánh số như trong bộ hồ sơ này.`,
+    mapLoading: 'Đang vẽ bản đồ…',
+    mapCredit: 'Bản đồ: Protomaps, những người đóng góp cho OpenStreetMap.',
+    mapPlain: 'Bản đồ nền không có sẵn ở đây, nên các địa điểm được hiện đúng vị trí của chúng, không có đường phố.',
+    noPoint: (n) => `${plural(n, { other: '# địa điểm' })} không có điểm nào được biết nên không có trên bản đồ.`,
+    watchIntro:
+      'Một số địa điểm trong bộ hồ sơ này nằm trong các khu vực theo dõi nguy cơ phải dọn đi, nơi hồ sơ công cho thấy các dấu hiệu giá đang tăng. Các trang của những địa điểm đó chỉ về đây.',
+    watchArea: (tract) => (tract ? `Khu điều tra dân số (census tract) ${tract}` : 'Một khu vực theo dõi'),
+    areaSigns: (signs) => `Các dấu hiệu ở đây cho thấy giá đang tăng: ${signs}.`,
+    watchLots: (list) => `Các địa điểm ở đây: ${list}.`,
+    seeFront: 'Xem mục "Theo dõi nguy cơ phải dọn đi" ở đầu bộ hồ sơ này.',
+    contactsTitle: 'Người cần liên hệ',
+    contactsIntro:
+      'Mỗi tổ chức và văn phòng một lần, kèm các địa điểm trong bộ hồ sơ này mà họ bao phủ. Chỉ các văn phòng chính thức, và thông tin liên hệ của các tổ chức cộng đồng như Thành phố công bố. Mỗi thông tin liên hệ nêu nguồn của nó và ngày kiểm tra gần nhất.',
+    forLots: (list) => `Cho các địa điểm ${list}`,
+    forLot: (n) => `Cho địa điểm ${n}`,
+    wardsTitle: 'Ward và division',
+    wardsIntro: 'Nơi hàng xóm ở mỗi địa điểm bỏ phiếu, và ai là các committee people (ủy viên ủy ban) của họ.',
+    contactsMissing: 'Bản sao tuần này không cho biết ai đại diện cho các địa điểm này. Atlas, bản đồ của Thành phố, cho thấy các quan chức dân cử của bất kỳ địa chỉ nào.',
+    contactsUnknown: (list) => `Tuần này chúng tôi chưa xác định được ai đại diện cho các địa điểm ${list}.`,
+    lotPlace: (n) => `Địa điểm ${n}`,
+    parcel: (opa) => `Thửa đất ${opa}`,
+    lotPage: 'Trang lô đất trực tuyến',
+    notListed:
+      'Bản sao hằng tuần của chúng tôi không có trang nào cho thửa đất này, nên bộ hồ sơ này không thể nói thêm. Trang lô đất trực tuyến của nó tra cứu nó với Thành phố.',
+    sections: {
+      vacancy: 'Chúng tôi nghĩ nó là gì',
+      owner: 'Ai là chủ sở hữu',
+      permission: 'Các cách xin phép, theo thứ tự nên thử',
+      actions: 'Việc bạn có thể làm ở đây',
+      rules: 'Các quy định cho lô đất này',
+      represent: 'Ai đại diện cho lô đất này',
+      notChecked: 'Những gì chúng tôi chưa kiểm tra được',
+    },
+    ownerType: (type) => `Loại chủ sở hữu: ${type}.`,
+    noNames: 'Tên và địa chỉ gửi thư của chủ sở hữu có trên trang lô đất trực tuyến và trong hồ sơ của Thành phố.',
+    firstStep: 'Bước đầu tiên',
+    cost: 'Chi phí',
+    gardenAsk: 'Hãy hỏi hàng xóm trước: một khu vườn chỉ có hiệu quả khi dãy phố muốn có nó.',
+    representUnknown: 'Bản sao tuần này không cho biết ai đại diện cho lô đất này.',
+    rcoLine: (names) => `Tổ chức Cộng đồng Đã đăng ký (RCO): ${names}.`,
+    ownerLetter: 'Thư gửi chủ sở hữu xin phép',
+    ownerLetterOffered: 'Đã có sẵn: hãy điền và in nó trên trang thư.',
+    otherLetters: 'Thư gửi văn phòng Hội đồng và các tổ chức cộng đồng',
+    lettersLink: 'Viết một lá thư',
+    notChecked: {
+      line: (parts, date) =>
+        [
+          parts.length ? `${parts.join(' ')}` : '',
+          'Ai đang dùng lô đất hiện nay, nó có hàng rào hay có người chăm sóc không, và bất cứ điều gì mới hơn hồ sơ của Thành phố' +
+            (date ? ` ngày ${formatDate(date) ?? date}` : '') +
+            ': hãy xem tận nơi và trên trang lô đất trực tuyến.',
+        ]
+          .filter(Boolean)
+          .join(' '),
+      noDossier: 'Thửa đất này không có trong bản sao hằng tuần của chúng tôi.',
+      partial: {
+        transfers: 'Các chứng thư của nó không có trong bản sao hằng tuần của chúng tôi.',
+        assessments: 'Các lần định giá của nó không có trong bản sao hằng tuần của chúng tôi.',
+        li: 'Các vi phạm L&I của nó không có trong bản sao hằng tuần của chúng tôi.',
+      },
+      missing: {
+        historic: 'Nó có phải là di tích lịch sử hay không (bản sao hằng tuần thiếu danh bạ di tích lịch sử).',
+        overlays: 'Các lớp phủ quy hoạch của nó (bản sao hằng tuần thiếu chúng).',
+        brownfields: 'Các hồ sơ brownfield của liên bang ở gần (bản sao hằng tuần thiếu chúng).',
+        appeals: 'Các kháng cáo và phiên điều trần của nó (bản sao hằng tuần thiếu chúng).',
+      },
+      represent: 'Ai đại diện cho nó.',
+    },
+    privacy: 'Được tạo trong trình duyệt này từ bản sao hằng tuần của chúng tôi. Không có gì về bộ hồ sơ này được gửi đi đâu cả.',
+  },
+
+  flyer: {
+    pageTitle: 'Làm tờ rơi cho hàng xóm',
+    make: 'Làm tờ rơi cho hàng xóm',
+    intro:
+      'Một biển báo cho hàng rào của một lô đất trống: nó cho người đi ngang qua biết rằng hàng xóm quan tâm đến nơi này và cách tìm nhau. Bạn chọn nội dung của nó và in ở đây. Không có gì được gửi đi đâu cả.',
+    noLot: 'Hãy mở trang này từ một trang lô đất hoặc một bộ hồ sơ, để tờ rơi có thể hiện địa chỉ của lô đất, một bản đồ và một mã dẫn đến trang của nó.',
+    loading: 'Đang đọc bản sao hằng tuần…',
+    headline: 'Tiêu đề',
+    defaultHeadline: 'Hàng xóm quan tâm đến lô đất này',
+    hopes: 'Điều bạn hy vọng làm',
+    hopeOptions: {
+      cleanup: 'Một buổi dọn dẹp',
+      garden: 'Một khu vườn',
+      seating: 'Một chỗ ngồi',
+      mural: 'Một bức tranh tường',
+      ask_city: 'Hỏi Thành phố về nó',
+    },
+    hopeLines: {
+      cleanup: 'Cùng nhau dọn dẹp nó',
+      garden: 'Trồng một khu vườn',
+      seating: 'Làm một chỗ ngồi',
+      mural: 'Vẽ một bức tranh tường, khi có sự cho phép của chủ bức tường',
+      ask_city: 'Hỏi Thành phố điều gì có thể xảy ra ở đây',
+    },
+    ownWords: 'Hoặc bằng lời của chính bạn',
+    contact: 'Hàng xóm có thể liên lạc với bạn bằng cách nào',
+    contactHelp: 'Một liên kết nhóm trò chuyện, một email, một số điện thoại, hoặc giờ và nơi họp mặt.',
+    publicWarning:
+      'Những gì bạn in ra là công khai: ai cũng có thể đọc và chụp ảnh nó. Hãy ưu tiên một liên kết nhóm trò chuyện hoặc một email lập riêng cho dự án hơn là địa chỉ nhà hoặc số điện thoại cá nhân.',
+    publicCaution: 'Có vẻ đây có thể là một địa chỉ nhà hoặc một số điện thoại cá nhân. Nó sẽ được in ra cho bất kỳ ai nhìn thấy.',
+    ownLink: 'Liên kết riêng của bạn cho một mã QR thứ hai (không bắt buộc)',
+    ownLinkHelp: 'Ví dụ liên kết mời vào nhóm trò chuyện của bạn. Nó phải bắt đầu bằng https://',
+    ownLinkBad: 'Cái này trông không giống một địa chỉ web, nên không in mã thứ hai.',
+    ownLinkLabel: 'Mã thứ hai dùng để làm gì (không bắt buộc)',
+    ownLinkLabelPlaceholder: 'Tham gia nhóm trò chuyện của chúng tôi',
+    size: 'Giấy',
+    sizes: { letter: 'Một tờ rơi trên một trang Letter', half: 'Nửa trang, hai tờ trên một tờ giấy' },
+    print: 'In tờ rơi',
+    clear: 'Xóa những gì tôi đã gõ',
+    confirmClear: 'Xóa những gì bạn đã gõ cho các tờ rơi khỏi trình duyệt này? Không thể lấy lại.',
+    cleared: 'Đã xóa. Hiện không còn gì bạn đã gõ cho các tờ rơi được giữ trong trình duyệt này.',
+    kept: 'Những gì bạn gõ chỉ được giữ trong trình duyệt này, để bạn có thể quay lại. Không có gì được gửi đi đâu cả.',
+    where: 'Nơi bạn có thể dán nó',
+    whereLead:
+      'Cửa sổ hoặc hàng rào của chính bạn, hàng rào của chủ lô đất khi có sự cho phép, các bảng thông báo cộng đồng ở thư viện và trung tâm sinh hoạt (hãy hỏi nhân viên), và các cơ sở kinh doanh đồng ý.',
+    whereNot:
+      'Không dán trên cột điện, đèn đường, biển báo giao thông, cây của Thành phố hoặc cây ven đường, hay mái che của SEPTA: quy định của Thành phố cấm điều này, với mức phạt từ $300 mỗi biển hoặc tờ.',
+    whereLink: 'Đọc hướng dẫn, kèm các nguồn của nó',
+    preview: 'Tờ rơi',
+    hopeTitle: 'Chúng tôi hy vọng sẽ',
+    reachTitle: 'Liên lạc với chúng tôi',
+    scanLot: 'Quét để xem lô đất này trên Placekeepers: hồ sơ của Thành phố nói gì và hàng xóm có thể giúp thế nào.',
+    scanOwn: 'Quét để vào liên kết của chúng tôi',
+    mapAlt: (address) => `Một bản đồ các dãy phố quanh ${address}, với lô đất được đánh dấu.`,
+    byNeighbors: 'Do hàng xóm dán lên, không phải do Thành phố hay chủ sở hữu. Làm bằng Placekeepers, bản đồ miễn phí cho hàng xóm ở Philadelphia.',
+    qrLabel: (what) => `Mã QR: ${what}`,
+    qrCredit: 'Các mã QR được tạo trong trình duyệt này bằng qrcode-generator của Kazuhiko Arase (giấy phép MIT).',
+  },
+
+  letters: {
+    pageTitle: 'Viết một lá thư',
+    intro:
+      'Các lá thư bạn điền và in ở đây. Trang web không bao giờ gửi bất cứ thứ gì: bạn tự gửi thư qua bưu điện, qua email hoặc đem đến tận tay. Những gì bạn gõ chỉ ở lại trong trình duyệt này.',
+    unreviewed: 'Chưa có luật sư nào xem xét lá thư này. Đây không phải là tư vấn pháp lý.',
+    legalHelp: 'Để được giúp đỡ pháp lý, hãy hỏi Grounded in Philly, một dự án của Garden Justice Legal Initiative',
+    legalHelpShort: 'Giúp đỡ pháp lý miễn phí: Grounded in Philly (Garden Justice Legal Initiative)',
+    senderNote: 'Ghi chú cho người gửi',
+    chooseTemplate: 'Lá thư nào',
+    templates: {
+      owner: 'Gửi chủ lô đất, xin phép chăm sóc nó',
+      council: 'Gửi văn phòng Hội đồng Thành phố, xin sự ủng hộ',
+      rco: 'Gửi một Tổ chức Cộng đồng Đã đăng ký, xin được trình bày',
+      followup: 'Theo dõi một báo cáo 311 vẫn còn đang mở',
+    },
+    templateHelp: {
+      owner: 'Xin chủ sở hữu cho phép chăm sóc lô đất trong một thời gian: một buổi dọn dẹp, một khu vườn hoặc một chỗ ngồi. Hãy viết cho từng chủ sở hữu một.',
+      council: 'Xin văn phòng thành viên Hội đồng của khu vực bạn ủng hộ một sân hông, một lô đất của Land Bank hoặc một buổi dọn dẹp.',
+      rco: 'Giới thiệu dự án của bạn với một tổ chức cộng đồng và xin thời gian ở một trong các cuộc họp của họ.',
+      followup: 'Nhờ văn phòng Hội đồng của khu vực bạn giúp về một yêu cầu Philly311 vẫn còn đang mở.',
+    },
+    forLot: (address) => `Cho ${address}`,
+    forList: (name, n) => `Cho danh sách "${name}" (${plural(n, { other: '# địa điểm' })})`,
+    chooseLot: 'Địa điểm nào',
+    noLot:
+      'Hãy mở trang này từ một trang lô đất hoặc một bộ hồ sơ để điền sẵn địa chỉ của lô đất, chủ sở hữu và người đại diện của nó. Bạn cũng có thể tự gõ chúng.',
+    loading: 'Đang đọc bản sao hằng tuần…',
+    gate: {
+      public:
+        'Lô đất này là đất công. Hãy xin qua các chương trình của Land Bank dành cho hàng xóm, hoặc xin sự ủng hộ từ văn phòng Hội đồng của bạn: có một lá thư cho việc đó.',
+      not_sure:
+        'Chúng tôi không chắc lô đất này bỏ trống, và nó có thể là nhà của ai đó, nên trang web không đưa ra lá thư gửi chủ sở hữu của nó. Nếu bạn biết lô đất trống, hãy xem lại tận nơi, và hỏi hàng xóm ai là chủ sở hữu.',
+      no_owner: 'Hồ sơ của Thành phố không nêu chủ sở hữu nào cho lô đất này, nên không có ai để gửi lá thư này đến.',
+      not_listed:
+        'Bản sao hằng tuần của chúng tôi không có trang nào cho thửa đất này, nên trang web không thể biết một lá thư gửi chủ sở hữu có phù hợp ở đây không. Hãy mở trang lô đất của nó.',
+    },
+    notOffered: 'Thư gửi chủ sở hữu không được đưa ra ở đây',
+    fields: {
+      date: 'Ngày',
+      senderName: 'Tên của bạn',
+      group: 'Nhóm hoặc dãy phố của bạn, nếu có',
+      contact: 'Cách liên lạc với bạn',
+      contactHelp: 'Một số điện thoại, một email hoặc một địa chỉ gửi thư. Nó được in trên lá thư.',
+      ownerName: 'Tên chủ sở hữu, như Thành phố công bố',
+      ownerAddress: 'Địa chỉ gửi thư của chủ sở hữu, như Thành phố công bố',
+      lotAddress: 'Địa chỉ của lô đất',
+      plans: 'Điều bạn hy vọng làm',
+      planOptions: {
+        cleanup: 'dọn dẹp nó',
+        garden: 'trồng một khu vườn nhỏ',
+        seating: 'đặt một chỗ ngồi',
+      },
+      duration: 'Trong bao lâu',
+      durationPlaceholder: 'một mùa',
+      extra: 'Bằng lời của chính bạn (không bắt buộc)',
+      recipientName: 'Gửi',
+      recipientAddress: 'Địa chỉ',
+      ask: 'Điều bạn đề nghị',
+      askOptions: {
+        side_yard: 'Ủng hộ cho một sân hông (chỉ nếu bạn sống ngay bên cạnh)',
+        land_bank: 'Ủng hộ việc chăm sóc một lô đất của Land Bank',
+        cleanup: 'Giúp sắp xếp một buổi dọn dẹp',
+      },
+      project: 'Dự án của bạn, trong vài từ',
+      projectPlaceholder: 'một buổi dọn dẹp và một khu vườn nhỏ',
+      requestNumber: 'Số yêu cầu Philly311',
+      reportedOn: 'Bạn đã báo khi nào',
+      problem: 'Vấn đề là gì',
+      problemOptions: {
+        dumping: 'đổ rác trái phép',
+        light: 'một đèn đường bị hỏng',
+        graffiti: 'vẽ bậy lên tường',
+        building: 'một tòa nhà bỏ trống để ngỏ',
+        other: 'một vấn đề khác của chính địa điểm đó',
+      },
+      problemOther: 'Vấn đề, bằng lời của bạn',
+    },
+    prefilledFrom: (source, date) => `Điền sẵn từ ${source}, ${date}. Hãy kiểm tra trước khi bạn gửi.`,
+    nameLeftOut: 'Tên chủ sở hữu được để trống ở đây. Hãy viết nó như bạn biết, hoặc để trống và lá thư sẽ bắt đầu bằng "Kính gửi chủ sở hữu bất động sản,".',
+    cityRecords: 'hồ sơ của Thành phố',
+    print: 'In lá thư',
+    clear: 'Xóa mọi thứ tôi đã gõ',
+    cleared: 'Đã xóa. Hiện không còn gì bạn đã gõ được giữ trong trình duyệt này.',
+    confirmClear: 'Xóa mọi thứ bạn đã gõ trong các lá thư này khỏi trình duyệt này? Không thể lấy lại.',
+    kept: 'Những gì bạn gõ chỉ được giữ trong trình duyệt này, để bạn có thể quay lại. Không có gì được gửi đi đâu cả.',
+    notKept: 'Lúc này trình duyệt này không giữ những gì bạn gõ, có thể do đang dùng cửa sổ riêng tư. Hãy in trước khi đóng trang.',
+    preview: 'Lá thư',
+    salutation: (name) => `Kính gửi ${name},`,
+    dearOwner: 'Kính gửi chủ sở hữu bất động sản,',
+    sincerely: 'Trân trọng,',
+    reachMe: (contact) => `Quý vị có thể liên lạc với tôi theo ${contact}.`,
+    reachMeBlank: 'Quý vị có thể liên lạc với tôi theo [cách liên lạc với bạn].',
+    thanks: 'Xin cảm ơn quý vị đã xem xét việc này.',
+    thanksHelp: 'Xin cảm ơn sự giúp đỡ của quý vị.',
+    me: (name, group) => `Tên tôi là ${name || '[tên của bạn]'}${group ? `, và tôi viết thư này thay mặt ${group}` : ''}.`,
+    owner: {
+      intro: (lot) => `Tôi sống gần ${lot || '[địa chỉ của lô đất]'}, lô đất mà hồ sơ của Thành phố ghi dưới tên quý vị.`,
+      ask: (plans) =>
+        `Hàng xóm trên dãy phố này muốn chăm sóc lô đất trong một thời gian. Chúng tôi xin phép quý vị để ${plans || '[điều bạn hy vọng làm]'}.`,
+      terms: (duration) =>
+        `${duration ? `Chúng tôi sẽ làm việc này trong ${duration}, tự làm công việc và tự trả tiền cho mọi vật dụng.` : 'Chúng tôi sẽ tự làm công việc và tự trả tiền cho mọi vật dụng.'} Chúng tôi sẽ giữ lô đất sạch sẽ và an toàn, và sẽ không xây bất cứ thứ gì cố định. Quý vị có thể từ chối, và nếu quý vị đồng ý, quý vị có thể yêu cầu chúng tôi ngừng bất cứ lúc nào.`,
+      writing:
+        'Nếu quý vị đồng ý, chúng tôi muốn ghi thỏa thuận của chúng ta thành văn bản, để quý vị và chúng tôi đều biết mình đã hứa những gì. Chúng tôi sẵn lòng trả lời mọi câu hỏi trước.',
+    },
+    council: {
+      dear: (name) => (name ? `Kính gửi Thành viên Hội đồng ${name},` : 'Kính gửi Thành viên Hội đồng,'),
+      intro: (group, lot) =>
+        `Tôi viết thư này với tư cách một người hàng xóm trong khu vực của quý vị${group ? `, cùng với ${group},` : ''} về ${lot || '[địa chỉ của lô đất]'}.`,
+      ask: {
+        side_yard:
+          'Tôi sống ngay bên cạnh, và tôi muốn chăm sóc lô đất như một sân hông. Chương trình sân hông của Philadelphia Land Bank cần sự ủng hộ của văn phòng quý vị, và tôi xin sự ủng hộ đó.',
+        land_bank:
+          'Hàng xóm muốn chăm sóc lô đất này qua một trong các chương trình của Philadelphia Land Bank dành cho hàng xóm, như một thỏa thuận làm vườn. Tôi xin văn phòng quý vị ủng hộ đơn của chúng tôi.',
+        cleanup: 'Lô đất này cần được dọn dẹp. Hàng xóm sẵn sàng giúp, và chúng tôi xin văn phòng quý vị giúp chúng tôi sắp xếp việc đó với Thành phố.',
+      },
+      meet: 'Tôi sẵn lòng gặp nhân viên của quý vị hoặc đưa họ đến xem lô đất.',
+    },
+    rco: {
+      dear: (name) => (name ? `Kính gửi các hàng xóm của ${name},` : 'Kính gửi các hàng xóm,'),
+      intro: (project, lot) => `Chúng tôi là những người hàng xóm đang thực hiện ${project || '[dự án của bạn]'} tại ${lot || '[địa chỉ của lô đất]'}.`,
+      ask: 'Chúng tôi muốn giới thiệu dự án tại một trong các cuộc họp của quý vị, nghe các thành viên nghĩ gì, và trả lời câu hỏi của họ. Chúng tôi có thể xin vài phút trong chương trình nghị sự của một cuộc họp sắp tới được không?',
+    },
+    followup: {
+      dear: (name) => (name ? `Kính gửi Thành viên Hội đồng ${name} và các nhân viên,` : 'Kính gửi các nhân viên văn phòng Hội đồng,'),
+      reported: (when, problem, place, number) =>
+        `Vào ${when || '[ngày bạn đã báo]'}, tôi đã báo ${problem || '[vấn đề]'} tại ${place || '[địa chỉ]'} cho Philly311. Số yêu cầu là ${number || '[số yêu cầu]'}. Yêu cầu vẫn còn đang mở, và vấn đề vẫn còn đó.`,
+      ask: 'Tôi xin văn phòng quý vị giúp bảo đảm vấn đề được giải quyết.',
+      subject: (number) => `Về yêu cầu Philly311 ${number || '[số]'}`,
+    },
+  },
+
   displacement: {
     caution: 'Xanh hóa có thể làm tăng giá cả ở khu vực lân cận. Hãy cân nhắc kết hợp với các biện pháp bảo vệ.',
     placemakingCaution:
@@ -684,7 +1033,9 @@ const vi: Catalog = {
                                         ? 'Nhân viên hướng dẫn học sinh qua đường'
                                         : style === 'redlining'
                                           ? 'Bản đồ phân loại khu dân cư (redlining) năm 1937'
-                                          : 'Chi tiết',
+                                          : style === 'projects'
+                                            ? 'Dự án hàng xóm đã hoàn thành'
+                                            : 'Chi tiết',
     memorialTitle: 'Để tưởng nhớ',
     peopleHere: (n) => `${plural(n, { other: '# người' })} được tưởng nhớ ở đây`,
     killed: {
@@ -1605,6 +1956,45 @@ const vi: Catalog = {
       dates: (fetched, last) => `Chứng thư đọc ngày ${fetched}; chứng thư mới nhất đề ngày ${last}.`,
       file: (part, day) => `placekeepers-land-bank-${part}-${day}.csv`,
     },
+  },
+
+  projects: {
+    kinds: {
+      cleanup: 'Dọn dẹp',
+      garden: 'Khu vườn',
+      seating: 'Chỗ ngồi',
+      art: 'Tranh tường hoặc nghệ thuật',
+      trees: 'Cây xanh',
+      city_install: 'Mái che hoặc ghế ngồi do Thành phố lắp',
+      fix_311: 'Một việc sửa qua 311',
+      other: 'Một dự án khác',
+    },
+    legend: 'Một dự án mà hàng xóm đã hoàn thành',
+    legendNote: 'Placekeepers đọc và duyệt mọi báo cáo trước khi nó xuất hiện.',
+    detailsTitle: 'Dự án hàng xóm đã hoàn thành',
+    here: (n) => `${plural(n, { other: '# dự án' })} ở đây`,
+    finished: (month) => `Hoàn thành vào ${month}`,
+    by: (group) => `Do ${group} thực hiện`,
+    whatItTook: 'Cần những gì',
+    report: 'Xem báo cáo và các ảnh của nó trên GitHub',
+    source: 'Đọc thêm về nó',
+    openLot: 'Mở trang lô đất',
+    showLayer: 'Hiện các dự án hàng xóm đã hoàn thành trên bản đồ',
+    privacy: 'Bản đồ không bao giờ hiện ai đã gửi một báo cáo, chỉ hiện tên một nhóm mà họ chọn cho hiện.',
+    section: 'Các dự án ở đây',
+    loading: 'Đang tìm các dự án mà hàng xóm đã báo ở đây.',
+    none: 'Chưa có ai báo về một dự án hàng xóm đã hoàn thành ở đây.',
+    unpublished: 'Bản sao này của bản đồ chưa có danh sách các dự án hàng xóm đã hoàn thành.',
+    failed: 'Không tải được danh sách các dự án hàng xóm đã hoàn thành. Hãy thử lại sau.',
+    tellUs: 'Hãy cho chúng tôi biết về một dự án bạn đã hoàn thành',
+    tellUsHere: 'Hãy cho chúng tôi biết về một dự án bạn đã hoàn thành ở đây',
+    tellUsNote:
+      'Biểu mẫu mở trên GitHub, nơi ai cũng đọc được. Một người sẽ đọc mọi báo cáo trước khi nó xuất hiện trên bản đồ. Ảnh ở lại trên GitHub: không bao giờ có khuôn mặt của một đứa trẻ hay của bất kỳ ai không đồng ý, và không bao giờ có biển số xe.',
+    oneLot: 'Một lô đất riêng lẻ không thể cho thấy một dự án có hiệu quả hay không.',
+    timelineKind: 'Dự án hàng xóm đã hoàn thành',
+    timelineToggle: 'Các dự án hàng xóm đã hoàn thành',
+    timelineText: (kind, group) => (group ? `${kind}, do ${group} thực hiện` : kind),
+    printTitle: 'Các dự án hàng xóm đã hoàn thành ở đây',
   },
 
   basemap: {

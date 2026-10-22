@@ -57,8 +57,10 @@ nay, bước duy nhất mà chúng tôi có thể đề nghị là liên hệ PH
 ### Các lô đất thuộc sở hữu tư nhân
 
 - **Hỏi chủ sở hữu.** Nhiều chủ sở hữu có thể liên lạc được qua địa chỉ gửi thư ghi trên trang của
-  lô đất. Một mẫu thư xin phép đã được lên kế hoạch nhưng **chưa được viết**. Hãy nhờ Garden Justice
-  Legal Initiative xem qua mọi thỏa thuận trước khi bạn ký.
+  lô đất. Từ một trang lô đất, "Viết một lá thư" mở [một lá thư xin chủ sở hữu cho phép](../letters/)
+  chăm sóc lô đất trong một thời gian. **Chưa có luật sư nào xem xét lá thư này, và đây không phải
+  là tư vấn pháp lý.** Hãy nhờ Garden Justice Legal Initiative xem qua mọi thỏa thuận trước khi bạn
+  ký.
 - **Mua nó.** Một vụ mua bán thông thường, dù nhiều bất động sản bỏ trống có giấy tờ nhà đất bị rối
   (tangled title: chủ sở hữu đã qua đời và di sản chưa bao giờ được giải quyết hợp pháp), điều có
   thể khiến việc bán khó khăn.
@@ -142,6 +144,41 @@ trên trang [Hãy dùng có trách nhiệm](../responsibly/).
 - Từ ngày 10 tháng 11 năm 2025, Thành phố tự động chặn mọi chứng thư mà người bán đã qua đời vào
   ngày họ được cho là đã ký.
 
+## Cùng hàng xóm tổ chức
+
+- **Ai đại diện cho bạn.** Mỗi trang lô đất trong danh sách của chúng tôi kết thúc bằng việc ai đại
+  diện cho lô đất: ward và division của nó, thành viên Hội đồng Thành phố, dân biểu tiểu bang,
+  thượng nghị sĩ tiểu bang và dân biểu Quốc hội của nó, mỗi người kèm văn phòng chính thức và số
+  điện thoại, cùng các Tổ chức Cộng đồng Đã đăng ký mà khu vực của họ bao phủ lô đất, kèm thông tin
+  liên hệ mà Thành phố công bố. Mỗi thông tin nêu nó đến từ đâu và ngày kiểm tra gần nhất. Atlas,
+  bản đồ của Thành phố, cho thấy điều tương tự cho bất kỳ địa chỉ nào trong chế độ xem "Voting" (bỏ
+  phiếu) của nó.
+- **Bộ hồ sơ.** Hãy lưu các địa điểm bạn quan tâm vào một danh sách, rồi chọn "Làm một bộ hồ sơ"
+  bên cạnh danh sách (hoặc "Làm một bộ hồ sơ cho các địa điểm này" phía trên danh sách xếp hạng
+  trong chế độ xem phân tích). Bộ hồ sơ mở trong thẻ riêng của nó, sẵn sàng để in trên giấy Letter:
+  một trang bìa có một bản đồ nhỏ, người cần liên hệ, và một trang cho mỗi địa điểm với những gì
+  trang lô đất của nó nói. Nó được tạo trong trình duyệt của bạn từ bản sao hằng tuần của chúng tôi
+  về hồ sơ của Thành phố; không có gì được gửi đi đâu cả.
+- **Thư.** [Trang thư](../letters/) có bốn lá thư ngắn để điền và in: gửi chủ một lô đất xin phép
+  chăm sóc nó, gửi văn phòng Hội đồng Thành phố của bạn xin ủng hộ một sân hông, một lô đất của
+  Land Bank hoặc một buổi dọn dẹp, gửi một Tổ chức Cộng đồng Đã đăng ký xin trình bày dự án của bạn
+  tại một cuộc họp, và một thư theo dõi một báo cáo Philly311 vẫn còn đang mở. **Chưa có luật sư nào
+  xem xét các lá thư này. Chúng không phải là tư vấn pháp lý.** Để được giúp đỡ pháp lý, hãy dùng
+  [biểu mẫu yêu cầu của Grounded in Philly](https://groundedinphilly.org/request-representation/)
+  (Garden Justice Legal Initiative). Trang web không bao giờ gửi một lá thư, và những gì bạn gõ ở
+  lại trong trình duyệt của bạn cho đến khi bạn xóa.
+- Thư gửi chủ sở hữu được đưa ra cho một công ty hoặc một tổ chức phi lợi nhuận, và cho một người
+  chỉ khi bản đồ khá chắc lô đất là bỏ trống: một lô đất chúng tôi không chắc có thể là nhà của ai
+  đó. Các lô đất của Thành phố và của Land Bank thì đi qua các chương trình của Land Bank.
+- **Tờ rơi cho hàng xóm.** Từ một trang lô đất, "Làm tờ rơi cho hàng xóm" làm một biển báo cho hàng
+  rào của lô đất: một tiêu đề lớn, địa chỉ và một bản đồ nhỏ, điều bạn hy vọng làm, cách hàng xóm
+  liên lạc với bạn, và một mã QR mở trang của lô đất trên Placekeepers. Nó in trên một trang Letter
+  hoặc thành hai nửa trang trên một tờ. Những gì bạn in là công khai, nên hãy dùng một liên kết
+  nhóm trò chuyện hoặc một email lập riêng cho dự án thay vì địa chỉ nhà hoặc số điện thoại cá nhân
+  của bạn. Trước khi dán lên, hãy đọc [nơi bạn có thể dán nó](../posting/): không bao giờ trên cột
+  điện, đèn đường, biển báo giao thông hay cây ven đường, nơi quy định của Thành phố đặt mức phạt
+  từ $300 mỗi biển hiệu.
+
 ## Giấy phép về đường phố và không gian công cộng
 
 | Việc bạn muốn làm | Hỏi ai | Cần những gì | Chi phí | Mất bao lâu |
@@ -207,6 +244,27 @@ bản đồ đến từ danh sách Percent for Art của Thành phố, OpenStree
 thể thêm một tác phẩm vào OpenStreetMap, như một tác phẩm nghệ thuật kèm loại của nó, và tên cùng
 nghệ sĩ khi bạn biết; nó đến bản đồ trong khoảng một tuần. Mural Arts Philadelphia giữ danh sách
 tranh tường lớn nhất của thành phố trên [trang web riêng của họ](https://muralarts.org/artworks/).
+
+## Hãy cho chúng tôi biết về một dự án bạn đã hoàn thành
+
+Hàng xóm có dọn dẹp một lô đất, trồng một khu vườn hoặc cây, làm một chỗ ngồi, vẽ một bức tranh
+tường, nhận được một chiếc ghế hoặc một mái che từ Thành phố, hay được sửa một vấn đề 311 không?
+Hãy cho chúng tôi biết bằng biểu mẫu ngắn này, và nó có thể xuất hiện trên bản đồ dưới mục "Các dự
+án hàng xóm đã hoàn thành", nơi các hàng xóm khác có thể thấy đã làm gì ở gần và cần những gì.
+
+[Hãy cho chúng tôi biết về một dự án bạn đã hoàn thành](https://github.com/holdTheDoorHoid/placekeepers/issues/new?template=project.yml)
+
+- Một người điều hành Placekeepers đọc mọi báo cáo trước khi nó xuất hiện. Khi được duyệt, nó thường
+  đến bản đồ trong vòng một giờ, và luôn đến trước lần cập nhật hằng tuần tiếp theo.
+- Bản đồ hiện những gì đã làm, ở đâu, tháng hoàn thành, và, nếu bạn muốn, tên nhóm của bạn và vài từ
+  về những gì cần có. Nó không bao giờ hiện tên người dùng GitHub của bạn, và nó không hiện bạn có
+  được phép hay không. Biểu mẫu hỏi về sự cho phép để chúng tôi biết những hướng đi hợp pháp nào
+  hiệu quả; chúng tôi không bao giờ đánh giá câu trả lời.
+- Biểu mẫu nằm trên GitHub, nơi ai cũng đọc được, và để gửi cần một tài khoản GitHub miễn phí.
+- Ảnh được hoan nghênh trên chính báo cáo, nhưng không bao giờ có khuôn mặt của một đứa trẻ hay của
+  bất kỳ ai không đồng ý, và không bao giờ có biển số xe. Bản đồ không hiện ảnh: nó liên kết đến
+  báo cáo.
+- Trên trang của một lô đất trên bản đồ, biểu mẫu mở với lô đất đó đã được điền sẵn.
 
 ## Tiền để giúp chi trả
 

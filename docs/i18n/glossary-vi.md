@@ -124,3 +124,17 @@ wording of four texts. Two of the changes set a rule worth keeping:
 - a bill pending in City Council "would change" the zoning: write "nếu được thông qua, sẽ thay đổi"
   (if it passes, it will change), never a plain "sẽ thay đổi".
 
+
+## Catch up pass (2026-10-22): terms added
+
+| English | Vietnamese | Note |
+|---|---|---|
+| packet | bộ hồ sơ | the printable packet of places |
+| letter (template) | lá thư | the four letters; they use "Quý vị" for the recipient and "tôi" or "chúng tôi" for the sender |
+| flyer | tờ rơi | "Làm tờ rơi cho hàng xóm" |
+| ward, division | ward (khu bầu cử), division (tiểu khu bầu cử) | English words kept, as on City documents |
+| committee people | committee people (ủy viên ủy ban) | |
+| who represents you | ai đại diện cho bạn | |
+| Council member | Thành viên Hội đồng Thành phố | state representative = dân biểu tiểu bang, state senator = thượng nghị sĩ tiểu bang, Member of Congress = dân biểu Quốc hội Hoa Kỳ |
+| projects neighbors finished | các dự án hàng xóm đã hoàn thành | layer and form name |
+| lawyer has not reviewed it | chưa có luật sư nào xem xét lá thư này, và đây không phải là tư vấn pháp lý | |
