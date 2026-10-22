@@ -1007,3 +1007,82 @@ lenses:
       heat_and_shade:
         label: "Calor y sombra"
 
+
+suggestions:
+  clean_and_green:
+    label: "Limpiar y reverdecer este lote"
+    summary: "Recoger la basura, nivelar el terreno, plantar pasto y unos pocos árboles, poner una cerca baja de postes y travesaños, y cortar el pasto con regularidad."
+    cost: "Unos $1,100 a $1,500 al principio y $150 a $300 al año (por confirmar con PHS)"
+  seal_abandoned_building:
+    label: "Conseguir que se selle este edificio"
+    summary: "Reporte un edificio abandonado abierto para que la Ciudad selle sus puertas y ventanas."
+    cost: "Reportarlo es gratis"
+  plant_shade_trees:
+    label: "Plantar árboles de sombra en este lote y a lo largo de él"
+    summary: "Menos árboles dan sombra a esta área que en los alrededores de al menos la mitad de los lugares de este mapa (el estudio de la Ciudad sobre las copas de los árboles de 2018). Los árboles refrescan una cuadra con su sombra y con el agua que sueltan sus hojas. La Ciudad planta árboles gratis en la acera de la calle cuando el dueño de una propiedad lo pide, y TreePhilly regala árboles gratis para plantar en el suelo de terrenos privados. Elija árboles que crezcan altos, para que den sombra a la calle y los vecinos puedan seguir viendo a través del lote."
+    cost: "Árboles gratis de la Ciudad y de TreePhilly. Los árboles jóvenes necesitan unos 20 galones de agua por semana de marzo a diciembre"
+  cool_green_lot:
+    label: "Reverdecer este lote para refrescar la cuadra"
+    summary: "Según el índice de vulnerabilidad al calor de la Ciudad, el calor del verano golpea aquí a las personas más fuerte que en los alrededores de al menos la mitad de los lugares de este mapa. La tierra desnuda, la grava y los escombros absorben el sol, mientras que el pasto, los canteros de jardín y sobre todo los árboles mantienen un lote más fresco y dan sombra a la acera de al lado. Sea lo que sea que este lote llegue a ser, un jardín, un lote limpio y verde o un patio lateral, plante árboles de sombra en él, y manténgalos altos para que el lote siga abierto a la vista."
+    cost: "Desde árboles gratis (TreePhilly) hasta unos $1,100 a $1,500 al principio para un lote limpio y verde completo (por confirmar con PHS)"
+  seating_and_shade:
+    label: "Hacer un lugar para sentarse a la sombra"
+    summary: "Más personas viven a 5 minutos a pie de este lote que en los alrededores de al menos la mitad de los lugares de este mapa. Unos pocos bancos o una mesa de picnic bajo árboles de sombra pueden convertirlo en un lugar donde los vecinos se detienen, descansan y se encuentran. Pregunte a los vecinos qué usarían, elija asientos resistentes y plante árboles que crezcan altos para que el lote siga abierto a la vista. Planifique quién lo mantendrá limpio."
+    cost: "Desde árboles gratis (TreePhilly) y un banco hecho con un diseño abierto hasta unos pocos miles de dólares. Los mini subsidios para espacios públicos de Feet First Philly dan de $500 a $2,500"
+  community_garden:
+    label: "Empezar un jardín comunitario"
+    summary: "Este lote está más lejos de un parque que al menos la mitad de los lugares de este mapa, y al menos 1,000 personas viven a 5 minutos a pie de él. Un jardín comunitario les da a los vecinos espacio verde, comida y flores, y una razón para encontrarse. Necesita jardineros que vuelvan cada semana, agua y permiso para usar el terreno. Cuando un jardín ya funciona, el Neighborhood Gardens Trust puede ayudar a que siga siendo un jardín para siempre."
+    cost: "Desde unas pocas camas elevadas hasta unos pocos miles de dólares con tierra, una cerca y agua. El Acuerdo de Jardín Urbano (Urban Garden Agreement) del Land Bank cuesta $1"
+  art_request:
+    label: "Preguntar por un mural u otro arte"
+    summary: "Mucha gente vive alrededor de este lote, y ninguna obra de la lista Percent for Art de la Ciudad ni de Wikidata está a 5 minutos a pie. Esas listas no incluyen muchos murales, así que mire primero la capa de Arte público y la lista propia de murales de Mural Arts. Una pared en blanco frente al lote podría tener un mural: Mural Arts recibe solicitudes de los dueños de paredes en su propio sitio. El arte es bienvenido por su belleza y por el orgullo que da; ningún estudio lo relaciona con menos violencia."
+    cost: "Preguntar a Mural Arts es gratis"
+  report_dumping:
+    label: "Reportar la basura tirada ilegalmente a Philly311"
+    summary: "Alguien le preguntó a Philly311 por basura tirada ilegalmente en una cuadra frente a la que está este lote en los últimos 90 días, y la solicitud sigue abierta. Si la basura sigue allí, haga su propia solicitud, con una foto, para que la Ciudad la retire. Un reporte trata de la basura, nunca de quién la dejó."
+    cost: "Reportarlo es gratis"
+  report_dark_light:
+    label: "Reportar la luz de calle apagada a Philly311"
+    summary: "Alguien le pidió a Philly311 que arreglara una luz de calle o de callejón que está apagada en una cuadra frente a la que está este lote, en los últimos 90 días, y la solicitud sigue abierta. Si la luz sigue apagada, haga su propia solicitud, con el número del poste si lo tiene. Una calle iluminada ayuda a los vecinos a usar la calle y el lote después de oscurecer."
+    cost: "Reportarlo es gratis"
+  report_graffiti:
+    label: "Reportar el grafiti a Philly311"
+    summary: "Alguien le pidió a Philly311 que quitara grafiti en una cuadra frente a la que está este lote en los últimos 90 días, y la solicitud sigue abierta. Si sigue allí, haga su propia solicitud, con una foto, para que la Ciudad lo limpie. Si los vecinos prefieren tener arte en esa pared, pregunte a su dueño por un mural."
+    cost: "Reportarlo es gratis"
+  memorial_or_ghost_bike:
+    label: "Un memorial o una bicicleta blanca (ghost bike)"
+    summary: "Un memorial honra a la persona que murió y les recuerda a todos los que pasan que vayan más despacio. Para una persona que murió al andar en bicicleta, la Bicycle Coalition puede colocar una bicicleta blanca (ghost bike), una bicicleta pintada de blanco."
+    cost: "Bajo; pedir una bicicleta blanca es gratis"
+  traffic_calming_petition:
+    label: "Pedir medidas para calmar el tránsito en esta calle residencial"
+    summary: "Los vecinos pueden pedirle a la Ciudad reductores de velocidad (cojines) en una calle residencial. La Ciudad califica las solicitudes tres veces al año con datos de choques, y si se elige esta calle, el 60 por ciento de la cuadra firma una petición. Las arterias, las carreteras estatales y las calles cortas, empinadas y con curvas no califican."
+    cost: "Pedirlo es gratis"
+  daylighting_check:
+    label: "Comprobar que esta esquina esté despejada por 20 pies"
+    summary: "La ley de Pensilvania ya prohíbe estacionar a menos de 20 pies de un cruce peatonal en una intersección, y a menos de 30 pies de una señal de alto o un semáforo, para que los conductores y las personas que cruzan puedan verse. Si hay autos estacionados allí, pregunte a la Ciudad por despejar la esquina con pintura, postes o macetas. Reporte una luz de calle apagada aquí a Philly311."
+    cost: "Preguntar es gratis"
+  asphalt_art_check:
+    label: "Arte en el asfalto en esta esquina, consulte primero con la Ciudad"
+    summary: "Un estudio de intersecciones pintadas encontró menos choques con personas que caminaban y andaban en bicicleta, pero no tenía grupo de comparación y lo pagó el patrocinador del programa. En 2025 el gobierno federal empezó a pedir a los estados que quiten el arte de los cruces peatonales, y Filadelfia no tiene un proceso de permisos para eso. Consulte con la Ciudad antes de pintar cualquier cosa."
+    cost: "No se sabe; no hay un proceso de la Ciudad para ponerle precio"
+  stop_survey:
+    label: "Revisar esta parada con StreetComplete"
+    summary: "Nadie ha registrado todavía si esta parada tiene un refugio o un banco, o OpenStreetMap y la lista de refugios de autobús de la Ciudad no coinciden sobre su refugio. Cualquiera puede averiguarlo en unos minutos con la aplicación de teléfono gratuita StreetComplete, y las respuestas llegan a este mapa en más o menos una semana. Si la aplicación no tiene ninguna pregunta aquí, la parada todavía no está en OpenStreetMap: agréguela con la capa Things de la aplicación, o deje una nota."
+    cost: "Gratis; unos tres minutos por parada"
+  stop_shelter_request:
+    label: "Pedir a la Ciudad un refugio en esta parada"
+    summary: "Una revisión no encontró refugio aquí, y la lista de refugios de autobús de la Ciudad tampoco tiene ninguno aquí. El programa de refugios de autobús de la Ciudad, a cargo de su oficina de transporte (OTIS), construye refugios pagados con la publicidad que llevan y se propone ponerlos en el 15 por ciento de las paradas de autobús más concurridas. No hay un formulario público de solicitud, así que escriba a OTIS con el número de la parada y cuántas personas suben aquí."
+    cost: "Pedirlo es gratis"
+  stop_bench_request:
+    label: "Pedir a la Ciudad un banco en esta parada"
+    summary: "Una revisión no encontró banco aquí. Los bancos en las paradas pertenecen al programa de mobiliario urbano de la Ciudad, a cargo de OTIS, y no encontramos una forma pública de pedir uno, así que escriba a OTIS con el número de la parada. Un banco que usted mismo construya necesita permiso, y el trámite de permisos de la Ciudad para un banco en una acera todavía no está confirmado."
+    cost: "Pedirlo es gratis"
+  stop_streetlight_report:
+    label: "Reportar una luz de calle apagada en esta parada"
+    summary: "OpenStreetMap dice que esta parada no tiene luz. Si una luz de calle de aquí está apagada, repórtela a Philly311. El programa actual de alumbrado público de la Ciudad reemplaza luces pero no agrega nuevas, así que una parada sin ninguna luz es una pregunta para OTIS."
+    cost: "Reportarlo es gratis"
+  stop_shade_trees:
+    label: "Plantar árboles de sombra junto a esta parada"
+    summary: "Pocos árboles dan sombra a esta parada. La Ciudad planta árboles gratis en la acera frente a una casa o un negocio cuando su dueño lo pide, y los riega el primer año. Pida a los dueños de los edificios junto a la parada que soliciten uno; los vecinos pueden ayudar a regarlo después."
+    cost: "Árboles de calle gratis para los dueños de propiedades"
+
