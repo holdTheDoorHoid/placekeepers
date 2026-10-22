@@ -453,26 +453,24 @@ ALLOWED_LINK = re.compile(
 
 def assert_private(files: dict[str, str]) -> None:
     """No GitHub user name, title, photo link, contact detail or permission answer beyond the
-    links to the reports, in any published file."""
+    links to the reports, in any published file; and in the projects' own files, no link or @
+    at all but those links."""
     assert files
+    everywhere = (
+        *REPORTERS,
+        "user-attachments",
+        "githubusercontent",
+        "spam.example.com",
+        "Ana Lopez",
+        "555-0123",
+        "ben.sample@example.com",
+        "No, or not sure",
+        "Yes, from the owner",
+    )
     for name, text in files.items():
-        if not (name.startswith("tables/projects") or name.startswith("tiles/projects")):
-            continue
         rest = ALLOWED_LINK.sub("", text)
-        for word in (
-            *REPORTERS,
-            "holdTheDoorHoid",
-            "user-attachments",
-            "githubusercontent",
-            "spam.example.com",
-            "Ana Lopez",
-            "555-0123",
-            "ben.sample@example.com",
-            "No, or not sure",
-            "Yes, from the owner",
-            "@",
-            "http",
-        ):
+        own = name.startswith("tables/projects") or name.startswith("tiles/projects")
+        for word in (*everywhere, *(("holdTheDoorHoid", "@", "http") if own else ())):
             assert word not in rest, f"{word!r} reached {name}"
 
 
