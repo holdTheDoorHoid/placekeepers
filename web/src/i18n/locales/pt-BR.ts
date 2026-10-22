@@ -8,7 +8,7 @@
 // as punctuation, and proper names as they are (Placekeepers, Philly311, LandCare).
 
 import type { Catalog } from '../catalog.ts';
-import { formatDecimal, formatNumber, plural } from '../format.ts';
+import { formatDate, formatDecimal, formatNumber, plural } from '../format.ts';
 import { distanceWords } from '../../strings.ts';
 
 /**
@@ -109,6 +109,7 @@ const ptBR: Catalog = {
       { slug: 'responsibly', label: 'Use com responsabilidade' },
       { slug: 'vacant-land', label: 'Como encontramos terrenos vazios' },
       { slug: 'streetcomplete', label: 'Verificar pontos de ônibus' },
+      { slug: 'posting', label: 'Onde afixar um cartaz' },
       { slug: 'terms', label: 'Termos' },
       { slug: 'privacy', label: 'Privacidade' },
       { slug: 'contact', label: 'Contato' },
@@ -712,7 +713,9 @@ const ptBR: Catalog = {
                                         ? 'Guarda de travessia escolar'
                                         : style === 'redlining'
                                           ? 'Mapa de redlining de 1937'
-                                          : 'Detalhes',
+                                          : style === 'projects'
+                                            ? 'Projeto concluído pelos vizinhos'
+                                            : 'Detalhes',
     memorialTitle: 'Em memória',
     peopleHere: (n) => `${pl(n, '# pessoa é lembrada', '# pessoas são lembradas')} aqui`,
     killed: {
@@ -2567,7 +2570,404 @@ const ptBR: Catalog = {
     },
   },
 
-  // @@END@@
+  represent: {
+    title: 'Quem representa você',
+    intro: 'As pessoas eleitas para este endereço, com os seus gabinetes oficiais. Ligue ou escreva a elas sobre este lote.',
+    ward: (ward, division) => `Ward ${ward}, divisão ${division}`,
+    wardOnly: (ward) => `Ward ${ward}`,
+    wardHelp:
+      'O seu ward (distrito eleitoral) e a sua divisão decidem onde você vota e quem são os committee people (representantes de partido eleitos) do seu bairro.',
+    district: (n) => `Distrito ${n}`,
+    offices: {
+      council: 'Câmara Municipal',
+      house: 'Câmara dos Representantes da Pensilvânia',
+      senate: 'Senado da Pensilvânia',
+      congress: 'Câmara dos Representantes dos EUA',
+    },
+    titles: {
+      council: 'Vereador(a)',
+      house: 'Deputado(a) estadual',
+      senate: 'Senador(a) estadual',
+      congress: 'Membro do Congresso',
+    },
+    office: 'Gabinete',
+    phone: 'Telefone',
+    website: 'Site',
+    vacant: 'Nenhum membro está listado para esta cadeira agora. A cadeira pode ficar vazia até uma eleição.',
+    notWorkedOut: 'Não conseguimos descobrir este distrito para o lote esta semana.',
+    notInBuild: 'A cópia desta semana foi feita sem esta lista de membros, então não podemos dizer quem ocupa a cadeira.',
+    atLargeTitle: 'Membros da Câmara eleitos pela cidade toda',
+    atLarge: 'Mais sete membros da Câmara Municipal são eleitos pela cidade toda e representam todos os endereços:',
+    rcoTitle: 'Organizações Comunitárias Registradas',
+    rcoIntro:
+      'A Prefeitura notifica estas organizações sobre os recursos de zoneamento daqui. Elas são um bom primeiro contato para um projeto de bairro.',
+    noRco: 'Nenhuma Organização Comunitária Registrada cobre este lote, como a Prefeitura as traça.',
+    rcosNotInBuild: 'A cópia desta semana foi feita sem as organizações comunitárias, então não podemos listá-las.',
+    rcoUnknown: (n) =>
+      `${pl(n, '# organização a mais cobre', '# organizações a mais cobrem')} este lote, mas a cópia desta semana não tem contato ${n === 1 ? 'dela' : 'delas'}.`,
+    rcoAddress: 'Endereço',
+    rcoMeeting: 'Reúne-se em',
+    rcoPreferred: 'Prefere',
+    rcoContact: 'Contato',
+    rcoAsPublished: 'Contatos como a Prefeitura os publica para o público.',
+    checked: (who, when) => `${who}, verificado em ${when}`,
+    sourceNames: {
+      city_elected_officials: 'Prefeitura da Filadélfia, a sua lista de autoridades eleitas',
+      pa_legislators: 'Open States',
+      us_legislators: 'projeto congress-legislators',
+      rco_contacts: 'Comissão de Planejamento Urbano da Filadélfia',
+    },
+    loading: 'Procurando quem representa este lote.',
+    unlisted:
+      'Descobrimos toda semana quem representa cada lote, para os lotes da nossa lista. O Atlas, o mapa da Prefeitura, mostra as autoridades eleitas de qualquer endereço.',
+    missing:
+      'A cópia desta semana não diz quem representa este lote. O Atlas, o mapa da Prefeitura, mostra as autoridades eleitas de qualquer endereço.',
+    atlas: 'Autoridades eleitas deste endereço no Atlas, o mapa da Prefeitura',
+    officialOnly: 'Para as autoridades eleitas, só são listados gabinetes oficiais: nenhum telefone nem e-mail pessoal.',
+    officesMove:
+      'Os gabinetes às vezes mudam antes de as listas se atualizarem: o site de cada membro tem o endereço e o telefone mais novos.',
+  },
+
+  packet: {
+    pageTitle: 'Fazer um pacote',
+    intro:
+      'Um pacote para imprimir ou compartilhar em uma reunião: uma capa com um mapa, quem contatar e uma página para cada lugar, com o que a página do lote diz sobre ele. Ele é feito neste navegador a partir da nossa cópia semanal dos registros da Prefeitura; nada é enviado a lugar nenhum.',
+    make: 'Fazer um pacote',
+    makeHelp: 'Abre em uma nova aba um pacote imprimível com estes lugares.',
+    makeFromView: 'Fazer um pacote com estes lugares',
+    makeFromViewHelp: (limit) => `Os ${formatNumber(limit)} primeiros da lista em ordem, na ordem dela.`,
+    viewName: 'Lugares no mapa',
+    chooseList: 'Lugares no pacote',
+    fromView: (name, n) => `${name} (${pl(n, '# lugar', '# lugares')}, do mapa)`,
+    noLists:
+      'Ainda não há listas salvas neste navegador. Salve lugares do mapa e volte, ou abra um pacote pela visualização de análise.',
+    emptyList: 'Esta lista ainda não tem lugares.',
+    lensLabel: 'Sugestões segundo a lente',
+    print: 'Imprimir o pacote',
+    printHelp: 'Imprime em papel Letter, em preto e branco: uma página para cada lugar, depois da capa e dos contatos.',
+    backToMap: 'Voltar ao mapa',
+    loading: (done, total) => `Lendo a cópia semanal: ${formatNumber(done)} de ${formatNumber(total)} arquivos.`,
+    failed: 'Parte da cópia semanal não pôde ser carregada. Verifique a sua conexão e tente de novo.',
+    retry: 'Tentar de novo',
+    leftOut: (n, limit) =>
+      `Um pacote comporta até ${formatNumber(limit)} lugares, então ${pl(n, '# lugar desta lista ficou', '# lugares desta lista ficaram')} de fora. Faça uma lista menor para o resto.`,
+    coverKicker: 'Pacote do Placekeepers',
+    made: (date) => `Feito em ${date}`,
+    count: (n) => pl(n, '# lugar', '# lugares'),
+    dataFrom: (date) => `Da nossa cópia semanal dos registros da Prefeitura de ${date}. A página de cada lote online tem os registros de hoje.`,
+    lensUsed: (lens) => `Sugestões segundo a lente: ${lens}.`,
+    contentsTitle: 'Neste pacote',
+    contents: {
+      contacts: 'Quem contatar',
+    },
+    mapTitle: 'Onde ficam os lugares',
+    mapAlt: (n) => `Um mapa de ${pl(n, '# lugar', '# lugares')}, numerados como neste pacote.`,
+    mapLoading: 'Desenhando o mapa…',
+    mapCredit: 'Mapa: Protomaps, colaboradores do OpenStreetMap.',
+    mapPlain: 'O mapa base não está disponível aqui, então os lugares aparecem onde estão, sem ruas.',
+    noPoint: (n) => `${pl(n, '# lugar não tem ponto conhecido e não está', '# lugares não têm ponto conhecido e não estão')} no mapa.`,
+    watchIntro:
+      'Alguns lugares deste pacote estão em áreas em observação de deslocamento de moradores, onde os registros públicos mostram sinais de que os preços estão subindo. As páginas desses lugares apontam para cá.',
+    watchArea: (tract) => (tract ? `Setor censitário ${tract}` : 'Uma área em observação'),
+    areaSigns: (signs) => `Sinais daqui de que os preços estão subindo: ${signs}.`,
+    watchLots: (list) => `Lugares daqui: ${list}.`,
+    seeFront: 'Veja "Observação de deslocamento de moradores" no início deste pacote.',
+    contactsTitle: 'Quem contatar',
+    contactsIntro:
+      'Cada organização e gabinete uma vez, com os lugares deste pacote que ela cobre. Só gabinetes oficiais, e os contatos das organizações comunitárias como a Prefeitura os publica. Todo contato mostra a sua fonte e o dia em que foi conferido pela última vez.',
+    forLots: (list) => `Para os lugares ${list}`,
+    forLot: (n) => `Para o lugar ${n}`,
+    wardsTitle: 'Wards e divisões',
+    wardsIntro: 'Onde votam os vizinhos de cada lugar e quais são os committee people deles.',
+    contactsMissing:
+      'A cópia desta semana não diz quem representa estes lugares. O Atlas, o mapa da Prefeitura, mostra as autoridades eleitas de qualquer endereço.',
+    contactsUnknown: (list) => `Não conseguimos descobrir esta semana quem representa os lugares ${list}.`,
+    lotPlace: (n) => `Lugar ${n}`,
+    parcel: (opa) => `Lote ${opa}`,
+    lotPage: 'Página do lote online',
+    notListed:
+      'A nossa cópia semanal não tem página para este lote, então este pacote não pode dizer mais. A página do lote online o consulta na Prefeitura.',
+    sections: {
+      vacancy: 'O que achamos que é',
+      owner: 'De quem é',
+      permission: 'Formas de obter permissão, na ordem em que vale tentá-las',
+      actions: 'O que você poderia fazer aqui',
+      rules: 'Regras para este lote',
+      represent: 'Quem representa este lote',
+      notChecked: 'O que não conseguimos conferir',
+    },
+    ownerType: (type) => `Tipo de proprietário: ${type}.`,
+    noNames: 'Os nomes e o endereço de correspondência do proprietário estão na página do lote online e nos registros da Prefeitura.',
+    firstStep: 'Primeiro passo',
+    cost: 'Custo',
+    gardenAsk: 'Pergunte primeiro aos vizinhos: um jardim funciona quando o quarteirão quer.',
+    representUnknown: 'A cópia desta semana não diz quem representa este lote.',
+    rcoLine: (names) => `Organizações Comunitárias Registradas: ${names}.`,
+    ownerLetter: 'Carta ao proprietário pedindo permissão',
+    ownerLetterOffered: 'Oferecida: preencha e imprima na página de cartas.',
+    otherLetters: 'Cartas ao gabinete da Câmara Municipal e às organizações comunitárias',
+    lettersLink: 'Escrever uma carta',
+    notChecked: {
+      line: (parts, date) =>
+        [
+          parts.length ? `${parts.join(' ')}` : '',
+          'Quem usa o lote hoje, se ele tem cerca ou cuidado, e qualquer coisa mais nova do que os registros da Prefeitura' +
+            (date ? ` de ${formatDate(date) ?? date}` : '') +
+            ': olhe pessoalmente e na página do lote online.',
+        ]
+          .filter(Boolean)
+          .join(' '),
+      noDossier: 'Este lote não está na nossa cópia semanal.',
+      partial: {
+        transfers: 'As escrituras dele não estão na nossa cópia semanal.',
+        assessments: 'As avaliações dele não estão na nossa cópia semanal.',
+        li: 'As infrações do L&I dele não estão na nossa cópia semanal.',
+      },
+      missing: {
+        historic: 'Se ele é histórico (a cópia semanal não tinha o registro histórico).',
+        overlays: 'Os zoneamentos sobrepostos dele (a cópia semanal não os tinha).',
+        brownfields: 'Registros federais de brownfield por perto (a cópia semanal não os tinha).',
+        appeals: 'Os recursos e audiências dele (a cópia semanal não os tinha).',
+      },
+      represent: 'Quem o representa.',
+    },
+    privacy: 'Feito neste navegador a partir da nossa cópia semanal. Nada sobre este pacote é enviado a lugar nenhum.',
+  },
+
+  flyer: {
+    pageTitle: 'Fazer um cartaz para os vizinhos',
+    make: 'Fazer um cartaz para os vizinhos',
+    intro:
+      'Um cartaz para a cerca de um lote vazio: ele diz a quem passa que os vizinhos se importam com este lugar e como se encontrar. Você escolhe o que ele diz e o imprime aqui. Nada é enviado a lugar nenhum.',
+    noLot:
+      'Abra esta página a partir da página de um lote ou de um pacote, para que o cartaz possa mostrar o endereço do lote, um mapa e um código para a página dele.',
+    loading: 'Lendo a cópia semanal…',
+    headline: 'Título',
+    defaultHeadline: 'Os vizinhos se importam com este lote',
+    hopes: 'O que você espera fazer',
+    hopeOptions: {
+      cleanup: 'Uma limpeza',
+      garden: 'Um jardim',
+      seating: 'Um lugar para sentar',
+      mural: 'Um mural',
+      ask_city: 'Perguntar à Prefeitura sobre isso',
+    },
+    hopeLines: {
+      cleanup: 'Limpar juntos',
+      garden: 'Plantar um jardim',
+      seating: 'Fazer um lugar para sentar',
+      mural: 'Pintar um mural, com a permissão do proprietário da parede',
+      ask_city: 'Perguntar à Prefeitura o que pode acontecer aqui',
+    },
+    ownWords: 'Ou com as suas próprias palavras',
+    contact: 'Como os vizinhos podem falar com você',
+    contactHelp: 'Um link de grupo de bate-papo, um e-mail, um telefone, ou o horário e o local de uma reunião.',
+    publicWarning:
+      'O que você imprime é público: qualquer pessoa pode ler e fotografar. Prefira um link de grupo de bate-papo ou um e-mail criado para o projeto, em vez de um endereço de casa ou um telefone pessoal.',
+    publicCaution: 'Isto pode ser um endereço de casa ou um telefone pessoal. Será impresso para qualquer pessoa ver.',
+    ownLink: 'Seu próprio link para um segundo código QR (opcional)',
+    ownLinkHelp: 'Por exemplo, o link de convite do seu grupo de bate-papo. Ele deve começar com https://',
+    ownLinkBad: 'Isto não parece um endereço da web, então nenhum segundo código é impresso.',
+    ownLinkLabel: 'Para que serve o segundo código (opcional)',
+    ownLinkLabelPlaceholder: 'Entre no nosso grupo de bate-papo',
+    size: 'Papel',
+    sizes: { letter: 'Um cartaz em uma página Letter', half: 'Meia página, dois por folha' },
+    print: 'Imprimir o cartaz',
+    clear: 'Limpar o que digitei',
+    confirmClear: 'Limpar neste navegador o que você digitou para os cartazes? Não dá para recuperar.',
+    cleared: 'Limpo. Nada do que você digitou para os cartazes fica guardado neste navegador agora.',
+    kept: 'O que você digita fica guardado só neste navegador, para você poder voltar a isso. Nada é enviado a lugar nenhum.',
+    where: 'Onde você pode afixá-lo',
+    whereLead:
+      'Na sua própria janela ou cerca, na cerca do proprietário do lote com permissão, em quadros de avisos comunitários de bibliotecas e centros recreativos (pergunte à equipe) e em comércios que concordarem.',
+    whereNot:
+      'Não em postes de serviços públicos, postes de iluminação de rua, placas de trânsito, árvores da Prefeitura ou de rua, nem em abrigos da SEPTA: o código da Prefeitura proíbe, com multas a partir de US$ 300 por cartaz.',
+    whereLink: 'Leia o guia, com as fontes dele',
+    preview: 'O cartaz',
+    hopeTitle: 'Esperamos',
+    reachTitle: 'Fale conosco',
+    scanLot: 'Escaneie para ver este lote no Placekeepers: o que os registros da Prefeitura dizem e como os vizinhos podem ajudar.',
+    scanOwn: 'Escaneie para ver o nosso link',
+    mapAlt: (address) => `Um mapa dos quarteirões em volta de ${address}, com o lote marcado.`,
+    byNeighbors:
+      'Afixado por vizinhos, não pela Prefeitura nem pelo proprietário. Feito com o Placekeepers, um mapa gratuito para vizinhos da Filadélfia.',
+    qrLabel: (what) => `Código QR: ${what}`,
+    qrCredit: 'Os códigos QR são feitos neste navegador com o qrcode-generator, de Kazuhiko Arase (licença MIT).',
+  },
+
+  letters: {
+    pageTitle: 'Escrever uma carta',
+    intro:
+      'Cartas que você preenche aqui e imprime. O site nunca envia nada: você mesmo envia a carta pelo correio, por e-mail ou entregando em mãos. O que você digita fica só neste navegador.',
+    unreviewed: 'Um advogado ainda não revisou esta carta. Ela não é aconselhamento jurídico.',
+    legalHelp: 'Para ajuda jurídica, procure o Grounded in Philly, um projeto da Garden Justice Legal Initiative',
+    legalHelpShort: 'Ajuda jurídica gratuita: Grounded in Philly (Garden Justice Legal Initiative)',
+    senderNote: 'Nota para quem envia',
+    chooseTemplate: 'Qual carta',
+    templates: {
+      owner: 'Ao proprietário do lote, pedindo permissão para cuidar dele',
+      council: 'Ao gabinete da Câmara Municipal, pedindo apoio',
+      rco: 'A uma Organização Comunitária Registrada, pedindo para apresentar',
+      followup: 'Dando seguimento a um pedido ao 311 que continua aberto',
+    },
+    templateHelp: {
+      owner:
+        'Pede ao proprietário permissão para cuidar do lote por um tempo: uma limpeza, um jardim ou um lugar para sentar. Escreva a um proprietário de cada vez.',
+      council: 'Pede ao gabinete do vereador do seu distrito apoio para um quintal lateral, um lote do Land Bank ou uma limpeza.',
+      rco: 'Apresenta o seu projeto a uma organização comunitária e pede um tempo em uma das reuniões dela.',
+      followup: 'Pede ao gabinete da Câmara do seu distrito que ajude com um pedido ao Philly311 que continua aberto.',
+    },
+    forLot: (address) => `Para ${address}`,
+    forList: (name, n) => `Para a lista "${name}" (${pl(n, '# lugar', '# lugares')})`,
+    chooseLot: 'Qual lugar',
+    noLot:
+      'Abra esta página a partir da página de um lote ou de um pacote para preencher o endereço do lote, o proprietário e quem o representa. Você também pode digitá-los você mesmo.',
+    loading: 'Lendo a cópia semanal…',
+    gate: {
+      public:
+        'Este lote é terra pública. Peça pelos programas do Land Bank para vizinhos, ou peça apoio ao gabinete da sua Câmara Municipal: há uma carta para isso.',
+      not_sure:
+        'Não temos certeza de que este lote está vazio, e pode ser a casa de alguém, então o site não oferece uma carta ao proprietário dele. Se você sabe que o lote está vazio, olhe de novo pessoalmente e pergunte aos vizinhos quem é o proprietário.',
+      no_owner: 'Os registros da Prefeitura não indicam proprietário para este lote, então não há a quem endereçar esta carta.',
+      not_listed:
+        'A nossa cópia semanal não tem página para este lote, então o site não consegue dizer se uma carta ao proprietário cabe aqui. Abra a página do lote.',
+    },
+    notOffered: 'Carta ao proprietário não oferecida aqui',
+    fields: {
+      date: 'Data',
+      senderName: 'Seu nome',
+      group: 'Seu grupo ou quarteirão, se houver',
+      contact: 'Como falar com você',
+      contactHelp: 'Um telefone, um e-mail ou um endereço de correspondência. Ele é impresso na carta.',
+      ownerName: 'Nome do proprietário, como a Prefeitura publica',
+      ownerAddress: 'Endereço de correspondência do proprietário, como a Prefeitura publica',
+      lotAddress: 'O endereço do lote',
+      plans: 'O que você espera fazer',
+      planOptions: {
+        cleanup: 'limpá-lo',
+        garden: 'plantar um pequeno jardim',
+        seating: 'montar um lugar para sentar',
+      },
+      duration: 'Por quanto tempo',
+      durationPlaceholder: 'nesta temporada',
+      extra: 'Com as suas próprias palavras (opcional)',
+      recipientName: 'Para',
+      recipientAddress: 'Endereço',
+      ask: 'O que você está pedindo',
+      askOptions: {
+        side_yard: 'Apoio para um quintal lateral (só se você mora ao lado)',
+        land_bank: 'Apoio para cuidar de um lote do Land Bank',
+        cleanup: 'Ajuda para organizar uma limpeza',
+      },
+      project: 'Seu projeto, em poucas palavras',
+      projectPlaceholder: 'uma limpeza e um pequeno jardim',
+      requestNumber: 'Número do pedido ao Philly311',
+      reportedOn: 'Quando você informou',
+      problem: 'Qual é o problema',
+      problemOptions: {
+        dumping: 'descarte ilegal de lixo',
+        light: 'uma luz de rua quebrada',
+        graffiti: 'pichação',
+        building: 'um prédio vazio aberto',
+        other: 'outro problema com o próprio lugar',
+      },
+      problemOther: 'O problema, com as suas palavras',
+    },
+    prefilledFrom: (source, date) => `Preenchido segundo ${source}, ${date}. Confira antes de enviar.`,
+    nameLeftOut:
+      'O nome do proprietário fica em branco aqui. Escreva-o como você o conhece, ou deixe em branco e a carta começa com "Prezado(a) proprietário(a)".',
+    cityRecords: 'os registros da Prefeitura',
+    print: 'Imprimir a carta',
+    clear: 'Limpar tudo o que digitei',
+    cleared: 'Limpo. Nada do que você digitou fica guardado neste navegador agora.',
+    confirmClear: 'Limpar neste navegador tudo o que você digitou nestas cartas? Não dá para recuperar.',
+    kept: 'O que você digita fica guardado só neste navegador, para você poder voltar a isso. Nada é enviado a lugar nenhum.',
+    notKept:
+      'Este navegador não está guardando o que você digita agora, talvez por ser uma janela privada. Imprima antes de fechar a página.',
+    preview: 'A carta',
+    salutation: (name) => `Prezado(a) ${name},`,
+    dearOwner: 'Prezado(a) proprietário(a),',
+    sincerely: 'Atenciosamente,',
+    reachMe: (contact) => `Pode entrar em contato comigo em ${contact}.`,
+    reachMeBlank: 'Pode entrar em contato comigo em [como falar com você].',
+    thanks: 'Agradeço por considerar isto.',
+    thanksHelp: 'Agradeço pela sua ajuda.',
+    me: (name, group) => `Meu nome é ${name || '[seu nome]'}${group ? `, e escrevo em nome de ${group}` : ''}.`,
+    owner: {
+      intro: (lot) => `Moro perto de ${lot || '[o endereço do lote]'}, o lote que os registros da Prefeitura listam em seu nome.`,
+      ask: (plans) =>
+        `Os vizinhos deste quarteirão gostariam de cuidar do lote por um tempo. Pedimos a sua permissão para ${plans || '[o que você espera fazer]'}.`,
+      terms: (duration) =>
+        `${duration ? `Faríamos isso ${duration}, fazendo nós mesmos o trabalho e pagando por quaisquer materiais.` : 'Faríamos nós mesmos o trabalho e pagaríamos por quaisquer materiais.'} Manteríamos o lote limpo e seguro, e não construiríamos nada permanente. Você pode dizer não e, se disser sim, pode nos pedir que paremos a qualquer momento.`,
+      writing:
+        'Se você concordar, gostaríamos de pôr o nosso acordo por escrito, para que você e nós saibamos o que prometemos. Teremos prazer em responder a qualquer pergunta antes.',
+    },
+    council: {
+      dear: (name) => (name ? `Prezado(a) vereador(a) ${name},` : 'Prezado(a) vereador(a),'),
+      intro: (group, lot) =>
+        `Escrevo como moradora ou morador do seu distrito${group ? `, junto com ${group},` : ''} sobre ${lot || '[o endereço do lote]'}.`,
+      ask: {
+        side_yard:
+          'Moro na casa ao lado e gostaria de cuidar do lote como quintal lateral. O programa de quintal lateral do Philadelphia Land Bank precisa do apoio do seu gabinete, e peço esse apoio.',
+        land_bank:
+          'Os vizinhos gostariam de cuidar deste lote por meio de um dos programas do Philadelphia Land Bank para vizinhos, como um acordo de jardim (garden agreement). Peço o apoio do seu gabinete para a nossa candidatura.',
+        cleanup:
+          'Este lote precisa de uma limpeza. Os vizinhos estão prontos para ajudar, e pedimos ao seu gabinete que nos ajude a organizá-la com a Prefeitura.',
+      },
+      meet: 'Teria prazer em me reunir com a sua equipe ou em mostrar o lote a ela.',
+    },
+    rco: {
+      dear: (name) => (name ? `Prezados vizinhos de ${name},` : 'Prezados vizinhos,'),
+      intro: (project, lot) => `Somos vizinhos que trabalham em ${project || '[o seu projeto]'} em ${lot || '[o endereço do lote]'}.`,
+      ask: 'Gostaríamos de apresentar o projeto em uma das suas reuniões, ouvir o que os seus membros pensam e responder às perguntas deles. Poderíamos ter alguns minutos na pauta de uma reunião próxima?',
+    },
+    followup: {
+      dear: (name) => (name ? `Prezado(a) vereador(a) ${name} e equipe,` : 'Prezada equipe do gabinete,'),
+      reported: (when, problem, place, number) =>
+        `Em ${when || '[o dia em que você informou]'}, informei ao Philly311 ${problem || '[o problema]'} em ${place || '[o endereço]'}. O número do pedido é ${number || '[o número do pedido]'}. O pedido continua aberto, e o problema continua lá.`,
+      ask: 'Peço ao seu gabinete que ajude a garantir que isso seja resolvido.',
+      subject: (number) => `Sobre o pedido ${number || '[número]'} ao Philly311`,
+    },
+  },
+
+  projects: {
+    kinds: {
+      cleanup: 'Limpeza',
+      garden: 'Jardim',
+      seating: 'Lugar para sentar',
+      art: 'Mural ou arte',
+      trees: 'Árvores',
+      city_install: 'Um abrigo ou banco que a Prefeitura instalou',
+      fix_311: 'Uma solução via 311',
+      other: 'Outro projeto',
+    },
+    legend: 'Um projeto que os vizinhos concluíram',
+    legendNote: 'O Placekeepers lê e aprova cada relato antes de ele aparecer.',
+    detailsTitle: 'Projeto concluído pelos vizinhos',
+    here: (n) => `${pl(n, '# projeto', '# projetos')} aqui`,
+    finished: (month) => `Concluído em ${month}`,
+    by: (group) => `Por ${group}`,
+    whatItTook: 'O que foi preciso',
+    report: 'Veja o relato e as fotos dele no GitHub',
+    source: 'Leia mais a respeito',
+    openLot: 'Abrir a página do lote',
+    showLayer: 'Mostrar no mapa os projetos concluídos pelos vizinhos',
+    privacy: 'O mapa nunca mostra quem enviou um relato, só o nome de um grupo que a pessoa escolheu mostrar.',
+    section: 'Projetos aqui',
+    loading: 'Procurando projetos que os vizinhos relataram aqui.',
+    none: 'Ninguém relatou ainda um projeto concluído pelos vizinhos aqui.',
+    unpublished: 'Esta cópia do mapa ainda não tem uma lista de projetos concluídos pelos vizinhos.',
+    failed: 'Não foi possível carregar a lista de projetos concluídos pelos vizinhos. Tente de novo mais tarde.',
+    tellUs: 'Conte-nos sobre um projeto que você concluiu',
+    tellUsHere: 'Conte-nos sobre um projeto que você concluiu aqui',
+    tellUsNote:
+      'O formulário abre no GitHub, onde qualquer pessoa pode lê-lo. Uma pessoa lê cada relato antes de ele aparecer no mapa. As fotos ficam no GitHub: nunca com o rosto de uma criança nem de alguém que não concordou, e nunca com uma placa de veículo.',
+    oneLot: 'Um lote isolado não consegue mostrar se um projeto funcionou.',
+    timelineKind: 'Projeto concluído pelos vizinhos',
+    timelineToggle: 'Projetos concluídos pelos vizinhos',
+    timelineText: (kind, group) => (group ? `${kind}, por ${group}` : kind),
+    printTitle: 'Projetos concluídos pelos vizinhos aqui',
+  },
 };
 
 export default ptBR;

@@ -4,7 +4,7 @@
 
 Se algo no mapa parecer errado, os detalhes de um lote, um caminho legal ou qualquer outra coisa,
 conte para nós neste formulário curto. Ele já pergunta sobre o lugar e sobre o que parece errado,
-para podermos conferir rápido. O formulário está em inglês, mas você pode escrever em português.
+para podermos conferir rápido. O formulário está em inglês, mas você pode escrever em português: vamos ler o que você escrever com a ajuda de uma ferramenta de tradução.
 
 [Informar uma correção](https://github.com/holdTheDoorHoid/placekeepers/issues/new?template=correction.yml)
 
@@ -14,6 +14,15 @@ Se você conhece uma fonte de dados pública que seria útil para os vizinhos da
 para nós aqui.
 
 [Sugerir uma fonte de dados](https://github.com/holdTheDoorHoid/placekeepers/issues/new?template=data-source.yml)
+
+## Conte-nos sobre um projeto que você concluiu
+
+Se os vizinhos concluíram uma limpeza, um jardim, um lugar para sentar, um mural, árvores, ou
+conseguiram da Prefeitura um banco, um abrigo ou uma solução via 311, conte-nos neste formulário.
+Uma pessoa lê cada relato e, depois de aprovado, ele aparece no mapa em "Projetos concluídos pelos
+vizinhos", com um link de volta para o relato. O mapa nunca mostra quem o enviou.
+
+[Conte-nos sobre um projeto que você concluiu](https://github.com/holdTheDoorHoid/placekeepers/issues/new?template=project.yml)
 
 ## Um ponto de ônibus, abrigo ou banco está faltando ou errado
 
@@ -35,6 +44,6 @@ ele não volte em uma atualização posterior.
 
 ## Todo o resto
 
-Para qualquer coisa que não se encaixe nos dois formulários acima, abra uma issue geral (um pedido
+Para qualquer coisa que não se encaixe nos formulários acima, abra uma issue geral (um pedido
 público) no [GitHub](https://github.com/holdTheDoorHoid/placekeepers/issues/new/choose), ou use o
 formulário de correção e explique o que você precisa na descrição.

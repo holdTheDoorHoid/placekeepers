@@ -322,6 +322,40 @@ sources:
     name: "Parquinhos"
     publisher: "Prefeitura da Filadélfia, Parques e Recreação"
 
+  project_reports:
+    name: "Projetos concluídos pelos vizinhos, relatados no formulário do GitHub do site"
+    publisher: "Vizinhos, pelo formulário \"Conte-nos sobre um projeto que você concluiu\" do Placekeepers"
+  project_corrections:
+    name: "Projetos concluídos pelos vizinhos, entradas manuais e correções"
+    publisher: "Placekeepers"
+  political_divisions:
+    name: "Wards e divisões políticas"
+    publisher: "Prefeitura da Filadélfia"
+  pa_house_districts:
+    name: "Distritos da Câmara dos Representantes da Pensilvânia"
+    publisher: "Departamento do Censo dos EUA, TIGER/Line Shapefiles"
+  pa_senate_districts:
+    name: "Distritos do Senado da Pensilvânia"
+    publisher: "Departamento do Censo dos EUA, TIGER/Line Shapefiles"
+  us_house_districts:
+    name: "Distritos do Congresso na Pensilvânia"
+    publisher: "Departamento do Censo dos EUA, TIGER/Line Shapefiles"
+  pa_legislators:
+    name: "Membros da Assembleia Geral da Pensilvânia"
+    publisher: "Open States (Plural Policy)"
+  us_legislators:
+    name: "Membros do Congresso"
+    publisher: "O projeto unitedstates/congress-legislators"
+  us_legislator_offices:
+    name: "Gabinetes distritais dos membros do Congresso"
+    publisher: "O projeto unitedstates/congress-legislators"
+  city_elected_officials:
+    name: "Autoridades eleitas da Prefeitura"
+    publisher: "Prefeitura da Filadélfia"
+  rco_contacts:
+    name: "Contatos das Organizações Comunitárias Registradas"
+    publisher: "Comissão de Planejamento Urbano da Filadélfia (City Planning Commission)"
+
 layers:
   vacant_parcels:
     label: "Lotes e prédios vazios"
@@ -855,6 +889,10 @@ layers:
     settings:
       shade:
         label: "Colorir as áreas (desligado mostra só os contornos e as classificações)"
+
+  projects:
+    label: "Projetos concluídos pelos vizinhos"
+    description: "Limpezas, jardins, lugares para sentar, murais, árvores, bancos e abrigos da Prefeitura e soluções via 311 que os vizinhos concluíram e nos contaram. Cada relato é lido e aprovado pelo Placekeepers antes de aparecer. Toque em um para ver o que foi feito, quando e o que foi preciso, com um link para o relato e as fotos dele no GitHub. O mapa nunca mostra quem enviou um relato, só o nome de um grupo que a pessoa escolheu."
 
 lenses:
   violence:
