@@ -1,0 +1,347 @@
+# Chinese, simplified characters (zh-Hans): translations of the visitor facing words in
+# registry/*.yaml, by id. English in registry/*.yaml is the source; anything left out here shows the
+# English. Which fields may be translated, and the shape of this file, are in docs/TRANSLATING.md
+# and web/src/i18n/registry-text.ts. Terms are fixed in docs/i18n/glossary-zh-Hans.md.
+
+groups:
+  lots:
+    label: 地块和建筑
+    description: 空地和废弃建筑，以及可以拿它们做些什么。
+  care:
+    label: 已有人照看的地方
+    description: 已经有人维护的地块、菜园、公园，以及其他人们已经在照料的地方。
+  displacement:
+    label: 价格与保护措施
+    description: 哪些地方的价格在上涨，这样在绿化和做其他改善的同时，可以配套保护措施，保护现在住在那里的邻居。
+  rules:
+    label: 土地规定和听证会
+    description: 历史街区和历史房产、分区叠加区、即将举行的关于地块和建筑的听证会，以及联邦棕地场址。
+  streets:
+    label: 街道和纪念点
+    description: 高伤害路网、交通事故、在我们街道上遇难的人，以及市政府列出的街道灯杆、交通减速措施和学校过街协管员。
+  transit:
+    label: 公交和火车
+    description: SEPTA 的车站和线路、班次有多频繁、有多少人上车，以及哪些车站有候车亭或长椅（依据市政府的候车亭名单和 OpenStreetMap）。
+  heat:
+    label: 高温、树木和洪水
+    description: 夏天的高温对每个社区的冲击有多大、市政府在街道和公园里养护的树，以及 FEMA 预计哪里会发洪水。
+  amenities:
+    label: 长椅、饮水、厕所等
+    description: 可以坐下、喝水、上厕所或借书的地方（依据 OpenStreetMap 上的标注），以及公园里的饮水器。
+  public_places:
+    label: 图书馆、休闲中心和游泳池
+    description: Free Library 的各个分馆、公园与休闲部的休闲中心、游泳池和喷水游乐区，以及市政府列出的取暖和纳凉场所。
+  conditions:
+    label: 向 311 报告的问题
+    description: 过去 90 天内人们向 Philly311 报告的非法倾倒垃圾、路灯不亮和涂鸦，按街区统计。
+  placemaking:
+    label: 艺术和场所营造
+    description: 壁画、雕塑、马赛克镶嵌画和其他公共艺术（来自市政府、OpenStreetMap 和 Wikidata），以及市政府的儿童游乐场。
+  walking:
+    label: 步行、骑车和人口
+    description: 每个地区步行有多方便、步行很短的距离内有多少人和日常场所，以及每条街道对骑自行车的人来说压力有多大。
+  then_and_now:
+    label: 过去与现在
+    description: 一个街区以前有什么，以及过去还剩下什么。1959 年以来的航拍照片和 1860 年的地图集，只有在打开时才会从市政府的服务器加载；1937 年的红线地图来自本网站。
+  safety_context:
+    label: 最需要关怀的地方
+    description: 显示哪里的改善最可能有帮助的背景资料。
+  boundaries:
+    label: 边界
+    description: 市议会选区、社区组织和社区。
+  basemap:
+    label: 底图
+    description: 在其他一切下面的街道、建筑和地名。
+
+options:
+  live_city_data:
+    label: 获取市政府实时数据
+    description: >-
+      当您打开一个地块页面或搜索地址时，您的浏览器会向费城市政府的公共服务器查询最新的记录：业主、出售、评估、检查和申诉。这些请求直接从您的设备发到市政府，从不经过 Placekeepers，市政府的服务器会把它们当作对市政府自己房产网站的一次访问。“过去与现在”下的市政府航拍照片和 1860 年地图集，也直接来自市政府的服务器，但只有在您打开其中一项时才会如此。关闭此选项，就只使用 Placekeepers 发布的每周数据副本。地址搜索、打开不在我们名单上的地块，以及旧照片和地图集，都需要保持打开。
+
+partners:
+  phs:
+    one_line: LandCare、Community LandCare 和 Philly Spring Cleanup。
+  gjli:
+    one_line: 免费的法律帮助，以及使用空地的指南。
+  ngt:
+    one_line: 永久保护社区菜园。
+  land_bank:
+    one_line: 市政府针对空地的各项计划，包括侧院和菜园。
+  bike_coalition:
+    one_line: Vision Zero 倡导、幽灵单车（ghost bike）和 Families for Safe Streets。
+  feet_first:
+    one_line: 倡导行人权益、步行环境审查，以及公共空间小额资助。
+  treephilly:
+    one_line: 公园与休闲部的植树计划：免费的行道树和院子里的树。
+  mural_arts:
+    one_line: 全市各处的壁画；墙壁的业主可以申请一幅。
+
+sources:
+  opa_properties:
+    name: "OPA 房产数据"
+    publisher: "费城市政府，财产评估办公室"
+  pwd_parcels:
+    name: "水务部地块数据"
+    publisher: "费城水务部"
+  vacant_indicators_land:
+    name: "空置房产指标，空地"
+    publisher: "费城市政府"
+  vacant_indicators_bldg:
+    name: "空置房产指标，建筑"
+    publisher: "费城市政府"
+  shootings:
+    name: "枪击受害者"
+    publisher: "费城警察局"
+  high_injury_network:
+    name: "Vision Zero 高伤害路网 2025"
+    publisher: "费城市政府，交通与基础设施系统办公室"
+  real_estate_transfers:
+    name: "房地产转让"
+    publisher: "费城市政府，记录部"
+  assessment_history:
+    name: "评估历史"
+    publisher: "费城市政府，财产评估办公室"
+  li_violations:
+    name: "L&I 法规违规记录"
+    publisher: "费城市政府，执照和检查部"
+  li_complaints:
+    name: "L&I 投诉记录"
+    publisher: "费城市政府，执照和检查部"
+  li_permits:
+    name: "L&I 建筑和分区许可"
+    publisher: "费城市政府，执照和检查部"
+  li_unsafe:
+    name: "不安全建筑"
+    publisher: "费城市政府，执照和检查部"
+  li_imminently_dangerous:
+    name: "有迫在眉睫危险的建筑"
+    publisher: "费城市政府，执照和检查部"
+  li_clean_and_seal:
+    name: "清理和封闭工单"
+    publisher: "费城市政府，执照和检查部"
+  li_demolitions:
+    name: "建筑拆除"
+    publisher: "费城市政府，执照和检查部"
+  building_footprints:
+    name: "建筑轮廓"
+    publisher: "费城市政府，执照和检查部"
+  land_use:
+    name: "土地用途"
+    publisher: "费城城市规划委员会"
+  city_owned_property:
+    name: "市政府所有的房产"
+    publisher: "费城市政府，规划与发展部"
+  phs_landcare:
+    name: "PHS LandCare 维护的地块"
+    publisher: "宾夕法尼亚园艺协会（Pennsylvania Horticultural Society），经费城市政府提供"
+  gardens_phs_ngt:
+    name: "PHS 和 Neighborhood Gardens Trust 支持的菜园"
+    publisher: "宾夕法尼亚园艺协会和 Neighborhood Gardens Trust"
+  gardens_registered:
+    name: "已登记的社区菜园"
+    publisher: "费城公园与休闲部"
+  ppr_properties:
+    name: "公园与休闲部的房产"
+    publisher: "费城公园与休闲部"
+  zoning_base_districts:
+    name: "基础分区"
+    publisher: "费城城市规划委员会"
+  council_districts:
+    name: "2024 年市议会选区"
+    publisher: "费城市政府"
+  community_organizations:
+    name: "注册社区组织"
+    publisher: "费城城市规划委员会"
+  neighborhoods:
+    name: "费城社区"
+    publisher: "Abaca Labs，经 OpenDataPhilly 提供"
+  acs_poverty:
+    name: "按人口普查区统计的贫困率（美国社区调查 2020 年到 2024 年）"
+    publisher: "美国人口普查局，美国社区调查"
+  cagp_tax_2025:
+    name: "截至 2025 年 7 月的欠税（Clean & Green Philly）"
+    publisher: "Clean & Green Philly，Code for Philly"
+  crashes_2020_2024:
+    name: "交通事故，2020 年到 2024 年（PennDOT 数据，市政府副本）"
+    publisher: "费城市政府，来自宾夕法尼亚州交通厅的交通事故记录"
+  crashes_2016_2020:
+    name: "交通事故，2016 年到 2020 年（PennDOT 数据，市政府副本）"
+    publisher: "费城市政府，来自宾夕法尼亚州交通厅的交通事故记录"
+  crashes_2007_2017:
+    name: "交通事故，2015 年（PennDOT 数据，2007 年到 2017 年的市政府副本）"
+    publisher: "费城市政府，来自宾夕法尼亚州交通厅的交通事故记录"
+  fatal_crashes:
+    name: "致命的交通事故"
+    publisher: "费城警察局，事故调查组"
+  schools:
+    name: "学校"
+    publisher: "费城市政府，规划委员会"
+  street_centerlines:
+    name: "街道中心线"
+    publisher: "费城市政府，街道部"
+  memorial_names:
+    name: "纪念名单，人工整理"
+    publisher: "Placekeepers，依据公开的纪念名单，例如 Bicycle Coalition 的 TrafficVictimsPHL"
+  pba_laser:
+    name: "用 Laser Vision 报告的停车问题"
+    publisher: "Philly Bike Action"
+  census_tracts_2020:
+    name: "2020 年人口普查区"
+    publisher: "费城市政府，规划委员会，来自美国人口普查局"
+  tree_canopy_2018:
+    name: "2008 年到 2018 年的树冠"
+    publisher: "费城市政府，公园与休闲部，与佛蒙特大学空间分析实验室（University of Vermont Spatial Analysis Laboratory）合作"
+  street_trees:
+    name: "行道树清单"
+    publisher: "费城市政府，公园与休闲部"
+  fema_floodplain:
+    name: "FEMA 洪泛区（2023 年）"
+    publisher: "联邦紧急事务管理署（FEMA），由费城市政府发布"
+  basemap_openstreetmap:
+    name: "来自 OpenStreetMap 的底图"
+    publisher: "OpenStreetMap 贡献者，由 Protomaps 制作成地图文件"
+  septa_gtfs:
+    name: "SEPTA 时刻表（GTFS）"
+    publisher: "东南宾夕法尼亚交通局（SEPTA）"
+  septa_ridership_bus:
+    name: "SEPTA 公交站乘客量"
+    publisher: "东南宾夕法尼亚交通局（SEPTA）"
+  septa_ridership_trolley:
+    name: "SEPTA 有轨电车站乘客量"
+    publisher: "东南宾夕法尼亚交通局（SEPTA）"
+  osm_philadelphia:
+    name: "费城的 OpenStreetMap（公交站、候车亭、长椅、饮水、厕所等）"
+    publisher: "OpenStreetMap 贡献者，来自 Geofabrik 的宾夕法尼亚提取文件"
+  heat_vulnerability:
+    name: "按人口普查区统计的高温脆弱度"
+    publisher: "费城市政府，公共卫生部和可持续发展办公室"
+  library_locations:
+    name: "Free Library 各分馆位置"
+    publisher: "费城市政府，为 Free Library of Philadelphia 提供"
+  ppr_program_sites:
+    name: "公园与休闲部的活动场所"
+    publisher: "费城市政府，公园与休闲部"
+  ppr_swimming_pools:
+    name: "公园与休闲部的游泳池"
+    publisher: "费城市政府，公园与休闲部"
+  ppr_spraygrounds:
+    name: "公园与休闲部的喷水游乐区"
+    publisher: "费城市政府，公园与休闲部"
+  ppr_hydration_stations:
+    name: "公园与休闲部的饮水站"
+    publisher: "费城市政府，公园与休闲部"
+  philly311_conditions:
+    name: "Philly311 关于倾倒垃圾、路灯不亮和涂鸦的请求"
+    publisher: "费城市政府，Philly311"
+  bus_shelters:
+    name: "公交候车亭"
+    publisher: "费城市政府，交通与基础设施系统办公室"
+  street_poles:
+    name: "街道灯杆"
+    publisher: "费城市政府，街道部（街道照明处）"
+  traffic_calming:
+    name: "交通减速设施"
+    publisher: "费城市政府，街道部"
+  crossing_guards:
+    name: "学校过街协管员位置"
+    publisher: "费城市政府，街道部"
+  percent_for_art:
+    name: "“艺术百分比”（Percent for Art）收藏"
+    publisher: "费城市政府，规划与发展部"
+  wikidata_art:
+    name: "Wikidata 中的公共艺术"
+    publisher: "Wikidata 贡献者（Wikimedia Foundation）"
+  commercial_corridors:
+    name: "费城的商业走廊"
+    publisher: "费城市政府，规划与发展部"
+  epa_walkability:
+    name: "全国步行指数（EPA Smart Location Database）"
+    publisher: "美国环境保护署（EPA），社区振兴办公室"
+  census_blocks_2020:
+    name: "按人口普查街区统计的人口（2020 年人口普查）"
+    publisher: "美国人口普查局，2020 年人口普查重划选区数据（P.L. 94-171）"
+  dvrpc_lts:
+    name: "自行车交通压力（DVRPC 交通压力等级）"
+    publisher: "特拉华河谷区域规划委员会（DVRPC）"
+  snap_retailers:
+    name: "接受 SNAP 的食品店（USDA）"
+    publisher: "美国农业部，SNAP 零售商数据"
+  real_estate_sales:
+    name: "房地产出售，全市"
+    publisher: "费城市政府，记录部"
+  assessment_values:
+    name: "评估的市场价值，全市，两个纳税年度"
+    publisher: "费城市政府，财产评估办公室"
+  acs_tenure:
+    name: "按人口普查区统计的租户和业主（美国社区调查 2020 年到 2024 年）"
+    publisher: "美国人口普查局，美国社区调查"
+  market_value_analysis:
+    name: "2026 年市场价值分析"
+    publisher: "Reinvestment Fund，为费城市政府规划与发展部制作"
+  li_history:
+    name: "用于地块时间线的 L&I 记录"
+    publisher: "费城市政府，执照和检查部"
+  cagp_vacant_land_2024:
+    name: "空地名单，2024 年 6 月（L&I，由 Clean & Green Philly 保存）"
+    publisher: "费城市政府，执照和检查部，由 Clean & Green Philly（Code for Philly）保存"
+  cagp_vacant_buildings_2024:
+    name: "空置建筑名单，2024 年 6 月（Clean & Green Philly）"
+    publisher: "Clean & Green Philly，Code for Philly"
+  historic_districts:
+    name: "地方历史街区"
+    publisher: "费城历史委员会"
+  historic_sites:
+    name: "费城历史名胜名录，房产"
+    publisher: "费城历史委员会"
+  zoning_overlays:
+    name: "分区叠加区"
+    publisher: "费城城市规划委员会"
+  appeals:
+    name: "向分区调整委员会、执照和检查复审委员会及其他委员会提出的申诉"
+    publisher: "费城市政府，执照和检查部"
+  epa_brownfields:
+    name: "EPA 棕地房产（ACRES），费城"
+    publisher: "美国环境保护署（EPA）"
+  land_conveyances:
+    name: "2014 年以来市政府土地机构的契据"
+    publisher: "费城市政府，记录部"
+  land_conveyed_by_fy:
+    name: "按项目和财政年度统计的转让房产，2017 年到 2023 年（土地管理仪表板）"
+    publisher: "费城市政府，规划与发展部（土地管理）"
+  city_aerial_photos:
+    name: "按年份的航拍照片（正射影像）"
+    publisher: "费城市政府，创新与技术办公室"
+  dvrpc_aerial_photos:
+    name: "1959 年和 1975 年的航拍照片"
+    publisher: "特拉华河谷区域规划委员会，由费城市政府托管"
+  usgs_aerial_photos_1999:
+    name: "1999 年的航拍照片"
+    publisher: "美国地质调查局，由费城市政府托管"
+  city_atlas_1860:
+    name: "1860 年 Hexamer 和 Locher 地图集"
+    publisher: "Greater Philadelphia GeoHistory Network，由费城市政府托管"
+  mapping_inequality_1937:
+    name: "Mapping Inequality：1937 年费城的 HOLC 地图"
+    publisher: "里士满大学（University of Richmond），Digital Scholarship Lab"
+  acs_rent_burden:
+    name: "按人口普查区统计的房租占收入的比例（美国社区调查 2020 年到 2024 年）"
+    publisher: "美国人口普查局，美国社区调查"
+  acs_occupancy:
+    name: "按人口普查区统计的有人居住和空置的住房（美国社区调查 2020 年到 2024 年）"
+    publisher: "美国人口普查局，美国社区调查"
+  acs_vacancy:
+    name: "按人口普查区统计的住房空置原因（美国社区调查 2020 年到 2024 年）"
+    publisher: "美国人口普查局，美国社区调查"
+  acs_income:
+    name: "按人口普查区统计的家庭收入中位数（美国社区调查 2020 年到 2024 年）"
+    publisher: "美国人口普查局，美国社区调查"
+  acs_rent:
+    name: "按人口普查区统计的租金中位数（美国社区调查 2020 年到 2024 年）"
+    publisher: "美国人口普查局，美国社区调查"
+  warming_cooling_sites:
+    name: "取暖和纳凉场所"
+    publisher: "费城市政府，应急管理办公室"
+  ppr_playgrounds:
+    name: "儿童游乐场"
+    publisher: "费城市政府，公园与休闲部"
