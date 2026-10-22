@@ -151,6 +151,23 @@ Never softened: the brownfield note says "أعمال تنظيف" (cleanup work) 
 (land that may be contaminated), never "نظيفة" or "آمنة"; the possible estate passage says "قد
 يكون المالك المسجّل قد توفي" (may have died), never that the owner died.
 
+## The "Did it work?" page (M5.4)
+
+| English | Arabic | Notes |
+|---|---|---|
+| Did it work? | هل نجح هذا؟ | the menu item and the page title |
+| care (done to a place: cleaned, greened, sealed, demolished) | عناية | "places that got care" is "الأماكن التي حظيت بالعناية"; "after care" is "بعد العناية بالأماكن" |
+| comparison, comparison places | مقارنة (مقارنات)، أماكن المقارنة | counted with `COMPARISON` in `ar.ts` |
+| verdict labels | "أقل بعد العناية بالأماكن"، "أكثر بعد العناية بالأماكن"، "لا يوجد تغيّر واضح"، "لم نستطع معرفة ذلك"، "أقل من أن يكفي للحكم" | "We could not tell" stays a plain admission, never "لا أثر" (no effect) |
+| "This does not show that care caused them." | "هذا لا يُظهر أن العناية هي التي تسببت في ذلك." | kept on every "more afterwards" verdict |
+| the real evidence | الأدلة الحقيقية | the randomized trials (التجارب العشوائية); a comparison of records "can mislead" is "قد تضلّل" |
+| 90 percent interval | فاصل الثقة 90 في المئة | a change in words: "أكثر بنسبة 3.2%", "أقل بنسبة 6.2%", "دون تغيير"; a range is "من أقل بنسبة 6.2% إلى أكثر بنسبة 0.2%" |
+| the count of shootings, dumping reports, complaints | عدد حالات إطلاق النار، عدد البلاغات عن إلقاء النفايات بصورة غير قانونية، عدد الشكاوى بشأن العقارات الفارغة | each noun phrase is definite so "عدد" can come before it |
+| a half year | نصف سنة | "النصف الأول من 2017", "النصف الثاني من 2024" |
+| area of the city (a cell of about 5 square kilometers) | منطقة (مناطق) | counted with `AREA`; the census tract stays "منطقة التعداد" |
+| the check (placebo) | الفحص (الفحوص) | "نجح الفحص" and "فشل الفحص" |
+| maintainer (of the project) | القائم على المشروع | |
+
 ## Back translation check (2026-10-21)
 
 No glossary choice above was changed. Two phrases were fixed so the safety wording matches the

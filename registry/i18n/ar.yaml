@@ -394,6 +394,12 @@ sources:
   rco_contacts:
     name: جهات اتصال المنظمات المجتمعية المسجّلة
     publisher: لجنة التخطيط العمراني في فيلادلفيا
+  philly311_dumping_history:
+    name: طلبات Philly311 بشأن إلقاء النفايات بصورة غير قانونية منذ 2016
+    publisher: مدينة فيلادلفيا، Philly311
+  li_complaints_history:
+    name: "شكاوى L&I بشأن قطع الأراضي والمباني الفارغة منذ 2015"
+    publisher: مدينة فيلادلفيا، إدارة التراخيص والتفتيش
 
 layers:
   vacant_parcels:

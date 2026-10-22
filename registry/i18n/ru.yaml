@@ -355,6 +355,12 @@ sources:
   rco_contacts:
     name: "Контакты зарегистрированных общественных организаций"
     publisher: "Градостроительная комиссия Филадельфии (Philadelphia City Planning Commission)"
+  philly311_dumping_history:
+    name: "Обращения в Philly311 о незаконном сбросе мусора с 2016 года"
+    publisher: "Город Филадельфия, Philly311"
+  li_complaints_history:
+    name: "Жалобы в L&I на пустующие участки и здания с 2015 года"
+    publisher: "Город Филадельфия, Департамент лицензий и инспекций (L&I)"
 
 layers:
   vacant_parcels:
