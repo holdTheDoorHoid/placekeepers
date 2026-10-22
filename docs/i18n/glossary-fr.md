@@ -141,6 +141,8 @@ that name. Looked up on 2026-10-21 (about ten lookups).
 | Philadelphia Historical Commission | Commission historique de Philadelphie | phila.gov/fr/departments/philadelphia-historical-commission |
 | Philadelphia Register of Historic Places | Registre des lieux historiques de Philadelphie | same department |
 | Zoning Board of Adjustment | Conseil d'ajustement du zonage | phila.gov/fr/departments/zoning-board-of-adjustment |
+| Department of Sanitation | Département de l'assainissement | phila.gov/fr/departments/department-of-sanitation |
+| Philadelphia More Beautiful Committee (PMBC) | Comité « Philadelphia More Beautiful » | same page |
 
 Not translated, because the City's French pages do not exist or do not agree with each other:
 
