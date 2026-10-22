@@ -4,7 +4,7 @@
 
 Si yon bagay sou kat la sanble mal, detay yon teren, yon wout legal, oswa nenpòt lòt bagay, tanpri
 di nou sa ak ti fòm sa a. Li deja mande pou kote a ak sa ki sanble mal, pou nou ka verifye l vit.
-Fòm nan an angle, men ou ka ekri an kreyòl.
+Ou ka ekri an kreyòl; nou pral li l ak èd yon zouti tradiksyon.
 
 [Rapòte yon koreksyon](https://github.com/holdTheDoorHoid/placekeepers/issues/new?template=correction.yml)
 
@@ -13,6 +13,15 @@ Fòm nan an angle, men ou ka ekri an kreyòl.
 Si ou konnen yon sous done piblik vwazen Filadèlfi yo ta jwenn itil, di nou sa isit la.
 
 [Sijere yon sous done](https://github.com/holdTheDoorHoid/placekeepers/issues/new?template=data-source.yml)
+
+## Di nou sou yon pwojè ou fini
+
+Si vwazen yo te fini yon netwayaj, yon jaden, yon kote pou chita, yon miral, pyebwa, oswa te jwenn
+yon ban, yon abri oswa yon repare 311 nan men Vil la, di nou sa ak fòm sa a. Yon moun li chak rapò,
+epi yon fwa li apwouve li parèt sou kat la anba "Pwojè vwazen yo fini", ak yon lyen retounen nan
+rapò a. Kat la pa janm montre ki moun ki voye l.
+
+[Di nou sou yon pwojè ou fini](https://github.com/holdTheDoorHoid/placekeepers/issues/new?template=project.yml)
 
 ## Yon estasyon bis, yon abri oswa yon ban manke oswa mal
 
@@ -33,6 +42,6 @@ tounen nan yon pwochen mizajou.
 
 ## Tout lòt bagay
 
-Pou nenpòt bagay ki pa antre nan de fòm ki anwo yo, louvri yon pwoblèm jeneral sou
+Pou nenpòt bagay ki pa antre nan fòm ki anwo yo, louvri yon pwoblèm jeneral sou
 [GitHub](https://github.com/holdTheDoorHoid/placekeepers/issues/new/choose), oswa itilize fòm
 koreksyon an epi eksplike sa ou bezwen nan deskripsyon an.
