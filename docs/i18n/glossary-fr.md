@@ -169,3 +169,30 @@ Not translated, because the City's French pages do not exist or do not agree wit
 | "by" a date (a deadline) | « au plus tard le », never « avant le », which can read as leaving out the day itself (Homestead Exemption: December 1 and October 1). |
 | "ask about" a ghost bike or memorial | « se renseigner au sujet de », not « demander un », so an inquiry never reads as a request for one. |
 | "bids on it" (the City's competitive bid status) | « des offres pour ce terrain », without « acquérir », so the status does not read as an invitation to buy. |
+
+## Added for the "Did it work?" page (2026-10-22)
+
+| English | French | Note |
+|---|---|---|
+| care (what a lot or building received) | soin | "du soin", as in "là où le soin est le plus nécessaire" |
+| Did it work? | Est-ce que ça a marché ? | page title and menu; matches "Pourquoi ça marche" |
+| We could not tell | Nous n'avons pas pu savoir | a plain admission, never "sans effet" and never "ça a marché" |
+| Too few to tell | Trop peu pour savoir | |
+| No clear change | Pas de changement net | "net" is the plain word for "clear" here |
+| Fewer / More after care | Moins / Plus après le soin | |
+| the real evidence (randomized trials) | les vraies preuves ; essais randomisés | "essai", as on the Pourquoi ça marche page. A comparison of records "peut induire en erreur"; a trial cannot be fooled the same ways |
+| This does not show that care caused them | Cela ne montre pas que le soin en soit la cause | written without a pronoun for the extra cases, so one sentence fits fusillades, signalements and plaintes |
+| comparison places | lieux de comparaison | |
+| check (the placebo and the ring) | vérification | "Vérification réussie", "Échec de la vérification" |
+| the ring (200 to 400 meters out) | l'anneau | |
+| half year | semestre | "premier semestre de 2017"; the template adds "du ... au ..." |
+| 90 percent interval | intervalle de 90 pour cent | "pour cent" in running sentences, as the voice rules say |
+| no change (in a template that says "found ...") | un changement nul | "a trouvé aucun changement" would not parse |
+| X% fewer / more | X % de moins / de plus | "il y a eu X % de fusillades en moins" in the verdict sentence |
+| shootings (counts) | fusillades | |
+| dumping reports | signalements de dépôts sauvages | "signalement" is right for a report of a problem; "compte rendu" stays for finished projects |
+| complaints about vacant property | plaintes sur des propriétés vacantes | "plaintes", as in "Plaintes reçues par L&I" |
+| chance | le hasard | |
+| area (a part of the city redrawn in the interval) | zone | |
+| clean and seal | nettoyage et scellement | as the lot page says |
+| unsafe (a building, in running text) | n'est plus sûr | the L&I status label stays « non sûr » |
