@@ -192,7 +192,7 @@ vea las maneras de proteger a los vecinos en [Úselo con responsabilidad](../res
 | Calmar el tránsito en una calle residencial (reductores de velocidad y similares) | Departamento de Calles | Que el 60% de la cuadra firme una petición | Preguntar es gratis | Se revisa tres veces al año; se instala de mayo a octubre |
 | Hacer una fiesta de cuadra o un evento en la calle | Departamento de Calles y el distrito de policía | El 75% de los hogares para una fiesta de cuadra, el 90% para otros eventos | $25 a $150 | Solicite con 21 días de anticipación |
 | Hacer una Playstreet (calle de juego) durante el verano | Parques y Recreación | Petición del 75%, un residente que supervise, una calle pequeña de un solo sentido | Gratis | Solo en verano |
-| Ser Capitán de Cuadra (Block Captain) y organizar limpiezas | Departamento de Calles | Que el 51% de la cuadra firme | Gratis | Hasta tres limpiezas organizadas por verano, con herramientas incluidas |
+| Ser capitán de la cuadra (Block Captain) y organizar limpiezas | Departamento de Saneamiento (Comité Más Bella de Filadelfia, Philadelphia More Beautiful Committee) | Que el 51% de la cuadra firme | Gratis | Hasta tres limpiezas organizadas por verano, con herramientas incluidas |
 | Participar en Philly Spring Cleanup | Departamento de Calles y PHS | Inscribirse | Escobas, guantes y bolsas gratis | Primavera |
 | Construir un parklet (un pequeño espacio público en un lugar de estacionamiento) | OTIS | Mostrar el apoyo de la comunidad y conseguir seguro | No se indica | De temporada, de abril a noviembre; la revisión puede tardar meses |
 | Pedir un árbol de calle gratis | Parques y Recreación (TreePhilly) | Que lo pida el dueño de la propiedad frente a la cual estaría | Gratis: la Ciudad lo planta y lo riega el primer año | La próxima temporada de plantación |
@@ -235,7 +235,7 @@ cambio físico que mantenga despejada la esquina, como postes, macetas o una ext
 | Proyecto | Costo típico | Vía legal | Evidencia | Quién ayuda |
 |---|---|---|---|---|
 | Limpiar y reverdecer un lote, al estilo de PHS | Unos $1,100 a $1,500 al empezar, $150 a $300 al año después (**todavía sin confirmar con PHS**) | El permiso del dueño, o un acuerdo con el Land Bank | Sólida, para la violencia | PHS |
-| Solo limpieza y corte de pasto | Menos que el reverdecimiento completo | Igual que arriba | Sólida, para los tiroteos en el ensayo original | PHS, Capitanes de Cuadra |
+| Solo limpieza y corte de pasto | Menos que el reverdecimiento completo | Igual que arriba | Sólida, para los tiroteos en el ensayo original | PHS, capitanes de la cuadra |
 | Sellar las puertas y ventanas de una casa abandonada | Lo paga el dueño o la Ciudad | Reportarlo a Philly311; Licencias e Inspecciones puede limpiarla y sellarla | Sólida, para la violencia | Licencias e Inspecciones |
 | Empezar un jardín comunitario | Varía | Un acuerdo o licencia de jardín, o el permiso del dueño | Se apoya en la evidencia del reverdecimiento de arriba | PHS, Neighborhood Gardens Trust, Garden Justice Legal Initiative |
 | Plantar un árbol | Gratis con TreePhilly | Pedir uno (vea Árboles en un lote y a lo largo de él, arriba) | Mixta, para la violencia; mixta también para el calor: los árboles refrescan una cuadra de día, pero los beneficios para la salud son estimaciones, no ensayos | TreePhilly |
