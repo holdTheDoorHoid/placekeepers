@@ -66,7 +66,7 @@ comparison places' change would have predicted. A plain sentence for each:
   rules fixed in advance it is not enough to say so.
 - **Clean and seal and shootings.** The check failed (+8.7%, +1.5% to +15.2%): these places were
   already on a different path. Shootings jumped 11% in the half year right after the work, which
-  suggests the City sealed buildings after trouble the records do not show.
+  fits the City cleaning and sealing properties after trouble the records do not show.
 - **Clean and seal and dumping or complaints.** About 3% more after the work. More reports can mean
   more neglect, or more neighbors reporting once the City has paid attention.
 - **Demolitions and shootings.** 6.3% more (0.6% to 10.5%), with the check passed. The City
@@ -75,17 +75,18 @@ comparison places' change would have predicted. A plain sentence for each:
   slightly more crime where demolition was heaviest (docs/EVIDENCE.md). This does not show that
   demolition caused more shootings.
 - **Demolitions and complaints.** 6.2% more (3.2% to 8.5%), and a little more in the ring too.
-  Buildings next to a demolished one are often left damaged or empty.
+  Buildings next to a demolished one may be left damaged or empty.
 - **Projects neighbors finished.** None to compare yet.
 
 With nine comparisons at 90 percent, about one can look like a change by chance alone.
 
 ### What we can say, and what we cannot
 
-- We **can** say that the City's records, compared carefully, give no sign that LandCare greening,
-  clean and seal or demolitions reduced shootings, dumping or complaints within two blocks, in the
-  years 2017 to 2024. Where the check passed, the intervals rule out drops larger than about 1 to
-  6 percent. For shootings near LandCare lots, the outcome the greening trial measured, the
+- We **can** say that the City's records, compared carefully, give no clear sign that LandCare
+  greening, clean and seal or demolitions reduced shootings, dumping or complaints within two
+  blocks, in the years 2017 to 2024 (the nearest is LandCare and complaints, above). Where the
+  check passed, every interval rules out a drop larger than about 6 percent, and four of them rule
+  out any drop. For shootings near LandCare lots, the outcome the greening trial measured, the
   comparison could not be trusted at all, so it says nothing either way about the trial's 7 to 9
   percent drop.
 - We **cannot** say that care did not work. A trial picks places by lot, so the places that got
@@ -130,20 +131,19 @@ no year at all, 20 "WINTER" and 3 "Summer", which could fall in either half), an
 compared and never counted as cared for. Dates are good for PHS's own contracted program (`PLC`:
 7,742 of 8,169 dated) and rare for Community LandCare (`CLC`: 722 of 3,274), the Land Bank's lots
 (61 of 587) and PHDC's (43 of 429), so in practice the study is about PHS's cleaning and greening.
-We found no other source of LandCare dates on the City's or PHS's open data. The layer
-holds only the lots in the program today: lots greened and later built on are missing.
+We found no other source of LandCare dates on the City's or PHS's open data. The layer holds only
+the lots in the program today: lots greened and later built on are missing.
 
 **The City's clean and seal crews** (`li_clean_and_seal`, 107,228 work orders). Each has the day
 the work order (or else the case) was completed; 103,500 have a done status (Approved, CLOSED, WORK
 COMPLETE). The records hold 5,700 to 10,600 a year from 2009 to 2019 (over 8,000 in most years),
-then 2,123 in 2020 and under 1,300 a year since, a change in the City's system rather than in the work, as far as we can tell.
-So most clean and seal comparisons are from 2017 to 2019. The records do not say whether an order
-cleaned a lot or sealed a building; the study counts both.
+then 2,123 in 2020 and under 1,300 a year since. Whether that reflects less work or a change in how
+the City records it, we could not tell. So most clean and seal comparisons are from 2017 to 2019.
+The records do not say whether an order cleaned a lot or sealed a building; the study counts both.
 
 **City demolitions** (`li_demolitions`). 7,925 demolitions the City carried out itself
 (`city_demo` YES), completed, with the day completed, tank removals left out: about 250 to 620 a
-year from 2008 to 2025.
-Private demolitions are left out: they are development, not care.
+year from 2008 to 2025. Private demolitions are left out: they are development, not care.
 
 **Projects neighbors finished** (`tables/projects.json`, M5.3): the month each was finished. None
 has been approved yet. A project counts once two full years of records follow its half year.
@@ -160,14 +160,14 @@ has been approved yet. A project counts once two full years of records follow it
 - **L&I complaints about vacant lots and buildings** (new source `li_complaints_history`): 146,457
   with a point from January 2, 2015, under the names used before the City's new system of 2020
   ("VACANT LOTS (CLIP)", "VACANT HOUSE", "VACANT COMMERCIAL") and after ("VACANT LOT", "VACANT
-  PROPERTY COMPLAINT", "VACANT & OPEN TO TRESPASS"), about 12,000 to 13,000 a year either way. The inspection
-  program "VACANT STRATEGY INSPECTIONS" (1,533) is left out, as are 219 without a point. The place's
-  own square is left out, as for dumping.
+  PROPERTY COMPLAINT", "VACANT & OPEN TO TRESPASS"), about 12,000 to 13,000 a year either way.
+  The inspection program "VACANT STRATEGY INSPECTIONS" (1,533) is left out, as are 219 without a
+  point. The place's own square is left out, as for dumping.
 - **Whether the place still looks vacant later: not measured.** The City's vacancy lists exist only
-  for June 2024 and October 2026, and LandCare and clean and seal are meant to keep a place cared for
-  while it stays empty, so "still vacant" cannot tell success from failure. Permits and sales could
-  show reuse, but the deed and permit records the pipeline keeps are for parcels that are vacant
-  today, which would leave out exactly the places that were reused.
+  for June 2024 and October 2026, and LandCare and clean and seal are meant to keep a place cared
+  for while it stays empty, so "still vacant" cannot tell success from failure. Permits and sales
+  could show reuse, but the deed and permit records the pipeline keeps are for parcels that are
+  vacant today, which would leave out exactly the places that were reused.
 
 ## The comparison
 
@@ -194,16 +194,16 @@ compared only when both windows lie wholly inside the complete half years of the
 - lie within 3 kilometers but at least 400 meters away, so the two never share the same counting
   circle;
 - had a similar count of the outcome in each of the two years before: the square roots of the two
-  yearly counts each within 0.5 (0 matches only 0; 4 matches 2 to 6; 16 matches 12 to 20);
+  yearly counts each within 0.5 (0 matches only 0; 4 matches 3 to 6; 16 matches 13 to 20);
 - lie in a census tract whose share of people below the poverty line (American Community Survey,
   2020 to 2024) is within 5 percentage points.
 
 Among those, the closest by a score of the count differences, the poverty difference and a little
 distance. A comparison place may serve several cared for places. A cared for place with none is
-left out, and the results say how many (from 65 of 688 for LandCare and shootings to 593 of 4,962
-for clean and seal and complaints). Matching on the counts of the two years before is what answers
-regression to the mean: a place picked after a bad stretch is set against places with the same bad
-stretch.
+left out, and the results say how many: between 5 and 17 percent of them (from 249 of 4,962 for
+clean and seal and shootings to 114 of 688 for LandCare and complaints). Matching on the counts of
+the two years before is what answers regression to the mean: a place picked after a bad stretch is
+set against places with the same bad stretch.
 
 **The estimate (a difference in differences).** For each cared for place, the count expected after
 is its own count before plus its comparison places' average change. The change is the count after
