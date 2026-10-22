@@ -20,6 +20,10 @@ as "2019 to 2024" instead. A test checks every file here for dashes automaticall
 (`web/tests/strings.test.ts`), and it runs in CI, so a stray dash fails the build, not just a
 review.
 
+**Other languages.** A translated page lives in `content/<code>/<page>.md`, with the same file
+name as the English page (for example `content/es/contact.md`). A page with no translation yet
+shows in English, with a note in the visitor's language. See `docs/TRANSLATING.md`.
+
 **Adding or renaming a page.** Add a new Markdown file here (its file name becomes its web
 address, so `new-page.md` becomes `/new-page/`), add it to the menu list in
 `web/src/strings.ts` (the `nav.pages` list), and give it its own `web/<slug>/index.html` next to

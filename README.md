@@ -98,6 +98,16 @@ release. Transit Forward Philadelphia's stop audits wait on permission, philart.
 Association for Public Art and Philadelphia's Magic Gardens wait on theirs, and the Athenaeum of
 Philadelphia's old maps wait on its own. See the [roadmap](docs/ROADMAP.md).
 
+## Languages
+
+The site is being translated into Spanish, Chinese (simplified characters), Vietnamese, Russian,
+Portuguese, Haitian Creole, Khmer, French and Arabic, the languages Philadelphians most often need
+besides English. A language button in the top bar and in Settings switches the whole site, and a
+link copied from a page keeps its language. Arabic reads right to left. Anything not translated yet
+shows in English, and every translated page says it was translated with the help of AI and not yet
+checked by a native speaker, with a link to a short form to fix it. Translators start with
+[docs/TRANSLATING.md](docs/TRANSLATING.md).
+
 ## How the data stays fresh
 
 Every Monday, GitHub downloads every source again, checks it, and keeps the last good copy of
@@ -139,6 +149,7 @@ NonCommercial 2.5 license. Non commercial use only. Every source, with its publi
 
 - **Add missing map features**, such as benches or bus shelters, to OpenStreetMap. We read it
   every week.
+- **Fix a translation** in your language with the "Fix a translation" link on any translated page.
 - **Report a correction** through a short, prefilled
   [GitHub issue](https://github.com/holdTheDoorHoid/placekeepers/issues/new/choose).
 - **Ask a question or raise a concern** on the
