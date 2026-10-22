@@ -92,7 +92,7 @@ moun ki te bati yo. Li chèche jaden ki aktif pandan omwen twa sezon kilti, ak j
 yo, lyen ak gwoup tankou yon legliz, yon lekòl oswa yon kòporasyon devlopman kominotè, ak sipò
 vwazen yo ak manm Konsèy Minisipal distri a (verifye sou paj prezèvasyon li 8 oktòb 2026).
 
-### Pyebwa sou yon teren ak ak long li
+### Pyebwa sou yon teren ak sou bò li
 
 Pyebwa rafrechi yon blòk ak lonbraj yo, epi lantiy chalè ak lonbraj la sou kat la montre kote yo ta
 ede pi plis. Plante sou yon teren, oswa nan twotwa a devan li, kòmanse ak pwopriyetè teren an, kidonk
@@ -177,7 +177,7 @@ yon pwolonjman twotwa.
 | Sèlman netwayaj ak koupe zèb | Mwens pase plantasyon konplè | Menm bagay ak anlè a | Solid, pou tire nan esè orijinal la | PHS, Kapitèn Blòk |
 | Sele pòt ak fenèt yon kay abandone | Pwopriyetè a oswa Vil la peye | Rapòte bay Philly311; Lisans ak Enspeksyon ka netwaye epi sele l | Solid, pou vyolans | Lisans ak Enspeksyon |
 | Kòmanse yon jaden kominotè | Varye | Yon akò jaden oswa lisans, oswa pèmisyon pwopriyetè a | Bati sou prèv plantasyon an anwo a | PHS, Neighborhood Gardens Trust, Garden Justice Legal Initiative |
-| Plante yon pyebwa | Gratis atravè TreePhilly | Mande youn (gade Pyebwa sou yon teren ak ak long li, anwo a) | Melanje, pou vyolans; Melanje pou chalè tou: pyebwa rafrechi yon blòk pandan jounen an, men benefis sante yo se estimasyon, se pa esè | TreePhilly |
+| Plante yon pyebwa | Gratis atravè TreePhilly | Mande youn (gade Pyebwa sou yon teren ak sou bò li, anwo a) | Melanje, pou vyolans; Melanje pou chalè tou: pyebwa rafrechi yon blòk pandan jounen an, men benefis sante yo se estimasyon, se pa esè | TreePhilly |
 | Ajoute yon jaden lapli oswa yon veso plant pou dlo lapli | Gratis pou pwopriyetè kay, atravè Rain Check | Enskri (**poko konfime pou gwoup**) | Pa sou vyolans | Depatman Dlo |
 | Bati yon ban | Sèlman materyèl ak koupe, ak yon plan ouvè tankou Wikiblock Better Block la | Pèmisyon pwopriyetè teren an; yon pèmi twotwa **poko konfime** | Pa sou vyolans | Better Block (plan) |
 | Kòmanse yon kanpay limyè galri | Prèske zewo | Pa bezwen anyen pou pwòp galri ou | Modere pou limyè ri; limyè galri yo menm pa teste | Vwazen yo |
