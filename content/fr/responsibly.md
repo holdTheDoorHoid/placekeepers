@@ -54,7 +54,7 @@ Retaper une rue peut faire monter les loyers et les prix des logements à proxim
 
 Les fiches qui suggèrent un endroit pour s'asseoir, un jardin communautaire ou de l'art le disent avec leurs propres mots :
 
-> « De nouveaux jardins, de nouvelles places assises et de l'art peuvent rendre une rue plus recherchée et faire monter les prix et les loyers à proximité. Associez-les à des protections pour les voisins qui sont locataires ou en retard sur leurs impôts fonciers. »
+> « De nouveaux jardins, de nouvelles places assises et de l'art peuvent rendre une rue plus recherchée et faire monter les prix et les loyers à proximité. Associez-les à des protections pour les voisins qui sont locataires ou en retard sur leurs impôts. »
 
 La carte a aussi une **vigilance sur les déplacements** : des zones avec des signes que les prix y montent en ce moment. Une zone est en vigilance quand au moins deux de ces signes apparaissent dans les registres publics, dont au moins un concerne les prix :
 

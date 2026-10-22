@@ -15,12 +15,12 @@ import { distanceWords } from '../../strings.ts';
 
 /** A change in percent in words: "en hausse de 61 %", "en baisse de 3 %", "inchangé". */
 function changeWords(n: number): string {
-  if (n > 0) return `en hausse de ${formatNumber(n)} %`;
-  if (n < 0) return `en baisse de ${formatNumber(-n)} %`;
+  if (n > 0) return `en hausse de ${formatNumber(n)} %`;
+  if (n < 0) return `en baisse de ${formatNumber(-n)} %`;
   return 'inchangé';
 }
 
-/** " (à quelques points près : 6)", or nothing when there is no margin: a survey's margin of error. */
+/** " (marge d'erreur de 6 points)", or nothing when there is no margin: a survey's margin of error. */
 function giveOrTake(margin: number | null, unit: 'points' | 'homes'): string {
   if (margin === null) return '';
   return ` (marge d'erreur de ${unit === 'points' ? plural(margin, { one: '# point', other: '# points' }) : formatNumber(margin)})`;
@@ -175,7 +175,7 @@ const fr: Catalog = {
     kindBuilding: 'Bâtiment vacant',
     kindUnknown: 'Parcelle vacante',
     parcel: (id) => `Parcelle ${id}`,
-    priority: (score, lens) => `Priorité ${score} sur 100 pour l'angle « ${lens.toLowerCase()} »`,
+    priority: (score, lens) => `Priorité ${score} sur 100 pour l'angle « ${lens.toLowerCase()} »`,
     mainReason: (label) => `Raison principale : ${label}.`,
     bestSuggestion: 'Ce que vous pourriez faire',
     firstStep: 'Première démarche légale',
@@ -196,7 +196,7 @@ const fr: Catalog = {
     2: 'Entreprise',
     3: 'Ville de Philadelphie',
     4: 'Philadelphia Land Bank',
-    5: 'Redevelopment Authority',
+    5: 'Redevelopment Authority (autorité de réaménagement)',
     6: 'Autorité du logement public',
     7: 'Organisme à but non lucratif',
     8: 'Autre organisme public',
@@ -268,8 +268,8 @@ const fr: Catalog = {
           ? 'Tous les facteurs sont désactivés. Activez-en un pour colorier les arrêts de bus et de tramway.'
           : 'Tous les facteurs sont désactivés. Activez-en un pour colorier les terrains.',
     explainToggle: 'Pourquoi ce facteur',
-    shown: (layer, lens) => `La carte affiche maintenant « ${layer} », coloriée selon l'angle « ${lens.toLowerCase()} ».`,
-    notShown: (layer) => `La carte n'affiche pas cet angle sur « ${layer} » pour le moment.`,
+    shown: (layer, lens) => `La carte affiche maintenant « ${layer} », coloriée selon l'angle « ${lens.toLowerCase()} ».`,
+    notShown: (layer) => `La carte n'affiche pas cet angle sur « ${layer} » pour le moment.`,
     showOnMap: 'Voir sur la carte',
     legendLow: 'Priorité plus faible',
     legendHigh: 'Priorité plus élevée',
@@ -289,7 +289,7 @@ const fr: Catalog = {
     listed: 'Indiqué par les agences foncières de la Ville',
     clear: 'Effacer les filtres',
     showAll: 'Tout afficher',
-    noneSelected: (group) => `Rien n'est choisi sous « ${group} », donc aucun terrain n'est affiché.`,
+    noneSelected: (group) => `Rien n'est choisi sous « ${group} », donc aucun terrain n'est affiché.`,
     narrowedNote: (n) =>
       n === 1
         ? "Un filtre de la vue d'analyse réduit ces lieux."
@@ -344,7 +344,7 @@ const fr: Catalog = {
     layersTitle: 'Couches et leurs paramètres',
     lensTitle: 'Poids des angles',
     suggestionsTitle: 'Suggestions à afficher',
-    suggestionShow: (label) => `Afficher « ${label} »`,
+    suggestionShow: (label) => `Afficher « ${label} »`,
     resetTitle: 'Recommencer',
     resetHelp:
       'Remet chaque couche, paramètre et poids aux valeurs par défaut de cette vue, et oublie la copie enregistrée dans ce navigateur.',
@@ -400,7 +400,7 @@ const fr: Catalog = {
       `${plural(n, { one: "# lieu n'a pas de score et n'est pas affiché", other: "# lieux n'ont pas de score et ne sont pas affichés" })}.`,
     noStep: (n) =>
       `${plural(n, { one: "# lieu n'a pas encore de première démarche publiée et n'est pas affiché", other: "# lieux n'ont pas encore de première démarche publiée et ne sont pas affichés" })}.`,
-    dot: (place, score, step) => `${place} : priorité ${score}. ${step}.`,
+    dot: (place, score, step) => `${place} : priorité ${score}. ${step}.`,
     tableNote: "La liste classée montre les mêmes lieux, avec la même première démarche, pour les claviers et les lecteurs d'écran.",
     capped: (shown, total) =>
       `Affichage des ${formatNumber(shown)} lieux au score le plus élevé sur ${formatNumber(total)} à l'écran. Zoomez pour les voir tous.`,
@@ -432,7 +432,7 @@ const fr: Catalog = {
       `${plural(n, { one: '# lieu', other: '# lieux' })} de ${title}. Créé le ${day}${dataDay ? ` à partir des données hebdomadaires du ${dataDay}` : ''}.`,
     ownerLine:
       "Les noms des propriétaires et les adresses postales sont tels que la Ville les publie. Chaque indicateur sur le propriétaire comporte une note de prudence et une prochaine étape protectrice : lisez-les sur la page du terrain avant d'agir. Ce n'est pas un avis juridique.",
-    scoreLine: (lens, weights) => `Les scores utilisent l'angle « ${lens} » avec ces poids : ${weights}.`,
+    scoreLine: (lens, weights) => `Les scores utilisent l'angle « ${lens} » avec ces poids : ${weights}.`,
     greeningLine: (caution) => `À propos des suggestions de verdissement : ${caution}`,
     placemakingLine: (caution) => `À propos des jardins, des places assises et de l'art : ${caution}`,
   },
@@ -455,11 +455,11 @@ const fr: Catalog = {
     saveName: 'Enregistrer le nom',
     cancel: 'Annuler',
     delete: 'Supprimer cette liste',
-    made: (name) => `La liste « ${name} » est créée. Les lieux que vous enregistrez maintenant y sont ajoutés.`,
-    renamed: (name) => `La liste s'appelle maintenant « ${name} ».`,
-    deleted: (name) => `« ${name} » est supprimée de ce navigateur.`,
+    made: (name) => `La liste « ${name} » est créée. Les lieux que vous enregistrez maintenant y sont ajoutés.`,
+    renamed: (name) => `La liste s'appelle maintenant « ${name} ».`,
+    deleted: (name) => `« ${name} » est supprimée de ce navigateur.`,
     confirmDelete: (name, n) =>
-      `Supprimer « ${name} » et ${plural(n, { one: 'son lieu', other: 'ses # lieux' })} de ce navigateur ? Elle ne pourra pas être récupérée, sauf si vous l'avez téléchargée.`,
+      `Supprimer « ${name} » (${plural(n, { one: '# lieu', other: '# lieux' })}) de ce navigateur ? Elle ne pourra pas être récupérée, sauf si vous l'avez téléchargée.`,
     count: (n) => plural(n, { one: '# lieu', other: '# lieux' }),
     noPlaces: "Cette liste est vide. Enregistrez des lieux depuis leurs fiches, la liste classée ou les pages de leurs terrains.",
     open: (place) => `Ouvrir la page du terrain de ${place}`,
@@ -472,24 +472,24 @@ const fr: Catalog = {
     saveTo: (name) => `Enregistrer dans ${name}`,
     saved: (name) => `Enregistré dans ${name}`,
     savedLabel: (name) => `Enregistré dans ${name}. Choisissez pour le retirer.`,
-    added: (name) => `Enregistré dans « ${name} ». Les listes restent dans ce navigateur.`,
-    removed: (name) => `Retiré de « ${name} ».`,
+    added: (name) => `Enregistré dans « ${name} ». Les listes restent dans ce navigateur.`,
+    removed: (name) => `Retiré de « ${name} ».`,
     full: (limit) => `Cette liste est pleine : une liste contient jusqu'à ${formatNumber(limit)} lieux.`,
     tooMany: (limit) => `Ce navigateur conserve jusqu'à ${formatNumber(limit)} listes. Supprimez-en une pour en créer une autre.`,
     download: 'Télécharger cette liste',
     importTitle: 'Ouvrir un fichier de liste',
     importHelp: 'Un fichier CSV ou GeoJSON téléchargé depuis Placekeepers, ou tout fichier texte de numéros de parcelle à neuf chiffres.',
-    imported: (name, n) => `« ${name} » est ouverte avec ${plural(n, { one: '# lieu', other: '# lieux' })}.`,
+    imported: (name, n) => `« ${name} » est ouverte avec ${plural(n, { one: '# lieu', other: '# lieux' })}.`,
     importFailed: "Ce fichier ne contient aucun numéro de parcelle que nous ayons pu lire.",
     importTooBig: 'Ce fichier est trop grand pour être une liste.',
     importLeftOut: (n, limit) =>
-      `${plural(n, { one: '# lieu a été laissé de côté', other: '# lieux ont été laissés de côté' })} : une liste contient jusqu'à ${formatNumber(limit)} lieux.`,
+      `${plural(n, { one: '# lieu a été laissé de côté', other: '# lieux ont été laissés de côté' })} : une liste contient jusqu'à ${formatNumber(limit)} lieux.`,
   },
 
   displacement: {
     caution: "Le verdissement peut faire monter les prix à proximité. Pensez à l'associer à des protections.",
     placemakingCaution:
-      "De nouveaux jardins, de nouvelles places assises et de l'art peuvent rendre une rue plus recherchée et faire monter les prix et les loyers à proximité. Associez-les à des protections pour les voisins qui sont locataires ou en retard sur leurs impôts fonciers.",
+      "De nouveaux jardins, de nouvelles places assises et de l'art peuvent rendre une rue plus recherchée et faire monter les prix et les loyers à proximité. Associez-les à des protections pour les voisins qui sont locataires ou en retard sur leurs impôts.",
     protections: 'Moyens de protéger les voisins',
     inWatch: (signs) => `Ce lieu se trouve dans une zone de vigilance sur les déplacements d'habitants, avec des signes que les prix y montent : ${signs}.`,
     protectionsTitle: 'Protections à associer',
@@ -531,18 +531,18 @@ const fr: Catalog = {
     pricesText: (p0, p1, change, city, span) =>
       `Le prix médian des logements vendus est passé de ${p0} à ${p1}, ${changeWords(change)}${city === null ? '' : `, contre ${changeWords(city)} dans l'ensemble de la ville`}${span ? ` (${span})` : ''}.`,
     companiesText: (share, sales, city) =>
-      `Des entreprises ont acheté ${share} % des ${formatNumber(sales)} logements vendus ces trois dernières années${city === null ? '' : `, contre ${city} % dans l'ensemble de la ville`}.`,
+      `Des entreprises ont acheté ${share} % des ${formatNumber(sales)} logements vendus ces trois dernières années${city === null ? '' : `, contre ${city} % dans l'ensemble de la ville`}.`,
     assessmentsText: (change, homes, city, years) =>
       `La valeur marchande du logement médian selon la Ville est ${changeWords(change)}${years ? ` de ${years[0]} à ${years[1]}` : ''} (${plural(homes, { one: '# logement', other: '# logements' })})${city === null ? '' : `, contre ${changeWords(city)} dans l'ensemble de la ville`}.`,
     rentersText: (share, city, years) =>
-      `${share} % des logements où les gens habitent ici sont loués${city === null ? '' : `, contre ${city} % dans l'ensemble de la ville`}${years ? ` (enquête du Bureau du recensement, ${years[0]} à ${years[1]})` : ''}.`,
+      `${share} % des logements où les gens habitent ici sont loués${city === null ? '' : `, contre ${city} % dans l'ensemble de la ville`}${years ? ` (enquête du Bureau du recensement, ${years[0]} à ${years[1]})` : ''}.`,
     mvaText: (rising, groups, edition) =>
       rising > 0
         ? `Dans ${rising} des ${plural(groups, { one: '# groupe d\'îlots', other: '# groupes d\'îlots' })} d'ici, la ${edition ?? 'Market Value Analysis'} de Reinvestment Fund pour la Ville constate une pression à la hausse : des prix de logements qui deviennent inaccessibles à ce que gagnent les habitants de longue date.`
         : `Dans aucun des ${plural(groups, { one: '# groupe d\'îlots', other: '# groupes d\'îlots' })} d'ici, la ${edition ?? 'Market Value Analysis'} ne constate de pression à la hausse.`,
     mvaNone: "L'analyse de la valeur marchande (Market Value Analysis) ne couvre pas cette zone.",
     tooFewSales: (earlier, recent, needed) =>
-      `Trop peu de ventes de logements pour le dire (${formatNumber(earlier)} et ${formatNumber(recent)} ; il en faut au moins ${formatNumber(needed)} par période).`,
+      `Trop peu de ventes de logements pour le dire (${formatNumber(earlier)} et ${formatNumber(recent)} ; il en faut au moins ${formatNumber(needed)} par période).`,
     tooFewHomes: 'Trop peu de logements avec une valeur les deux années pour le dire.',
     tooFewHouseholds: "Trop peu de ménages dans l'enquête du recensement pour le dire.",
     rule: "Une zone est en vigilance quand au moins deux de ces signes se vérifient, dont au moins un concerne les prix : prix de vente, valeurs d'évaluation ou analyse de la valeur marchande.",
@@ -560,7 +560,7 @@ const fr: Catalog = {
       vacant: 'Logements vides',
     },
     burdenText: (share, margin, households, city, years) =>
-      `${share} % des ${formatNumber(households)} ménages locataires d'ici paient la moitié de leur revenu ou plus en loyer et charges${giveOrTake(margin, 'points')}${city === null ? '' : `, contre ${city} % dans l'ensemble de la ville`}${years ? ` (enquête du Bureau du recensement, ${years[0]} à ${years[1]})` : ''}. Les hausses de loyer les touchent le plus durement.`,
+      `${share} % des ${formatNumber(households)} ménages locataires d'ici paient la moitié de leur revenu ou plus en loyer et charges${giveOrTake(margin, 'points')}${city === null ? '' : `, contre ${city} % dans l'ensemble de la ville`}${years ? ` (enquête du Bureau du recensement, ${years[0]} à ${years[1]})` : ''}. Les hausses de loyer les touchent le plus durement.`,
     burdenTooFew: "Trop peu de ménages locataires dans l'enquête du recensement pour le dire.",
     rentText: (rent, margin, city) =>
       `${rent} par mois, avec les charges que paie le locataire${margin ? ` (marge d'erreur de ${margin})` : ''}${city ? `, contre ${city} dans l'ensemble de la ville` : ''}.`,
@@ -569,7 +569,7 @@ const fr: Catalog = {
       `${income} par an${margin ? ` (marge d'erreur de ${margin})` : ''}${city ? `, contre ${city} dans l'ensemble de la ville` : ''}.`,
     incomeNone: "L'enquête du recensement a trop peu de réponses ici pour calculer un revenu médian.",
     vacantText: (vacant, homes, share, margin, city) =>
-      `${formatNumber(vacant)} des ${formatNumber(homes)} logements d'ici, soit ${share} %${giveOrTake(margin, 'points')}${city === null ? '' : `, contre ${city} % dans l'ensemble de la ville`}.`,
+      `${formatNumber(vacant)} des ${formatNumber(homes)} logements d'ici, soit ${share} %${giveOrTake(margin, 'points')}${city === null ? '' : `, contre ${city} % dans l'ensemble de la ville`}.`,
     vacantTooFew: "Trop peu de logements dans l'enquête du recensement pour le dire.",
     whyEmpty: 'Pourquoi ils sont vides',
     whyRows: {
@@ -579,7 +579,7 @@ const fr: Catalog = {
       vz: 'Pour un usage saisonnier ou occasionnel',
       vo: "Retirés du marché pour d'autres raisons, comme des réparations, des ennuis juridiques d'une famille ou l'abandon",
     },
-    whyRow: (label, n, margin) => `${label} : ${formatNumber(n)}${giveOrTake(margin, 'homes')}`,
+    whyRow: (label, n, margin) => `${label} : ${formatNumber(n)}${giveOrTake(margin, 'homes')}`,
     legendArea: 'Une zone avec des signes que les prix montent',
     legendTap: "Touchez l'intérieur d'une zone, ou tout près de son bord, pour voir ses signes.",
     legendNote: "Des signes dans des registres publics, pas une prévision. Les fiches de verdissement, de jardin, de places assises et d'art dans ces zones ajoutent des moyens de protéger les voisins.",
@@ -610,7 +610,7 @@ const fr: Catalog = {
 
   legend: {
     parcelsFill: 'Couleur de remplissage : priorité selon votre mélange d\'angles',
-    parcelsFillLens: (lens) => `Couleur de remplissage : priorité selon l'angle « ${lens.toLowerCase()} »`,
+    parcelsFillLens: (lens) => `Couleur de remplissage : priorité selon l'angle « ${lens.toLowerCase()} »`,
     parcelsSure: "Contour : notre degré de certitude que c'est vacant",
     sureHigh: 'Très probablement vacant',
     sureMedium: 'Probablement vacant',
@@ -713,7 +713,7 @@ const fr: Catalog = {
     memorialsIntro: "Chacun rend hommage à une personne tuée dans un accident de la route. Ouvrez-en un pour en savoir plus.",
     memorialCount: (n) => plural(n, { one: '# mémorial', other: '# mémoriaux' }),
     memorialsMore: (n) =>
-      `${plural(n, { one: '# autre mémorial est', other: '# autres mémoriaux sont' })} à l'écran. Zoomez pour les lister ici.`,
+      `${plural(n, { one: '# autre mémorial est', other: '# autres mémoriaux sont' })} à l'écran. Zoomez pour tout lister ici.`,
     memorialsLayerOff: "Activez la couche Mémoriaux pour lister les mémoriaux à l'écran.",
     memorialsNone: 'Aucun mémorial dans cette partie de la carte.',
     blocksNearby: 'Tronçons de rue à proximité',
@@ -723,15 +723,15 @@ const fr: Catalog = {
     blockCount: (n) => plural(n, { one: '# tronçon', other: '# tronçons' }),
     blockNoScore: 'Pas de score de sécurité de la rue.',
     blocksMore: (n) =>
-      `${plural(n, { one: '# autre tronçon est', other: '# autres tronçons sont' })} à l'écran. Zoomez pour les lister ici.`,
-    blocksLayerOff: (layer) => `Activez la couche « ${layer} » pour lister les tronçons de rue à l'écran.`,
+      `${plural(n, { one: '# autre tronçon est', other: '# autres tronçons sont' })} à l'écran. Zoomez pour tout lister ici.`,
+    blocksLayerOff: (layer) => `Activez la couche « ${layer} » pour lister les tronçons de rue à l'écran.`,
     blocksNone: "Aucun tronçon de rue n'est dessiné dans cette partie de la carte.",
     crashesNearby: 'Accidents à proximité',
     crashesInView: "Accidents à l'écran",
     crashesIntro: "D'après les registres d'accidents de PennDOT, tels que les paramètres de la couche des accidents les choisissent. Ouvrez-en un pour en savoir plus.",
     crashCount: (n) => plural(n, { one: '# accident', other: '# accidents' }),
     crashesMore: (n) =>
-      `${plural(n, { one: '# autre accident est', other: '# autres accidents sont' })} à l'écran. Zoomez pour les lister ici.`,
+      `${plural(n, { one: '# autre accident est', other: '# autres accidents sont' })} à l'écran. Zoomez pour tout lister ici.`,
     crashNear: (street) => `Près de ${street}`,
     crashesNone: "Aucun accident n'est dessiné dans cette partie de la carte.",
     removal: 'Demander le retrait',
@@ -750,7 +750,7 @@ const fr: Catalog = {
     },
     involvedOthers: "des personnes dans des voitures ou d'autres véhicules",
     crashSource: "D'après les registres d'accidents de PennDOT.",
-    segmentScore: (score, lens) => `${lens} : ${score} sur 100 selon votre mélange d'angles`,
+    segmentScore: (score, lens) => `${lens} : ${score} sur 100 selon votre mélange d'angles`,
     segmentNoScore: 'Pas de score de sécurité de la rue pour ce tronçon.',
     onHin: 'Sur le réseau High Injury Network',
     ksi: (n) =>
@@ -773,7 +773,7 @@ const fr: Catalog = {
     shelterDigital: 'Son panneau publicitaire est un écran numérique.',
     shelterLens: "L'arrêt qu'il dessert compte comme abrité dans l'angle « confort aux arrêts ».",
     shelterPartner: "La Ville installe et entretient ces abribus avec son partenaire publicitaire, et c'est la publicité qui les finance.",
-    shelterSource: "D'après la liste des abribus de la Ville (Office of Transportation and Infrastructure Systems).",
+    shelterSource: "D'après la liste des abribus de la Ville (Bureau des systèmes de transport et d'infrastructure).",
     sheltersHere: (n) => `${plural(n, { one: '# abribus', other: '# abribus' })} à cet endroit`,
 
     poleLed: 'Une lampe LED répertoriée par la Ville',
@@ -790,7 +790,7 @@ const fr: Catalog = {
       3: 'La Ville répertorie une lampe sur ce poteau, mais pas son type.',
     },
     poleOwner: {
-      1: 'Le Streets Department de la Ville est propriétaire du poteau.',
+      1: 'Le Département des rues de la Ville est propriétaire du poteau.',
       2: 'PECO est propriétaire du poteau.',
       3: 'PennDOT est propriétaire du poteau.',
       4: "Quelqu'un d'autre que la Ville, PECO ou PennDOT est propriétaire du poteau.",
@@ -798,17 +798,17 @@ const fr: Catalog = {
     poleReport: (number) => `Si une lumière est éteinte ici, indiquez à Philly311 le numéro du poteau : ${number}.`,
     poleReportNoNumber: 'Si une lumière est éteinte ici, dites à Philly311 où elle se trouve.',
     polesHere: (n) => `${plural(n, { one: '# poteau', other: '# poteaux' })} à cet endroit`,
-    poleSource: "D'après la liste des poteaux de rue du Streets Department (le service des rues de la Ville), actualisée chaque semaine.",
+    poleSource: "D'après la liste des poteaux de rue du Département des rues, actualisée chaque semaine.",
 
     calmingLegend: "Un coussin ralentisseur, un dos d'âne ou un plateau",
     calmingLegendNote: 'Les voisins peuvent demander à la Ville des aménagements de modération de la circulation dans une rue résidentielle.',
     zoomStreets: 'Zoomez sur quelques quartiers pour les voir.',
     calmingTitle: 'Modération de la circulation',
-    calmingWhat: "Un coussin ralentisseur, un dos d'âne ou un plateau que le Streets Department répertorie, pour ralentir les conducteurs.",
+    calmingWhat: "Un coussin ralentisseur, un dos d'âne ou un plateau que le Département des rues répertorie, pour ralentir les conducteurs.",
     calmingOn: (street) => `Sur ${street}`,
     calmingSince: (date) => `Il a été installé le ${date}.`,
     calmingHere: (n) => `${plural(n, { one: '# dispositif', other: '# dispositifs' })} à cet endroit`,
-    calmingSource: "D'après la liste des dispositifs de modération de la circulation du Streets Department.",
+    calmingSource: "D'après la liste des dispositifs de modération de la circulation du Département des rues.",
 
     guardLegend: 'Un coin de rue où la Ville place un brigadier scolaire',
     guardLegendNote: "Les brigadiers scolaires aident les enfants et tout le monde à traverser près des écoles au début et à la fin de la journée d'école.",
@@ -826,14 +826,14 @@ const fr: Catalog = {
     blockNoPoles: 'La Ville ne répertorie aucun poteau de rue le long de ce tronçon.',
     blockCalming: (n, year) =>
       year
-        ? `Modération de la circulation ici depuis ${year} : la Ville répertorie ${plural(n, { one: "# coussin ralentisseur, dos d'âne ou plateau", other: "# coussins ralentisseurs, dos d'âne ou plateaux" })} sur ce tronçon.`
+        ? `Modération de la circulation ici depuis ${year} : la Ville répertorie ${plural(n, { one: "# coussin ralentisseur, dos d'âne ou plateau", other: "# coussins ralentisseurs, dos d'âne ou plateaux" })} sur ce tronçon.`
         : `La Ville répertorie ${plural(n, { one: "# coussin ralentisseur, dos d'âne ou plateau", other: "# coussins ralentisseurs, dos d'âne ou plateaux" })} sur ce tronçon.`,
     blockNoCalming: 'Aucune modération de la circulation enregistrée ici pour le moment.',
     blockArterial:
-      "Les coussins ralentisseurs de la Ville sont pour les rues résidentielles. Dans une rue comme celle-ci, interrogez l'Office of Transportation and Infrastructure Systems de la Ville sur d'autres changements.",
+      "Les coussins ralentisseurs de la Ville sont pour les rues résidentielles. Dans une rue comme celle-ci, interrogez le Bureau des systèmes de transport et d'infrastructure (OTIS) de la Ville sur d'autres changements.",
     memorialCalming: (n, year) =>
       year
-        ? `Modération de la circulation sur ce tronçon depuis ${year} : la Ville répertorie ${plural(n, { one: '# dispositif', other: '# dispositifs' })}.`
+        ? `Modération de la circulation sur ce tronçon depuis ${year} : la Ville répertorie ${plural(n, { one: '# dispositif', other: '# dispositifs' })}.`
         : `La Ville répertorie ${plural(n, { one: '# dispositif de modération de la circulation', other: '# dispositifs de modération de la circulation' })} sur ce tronçon.`,
     memorialNoCalming: 'Aucune modération de la circulation enregistrée sur ce tronçon pour le moment.',
     lightsPoles: (poles, lamps, led) =>
@@ -911,7 +911,7 @@ const fr: Catalog = {
     matchedByPlace: "Associé à l'arrêt OpenStreetMap au même endroit, à moins de 15 mètres.",
     halfway: 'Les réponses « pas encore relevé » comptent à moitié (50 sur 100) dans le score jusqu\'à ce que quelqu\'un les note.',
     canopy: (percent) =>
-      `Les arbres couvrent environ ${formatNumber(percent)} % du terrain autour de l'arrêt, dans une zone d'environ deux rues de large (relevé du couvert arboré de la Ville, 2018).`,
+      `Les arbres couvrent environ ${formatNumber(percent)} % du terrain autour de l'arrêt, dans une zone d'environ deux rues de large (relevé du couvert arboré de la Ville, 2018).`,
     onHin: "L'arrêt se trouve sur le réseau High Injury Network, les rues où se produisent la plupart des décès et des blessures graves de la circulation à Philadelphie.",
     noScore: "L'angle « confort aux arrêts » ne note que les arrêts de bus et de tramway.",
     tunnelStation: "Cet arrêt de tramway est souterrain, dans le tunnel, donc l'angle « confort aux arrêts » le laisse de côté, comme les stations de métro et de train.",
@@ -1023,7 +1023,7 @@ const fr: Catalog = {
     priority: 'Contour : secteurs que la Ville classe très haut en vulnérabilité à la chaleur',
     tractsNone: "Les secteurs que l'indice ne couvre pas, comme les grands parcs et l'aéroport, restent vides.",
     tractsSource:
-      "D'après l'indice de vulnérabilité à la chaleur de la Ville (Heat Vulnerability Index, Department of Public Health et Office of Sustainability), données de 2017 à 2019.",
+      "D'après l'indice de vulnérabilité à la chaleur de la Ville (Heat Vulnerability Index, Département de santé publique et Bureau du développement durable), données de 2017 à 2019.",
     treeBig: 'Un arbre de la Ville : plus le point est gros, plus son tronc est large',
     treeSmall: "Un petit arbre, souvent un jeune arbre qu'il faut arroser",
     treesZoom: 'Zoomez sur quelques rues pour voir les arbres.',
@@ -1038,7 +1038,7 @@ const fr: Catalog = {
     treeNoTrunk: "L'inventaire ne donne pas la taille de son tronc.",
     treeYoung: "Un jeune arbre a besoin d'environ 20 gallons d'eau (environ 75 litres) par semaine de mars à décembre, selon TreePhilly.",
     treesHere: (n) => `${plural(n, { one: '# arbre', other: '# arbres' })} à cet endroit`,
-    treeSource: "D'après l'inventaire des arbres de Parks and Recreation, les arbres que la Ville entretient dans ses rues et ses parcs.",
+    treeSource: "D'après l'inventaire des arbres de Parcs et loisirs, les arbres que la Ville entretient dans ses rues et ses parcs.",
   },
 
   art: {
@@ -1137,7 +1137,7 @@ const fr: Catalog = {
     statusLong: {
       shelter: 'avec un abribus ou un toit',
       bench: 'avec un banc mais aucun abribus sur la carte',
-      neither: "avec ni l'un ni l'autre",
+      neither: "sans l'un ni l'autre",
       unsurveyed: 'dans OpenStreetMap mais pas encore relevé',
       missing: 'introuvable dans OpenStreetMap',
     },
@@ -1159,7 +1159,7 @@ const fr: Catalog = {
     partEstimate: (time, miles) => `Notre estimation : ${time} (${miles} de marche).`,
     sheetFor: (route, direction) => `Feuille de relevé : ligne ${route}, ${direction}`,
     howToFill:
-      "Cochez O (oui) ou N (non) pour chaque chose que vous trouvez à l'arrêt. « Éclairé » veut dire qu'une lumière éclaire l'arrêt la nuit : une lampe dans l'abribus ou un lampadaire juste à côté. « À réparer » veut dire un abribus, un banc, un panneau ou une poubelle cassé. Si vous ne pouvez pas savoir, laissez la case vide : ne devinez jamais, s'il vous plaît.",
+      "Cochez O (oui) ou N (non) pour chaque chose que vous trouvez à l'arrêt. « Éclairé » veut dire qu'une lumière éclaire l'arrêt la nuit : une lampe dans l'abribus ou un lampadaire juste à côté. « À réparer » veut dire que l'abribus, le banc, le panneau ou la poubelle est cassé. Si vous ne pouvez pas savoir, laissez la case vide : ne devinez jamais, s'il vous plaît.",
     nameLine: 'Nom :',
     dateLine: 'Date :',
     columns: {
@@ -1178,9 +1178,9 @@ const fr: Catalog = {
     yesShort: 'O',
     noShort: 'N',
     stopNumber: (sid) => `Arrêt SEPTA ${sid}`,
-    answerLabel: (n, name, question, answer) => `Arrêt ${n}, ${name} : ${question}, ${answer}`,
-    repairLabel: (n, name) => `Arrêt ${n}, ${name} : à réparer`,
-    notesLabel: (n, name) => `Arrêt ${n}, ${name} : notes`,
+    answerLabel: (n, name, question, answer) => `Arrêt ${n}, ${name} : ${question}, ${answer}`,
+    repairLabel: (n, name) => `Arrêt ${n}, ${name} : à réparer`,
+    notesLabel: (n, name) => `Arrêt ${n}, ${name} : notes`,
     openOsm: 'Voir sur OpenStreetMap',
     editOsm: 'Modifier',
     answered: (n, of) => `Sur cet appareil, vous avez rempli ${plural(n, { one: '# arrêt', other: '# arrêts' })} sur ${formatNumber(of)}.`,
@@ -1274,7 +1274,7 @@ const fr: Catalog = {
     poolKinds: { 1: 'Piscine', 2: "Aire de jeux d'eau", 3: "Jet d'eau" },
     waterKinds: { 1: 'Fontaine à boire', 2: 'Point de remplissage de bouteilles' },
     status: { 1: 'En service cette année', 0: 'Hors service cette année' },
-    statusUnknown: "Parks and Recreation ne dit pas si c'est en service cette année.",
+    statusUnknown: "Parcs et loisirs ne dit pas si c'est en service cette année.",
     indoor: { 1: "À l'intérieur", 0: "À l'extérieur" },
     waterIndoor: "À l'intérieur d'un bâtiment : ouvert quand le bâtiment l'est.",
     accessible: { 1: 'Indiqué comme accessible aux personnes handicapées', 0: 'Non indiqué comme accessible' },
@@ -1284,10 +1284,10 @@ const fr: Catalog = {
     inPark: (park) => `Dans ${park}.`,
     phone: (number) => `Téléphone : ${number}`,
     libraryPage: 'Horaires et événements sur le site de la Free Library',
-    seasonNote: "Les piscines ouvrent seulement pour l'été. Vérifiez auprès de Parks and Recreation les horaires de cette semaine.",
+    seasonNote: "Les piscines ouvrent seulement pour l'été. Vérifiez auprès de Parcs et loisirs les horaires de cette semaine.",
     source: {
       libraries: "D'après la liste de la Ville des sites de la Free Library of Philadelphia.",
-      parks: "D'après Philadelphia Parks and Recreation, tel que la Ville le publie.",
+      parks: "D'après Parcs et loisirs de Philadelphie, tel que la Ville le publie.",
     },
     cooling: {
       legendOpen: 'Un refuge contre le froid ou la chaleur indiqué comme ouvert',
@@ -1302,7 +1302,7 @@ const fr: Catalog = {
       oneMarker: "Une bibliothèque ou un centre de loisirs qui est aussi un refuge n'apparaît qu'une fois, comme refuge.",
       kinds: {
         1: 'Bibliothèque de la Free Library',
-        2: 'Site de Parks and Recreation',
+        2: 'Site de Parcs et loisirs',
         3: 'Partenaire communautaire',
         4: 'Centre communautaire de la Philadelphia Housing Authority',
       },
@@ -1320,7 +1320,7 @@ const fr: Catalog = {
       restroom: 'A des toilettes publiques',
       also: {
         lib: (name) => `Aussi sur la carte comme bibliothèque de la Free Library : ${name}.`,
-        rec: (name) => `Aussi sur la carte comme site de Parks and Recreation : ${name}.`,
+        rec: (name) => `Aussi sur la carte comme site de Parcs et loisirs : ${name}.`,
       },
       alsoSite: "La Ville l'indique aussi comme refuge contre le froid ou la chaleur.",
     },
@@ -1337,8 +1337,8 @@ const fr: Catalog = {
       dark_lights: 'Un lampadaire de rue ou de ruelle éteint',
       graffiti: 'Graffitis',
     },
-    legendOpen: (what) => `${what} : une demande encore ouverte`,
-    legendClosed: (what) => `${what} : toutes les demandes sont closes`,
+    legendOpen: (what) => `${what} : une demande encore ouverte`,
+    legendClosed: (what) => `${what} : toutes les demandes sont closes`,
     legendSize: 'Un cercle plus grand veut dire plus de demandes sur ce tronçon de rue.',
     legendWindow: 'Demandes à Philly311 au cours des 90 derniers jours, comptées par tronçon de rue, jamais par adresse.',
     openOnly: "Seuls les tronçons avec une demande encore ouverte sont affichés.",
@@ -1410,7 +1410,7 @@ const fr: Catalog = {
       "Compté depuis le milieu de chaque hexagone en ligne droite : 400 mètres pour 5 minutes de marche, 800 pour 10 minutes de marche. Cela va un peu plus loin qu'une marche le long des rues, et cela traverse les voies ferrées, les autoroutes et les rivières.",
     reachSource: {
       people: "Personnes d'après le recensement de 2020, comptées par îlot.",
-      places: "Lieux de la Ville, de Parks and Recreation, de l'USDA et de la SEPTA. Les lieux juste de l'autre côté de la limite de la ville ne sont pas comptés.",
+      places: "Lieux de la Ville, de Parcs et loisirs, de l'USDA et de la SEPTA. Les lieux juste de l'autre côté de la limite de la ville ne sont pas comptés.",
       corners: "Coins d'après les axes de rues de la Ville.",
     },
 
@@ -1485,7 +1485,7 @@ const fr: Catalog = {
     whatCounts:
       "Une cession, ici, est un acte d'une agence foncière à quelqu'un en dehors des quatre agences : une personne, une entreprise, un organisme à but non lucratif, ou un autre organisme public comme la Philadelphia Housing Authority. Chaque propriété compte une fois. Les corrections, les levées d'anciennes restrictions, les transferts entre les agences et les accords enregistrés comme actes sont exclus.",
     partial: (year, date) =>
-      `${year} ne va que jusqu'au ${date} : les registres d'actes de la Ville ont environ huit semaines de retard.`,
+      `${year} ne va que jusqu'au ${date} : les registres d'actes de la Ville ont environ huit semaines de retard.`,
     noNames: "Nous ne lisons les noms des acheteurs que pour distinguer une personne d'une entreprise et pour vérifier la maison voisine. Nous n'en gardons aucun.",
     showNumbers: 'Afficher les chiffres',
     tableLabel: (what) => `Les chiffres : ${what}`,
@@ -1510,7 +1510,7 @@ const fr: Catalog = {
         public: 'Autres organismes publics',
         unknown: 'Pas clair',
       },
-      share: (label, pct) => `${label} : ${pct} %`,
+      share: (label, pct) => `${label} : ${pct} %`,
       shares: 'Part de toutes les propriétés cédées ces années-là',
     },
     programs: {
@@ -1524,7 +1524,7 @@ const fr: Catalog = {
         `Pour les exercices ${from} à ${to}, le tableau de bord de la Ville a compté ${formatNumber(cityTotal)} jardins latéraux. D'après les actes, nous en déduisons ${formatNumber(ours)} pour les quatre agences, dont ${formatNumber(oursPlb)} de la Land Bank.`,
       cityTitle: 'Les comptes de la Ville elle-même par programme',
       cityCaption: (edited) =>
-        `D'après le tableau de bord Land Management de la Ville, par exercice (de juillet à juin). Il a été mis à jour pour la dernière fois le ${edited}, donc le dernier exercice est incomplet, et pour le logement il compte les logements construits, pas les propriétés.`,
+        `D'après le tableau de bord de gestion des terres de la Ville, par exercice (de juillet à juin). Il a été mis à jour pour la dernière fois le ${edited}, donc le dernier exercice est incomplet, et pour le logement il compte les logements construits, pas les propriétés.`,
       fy: 'Exercice',
       sideYards: 'Jardins latéraux',
       gardens: 'Jardins ou espaces ouverts',
@@ -1545,7 +1545,7 @@ const fr: Catalog = {
       median: 'Prix médian',
       nominal: 'Prix symbolique',
       none: 'Aucun prix enregistré',
-      summary: (median, pct) => `Prix médian sur ces années : ${median}. ${pct} % ont été cédées à un prix symbolique.`,
+      summary: (median, pct) => `Prix médian sur ces années : ${median}. ${pct} % ont été cédées à un prix symbolique.`,
     },
     districts: {
       title: 'Par district du Conseil municipal',
@@ -1560,7 +1560,7 @@ const fr: Catalog = {
     listed: {
       title: 'Terrains indiqués comme disponibles, semaine par semaine',
       caption: (from) =>
-        `La liste de la Ville des propriétés publiques, la même liste que montre la carte des propriétés de la Land Bank, comptée chaque semaine où notre copie a été actualisée. Le comptage commence le ${from} ; il n'y a pas de comptages hebdomadaires plus anciens.`,
+        `La liste de la Ville des propriétés publiques, la même liste que montre la carte des propriétés de la Land Bank, comptée chaque semaine où notre copie a été actualisée. Le comptage commence le ${from} ; il n'y a pas de comptages hebdomadaires plus anciens.`,
       date: 'Date de la liste',
       records: 'Indiqués comme disponibles',
       parcels: 'Parcelles',
@@ -1586,19 +1586,19 @@ const fr: Catalog = {
     sources: {
       title: 'Sources et dates',
       deeds: (fetched, last) =>
-        `Actes : Ville de Philadelphie, Department of Records, transferts de biens immobiliers, lus le ${fetched} ; l'acte le plus récent est daté du ${last}.`,
+        `Actes : Ville de Philadelphie, Département des archives, transferts de biens immobiliers, lus le ${fetched} ; l'acte le plus récent est daté du ${last}.`,
       programs: (edited) =>
-        `Comptes par programme : Ville de Philadelphie, Department of Planning and Development, tableau de bord Land Management, mis à jour pour la dernière fois le ${edited}.`,
+        `Comptes par programme : Ville de Philadelphie, Département de la planification et du développement, tableau de bord de gestion des terres, mis à jour pour la dernière fois le ${edited}.`,
       listed:
-        "Terrains répertoriés : Ville de Philadelphie, Department of Planning and Development (Land Management), tels que les montre la carte des propriétés de la Philadelphia Land Bank.",
+        "Terrains répertoriés : Ville de Philadelphie, Département de la planification et du développement (gestion des terres), tels que les montre la carte des propriétés de la Philadelphia Land Bank.",
       districts: 'Districts du Conseil municipal : Ville de Philadelphie, limites actuelles.',
       neighbours:
-        "Pour la déduction des jardins latéraux : la liste des propriétaires de la Ville (Office of Property Assessment) et les formes des parcelles (Water Department).",
+        "Pour la déduction des jardins latéraux : la liste des propriétaires de la Ville (Bureau de l'évaluation immobilière) et les formes des parcelles (Water Department).",
       board: "Les ordres du jour du conseil d'administration de la Land Bank, qui énumèrent chaque cession par programme",
       council: "La législation du Conseil municipal, où le Conseil approuve chaque cession de la Land Bank",
       method: 'Comment nous comptons, en détail',
       deedsLink: 'Les transferts de biens immobiliers de la Ville',
-      programsLink: 'Le tableau du tableau de bord Land Management de la Ville',
+      programsLink: 'Le tableau du tableau de bord de gestion des terres de la Ville',
     },
     csv: {
       years: (agency) => `Cessions par année et par agence (les quatre agences et chacune ; cette page montrait ${agency}).`,
@@ -1606,7 +1606,7 @@ const fr: Catalog = {
       programs: 'Les comptes de la Ville elle-même par programme et par exercice, à côté de notre déduction de jardins latéraux.',
       listed: 'Terrains de la liste de la Ville des propriétés publiques indiqués comme disponibles, chaque semaine depuis le début du comptage.',
       counts: 'Comptes seulement : aucun nom, aucune adresse et aucun numéro de parcelle.',
-      dates: (fetched, last) => `Actes lus le ${fetched} ; l'acte le plus récent est daté du ${last}.`,
+      dates: (fetched, last) => `Actes lus le ${fetched} ; l'acte le plus récent est daté du ${last}.`,
       file: (part, day) => `placekeepers-land-bank-${part}-${day}.csv`,
     },
   },
@@ -1744,7 +1744,7 @@ const fr: Catalog = {
     },
     ungraded: 'Sans note (terrains industriels et commerciaux)',
     area: (label, grade) => `Zone ${label}, notée ${grade} en 1937`,
-    areaUngraded: (label) => `${label} : une zone que la carte de 1937 a laissée sans note`,
+    areaUngraded: (label) => `${label} : une zone que la carte de 1937 a laissée sans note`,
     context:
       "En 1937, un organisme fédéral, la Home Owners' Loan Corporation, a noté les quartiers de la ville de A à D selon le degré de sécurité qu'il jugeait pour les prêts hypothécaires à cet endroit. Les notes dépendaient des personnes qui habitaient chaque zone : les zones où vivaient des familles noires et de nombreuses familles immigrées étaient le plus souvent notées D et entourées en rouge. Pendant des décennies, il y était plus difficile d'obtenir un prêt, et cette pratique s'appelle le redlining.",
     notToday: "Les notes sont une trace de la façon dont un organisme fédéral jugeait les lieux en 1937. Elles ne disent rien des personnes qui y vivent aujourd'hui.",
@@ -1787,15 +1787,15 @@ const fr: Catalog = {
       brownfield: "Site brownfield de l'EPA",
     },
     notes: {
-      historic: "Les changements ici peuvent nécessiter l'examen de la Historical Commission ; demandez-leur d'abord.",
+      historic: "Les changements ici peuvent nécessiter l'examen de la Commission historique ; demandez-leur d'abord.",
       overlays: "Les zonages superposés se chevauchent, et quelques-uns couvrent la plus grande partie de la ville. Touchez un endroit pour voir tous les zonages superposés qui s'y trouvent.",
       hearings: "Touchez une audience pour voir comment y participer et pour ouvrir la page du terrain.",
-      brownfields: "Ce n'est pas une carte de tout le terrain contaminé. Testez le sol avant de cultiver de la nourriture sur un de ces sites ou près de l'un d'eux.",
+      brownfields: "Ce n'est pas une carte de tout le terrain contaminé. Testez le sol avant de cultiver des aliments sur un de ces sites ou près de l'un d'eux.",
     },
     districtTitle: (name) => name,
     designated: (date) => `Désigné le ${date}.`,
     noDate: "La couche de la Ville ne donne pas de jour de désignation.",
-    propertyTitle: 'Au Philadelphia Register of Historic Places',
+    propertyTitle: 'Au Registre des lieux historiques de Philadelphie',
     listedOn: (date) => `Inscrit séparément le ${date}.`,
     listedAlone: 'Inscrit séparément.',
     inDistrict: (district, date) => `Fait partie de ${district}${date ? `, désigné le ${date}` : ''}.`,
@@ -1875,7 +1875,7 @@ const fr: Catalog = {
       landcare: 'Déjà entretenu par PHS LandCare.',
       landcareSince: (year) => `Déjà entretenu par PHS LandCare depuis ${year}.`,
       garden: 'Des gens y font déjà du jardinage. Demandez-leur avant de planifier quoi que ce soit.',
-      lensLine: (lens) => `Priorité selon l'angle « ${lens.toLowerCase()} », l'angle selon lequel la carte colorie les terrains.`,
+      lensLine: (lens) => `Priorité selon l'angle « ${lens.toLowerCase()} », l'angle selon lequel la carte colorie les terrains.`,
       flood: {
         1: "Une partie de ce terrain se trouve dans la zone inondable à 1 pour cent de chance par an de la FEMA (l'agence américaine de gestion des urgences), où une inondation a au moins 1 chance sur 100 chaque année. C'est une raison de faire attention, pas une part d'un score : les plantes ici doivent supporter un sol détrempé, tout ce qui est construit doit suivre les règles de la Ville sur les zones inondables, et un verdissement qui absorbe la pluie aide.",
         2: "Une partie de ce terrain se trouve dans la zone d'inondation à 0,2 pour cent de chance par an de la FEMA, où une inondation a 1 chance sur 500 chaque année. C'est une raison de faire attention, pas une part d'un score : les plantes ici devraient supporter un sol détrempé, et un verdissement qui absorbe la pluie aide.",
@@ -1923,7 +1923,7 @@ const fr: Catalog = {
         "Être sur la liste ne veut pas dire que la Land Bank dira oui. Elle décide de chaque demande séparément et peut refuser toute vente ou location, même d'une propriété qu'elle indique comme disponible.",
       changes: 'La liste change souvent. Vérifiez la carte de la Land Bank avant d\'agir.',
       map: 'La carte des propriétés disponibles de la Land Bank',
-      credit: 'Liste : Ville de Philadelphie, Department of Planning and Development (Land Management), telle que la montre la carte de la Philadelphia Land Bank.',
+      credit: 'Liste : Ville de Philadelphie, Département de la planification et du développement (gestion des terres), telle que la montre la carte de la Philadelphia Land Bank.',
     },
 
     ownerType: {
@@ -1931,7 +1931,7 @@ const fr: Catalog = {
       unclear: "Nous n'avons pas pu dire d'après le nom de quel type de propriétaire il s'agit.",
       individual: 'Le nom du propriétaire ressemble à un nom de personne.',
       publicName: (label) => `Les registres de la Ville nomment ${label} comme propriétaire.`,
-      markerReason: (marker) => `Le nom du propriétaire contient « ${marker} ».`,
+      markerReason: (marker) => `Le nom du propriétaire contient « ${marker} ».`,
       agencyConflict: (contact) => `Les registres de propriété de la Ville nomment un autre propriétaire, donc demandez à ${contact} lequel est à jour.`,
       agencyContacts: { PUB: 'la Land Bank', PLB: 'la Land Bank', PRA: 'la PHDC', PHDC: 'la PHDC' },
       publicBodies: {
@@ -1977,7 +1977,7 @@ const fr: Catalog = {
         company: 'Une entreprise',
         city: 'La Ville de Philadelphie',
         land_bank: 'La Philadelphia Land Bank',
-        redevelopment_authority: 'La Philadelphia Redevelopment Authority',
+        redevelopment_authority: 'La Philadelphia Redevelopment Authority (autorité de réaménagement)',
         housing_authority: 'Une autorité du logement public',
         nonprofit: 'Un organisme à but non lucratif',
         other_public: 'Un autre organisme public',
@@ -2088,7 +2088,7 @@ const fr: Catalog = {
         one: (sale) => `Vendu par le shérif le ${sale}.`,
         many: (n, sales) => `Vendu par le shérif ${n} fois : ${sales}.`,
         sale: (date, price) => (price ? `${date}, pour ${price}` : date),
-        andLast: (others, last) => `${others} ; et ${last}`,
+        andLast: (others, last) => `${others} ; et ${last}`,
         careful:
           "Lors d'une vente par le shérif, l'enchère gagnante efface les anciennes dettes de la propriété, donc un terrain dont les voisins ont pris soin peut passer à un acheteur extérieur. Une vente passée ne veut pas dire que la propriété est à vendre maintenant.",
         next: "Si votre rue prend soin de ce terrain, lisez le guide de Grounded in Philly sur les ventes par le shérif et demandez une aide juridique gratuite au Garden Justice Legal Initiative.",
@@ -2203,7 +2203,7 @@ const fr: Catalog = {
         title: 'Chronologie',
         caption: 'Tout ce qui est enregistré pour cette propriété, du plus récent au plus ancien, par année',
         intro: 'Ventes, registres de L&I, appels et registres de vacance dans une seule liste, du plus récent au plus ancien. Désactivez un type pour le masquer.',
-        appeal: (board, kind) => (kind ? `${board} : ${kind}` : board),
+        appeal: (board, kind) => (kind ? `${board} : ${kind}` : board),
         appealHearing: (date) => `audience du ${date}`,
         show: 'Afficher dans la chronologie',
         loading: 'Chargement de la chronologie depuis la copie hebdomadaire.',
@@ -2279,7 +2279,7 @@ const fr: Catalog = {
           unsafe: (date) => `L&I indique le bâtiment comme non sûr depuis le ${date}.`,
           sealed: (year, n) =>
             n > 1
-              ? `La Ville a envoyé ses équipes de nettoyage et de scellement ici pour la dernière fois en ${year} ; elle l'a fait ${formatNumber(n)} fois.`
+              ? `La Ville a envoyé ses équipes de nettoyage et de scellement ici pour la dernière fois en ${year} ; elle l'a fait ${formatNumber(n)} fois.`
               : `La Ville a envoyé ses équipes de nettoyage et de scellement ici en ${year}.`,
           sheriff: (year) => `Il a été vendu par le shérif en ${year}.`,
           cityList: (land, date, june) =>
@@ -2331,7 +2331,7 @@ const fr: Catalog = {
       correction: 'Signaler une correction',
       correctionHelp: "Ouvre un formulaire sur GitHub, rempli avec cette parcelle. L'envoyer demande un compte GitHub gratuit.",
       ownerNote:
-        "Si vous êtes propriétaire de ce bien et qu'un registre de la Ville à son sujet est faux, le service de la Ville qui tient le registre peut le corriger à la source : le service d'évaluation foncière (Office of Property Assessment) pour les noms de propriétaires, les adresses postales et les évaluations, le service des registres (Department of Records) pour les actes, et le service des permis et inspections (Licenses and Inspections) pour les infractions et les permis.",
+        "Si vous êtes propriétaire de ce bien et qu'un registre de la Ville à son sujet est faux, le service de la Ville qui tient le registre peut le corriger à la source : le Bureau de l'évaluation immobilière (OPA) pour les noms de propriétaires, les adresses postales et les évaluations, le Département des archives pour les actes, et le Département des licences et des inspections (L&I) pour les infractions et les permis.",
     },
 
     ownerList: {
@@ -2348,7 +2348,7 @@ const fr: Catalog = {
       printed: (date) => `Imprimé depuis Placekeepers le ${date}.`,
       recent: 'Historique récent',
       moreOnline: (n) => `${plural(n, { one: '# enregistrement de plus', other: '# enregistrements de plus' })} sur la page du terrain en ligne.`,
-      lastAssessment: (year, value) => `Évaluation de la Ville pour ${year} : ${value}.`,
+      lastAssessment: (year, value) => `Évaluation de la Ville pour ${year} : ${value}.`,
       moreSources: (n) => `${plural(n, { one: '# source de plus', other: '# sources de plus' })} sur la page du terrain en ligne.`,
       taxCenter: (url) => `Solde d'aujourd'hui : le Tax Center de la Ville, ${url}`,
       rules: 'Règles pour ce terrain',
@@ -2358,7 +2358,7 @@ const fr: Catalog = {
       intro:
         "Ce que disent les registres de la Ville et les registres fédéraux sur ce qui s'applique à ce terrain : désignation historique, zonage et ses zonages superposés, registres de brownfield, et appels devant les comités de la Ville. Rien de cela ne dit si l'on peut construire ici. Demandez au service nommé avant de planifier quoi que ce soit.",
       notOnList:
-        "Les règles sont établies chaque semaine pour les terrains de notre liste, et cette parcelle n'y est pas. Atlas, la carte de la Ville, montre son zonage et ses zonages superposés, et la Historical Commission peut dire si elle est historique.",
+        "Les règles sont établies chaque semaine pour les terrains de notre liste, et cette parcelle n'y est pas. Atlas, la carte de la Ville, montre son zonage et ses zonages superposés, et la Commission historique peut dire si elle est historique.",
       hearingTitle: 'Une audience approche',
       hearingSet: (board, date, time) => `Une audience ${board} sur ce terrain est fixée au ${date}${time ? `, à ${time}` : ''}.`,
       hearingBoard: {
@@ -2371,17 +2371,17 @@ const fr: Catalog = {
       historicTitle: 'Désignation historique',
       inDistrict: (district, date) => `Ce terrain est dans ${district}${date ? `, désigné le ${date}` : ''}.`,
       districtName: (name) => (/district/i.test(name) ? `le ${name}` : `le quartier historique ${name}`),
-      listed: (date) => `Cette propriété est inscrite séparément au Philadelphia Register of Historic Places depuis le ${date}.`,
-      listedNoDate: 'Cette propriété est inscrite séparément au Philadelphia Register of Historic Places.',
-      listedInDistrict: (district) => `Cette propriété figure au Philadelphia Register of Historic Places au titre de ${district}.`,
+      listed: (date) => `Cette propriété est inscrite séparément au Registre des lieux historiques de Philadelphie depuis le ${date}.`,
+      listedNoDate: 'Cette propriété est inscrite séparément au Registre des lieux historiques de Philadelphie.',
+      listedInDistrict: (district) => `Cette propriété figure au Registre des lieux historiques de Philadelphie au titre de ${district}.`,
       askFirst:
-        "Les changements ici peuvent nécessiter l'examen de la Historical Commission ; demandez-leur d'abord. Pour une fresque ou un jardin, demandez à la Commission avant de commencer.",
-      contact: 'Philadelphia Historical Commission : 215 686 7660, preservation@phila.gov.',
+        "Les changements ici peuvent nécessiter l'examen de la Commission historique ; demandez-leur d'abord. Pour une fresque ou un jardin, demandez à la Commission avant de commencer.",
+      contact: 'Commission historique de Philadelphie : 215 686 7660, preservation@phila.gov.',
       confirm: "La Ville demande à tout le monde de confirmer le statut historique d'une propriété auprès de la Commission.",
-      commissionSite: 'Le site web de la Historical Commission',
+      commissionSite: 'Le site web de la Commission historique',
       projectReview: 'Comment la Commission examine les travaux sur les propriétés historiques',
       findHistoric: 'Trouver une propriété ou un quartier historique',
-      notHistoric: "Les registres de la Historical Commission n'indiquent pas ce terrain comme historique. Demandez à la Commission pour en être sûr.",
+      notHistoric: "Les registres de la Commission historique n'indiquent pas ce terrain comme historique. Demandez à la Commission pour en être sûr.",
       zoningTitle: 'Zonage',
       base: (code, group) => `Zonage de base : ${code}${group ? `, ${group}` : ''}.`,
       zoningGroups: {
@@ -2438,7 +2438,7 @@ const fr: Catalog = {
       },
       brownfieldTitle: 'Registres de brownfield',
       brownfield:
-        "Une évaluation ou une dépollution fédérale de site brownfield a été enregistrée à cette adresse ou près d'elle. Testez le sol avant de cultiver de la nourriture.",
+        "Une évaluation ou une dépollution fédérale de site brownfield a été enregistrée à cette adresse ou près d'elle. Testez le sol avant de cultiver des aliments.",
       brownfieldSite: (name, feet) => `${name}, à environ ${formatNumber(feet)} pieds de ce terrain`,
       onLot: 'sur ce terrain',
       brownfieldMore: (n) => `et ${plural(n, { one: '# enregistrement de plus', other: '# enregistrements de plus' })} dans un rayon d'environ 330 pieds`,
@@ -2452,7 +2452,7 @@ const fr: Catalog = {
       appealsMissing: "Notre copie hebdomadaire a été construite sans les registres d'appels de la Ville, donc cette page ne peut pas dire s'il y en a.",
       appealsMissingOff: 'Les données en direct de la Ville peuvent les montrer.',
       boards: {
-        zoning: 'Zoning Board of Adjustment',
+        zoning: "Conseil d'ajustement du zonage",
         li_review: 'L&I Review Board',
         building: 'Board of Building Standards',
         other: 'Un autre comité de la Ville',
@@ -2488,7 +2488,7 @@ const fr: Catalog = {
         AFFIRMED: 'La décision de la Ville est maintenue',
       },
       missing: {
-        historic: "Notre copie hebdomadaire a été construite sans le registre historique, donc cette page ne peut pas dire si ce terrain est historique. Demandez à la Historical Commission.",
+        historic: "Notre copie hebdomadaire a été construite sans le registre historique, donc cette page ne peut pas dire si ce terrain est historique. Demandez à la Commission historique.",
         overlays: "Notre copie hebdomadaire a été construite sans les zonages superposés, donc cette page ne peut pas les lister. Atlas, la carte de la Ville, les montre.",
         brownfields: "Notre copie hebdomadaire a été construite sans les registres de brownfield de l'EPA, donc cette page ne peut pas dire s'il y en a à proximité.",
       },

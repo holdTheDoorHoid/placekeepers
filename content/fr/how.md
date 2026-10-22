@@ -47,7 +47,7 @@ Le **Neighborhood Gardens Trust** ([ngtrust.org](https://ngtrust.org/), 215 988 
 
 Les arbres rafraîchissent une rue par leur ombre, et l'angle « chaleur et ombre » de la carte montre où ils aideraient le plus. Planter sur un terrain, ou dans le trottoir devant celui-ci, commence par le propriétaire du terrain, donc commencez par les voies de permission ci-dessus. Ensuite :
 
-- **Arbres de rue gratuits.** La Ville plante un arbre de rue dans le trottoir devant une propriété quand son propriétaire le demande à la Street Tree Management Division de Parks and Recreation, en ligne, par e-mail à StreetTree.Info@phila.gov, ou par téléphone au 215 685 4363. Demandez au propriétaire du terrain, nommé sur la page du terrain, ou à la Land Bank pour un terrain de la Ville ou de la Land Bank. La Ville choisit l'arbre, découpe le trottoir, le plante gratuitement au printemps (de la mi-avril à la mi-juin) ou à l'automne (de la mi-octobre à la mi-novembre), et l'arrose la première année. Ensuite il a besoin d'environ 20 gallons d'eau (environ 75 litres) par semaine de mars à décembre, et les voisins peuvent aider. **Pas encore confirmé :** si la Ville plante devant un terrain qui appartient à la Ville ou à la Land Bank.
+- **Arbres de rue gratuits.** La Ville plante un arbre de rue dans le trottoir devant une propriété quand son propriétaire le demande à la Division de la gestion des arbres de rue (Street Tree Management Division) de Parcs et loisirs, en ligne, par e-mail à StreetTree.Info@phila.gov, ou par téléphone au 215 685 4363. Demandez au propriétaire du terrain, nommé sur la page du terrain, ou à la Land Bank pour un terrain de la Ville ou de la Land Bank. La Ville choisit l'arbre, découpe le trottoir, le plante gratuitement au printemps (de la mi-avril à la mi-juin) ou à l'automne (de la mi-octobre à la mi-novembre), et l'arrose la première année. Ensuite il a besoin d'environ 20 gallons d'eau (environ 75 litres) par semaine de mars à décembre, et les voisins peuvent aider. **Pas encore confirmé :** si la Ville plante devant un terrain qui appartient à la Ville ou à la Land Bank.
 - **Arbres gratuits lors d'une distribution de TreePhilly.** TreePhilly donne gratuitement aux habitants de Philadelphie des arbres à planter en pleine terre sur une propriété privée, jamais dans un pot ni dans le trottoir. Inscrivez-vous à sa lettre d'information, inscrivez-vous auprès du groupe qui accueille une distribution près de chez vous (les inscriptions ouvrent environ deux semaines à un mois avant), et récupérez l'arbre au printemps ou à l'automne. **Pas encore confirmé :** si un arbre de la distribution peut aller sur un terrain vacant privé dont le propriétaire est d'accord par écrit.
 
 Choisissez des arbres qui grandiront : les grands arbres donnent de l'ombre à la rue, et ils gardent le terrain ouvert à la vue. Comme tout verdissement, les arbres peuvent faire monter les prix à proximité ; voyez les moyens de protéger les voisins sur [À utiliser avec responsabilité](../responsibly/).
@@ -55,21 +55,21 @@ Choisissez des arbres qui grandiront : les grands arbres donnent de l'ombre à
 ### Aide pour les familles qui gardent leur maison
 
 - Le **Tangled Title Fund**, géré par Philadelphia VIP (tangledtitlefund@gmail.com, 215 523 9553), paie jusqu'à 6 500 $ des frais juridiques pour mettre en règle un titre de propriété embrouillé, pour les ménages qui gagnent jusqu'à 80 % du revenu typique de la zone, pour leur propre maison.
-- **Fraud Guard**, géré par le Department of Records de la Ville (215 686 2290, records.info@phila.gov), est une alerte gratuite envoyée chaque fois qu'un document est enregistré à votre nom, pour que vous l'appreniez vite si quelqu'un essaie de prendre votre propriété avec un faux acte.
+- **Fraud Guard**, géré par le Département des archives de la Ville (215 686 2290, records.info@phila.gov), est une alerte gratuite envoyée chaque fois qu'un document est enregistré à votre nom, pour que vous l'appreniez vite si quelqu'un essaie de prendre votre propriété avec un faux acte.
 - Depuis le 10 novembre 2025, la Ville bloque automatiquement tout acte dont le vendeur était déjà décédé à la date où il est censé l'avoir signé.
 
 ## Permis pour la rue et l'espace public
 
 | Ce que vous voulez faire | À qui demander | Ce qu'il faut | Coût | Combien de temps |
 |---|---|---|---|---|
-| Modérer la circulation dans une rue résidentielle (dos d'âne et dispositifs semblables) | Streets Department | 60 % du tronçon signe une pétition | Demande gratuite | Examinée trois fois par an ; installé de mai à octobre |
-| Organiser une fête de quartier ou un événement de rue | Streets Department et le district de police | 75 % des foyers pour une fête de quartier, 90 % pour les autres événements | 25 $ à 150 $ | Faire la demande 21 jours à l'avance |
-| Organiser une Playstreet (rue de jeux) pour l'été | Parks and Recreation | Pétition à 75 %, un habitant responsable, une petite rue à sens unique | Gratuit | L'été seulement |
-| Devenir Block Captain (capitaine de la rue) et organiser des nettoyages | Streets Department | 51 % du tronçon signe | Gratuit | Jusqu'à trois nettoyages organisés par été, avec les outils fournis |
-| Participer à Philly Spring Cleanup | Streets Department et PHS | S'inscrire | Balais, gants et sacs gratuits | Printemps |
+| Modérer la circulation dans une rue résidentielle (dos d'âne et dispositifs semblables) | Département des rues | 60 % du tronçon signe une pétition | Demande gratuite | Examinée trois fois par an ; installé de mai à octobre |
+| Organiser une fête de quartier ou un événement de rue | Département des rues et le district de police | 75 % des foyers pour une fête de quartier, 90 % pour les autres événements | 25 $ à 150 $ | Faire la demande 21 jours à l'avance |
+| Organiser une Playstreet (rue de jeux) pour l'été | Parcs et loisirs | Pétition à 75 %, un habitant responsable, une petite rue à sens unique | Gratuit | L'été seulement |
+| Devenir Block Captain (capitaine de la rue) et organiser des nettoyages | Département des rues | 51 % du tronçon signe | Gratuit | Jusqu'à trois nettoyages organisés par été, avec les outils fournis |
+| Participer à Philly Spring Cleanup | Département des rues et PHS | S'inscrire | Balais, gants et sacs gratuits | Printemps |
 | Construire un parklet (petit espace public aménagé sur des places de stationnement) | OTIS | Montrer le soutien de la communauté et avoir une assurance | Non précisé | Saisonnier, d'avril à novembre ; l'examen peut prendre des mois |
-| Demander un arbre de rue gratuit | Parks and Recreation (TreePhilly) | Le propriétaire de la propriété devant laquelle il se trouverait en fait la demande | Gratuit : la Ville le plante et l'arrose la première année | La prochaine saison de plantation |
-| Demander un support à vélos | Streets Department | Faire la demande | Non précisé | Non précisé |
+| Demander un arbre de rue gratuit | Parcs et loisirs (TreePhilly) | Le propriétaire de la propriété devant laquelle il se trouverait en fait la demande | Gratuit : la Ville le plante et l'arrose la première année | La prochaine saison de plantation |
+| Demander un support à vélos | Département des rues | Faire la demande | Non précisé | Non précisé |
 | Peindre une fresque murale | Mural Arts, par le formulaire « Want a mural on your wall? » (une fresque sur votre mur ?) sur [sa page de contact](https://muralarts.org/contact/) | La permission du propriétaire du mur | Demande gratuite | Des mois |
 | Signaler un lampadaire éteint, un dépôt sauvage, des graffitis ou un bâtiment vacant ouvert | Philly311 | Rien | Gratuit | De quelques jours à quelques semaines |
 
@@ -89,7 +89,7 @@ Quelques sujets sur lesquels les gens posent souvent des questions n'ont pas enc
 |---|---|---|---|---|
 | Nettoyer et verdir un terrain, à la manière de PHS | Environ 1 100 $ à 1 500 $ au départ, 150 $ à 300 $ par an ensuite (**pas encore confirmé avec PHS**) | La permission du propriétaire, ou un accord de la Land Bank | Solides, pour la violence | PHS |
 | Nettoyage et tonte seulement | Moins que le verdissement complet | Même chose que ci-dessus | Solides, pour les fusillades dans l'essai d'origine | PHS, Block Captains |
-| Sceller les portes et les fenêtres d'une maison abandonnée | Payé par le propriétaire ou la Ville | Signaler à Philly311 ; Licenses and Inspections peut la nettoyer et la sceller | Solides, pour la violence | Licenses and Inspections |
+| Sceller les portes et les fenêtres d'une maison abandonnée | Payé par le propriétaire ou la Ville | Signaler à Philly311 ; le Département des licences et des inspections (L&I) peut la nettoyer et la sceller | Solides, pour la violence | L&I |
 | Lancer un jardin communautaire | Variable | Un accord ou une licence de jardin, ou la permission du propriétaire | S'appuie sur les preuves de verdissement ci-dessus | PHS, Neighborhood Gardens Trust, Garden Justice Legal Initiative |
 | Planter un arbre | Gratuit avec TreePhilly | En demander un (voir Des arbres sur un terrain et le long de celui-ci, ci-dessus) | Partagées, pour la violence ; partagées aussi pour la chaleur : les arbres rafraîchissent une rue le jour, mais les bénéfices pour la santé sont des estimations, pas des essais | TreePhilly |
 | Ajouter un jardin de pluie ou une jardinière pour les eaux pluviales | Gratuit pour les propriétaires, par Rain Check | S'inscrire (**pas encore confirmé pour les groupes**) | Sans lien avec la violence | Water Department |
@@ -103,7 +103,7 @@ Quelques sujets sur lesquels les gens posent souvent des questions n'ont pas enc
 
 ## De l'argent pour aider à payer
 
-- La Division of Safe Neighborhoods de la Ville gère des subventions pour la prévention de la violence communautaire : environ 24 millions de dollars sont allés à 147 groupes en juin 2025, et un nouveau cycle de 25 millions de dollars a été annoncé le 17 juin 2026.
+- La Division of Safe Neighborhoods (division des quartiers sûrs) de la Ville gère des subventions pour la prévention de la violence communautaire : environ 24 millions de dollars sont allés à 147 groupes en juin 2025, et un nouveau cycle de 25 millions de dollars a été annoncé le 17 juin 2026.
 - Feet First Philly offre des mini-subventions pour l'espace public de 500 $ à 2 500 $, pour des projets qui rendent un quartier plus facile à parcourir à pied et en roulant. Les demandes ouvrent en août et sont dues en octobre.
 - Le Block Party Bonanza (un kit gratuit et une carte-cadeau) était un programme de 2026 seulement et s'est terminé le 3 octobre 2026, donc il n'est plus disponible.
 
@@ -119,4 +119,4 @@ Quelques sujets sur lesquels les gens posent souvent des questions n'ont pas enc
 | Feet First Philly | Plaidoyer pour la marche, mini-subventions, questions sur l'art sur l'asphalte | feetfirstphilly.org |
 | Mural Arts Philadelphia | Fresques | muralarts.org |
 | Code for Philly | Les bénévoles qui ont construit le Clean & Green Philly d'origine | codeforphilly.org |
-| OTIS et le Streets Department | Permis de rue, Vision Zero | phila.gov |
+| OTIS et le Département des rues | Permis de rue, Vision Zero | phila.gov |

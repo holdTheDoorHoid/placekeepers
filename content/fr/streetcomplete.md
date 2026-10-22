@@ -51,7 +51,7 @@ Notre carte montre aussi des bancs, des tables de pique-nique, de l'eau potable,
 
 Vous pouvez ajouter ce qui manque avec la couche **Things** de StreetComplete : activez-la, touchez l'endroit où se trouve la chose, et choisissez ce que c'est. La couche couvre les bancs, les tables de pique-nique, l'eau potable, les toilettes et les bibliothèques publiques, parmi beaucoup d'autres choses de la rue. Une fois qu'ils sont cartographiés, StreetComplete pose aussi des questions sur certains d'entre eux, par exemple si un banc a un dossier, et si les toilettes publiques sont payantes ou accessibles en fauteuil roulant. Vos ajouts arrivent sur notre carte en environ une semaine.
 
-La couche **Fontaines à boire dans les parcs** vient de la propre liste de Parks and Recreation, pas d'OpenStreetMap, donc les changements viennent de la Ville.
+La couche **Fontaines à boire dans les parcs** vient de la propre liste de Parcs et loisirs, pas d'OpenStreetMap, donc les changements viennent de la Ville.
 
 ## Combien de temps dure un relevé
 
