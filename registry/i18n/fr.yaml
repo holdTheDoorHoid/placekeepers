@@ -322,6 +322,40 @@ sources:
     name: "Aires de jeux"
     publisher: "Ville de Philadelphie, Parcs et loisirs"
 
+  project_reports:
+    name: "Projets terminés par des voisins, déclarés sur le formulaire GitHub du site"
+    publisher: "Des voisins, par le formulaire « Parlez-nous d'un projet que vous avez terminé » de Placekeepers"
+  project_corrections:
+    name: "Projets terminés par des voisins, saisies à la main et corrections"
+    publisher: "Placekeepers"
+  political_divisions:
+    name: "Wards et divisions électorales"
+    publisher: "Ville de Philadelphie"
+  pa_house_districts:
+    name: "Districts de la Chambre des représentants de Pennsylvanie"
+    publisher: "Bureau du recensement des États-Unis (U.S. Census Bureau), TIGER/Line Shapefiles"
+  pa_senate_districts:
+    name: "Districts du Sénat de Pennsylvanie"
+    publisher: "Bureau du recensement des États-Unis (U.S. Census Bureau), TIGER/Line Shapefiles"
+  us_house_districts:
+    name: "Districts du Congrès en Pennsylvanie"
+    publisher: "Bureau du recensement des États-Unis (U.S. Census Bureau), TIGER/Line Shapefiles"
+  pa_legislators:
+    name: "Membres de l'Assemblée générale de Pennsylvanie"
+    publisher: "Open States (Plural Policy)"
+  us_legislators:
+    name: "Membres du Congrès"
+    publisher: "Le projet unitedstates/congress-legislators"
+  us_legislator_offices:
+    name: "Bureaux de circonscription des membres du Congrès"
+    publisher: "Le projet unitedstates/congress-legislators"
+  city_elected_officials:
+    name: "Élus de la Ville"
+    publisher: "Ville de Philadelphie"
+  rco_contacts:
+    name: "Contacts des organisations communautaires enregistrées"
+    publisher: "Commission d'urbanisme de Philadelphie"
+
 layers:
   vacant_parcels:
     label: "Terrains et bâtiments vacants"
@@ -655,7 +689,7 @@ layers:
             label: "Seulement ceux indiqués comme ouverts"
   dumping:
     label: "Dépôts sauvages signalés au 311"
-    description: "Les tronçons où quelqu'un a interrogé Philly311 sur un dépôt sauvage au cours des 90 derniers jours, avec le nombre de demandes et l'indication qu'une demande est encore ouverte ou non. Compté par tronçon de rue, jamais par adresse, et sans rien sur qui a signalé. Une demande montre que quelqu'un a remarqué et a demandé de l'aide ; certains tronçons demandent plus souvent que d'autres, donc peu de demandes ne veut pas dire un tronçon propre."
+    description: "Les tronçons où quelqu'un a contacté Philly311 au sujet d'un dépôt sauvage au cours des 90 derniers jours, avec le nombre de demandes et l'indication qu'une demande est encore ouverte ou non. Compté par tronçon de rue, jamais par adresse, et sans rien sur qui a signalé. Une demande montre que quelqu'un a remarqué et a demandé de l'aide ; certains tronçons demandent plus souvent que d'autres, donc peu de demandes ne veut pas dire un tronçon propre."
     settings:
       show:
         label: "Afficher les tronçons avec"
@@ -855,6 +889,10 @@ layers:
     settings:
       shade:
         label: "Ombrer les zones (désactivé montre seulement leurs contours et leurs notes)"
+
+  projects:
+    label: "Projets terminés par des voisins"
+    description: "Nettoyages, jardins, endroits pour s'asseoir, fresques, arbres, bancs et abribus de la Ville, et problèmes réglés au 311 que des voisins ont terminés et dont ils nous ont parlé. Chaque compte rendu est lu et approuvé par Placekeepers avant d'apparaître. Touchez-en un pour voir ce qui a été fait, quand, et ce qu'il a fallu, avec un lien vers le compte rendu et ses photos sur GitHub. La carte ne montre jamais qui a envoyé un compte rendu, seulement un nom de groupe qu'ils ont choisi."
 
 lenses:
   violence:
