@@ -75,9 +75,7 @@ def main(replicates: int) -> None:
         w = csv.DictWriter(f, fieldnames=list(rows[0]))
         w.writeheader()
         for row in rows:
-            w.writerow(
-                {k: round(v, 2) if isinstance(v, float) else v for k, v in row.items()}
-            )
+            w.writerow({k: round(v, 2) if isinstance(v, float) else v for k, v in row.items()})
     print(
         "| How care was chosen | True change | Cities | Average estimate | "
         "Intervals holding the truth | Simple before and after | Placebo check passed |"
@@ -85,11 +83,7 @@ def main(replicates: int) -> None:
     print("|---|---|---|---|---|---|---|")
     for scenario, (_, effects) in SCENARIOS.items():
         for effect in effects:
-            sub = [
-                r
-                for r in rows
-                if r["scenario"] == scenario and r["effect"] == 100 * effect
-            ]
+            sub = [r for r in rows if r["scenario"] == scenario and r["effect"] == 100 * effect]
             print(
                 f"| {scenario} | {100 * effect:+.0f}% | {len(sub)} | "
                 f"{np.mean([r['percent'] for r in sub]):+.1f}% | "
@@ -97,9 +91,7 @@ def main(replicates: int) -> None:
                 f"{np.mean([r['naive'] for r in sub]):+.1f}% | "
                 f"{sum(r['placebo_covers_zero'] for r in sub)} of {len(sub)} |"
             )
-    print(
-        f"\nAverage cared for places per city: {np.mean([r['sets'] for r in rows]):.0f}"
-    )
+    print(f"\nAverage cared for places per city: {np.mean([r['sets'] for r in rows]):.0f}")
     print(f"Average in the placebo: {np.mean([r['placebo_sets'] for r in rows]):.0f}")
 
 
