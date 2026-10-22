@@ -109,12 +109,12 @@ describe('joining a label to its value, and a list into a phrase', () => {
   it('splits around the value the way the language writes it', () => {
     const english = strings.join.labelled;
     try {
-      strings.join.labelled = (label, value) => `${label}\u202F: ${value}`;
+      Object.assign(strings.join, { labelled: (label: string, value: string) => `${label}\u202F: ${value}` });
       expect(labelledParts('Licence')).toEqual({ label: 'Licence\u202F:', gap: ' ', after: '' });
-      strings.join.labelled = (label, value) => `${label}：${value}`;
+      Object.assign(strings.join, { labelled: (label: string, value: string) => `${label}：${value}` });
       expect(labelledParts('许可证')).toEqual({ label: '许可证：', gap: '', after: '' });
     } finally {
-      strings.join.labelled = english;
+      Object.assign(strings.join, { labelled: english });
     }
   });
 });
@@ -127,12 +127,12 @@ describe('the signs of a displacement watch area', () => {
       // As a page in Portuguese has it before its translator writes join.long.
       const copy = cloneText(strings);
       applyCatalog(copy, {}, markFallback);
-      strings.join.long = copy.join.long;
+      Object.assign(strings.join, { long: copy.join.long });
       const text = signsText(SIGNS.prices | SIGNS.renters | SIGNS.mva);
       expect(text).not.toContain('; and ');
       expect(text).toMatch(/, .+ e /);
     } finally {
-      strings.join.long = english;
+      Object.assign(strings.join, { long: english });
     }
   });
 });
@@ -150,13 +150,13 @@ describe('the letters', () => {
       const copy = cloneText(strings);
       applyCatalog(copy, { letters: { yourName: '[su nombre]' } }, markFallback);
       Object.assign(strings.join, { and: copy.join.and, names: copy.join.names });
-      strings.letters.yourName = copy.letters.yourName;
+      Object.assign(strings.letters, { yourName: copy.letters.yourName });
       expect(listWords(['cortar el pasto', 'sembrar', 'poner un banco'])).toBe('cortar el pasto, sembrar y poner un banco');
       expect(strings.join.names(['EXAMPLE DARNELL', 'EXAMPLE TINA'])).toBe('EXAMPLE DARNELL y EXAMPLE TINA');
       expect(buildLetter('owner', EMPTY_FIELDS).signature).toEqual(['[su nombre]']);
     } finally {
       Object.assign(strings.join, { and: saved.and, names: saved.names });
-      strings.letters.yourName = saved.yourName;
+      Object.assign(strings.letters, { yourName: saved.yourName });
     }
   });
 });
