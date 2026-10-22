@@ -1,0 +1,161 @@
+/* The packet page's own rules (M5.1): on screen, each page of the packet is a card that scrolls,
+   on phones too; on paper, Letter size in black and white, the cover, the displacement card, the
+   contacts and each place on pages of their own. Parts meant for the screen carry .screen-only. */
+
+.packet {
+  margin-top: 16px;
+}
+.packet .sheet {
+  margin: 0 0 16px;
+  padding: 16px;
+  border: 1px solid var(--pk-surface-2);
+  border-radius: var(--pk-radius);
+  background: var(--pk-bg);
+  overflow-wrap: anywhere;
+}
+.packet h2 {
+  margin: 0 0 4px;
+  font-size: 1.3rem;
+}
+.packet h3 {
+  margin: 12px 0 4px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--pk-surface-2);
+  font-size: 1rem;
+}
+.packet p {
+  margin: 0 0 4px;
+}
+.packet ul,
+.packet ol {
+  margin: 0 0 6px;
+  padding-left: 1.3em;
+}
+.packet .kicker {
+  margin: 0;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.packet .meta {
+  color: var(--pk-muted, #444);
+  font-size: 0.85rem;
+}
+.packet .note {
+  font-size: 0.85rem;
+}
+.packet .warning {
+  font-weight: 700;
+}
+.packet .hearing {
+  padding: 6px 8px;
+  border-left: 4px solid currentColor;
+}
+.packet .cards {
+  list-style: none;
+  padding: 0;
+}
+.packet .cards > li {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--pk-surface-2);
+  break-inside: avoid;
+}
+.packet .represent,
+.packet .contents {
+  list-style: none;
+  padding: 0;
+}
+.packet li > p {
+  margin: 0;
+}
+.packet .wards {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.85rem;
+}
+.packet .wards td {
+  padding: 2px 4px;
+  border-bottom: 1px solid var(--pk-surface-2);
+  vertical-align: top;
+}
+.packet .lot footer {
+  margin-top: 8px;
+  padding-top: 4px;
+  border-top: 1px solid var(--pk-surface-2);
+}
+
+@media print {
+  @page {
+    size: letter portrait;
+    margin: 0.5in;
+  }
+  html,
+  body {
+    background: #ffffff;
+    color: #000000;
+  }
+  .screen-only {
+    display: none !important;
+  }
+  .page {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+  .packet {
+    margin: 0;
+    font: 9.5pt/1.3 var(--pk-font);
+    color: #000;
+  }
+  .packet .sheet {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    /* A page of its own; page-break-after for older Safari. */
+    break-after: page;
+    page-break-after: always;
+  }
+  .packet .sheet:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+  .packet .lot {
+    font-size: 9pt;
+    line-height: 1.25;
+  }
+  .packet h2 {
+    font-size: 14pt;
+  }
+  .packet h3 {
+    margin: 6px 0 2px;
+    border-bottom: 1px solid #999;
+    font-size: 10pt;
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+  .packet .meta,
+  .packet .note,
+  .packet .small,
+  .packet .source {
+    color: #222;
+    font-size: 8pt;
+  }
+  .packet .contacts p {
+    font-size: 8.5pt;
+  }
+  .packet .represent {
+    columns: 2;
+    column-gap: 16px;
+  }
+  .packet .contacts .cards {
+    columns: 2;
+    column-gap: 16px;
+  }
+  .packet a {
+    color: #000;
+    text-decoration: none;
+  }
+  .packet .hearing {
+    border-left: 3px solid #000;
+  }
+}

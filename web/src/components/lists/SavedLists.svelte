@@ -8,6 +8,7 @@
   import type { AppStore } from '../../state/store.svelte.ts';
   import { strings } from '../../strings.ts';
   import ExportButtons from '../places/ExportButtons.svelte';
+  import PacketButton from '../packet/PacketButton.svelte';
 
   let { store, idPrefix, onOpen }: { store: AppStore; idPrefix: string; onOpen?: () => void } = $props();
 
@@ -187,6 +188,7 @@
       </ul>
       <h4 id="{idPrefix}-list-download">{s.download}</h4>
       <ExportButtons {store} places={exportPlaces} title={active.name} idPrefix="{idPrefix}-list" headingId="{idPrefix}-list-download" />
+      <PacketButton {store} listId={active.id} />
     {/if}
   {/if}
 

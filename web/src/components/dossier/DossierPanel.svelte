@@ -65,6 +65,8 @@
           properties={store.dossier.tile}
           address={view.title !== strings.dossier.parcel(view.opa) ? view.title : null}
         />
+        <!-- Organizing tools (M5.1): letters about this lot, filled in and printed on their own page. -->
+        <a class="button small quiet" href="{config.siteBase}letters/#opa={view.opa}" target="_blank" rel="noopener noreferrer">{strings.packet.lettersLink}</a>
       {/if}
     {/snippet}
     {#snippet historyExtra()}

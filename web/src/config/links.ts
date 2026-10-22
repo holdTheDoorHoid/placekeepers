@@ -21,6 +21,12 @@ export const TANGLED_TITLE_FUND_URL = 'https://phillyvip.org/tangled-title-fund/
 /** Grounded in Philly's guide to sheriff sales. */
 export const SHERIFF_SALE_GUIDE_URL = 'https://groundedinphilly.org/sheriff-sale/';
 
+/**
+ * Grounded in Philly's request for legal help, run by the Garden Justice Legal Initiative (checked
+ * 2026-10-21): every letter template links it (M5.1, issue #45).
+ */
+export const GROUNDED_LEGAL_HELP_URL = 'https://groundedinphilly.org/request-representation/';
+
 /** The Garden Justice Legal Initiative, for free legal help. */
 export const GJLI_URL = 'https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/';
 

@@ -14,16 +14,16 @@
 </script>
 
 <div class="seat" class:compact>
-  <p class="office">{row.office}{#if row.district}, {row.district}{/if}</p>
+  <p class="office">{compact ? (row.district ?? row.office) : row.district ? `${row.office}, ${row.district}` : row.office}</p>
   {#if row.seat}
     <p class="name"><strong>{row.seat.name}</strong>{#if row.seat.role}, {row.seat.role}{/if}</p>
     {#each row.seat.offices as office, i (i)}
       <p class="small">
-        {#if office.address}{office.address}{/if}{#if office.address && office.phone}. {/if}{#if office.phone}{r.phone}: <a href={tel(office.phone)}>{office.phone}</a>{/if}
+        {#if office.address}{office.address}{/if}{#if office.address && office.phone}{'. '}{/if}{#if office.phone}{`${r.phone}: `}<a href={tel(office.phone)}>{office.phone}</a>{/if}
       </p>
     {/each}
     {#if row.seat.website}
-      <p class="small"><a href={row.seat.website} target="_blank" rel="noopener noreferrer">{r.website}</a> <span class="print-url">{row.seat.website}</span></p>
+      <p class="small"><a href={row.seat.website} target="_blank" rel="noopener noreferrer"><span class="screen-label">{r.website}</span><span class="print-url">{row.seat.website}</span></a></p>
     {/if}
     {#if row.source}<p class="muted source">{row.source}</p>{/if}
   {:else}
@@ -48,7 +48,9 @@
   @media print {
     .print-url {
       display: inline;
-      font-size: 8pt;
+    }
+    .screen-label {
+      display: none;
     }
     a {
       color: #000;

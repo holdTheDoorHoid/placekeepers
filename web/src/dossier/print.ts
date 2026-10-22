@@ -60,6 +60,8 @@ export interface PrintModel {
     li: string[];
     notInCopy: string | null;
   };
+  /** Who represents the lot (M5.1), in one line: the ward and division and each seat's member. */
+  represent: string | null;
   sources: string[];
   moreSources: string | null;
   notLegalAdvice: string;
@@ -96,6 +98,13 @@ function rulesLines(view: DossierView): string[] {
   if (r.brownfield) lines.push(r.brownfield.text);
   if (r.notOnList) lines.push(r.notOnList);
   return lines;
+}
+
+function representLine(view: DossierView): string | null {
+  const r = view.represent;
+  if (r.status !== 'ready') return null;
+  const parts = [r.ward, ...r.rows.filter((row) => row.seat).map((row) => `${row.office}, ${row.district}: ${row.seat!.name}`)].filter(Boolean);
+  return parts.length ? `${parts.join('. ')}.` : null;
 }
 
 export function printModel(view: DossierView, now: Date = new Date()): PrintModel {
@@ -167,6 +176,7 @@ export function printModel(view: DossierView, now: Date = new Date()): PrintMode
       li: (view.history.li.summary ?? []).slice(0, PRINT_LIMITS.li),
       notInCopy: view.history.notInCopy?.text ?? null,
     },
+    represent: representLine(view),
     sources: view.sources.rows.slice(0, PRINT_LIMITS.sources).map((r) => `${r.name}: ${r.when}`),
     moreSources:
       view.sources.rows.length > PRINT_LIMITS.sources ? strings.dossier.print.moreSources(view.sources.rows.length - PRINT_LIMITS.sources) : null,

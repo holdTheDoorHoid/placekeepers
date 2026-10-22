@@ -13,6 +13,7 @@
   import SavedLists from '../lists/SavedLists.svelte';
   import AreaSummary from '../places/AreaSummary.svelte';
   import ExportButtons from '../places/ExportButtons.svelte';
+  import PacketButton from '../packet/PacketButton.svelte';
   import RankedTable from '../places/RankedTable.svelte';
   import AddressSearch from '../search/AddressSearch.svelte';
   import FeatureDetails from '../streets/FeatureDetails.svelte';
@@ -205,6 +206,7 @@
   <div id="pk-drawer-table" class="drawer-body" hidden={panel !== 'table'}>
     {#if panel === 'table'}
       <ExportButtons {store} places={inView} title={strings.export.inView} idPrefix="pk-view" off={sampled ? strings.export.sampleOff : null} />
+      <PacketButton {store} places={() => (store.parcelsSampled ? [] : ranked)} off={sampled ? strings.export.sampleOff : null} />
       {#if sampled}
         <p class="notice sample" role="status">{strings.analysis.sampleList}</p>
       {:else}
