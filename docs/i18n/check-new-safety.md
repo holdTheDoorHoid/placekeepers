@@ -53,3 +53,19 @@ for" is English's own wording and the Spanish keeps it as it is ("que la gente p
 Contact page: it says people can write in Spanish and that we read it with a translation tool;
 it promises no reply in Spanish.
 
+## Chinese, simplified characters (zh-Hans)
+
+Checked 109 items. Same meaning: 109. Changed: 0. Nothing needed fixing.
+
+Small differences, kept:
+
+| Place | Chinese | Back translation | English | Why kept |
+|---|---|---|---|---|
+| `projects.tellUsNote`, and the same line on How to do it | "绝不能有没有同意拍摄的任何人的脸" | never the face of anyone who did not agree to be photographed | never the face of anyone who did not agree | "Agree" is made specific to being photographed. That is the sensible reading in a photo rule, and it is not weaker. |
+| `letters.gate.public` | "请改为通过土地银行为邻居开设的计划提出申请" | Please instead apply through the programs the Land Bank has opened for neighbors | Ask through the Land Bank's programs for neighbors instead | "Apply" for "ask" is a little more formal. The Land Bank's programs do take applications. |
+
+Listed as available: every place reads "列为可用" in the City's own words, with the curly quotes
+around "可用" in the setting name and the lot page title, as the glossary decided. None reads as an
+invitation. Contact page: nothing promises a reply in Chinese (the page does not mention Chinese
+at all, which is allowed).
+
