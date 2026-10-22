@@ -85,6 +85,21 @@ const ptBR: Catalog = {
   units: {
     meters: (n) => `${formatNumber(n)} metros`,
     kilometers: (km) => `${formatDecimal(km, 1)} quilômetros`,
+    miles: (miles) => `${formatDecimal(miles, 1)} ${miles > 1 ? 'milhas' : 'milha'}`,
+    lessThanMiles: (miles) => `menos de ${formatDecimal(miles, 1)} milha`,
+  },
+
+  join: {
+    labelled: (label, value) => `${label}: ${value}`,
+    colon: (label) => `${label}:`,
+    and: (items) => (items.length <= 1 ? items.join('') : `${items.slice(0, -1).join(', ')} e ${items.at(-1)}`),
+    long: (items) =>
+      items.length <= 1
+        ? items.join('')
+        : items.length === 2
+          ? `${items[0]} e ${items[1]}`
+          : `${items.slice(0, -1).join('; ')}; e ${items.at(-1)}`,
+    names: (names) => names.join(' e '),
   },
 
   header: {
@@ -1176,6 +1191,8 @@ const ptBR: Catalog = {
     },
     estimateTitle: 'Quanto tempo leva',
     estimate: (time) => `Nossa estimativa: ${time} para uma pessoa ou dupla.`,
+    duration: (hours, minutes) =>
+      `cerca de ${[hours ? pl(hours, '# hora', '# horas') : '', minutes || !hours ? pl(minutes, '# minuto', '# minutos') : ''].filter(Boolean).join(' e ')}`,
     estimateBasis:
       'Esta é a nossa própria estimativa, não uma medição: andando cerca de 3 milhas por hora de um ponto a outro, e cerca de um minuto em cada ponto. Chegar ao primeiro ponto e voltar para casa é tempo extra.',
     trolleyTunnel:
@@ -2759,6 +2776,9 @@ const ptBR: Catalog = {
       mural: 'Pintar um mural, com a permissão do proprietário da parede',
       ask_city: 'Perguntar à Prefeitura o que pode acontecer aqui',
     },
+    language: 'Idioma do cartaz',
+    languageHelp: 'Imprima o cartaz no idioma que os seus vizinhos leem. O que você digita é impresso exatamente como digitou.',
+    withEnglish: 'Acrescentar o inglês ao lado, em uma segunda coluna',
     ownWords: 'Ou com as suas próprias palavras',
     contact: 'Como os vizinhos podem falar com você',
     contactHelp: 'Um link de grupo de bate-papo, um e-mail, um telefone, ou o horário e o local de uma reunião.',
@@ -2885,9 +2905,15 @@ const ptBR: Catalog = {
     notKept:
       'Este navegador não está guardando o que você digita agora, talvez por ser uma janela privada. Imprima antes de fechar a página.',
     preview: 'A carta',
+    language: 'Idioma da carta',
+    languageHelp:
+      'Os gabinetes, as organizações comunitárias e os proprietários a quem estas cartas vão leem principalmente inglês, então a carta é impressa em inglês, a menos que você escolha o seu idioma.',
+    translationTitle: 'A sua carta no seu idioma',
+    translationNote: 'Para você saber o que está assinando. Só a carta acima é impressa; esta tradução fica só na sua tela.',
     salutation: (name) => `Prezado(a) ${name},`,
     dearOwner: 'Prezado(a) proprietário(a),',
     sincerely: 'Atenciosamente,',
+    yourName: '[seu nome]',
     reachMe: (contact) => `Pode entrar em contato comigo em ${contact}.`,
     reachMeBlank: 'Pode entrar em contato comigo em [como falar com você].',
     thanks: 'Agradeço por considerar isto.',
