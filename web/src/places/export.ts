@@ -347,7 +347,7 @@ export function saveFile(name: string, text: string, type: string): void {
   const url = URL.createObjectURL(new Blob([plainText(text)], { type }));
   const link = document.createElement('a');
   link.href = url;
-  link.download = name;
+  link.download = plainText(name);
   link.style.display = 'none';
   document.body.append(link);
   link.click();

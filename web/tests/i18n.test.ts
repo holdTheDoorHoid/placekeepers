@@ -27,7 +27,7 @@ import { fixTranslationUrl } from '../src/i18n/fix.ts';
 import { plural } from '../src/i18n/format.ts';
 import { LANGUAGES, LANGUAGE_CODES, TRANSLATED_CODES, matchLanguage, type TranslatedCode } from '../src/i18n/languages.ts';
 import { setLocale } from '../src/i18n/locale.ts';
-import { FALLBACK_END, FALLBACK_START, markFallback, plainText, textKind } from '../src/i18n/marks.ts';
+import { FALLBACK_END, FALLBACK_START, isolateValue, markFallback, plainText, textKind } from '../src/i18n/marks.ts';
 import { applyRegistryText, compareRegistryText, registryTextPaths } from '../src/i18n/registry-text.ts';
 import type { KeyValueStore } from '../src/state/storage.ts';
 import { formatDate, formatMoney, formatNumber, strings } from '../src/strings.ts';
@@ -229,6 +229,20 @@ describe('falling back to English', () => {
     expect(textKind(`Ajustes ${marked}`)).toBe('translated');
     expect(textKind('Ajustes')).toBe('translated');
     expect(textKind('1,234')).toBeNull();
+  });
+
+  it('keeps values in their own direction on a right to left page, apart from English fallbacks', () => {
+    const address = isolateValue('1305 N EXAMPLE AVE');
+    expect(address).toBe('\u20681305 N EXAMPLE AVE\u2069');
+    expect(isolateValue(address)).toBe(address);
+    expect(textKind(address)).toBe('translated');
+    expect(textKind(`العنوان: ${address}`)).toBe('translated');
+    expect(textKind(markFallback(`Address: ${address}`))).toBe('fallback');
+    expect(plainText(`\u2066a\u2069 \u2067b\u2069 ${address}`)).toBe('a b 1305 N EXAMPLE AVE');
+    const english = cloneText(strings);
+    applyCatalog(english, { place: { parcel: (id: string) => `القطعة ${id}` } }, markFallback, { isolate: isolateValue });
+    expect(english.place.parcel('990000005')).toBe('القطعة \u2068990000005\u2069');
+    expect(english.place.parcel.length).toBe(1);
   });
 
   it('writes a catalog into the English object in place, leaf by leaf', () => {

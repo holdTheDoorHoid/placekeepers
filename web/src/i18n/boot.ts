@@ -23,7 +23,7 @@ import {
 } from './choose.ts';
 import { languageOf, type LanguageCode, type TranslatedCode } from './languages.ts';
 import { setLocale } from './locale.ts';
-import { watchFallbacks } from './marks.ts';
+import { isolateValue, markFallback, watchFallbacks } from './marks.ts';
 import { applyRegistryText, type RegistryText, type RegistryTextReport } from './registry-text.ts';
 
 type Loader<T> = () => Promise<{ default: T }>;
@@ -126,7 +126,9 @@ export async function startLanguage(options: { registry?: Registry } = {}): Prom
         options.registry ? REGISTRY_TEXTS[code]() : Promise.resolve(null),
       ]);
       setLocale(code);
-      stringsReport = applyCatalog(strings, catalog.default);
+      // On a right to left page, values a template fills in keep their own direction.
+      const rtl = languageOf(code).dir === 'rtl';
+      stringsReport = applyCatalog(strings, catalog.default, markFallback, rtl ? { isolate: isolateValue } : {});
       if (options.registry && registryText) registryReport = applyRegistryText(options.registry, registryText.default);
     } catch (error) {
       console.warn(`Placekeepers could not load the words for "${code}", so this page is in English.`, error);

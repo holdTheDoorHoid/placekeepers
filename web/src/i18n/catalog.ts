@@ -73,12 +73,25 @@ function markValue(value: unknown, mark: (text: string) => string): unknown {
   return value;
 }
 
+/** A translated template whose text values are isolated before it uses them (right to left pages). */
+function isolatingTemplate(fn: (...args: unknown[]) => unknown, isolate: (text: string) => string): (...args: unknown[]) => unknown {
+  const wrapped = (...args: unknown[]) => fn(...args.map((a) => (typeof a === 'string' ? isolate(a) : a)));
+  Object.defineProperty(wrapped, 'length', { value: fn.length });
+  return wrapped;
+}
+
 function join(path: string, key: string): string {
   return path ? `${path}.${key}` : key;
 }
 
 /** Arrays of objects with a slug are matched by slug; other arrays by position, when lengths agree. */
-function mergeArray(en: unknown[], tr: unknown, path: string, report: ApplyReport, mark: (text: string) => string): void {
+interface Writing {
+  mark: (text: string) => string;
+  /** On a right to left page, wraps each text value a translated template fills in. */
+  isolate?: (text: string) => string;
+}
+
+function mergeArray(en: unknown[], tr: unknown, path: string, report: ApplyReport, mark: Writing): void {
   const list = Array.isArray(tr) ? tr : undefined;
   if (tr !== undefined && !list) report.mismatched.push(path);
   const bySlug = en.every((e) => isBag(e) && typeof e.slug === 'string');
@@ -99,8 +112,9 @@ function mergeValue(
   tr: unknown,
   path: string,
   report: ApplyReport,
-  mark: (text: string) => string,
+  how: Writing,
 ): void {
+  const mark = how.mark;
   const box = holder as Record<string | number, unknown>;
   const en = box[key];
   if (typeof en === 'string') {
@@ -114,7 +128,7 @@ function mergeValue(
     }
   } else if (typeof en === 'function') {
     if (typeof tr === 'function') {
-      box[key] = tr;
+      box[key] = how.isolate ? isolatingTemplate(tr as (...args: unknown[]) => unknown, how.isolate) : tr;
       report.translated.push(path);
     } else {
       if (tr !== undefined) report.mismatched.push(path);
@@ -122,14 +136,14 @@ function mergeValue(
       report.fallback.push(path);
     }
   } else if (Array.isArray(en)) {
-    mergeArray(en, tr, path, report, mark);
+    mergeArray(en, tr, path, report, how);
   } else if (isBag(en)) {
     if (tr !== undefined && !isBag(tr)) report.mismatched.push(path);
-    mergeObject(en, isBag(tr) ? tr : undefined, path, report, mark);
+    mergeObject(en, isBag(tr) ? tr : undefined, path, report, how);
   }
 }
 
-function mergeObject(en: Bag, tr: Bag | undefined, path: string, report: ApplyReport, mark: (text: string) => string): void {
+function mergeObject(en: Bag, tr: Bag | undefined, path: string, report: ApplyReport, mark: Writing): void {
   for (const key of Object.keys(en)) {
     const p = join(path, key);
     if (ENGLISH_ONLY.has(p) || ID_KEYS.has(key)) {
@@ -151,9 +165,10 @@ export function applyCatalog(
   target: object,
   catalog: object,
   mark: (text: string) => string = markFallback,
+  options: { isolate?: (text: string) => string } = {},
 ): ApplyReport {
   const report: ApplyReport = { translated: [], fallback: [], extra: [], mismatched: [] };
-  mergeObject(target as Bag, catalog as Bag, '', report, mark);
+  mergeObject(target as Bag, catalog as Bag, '', report, { mark, isolate: options.isolate });
   return report;
 }
 

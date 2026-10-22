@@ -28,12 +28,13 @@
     </div>
   </header>
 
-  <LanguageOffer />
-  <TranslationNote {inEnglish} />
-
-  <!-- The page's own Markdown supplies the heading (an <h1>), so none is added here. -->
-  <main class="prose" lang={inEnglish ? 'en' : undefined} dir={inEnglish ? 'ltr' : undefined}>
-    {@html html}
+  <main>
+    <LanguageOffer />
+    <TranslationNote {inEnglish} />
+    <!-- The page's own Markdown supplies the heading (an <h1>), so none is added here. -->
+    <div class="prose" lang={inEnglish ? 'en' : undefined} dir={inEnglish ? 'ltr' : undefined}>
+      {@html html}
+    </div>
   </main>
 
   <footer class="muted small">{strings.app.notAffiliated} {strings.app.licenses}</footer>

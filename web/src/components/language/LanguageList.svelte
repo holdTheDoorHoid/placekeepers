@@ -38,8 +38,9 @@
       >
         <span class="name" lang={language.code} dir={language.dir}>{language.name}</span>
         <span class="also">
-          {localName(language.code, language.english)}{#if current}<span class="in-use">{strings.language.inUse}</span
-            >{:else if !language.ready}<span class="in-use">{strings.language.notReady}</span>{/if}
+          {localName(language.code, language.english)}{#if current}<span class="sr-only">, </span><span class="in-use"
+              >{strings.language.inUse}</span
+            >{:else if !language.ready}<span class="sr-only">, </span><span class="in-use">{strings.language.notReady}</span>{/if}
         </span>
       </button>
     </li>

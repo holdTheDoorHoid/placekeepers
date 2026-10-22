@@ -8,6 +8,8 @@
 import '../app.css';
 import content from 'virtual:placekeepers/content';
 import { loadContentPages, startLanguage } from '../i18n/boot.ts';
+import { plainText } from '../i18n/marks.ts';
+import { strings } from '../strings.ts';
 
 const { code } = await startLanguage();
 const target = document.getElementById('app')!;
@@ -19,5 +21,8 @@ if (!slug || english === undefined) {
 }
 
 const translated = (await loadContentPages(code))?.[slug];
+// The browser tab says the page's name in the page's language (index.html has it in English).
+const label = strings.nav.pages.find((p) => p.slug === slug)?.label;
+if (code !== 'en' && label) document.title = plainText(`${label}, ${strings.app.name}`);
 const [{ mount }, { default: ContentPage }] = await Promise.all([import('svelte'), import('./ContentPage.svelte')]);
 mount(ContentPage, { target, props: { slug, html: translated ?? english, inEnglish: code !== 'en' && translated === undefined } });

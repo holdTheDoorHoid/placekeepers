@@ -1,5 +1,5 @@
 // English text shown on a page in another language, because its translation is missing, is
-// wrapped in two invisible characters: FIRST STRONG ISOLATE before it and POP DIRECTIONAL ISOLATE
+// wrapped in two invisible characters: LEFT TO RIGHT ISOLATE before it and POP DIRECTIONAL ISOLATE
 // after it. They do two jobs:
 //
 //  * In Arabic, which reads right to left, they keep an English sentence in its own left to right
@@ -8,18 +8,28 @@
 //  * They let watchFallbacks() find English text after the page draws and put lang="en" on the
 //    element that holds it, so screen readers switch to an English voice.
 //
+// On a page that reads right to left, the values a translated template fills in (an address, a
+// name, a date) are wrapped too, in FIRST STRONG ISOLATE and POP DIRECTIONAL ISOLATE, so "1305 N
+// Example Ave" inside an Arabic sentence keeps its number in front (isolateValue).
+//
 // Nothing marks text on a page in English. Text that leaves the page (a downloaded file, an
 // address) goes through plainText() so the marks never reach it.
 
 import { isSourceLocale } from './locale.ts';
 
-export const FALLBACK_START = '\u2068';
+export const FALLBACK_START = '\u2066';
+const VALUE_START = '\u2068';
 export const FALLBACK_END = '\u2069';
-const MARKS = /[\u2068\u2069]/g;
+const MARKS = /[\u2066-\u2069]/g;
 
 /** English text marked as a fallback. */
 export function markFallback(text: string): string {
   return text ? `${FALLBACK_START}${text}${FALLBACK_END}` : text;
+}
+
+/** A value spliced into a sentence on a right to left page, kept in its own direction. */
+export function isolateValue(text: string): string {
+  return text && !/^[\u2066-\u2068]/.test(text) ? `${VALUE_START}${text}${FALLBACK_END}` : text;
 }
 
 /**
@@ -30,7 +40,7 @@ export function asEnglish(text: string): string {
   return isSourceLocale() ? text : markFallback(text);
 }
 
-/** The text without fallback marks, for files, addresses and comparisons. */
+/** The text without fallback or value marks, for files, addresses and comparisons. */
 export function plainText(text: string): string {
   return text.replace(MARKS, '');
 }
@@ -39,29 +49,37 @@ export function hasFallback(text: string): boolean {
   return text.includes(FALLBACK_START);
 }
 
-/** The text with every marked run taken out, outermost runs first. */
+/** The text with every fallback run taken out (value runs stay, and so do values inside them). */
 function withoutMarkedRuns(text: string): string {
   let out = '';
-  let depth = 0;
+  const open: boolean[] = [];
   for (const ch of text) {
-    if (ch === FALLBACK_START) depth++;
-    else if (ch === FALLBACK_END) depth = Math.max(0, depth - 1);
-    else if (depth === 0) out += ch;
+    if (ch === FALLBACK_START) open.push(true);
+    else if (ch === '\u2067' || ch === VALUE_START) open.push(false);
+    else if (ch === FALLBACK_END) open.pop();
+    else if (!open.includes(true)) out += ch;
   }
   return out;
 }
 
 const LETTER = /\p{L}/u;
+/** Letters of the scripts that read right to left (Hebrew, Arabic and its neighbors). */
+const RTL_LETTER = /[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]/;
 
 /**
  * What language a piece of text is in, as far as the marks tell: "fallback" when every letter
  * in it sits inside a marked run, "translated" when it has letters outside any run, and null
- * when it has no letters at all (numbers, punctuation, an address).
+ * when it has no letters at all (numbers, punctuation).
  */
 export function textKind(text: string): 'fallback' | 'translated' | null {
   if (!LETTER.test(text)) return null;
   if (!hasFallback(text)) return 'translated';
   return LETTER.test(withoutMarkedRuns(text)) ? 'translated' : 'fallback';
+}
+
+/** Whether text outside any fallback run has a letter of a right to left script. */
+function hasRtlLetters(text: string): boolean {
+  return RTL_LETTER.test(withoutMarkedRuns(text));
 }
 
 // Watching the page ------------------------------------------------------------------------
@@ -82,15 +100,16 @@ function directText(el: Element): string {
  * children has none of its own: the children settle themselves, so a row of buttons labeled in
  * English does not make the buttons inside it English.
  */
-function elementKind(el: Element): { kind: 'fallback' | 'translated'; fromText: boolean } | null {
-  const own = textKind(directText(el));
-  if (own) return { kind: own, fromText: true };
+function elementKind(el: Element): { kind: 'fallback' | 'translated'; fromText: boolean; rtlLetters: boolean } | null {
+  const text = directText(el);
+  const own = textKind(text);
+  if (own) return { kind: own, fromText: true, rtlLetters: hasRtlLetters(text) };
   if (LETTER.test(el.textContent ?? '')) return null;
   for (const name of NAMED_BY) {
     const value = el.getAttribute(name);
     if (value) {
       const kind = textKind(value);
-      if (kind) return { kind, fromText: name === 'placeholder' };
+      if (kind) return { kind, fromText: name === 'placeholder', rtlLetters: hasRtlLetters(value) };
     }
   }
   return null;
@@ -112,8 +131,11 @@ function inheritedDir(el: Element): string {
 }
 
 /** The direction for an element's own words on a right to left page. */
-function directionFor(el: Element, want: string, pageLang: string): string {
-  if (want === pageLang) return 'rtl';
+function directionFor(el: Element, want: string, pageLang: string, rtlLetters: boolean): string {
+  // Words in the page's language read right to left. Text with no right to left letters at all,
+  // such as an address or a name from City records, finds its own direction, so "1305 N Example
+  // Ave" keeps its number in front.
+  if (want === pageLang) return rtlLetters ? 'rtl' : 'auto';
   // A text box keeps "auto", so what a visitor types in Arabic still runs right to left.
   return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' ? 'auto' : 'ltr';
 }
@@ -133,7 +155,7 @@ function settle(el: Element, pageLang: string, rtl: boolean): void {
   // left again. Only an element's own text decides this, never a label on a box of other things.
   let dir: string | null = null;
   if (rtl && want !== null && found?.fromText) {
-    const wanted = directionFor(el, want, pageLang);
+    const wanted = directionFor(el, want, pageLang, found.rtlLetters);
     if (wanted !== inheritedDir(el)) dir = wanted;
   }
   if (lang === null && dir === null) {
