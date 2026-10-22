@@ -118,6 +118,19 @@ Title Fund, Philly311, SEPTA or the Land Bank's programs, so those stay as prope
 | bus lane | bann bis la | "bann" is a road lane; never "liy bis", which is a bus route |
 | lease | kontra lokasyon | the word the catalog already uses for "lease" in `dossier.listing.decline` ("vant oswa lokasyon") |
 
+## Added in the catch up pass (2026-10-22)
+
+| English | Haitian Creole | Notes |
+|---|---|---|
+| flyer | afich | "Fè yon afich pou vwazen"; "afiche" is to post |
+| packet | pake | a printed set of pages: "Fè yon pake" |
+| letter (to fill in and print) | lèt | the page is "Ekri yon lèt" |
+| who represents you | ki moun ki reprezante ou | |
+| ward, division | ward, divizyon | "Ward" stays English, as on voter papers; "committee people" are "manm komite" |
+| City Council member | manm Konsèy Minisipal | state representative "reprezantan eta", state senator "senatè eta", Member of Congress "manm Kongrè" |
+| projects neighbors finished | pwojè vwazen yo fini | the form is "Di nou sou yon pwojè ou fini" |
+| not reviewed by a lawyer | yon avoka poko revize l | always with "se pa konsèy jiridik" (not legal advice) |
+
 ## The word for word passages (docs/ETHICS.md)
 
 Each is one fixed unit. The same Haitian Creole text is used wherever the English repeats it
