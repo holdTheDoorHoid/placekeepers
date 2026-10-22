@@ -1033,7 +1033,9 @@ const vi: Catalog = {
                                         ? 'Nhân viên hướng dẫn học sinh qua đường'
                                         : style === 'redlining'
                                           ? 'Bản đồ phân loại khu dân cư (redlining) năm 1937'
-                                          : 'Chi tiết',
+                                          : style === 'projects'
+                                            ? 'Dự án hàng xóm đã hoàn thành'
+                                            : 'Chi tiết',
     memorialTitle: 'Để tưởng nhớ',
     peopleHere: (n) => `${plural(n, { other: '# người' })} được tưởng nhớ ở đây`,
     killed: {

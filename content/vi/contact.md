@@ -5,7 +5,7 @@
 Nếu có điều gì trên bản đồ có vẻ sai, chi tiết của một lô đất, một hướng đi hợp pháp, hay bất cứ
 điều gì khác, xin hãy cho chúng tôi biết bằng biểu mẫu ngắn này. Biểu mẫu đã hỏi về địa điểm và
 điều có vẻ sai, để chúng tôi kiểm tra nhanh. Biểu mẫu bằng tiếng Anh, nhưng bạn có thể viết bằng
-tiếng Việt.
+tiếng Việt: chúng tôi sẽ đọc bằng sự trợ giúp của một công cụ dịch.
 
 [Báo một chỉnh sửa](https://github.com/holdTheDoorHoid/placekeepers/issues/new?template=correction.yml)
 
@@ -15,6 +15,16 @@ Nếu bạn biết một nguồn dữ liệu công khai mà hàng xóm ở Phila
 biết ở đây.
 
 [Đề xuất một nguồn dữ liệu](https://github.com/holdTheDoorHoid/placekeepers/issues/new?template=data-source.yml)
+
+## Hãy cho chúng tôi biết về một dự án bạn đã hoàn thành
+
+Nếu hàng xóm đã hoàn thành một buổi dọn dẹp, một khu vườn, một chỗ ngồi, một bức tranh tường, việc
+trồng cây, hoặc nhận được một chiếc ghế, một mái che hay một việc sửa qua 311 từ Thành phố, hãy cho
+chúng tôi biết bằng biểu mẫu này. Một người đọc mọi báo cáo, và khi nó được duyệt, nó xuất hiện trên
+bản đồ dưới mục "Các dự án hàng xóm đã hoàn thành", kèm một liên kết trở lại báo cáo. Bản đồ không
+bao giờ hiện ai đã gửi nó.
+
+[Hãy cho chúng tôi biết về một dự án bạn đã hoàn thành](https://github.com/holdTheDoorHoid/placekeepers/issues/new?template=project.yml)
 
 ## Một trạm xe buýt, mái che hoặc ghế ngồi bị thiếu hoặc sai
 
@@ -36,6 +46,6 @@ giữ tên, để nó không xuất hiện lại trong một lần cập nhật 
 
 ## Mọi việc khác
 
-Với bất cứ điều gì không khớp với hai biểu mẫu ở trên, hãy mở một issue chung trên
+Với bất cứ điều gì không khớp với các biểu mẫu ở trên, hãy mở một issue chung trên
 [GitHub](https://github.com/holdTheDoorHoid/placekeepers/issues/new/choose), hoặc dùng biểu mẫu
 chỉnh sửa và giải thích điều bạn cần trong phần mô tả.
