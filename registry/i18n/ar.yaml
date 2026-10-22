@@ -1,0 +1,373 @@
+# Arabic (ar) translations of the visitor facing words in registry/*.yaml, by id. English in
+# registry/*.yaml is the source; anything left out here shows the English. Which fields may be
+# translated, and the shape of this file, are in docs/TRANSLATING.md and
+# web/src/i18n/registry-text.ts. Key terms are fixed in docs/i18n/glossary-ar.md.
+#
+# Plain Modern Standard Arabic. Western digits, Arabic punctuation, no dashes as punctuation, and
+# proper names as they are (Placekeepers, Philly311, LandCare, SEPTA, Land Bank).
+
+groups:
+  lots:
+    label: قطع الأراضي والمباني
+    description: قطع الأراضي الفارغة والمباني المهجورة، وما يمكن فعله بها.
+  care:
+    label: عناية قائمة بالفعل
+    description: قطع أراضٍ يُعتنى بها بالفعل، وحدائق ومتنزهات وأماكن أخرى يرعاها الناس أصلًا.
+  displacement:
+    label: الأسعار والحماية
+    description: >-
+      أين ترتفع الأسعار، حتى يُقرن التخضير وغيره من التحسينات بإجراءات حماية للجيران الذين يسكنون
+      هناك الآن.
+  rules:
+    label: قواعد الأرض وجلسات الاستماع
+    description: >-
+      الأحياء والعقارات التاريخية، ونطاقات تقسيم المناطق الإضافية، وجلسات الاستماع القادمة بشأن
+      قطع الأراضي والمباني، ومواقع البراونفيلد الفيدرالية.
+  streets:
+    label: الشوارع والنُّصُب التذكارية
+    description: >-
+      شبكة الشوارع الأكثر إصابات، والحوادث، والأشخاص الذين قُتلوا في شوارعنا، وأعمدة الشوارع
+      ووسائل تهدئة حركة المرور وحرّاس العبور المدرسيين التي تُدرجها المدينة.
+  transit:
+    label: الحافلات والقطارات
+    description: >-
+      مواقف SEPTA وخطوطها، وعدد مرات مجيء الخدمة، وكم شخصًا يصعد، وأي المواقف فيها مظلة أو مقعد،
+      بحسب قائمة المدينة للمظلات وOpenStreetMap.
+  heat:
+    label: الحرارة والأشجار والفيضانات
+    description: >-
+      مدى تأثير حرّ الصيف في كل حي، والأشجار التي تعتني بها المدينة في شوارعها وحدائقها، وأين
+      تتوقع FEMA حدوث فيضانات.
+  amenities:
+    label: مقاعد وماء ومراحيض وغيرها
+    description: >-
+      أماكن للجلوس وشرب الماء واستخدام المرحاض أو استعارة كتاب، كما هي مسجّلة في OpenStreetMap،
+      ونوافير الشرب في الحدائق.
+  public_places:
+    label: المكتبات والمراكز الترفيهية والمسابح
+    description: >-
+      فروع Free Library، والمراكز الترفيهية والمسابح ومناطق الألعاب المائية التابعة لإدارة الحدائق
+      والترفيه، ومواقع التدفئة والتبريد لدى المدينة، كما تُدرجها المدينة.
+  conditions:
+    label: مشكلات بُلّغ عنها إلى 311
+    description: >-
+      إلقاء النفايات بصورة غير قانونية، وأضواء مطفأة، وكتابات على الجدران بلّغ عنها الناس إلى
+      Philly311 في آخر 90 يومًا، تُعدّ بحسب المقطع.
+  placemaking:
+    label: الفن وتهيئة الأماكن
+    description: >-
+      جداريات ومنحوتات وفسيفساء وفنون عامة أخرى، من المدينة وOpenStreetMap وWikidata، وملاعب
+      الأطفال التابعة للمدينة.
+  walking:
+    label: المشي وركوب الدراجات والناس
+    description: >-
+      مدى صلاحية كل منطقة للمشي، وكم شخصًا وكم مكانًا يوميًا على بعد مشي قصير، ومدى الضغط الذي
+      يسببه كل شارع لراكبي الدراجات.
+  then_and_now:
+    label: الماضي والحاضر
+    description: >-
+      ما كان قائمًا في مقطع شارع من قبل، وما بقي من الماضي. تُحمَّل الصور الجوية منذ 1959 وأطلس
+      1860 من خوادم المدينة فقط عند تشغيلها؛ أما خريطة "الخط الأحمر" (redlining) لعام 1937 فتأتي
+      من هذا الموقع.
+  safety_context:
+    label: حيث الحاجة إلى العناية أكبر
+    description: سياق يبيّن أين يُرجَّح أن تنفع التحسينات أكثر.
+  boundaries:
+    label: الحدود
+    description: دوائر المجلس والمنظمات المجتمعية والأحياء.
+  basemap:
+    label: الخريطة الأساسية
+    description: الشوارع والمباني وأسماء الأماكن، تحت كل شيء آخر.
+
+sources:
+  opa_properties:
+    name: عقارات OPA
+    publisher: مدينة فيلادلفيا، مكتب تقييم الممتلكات
+  pwd_parcels:
+    name: قطع إدارة المياه
+    publisher: إدارة المياه في فيلادلفيا
+  vacant_indicators_land:
+    name: مؤشرات العقارات الفارغة، الأراضي (Vacant Property Indicators)
+    publisher: مدينة فيلادلفيا
+  vacant_indicators_bldg:
+    name: مؤشرات العقارات الفارغة، المباني (Vacant Property Indicators)
+    publisher: مدينة فيلادلفيا
+  shootings:
+    name: ضحايا إطلاق النار
+    publisher: إدارة شرطة فيلادلفيا
+  high_injury_network:
+    name: شبكة الشوارع الأكثر إصابات 2025 (Vision Zero High Injury Network)
+    publisher: مدينة فيلادلفيا، مكتب النقل ونظم البنية التحتية
+  real_estate_transfers:
+    name: عمليات نقل العقارات
+    publisher: مدينة فيلادلفيا، إدارة السجلات
+  assessment_history:
+    name: سجل التقييمات
+    publisher: مدينة فيلادلفيا، مكتب تقييم الممتلكات
+  li_violations:
+    name: "مخالفات قانون البناء لدى L&I"
+    publisher: مدينة فيلادلفيا، إدارة التراخيص والتفتيش
+  li_complaints:
+    name: "شكاوى L&I"
+    publisher: مدينة فيلادلفيا، إدارة التراخيص والتفتيش
+  li_permits:
+    name: "تصاريح البناء وتقسيم المناطق لدى L&I"
+    publisher: مدينة فيلادلفيا، إدارة التراخيص والتفتيش
+  li_unsafe:
+    name: المباني غير الآمنة
+    publisher: مدينة فيلادلفيا، إدارة التراخيص والتفتيش
+  li_imminently_dangerous:
+    name: المباني التي تشكّل خطرًا وشيكًا
+    publisher: مدينة فيلادلفيا، إدارة التراخيص والتفتيش
+  li_clean_and_seal:
+    name: أوامر عمل التنظيف والإغلاق
+    publisher: مدينة فيلادلفيا، إدارة التراخيص والتفتيش
+  li_demolitions:
+    name: هدم المباني
+    publisher: مدينة فيلادلفيا، إدارة التراخيص والتفتيش
+  building_footprints:
+    name: مخططات المباني
+    publisher: مدينة فيلادلفيا، إدارة التراخيص والتفتيش
+  land_use:
+    name: استخدام الأراضي
+    publisher: لجنة التخطيط العمراني في فيلادلفيا
+  city_owned_property:
+    name: الممتلكات التي تملكها المدينة
+    publisher: مدينة فيلادلفيا، إدارة التخطيط والتنمية
+  phs_landcare:
+    name: قطع PHS LandCare
+    publisher: جمعية بنسلفانيا للبستنة (Pennsylvania Horticultural Society)، عبر مدينة فيلادلفيا
+  gardens_phs_ngt:
+    name: حدائق تدعمها PHS وNeighborhood Gardens Trust
+    publisher: جمعية بنسلفانيا للبستنة (Pennsylvania Horticultural Society) وNeighborhood Gardens Trust
+  gardens_registered:
+    name: الحدائق المجتمعية المسجّلة
+    publisher: إدارة الحدائق والترفيه في فيلادلفيا
+  ppr_properties:
+    name: عقارات إدارة الحدائق والترفيه
+    publisher: إدارة الحدائق والترفيه في فيلادلفيا
+  zoning_base_districts:
+    name: مناطق تقسيم المناطق الأساسية
+    publisher: لجنة التخطيط العمراني في فيلادلفيا
+  council_districts:
+    name: دوائر مجلس المدينة 2024
+    publisher: مدينة فيلادلفيا
+  community_organizations:
+    name: المنظمات المجتمعية المسجّلة (Registered Community Organizations)
+    publisher: لجنة التخطيط العمراني في فيلادلفيا
+  neighborhoods:
+    name: أحياء فيلادلفيا
+    publisher: Abaca Labs، عبر OpenDataPhilly
+  acs_poverty:
+    name: معدل الفقر بحسب منطقة التعداد (ACS من 2020 إلى 2024)
+    publisher: مكتب الإحصاء الأمريكي، American Community Survey
+  cagp_tax_2025:
+    name: "دين الضرائب حتى يوليو 2025 (Clean & Green Philly)"
+    publisher: "Clean & Green Philly، Code for Philly"
+  crashes_2020_2024:
+    name: الحوادث، من 2020 إلى 2024 (بيانات PennDOT، نسخة المدينة)
+    publisher: >-
+      مدينة فيلادلفيا، من سجلات حوادث وزارة النقل في بنسلفانيا (Pennsylvania Department of
+      Transportation)
+  crashes_2016_2020:
+    name: الحوادث، من 2016 إلى 2020 (بيانات PennDOT، نسخة المدينة)
+    publisher: >-
+      مدينة فيلادلفيا، من سجلات حوادث وزارة النقل في بنسلفانيا (Pennsylvania Department of
+      Transportation)
+  crashes_2007_2017:
+    name: الحوادث، 2015 (بيانات PennDOT، نسخة المدينة من 2007 إلى 2017)
+    publisher: >-
+      مدينة فيلادلفيا، من سجلات حوادث وزارة النقل في بنسلفانيا (Pennsylvania Department of
+      Transportation)
+  fatal_crashes:
+    name: الحوادث المميتة
+    publisher: إدارة شرطة فيلادلفيا، وحدة التحقيق في الحوادث
+  schools:
+    name: المدارس
+    publisher: مدينة فيلادلفيا، لجنة التخطيط
+  street_centerlines:
+    name: محاور الشوارع
+    publisher: مدينة فيلادلفيا، إدارة الشوارع
+  memorial_names:
+    name: أسماء النُّصُب التذكارية، مجمّعة يدويًا
+    publisher: Placekeepers، من قوائم تأبين عامة مثل TrafficVictimsPHL لدى Bicycle Coalition
+  pba_laser:
+    name: مشكلات وقوف بُلّغ عنها عبر Laser Vision
+    publisher: Philly Bike Action
+  census_tracts_2020:
+    name: مناطق التعداد 2020
+    publisher: مدينة فيلادلفيا، لجنة التخطيط، عن مكتب الإحصاء الأمريكي
+  tree_canopy_2018:
+    name: مظلة الأشجار من 2008 إلى 2018
+    publisher: >-
+      مدينة فيلادلفيا، إدارة الحدائق والترفيه، بالتعاون مع University of Vermont Spatial Analysis
+      Laboratory
+  street_trees:
+    name: قائمة أشجار الشوارع
+    publisher: مدينة فيلادلفيا، إدارة الحدائق والترفيه
+  fema_floodplain:
+    name: سهل الفيضان لدى FEMA (2023)
+    publisher: الوكالة الفيدرالية لإدارة الطوارئ (FEMA)، تنشرها مدينة فيلادلفيا
+  basemap_openstreetmap:
+    name: الخريطة الأساسية من OpenStreetMap
+    publisher: مساهمو OpenStreetMap، في ملف خريطة أعدّته Protomaps
+  septa_gtfs:
+    name: جداول SEPTA (GTFS)
+    publisher: هيئة النقل في جنوب شرق بنسلفانيا (SEPTA)
+  septa_ridership_bus:
+    name: أعداد ركاب مواقف حافلات SEPTA
+    publisher: هيئة النقل في جنوب شرق بنسلفانيا (SEPTA)
+  septa_ridership_trolley:
+    name: أعداد ركاب مواقف ترام SEPTA
+    publisher: هيئة النقل في جنوب شرق بنسلفانيا (SEPTA)
+  osm_philadelphia:
+    name: OpenStreetMap في فيلادلفيا (مواقف الحافلات والمظلات والمقاعد والمياه والمراحيض وغيرها)
+    publisher: مساهمو OpenStreetMap، من مقتطف Geofabrik لولاية بنسلفانيا
+  heat_vulnerability:
+    name: قابلية التأثر بالحرارة بحسب منطقة التعداد
+    publisher: مدينة فيلادلفيا، إدارة الصحة العامة ومكتب الاستدامة
+  library_locations:
+    name: مواقع Free Library
+    publisher: مدينة فيلادلفيا، من أجل Free Library of Philadelphia
+  ppr_program_sites:
+    name: مواقع برامج إدارة الحدائق والترفيه
+    publisher: مدينة فيلادلفيا، إدارة الحدائق والترفيه
+  ppr_swimming_pools:
+    name: مسابح إدارة الحدائق والترفيه
+    publisher: مدينة فيلادلفيا، إدارة الحدائق والترفيه
+  ppr_spraygrounds:
+    name: مناطق الألعاب المائية التابعة لإدارة الحدائق والترفيه
+    publisher: مدينة فيلادلفيا، إدارة الحدائق والترفيه
+  ppr_hydration_stations:
+    name: محطات مياه الشرب التابعة لإدارة الحدائق والترفيه
+    publisher: مدينة فيلادلفيا، إدارة الحدائق والترفيه
+  philly311_conditions:
+    name: طلبات Philly311 بشأن إلقاء النفايات والأضواء المطفأة والكتابات على الجدران
+    publisher: مدينة فيلادلفيا، Philly311
+  bus_shelters:
+    name: مظلات الحافلات
+    publisher: مدينة فيلادلفيا، مكتب النقل ونظم البنية التحتية
+  street_poles:
+    name: أعمدة الشوارع
+    publisher: مدينة فيلادلفيا، إدارة الشوارع (قسم إنارة الشوارع)
+  traffic_calming:
+    name: وسائل تهدئة حركة المرور
+    publisher: مدينة فيلادلفيا، إدارة الشوارع
+  crossing_guards:
+    name: مواقع حرّاس العبور المدرسيين
+    publisher: مدينة فيلادلفيا، إدارة الشوارع
+  percent_for_art:
+    name: مجموعة Percent for Art
+    publisher: مدينة فيلادلفيا، إدارة التخطيط والتنمية
+  wikidata_art:
+    name: الفن العام في Wikidata
+    publisher: مساهمو Wikidata (مؤسسة ويكيميديا)
+  commercial_corridors:
+    name: الممرات التجارية في فيلادلفيا
+    publisher: مدينة فيلادلفيا، إدارة التخطيط والتنمية
+  epa_walkability:
+    name: المؤشر الوطني لصلاحية المشي (قاعدة بيانات EPA للمواقع الذكية)
+    publisher: وكالة حماية البيئة الأمريكية، مكتب إنعاش المجتمعات (Office of Community Revitalization)
+  census_blocks_2020:
+    name: السكان بحسب كتلة التعداد (تعداد 2020)
+    publisher: مكتب الإحصاء الأمريكي، بيانات إعادة تقسيم الدوائر لتعداد 2020 (P.L. 94-171)
+  dvrpc_lts:
+    name: ضغط حركة المرور على الدراجات (DVRPC Level of Traffic Stress)
+    publisher: لجنة التخطيط الإقليمي لوادي ديلاوير (DVRPC)
+  snap_retailers:
+    name: متاجر الغذاء التي تقبل SNAP (USDA)
+    publisher: وزارة الزراعة الأمريكية، بيانات متاجر SNAP
+  real_estate_sales:
+    name: مبيعات العقارات في المدينة كلها
+    publisher: مدينة فيلادلفيا، إدارة السجلات
+  assessment_values:
+    name: القيم السوقية المقدّرة في المدينة كلها، لسنتين ضريبيتين
+    publisher: مدينة فيلادلفيا، مكتب تقييم الممتلكات
+  acs_tenure:
+    name: المستأجرون والملاك بحسب منطقة التعداد (ACS من 2020 إلى 2024)
+    publisher: مكتب الإحصاء الأمريكي، American Community Survey
+  market_value_analysis:
+    name: تحليل قيمة السوق 2026 (Market Value Analysis)
+    publisher: Reinvestment Fund، من أجل إدارة التخطيط والتنمية في مدينة فيلادلفيا
+  li_history:
+    name: "سجلات L&I للجدول الزمني للقطعة"
+    publisher: مدينة فيلادلفيا، إدارة التراخيص والتفتيش
+  cagp_vacant_land_2024:
+    name: "قائمة الأراضي الفارغة، يونيو 2024 (L&I، احتفظت بها Clean & Green Philly)"
+    publisher: >-
+      مدينة فيلادلفيا، إدارة التراخيص والتفتيش، كما احتفظت بها Clean & Green Philly (Code for
+      Philly)
+  cagp_vacant_buildings_2024:
+    name: "قائمة المباني الفارغة، يونيو 2024 (Clean & Green Philly)"
+    publisher: "Clean & Green Philly، Code for Philly"
+  historic_districts:
+    name: الأحياء التاريخية المحلية
+    publisher: لجنة فيلادلفيا للآثار التاريخية
+  historic_sites:
+    name: سجل فيلادلفيا للأماكن التاريخية، العقارات
+    publisher: لجنة فيلادلفيا للآثار التاريخية
+  zoning_overlays:
+    name: النطاقات الإضافية لتقسيم المناطق
+    publisher: لجنة التخطيط العمراني في فيلادلفيا
+  appeals:
+    name: "الطعون أمام مجلس تقسيم المناطق ومجلس مراجعة L&I ومجالس أخرى"
+    publisher: مدينة فيلادلفيا، إدارة التراخيص والتفتيش
+  epa_brownfields:
+    name: عقارات البراونفيلد لدى EPA (ACRES)، فيلادلفيا
+    publisher: وكالة حماية البيئة الأمريكية
+  land_conveyances:
+    name: الصكوك الصادرة عن جهات الأراضي في المدينة منذ 2014
+    publisher: مدينة فيلادلفيا، إدارة السجلات
+  land_conveyed_by_fy:
+    name: >-
+      العقارات التي نُقلت ملكيتها بحسب البرنامج والسنة المالية، من 2017 إلى 2023 (لوحة إدارة
+      الأراضي)
+    publisher: مدينة فيلادلفيا، إدارة التخطيط والتنمية (إدارة الأراضي)
+  city_aerial_photos:
+    name: صور جوية بحسب السنة (orthophotos)
+    publisher: مدينة فيلادلفيا، مكتب الابتكار والتكنولوجيا
+  dvrpc_aerial_photos:
+    name: صور جوية لعامي 1959 و1975
+    publisher: لجنة التخطيط الإقليمي لوادي ديلاوير، تستضيفها مدينة فيلادلفيا
+  usgs_aerial_photos_1999:
+    name: صور جوية لعام 1999
+    publisher: هيئة المسح الجيولوجي الأمريكية (U.S. Geological Survey)، تستضيفها مدينة فيلادلفيا
+  city_atlas_1860:
+    name: أطلس Hexamer وLocher لعام 1860
+    publisher: Greater Philadelphia GeoHistory Network، تستضيفه مدينة فيلادلفيا
+  mapping_inequality_1937:
+    name: "Mapping Inequality: خريطة HOLC لفيلادلفيا لعام 1937"
+    publisher: جامعة ريتشموند، Digital Scholarship Lab
+  acs_rent_burden:
+    name: الإيجار كنسبة من الدخل بحسب منطقة التعداد (ACS من 2020 إلى 2024)
+    publisher: مكتب الإحصاء الأمريكي، American Community Survey
+  acs_occupancy:
+    name: المنازل المسكونة والفارغة بحسب منطقة التعداد (ACS من 2020 إلى 2024)
+    publisher: مكتب الإحصاء الأمريكي، American Community Survey
+  acs_vacancy:
+    name: لماذا المنازل فارغة بحسب منطقة التعداد (ACS من 2020 إلى 2024)
+    publisher: مكتب الإحصاء الأمريكي، American Community Survey
+  acs_income:
+    name: دخل الأسرة الوسيط بحسب منطقة التعداد (ACS من 2020 إلى 2024)
+    publisher: مكتب الإحصاء الأمريكي، American Community Survey
+  acs_rent:
+    name: الإيجار الوسيط بحسب منطقة التعداد (ACS من 2020 إلى 2024)
+    publisher: مكتب الإحصاء الأمريكي، American Community Survey
+  warming_cooling_sites:
+    name: مواقع التدفئة والتبريد
+    publisher: مدينة فيلادلفيا، مكتب إدارة الطوارئ
+  ppr_playgrounds:
+    name: ملاعب الأطفال
+    publisher: مدينة فيلادلفيا، إدارة الحدائق والترفيه
+
+options:
+  live_city_data:
+    label: جلب بيانات المدينة الحية
+    description: >-
+      حين تفتح صفحة قطعة أو تبحث عن عنوان، يطلب متصفحك أحدث السجلات من الخوادم العامة لمدينة
+      فيلادلفيا: المالك والمبيعات والتقييمات والتفتيشات والطعون. تذهب هذه الطلبات مباشرة من جهازك
+      إلى المدينة، ولا تمر أبدًا عبر Placekeepers، وترى خوادم المدينة هذه الطلبات كما سترى زيارة
+      لموقع العقارات الخاص بالمدينة. وتأتي الصور الجوية للمدينة وأطلس 1860، تحت "الماضي والحاضر"،
+      مباشرة من خوادم المدينة أيضًا، لكن فقط بعد أن تشغّل إحداهما. أوقف هذا الخيار لتستخدم فقط
+      النسخة الأسبوعية من البيانات التي ينشرها Placekeepers. ويلزم تشغيله للبحث عن العناوين، ولفتح
+      قطعة ليست في قائمتنا، وللصور القديمة والأطلس.
