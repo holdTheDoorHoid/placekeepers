@@ -127,3 +127,31 @@ page worth following, see above).
 Safety lines translated with extra care: `letters.unreviewed` ("Un abogado todavía no ha revisado esta
 carta. No es asesoría legal."), `flyer.publicWarning`, `flyer.whereNot`, `projects.tellUsNote`,
 `projects.privacy`, and the same rules on the Where to post a flyer, How to do it and Contact pages.
+
+## Added for the "Did it work?" page (2026-10-22)
+
+| English | Spanish | Note |
+|---|---|---|
+| care (what a lot or building received) | cuidado | the same word as "donde más se necesita cuidado" |
+| Did it work? | ¿Funcionó? | page title and menu |
+| We could not tell | No pudimos saberlo | a plain admission, never "sin efecto" and never "funcionó" |
+| Too few to tell | Muy pocos para saberlo | |
+| No clear change | Sin cambio claro | |
+| Fewer / More after care | Menos / Más después del cuidado | |
+| the real evidence (randomized trials) | la evidencia real; ensayos aleatorizados | the page says a comparison of records "puede inducir a error" and a trial cannot be fooled the same ways |
+| mislead | inducir a error | not "engañar" for a comparison of records, which has no intent |
+| This does not show that care caused them | Esto no demuestra que el cuidado haya sido la causa | written without "los/las", so one sentence fits tiroteos, reportes and quejas |
+| comparison places | lugares de comparación | |
+| check (the placebo and the ring) | verificación | "revisar" stays for surveying a stop |
+| Check passed / failed | Verificación superada / fallida | |
+| the ring (200 to 400 meters out) | el anillo | |
+| half year | semestre | "primer semestre de 2017"; the template adds "desde el ... hasta el ..." |
+| 90 percent interval | intervalo del 90 por ciento | |
+| no change (in a template that says "found ...") | un cambio de cero | "encontró ningún cambio" would not parse |
+| dumping reports | reportes de basura tirada ilegalmente | the site's existing wording for illegal dumping |
+| complaints about vacant property | quejas sobre propiedades vacías | "quejas" as in "Quejas a L&I" |
+| shootings (counts) | tiroteos | |
+| chance | casualidad | |
+| area (a part of the city redrawn in the interval) | zona | |
+| season (LandCare's spring or fall) | estación del año | "temporada" would read as a sports season |
+| clean and seal | limpieza y sellado | as the lot page says |

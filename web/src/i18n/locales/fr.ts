@@ -96,6 +96,7 @@ const fr: Catalog = {
     menuLabel: 'Pages du site',
     map: 'Carte',
     landBank: 'La Land Bank en chiffres',
+    didIt: 'Est-ce que ça a marché ?',
     pages: [
       { slug: 'about', label: 'À propos' },
       { slug: 'why', label: 'Pourquoi ça marche' },
@@ -2867,6 +2868,177 @@ const fr: Catalog = {
       ask: 'Je demande à votre bureau de veiller à ce que le problème soit réglé.',
       subject: (number) => `À propos de la demande Philly311 ${number || '[numéro]'}`,
     },
+  },
+
+  didit: {
+    pageTitle: 'Est-ce que ça a marché ?',
+    back: 'Retour à la carte',
+    intro:
+      "Quand un terrain ou un bâtiment a reçu du soin, les rues autour ont-elles changé, par rapport à des lieux semblables qui n'en ont pas reçu ? Nous avons comparé les registres de la Ville elle-même pour des milliers de lieux à travers Philadelphie. Voici ce qu'ils peuvent dire, et ce qu'ils ne peuvent pas dire.",
+    loading: 'Chargement des résultats',
+    loadFailed: "Les résultats n'ont pas pu être chargés. Vérifiez votre connexion et réessayez.",
+    retry: 'Réessayer',
+    missing: "Les résultats ne sont pas encore publiés. Ils apparaissent après la prochaine actualisation hebdomadaire des données.",
+    print: 'Imprimer cette page',
+    runOn: (generated, through) =>
+      `Cette comparaison a été faite le ${generated}, avec les registres de la Ville jusqu'au ${through}. Elle est refaite environ une fois par an.`,
+    // La réponse courte
+    shortTitle: 'La réponse courte',
+    tallyIntro: (n) => `Nous avons fait ${plural(n, { one: '# comparaison', other: '# comparaisons' })}.`,
+    tallyParts: {
+      fewer: (n) => `${plural(n, { one: '# a trouvé', other: '# ont trouvé' })} moins de problèmes à proximité après le soin`,
+      more: (n) => plural(n, { one: '# a trouvé davantage', other: '# ont trouvé davantage' }),
+      no_clear_change: (n) => plural(n, { one: "# n'a trouvé aucun changement net", other: "# n'ont trouvé aucun changement net" }),
+      check_failed: (n) =>
+        `${plural(n, { one: "# n'était pas fiable", other: "# n'étaient pas fiables" })}, parce que les lieux qui ont reçu du soin évoluaient déjà différemment avant celui-ci`,
+      too_few: (n) => `${plural(n, { one: '# avait', other: '# avaient' })} trop peu de lieux pour savoir`,
+    },
+    tallyJoin: (parts) => (parts.length <= 1 ? `${parts.join('')}.` : `${parts.slice(0, -1).join(', ')} et ${parts[parts.length - 1]}.`),
+    noneFewer:
+      "Les registres de la Ville ne montrent pas que le soin ait fait baisser les fusillades, les dépôts sauvages ou les plaintes à proximité. Là où ils montrent davantage de cas après le soin, la raison la plus probable est que le soin est allé là où les problèmes augmentaient déjà, et non que le soin en soit la cause.",
+    someFewer: "Là où les registres montrent moins de problèmes après le soin, lisez les vérifications sous chaque résultat avant de vous y fier.",
+    notOneLot: "Rien de tout cela n'est un verdict sur un terrain en particulier.",
+    // Les vraies preuves (docs/EVIDENCE.md)
+    trialsTitle: 'Les vraies preuves : des essais à Philadelphie',
+    trialsIntro:
+      'Une comparaison de registres comme celle-ci peut induire en erreur. Les essais randomisés ne peuvent pas être trompés de la même façon, et deux ont été menés ici :',
+    trials: [
+      'Verdir des terrains vacants : dans un essai mené dans toute la ville sur 541 terrains, la violence armée a baissé de 29 % près des terrains verdis dans les quartiers sous le seuil de pauvreté (Branas et ses collègues, 2018).',
+      'Dans le même essai, les fusillades ont baissé de 6,8 % près des terrains verdis et de 9,2 % près des terrains seulement nettoyés et tondus (Moyer et ses collègues, 2019).',
+      "Réparer les maisons abandonnées : des portes et des fenêtres en bon état ont réduit de 13 % les agressions avec une arme à feu à proximité ; le nettoyage seul n'a fait aucune différence mesurable (South et ses collègues, 2023).",
+    ],
+    trialLinks: ["Lire l'essai sur le verdissement", "Lire l'étude sur les fusillades", "Lire l'essai sur la réparation des maisons"],
+    whyLink: 'Lire la page « Pourquoi ça marche »',
+    warningsTitle: 'Pourquoi une comparaison de registres peut induire en erreur',
+    warnings: [
+      "Le soin va souvent là où les problèmes augmentent déjà, si bien que les lieux qui l'ont reçu peuvent différer des lieux avec lesquels on les compare, d'une façon qu'aucun registre ne montre.",
+      "Une mauvaise année est souvent suivie d'une meilleure de toute façon. Des lieux choisis juste après une mauvaise période peuvent sembler s'améliorer alors que rien n'a changé.",
+      "Les problèmes peuvent se déplacer plus loin dans la rue au lieu de disparaître. Pour cela, nous regardons l'anneau autour de chaque lieu.",
+    ],
+    // Un type de soin
+    kinds: {
+      landcare: 'Terrains que PHS LandCare a nettoyés et verdis',
+      clean_seal: 'Terrains et bâtiments que la Ville a nettoyés et scellés',
+      demolition: 'Bâtiments que la Ville a démolis',
+      projects: 'Projets terminés par des voisins',
+    },
+    kindNotes: {
+      landcare: (records, dated) =>
+        `La liste de PHS LandCare donne la saison où chaque terrain a été nettoyé et verdi pour ${formatNumber(dated)} de ses ${formatNumber(records)} terrains. Les terrains sans saison, pour la plupart entretenus par des voisins grâce à Community LandCare, sont laissés de côté.`,
+      clean_seal: (records) =>
+        `Les ordres de travaux de nettoyage et de scellement de la Ville qui ont été exécutés, selon le jour où le travail s'est terminé : ${formatNumber(records)} depuis 2007. Les registres de la Ville en contiennent beaucoup moins à partir de 2020, si bien que la plupart de ces comparaisons portent sur 2017 à 2019.`,
+      demolition: (records) =>
+        `Démolitions que la Ville a réalisées elle-même, selon le jour où chacune s'est terminée : ${formatNumber(records)} depuis 2007. Les démolitions faites avec un permis privé sont laissées de côté.`,
+    },
+    outcomes: {
+      shootings: "Fusillades dans un rayon d'environ deux rues (200 mètres)",
+      dumping: "Dépôts sauvages signalés à Philly311 dans un rayon d'environ deux rues, sans compter le lieu lui-même",
+      complaints: "Plaintes à L&I sur des terrains et des bâtiments vacants dans un rayon d'environ deux rues, sans compter le lieu lui-même",
+    },
+    outcomeNouns: {
+      shootings: 'fusillades',
+      dumping: 'signalements de dépôts sauvages',
+      complaints: 'plaintes sur des propriétés vacantes',
+    },
+    verdictLabels: {
+      fewer: 'Moins après le soin',
+      more: 'Plus après le soin',
+      no_clear_change: 'Pas de changement net',
+      check_failed: "Nous n'avons pas pu savoir",
+      too_few: 'Trop peu pour savoir',
+    },
+    verdicts: {
+      fewer: (noun, percent, range) =>
+        `Pendant les deux années qui ont suivi le soin, il y a eu ${formatDecimal(percent, 1)} % de ${noun} en moins à proximité que prévu d'après des lieux semblables sans soin (intervalle de 90 pour cent : ${range}).`,
+      more: (noun, percent, range) =>
+        `Pendant les deux années qui ont suivi le soin, il y a eu ${formatDecimal(percent, 1)} % de ${noun} en plus à proximité que prévu d'après des lieux semblables sans soin (intervalle de 90 pour cent : ${range}).`,
+      notCaused: "Cela ne montre pas que le soin en soit la cause.",
+      moreReports: "Davantage de signalements peuvent aussi vouloir dire que davantage de voisins signalent, une fois que la Ville a prêté attention au lieu.",
+      noClearChange: (change, range) =>
+        `Pas de changement net. La comparaison a trouvé ${change} (intervalle de 90 pour cent : ${range}), et cet intervalle inclut l'absence totale de changement.`,
+      checkFailed: (noun) =>
+        `Pendant les années qui ont précédé le soin, le nombre de ${noun} près de ces lieux évoluait déjà différemment de celui près des lieux de comparaison, si bien que cette comparaison ne peut pas séparer l'effet du soin de ce qui se passait déjà.`,
+      tooFew: (places, min) =>
+        `${places === 0 ? "Aucun lieu n'a pu être comparé." : plural(places, { one: 'Seulement # lieu a pu être comparé.', other: 'Seulement # lieux ont pu être comparés.' })} Il faut au moins ${formatNumber(min)} lieux pour faire une comparaison.`,
+    },
+    whyMore: {
+      landcare: "PHS et la Ville choisissent des terrains où des voisins demandent de l'aide, souvent là où les problèmes augmentent.",
+      clean_seal:
+        "La Ville nettoie et scelle une propriété après des plaintes à son sujet, souvent quand une rue est en train de se dégrader ou après des ennuis sur la propriété elle-même.",
+      demolition:
+        "La Ville démolit un bâtiment une fois qu'il n'est plus sûr, souvent dans des rues qui se dégradent d'une façon que les registres ne montrent pas.",
+      projects: 'Les voisins lancent souvent des projets là où les problèmes augmentent.',
+    },
+    half: (year, half) => `${half === 1 ? 'premier' : 'deuxième'} semestre de ${year}`,
+    noChange: 'un changement nul',
+    fewerBy: (percent) => `${formatDecimal(percent, 1)} % de moins`,
+    moreBy: (percent) => `${formatDecimal(percent, 1)} % de plus`,
+    range: (low, high) => `de ${low} à ${high}`,
+    compared: (places, from, to, areas) =>
+      `Comparaison : ${plural(places, { one: '# lieu qui a reçu', other: '# lieux qui ont reçu' })} du soin du ${from} au ${to}, dans ${plural(areas, { one: '# zone', other: '# zones' })} de la ville, chacun avec jusqu'à cinq lieux semblables qui n'en ont pas reçu.`,
+    counts: (before, after, expected) =>
+      `Près des lieux qui ont reçu du soin : ${formatNumber(before)} pendant les deux années d'avant, ${formatNumber(after)} pendant les deux années d'après, alors que ${formatNumber(expected)} étaient attendus d'après les lieux de comparaison.`,
+    checksTitle: 'Vérifications',
+    checks: {
+      passed: (change, range, places) =>
+        `Vérification réussie : en faisant comme si le soin était arrivé quatre ans et demi plus tôt, la comparaison ne devrait trouver aucun changement, et elle a trouvé ${change} (${range} ; ${plural(places, { one: '# lieu', other: '# lieux' })} avec des registres remontant aussi loin).`,
+      failed: (change, range, places) =>
+        `Échec de la vérification : en faisant comme si le soin était arrivé quatre ans et demi plus tôt, la comparaison a trouvé ${change} (${range} ; ${plural(places, { one: '# lieu', other: '# lieux' })} avec des registres remontant aussi loin) alors qu'elle ne devrait trouver aucun changement. Les lieux qui ont reçu du soin suivaient déjà une trajectoire différente.`,
+      tooFew: "La vérification n'a pas pu être faite : trop peu de ces lieux ont des registres remontant assez loin.",
+      around: (change, range) => `Plus loin, entre 200 et 400 mètres : ${change} (${range}).`,
+      moved: "Une partie du problème s'est peut-être déplacée là-bas.",
+      later: (change, range, places) =>
+        `Comparaison seulement avec des lieux qui ont reçu le même soin plus tard : ${change} (${range} ; ${plural(places, { one: '# lieu', other: '# lieux' })}).`,
+      naive: (change, noun) =>
+        `Un simple avant et après dirait ${change}, parce qu'il ne tient pas compte de l'évolution du nombre de ${noun} partout ailleurs.`,
+    },
+    // Projets terminés par des voisins
+    projectsNow: (shown, ready, before) =>
+      `La carte montre ${plural(shown, { one: '# projet terminé', other: '# projets terminés' })} par des voisins. ${ready === 0 ? "Aucun d'entre eux n'a été terminé" : ready === 1 ? "1 d'entre eux a été terminé" : `${formatNumber(ready)} d'entre eux ont été terminés`} au plus tard en ${before}, il y a assez longtemps pour disposer de deux années de registres ensuite.`,
+    projectsNotRead: "Cette copie de la carte n'a pas encore de liste de projets terminés par des voisins.",
+    projectsNeed: (min) =>
+      `Il faut au moins ${formatNumber(min)} lieux pour faire une comparaison. Chaque projet déclaré nous en rapproche, et montre aux voisins ce que d'autres ont fait.`,
+    projectsLink: "Parlez-nous d'un projet que vous avez terminé",
+    // Ce que cela ne peut pas dire
+    cannotTitle: 'Ce que cela ne peut pas dire',
+    cannot: [
+      "Si un lieu a encore l'air vacant plus tard. Les listes de propriétés vacantes de la Ville n'existent que pour 2024 et 2026, et LandCare ainsi que le nettoyage et le scellement servent à garder un lieu entretenu tant qu'il reste vide, si bien que « toujours vacant » ne permet pas de distinguer le succès de l'échec.",
+      "Rien sur un seul terrain. Les fusillades, les dépôts sauvages et les plaintes montent et descendent dans chaque rue pour de nombreuses raisons. Seuls de nombreux lieux ensemble peuvent montrer une tendance, et même alors pas avec certitude.",
+      "Pourquoi quelque chose a changé. Une comparaison montre ce qui a changé, pas ce qui l'a causé.",
+      "Rien sur les terrains qui ont quitté LandCare. Sa liste ne contient que les terrains dont il s'occupe aujourd'hui.",
+      "Les changements dans les registres eux-mêmes : les registres de nettoyage et de scellement de la Ville contiennent beaucoup moins d'ordres à partir de 2020, ses signalements de dépôts sauvages commencent en janvier 2016, et L&I a renommé ses types de plainte en 2020. Chaque comparaison met des lieux face à d'autres pendant les mêmes années, ce qui règle la plus grande partie de cela.",
+    ],
+    chance: (n) =>
+      `Le hasard : à 90 pour cent, environ une comparaison sur dix peut ressembler à un changement alors qu'il n'y en a pas, si bien que sur ${plural(n, { one: '# comparaison', other: '# comparaisons' })} une ou deux peuvent n'être que le fruit du hasard.`,
+    // Comment nous avons comparé
+    methodTitle: 'Comment nous avons comparé',
+    method: [
+      'Un lieu est un carré de la ville de 100 mètres de côté où du soin a eu lieu pendant un semestre, à partir de 2017.',
+      "Pour chacun, nous avons trouvé jusqu'à cinq lieux situés à moins d'environ 2 miles (3 kilomètres), mais pas dans la même rue, qui n'ont pas reçu le même soin pendant les deux années d'avant ou d'après, avec un nombre semblable pendant chacune des deux années d'avant et une part semblable de voisins sous le seuil de pauvreté.",
+      "Nous avons comparé le changement dans le lieu qui a reçu du soin, des deux années d'avant aux deux années d'après, avec le changement moyen dans ses lieux de comparaison, en mettant de côté le semestre du travail lui-même.",
+      "L'intervalle de 90 pour cent vient d'un nouveau tirage au hasard de zones entières de la ville, répété 2 000 fois. Le vrai changement se trouve très probablement à l'intérieur.",
+      "Nous avons d'abord testé la méthode sur des villes inventées où nous connaissions la réponse. Elle a trouvé le changement que nous y avions mis, et n'en a trouvé aucun quand nous n'en avions mis aucun.",
+    ],
+    methodLink: 'La méthode complète, tous les chiffres et le code',
+    // Sources
+    sourcesTitle: 'Sources',
+    sources: {
+      landcare: 'Terrains de PHS LandCare, de la Pennsylvania Horticultural Society, via la Ville de Philadelphie.',
+      clean_seal: 'Ordres de travaux de nettoyage et de scellement, du Département des licences et des inspections de la Ville.',
+      demolition: 'Démolitions de bâtiments, du Département des licences et des inspections de la Ville.',
+      shootings: (first, last) => `Victimes de fusillades, du Philadelphia Police Department, du ${first} au ${last}. Seulement des comptes.`,
+      dumping: (first, last) => `Demandes à Philly311 sur les dépôts sauvages, du ${first} au ${last}.`,
+      complaints: (first, last) =>
+        `Plaintes sur des terrains et des bâtiments vacants, du Département des licences et des inspections de la Ville, du ${first} au ${last}.`,
+      poverty:
+        "La part des voisins sous le seuil de pauvreté par secteur de recensement, d'après l'American Community Survey (ACS) du Bureau du recensement des États-Unis, 2020 à 2024.",
+      projects: "Projets terminés par des voisins, tels qu'ils ont été déclarés à Placekeepers et approuvés par la personne qui s'en occupe.",
+    },
+    // La page du terrain
+    lotNote:
+      'Un terrain seul ne peut pas montrer si le soin a fonctionné : les fusillades, les dépôts sauvages et les plaintes montent et descendent dans chaque rue pour de nombreuses raisons.',
+    lotLink: "Voir ce que montrent les registres de la Ville pour l'ensemble de Philadelphie",
+    sealedOn: (date) => `La Ville a nettoyé et scellé ce lieu pour la dernière fois le ${date}.`,
   },
 
   projects: {

@@ -210,6 +210,12 @@ sources:
   philly311_conditions:
     name: "Demandes à Philly311 sur les dépôts sauvages, les lumières éteintes et les graffitis"
     publisher: "Ville de Philadelphie, Philly311"
+  philly311_dumping_history:
+    name: "Demandes à Philly311 sur les dépôts sauvages depuis 2016"
+    publisher: "Ville de Philadelphie, Philly311"
+  li_complaints_history:
+    name: "Plaintes reçues par L&I sur des terrains et des bâtiments vacants depuis 2015"
+    publisher: "Ville de Philadelphie, Département des licences et des inspections"
   bus_shelters:
     name: "Abribus"
     publisher: "Ville de Philadelphie, Bureau des systèmes de transport et d'infrastructure"
