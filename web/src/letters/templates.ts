@@ -69,10 +69,9 @@ export interface Letter {
   signature: string[];
 }
 
-/** "a, b and c". */
+/** "a, b and c", in the letter's language (strings.join.and). */
 export function listWords(items: string[]): string {
-  if (items.length <= 1) return items.join('');
-  return `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`;
+  return strings.join.and(items);
 }
 
 /**
@@ -100,7 +99,7 @@ export function buildLetter(template: TemplateId, f: LetterFields): Letter {
   const l = strings.letters;
   const extra = f.extra.trim() ? [f.extra.trim()] : [];
   const reach = f.contact.trim() ? l.reachMe(f.contact.trim()) : l.reachMeBlank;
-  const signature = [f.senderName.trim() || '[your name]', ...(f.group.trim() ? [f.group.trim()] : [])];
+  const signature = [f.senderName.trim() || l.yourName, ...(f.group.trim() ? [f.group.trim()] : [])];
   const to = [...f.recipientName.split(/\r?\n/).map((x) => x.trim()).filter(Boolean), ...addressLines(f.recipientAddress)];
   const base = { date: f.date.trim(), to, subject: null as string | null, closing: l.sincerely, signature };
   const me = l.me(f.senderName.trim(), f.group.trim());

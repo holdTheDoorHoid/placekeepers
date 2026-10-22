@@ -12,6 +12,7 @@ import { hasFallback, isolateValue, markFallback } from '../src/i18n/marks.ts';
 import { labelledParts, strings } from '../src/strings.ts';
 import { SIGNS, signsText } from '../src/displacement/watch.ts';
 import { clockWords } from '../src/dossier/rules.ts';
+import { buildLetter, EMPTY_FIELDS, listWords } from '../src/letters/templates.ts';
 import { formatDuration, formatMiles } from '../src/survey/sheet.ts';
 import { clock } from '../src/transit/describe.ts';
 
@@ -132,6 +133,30 @@ describe('the signs of a displacement watch area', () => {
       expect(text).toMatch(/, .+ e /);
     } finally {
       strings.join.long = english;
+    }
+  });
+});
+
+describe('the letters', () => {
+  it('read as before in English', () => {
+    expect(listWords(['mow it', 'plant a garden', 'put out a bench'])).toBe('mow it, plant a garden and put out a bench');
+    expect(buildLetter('owner', EMPTY_FIELDS).signature).toEqual(['[your name]']);
+  });
+
+  it('join the plans and owners the page language way, and take the signature placeholder from the catalog', () => {
+    const saved = { and: strings.join.and, names: strings.join.names, yourName: strings.letters.yourName };
+    try {
+      setLocale('es');
+      const copy = cloneText(strings);
+      applyCatalog(copy, { letters: { yourName: '[su nombre]' } }, markFallback);
+      Object.assign(strings.join, { and: copy.join.and, names: copy.join.names });
+      strings.letters.yourName = copy.letters.yourName;
+      expect(listWords(['cortar el pasto', 'sembrar', 'poner un banco'])).toBe('cortar el pasto, sembrar y poner un banco');
+      expect(strings.join.names(['EXAMPLE DARNELL', 'EXAMPLE TINA'])).toBe('EXAMPLE DARNELL y EXAMPLE TINA');
+      expect(buildLetter('owner', EMPTY_FIELDS).signature).toEqual(['[su nombre]']);
+    } finally {
+      Object.assign(strings.join, { and: saved.and, names: saved.names });
+      strings.letters.yourName = saved.yourName;
     }
   });
 });

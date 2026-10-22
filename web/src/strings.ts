@@ -933,6 +933,8 @@ export const strings = {
     salutation: (name: string) => `Dear ${name},`,
     dearOwner: 'Dear property owner,',
     sincerely: 'Sincerely,',
+    /** The signature line before the sender types a name. */
+    yourName: '[your name]',
     reachMe: (contact: string) => `You can reach me at ${contact}.`,
     reachMeBlank: 'You can reach me at [how to reach you].',
     thanks: 'Thank you for considering this.',

@@ -49,7 +49,7 @@ export function ownerAddressee(parcel: ShardParcel | null, clean: (text: string 
     .filter((part) => part && !estateWords(part))
     .join(', ');
   return {
-    name: estate ? '' : names.map((n) => clean(n) ?? n).join(' and '),
+    name: estate ? '' : strings.join.names(names.map((n) => clean(n) ?? n)),
     address,
     nameLeftOut: estate,
   };
