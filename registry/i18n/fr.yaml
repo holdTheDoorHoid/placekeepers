@@ -321,3 +321,537 @@ sources:
   ppr_playgrounds:
     name: "Aires de jeux"
     publisher: "Ville de Philadelphie, Parks and Recreation"
+
+layers:
+  vacant_parcels:
+    label: "Terrains et bâtiments vacants"
+    description: "Parcelles probablement vacantes, avec notre degré de certitude et pourquoi. Combine l'indicateur de vacance de la Ville avec les registres de l'évaluateur foncier, les empreintes des bâtiments, les démolitions, les dossiers de L&I et la carte d'occupation du sol, de sorte qu'aucune source seule ne peut la faire échouer."
+    settings:
+      min_confidence:
+        label: "Afficher les parcelles dont nous sommes au moins aussi sûrs"
+        options:
+          "1":
+            label: "Tout signe de vacance"
+          "2":
+            label: "Probablement ou très probablement vacant"
+          "3":
+            label: "Seulement très probablement vacant"
+      kinds:
+        label: "Afficher"
+        options:
+          both:
+            label: "Terrains et bâtiments"
+          lots:
+            label: "Terrains seulement"
+          buildings:
+            label: "Bâtiments seulement"
+      listed:
+        label: "Indiqué comme disponible par les agences foncières de la Ville"
+        options:
+          any:
+            label: "Toute parcelle"
+          available:
+            label: "Seulement celles indiquées comme disponibles"
+      lens:
+        label: "Colorier les terrains selon"
+        options:
+          violence:
+            label: "L'angle « réduction de la violence »"
+          heat:
+            label: "L'angle « chaleur et ombre »"
+          placemaking:
+            label: "L'angle « création de lieux »"
+  hin_2025:
+    label: "Réseau High Injury Network"
+    description: "Les rues où se produisent la plupart des décès et des blessures graves de la circulation à Philadelphie, telles que le programme Vision Zero de la Ville les a cartographiées en 2025."
+  shootings_hex:
+    label: "Fusillades, comptées par zone"
+    description: "Les victimes de fusillades pendant la période choisie, comptées par hexagone d'environ deux rues de large. Affiché pour orienter le soin là où il aide le plus, pas pour dire que des lieux sont dangereux."
+    settings:
+      window:
+        label: "Période"
+        options:
+          m12:
+            label: "Les 12 derniers mois"
+          m36:
+            label: "Les 3 dernières années"
+  landcare_lots:
+    label: "Terrains entretenus par PHS LandCare"
+    description: "Terrains vacants que la Pennsylvania Horticultural Society a nettoyés et verdis et dont elle continue de tondre l'herbe, par LandCare et Community LandCare. C'est le soin que les essais de Philadelphie ont testé."
+  gardens:
+    label: "Jardins communautaires"
+    description: "Jardins et fermes communautaires soutenus par PHS ou le Neighborhood Gardens Trust, et jardins enregistrés auprès de Parks and Recreation. Des gens s'occupent déjà de ces lieux, donc ils ne sont jamais montrés comme vacants."
+  council_districts:
+    label: "Districts du Conseil municipal"
+    description: "Les dix districts du Conseil municipal tels que dessinés en 2024, pour que vous voyiez quel bureau contacter."
+    settings:
+      names:
+        label: "Afficher les noms"
+  community_organizations:
+    label: "Organisations communautaires enregistrées"
+    description: "Des groupes de quartier enregistrés auprès de la Ville, qui sont informés des changements de zonage dans leur zone. Leurs zones se chevauchent souvent."
+    settings:
+      names:
+        label: "Afficher les noms"
+  neighborhoods:
+    label: "Quartiers"
+    description: "Noms et limites des quartiers, d'après la carte des quartiers d'OpenDataPhilly par Abaca Labs."
+    settings:
+      names:
+        label: "Afficher les noms"
+  segments:
+    label: "Sécurité des rues, tronçon par tronçon"
+    description: "Chaque tronçon de rue colorié selon l'angle « sécurité des rues » : s'il est sur le réseau High Injury Network, combien de personnes y ont été tuées ou grièvement blessées à pied ou à vélo dans les cinq dernières années des registres de PennDOT, si quelqu'un y a été tué ces deux dernières années, et si une école se trouve à moins de 400 mètres. Déplacez les curseurs de l'angle pour changer le mélange. Un tronçon indique aussi combien de poteaux la Ville répertorie le long de celui-ci et combien de leurs lampes sont des LED, ainsi que la modération de la circulation que la Ville y répertorie."
+    settings:
+      min_score:
+        label: "Afficher les tronçons dont le score est d'au moins"
+        options:
+          "1":
+            label: "Tout score supérieur à zéro"
+          "20":
+            label: "20 sur 100"
+          "40":
+            label: "40 sur 100"
+          "60":
+            label: "60 sur 100"
+  crashes:
+    label: "Accidents"
+    description: "Les accidents signalés à PennDOT à Philadelphie de 2015 à 2024, coloriés selon la gravité des blessures. Choisissez les années, la gravité des blessures et les personnes impliquées. Les registres de PennDOT arrivent environ un an après les accidents, donc les décès les plus récents apparaissent plutôt comme des mémoriaux."
+    settings:
+      years:
+        label: "Années"
+        options:
+          latest:
+            label: "La dernière année des registres"
+          recent:
+            label: "Les cinq dernières années"
+          all:
+            label: "Chaque année depuis 2015"
+      severity:
+        label: "Gravité des blessures"
+        options:
+          "3":
+            label: "Quelqu'un a été tué"
+          "2":
+            label: "Quelqu'un a été tué ou grièvement blessé"
+          "1":
+            label: "Quelqu'un a été blessé"
+          "0":
+            label: "Chaque accident"
+      mode:
+        label: "Qui était impliqué"
+        options:
+          all:
+            label: "Tout le monde"
+          walk_cycle:
+            label: "Les personnes à pied ou à vélo"
+          walk:
+            label: "Les personnes à pied"
+          cycle:
+            label: "Les personnes à vélo"
+          motorcycle:
+            label: "Les personnes à moto"
+  memorials:
+    label: "Mémoriaux"
+    description: "Les personnes tuées dans nos rues à pied, à vélo ou en trottinette, d'après les registres du Police Department sur les décès dans des accidents de la route depuis 2019, chacune marquée discrètement là où cela s'est passé. Un nom n'apparaît que lorsqu'une liste de mémoriaux publique le donne déjà, et chacun peut demander qu'un nom ou un marqueur soit retiré."
+    settings:
+      show_names:
+        label: "Afficher les noms"
+      all_fatal:
+        label: "Rendre aussi hommage aux personnes tuées en voiture et à moto"
+  parking_reports:
+    label: "Problèmes de stationnement signalés (Laser Vision)"
+    description: "Là où des personnes qui utilisent l'application Laser Vision de Philly Bike Action ont signalé des véhicules qui bloquent des trottoirs, des passages piétons, des coins de rue, des rampes de trottoir et des pistes cyclables pendant les 12 mois jusqu'à la date de la légende, comptés par zone d'environ une rue de large. Cela montre où des personnes qui utilisent une seule application ont signalé des problèmes, pas tous les problèmes. Une zone avec moins de 5 signalements est laissée de côté, afin qu'aucun signalement isolé n'apparaisse jamais. Beaucoup de signalements au même endroit sont une preuve en faveur d'aménagements physiques : avancées de trottoir, bornes, angles dégagés, pistes cyclables protégées et zones de livraison."
+    settings:
+      kind:
+        label: "Afficher les signalements de véhicules"
+        options:
+          all:
+            label: "Qui bloquent le passage de l'une de ces façons"
+          sidewalk:
+            label: "Sur un trottoir"
+          bike_lane:
+            label: "Dans une piste cyclable"
+          crosswalk:
+            label: "Sur un passage piéton"
+          corner:
+            label: "Sur un coin de rue"
+          ramp:
+            label: "Bloquant une rampe de trottoir"
+  street_poles:
+    label: "Poteaux de rue et lampes répertoriées par la Ville"
+    description: "Chaque poteau de rue que le Streets Department répertorie, avec les lampes qu'il y répertorie : LED, l'ancien sodium haute pression, ou une lampe d'un type qu'il ne précise pas. Beaucoup de poteaux, comme ceux de PECO et ceux des feux de circulation, n'ont aucune lampe répertoriée. C'est ce que la Ville a installé, pas si une lampe fonctionne ce soir : signalez une lumière éteinte à Philly311 avec le numéro du poteau. Affiché de près, sur quelques rues de large."
+    settings:
+      show:
+        label: "Afficher"
+        options:
+          all:
+            label: "Chaque poteau"
+          lamps:
+            label: "Les poteaux avec une lampe répertoriée par la Ville"
+          not_led:
+            label: "Les lampes que la Ville ne répertorie pas comme LED"
+  traffic_calming:
+    label: "Modération de la circulation répertoriée par la Ville"
+    description: "Les coussins ralentisseurs, dos d'âne et plateaux que le Streets Department a installés pour ralentir les conducteurs dans les rues résidentielles, avec le jour où chacun a été posé. Les voisins peuvent les demander à la Ville dans une rue résidentielle ; les artères et les routes de l'État n'y sont pas admissibles. Un tronçon de rue montre combien il en a et depuis quand, et un tronçon du réseau High Injury Network où des personnes ont été blessées dit quand aucun n'est encore enregistré."
+  crossing_guards:
+    label: "Postes de brigadiers scolaires"
+    description: "Les coins de rue où la Ville place un brigadier scolaire, un service de sécurité qui aide les enfants et tout le monde à traverser près des écoles au début et à la fin de la journée d'école. Chaque poste nomme son coin de rue et l'école la plus proche à moins de 400 mètres."
+  basemap:
+    label: "Fond de carte"
+    description: "Rues, bâtiments, parcs, eau et noms de lieux d'après OpenStreetMap, sous tout le reste. Choisissez l'aspect gris pour que les données ressortent, ou désactivez le fond de carte."
+    settings:
+      look:
+        label: "Aspect"
+        options:
+          light:
+            label: "Clair, en couleur"
+          muted:
+            label: "Gris, pour que les données ressortent"
+  transit_stops:
+    label: "Arrêts de bus et de tramway"
+    description: "Chaque arrêt de bus et de tramway de la SEPTA à Philadelphie, d'après les horaires actuels de la SEPTA : les lignes qui s'y arrêtent, la fréquence des bus ou des tramways un jour de semaine, un samedi et un dimanche typiques, l'heure où le service commence et finit, et combien de personnes y montent un jour de semaine moyen, d'après les propres comptages de la SEPTA. Chaque arrêt montre ce que trouvent les usagers là où OpenStreetMap le sait, un abribus là où la liste de la Ville en indique un, sa priorité selon l'angle « confort aux arrêts », et ce que les voisins peuvent faire. Les stations de métro, d'El et de Regional Rail peuvent être ajoutées dans les paramètres."
+    settings:
+      service:
+        label: "Afficher les arrêts avec"
+        options:
+          all:
+            label: "N'importe quel service"
+          frequent:
+            label: "Service fréquent : toutes les 15 minutes ou mieux en milieu de journée"
+          long_wait:
+            label: "Longues attentes : moins souvent que toutes les 30 minutes en milieu de journée"
+      color:
+        label: "Colorier les arrêts selon"
+        options:
+          lens:
+            label: "La priorité selon l'angle « confort aux arrêts »"
+          wait:
+            label: "La fréquence des bus ou des trains en milieu de journée"
+          boardings:
+            label: "Le nombre de personnes qui montent chaque jour de semaine"
+      stations:
+        label: "Afficher aussi les stations de métro, d'El et de Regional Rail"
+  transit_routes:
+    label: "Lignes de bus, de tramway et de train"
+    description: "Les rues et les voies que suit chaque ligne de la SEPTA à Philadelphie, d'après les horaires actuels de la SEPTA, coloriées selon le type de véhicule. Choisissez les lignes fréquentes pour voir où un bus ou un train passe au moins toutes les 15 minutes en milieu de journée."
+    settings:
+      service:
+        label: "Afficher les lignes"
+        options:
+          all:
+            label: "Chaque ligne"
+          frequent:
+            label: "Lignes fréquentes : toutes les 15 minutes ou mieux en milieu de journée"
+  stop_amenities:
+    label: "Abribus et bancs aux arrêts"
+    description: "Ce que trouvent les usagers aux arrêts de bus et de tramway qu'OpenStreetMap connaît : un abribus ou un toit, un banc mais pas d'abribus, ni l'un ni l'autre, ou pas encore relevé. Pas encore relevé veut dire que personne ne l'a encore noté ; cela ne veut pas dire que l'arrêt n'a rien. OpenStreetMap n'a pour l'instant qu'environ un arrêt sur dix (la liste complète des arrêts de la SEPTA est sa propre couche). Les voisins peuvent relever les arrêts avec l'application de téléphone StreetComplete, et leurs réponses apparaissent ici en environ une semaine."
+    settings:
+      show:
+        label: "Afficher"
+        options:
+          all:
+            label: "Chaque arrêt"
+          surveyed:
+            label: "Les arrêts que quelqu'un a relevés"
+          unsurveyed:
+            label: "Les arrêts pas encore relevés"
+  city_shelters:
+    label: "Abribus répertoriés par la Ville"
+    description: "Les abribus de la liste propre de la Ville, qu'elle installe et entretient avec son partenaire publicitaire, avec l'arrêt de la SEPTA que chacun dessert. Un arrêt avec un abribus de la Ville compte comme abrité dans l'angle « confort aux arrêts ». Là où OpenStreetMap dit qu'un arrêt n'a pas d'abribus mais que la Ville en répertorie un, la page de l'arrêt dit que les deux ne concordent pas, et un relevé sur place tranche. La liste a été modifiée pour la dernière fois en janvier 2025, donc un abribus installé ou retiré depuis peut manquer."
+  heat_tracts:
+    label: "Vulnérabilité à la chaleur par quartier"
+    description: "À quel point la chaleur de l'été frappe les habitants de chaque secteur de recensement, d'après l'indice de vulnérabilité à la chaleur de la Ville (Heat Vulnerability Index, Department of Public Health et Office of Sustainability, données de 2017 à 2019). Il réunit l'exposition à la chaleur, à quel point le secteur devient chaud les jours d'été tel que les satellites le mesurent, et la sensibilité à la chaleur, combien des personnes qui y vivent sont plus à risque par forte chaleur (douze mesures d'âge, de santé, de revenu, d'éducation, de langue et de race, telles que la Ville a construit l'indice). Les secteurs sont ombrés par cinquièmes de la ville, le cinquième le plus foncé étant le plus à risque. L'exposition et la sensibilité peuvent être montrées seules dans les paramètres."
+    settings:
+      measure:
+        label: "Ombrer les secteurs selon"
+        options:
+          vulnerability:
+            label: "Vulnérabilité à la chaleur : la chaleur et les personnes à risque ensemble"
+          exposure:
+            label: "Exposition à la chaleur : à quel point il fait chaud"
+          sensitivity:
+            label: "Sensibilité à la chaleur : combien de personnes sont à risque par forte chaleur"
+      priority:
+        label: "Entourer les secteurs que la Ville classe très haut"
+  city_trees:
+    label: "Arbres des rues et des parcs"
+    description: "Chaque arbre de l'inventaire des arbres de Parks and Recreation (2025) : les arbres que la Ville entretient sur ses trottoirs et dans ses parcs, pas les arbres des cours privées, avec le type de chaque arbre et la taille de son tronc. Affiché de près, sur quelques rues de large. Les petits arbres, avec un tronc de moins de 4 pouces de diamètre, sont souvent des jeunes arbres, et TreePhilly demande que les jeunes arbres reçoivent environ 20 gallons d'eau (environ 75 litres) par semaine de mars à décembre."
+    settings:
+      show:
+        label: "Afficher"
+        options:
+          all:
+            label: "Chaque arbre"
+          big:
+            label: "Grands arbres d'ombre : un tronc d'au moins 12 pouces de diamètre"
+          small:
+            label: "Petits arbres : un tronc de moins de 4 pouces de diamètre, souvent jeunes"
+  floodplain:
+    label: "Zone inondable"
+    description: "Là où les cartes d'inondation de la FEMA prévoient des inondations, telles que la Ville les publie (2023) : la zone inondable à 1 pour cent de chance par an, où une inondation a au moins 1 chance sur 100 chaque année, et la zone à 0,2 pour cent de chance par an à côté (souvent appelées zones inondables de 100 ans et de 500 ans). Tout ce qui est construit là doit suivre les règles de la Ville sur les zones inondables. Un verdissement qui absorbe la pluie y aide, avec des plantes qui supportent un sol détrempé."
+    settings:
+      zones:
+        label: "Afficher"
+        options:
+          both:
+            label: "Les zones à 1 pour cent et à 0,2 pour cent de chance par an"
+          high:
+            label: "Seulement la zone inondable à 1 pour cent de chance par an"
+  benches:
+    label: "Bancs, tels que cartographiés dans OpenStreetMap"
+    description: "Des endroits pour s'asseoir : les bancs que des gens ont ajoutés à OpenStreetMap, la carte libre que chacun peut améliorer, avec la présence d'un dossier là où la carte l'indique. Il manque beaucoup de bancs dans OpenStreetMap, donc une rue sans aucun banc affiché peut quand même en avoir. Chacun peut ajouter un banc avec l'application de téléphone StreetComplete, et il apparaît ici en environ une semaine."
+  picnic_tables:
+    label: "Tables de pique-nique, telles que cartographiées dans OpenStreetMap"
+    description: "Les tables de pique-nique que des gens ont ajoutées à OpenStreetMap, surtout dans les parcs, avec la présence d'un toit là où la carte l'indique. Il en manque beaucoup dans OpenStreetMap. Chacun peut en ajouter une avec l'application de téléphone StreetComplete, et elle apparaît ici en environ une semaine."
+  drinking_water:
+    label: "Eau potable, telle que cartographiée dans OpenStreetMap"
+    description: "Les fontaines à boire et les robinets d'eau que des gens ont ajoutés à OpenStreetMap, avec la possibilité de remplir une bouteille là où la carte l'indique. OpenStreetMap n'en connaît que quelques dizaines dans la ville, donc les fontaines à boire que Parks and Recreation répertorie sont leur propre couche. Chacun peut ajouter une fontaine avec l'application de téléphone StreetComplete, et elle apparaît ici en environ une semaine."
+  toilets:
+    label: "Toilettes publiques, telles que cartographiées dans OpenStreetMap"
+    description: "Les toilettes que des gens ont ajoutées à OpenStreetMap, avec qui peut les utiliser, la présence d'un droit d'entrée et l'accès en fauteuil roulant là où la carte l'indique. Les toilettes fermées au public sont laissées de côté. OpenStreetMap en connaît moins d'une centaine dans la ville. Chacun peut en ajouter avec l'application de téléphone StreetComplete, et elles apparaissent ici en environ une semaine."
+  bookcases:
+    label: "Boîtes à livres (Little Free Libraries), telles que cartographiées dans OpenStreetMap"
+    description: "Des bibliothèques publiques en libre accès, souvent appelées Little Free Libraries ou boîtes à livres, où chacun peut prendre ou laisser un livre, telles que des gens les ont ajoutées à OpenStreetMap. Beaucoup manquent. Chacun peut en ajouter une avec l'application de téléphone StreetComplete, et elle apparaît ici en environ une semaine."
+  park_water:
+    label: "Fontaines à boire dans les parcs"
+    description: "Les fontaines à boire et les points de remplissage de bouteilles dans les parcs et les centres de loisirs, tels que Philadelphia Parks and Recreation les répertorie. Celle qui se trouve dans un centre de loisirs peut être utilisée quand le centre est ouvert."
+  libraries:
+    label: "Bibliothèques de la Free Library"
+    description: "Chaque site de la Free Library of Philadelphia que la Ville répertorie, avec son adresse, son numéro de téléphone et un lien vers sa page pour les horaires d'ouverture. Les bibliothèques sont gratuites et ouvertes à tous."
+  recreation_centers:
+    label: "Centres de loisirs"
+    description: "Là où Philadelphia Parks and Recreation organise des programmes : centres de loisirs, centres pour personnes âgées et centres d'éducation à l'environnement, avec la présence d'une salle de sport, tels que la Ville les répertorie."
+  pools:
+    label: "Piscines et aires de jeux d'eau"
+    description: "Piscines de la Ville, aires de jeux d'eau et jets d'eau, des endroits pour se rafraîchir les jours de chaleur, avec l'indication qu'ils sont en service cette année ou non, telle que Philadelphia Parks and Recreation la répertorie. Les piscines n'ouvrent que pour la saison d'été ; vérifiez auprès de Parks and Recreation les horaires de cette semaine."
+    settings:
+      show:
+        label: "Afficher"
+        options:
+          in_service:
+            label: "Seulement celles en service cette année"
+          all:
+            label: "Toutes, y compris celles hors service"
+  cooling_centers:
+    label: "Refuges contre la chaleur et contre le froid"
+    description: "Les lieux que l'Office of Emergency Management de la Ville répertorie comme refuges contre le froid ou la chaleur : bibliothèques, centres de loisirs, partenaires communautaires et centres communautaires de la Philadelphia Housing Authority, avec l'indication qu'ils étaient indiqués comme ouverts, leurs horaires et ce qu'ils offrent, tels qu'indiqués le jour où cette carte a copié la liste pour la dernière fois. Pas en direct : les sites ouvrent et ferment selon la météo, appelez donc le site ou Philly311 avant de vous déplacer. Une bibliothèque ou un centre de loisirs qui est aussi un refuge n'apparaît qu'une fois."
+    settings:
+      kind:
+        label: "Sites pour"
+        options:
+          any:
+            label: "La chaleur ou le froid"
+          cooling:
+            label: "Se rafraîchir par temps chaud"
+          warming:
+            label: "Se réchauffer par temps froid"
+      show:
+        label: "Afficher"
+        options:
+          all:
+            label: "Tous, ouverts ou fermés selon la liste"
+          open:
+            label: "Seulement ceux indiqués comme ouverts"
+  dumping:
+    label: "Dépôts sauvages signalés au 311"
+    description: "Les tronçons où quelqu'un a interrogé Philly311 sur un dépôt sauvage au cours des 90 derniers jours, avec le nombre de demandes et l'indication qu'une demande est encore ouverte ou non. Compté par tronçon de rue, jamais par adresse, et sans rien sur qui a signalé. Une demande montre que quelqu'un a remarqué et a demandé de l'aide ; certains tronçons demandent plus souvent que d'autres, donc peu de demandes ne veut pas dire un tronçon propre."
+    settings:
+      show:
+        label: "Afficher les tronçons avec"
+        options:
+          any:
+            label: "N'importe quelle demande au cours des 90 derniers jours"
+          open:
+            label: "Une demande encore ouverte"
+  dark_lights:
+    label: "Lampadaires de rue et de ruelle signalés éteints"
+    description: "Les tronçons où quelqu'un a demandé à Philly311 de réparer un lampadaire de rue ou de ruelle éteint au cours des 90 derniers jours, avec le nombre de demandes et l'indication qu'une demande est encore ouverte ou non, à côté des poteaux et des lampes que la Ville répertorie le long du tronçon. Compté par tronçon de rue, jamais par adresse, et sans rien sur qui a signalé."
+    settings:
+      show:
+        label: "Afficher les tronçons avec"
+        options:
+          any:
+            label: "N'importe quelle demande au cours des 90 derniers jours"
+          open:
+            label: "Une demande encore ouverte"
+  graffiti:
+    label: "Graffitis signalés au 311"
+    description: "Les tronçons où quelqu'un a demandé à Philly311 d'enlever des graffitis au cours des 90 derniers jours, avec le nombre de demandes et l'indication qu'une demande est encore ouverte ou non. Compté par tronçon de rue, jamais par adresse, et sans rien sur qui a signalé."
+    settings:
+      show:
+        label: "Afficher les tronçons avec"
+        options:
+          any:
+            label: "N'importe quelle demande au cours des 90 derniers jours"
+          open:
+            label: "Une demande encore ouverte"
+  public_art:
+    label: "Art public"
+    description: "Fresques, sculptures et statues, mosaïques et autre art public, d'après la liste Percent for Art de la Ville, OpenStreetMap et Wikidata. Quand deux ou trois d'entre elles répertorient la même œuvre, la carte la montre une fois et renvoie vers chacune. Les œuvres qui rendent hommage à quelqu'un sont montrées seulement comme œuvres commémoratives, sans noms. Mural Arts Philadelphia tient la plus grande liste des fresques de la ville sur son propre site ; ses conditions n'autorisent pas à la copier, donc la carte renvoie vers elle. Si une œuvre manque, ajoutez-la à OpenStreetMap et elle apparaît ici en environ une semaine."
+    settings:
+      murals:
+        label: "Fresques et peintures murales"
+      sculptures:
+        label: "Sculptures et statues"
+      mosaics:
+        label: "Mosaïques"
+      other:
+        label: "Autres types d'art"
+      inside:
+        label: "Œuvres à l'intérieur des bâtiments"
+  playgrounds:
+    label: "Aires de jeux"
+    description: "Les aires de jeux que Philadelphia Parks and Recreation répertorie, avec les âges auxquels chacune est destinée et l'année d'installation quand la Ville la donne. Un parc en a souvent deux, une pour les plus jeunes et une pour les plus grands. La page d'un terrain nomme l'aire de jeux la plus proche et sa distance en ligne droite."
+  walkability:
+    label: "À quel point chaque zone est praticable à pied (EPA)"
+    description: "L'indice national de marchabilité (National Walkability Index) de l'Agence américaine de protection de l'environnement (EPA) pour chaque groupe d'îlots de recensement, une zone de quelques rues, d'après sa Smart Location Database (2021, à partir de données d'environ 2017 à 2019). Il note de 1 à 20 à quel point une zone se prête à la marche, à partir de quatre mesures : combien de coins de rue il y a, à quelle distance se trouve l'arrêt de transport en commun le plus proche, et deux mesures du mélange de logements, d'emplois et de commerces. Les zones sont ombrées par cinquièmes des groupes d'îlots de Philadelphie, ou selon les classes propres de l'EPA, qui comparent tout le pays. Chaque mesure peut être montrée seule dans les paramètres. Les groupes d'îlots sont découpés selon la terre de la ville, donc les rivières restent vides."
+    settings:
+      measure:
+        label: "Ombrer les zones selon"
+        options:
+          index:
+            label: "L'indice de marchabilité : les quatre mesures ensemble"
+          corners:
+            label: "Coins de rue : à quel point les rues sont reliées entre elles"
+          transit:
+            label: "Transports : à quelle distance se trouve l'arrêt le plus proche"
+          mix:
+            label: "Un mélange de logements, d'emplois et de commerces"
+      compare:
+        label: "Comparer avec"
+        options:
+          city:
+            label: "Philadelphie : cinquièmes des groupes d'îlots de la ville"
+          nation:
+            label: "Tout le pays : les classes propres de l'EPA"
+  walking_distance:
+    label: "Habitants et lieux à distance de marche"
+    description: "Pour chaque hexagone d'environ deux rues de large : combien de personnes habitent à moins de 5 minutes à pied de son milieu, d'après le recensement de 2020 ; combien de sept types de lieux du quotidien sont à moins de 10 minutes à pied (une bibliothèque, un centre de loisirs, une piscine ou une aire de jeux d'eau, une fontaine à boire dans un parc, une école, une épicerie ou un marché qui accepte le SNAP, et un arrêt de bus, de tramway ou de train) ; ou combien de coins de rue sont à moins de 5 minutes à pied. Cinq minutes de marche sont comptées comme 400 mètres et dix minutes de marche comme 800 mètres en ligne droite, ce qui va un peu plus loin qu'une marche le long des rues et traverse des voies ferrées, des autoroutes et des rivières que les piétons ne peuvent pas traverser."
+    settings:
+      measure:
+        label: "Ombrer les hexagones selon"
+        options:
+          people:
+            label: "Les personnes qui habitent à moins de 5 minutes à pied"
+          places:
+            label: "Les types de lieux du quotidien à moins de 10 minutes à pied"
+          corners:
+            label: "Les coins de rue à moins de 5 minutes à pied"
+  traffic_stress:
+    label: "Stress de la circulation pour les personnes à vélo (DVRPC)"
+    description: "À quel point chaque rue est stressante à parcourir à vélo, telle que la Delaware Valley Regional Planning Commission la note d'après le nombre de voies, la vitesse de la circulation et le type de piste cyclable, s'il y en a une : le niveau 1 convient à la plupart des personnes de tout âge, le niveau 2 à la plupart des adultes, le niveau 3 seulement aux cyclistes sûrs d'eux, et le niveau 4 seulement aux plus intrépides. Là où les deux sens d'une rue diffèrent, le plus stressant est montré. Les notes viennent des modèles de la DVRPC et des limites de vitesse affichées, pas d'un parcours de chaque rue."
+    settings:
+      show:
+        label: "Afficher"
+        options:
+          all:
+            label: "Chaque rue que la DVRPC note"
+          stressful:
+            label: "Seulement les rues stressantes : niveaux 3 et 4"
+          calm:
+            label: "Seulement les rues calmes : niveaux 1 et 2"
+  displacement_watch:
+    label: "Vigilance sur les déplacements : signes que les prix montent"
+    description: "Les zones (secteurs de recensement) avec au moins deux de ces signes, dont au moins un concerne les prix eux-mêmes (les trois premiers) : des logements vendus bien plus cher qu'il y a cinq ans, plus vite que dans l'ensemble de la ville ; les valeurs d'évaluation de la Ville qui montent bien plus vite que celles de la ville ; l'analyse de la valeur marchande de la Ville (Market Value Analysis) qui constate des prix devenant inaccessibles aux habitants de longue date ; des entreprises qui achètent beaucoup des logements vendus ; au moins trois logements sur cinq loués ; ou beaucoup de locataires qui paient la moitié de leur revenu ou plus en loyer (ajouté par le propriétaire du projet le 9 octobre 2026). Le verdissement et les autres améliorations peuvent faire monter encore les prix, donc quand une suggestion de verdir un terrain, de planter des arbres, d'aménager un endroit pour s'asseoir, de lancer un jardin ou de demander de l'art, ou un terrain que la Ville indique comme disponible, se trouve dans l'une de ces zones, sa fiche ajoute des moyens de protéger les voisins. Cela montre des signes dans des registres publics, pas une prévision, et cela ne dit rien de qui habite ici. Touchez une zone pour voir ses signes et ce qui a été mesuré pour chacun, et, comme contexte, le loyer médian, le revenu médian des ménages et combien de logements sont vides, d'après l'enquête du Bureau du recensement ; chaque chiffre d'enquête vient avec sa marge d'erreur."
+    settings:
+      shade:
+        label: "Ombrer les zones (désactivé montre seulement leurs contours)"
+  historic_districts:
+    label: "Quartiers historiques"
+    description: "Les quartiers historiques locaux de la Philadelphia Historical Commission. Les changements aux bâtiments et aux terrains d'un quartier peuvent nécessiter l'examen de la Commission, même une fresque, une clôture ou un jardin : demandez d'abord à la Commission (215 686 7660). La Ville demande à tout le monde de confirmer le statut historique d'une propriété auprès de la Commission. Touchez un quartier pour son nom et le jour où il a été désigné."
+  historic_properties:
+    label: "Propriétés au registre historique"
+    description: "Les propriétés du Philadelphia Register of Historic Places, chacune sa propre parcelle, inscrites séparément ou dans le cadre d'un quartier historique (affichées de près). Les changements ici peuvent nécessiter l'examen de la Historical Commission : demandez-leur d'abord (215 686 7660)."
+  zoning_overlays:
+    label: "Zonages superposés"
+    description: "Les zones où le Code de zonage ajoute ses propres règles par-dessus le zonage de base : conservation de quartier, rues commerçantes, protection contre les inondations et contre les pentes raides, limites sur le revêtement près de la Wissahickon, hauteurs près de l'aéroport, enseignes et plus. Beaucoup se chevauchent, et quelques-unes couvrent la plus grande partie de la ville. Touchez un endroit pour voir chaque zonage superposé qui s'y trouve, avec sa section du Code de zonage. Les zonages superposés peuvent changer ce qui est permis ; vérifiez auprès de la Ville avant de planifier."
+    settings:
+      show:
+        label: "Afficher"
+        options:
+          all:
+            label: "Les zonages superposés et les autres règles spéciales"
+          districts:
+            label: "Seulement les zonages superposés"
+  hearings:
+    label: "Audiences à venir"
+    description: "Les audiences fixées devant le Zoning Board of Adjustment, le L&I Review Board, le Board of Building Standards et les autres comités de la Ville au sujet d'une propriété, d'après les registres d'appels de la Ville, avec le jour, l'heure et le type d'appel. Chacun peut participer à une audience de zonage ; touchez-en une pour voir comment, et pour ouvrir la page du terrain. La personne qui a déposé un appel n'est indiquée que sur la page de ce terrain, jamais sur la carte."
+    settings:
+      boards:
+        label: "Afficher"
+        options:
+          all:
+            label: "Chaque comité"
+          zoning:
+            label: "Seulement le Zoning Board of Adjustment"
+  brownfields:
+    label: "Sites brownfield (EPA)"
+    description: "Les propriétés où une subvention fédérale pour brownfield a payé une évaluation ou une dépollution, d'après les registres de l'EPA. Ce n'est pas une carte de tout le terrain contaminé, et elle ne dit pas si un site est contaminé aujourd'hui. Testez le sol avant de cultiver de la nourriture sur un de ces sites ou près de l'un d'eux."
+  aerial_photos:
+    label: "Photos aériennes par année"
+    description: "Des photographies aériennes de toute la ville, prises depuis un avion : celles de la Ville elle-même pour chaque année où elle en a depuis 1996 (chaque printemps, la plupart des années de mars à mai), et des plus anciennes que la Ville héberge, de la Delaware Valley Regional Planning Commission (1959 et 1975) et du U.S. Geological Survey (1999). Faites défiler les années pour voir ce qui se trouvait dans une rue avant : des maisons qui sont tombées, des terrains qui ont été dégagés, des jardins qui ont poussé. Les photos viennent directement des serveurs de la Ville quand cette couche est activée, et sont dessinées sous tout le reste sur la carte. Les années plus anciennes sont moins nettes, et les photos jusqu'en 2000 sont en noir et blanc."
+    settings:
+      year:
+        label: "Année"
+        options:
+          "1959":
+            label: "1959"
+          "1975":
+            label: "1975"
+          "1996":
+            label: "1996"
+          "1999":
+            label: "1999"
+          "2000":
+            label: "2000"
+          "2004":
+            label: "2004"
+          "2005":
+            label: "2005"
+          "2008":
+            label: "2008"
+          "2009":
+            label: "2009"
+          "2010":
+            label: "2010"
+          "2011":
+            label: "2011"
+          "2012":
+            label: "2012"
+          "2014":
+            label: "2014"
+          "2015":
+            label: "2015"
+          "2016":
+            label: "2016"
+          "2017":
+            label: "2017"
+          "2018":
+            label: "2018"
+          "2019":
+            label: "2019"
+          "2020":
+            label: "2020"
+          "2022":
+            label: "2022"
+          "2023":
+            label: "2023"
+          "2024":
+            label: "2024"
+          "2025":
+            label: "2025"
+      opacity:
+        label: "Intensité de la photo, en pourcentage"
+  atlas_1860:
+    label: "Atlas de 1860 (Hexamer et Locher)"
+    description: "L'atlas de Philadelphie de 1860 de Hexamer et Locher, dessiné pâté de maisons par pâté de maisons avec ses bâtiments et ses terrains, ajusté à la carte d'aujourd'hui par le Greater Philadelphia GeoHistory Network et hébergé par la Ville. Il ne couvre que Center City et Northern Liberties. Baissez son intensité pour voir les rues d'aujourd'hui à travers. Il vient directement des serveurs de la Ville quand cette couche est activée."
+    settings:
+      opacity:
+        label: "Intensité de l'atlas, en pourcentage"
+  redlining_1937:
+    label: "Carte du redlining de 1937 (notes de la HOLC)"
+    description: "En 1937, un organisme fédéral, la Home Owners' Loan Corporation (HOLC), a noté les quartiers de Philadelphie de A à D selon le degré de sécurité qu'il jugeait pour les prêts hypothécaires à cet endroit. Les notes dépendaient des personnes qui habitaient chaque zone : les zones où vivaient des familles noires et de nombreuses familles immigrées étaient le plus souvent notées D et entourées en rouge, d'où vient le mot redlining. Cette couche montre les zones et les notes de 1937 telles que Mapping Inequality les a tracées. Les notes sont une trace de la façon dont l'organisme jugeait les lieux en 1937 ; elles ne disent rien des personnes qui y vivent aujourd'hui. Touchez une zone pour sa note et un lien vers sa description de 1937 sur Mapping Inequality. Usage non commercial seulement."
+    settings:
+      shade:
+        label: "Ombrer les zones (désactivé montre seulement leurs contours et leurs notes)"
