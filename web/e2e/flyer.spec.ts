@@ -86,6 +86,64 @@ test.describe('the neighbor flyer', () => {
     expect(await pdfPages()).toBe(1);
   });
 
+  test('prints in any language of the site, and in two side by side with English', async ({ page, context }, info) => {
+    const sent: string[] = [];
+    context.on('request', (request) => sent.push(`${request.url()} ${request.postData() ?? ''}`));
+    // The page's own language by default (in a tab of its own, since a ?lang= link holds for the
+    // rest of a visit in its tab).
+    const spanish = await context.newPage();
+    await offline(spanish);
+    await spanish.goto(`./flyer/?lang=es#opa=${LOT.id}&at=${LOT.lng},${LOT.lat}`);
+    await expect(spanish.getByTestId('flyer')).toContainText('A los vecinos les importa este lote');
+    await expect(spanish.getByTestId('flyer').locator('article').first()).toHaveAttribute('lang', 'es');
+    await spanish.close();
+
+    // Another language, from a page in English: Arabic, right to left, with what was typed as typed.
+    await offline(page);
+    await page.goto(`./flyer/#opa=${LOT.id}&at=${LOT.lng},${LOT.lat}`);
+    const flyer = page.getByTestId('flyer');
+    await page.getByLabel('Flyer language').selectOption('ar');
+    await expect(flyer).toContainText('الجيران يهتمون بهذه القطعة');
+    await expect(flyer).not.toContainText('Neighbors care about this lot');
+    await expect(flyer.locator('article').first()).toHaveAttribute('dir', 'rtl');
+    // The address from City records keeps its number in front inside the Arabic flyer.
+    await expect(flyer.locator('.address').first()).toHaveAttribute('dir', 'auto');
+    await page.getByLabel('A garden').check();
+    await page.getByLabel('How neighbors can reach you').fill('Zq9 group chat at chat.example.org');
+    await expect(flyer).toContainText('نأمل أن');
+    await expect(flyer).toContainText('Zq9 group chat at chat.example.org');
+
+    // English beside it, in a second column; the address and what was typed appear once.
+    await page.getByLabel('Add English beside it, in a second column').check();
+    await expect(flyer).toContainText('Neighbors care about this lot');
+    await expect(flyer).toContainText('الجيران يهتمون بهذه القطعة');
+    await expect(flyer.locator('article').first().locator('.headline [lang="en"]')).toHaveText('Neighbors care about this lot');
+    await expect(flyer.getByText('Zq9 group chat at chat.example.org')).toHaveCount(1);
+    await expect(flyer.getByText(LOT.address)).toHaveCount(1);
+    const [arabic, english] = await flyer.locator('article').first().locator('.headline .side').evaluateAll((els) => els.map((el) => el.getBoundingClientRect().x));
+    // Side by side, the flyer's language first: Arabic on the right, where an Arabic reader starts.
+    expect(english!).toBeLessThan(arabic!);
+
+    // Kept for the next visit, and still nothing sent anywhere.
+    await page.reload();
+    await expect(page.getByLabel('Flyer language')).toHaveValue('ar');
+    await expect(page.getByLabel('Add English beside it, in a second column')).toBeChecked();
+    for (const request of sent) expect(request).not.toContain('Zq9');
+
+    if (isPhone(info)) return;
+    await expectAccessible(page, 'a flyer in Arabic and English');
+    // On paper: still one Letter page, and two half pages to a sheet with nothing cut off.
+    await page.emulateMedia({ media: 'print' });
+    const pdfPages = async () => ((await page.pdf({ format: 'Letter' })).toString('latin1').match(/\/Type\s*\/Page[^s]/g) ?? []).length;
+    expect(await pdfPages()).toBe(1);
+    await page.emulateMedia({ media: 'screen' });
+    await page.getByLabel('Half page, two to a sheet').check();
+    await page.emulateMedia({ media: 'print' });
+    expect(await pdfPages()).toBe(1);
+    const cut = await flyer.locator('article').evaluateAll((els) => els.map((el) => el.scrollHeight - el.clientHeight));
+    for (const overflow of cut) expect(overflow).toBeLessThanOrEqual(1);
+  });
+
   test('the guide to where posting is allowed is reachable from the How page and cites its sources', async ({ page }) => {
     await offline(page);
     await page.goto('./how/');
