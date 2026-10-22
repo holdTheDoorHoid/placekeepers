@@ -7,7 +7,7 @@
 // loads no photo (docs/ETHICS.md, "Privacy"). Links are kept only when they are https.
 
 import type { Manifest } from '../data/manifest.ts';
-import { formatDate, strings } from '../strings.ts';
+import { formatMonth, strings } from '../strings.ts';
 
 export const PROJECTS_TABLE = 'tables/projects.json';
 export const PROJECTS_SCHEMA = 1;
@@ -148,7 +148,7 @@ export function projectsOn(table: ProjectsTable | null, opa: string): ProjectRec
 
 /** "May 2026". */
 export function monthWords(finished: string): string {
-  return formatDate(`${finished}-15`)?.replace(/ \d{1,2},/, '') ?? finished;
+  return formatMonth(finished);
 }
 
 export interface ProjectView {

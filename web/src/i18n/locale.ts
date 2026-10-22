@@ -130,6 +130,17 @@ export function formatDateIn(date: Date, style: DateStyle, timeZone: string): st
   return `${day} ${style === 'short' && name.length > 4 ? `${name.slice(0, 3)}.` : name} ${year}`;
 }
 
+/**
+ * A month and year in the page's language, "May 2026" in English, for a month without a day
+ * (a project's finishing month). The date is read in UTC, as written.
+ */
+export function formatMonthIn(date: Date): string {
+  const language = currentLanguage();
+  if (language.months) return `${language.months[date.getUTCMonth()] ?? ''} ${date.getUTCFullYear()}`;
+  const format = cached('month-year', (intl) => new Intl.DateTimeFormat(intl, { month: 'long', year: 'numeric', timeZone: 'UTC' }));
+  return format.format(date);
+}
+
 /** Every language's Intl locale, for tests. */
 export const INTL_LOCALES: Record<LanguageCode, string> = Object.fromEntries(LANGUAGES.map((l) => [l.code, l.intl])) as Record<
   LanguageCode,

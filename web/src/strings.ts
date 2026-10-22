@@ -16,6 +16,7 @@ import {
   clockFormat,
   decimalFormat,
   formatDateIn,
+  formatMonthIn,
   moneyFormat,
   numberFormat,
   listFormat,
@@ -37,6 +38,13 @@ export function formatDate(value: string | null | undefined, style: 'long' | 'sh
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return null;
   return formatDateIn(d, style, CITY_TIME_ZONE);
+}
+
+/** A month and year in the page's language, "May 2026" in English, from "2026-05". Returns the input if unreadable. */
+export function formatMonth(month: string): string {
+  if (!/^\d{4}-\d{2}$/.test(month)) return month;
+  const d = new Date(`${month}-15T12:00:00Z`);
+  return Number.isNaN(d.getTime()) ? month : formatMonthIn(d);
 }
 
 /** A number in the page's language: "1,234" in English. */

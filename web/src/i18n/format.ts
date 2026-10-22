@@ -4,7 +4,7 @@
 
 import { numberFormat, pluralCategory } from './locale.ts';
 
-export { distanceWords, formatClock, formatDate, formatDecimal, formatList, formatMoney, formatNumber, formatTime } from '../strings.ts';
+export { distanceWords, formatClock, formatDate, formatDecimal, formatList, formatMoney, formatMonth, formatNumber, formatTime } from '../strings.ts';
 
 /**
  * One form per plural category the language uses, with "#" where the number goes. `other` is

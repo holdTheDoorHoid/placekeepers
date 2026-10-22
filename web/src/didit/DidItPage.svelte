@@ -51,7 +51,8 @@
   }
 
   function monthWords(month: string): string {
-    return formatDate(`${month}-01`, 'long')?.replace(/^\w+ 1, /, '') ?? month;
+    // The first day of the month, written in full in the page's language: "June 1, 2024".
+    return formatDate(`${month}-01`, 'long') ?? month;
   }
 
   function day(value: string | null | undefined): string {
