@@ -92,6 +92,7 @@ const zhHans: Catalog = {
     menuLabel: '网站页面',
     map: '地图',
     landBank: '土地银行数字一览',
+    didIt: '有效果吗？',
     pages: [
       { slug: 'about', label: '关于' },
       { slug: 'why', label: '为什么行得通' },
@@ -1900,6 +1901,165 @@ const zhHans: Catalog = {
       // A file name, so it stays as it is in every language.
       file: (part, day) => `placekeepers-land-bank-${part}-${day}.csv`,
     },
+  },
+
+  // "有效果吗？" (M5.4, issue #48): the page that compares places that got care with places that did
+  // not (src/didit/). Care is 照看 here (work done at a place); 关怀 stays for "where care is needed
+  // most". 多 and 少 say "more" and "fewer" than expected; 对照地点 are the comparison places.
+  didit: {
+    pageTitle: '有效果吗？',
+    back: '返回地图',
+    intro:
+      '当一块空地或一栋建筑得到照看之后，和没有得到照看的类似地点相比，它周围的街区有没有变化？我们比较了市政府自己的记录，涉及费城各地的数千个地点。下面是这些记录能说明的，以及不能说明的。',
+    loading: '正在加载结果',
+    loadFailed: '无法加载结果。请检查网络连接后再试。',
+    retry: '再试一次',
+    missing: '结果尚未发布。下一次每周数据更新之后就会出现。',
+    print: '打印本页',
+    runOn: (generated, through) =>
+      `这次比较运行于${generated}，使用的是市政府截至${through}的记录。大约每年重新运行一次。`,
+    shortTitle: '简短的回答',
+    tallyIntro: (n) => `我们做了 ${plural(n, { other: '# 项比较' })}。`,
+    tallyParts: {
+      fewer: (n) => `${formatNumber(n)} 项发现照看之后附近的问题更少`,
+      more: (n) => `${formatNumber(n)} 项发现更多`,
+      no_clear_change: (n) => `${formatNumber(n)} 项发现没有明显变化`,
+      check_failed: (n) => `${formatNumber(n)} 项的结果不可信，因为得到照看的地点在照看之前，变化就已经和别处不一样了`,
+      too_few: (n) => `${formatNumber(n)} 项的地点太少，无法判断`,
+    },
+    tallyJoin: (parts) => (parts.length <= 1 ? `${parts.join('')}。` : `其中 ${parts.join('；')}。`),
+    noneFewer:
+      '市政府的记录没有显示照看降低了附近的枪击、倾倒垃圾或投诉。记录显示照看之后更多的地方，最可能的原因是照看去了问题本来就在增多的地方，而不是照看造成了这种增多。',
+    someFewer: '在记录显示照看之后问题更少的地方，请先读每个结果下面的核查，再决定是否相信它。',
+    notOneLot: '这一切都不是对任何单独一个地块的结论。',
+    trialsTitle: '真正的证据：费城的试验',
+    trialsIntro: '像这样对记录所做的比较，可能会误导人。随机试验不会以同样的方式被误导，而这里做过两项：',
+    trials: [
+      '绿化空地：在一项覆盖全市、涉及 541 块空地的试验中，贫困线以下的社区里，绿化过的空地附近的枪支暴力下降了 29%（Branas 等人，2018年）。',
+      '在同一项试验中，绿化过的空地附近的枪击下降了 6.8%，只清理和割草的空地附近下降了 9.2%（Moyer 等人，2019年）。',
+      '修复废弃房屋：装上能用的门窗，使附近的持枪袭击减少了 13%；只清理没有产生可测量的差别（South 等人，2023年）。',
+    ],
+    trialLinks: ['阅读绿化试验', '阅读枪击研究', '阅读房屋修复试验'],
+    whyLink: '更多关于它为什么行得通',
+    warningsTitle: '为什么对记录的比较可能会误导人',
+    warnings: [
+      '照看常常去往问题本来就在增多的地方，所以得到照看的地点，和拿来与它们比较的地点之间，可能存在任何记录都看不出来的差别。',
+      '糟糕的一年之后，往往会自然迎来好一点的一年。在糟糕的一段时间刚过去就被选中的地点，即使什么也没变，看上去也可能有所改善。',
+      '问题可能只是挪到了街的另一头，而不是消失。为此，我们会检查每个地点周围的一圈区域。',
+    ],
+    kinds: {
+      landcare: 'PHS LandCare 清理并绿化的地块',
+      clean_seal: '市政府清理并封闭的房产',
+      demolition: '市政府拆除的建筑',
+      projects: '邻居们完成的项目',
+    },
+    kindNotes: {
+      landcare: (records, dated) =>
+        `PHS LandCare 的名单上共有 ${formatNumber(records)} 个地块，其中 ${formatNumber(dated)} 个注明了被清理并绿化的季节。没有注明季节的地块（大多数由邻居们通过 Community LandCare 照看）未纳入比较。`,
+      clean_seal: (records) =>
+        `市政府已经完成的清理和封闭工单，按工作完成的日期计算：2007年以来共 ${formatNumber(records)} 件。2020年以后，市政府的记录里这类工单少得多，所以这些比较大多来自2017年到2019年。`,
+      demolition: (records) =>
+        `市政府自己实施的拆除，按每一栋完工的日期计算：2007年以来共 ${formatNumber(records)} 栋。凭私人许可证进行的拆除未纳入比较。`,
+    },
+    outcomes: {
+      shootings: '约两个街区（200 米）范围内的枪击',
+      dumping: '约两个街区范围内向 Philly311 报告的非法倾倒垃圾（不含该地点本身）',
+      complaints: '约两个街区范围内向 L&I 提出的关于空地和空置建筑的投诉（不含该地点本身）',
+    },
+    outcomeNouns: {
+      shootings: '枪击',
+      dumping: '倾倒垃圾报告',
+      complaints: '空置房产投诉',
+    },
+    verdictLabels: {
+      fewer: '照看之后更少',
+      more: '照看之后更多',
+      no_clear_change: '没有明显变化',
+      check_failed: '我们无法判断',
+      too_few: '地点太少，无法判断',
+    },
+    verdicts: {
+      fewer: (noun, percent, range) =>
+        `在照看之后的两年里，附近的${noun}比根据没有得到照看的类似地点推算出的预期数量少 ${formatDecimal(percent, 1)}%（90% 区间：${range}）。`,
+      more: (noun, percent, range) =>
+        `在照看之后的两年里，附近的${noun}比根据没有得到照看的类似地点推算出的预期数量多 ${formatDecimal(percent, 1)}%（90% 区间：${range}）。`,
+      notCaused: '这并不表明是照看造成了这种增多。',
+      moreReports: '报告变多，也可能是因为市政府关注之后，有更多邻居来报告了。',
+      noClearChange: (change, range) =>
+        `没有明显变化。比较的结果是${change}（90% 区间：${range}），而这个区间包含了完全没有变化的可能。`,
+      checkFailed: (noun) =>
+        `在照看之前的几年里，这些地点附近的${noun}，变化就已经和对照地点附近的${noun}不一样了，所以这个比较无法把照看和原本就在发生的事情分开。`,
+      tooFew: (places, min) =>
+        `只有 ${plural(places, { other: '# 个地点' })}可以比较。一项比较至少需要 ${formatNumber(min)} 个。`,
+    },
+    whyMore: {
+      landcare: 'PHS 和市政府选择邻居们请求帮助的地块，而这些地方的问题往往正在增多。',
+      clean_seal:
+        '市政府是在收到对某处房产的投诉之后，才去清理和封闭它，而这往往发生在一个街区正在走下坡路的时候，或者那处房产本身出了问题之后。',
+      demolition: '市政府是在一栋建筑已经变得不安全之后才拆除它，而这往往发生在一些正在衰落的街区，这种衰落是记录里看不出来的。',
+      projects: '邻居们常常在问题增多的地方发起项目。',
+    },
+    half: (year, half) => `${year}年${half === 1 ? '上' : '下'}半年`,
+    noChange: '没有变化',
+    fewerBy: (percent) => `少 ${formatDecimal(percent, 1)}%`,
+    moreBy: (percent) => `多 ${formatDecimal(percent, 1)}%`,
+    range: (low, high) => `从${low}${low.endsWith('%') ? ' ' : ''}到${high}`,
+    compared: (places, from, to, areas) =>
+      `比较对象：${plural(places, { other: '# 个地点' })}，在${from}到${to}之间得到了照看，分布在全市的 ${plural(areas, { other: '# 个区域' })}里，每个地点最多配有五个没有得到照看的类似地点。`,
+    counts: (before, after, expected) =>
+      `得到照看的地点附近：照看之前的两年里是 ${formatNumber(before)}，之后的两年里是 ${formatNumber(after)}，而根据对照地点，预期会是 ${formatNumber(expected)}。`,
+    checksTitle: '核查',
+    checks: {
+      passed: (change, range, places) =>
+        `核查通过：假设照看提前了四年半，这个比较应该找不到任何变化，而它的结果是${change}（${range}；${plural(places, { other: '# 个地点' })}有那么早的记录）。`,
+      failed: (change, range, places) =>
+        `核查未通过：假设照看提前了四年半，这个比较的结果是${change}（${range}；${plural(places, { other: '# 个地点' })}有那么早的记录），而它本应找不到变化。得到照看的地点当时就已经走在一条不同的变化轨迹上。`,
+      tooFew: '无法进行核查：这些地点里，有足够早的记录的太少。',
+      around: (change, range) => `更远处，200 到 400 米外：${change}（${range}）。`,
+      moved: '部分问题可能已经转移到了那里。',
+      later: (change, range, places) =>
+        `只与后来得到同样照看的地点比较：${change}（${range}；${plural(places, { other: '# 个地点' })}）。`,
+      naive: (change, noun) => `简单的前后对比会得出“${change}”，因为它没有考虑别处的${noun}是怎么变化的。`,
+    },
+    projectsNow: (shown, ready, before) =>
+      `地图上显示了 ${plural(shown, { other: '# 个项目' })}，都是邻居们完成的。其中 ${formatNumber(ready)} 个在${before}或更早完成，时间足够早，之后已有两年的记录。`,
+    projectsNotRead: '这个版本的地图还没有邻居们完成的项目的名单。',
+    projectsNeed: (min) =>
+      `一项比较至少需要 ${formatNumber(min)} 个项目。每报告一个项目，就离这个数字更近一步，也让邻居们看到别人做了什么。`,
+    projectsLink: '告诉我们您完成的一个项目',
+    cannotTitle: '这不能说明什么',
+    cannot: [
+      '一个地方之后是否仍然看起来空置。市政府的空置房产名单只有2024年和2026年的，而 LandCare 和清理并封闭本来就是要在一个地方空着的时候让它保持有人照看，所以“仍然空置”分不清是成功还是失败。',
+      '任何关于单独一个地块的结论。枪击、倾倒垃圾和投诉在每个街区都会因为许多原因起起落落。只有许多地点放在一起，才能显示出一种规律，即使如此也并不确定。',
+      '某件事为什么变化。比较显示的是什么变了，而不是是什么造成的。',
+      '任何关于退出了 LandCare 的地块的结论。它的名单上只有它现在照看的地块。',
+      '记录本身的变化：市政府的清理和封闭记录从2020年起少了许多工单，倾倒垃圾的报告从2016年1月才开始，L&I 在2020年重新命名了投诉的种类。每一项比较都是把地点与同一些年份里的其他地点相比，这样就处理了其中的大部分问题。',
+    ],
+    chance: (n) =>
+      `偶然性：在 90% 的水平上，大约每十项比较里就有一项，在其实没有变化时看上去像有变化，所以在这 ${formatNumber(n)} 项比较之中，有一两项可能纯属偶然。`,
+    methodTitle: '我们是怎么比较的',
+    method: [
+      '一个“地点”是全市范围内边长 100 米的一块方形区域，从2017年起，在某个半年里那里发生过照看。',
+      '对每一个地点，我们在大约 2 英里（3 公里）以内、但不在同一个街区的范围里，找出最多五个地点：它们在照看前后的两年里没有得到同样的照看，照看前两年里每一年的数量都相近，生活在贫困线以下的邻居所占的比例也相近。',
+      '我们把得到照看的地点从前两年到后两年的变化，与它的对照地点的平均变化作比较，并跳过做这项工作本身所在的那半年。',
+      '90% 区间来自对全市各个区域整体重新抽取 2,000 次。真实的变化很可能就在这个区间之内。',
+      '我们先在虚构的城市上测试了这个方法，那里的答案我们事先就知道。我们设定了变化，它就找到了变化；我们没有设定变化，它就找不到变化。',
+    ],
+    methodLink: '完整的方法、每一个数字和代码',
+    sourcesTitle: '数据来源',
+    sources: {
+      landcare: 'PHS LandCare 的地块，数据来自宾夕法尼亚园艺协会（Pennsylvania Horticultural Society），经费城市政府提供。',
+      clean_seal: '清理和封闭工单，来自市政府的执照和检查部。',
+      demolition: '建筑拆除记录，来自市政府的执照和检查部。',
+      shootings: (first, last) => `枪击受害者，来自费城警察局，${first}到${last}。只有计数。`,
+      dumping: (first, last) => `向 Philly311 提出的非法倾倒垃圾请求，${first}到${last}。`,
+      complaints: (first, last) => `关于空地和空置建筑的投诉，来自市政府的执照和检查部，${first}到${last}。`,
+      poverty: '按人口普查区统计的、生活在贫困线以下的邻居所占的比例，来自人口普查局的美国社区调查（American Community Survey），2020年到2024年。',
+      projects: '邻居们完成的项目，由邻居们报告给 Placekeepers，并经其维护者批准。',
+    },
+    lotNote: '单独一个地块无法说明照看是否有效：枪击、倾倒垃圾和投诉在每个街区都会因为许多原因起起落落。',
+    lotLink: '查看市政府的记录对整个费城显示了什么',
+    sealedOn: (date) => `市政府上一次清理并封闭它是在${date}。`,
   },
 
   projects: {
