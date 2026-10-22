@@ -220,11 +220,11 @@ const ht: Catalog = {
     againstTitle: 'Sa ki fè nou ezite',
     notPublished: 'Rezon pou kote sa a poko pibliye.',
     city_land: (date) =>
-      date ? `Vil la mete l sou lis kòm teren ki gen anpil chans pou l vid (lis la gen dat ${date})` : 'Vil la mete l sou lis kòm teren ki gen anpil chans pou l vid',
+      date ? `Vil la mete l sou lis kòm teren ki pwobableman vid (lis la gen dat ${date})` : 'Vil la mete l sou lis kòm teren ki pwobableman vid',
     city_building: (date) =>
       date
-        ? `Vil la mete l sou lis kòm bilding ki gen anpil chans pou l vid (lis la gen dat ${date})`
-        : 'Vil la mete l sou lis kòm bilding ki gen anpil chans pou l vid',
+        ? `Vil la mete l sou lis kòm bilding ki pwobableman vid (lis la gen dat ${date})`
+        : 'Vil la mete l sou lis kòm bilding ki pwobableman vid',
     assessor_vacant_land: 'Evalyatè a klase l kòm teren vid',
     no_building: 'Pa gen okenn bilding sou pasèl la',
     demolished: (year) =>
@@ -1181,7 +1181,7 @@ const ht: Catalog = {
     clearConfirm: 'Efase chak bwat ak chak nòt ou ranpli pou direksyon sa a?',
     safetyTitle: 'Anvan ou ale: rete an sekirite',
     safety: [
-      'Rete sou twotwa a. Pa janm kanpe nan ri a oswa antre nan liy bis pou gade yon estasyon.',
+      'Rete sou twotwa a. Pa janm kanpe nan ri a oswa antre nan bann bis la pou gade yon estasyon.',
       'Ale pandan jounen an, epi ale ak yon zanmi.',
       'Sispann mache anvan ou gade fèy sa a oswa telefòn ou, epi gade anlè anvan ou travèse.',
       'Pran sou kote pou pasaje yo ka tann epi monte. Pa pran foto moun.',
@@ -1881,12 +1881,12 @@ const ht: Catalog = {
       cost: 'Pri',
       timeline: 'Konbyen tan sa pran',
       lastChecked: (date) => `Dènye verifikasyon ${date}.`,
-      toConfirm: 'Toujou pou konfime ak òganizasyon ki nome isit la.',
+      toConfirm: 'Poko konfime ak òganizasyon ki nome isit la.',
       partners: 'Ki moun ki ka ede',
       otherRoutes: 'Lòt wout legal pou pasèl sa a',
       none: 'Poko gen sijesyon pou kote sa a.',
       notListed:
-        'Pasèl sa a pa sou lis teren ak bilding ki gen anpil chans pou yo vid nou an, kidonk nou pa gen sijesyon pou li. Paj Kijan pou fè l la eksplike wout legal yo pou nenpòt teren.',
+        'Pasèl sa a pa sou lis teren ak bilding ki pwobableman vid nou an, kidonk nou pa gen sijesyon pou li. Paj Kijan pou fè l la eksplike wout legal yo pou nenpòt teren.',
       howTo: 'Kijan pou fè l',
       conservatorshipWarning:
         'Pwosedi konsèvatè pa tribinal (conservatorship) ka retire yon pwopriyete nan men pwopriyetè li. Chèchè yo jwenn yo itilize l anpil plis nan katye ki ap fè fas ak jantrifikasyon (lè pri yo monte nan yon katye) pase nan lòt kote. Pale ak Garden Justice Legal Initiative anvan ou konsidere l.',
@@ -1985,7 +1985,7 @@ const ht: Catalog = {
       flagTitles: {
         absentee: 'Kote pwopriyetè a resevwa lapòs',
         possible_estate: 'Posib sikseswon',
-        tax_debt_2025: 'Dèt taks depi jiyè 2025',
+        tax_debt_2025: 'Dèt taks dapre dosye jiyè 2025',
         sheriff_sales: 'Ansyen vant pa sherif',
         years_since_sale: 'Ane depi dènye vant',
         many_parcels: 'Yon pwopriyetè anpil pasèl vid',
@@ -1997,10 +1997,10 @@ const ht: Catalog = {
       otherFlag: 'Yon nòt nan dosye Vil la',
       taxTitle: 'Taks',
       taxNoDebt:
-        'Vil la pa pibliye ankò balans taks chak pwopriyete kòm done ouvè. Kopi jiyè 2025 nou genyen an pa montre taks ki pa peye isit la.',
-      taxUnknown: 'Vil la pa pibliye ankò balans taks chak pwopriyete kòm done ouvè.',
+        'Vil la sispann pibliye balans taks chak pwopriyete kòm done ouvè. Kopi jiyè 2025 nou genyen an pa montre taks ki pa peye isit la.',
+      taxUnknown: 'Vil la sispann pibliye balans taks chak pwopriyete kòm done ouvè.',
       taxHeld:
-        'Vil la pa pibliye ankò balans taks chak pwopriyete kòm done ouvè. Nou montre kopi jiyè 2025 nou an pou yon pwopriyetè ki ka yon moun sèlman sou pasèl nou rele gen anpil chans oswa pwobableman vid.',
+        'Vil la sispann pibliye balans taks chak pwopriyete kòm done ouvè. Nou montre kopi jiyè 2025 nou an pou yon pwopriyetè ki ka yon moun sèlman sou pasèl nou rele gen anpil chans oswa pwobableman vid.',
       taxCenter: 'Verifye balans jodi a sou Sant Taks Filadèlfi (Philadelphia Tax Center)',
       deedFraudTitle: 'Pwoteje pwopriyete sa a kont vòl akt',
       deedFraud:
@@ -2063,7 +2063,7 @@ const ht: Catalog = {
       },
       tax_debt_2025: {
         text: (amount, years) =>
-          `Depi jiyè 2025, dosye Vil la te montre ${amount} nan taks byen imobilye ki pa peye${years ? ` ki soti nan ${plural(years, { other: '# ane taks' })}` : ''}.`,
+          `Dapre dosye Vil la nan jiyè 2025, te gen ${amount} nan taks byen imobilye ki pa peye${years ? ` ki soti nan ${plural(years, { other: '# ane taks' })}` : ''}.`,
         careful:
           'Sa a se dènye dosye piblik la, ki soti 9 jiyè 2025, se pa balans jodi a: pwopriyetè a ka te peye depi lè sa a, oswa li ka dwe plis. Apeprè twa lane taks ki pa peye oswa plis ka lakòz yon vant pa sherif, kote yon teren vwazen yo pran swen ka vann bay yon achtè ki soti deyò.',
         next: 'Verifye balans jodi a sou Sant Taks Filadèlfi (Philadelphia Tax Center) anvan ou konte sou sa a. Si blòk ou a pran swen teren sa a, gid Grounded in Philly sou vant pa sherif eksplike risk la ak sa ou ka fè.',

@@ -49,7 +49,7 @@ espre, pou yon sèl sous ki kase pa ka fè tout kat la tonbe ankò. Li ki jan so
 [Kijan nou jwenn teren vid](https://holdthedoorhoid.github.io/placekeepers/vacant-land/).
 
 Placekeepers pa reitilize okenn kòd Clean & Green Philly jodi a. Li itilize dènye kopi pwojè a sou
-dèt taks depi jiyè 2025 (lisans MIT), ki kredite sou
+dèt taks nan jiyè 2025 (lisans MIT), ki kredite sou
 [paj Eta done yo](https://holdthedoorhoid.github.io/placekeepers/status/). Nenpòt kòd li nou
 itilize pita ap kenbe avi MIT li, ki sou lis nan yon fichye NOTICE nan kòd sous nou an.
 

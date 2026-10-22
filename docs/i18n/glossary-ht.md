@@ -111,6 +111,12 @@ Title Fund, Philly311, SEPTA or the Land Bank's programs, so those stay as prope
 | weekly copy (snapshot) | kopi chak semèn | |
 | not yet surveyed | poko verifye | never worded as "missing" |
 | not yet confirmed | poko konfime | |
+| still to be confirmed | poko konfime | never "toujou pou konfime", because "toujou" means both always and still |
+| likely vacant (the City's list, the "not listed" line) | pwobableman vid | "gen anpil chans" is only for "very likely vacant"; the list holds both tiers |
+| as of a date (a snapshot) | dapre dosye ... nan jiyè 2025, or "nan jiyè 2025" | never "depi" (since): a snapshot is not a debt that has run since that month |
+| no longer (publishes) | sispann pibliye | never "pa ... ankò", which can read as "not yet" |
+| bus lane | bann bis la | "bann" is a road lane; never "liy bis", which is a bus route |
+| lease | kontra lokasyon | the word the catalog already uses for "lease" in `dossier.listing.decline` ("vant oswa lokasyon") |
 
 ## The word for word passages (docs/ETHICS.md)
 
@@ -148,3 +154,8 @@ Philly, OpenStreetMap, StreetComplete), the memorial removal email subject and b
 the `credits.basemap` HTML, and the CSV file name template `landBank.csv.file`. In the step by step
 instructions for OpenStreetMap's editor and for StreetComplete, the app's own button names are kept in
 English with the Creole meaning beside them, since a phone or the editor may show them in English.
+
+## Changes made after the back translation check
+
+The back translation check of 2026-10-21 (`docs/i18n/check-ht.md`) changed seven wordings; the rows
+above marked "never" record them. None touched the six word for word passages above.

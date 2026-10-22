@@ -118,7 +118,7 @@ chak pati lè yon gwoup separe yon liy.
 
 ## Rete an sekirite
 
-- Rete sou twotwa a. Pa janm kanpe nan ri a oswa antre nan liy bis pou gade yon estasyon.
+- Rete sou twotwa a. Pa janm kanpe nan ri a oswa antre nan bann bis la pou gade yon estasyon.
 - Sispann mache anvan ou gade telefòn ou, epi gade anlè anvan ou travèse.
 - Pran sou kote pou pasaje yo ka tann, monte epi desann. Pa janm bloke pòt bis la oswa abri a.
 - Verifye pandan jounen an, ak yon zanmi si ou kapab.

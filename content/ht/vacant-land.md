@@ -9,7 +9,7 @@ pa ka fè tout kat la tonbe.
 
 Chak pasèl nou kwè ki vid parèt kòm swa yon **teren** (pa gen okenn bilding ki kanpe sou li) swa yon
 **bilding** (kanpe, men vid), ansanm ak konbyen nou sèten: konfyans **wo**, **mwayen**, oswa **ba**.
-Chak youn montre rezon li yo ak mo senp, pa egzanp "lis Vil la di sa a gen anpil chans pou l se tè
+Chak youn montre rezon li yo ak mo senp, pa egzanp "lis Vil la di sa a pwobableman se tè
 vid, dosye pwopriyete Vil la klase l kòm tè vid, epi pa gen okenn anprent bilding sou pasèl la."
 Pasèl ki gen konfyans wo ak mwayen parèt pa defo; pasèl ki gen konfyans ba kache dèyè yon filtè,
 paske yo pa two pi bon pase pil oswa fas. Pak, jaden, pakin, liy tren, sèvis piblik, ak simityè pa
