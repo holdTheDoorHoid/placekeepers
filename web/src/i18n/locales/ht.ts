@@ -1073,7 +1073,9 @@ const ht: Catalog = {
                                         ? 'Gad travèse lekòl'
                                         : style === 'redlining'
                                           ? 'Kat redlining 1937'
-                                          : 'Detay',
+                                          : style === 'projects'
+                                            ? 'Pwojè vwazen yo fini'
+                                            : 'Detay',
     memorialTitle: 'An memwa',
     peopleHere: (n) => `Nou sonje ${plural(n, { other: '# moun' })} isit la`,
     killed: {
