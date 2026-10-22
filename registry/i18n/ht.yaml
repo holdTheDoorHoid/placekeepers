@@ -60,7 +60,7 @@ groups:
 sources:
   opa_properties:
     name: Pwopriyete OPA
-    publisher: Vil Filadèlfi, Biwo Evalyasyon Pwopriyete (Office of Property Assessment)
+    publisher: Vil Filadèlfi, Biwo Pwopriyete Evalyasyon (Office of Property Assessment)
   pwd_parcels:
     name: Pasèl Depatman Dlo
     publisher: Depatman Dlo Filadèlfi
@@ -81,7 +81,7 @@ sources:
     publisher: Vil Filadèlfi, Depatman Dosye (Department of Records)
   assessment_history:
     name: Istwa evalyasyon
-    publisher: Vil Filadèlfi, Biwo Evalyasyon Pwopriyete
+    publisher: Vil Filadèlfi, Biwo Pwopriyete Evalyasyon
   li_violations:
     name: Vyolasyon kòd L&I
     publisher: Vil Filadèlfi, Depatman Lisans ak Enspeksyon (Department of Licenses and Inspections)
@@ -128,7 +128,7 @@ sources:
     name: Distri zonaj debaz
     publisher: Komisyon Planifikasyon Vil Filadèlfi
   council_districts:
-    name: Distri Konsèy Vil la 2024
+    name: Distri Konsèy Minisipal 2024
     publisher: Vil Filadèlfi
   community_organizations:
     name: Òganizasyon Kominotè Anrejistre (Registered Community Organizations)
@@ -252,7 +252,7 @@ sources:
     publisher: Vil Filadèlfi, Depatman Dosye
   assessment_values:
     name: Valè mache evalye, nan tout vil la, de ane taks
-    publisher: Vil Filadèlfi, Biwo Evalyasyon Pwopriyete
+    publisher: Vil Filadèlfi, Biwo Pwopriyete Evalyasyon
   acs_tenure:
     name: Lokatè ak pwopriyetè pa sektè resansman (ACS 2020 a 2024)
     publisher: Biwo Resansman Etazini, American Community Survey
@@ -386,8 +386,8 @@ layers:
     label: Jaden kominotè
     description: Jaden ak fèm kominotè PHS oswa Neighborhood Gardens Trust sipòte, ak jaden ki anrejistre nan Pak ak Rekreyasyon. Moun deja pran swen kote sa yo, kidonk yo pa janm parèt kòm vid.
   council_districts:
-    label: Distri Konsèy Vil la
-    description: Dis distri Konsèy Vil la jan yo te trase an 2024, pou ou ka wè ki biwo pou kontakte.
+    label: Distri Konsèy Minisipal
+    description: Dis distri Konsèy Minisipal jan yo te trase an 2024, pou ou ka wè ki biwo pou kontakte.
     settings:
       names:
         label: Montre non yo
@@ -859,3 +859,553 @@ layers:
     settings:
       shade:
         label: Ombraje zòn yo (si ou fèmen l, se sèlman kontou yo ak nòt yo ki parèt)
+
+lenses:
+  violence:
+    label: Rediksyon vyolans
+    description: Kote netwaye, plante oswa sele ta pi ka diminye vyolans ak zam toupre, selon esè o aza ki fèt nan Filadèlfi.
+    factors:
+      untreated_vacancy:
+        label: Teren vid ki pa trete oswa bilding abandone ki ouvè
+        explain: 'Esè o aza ki fèt nan Filadèlfi te jwenn ke plante teren vid ak bay ansyen kay abandone pòt ak fenèt ki fonksyone te diminye vyolans ak zam toupre. Kote yo deja trete konsa jwenn 0: teren PHS LandCare antretni, ak bilding ki gen pwopriyetè ki repare pòt ak fenèt yo apre yon avi L&I. Chak lòt teren vid oswa bilding jwenn 100.'
+      shootings_nearby:
+        label: Moun ki pran bal toupre nan dènye twa lane yo
+        explain: Moun ki pran bal nan dènye twa lane yo nan apeprè yon ka mil (egzagòn kote a ak sis ki alantou l), selon dosye Depatman Polis yo sou moun ki pran bal. Ran an se pwopòsyon kote sou kat la ki gen mwens. Esè yo te mezire mwens tire alantou kote yo te trete, kidonk swen ede pi plis kote tire rive.
+      poverty:
+        label: To povrete nan katye a
+        explain: Pwopòsyon moun k ap viv anba liy povrete a nan sektè resansman kote a (sondaj Biwo Resansman, 2020 a 2024). Ran an se pwopòsyon kote sou kat la ki nan sektè ki gen yon to pi ba. Nan esè nan tout vil la, bès vyolans ak zam lan te jwenn nan katye ki anba liy povrete a.
+      canopy_gap:
+        label: Pa anpil pyebwa toupre
+        explain: Kouvèti pyebwa sou tè a nan apeprè yon ka mil, selon sondaj kouvèti pyebwa Vil la an 2018. Ran an se pwopòsyon kote sou kat la ki gen plis pyebwa alantou yo, kidonk mwens pyebwa vle di ran pi wo. Pyebwa ri yo lye ak mwens krim, men prèv yo melanje epi yo depann de kote yo plante yo.
+    presets:
+      research:
+        label: Baze sou rechèch
+      vacancy_only:
+        label: Sèlman vid
+  heat:
+    label: Chalè ak lonbraj
+    description: 'Kote plante pyebwa oswa vèdi yon teren vid ta rafrechi moun yo pi plis: teren nan katye kote chalè ete a frape moun yo pi di, ak ti lonbraj alantou yo, ak anpil moun pou santi diferans lan.'
+    factors:
+      heat_vulnerability:
+        label: Vilnerabilite chalè nan katye a
+        explain: 'Ki jan chalè ete a frape moun nan sektè resansman teren an, selon Endèks Vilnerabilite Chalè Vil la (Depatman Sante Piblik ak Biwo Dirabilite, done 2017 a 2019): ki jan sektè a vin cho nan jou ete, jan satelit mezire l, ansanm ak konbyen nan moun ki rete la ki pi an risk nan chalè a, selon laj, sante, revni ak plis ankò. Ran an se pwopòsyon kote sou kat la ki nan sektè ki gen yon nòt pi ba.'
+      few_trees:
+        label: Pa anpil pyebwa toupre
+        explain: Kouvèti pyebwa sou tè a nan apeprè yon ka mil, selon sondaj kouvèti pyebwa Vil la an 2018, menm mezi lantiy vyolans lan itilize. Ran an se pwopòsyon kote sou kat la ki gen plis pyebwa alantou yo, kidonk mwens pyebwa vle di ran pi wo. Pyebwa rafrechi ri yo ak lonbraj yo ak dlo fèy yo bay. Etid yo dakò yo rafrechi pandan jounen an, plis kote kouvèti a kouvri plis pase apeprè 40 pousan nan yon blòk, epi mwens nan nwit.
+      few_street_trees:
+        label: Pa anpil pyebwa Vil la sou blòk la
+        explain: Pyebwa nan 100 mèt de teren an nan envantè pyebwa 2025 Pak ak Rekreyasyon, pyebwa Vil la kenbe sou ri li yo ak nan pak li yo, se pa pyebwa nan lakou prive. Ran an se pwopòsyon kote sou kat la ki gen plis nan pyebwa sa yo alantou yo, kidonk mwens pyebwa vle di ran pi wo. Pyebwa ri yo bay lonbraj sou twotwa kote moun mache epi tann.
+      people_nearby:
+        label: Moun sa a ta rive jwenn
+        explain: Rezidan pa kilomèt kare tè nan sektè resansman teren an (sondaj Biwo Resansman, 2020 a 2024). Ran an se pwopòsyon kote sou kat la ki nan sektè ki gen mwens moun. Plis moun ta santi rafrechisman an. Popilasyon an konte sèlman ki moun yon amelyorasyon ta rive jwenn; li pa janm yon mezi bezwen poukont li.
+    presets:
+      balanced:
+        label: Ekilibre
+      people_at_risk:
+        label: Moun ki pi an risk
+      fewest_trees:
+        label: Pi piti pyebwa
+  placemaking:
+    label: Kreyasyon kote
+    description: 'Kote yon teren vid ta pi ka vin yon kote piblik moun itilize chak jou, tankou yon jaden, yon ti pak, yon kote pou chita nan lonbraj oswa yon kote pou atizay: teren ki gen anpil vwazen ak kote chak jou nan yon ti mache, lwen yon pak ak lwen atizay piblik. Se sou itilizasyon ak akèy, se pa sou krim.'
+    factors:
+      neighbors:
+        label: Moun nan 5 minit mache
+        explain: Konbyen moun ki rete nan 5 minit mache de teren an, konte kòm 400 mèt an liy dwat, selon resansman 2020. Ran an se pwopòsyon kote sou kat la ki gen mwens moun alantou yo. Plis vwazen vle di plis moun yon jaden, yon ban oswa yon miral ta sèvi. Popilasyon an konte sèlman ki moun yon pwojè ta rive jwenn.
+      everyday_places:
+        label: Kote chak jou nan 10 minit mache
+        explain: 'Konbyen nan sèt kalite kote chak jou ki nan 10 minit mache, konte kòm 800 mèt an liy dwat: yon bibliyotèk, yon sant rekreyasyon, yon pisin oswa yon zòn jwèt dlo, yon fontèn pou bwè nan yon pak, yon lekòl, yon makèt oswa yon mache ki aksepte SNAP, ak yon estasyon bis, tramway oswa tren. Ran an se pwopòsyon kote sou kat la ki gen mwens. Moun k ap ale nan kote sa yo pase devan teren an. Konbyen pasan yo ede yon nouvo kote piblik depann de ri a ak kote a, kidonk prèv yo melanje.'
+      walkability:
+        label: Bon pou mache
+        explain: 'Endèks Nasyonal Mache EPA a pou gwoup blòk teren an: kwen ri, ki jan transpò toupre, ak ki jan kay, travay ak magazen melanje byen (done apeprè 2017 a 2019). Ran an se pwopòsyon kote sou kat la nan zòn ki mwens bon pou mache. Kote moun mache, plis nan yo ta itilize yon kote sou teren an. Etid sou kote ki bon pou mache jwenn korelasyon ki gen siyifikasyon depann de kote a, kidonk prèv yo melanje.'
+      far_from_park:
+        label: Lwen yon pak
+        explain: 'Distans an liy dwat soti nan teren an rive nan bò tè pak ki pi pre a nan Pak ak Rekreyasyon: pak, teren jwèt, sant rekreyasyon, plas, koridò vèt ak zòn natirèl, men pa lakou travay li yo, teren gòlf oswa platbann plante nan mitan ri yo. Ran an se pwopòsyon kote sou kat la ki pi pre youn, kidonk pi lwen vle di ran pi wo. Yon teren ki lwen yon pak ta ka bay vwazen yo espas louvri yo manke.'
+      no_art_nearby:
+        label: Pa gen atizay piblik toupre
+        explain: 'Distans an liy dwat soti nan teren an rive nan zèv atizay piblik ki pi pre sou lis Percent for Art Vil la oswa nan Wikidata, san konte zèv andedan bilding yo. Ran an se pwopòsyon kote sou kat la ki pi pre youn, kidonk pi lwen vle di ran pi wo. De lis sa yo gen yon pati nan atizay vil la sèlman: miral Mural Arts yo ak zèv OpenStreetMap sèlman make yo pa nan yo, kidonk gade kouch Atizay piblik la tou. Atizay byenveni pou bèlte ak fyète; pa gen okenn etid ki lye l ak mwens vyolans.'
+      commercial_corridor:
+        label: Sou oswa toupre yon koridò komèsyal
+        explain: Nòt konplè, 100, lè teren an sou youn nan koridò komèsyal Vil la, ri komèsyal ak sant Komisyon Planifikasyon an te ankete ant 2011 ak 2017, oswa nan 50 mèt de youn, epi 0 si se pa sa. Magazen yo fè moun pase devan teren an chak jou. Ri komèsyal ki chaje ka pote pwoblèm tou, kidonk prèv yo melanje.
+    presets:
+      balanced:
+        label: Ekilibre
+      most_neighbors:
+        label: Pi plis vwazen
+      where_people_walk:
+        label: Kote moun deja mache
+      far_from_a_park:
+        label: Lwen yon pak
+  street_safety:
+    label: Sekirite ri
+    description: Blòk ri kote moun k ap mache ak moun k ap monte bisiklèt pi an risk, selon dosye aksidan, High Injury Network Vil la ak lekòl ki toupre.
+    factors:
+      high_injury_network:
+        label: Sou High Injury Network
+        explain: Vil la te jwenn ke pifò moun ki mouri ak ki blese grav nan trafik rive sou ri sa yo, apeprè 12 pousan nan tout ri Filadèlfi.
+      walking_cycling_harm:
+        label: Moun ki mouri oswa ki blese grav pandan yo t ap mache oswa ap monte bisiklèt, 5 dènye ane yo
+        explain: Konte moun ki mouri oswa ki blese grav pandan yo t ap mache oswa ap monte bisiklèt sou blòk sa a oswa nan kwen li yo, nan senk dènye ane dosye aksidan PennDOT yo. Ran an se pwopòsyon blòk nan tout vil la ki gen mwens.
+      recent_death:
+        label: Yon moun te mouri isit la nan 2 dènye ane yo
+        explain: Yon lanmò sou blòk sa a oswa nan kwen li yo nan dènye de lane yo, selon dosye aksidan ki lakòz lanmò Depatman Polis yo, ki mete ajou chak swa.
+      school_nearby:
+        label: Lekòl nan 400 mèt
+        explain: Timoun mache al lekòl ak tounen isit la. 400 mèt se apeprè senk minit mache.
+    presets:
+      research:
+        label: Baze sou rechèch
+      recorded_harm:
+        label: Sèlman dòmaj ki anrejistre
+  transit_comfort:
+    label: Konfò transpò
+    description: 'Estasyon bis ak tramway kote yon abri, yon ban oswa lonbraj ta ede pasaje yo pi plis: estasyon ki chaje, estasyon kote yon verifikasyon pa t jwenn anyen pou chita anba oswa sou li, estasyon ki gen ti lonbraj nan katye cho, estasyon sou High Injury Network, ak estasyon ki gen long tan datant. Kote pèsonn poko verifye yon estasyon, abri ak ban li konte mwatye.'
+    factors:
+      riders:
+        label: Moun ki monte chak jou lasemèn
+        explain: Konbyen moun ki monte isit la nan yon jou lasemèn mwayen, selon pwòp konte SEPTA. Ran an se pwopòsyon estasyon ki gen mwens pasaje. Plis pasaje vle di plis moun yon abri oswa yon ban ede; Vil la gen kòm objektif pou mete abri nan 15 pousan estasyon bis ki pi chaje yo. Estasyon SEPTA poko konte yo kite deyò faktè sa a.
+      no_shelter:
+        label: Pa gen abri
+        explain: 100 kote yon verifikasyon pa t jwenn abri, 0 kote gen yon abri, tout estasyon an anba yon twati, oswa pwòp lis abri bis Vil la gen youn la (kèlkeswa sa OpenStreetMap di). Kote pèsonn poko verifye estasyon an, li konte 50, mwatye, pou yon estasyon pa janm jwenn nòt ki di li manke yon abri li ka genyen; verifye l pou jwenn repons lan. Nan yon etid nan Minneapolis ak Saint Paul, pasaje nan estasyon ki pa gen ban ni abri te santi tan datant yo te pi long pase sa li te ye.
+      no_bench:
+        label: Pa gen ban
+        explain: 100 kote yon verifikasyon pa t jwenn ban, 0 kote gen youn, ak 50, mwatye, kote pèsonn poko verifye estasyon an. Menm etid la te jwenn yon ban fè yon tan datant santi pi kout.
+      little_shade:
+        label: Ti lonbraj toupre
+        explain: Kouvèti pyebwa sou tè a alantou estasyon an, nan yon zòn ki gen apeprè de blòk lajè, selon sondaj kouvèti pyebwa Vil la an 2018. Ran an se pwopòsyon estasyon ki gen plis pyebwa alantou yo, kidonk mwens pyebwa vle di ran pi wo. Lonbraj rafrechi moun k ap tann nan solèy, men konbyen li ede depann de klima a ak sa ki bay lonbraj la.
+      heat:
+        label: Katye cho nan ete
+        explain: Ki jan sektè resansman estasyon an vin cho nan jou ete, selon pati ekspozisyon chalè Endèks Vilnerabilite Chalè Vil la (tanperati sifas satelit ak ki kantite nan sektè a ki pave, bati oswa vèt). Ran an se pwopòsyon estasyon ki nan sektè ki pi fre.
+      high_injury_network:
+        label: Sou High Injury Network
+        explain: Estasyon an sou oswa nan youn nan ri kote pifò moun ki mouri ak ki blese grav nan trafik Filadèlfi pase, kidonk anpil pasaje travèse ri sa a pou rive nan estasyon an oswa pou kite l. Etid ki fèt yon lòt kote te jwenn aksidan ki enplike moun a pye rasanble nan estasyon bis ki chaje sou gwo wout, kote yon bon travèse enpòtan pi plis.
+      long_wait:
+        label: Long tan datant a midi
+        explain: Tan tipik ant bis oswa tramway ant 10 è ak 2 è nan jou lasemèn, selon orè SEPTA. Ran an se pwopòsyon estasyon ki gen tan datant ki pi kout. Yon long tan datant se lè yon chèz ak yon twati enpòtan pi plis. Estasyon ki pa gen sèvis a midi yo kite deyò faktè sa a.
+    presets:
+      balanced:
+        label: Ekilibre
+      busiest_first:
+        label: Estasyon ki pi chaje an premye
+      heat_and_shade:
+        label: Chalè ak lonbraj
+
+suggestions:
+  clean_and_green:
+    label: Netwaye epi plante teren sa a
+    summary: Retire fatra, nivle tè a, plante zèb ak kèk pyebwa, ajoute yon kloti ak ti poto ba ak ray, epi koupe zèb regilyèman.
+    cost: Apeprè $1,100 a $1,500 an avans ak $150 a $300 pa ane (pou konfime ak PHS)
+  seal_abandoned_building:
+    label: Fè yo sele bilding sa a
+    summary: Rapòte yon bilding abandone ki ouvè pou Vil la sele pòt ak fenèt li yo.
+    cost: Gratis pou rapòte
+  plant_shade_trees:
+    label: Plante pyebwa lonbraj sou teren sa a ak ak long li
+    summary: Mwens pyebwa bay lonbraj nan zòn sa a pase alantou omwen mwatye kote ki sou kat sa a (sondaj kouvèti pyebwa Vil la an 2018). Pyebwa rafrechi yon blòk ak lonbraj yo ak dlo fèy yo bay. Vil la plante pyebwa ri gratis nan twotwa a lè pwopriyetè yon pwopriyete mande, epi TreePhilly bay pyebwa gratis pou plante nan tè sou pwopriyete prive. Chwazi pyebwa ki pral grandi wo, pou yo bay ri a lonbraj epi vwazen yo ka toujou wè atravè teren an.
+    cost: Pyebwa gratis nan men Vil la ak TreePhilly. Jenn pyebwa bezwen apeprè 20 galon dlo chak semèn depi mas jiska desanm
+  cool_green_lot:
+    label: Plante teren sa a pou rafrechi blòk la
+    summary: Selon endèks vilnerabilite chalè Vil la, chalè ete a frape moun isit la pi di pase alantou omwen mwatye kote ki sou kat sa a. Tè mawon, gravye ak dekonb absòbe solèy la, men zèb, planch jaden ak sitou pyebwa kenbe yon teren pi fre epi bay twotwa bò kote l lonbraj. Kèlkeswa sa teren sa a vin ye, yon jaden, yon teren netwaye epi plante oswa yon lakou sou kote, plante pyebwa lonbraj ladan l, epi kenbe yo wo pou teren an rete louvri pou wè.
+    cost: Soti nan pyebwa gratis (TreePhilly) rive nan apeprè $1,100 a $1,500 an avans pou yon netwayaj ak plantasyon konplè (pou konfime ak PHS)
+  seating_and_shade:
+    label: Fè yon kote pou chita nan lonbraj
+    summary: Plis moun rete nan 5 minit mache de teren sa a pase alantou omwen mwatye kote ki sou kat sa a. Kèk ban oswa yon tab pikonik anba pyebwa lonbraj ka fè l yon kote kote vwazen yo rete, repoze epi rankontre. Mande vwazen yo sa yo t ap itilize, chwazi chèz ki solid, epi plante pyebwa ki pral grandi wo pou teren an rete louvri pou wè. Planifye ki moun ki pral kenbe l pwòp.
+    cost: Soti nan pyebwa gratis (TreePhilly) ak yon ban ou bati ak yon plan ouvè rive nan kèk mil dola. Ti sibvansyon espas piblik Feet First Philly bay $500 a $2,500
+  community_garden:
+    label: Kòmanse yon jaden kominotè
+    summary: Teren sa a pi lwen yon pak pase omwen mwatye kote ki sou kat sa a, epi omwen 1,000 moun rete nan 5 minit mache de li. Yon jaden kominotè bay vwazen yo espas vèt, manje ak flè, ak yon rezon pou rankontre. Li bezwen jadinye ki tounen chak semèn, dlo, ak pèmisyon pou itilize tè a. Yon fwa yon jaden ap mache, Neighborhood Gardens Trust ka ede kenbe l kòm jaden pou tout tan.
+    cost: Soti nan kèk kabann leve rive nan kèk mil dola ak tè, yon kloti ak dlo. Akò Urban Garden Land Bank lan koute $1
+  art_request:
+    label: Mande sou yon miral oswa lòt atizay
+    summary: 'Anpil moun rete alantou teren sa a, epi pa gen okenn zèv sou lis Percent for Art Vil la oswa nan Wikidata nan 5 minit mache. Lis sa yo manke anpil miral, kidonk gade kouch Atizay piblik la ak pwòp lis miral Mural Arts an premye. Yon mi vid ki fè fas ak teren an ta ka gen yon miral: Mural Arts resevwa demann nan men pwopriyetè mi sou pwòp sit li. Atizay byenveni pou bèlte ak fyète; pa gen okenn etid ki lye l ak mwens vyolans.'
+    cost: Gratis pou mande Mural Arts
+  report_dumping:
+    label: Rapòte fatra ki jete ilegalman bay Philly311
+    summary: Yon moun te mande Philly311 sou fatra ki jete ilegalman sou yon blòk ri ki fè fas ak teren sa a nan dènye 90 jou yo, epi demann lan toujou louvri. Si fatra a toujou la, ajoute pwòp demann ou, ak yon foto, pou Vil la retire l. Yon rapò se sou fatra a, pa janm sou ki moun ki kite l.
+    cost: Gratis pou rapòte
+  report_dark_light:
+    label: Rapòte limyè ri ki etenn bay Philly311
+    summary: Yon moun te mande Philly311 repare yon limyè ri oswa koridò ki etenn sou yon blòk ri ki fè fas ak teren sa a, nan dènye 90 jou yo, epi demann lan toujou louvri. Si limyè a toujou fè nwa, ajoute pwòp demann ou, ak nimewo poto a si li genyen youn. Yon ri ki klere ede vwazen yo itilize ri a ak teren an apre fènwa.
+    cost: Gratis pou rapòte
+  report_graffiti:
+    label: Rapòte grafiti a bay Philly311
+    summary: Yon moun te mande Philly311 retire grafiti sou yon blòk ri ki fè fas ak teren sa a nan dènye 90 jou yo, epi demann lan toujou louvri. Si li toujou la, ajoute pwòp demann ou, ak yon foto, pou Vil la ka netwaye l. Si vwazen yo ta pito gen atizay sou mi sa a, mande pwopriyetè li sou yon miral.
+    cost: Gratis pou rapòte
+  memorial_or_ghost_bike:
+    label: Yon memoryal oswa yon "ghost bike"
+    summary: Yon memoryal onore moun ki mouri a epi raple tout moun k ap pase pou yo ralanti. Pou yon moun ki te mouri pandan l t ap monte bisiklèt, Bicycle Coalition ka mete yon "ghost bike", yon bisiklèt yo pentire an blan.
+    cost: Piti; yon demann pou yon "ghost bike" gratis
+  traffic_calming_petition:
+    label: Mande ralanti trafik sou ri rezidansyèl sa a
+    summary: Vwazen yo ka mande Vil la pou kousen vitès sou yon ri rezidansyèl. Vil la bay demann yo nòt twa fwa pa ane ak done aksidan, epi si yo chwazi ri sa a, 60 pousan nan blòk la siyen yon petisyon. Gwo ri prensipal, gwo wout eta, ri kout, apik ak ki koube pa kalifye.
+    cost: Gratis pou mande
+  daylighting_check:
+    label: Verifye si kwen sa a lib sou 20 pye
+    summary: Lwa Pennsylvanie deja entèdi estasyone nan 20 pye de yon pasaj pyeton nan yon kafou, ak nan 30 pye de yon panno estòp oswa yon siyal, pou chofè yo ak moun k ap travèse ka wè youn lòt. Si machin estasyone la, mande Vil la sou fè kwen an pi vizib ak penti, poto oswa veso plant. Rapòte yon limyè ri ki etenn isit la bay Philly311.
+    cost: Gratis pou mande
+  asphalt_art_check:
+    label: Atizay sou asfalt nan kwen sa a, verifye ak Vil la an premye
+    summary: Yon etid sou kafou yo te pentire jwenn mwens aksidan ki enplike moun k ap mache ak moun k ap monte bisiklèt, men li pa t gen yon gwoup konparezon epi sponsò pwogram nan te peye pou li. An 2025 gouvènman federal la te kòmanse mande eta yo retire atizay sou pasaj pyeton, epi Filadèlfi pa gen yon pwosesis pèmi pou sa. Verifye ak Vil la anvan ou pentire anyen.
+    cost: Pa konnen; pa gen okenn pwosesis Vil la pou bay yon pri
+  stop_survey:
+    label: Verifye estasyon sa a ak StreetComplete
+    summary: 'Pèsonn poko anrejistre si estasyon sa a gen yon abri oswa yon ban, oswa OpenStreetMap ak lis abri bis Vil la pa dakò sou abri li. Nenpòt moun ka jwenn repons lan nan kèk minit ak aplikasyon telefòn StreetComplete gratis la, epi repons yo rive sou kat sa a nan apeprè yon semèn. Si aplikasyon an pa gen okenn kesyon isit la, estasyon an poko nan OpenStreetMap: ajoute l ak kouch Things aplikasyon an, oswa kite yon nòt.'
+    cost: Gratis; apeprè twa minit pa estasyon
+  stop_shelter_request:
+    label: Mande Vil la yon abri nan estasyon sa a
+    summary: Yon verifikasyon pa t jwenn abri isit la, epi lis abri bis Vil la pa gen youn isit la non plis. Pwogram abri bis Vil la, ke biwo transpò li (OTIS) jere, bati abri ke piblisite ki sou yo peye epi li gen kòm objektif pou mete yo nan 15 pousan estasyon bis ki pi chaje yo. Pa gen okenn fòm demann piblik, kidonk ekri OTIS ak nimewo estasyon an ak konbyen moun ki monte isit la.
+    cost: Gratis pou mande
+  stop_bench_request:
+    label: Mande Vil la yon ban nan estasyon sa a
+    summary: Yon verifikasyon pa t jwenn ban isit la. Ban nan estasyon yo fè pati pwogram mèb ri Vil la, ke OTIS jere, epi nou pa jwenn okenn fason piblik pou mande youn, kidonk ekri OTIS ak nimewo estasyon an. Yon ban ou bati ou menm bezwen pèmisyon, epi chemen pèmi Vil la pou yon ban sou yon twotwa poko konfime.
+    cost: Gratis pou mande
+  stop_streetlight_report:
+    label: Rapòte yon limyè ri ki etenn nan estasyon sa a
+    summary: OpenStreetMap di estasyon sa a pa klere. Si yon limyè ri isit la etenn, rapòte l bay Philly311. Pwogram limyè ri Vil la kounye a ranplase limyè men li pa ajoute nouvo, kidonk yon estasyon ki pa gen okenn limyè se yon kesyon pou OTIS.
+    cost: Gratis pou rapòte
+  stop_shade_trees:
+    label: Plante pyebwa lonbraj bò estasyon sa a
+    summary: Pa anpil pyebwa bay estasyon sa a lonbraj. Vil la plante pyebwa ri gratis nan twotwa a devan yon kay oswa yon biznis lè pwopriyetè li mande, epi li wouze yo premye ane a. Mande pwopriyetè bilding ki bò estasyon an pou mande youn; vwazen yo ka ede wouze l apre sa.
+    cost: Pyebwa ri gratis pou pwopriyetè yo
+
+routes:
+  land_bank_garden_agreement:
+    label: Akò jaden oswa lisans nan men Land Bank
+    who: 'Nenpòt moun pou yon Urban Garden Agreement ki koute $1; gwoup ki gen yon sponsò san bi likratif pou yon Community Garden License'
+    steps:
+      - Verifye si Land Bank oswa Vil la posede teren an.
+      - Li gid Grounded in Philly sou jwenn pèmisyon pou itilize tè Vil la.
+      - Aplike bay Land Bank, oswa patisipe nan youn nan webinè gratis li yo an premye.
+    cost: '$1 (Urban Garden Agreement), $25 pa ane (Individual Garden Agreement), oswa asirans ak yon sponsò (Community Garden License)'
+    timeline: 'Kèk semèn pou akò kout; kèk mwa pou yon lisans'
+    links:
+      'https://phillylandbank.org/':
+        label: Philadelphia Land Bank
+      'https://groundedinphilly.org/get-permission-to-use-land-city/':
+        label: 'Grounded in Philly: pèmisyon pou itilize tè Vil la'
+  ask_the_owner:
+    label: Mande pwopriyetè a pèmisyon
+    who: Nenpòt moun
+    steps:
+      - Jwenn adrès postal pwopriyetè a sou paj teren an.
+      - Ekri pou mande pèmisyon pou netwaye epi plante teren an, epi ofri yon akò ekri senp.
+      - Mande Garden Justice Legal Initiative revize nenpòt akò anvan ou siyen.
+    cost: Gratis
+    timeline: Depann de pwopriyetè a
+    links:
+      'https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/':
+        label: Garden Justice Legal Initiative
+  community_landcare:
+    label: Pran swen yon teren ak PHS Community LandCare
+    who: Gwoup rezidan
+    steps:
+      - Kontakte PHS sou Community LandCare.
+    cost: Pou konfime ak PHS
+    timeline: Pou konfime ak PHS
+    links:
+      'https://phsonline.org/':
+        label: Pennsylvania Horticultural Society
+  report_to_311:
+    label: Rapòte l bay Philly311
+    who: Nenpòt moun
+    steps:
+      - Rapòte bilding ouvè a, fatra jete ilegalman, grafiti, oswa limyè ri oswa koridò ki etenn bay Philly311 sou entènèt, pa aplikasyon, oswa pa rele 311.
+      - Kenbe nimewo demann sèvis la epi tounen verifye.
+    cost: Gratis
+    timeline: Kèk jou a kèk semèn
+    links:
+      'https://www.phila.gov/services/property-lots-housing/submit-a-service-request-with-311/':
+        label: Philly311
+  ghost_bike_request:
+    label: Mande Bicycle Coalition sou yon "ghost bike" oswa yon memoryal
+    who: Fanmi an, oswa zanmi ki gen benediksyon fanmi an
+    steps:
+      - Pale ak fanmi an an premye. Yon memoryal monte sèlman ak benediksyon yo.
+      - Pou yon moun ki te mouri pandan l t ap monte bisiklèt, ranpli fòm demann "ghost bike" Bicycle Coalition lan. Menm fòm nan mande pou repare oswa ranplase yon "ghost bike".
+      - Families for Safe Streets, ke Bicycle Coalition jere, sipòte fanmi apre yon aksidan epi li pataje yon gid resous apre aksidan.
+      - Planifye ki moun ki pral pran swen memoryal la avèk tan.
+    cost: Gratis pou mande
+    timeline: Pa di
+    links:
+      'https://bicyclecoalition.org/what-is-a-ghost-bike/':
+        label: 'Bicycle Coalition: kisa yon "ghost bike" ye'
+      'https://forms.gle/HBtY1hG4xcdVJKNb8':
+        label: Fòm demann "ghost bike"
+      'https://bicyclecoalition.org/programs/families-for-safe-streets/':
+        label: Families for Safe Streets Greater Philadelphia
+  traffic_calming_request:
+    label: Mande ralanti trafik pou yon ri rezidansyèl
+    who: Rezidan blòk la, sitou pou ri kote yo rete
+    steps:
+      - Verifye si ri a kalifye sou kat ralanti trafik Vil la, oswa pa rele 311.
+      - Voye demann ralanti trafik Vil la sou entènèt.
+      - Si Vil la chwazi demann lan, ranmase siyati nan 60 pousan fanmi sou blòk la, youn pa fanmi.
+    cost: Gratis pou mande
+    timeline: Vil la bay demann yo nòt twa fwa pa ane epi anjeneral li enstale kousen vitès soti me rive oktòb
+    links:
+      'https://www.phila.gov/services/streets-sidewalks-alleys/request-traffic-calming-for-a-residential-street/':
+        label: 'Vil Filadèlfi: mande ralanti trafik'
+  otis_contact:
+    label: Mande biwo transpò Vil la (OTIS)
+    who: Nenpòt moun
+    steps:
+      - Ekri Biwo Transpò ak Sistèm Enfrastrikti (Office of Transportation and Infrastructure Systems) nan otis@phila.gov, di kwen an ak sa ou wè la.
+      - Mande sa Vil la pèmèt nan kwen sa a ak kijan pou mande l.
+    cost: Gratis
+    timeline: Pa di
+    links:
+      'https://visionzerophl.com/':
+        label: Vision Zero Philadelphia
+  treephilly_yard_trees:
+    label: Jwenn pyebwa gratis nan yon distribisyon TreePhilly
+    who: Rezidan Filadèlfi, pou pyebwa ki plante nan tè sou pwopriyete prive, tankou yon teren ou posede oswa yon teren prive ki gen pwopriyetè ki dakò alekri
+    steps:
+      - 'Enskri nan bilten TreePhilly pou konnen lè enskripsyon an louvri. Distribisyon yo fèt nan prentan (mas rive me) ak nan otòn (septanm rive desanm) nan kòd postal ki gen priyorite.'
+      - Enskri nan gwoup kominotè ki òganize yon distribisyon toupre ou. Enskripsyon an louvri apeprè de semèn a yon mwa anvan distribisyon an epi li fèmen lè pyebwa yo fini.
+      - Pran pyebwa a, 2 a 10 pye wotè nan yon bokit 5 galon, ak yon sak pay gratis, epi plante l nan tè. Pyebwa distribisyon yo pa ka ale nan yon veso, nan twotwa a ni okenn lòt kote nan dwa pasaj piblik la.
+    cost: Gratis
+    timeline: Pwochen distribisyon prentan oswa otòn lan
+    links:
+      'https://treephilly.org/yard-trees/':
+        label: 'TreePhilly: pyebwa pou lakou'
+  mural_arts_wall_request:
+    label: Mande Mural Arts yon miral sou yon mi
+    who: Pwopriyetè mi an, ak vwazen ki sipòte l. Nenpòt moun ka kòmanse lè l mande pwopriyetè a
+    steps:
+      - Jwenn yon mi ki fè fas ak teren an epi ki fasil pou wè depi ri a, epi mande pwopriyetè li si li ta byenveni yon miral.
+      - Ak akò pwopriyetè a, ranpli fòm demann mi an sou paj kontak Mural Arts Philadelphia. Li mande sou mi an, sipò vwazen yo ak poukisa yon miral enpòtan la.
+      - Nenpòt bagay nan ri a oswa sou twotwa a, dwa pasaj piblik la, ale tou bay Komisyon Atizay Vil la.
+    cost: Gratis pou aplike
+    timeline: Plizyè mwa
+    links:
+      'https://muralarts.org/contact/':
+        label: 'Mural Arts Philadelphia: paj kontak, ak fòm pou yon miral sou mi ou'
+  public_space_mini_grant:
+    label: Aplike pou yon ti sibvansyon espas piblik Feet First Philly
+    who: Vwazen ak gwoup kominotè. Pwogram nan favorize kominote ki te wè mwens envestisman nan ri yo ak sèvis Vil la
+    steps:
+      - 'Li demann pwopozisyon an sou paj ti sibvansyon Feet First Philly. Pwojè yo dwe fè katye a pi an sekirite epi pi fasil pou mache ak woule ladan l; mande Feet First Philly si yon kote pou chita sou yon teren kalifye.'
+      - Aplike pandan wonn lan louvri. Aplikasyon yo louvri an out epi yo dwe fini nan oktòb.
+      - Atann pou voye yon ti rapò nan mitan an ak yon lòt nan fen.
+    cost: Sibvansyon $500 a $2,500, an pati finanse pa Depatman Sante Piblik
+    timeline: Aplikasyon yo louvri an out epi yo dwe fini nan oktòb chak ane
+    links:
+      'https://feetfirstphilly.org/public-space-enhancement-mini-grant-2/':
+        label: 'Feet First Philly: ti sibvansyon pou amelyore espas piblik'
+  land_bank_side_yard:
+    label: Jwenn li kòm yon lakou sou kote oswa dèyè (pwopriyetè kay ki bò kote a sèlman)
+    who: Pwopriyetè kay ki bò kote a, epi sèlman lè lis Vil la make teren an kòm elijib pou yon lakou sou kote
+    steps:
+      - Verifye si ou posede kay ki bò kote a epi si teren an make elijib pou yon lakou sou kote.
+      - Li paj lakou sou kote ak dèyè Land Bank lan epi aplike.
+      - Atann yon long tan. Apre revizyon anplwaye yo, konsèy Land Bank lan ak Konsèy Minisipal la dwe apwouve l.
+    cost: Yon pri senbolik. Teren an dwe rete yon lakou sou kote pou tout tan, anba yon ipotèk 30 an a valè evalyasyon li, ki padone si yo respekte règ yo; Vil la ka reprann li si yo pa respekte yo
+    timeline: Anplwaye yo vize pou reponn nan 120 jou, apre sa konsèy Land Bank lan ak Konsèy Minisipal la deside. Sèlman 67 teren te transfere nan fason sa a nan tout vil la soti 2020 rive 2023
+    links:
+      'https://phillylandbank.org/side-or-rear-yards/':
+        label: 'Philadelphia Land Bank: lakou sou kote oswa dèyè'
+  contact_phdc:
+    label: Mande PHDC sou pasèl sa a
+    who: Nenpòt moun
+    steps:
+      - Kontakte PHDC epi bay adrès pasèl la ak nimewo kont OPA li.
+      - Mande ki moun ki jere pasèl la, si li disponib, ak ki jan vwazen yo ta ka pran swen li.
+      - Si ou pa sèten ki moun pou mande, kòmanse ak Land Bank (land@phdc.phila.gov, 215 448 3034).
+    cost: Gratis pou mande
+    timeline: Pa konnen. Teren Redevelopment Authority yo poko gen okenn wout piblik pou vwazen yo
+    links:
+      'https://phdcphila.org/':
+        label: PHDC
+      'https://phillylandbank.org/':
+        label: Philadelphia Land Bank
+  garden_adverse_possession:
+    label: Posesyon advèsatif pou jaden (lwa 2024)
+    who: Rezidan Filadèlfi, gwoup oswa òganizasyon san bi likratif ki te fè jaden sou yon teren prive
+    steps:
+      - 'Verifye kondisyon lwa 2024 la (53 Pa.C.S. seksyon 1143, an vigè depi 6 septanm 2024): tè prive ki gen mwatye yon akr oswa mwens, 10 lane itilizasyon ak omwen 5 ladan yo kòm jaden, epi pa gen okenn bilding pèmanan (kloti ak ti kay pou zouti pèmèt).'
+      - Li gid Grounded in Philly sou posesyon advèsatif.
+      - Mande Garden Justice Legal Initiative pou yon avoka. Wout sa a bezwen yon pwosè "quiet title" (pwosè pou klarifye tit la).
+    cost: Yon avoka ak depans tribinal. Nenpòt dèt ki mare sou tè a (lien) rete ak li
+    timeline: Omwen 10 lane itilizasyon, apre sa yon pwosè
+    links:
+      'https://groundedinphilly.org/how-to-obtain-land-adverse-possession/':
+        label: 'Grounded in Philly: posesyon advèsatif'
+      'https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/':
+        label: Garden Justice Legal Initiative
+  conservatorship:
+    label: Konsèvatè pa tribinal (conservatorship, Act 135)
+    who: Yon òganizasyon san bi likratif oswa yon moun ki depoze yon petisyon nan tribinal
+    warning: Pwosedi konsèvatè pa tribinal (conservatorship) ka retire yon pwopriyete nan men pwopriyetè li. Chèchè yo jwenn yo itilize l anpil plis nan katye ki ap fè fas ak jantrifikasyon (lè pri yo monte nan yon katye) pase nan lòt kote. Pale ak Garden Justice Legal Initiative anvan ou konsidere l.
+    steps:
+      - Pale ak Garden Justice Legal Initiative anvan nenpòt lòt bagay.
+      - Mande an premye si ekri pwopriyetè a, oswa ede yon fanmi kenbe pwopriyete a, t ap reponn menm bezwen an.
+      - 'Konnen kondisyon lwa a: yon tribinal ka non yon konsèvatè sèlman pou yon pwopriyete ki pa t okipe legalman pandan 12 mwa, ki pa nan mache, ki pa nan foreklozi, epi yo pa t achte nan dènye 6 mwa.'
+    cost: Depans tribinal ak reparasyon. Depi 2014 yon moun ki depoze petisyon an ka resevwa pi gwo nan twa sa yo, $2,500, 20% nan depans yo, oswa 20% nan pri vant lan
+    timeline: 'Yon ka nan tribinal; mande èd jiridik konbyen tan sa ta pran'
+    links:
+      'https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/':
+        label: Garden Justice Legal Initiative
+  tangled_title_help:
+    label: Ede yon fanmi kenbe yon kay yo eritye (Tangled Title Fund)
+    who: 'Fanmi ki gen kay la toujou sou non yon fanmi ki mouri, ak revni fanmi jiska 80% nan revni mitan zòn nan; pwopriyete a dwe kay moun k ap aplike a'
+    steps:
+      - Kontakte Tangled Title Fund nan Philadelphia VIP (tangledtitlefund@gmail.com, 215 523 9553).
+      - Fon an peye jiska $6,500 pou depans jiridik pou netwaye tit la, ak jiska $3,500 anplis pou taks transfè, ka pa ka.
+    cost: 'Gratis pou fanmi an jiska limit fon an; fanmi an peye sa ki depase yo'
+    timeline: Premye vini, premye sèvi
+    links:
+      'https://phillyvip.org/tangled-title-fund/':
+        label: 'Philadelphia VIP: Tangled Title Fund'
+  fraud_guard:
+    label: Enskri nan alèt Fraud Guard gratis Vil la
+    who: Pwopriyetè pwopriyete ak fanmi yo
+    steps:
+      - Enskri nan Fraud Guard ak yon non ak yon adrès imèl.
+      - Vil la voye yon imèl lè yon dokiman ki gen non ou anrejistre, pou yon fo akt kapte bonè.
+      - Kesyon yo ale nan Depatman Dosye (215 686 2290, records.info@phila.gov).
+    cost: Gratis
+    timeline: Yon alèt vini apeprè 30 jou apre yon dokiman anrejistre
+    links:
+      'https://www.phila.gov/2022-09-06-own-property-in-philadelphia-get-free-deed-fraud-protection-with-fraud-guard/':
+        label: 'Vil Filadèlfi: Fraud Guard'
+  bus_shelter_request:
+    label: Mande Vil la yon abri bis
+    who: Nenpòt moun
+    steps:
+      - Note nimewo SEPTA estasyon an (sou panno a, ak sou kat sa a), kwen an, ak konbyen moun ki monte la chak jou lasemèn.
+      - 'Ekri Biwo Transpò ak Sistèm Enfrastrikti Vil la (OTIS) nan otis@phila.gov, oswa rele 215-686-9003. OTIS jere pwogram abri bis Vil la; pa gen okenn fòm demann piblik.'
+      - Voye yon kopi bay biwo distri Konsèy Minisipal ou a, epi di SEPTA tou, atravè fòm kòmantè li sou entènèt oswa nan 215-580-7800.
+    cost: Gratis pou mande
+    timeline: Pa di. OTIS voye nouvo kote pou abri bay Komisyon Atizay Vil la pou revizyon (uit nan desanm 2025)
+    links:
+      'https://www.phila.gov/media/20240521160603/RFI-OTIS-street-furniture-20240521.pdf':
+        label: Demann enfòmasyon OTIS sou mèb ri (me 2024), ak objektif Vil la pou abri
+      'https://www.phila.gov/media/20251205094032/Bus-Shelter-Upgrades-submission.pdf':
+        label: Uit nouvo abri bis voye bay Komisyon Atizay la (desanm 2025)
+      'https://wwww.septa.org/customer-service/comment-form/':
+        label: Fòm kòmantè SEPTA
+      'https://phlcouncil.com/council-members/':
+        label: 'Konsèy Minisipal Filadèlfi: manm Konsèy ak biwo chak distri'
+  stop_bench_request:
+    label: Mande Vil la yon ban nan yon estasyon
+    who: Nenpòt moun
+    steps:
+      - Note nimewo SEPTA estasyon an (sou panno a, ak sou kat sa a) ak kwen an.
+      - Ekri OTIS nan otis@phila.gov, oswa rele 215-686-9003, epi mande yon ban nan estasyon an. Ban nan estasyon yo fè pati pwogram mèb ri Vil la; nou pa jwenn okenn fòm demann piblik.
+      - Voye yon kopi bay biwo distri Konsèy Minisipal ou a.
+    cost: Gratis pou mande
+    timeline: Pa di
+    links:
+      'https://www.phila.gov/media/20240521160603/RFI-OTIS-street-furniture-20240521.pdf':
+        label: Demann enfòmasyon OTIS sou mèb ri (me 2024)
+      'https://phlcouncil.com/council-members/':
+        label: 'Konsèy Minisipal Filadèlfi: manm Konsèy ak biwo chak distri'
+  street_tree_request:
+    label: Mande yon pyebwa ri gratis
+    who: Pwopriyetè kay, biznis, teren oswa lòt pwopriyete kote pyebwa a ta kanpe devan li; vwazen yo ka mande pwopriyetè a fè sa
+    steps:
+      - Yo plante pyebwa ri nan twotwa a devan yon pwopriyete lè pwopriyetè li mande. Pale ak pwopriyetè bilding ki bò kote a. Pou yon teren vid, mande pwopriyetè paj teren an nonmen, oswa mande Land Bank pou yon teren Vil la oswa Land Bank posede.
+      - Pwopriyetè a mande Divizyon Jesyon Pyebwa Ri Pak ak Rekreyasyon (Street Tree Management Division) yon pyebwa ri gratis, sou entènèt, pa imèl nan StreetTree.Info@phila.gov, oswa pa telefòn nan 215-685-4363.
+      - Yon espesyalis pyebwa Vil la vin gade pou deside ki pyebwa ki bon. Vil la plante l gratis nan yon sezon plantasyon (mitan avril rive mitan jen, oswa mitan oktòb rive mitan novanm) epi li wouze l ak kouvri tè a ak pay pandan premye ane a. Apre sa, TreePhilly mande apeprè 20 galon dlo chak semèn depi mas jiska desanm.
+    cost: Gratis
+    timeline: Pwochen sezon plantasyon apre vizit espesyalis la
+    links:
+      'https://www.phila.gov/services/trees-parks-the-environment/tree-related-services/get-a-street-tree/':
+        label: 'Vil Filadèlfi: jwenn yon pyebwa ri'
+      'https://treephilly.org/street-trees/':
+        label: 'TreePhilly: pyebwa ri'
+  streetcomplete_survey:
+    label: Verifye estasyon an ak StreetComplete
+    who: Nenpòt moun ki gen yon telefòn Android (yon premye vèsyon tès pou iPhone te parèt an septanm 2026)
+    steps:
+      - Enstale aplikasyon StreetComplete gratis la epi fè yon kont OpenStreetMap gratis pou repons ou yo pibliye.
+      - Nan estasyon an, tape makè aplikasyon an epi reponn kesyon li yo sou abri a, ban an, limyè a ak nimewo estasyon an.
+      - Si aplikasyon an pa gen okenn kesyon nan estasyon an, ajoute estasyon an ak kouch Things li, oswa kite yon nòt pou yon lòt kartograf ka fè l.
+    cost: Gratis
+    timeline: Repons yo rive sou kat sa a nan apeprè yon semèn
+    links:
+      'https://holdthedoorhoid.github.io/placekeepers/streetcomplete/':
+        label: 'Placekeepers: verifye estasyon bis'
+      'https://streetcomplete.app/':
+        label: StreetComplete
+  neighborhood_gardens_trust:
+    label: Kenbe yon jaden kominotè pou tout tan (Neighborhood Gardens Trust)
+    who: Jadinye ki gen yon jaden kominotè ki grandi pandan omwen twa sezon
+    steps:
+      - 'Verifye kritè trust la: yon jaden ki aktif pandan omwen twa sezon kilti, jadinye ki kapab kenbe l, lyen ak gwoup tankou yon kòporasyon devlopman kominotè, yon legliz oswa yon lekòl, ak sipò vwazen yo ak manm Konsèy Minisipal distri a.'
+      - Aplike ak aplikasyon jaden trust la sou entènèt, oswa fòm li ou ka enprime. Trust la reponn nan apeprè de semèn, apre sa li vizite jaden an epi pote l bay konsèy li.
+      - Yon fwa apwouve, trust la travay ak Vil la pou jwenn tè a epi li kenbe l pou vwazen yo ka kontinye fè jaden, ak asirans responsablite ak èd pou dlo ak antretyen. Kesyon yo ale nan 215 988 1630 oswa ngtrust@pennhort.org.
+    cost: Gratis pou aplike
+    timeline: Yon repons nan apeprè de semèn; jwenn tè a pran plis tan
+    links:
+      'https://ngtrust.org/preservation/':
+        label: 'Neighborhood Gardens Trust: prezèvasyon jaden'
+  community_land_trust:
+    label: Kenbe kay ak tè abòdab pou tout tan (community land trusts)
+    who: Vwazen, gwoup kominotè ak òganizasyon san bi likratif
+    steps:
+      - 'Aprann ki jan yon community land trust travay: yon òganizasyon san bi likratif posede tè a pou tout tan, fanmi achte oswa lwe kay yo sou li, epi yon long bay tè (ground lease) kenbe chak kay abòdab lè yo vann li ankò.'
+      - "Pale ak yon land trust ki deja ap travay nan Filadèlfi, tankou Community Justice Land Trust Women's Community Revitalization Project la, ki kenbe kay nan Point Breeze, Grays Ferry, Mantua, Germantown, Port Richmond ak Haddington."
+      - Mande Garden Justice Legal Initiative ki jan yon land trust ta ka kenbe yon jaden oswa yon teren gwoup ou a deja pran swen.
+    cost: Gratis pou mande
+    timeline: 'Long; pwojè yon land trust pran plizyè lane'
+    links:
+      'https://groundedsolutions.org/strengthening-neighborhoods/community-land-trusts':
+        label: 'Grounded Solutions Network: community land trusts'
+      'https://www.wcrpphila.org/cjlt':
+        label: "Women's Community Revitalization Project: Community Justice Land Trust"
+  homestead_exemption:
+    label: Bese bòdwo taks yon pwopriyetè kay (Egzanpsyon Homestead Vil la)
+    who: Nenpòt moun ki posede kay li nan Filadèlfi epi ki rete ladan l kòm kay prensipal li, menm ak yon ipotèk oswa dèt taks; se pa kay ki gen yon abatman taks 10 an
+    steps:
+      - Aplike sou Sant Taks Filadèlfi (Philadelphia Tax Center) (tax-services.phila.gov), kote yon sèl aplikasyon konbine kouvri pwogram soulajman taks Vil la, oswa rele Liy Dirèk Homestead la nan 215 686 9200, oswa voye fòm nan pa lapòs bay Depatman Revni, P.O. Box 52817, Philadelphia, PA 19115.
+      - Egzanpsyon an retire $100,000 sou valè evalye kay la pou bòdwo taks la, sa ki ekonomize jiska $1,399 pa ane.
+      - Aplike anvan 1ye desanm (anvan 1ye oktòb pou wè l sou pwochen bòdwo a). Yon fwa yo aksepte l, pa bezwen aplike ankò sof si akt la chanje.
+    cost: Gratis
+    timeline: 1ye desanm chak ane
+    links:
+      'https://www.phila.gov/services/payments-assistance-taxes/taxes/property-and-real-estate-taxes/get-real-estate-tax-relief/get-the-homestead-exemption/':
+        label: 'Vil Filadèlfi: Jwenn Egzanpsyon Homestead la'
+  longtime_owner_occupants:
+    label: Limite evalyasyon yon pwopriyetè ki la depi lontan (Pwogram Okipan yo Pwopriyetè Longtime Vil la, LOOP)
+    who: Pwopriyetè kay ki rete nan kay yo depi omwen 10 lane, ki gen evalyasyon ki monte omwen 50 pousan nan yon ane oswa 75 pousan sou senk lane, ak revni fanmi anba limit Vil la (tankou $103,050 pou yon moun oswa $147,200 pou kat nan 2026), ki ajou ak taks yo oswa ki nan yon akò peman
+    steps:
+      - Aplike sou Sant Taks Filadèlfi (tax-services.phila.gov) ak aplikasyon konbine Vil la, oswa rele 215 686 9200, voye yon imèl bay revenue@phila.gov, oswa voye fòm nan pa lapòs bay Depatman Revni, P.O. Box 53190, Philadelphia, PA 19105.
+      - LOOP mete yon limit sou evalyasyon bòdwo taks la itilize, nan 1.5 fwa sa ane anvan an oswa 1.75 fwa pi ba valè senk dènye ane yo, toutotan pwopriyetè a rete elijib.
+      - 'Aplike anvan dat limit chak ane Vil la (30 septanm nan dènye lane yo); paj Vil la bay dat aktyèl la.'
+    cost: Gratis
+    timeline: Yon dat limit chak ane, 30 septanm nan dènye lane yo
+    links:
+      'https://www.phila.gov/services/payments-assistance-taxes/payment-plans-and-assistance-programs/income-based-programs-for-residents/apply-for-the-longtime-owner-occupants-program-loop/':
+        label: 'Vil Filadèlfi: Aplike pou LOOP'
+
+partners:
+  phs:
+    one_line: LandCare, Community LandCare ak Philly Spring Cleanup.
+  gjli:
+    one_line: Èd jiridik gratis ak gid pou itilize tè vid.
+  ngt:
+    one_line: Prezève jaden kominotè yo pou tout tan.
+  land_bank:
+    one_line: Pwogram Vil la pou teren vid, ki gen ladan yo lakou sou kote ak jaden.
+  bike_coalition:
+    one_line: Defans Vision Zero, "ghost bike" ak Families for Safe Streets.
+  feet_first:
+    one_line: Defans pou moun k ap mache, odit mache ak ti sibvansyon pou espas piblik.
+  treephilly:
+    one_line: 'Pwogram plantasyon pyebwa Pak ak Rekreyasyon: pyebwa ri gratis ak pyebwa pou lakou.'
+  mural_arts:
+    one_line: Miral nan tout vil la; pwopriyetè mi ka mande youn.
+
+options:
+  live_city_data:
+    label: Rekipere done an dirèk nan Vil la
+    description: >-
+      Lè ou louvri yon paj teren oswa ou chèche yon adrès, navigatè ou mande sèvè piblik Vil
+      Filadèlfi yo dènye dosye yo: pwopriyetè a, vant yo, evalyasyon yo, enspeksyon yo ak apèl yo.
+      Demann sa yo ale dirèkteman soti nan aparèy ou pou rive nan Vil la, yo pa janm pase nan
+      Placekeepers, epi sèvè Vil la wè yo menm jan yo ta wè yon vizit sou pwòp sit entènèt
+      pwopriyete Vil la. Foto ayeryen Vil la ak atlas 1860 li, anba "Avan ak kounye a", soti tou
+      dirèkteman nan sèvè Vil la, men sèlman lè ou limen youn nan yo. Fèmen sa a pou itilize
+      sèlman kopi chak semèn done Placekeepers pibliye. Rechèch adrès, louvri yon pasèl ki pa sou
+      lis nou an, ak ansyen foto yo ak atlas la bezwen sa a limen.

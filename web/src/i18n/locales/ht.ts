@@ -494,7 +494,7 @@ const ht: Catalog = {
       neighborhood_gardens_trust: 'Neighborhood Gardens Trust',
       community_land_trust: 'Trust tè kominotè',
       homestead_exemption: 'Egzanpsyon Homestead Vil la',
-      longtime_owner_occupants: 'Pwogram Longtime Owner Occupants Vil la (LOOP)',
+      longtime_owner_occupants: 'Pwogram Okipan yo Pwopriyetè Longtime (LOOP)',
       tangled_title_help: 'Èd pou yon tit pwopriyete ki mele',
     },
     checked: (date) => `verifye ${date}`,
@@ -1579,9 +1579,9 @@ const ht: Catalog = {
         'Teren ki sou lis: Vil Filadèlfi, Depatman Planifikasyon ak Devlopman (Land Management), jan kat pwopriyete Philadelphia Land Bank lan montre yo.',
       districts: 'Distrik konsèy: Vil Filadèlfi, limit jodi a.',
       neighbours:
-        'Pou dedaksyon sou lakou sou kote: lis pwopriyetè Vil la (Biwo Evalyasyon Pwopriyete, Office of Property Assessment) ak fòm pasèl yo (Depatman Dlo, Water Department).',
+        'Pou dedaksyon sou lakou sou kote: lis pwopriyetè Vil la (Biwo Pwopriyete Evalyasyon, Office of Property Assessment) ak fòm pasèl yo (Depatman Dlo, Water Department).',
       board: 'Ajanda konsèy Land Bank lan, ki bay lis chak dispozisyon pa pwogram',
-      council: 'Lejislasyon Konsèy Vil la, kote Konsèy la apwouve chak dispozisyon Land Bank',
+      council: 'Lejislasyon Konsèy Minisipal, kote Konsèy la apwouve chak dispozisyon Land Bank',
       method: 'Kijan nou konte, an detay',
       deedsLink: 'Transfè byen imobilye Vil la',
       programsLink: 'Tablo Land Management Vil la',
@@ -2001,7 +2001,7 @@ const ht: Catalog = {
       taxUnknown: 'Vil la pa pibliye ankò balans taks chak pwopriyete kòm done ouvè.',
       taxHeld:
         'Vil la pa pibliye ankò balans taks chak pwopriyete kòm done ouvè. Nou montre kopi jiyè 2025 nou an pou yon pwopriyetè ki ka yon moun sèlman sou pasèl nou rele gen anpil chans oswa pwobableman vid.',
-      taxCenter: 'Verifye balans jodi a sou Tax Center Vil la',
+      taxCenter: 'Verifye balans jodi a sou Sant Taks Filadèlfi (Philadelphia Tax Center)',
       deedFraudTitle: 'Pwoteje pwopriyete sa a kont vòl akt',
       deedFraud:
         'Vòl akt rive lè yon moun depoze yon fo akt pou pran yon pwopriyete, souvan yon pwopriyete ki gen yon pwopriyetè ki mouri oswa ki rete yon lòt kote. Pwopriyetè ak fanmi yo ka enskri nan alèt Fraud Guard gratis Vil la, ki voye yon imèl lè yo anrejistre yon dokiman ki gen non yo ladan l. Depi novanm 2025 Vil la bloke otomatikman tou akt kote vandè a te deja mouri lè yo sipoze te siyen yo.',
@@ -2027,7 +2027,7 @@ const ht: Catalog = {
         'UNKNOWN - RESEARCH PENDING': ['poko konnen', 'Ajans tè Vil la ap toujou ap ankete sou li.'],
         'OWNED - RFP RELEASED': ['ofri pou devlopman', 'Ajans tè Vil la mande pwopozisyon pou devlope l.'],
         'OWNED - ON HOLD FOR HOME SD': ['rezève pou yon pwogram lojman', 'Li rezève pou yon pwogram lis la rele HOME SD, kidonk yo pa ofri l bay vwazen yo kounye a.'],
-        'OWNED - HELD FOR CITY COUNCIL MEMBER': ['rezève pou manm Konsèy distri a', 'Li rezève pou manm Konsèy Vil la nan distri a, kidonk yo pa ofri l kounye a. Biwo manm nan ka di poukisa.'],
+        'OWNED - HELD FOR CITY COUNCIL MEMBER': ['rezève pou manm Konsèy distri a', 'Li rezève pou manm Konsèy Minisipal nan distri a, kidonk yo pa ofri l kounye a. Biwo manm nan ka di poukisa.'],
         'OWNED - TO BE FEATURED SOON': ['pral ofri byento', 'Ajans tè Vil la planifye pou ofri l byento.'],
         'OWNED - NOT AVAILABLE (GSI PROJECT)': ['mete sou kote pou travay dlo lapli vèt', 'Li rezève pou plantasyon Depatman Dlo a bati pou absòbe lapli.'],
         'OWNED - COMPETITIVE BID POSTED': ['ofri pa òf konpetitif', 'Ajans tè Vil la mande òf pou li.'],
@@ -2066,7 +2066,7 @@ const ht: Catalog = {
           `Depi jiyè 2025, dosye Vil la te montre ${amount} nan taks byen imobilye ki pa peye${years ? ` ki soti nan ${plural(years, { other: '# ane taks' })}` : ''}.`,
         careful:
           'Sa a se dènye dosye piblik la, ki soti 9 jiyè 2025, se pa balans jodi a: pwopriyetè a ka te peye depi lè sa a, oswa li ka dwe plis. Apeprè twa lane taks ki pa peye oswa plis ka lakòz yon vant pa sherif, kote yon teren vwazen yo pran swen ka vann bay yon achtè ki soti deyò.',
-        next: 'Verifye balans jodi a sou Tax Center Vil la anvan ou konte sou sa a. Si blòk ou a pran swen teren sa a, gid Grounded in Philly sou vant pa sherif eksplike risk la ak sa ou ka fè.',
+        next: 'Verifye balans jodi a sou Sant Taks Filadèlfi (Philadelphia Tax Center) anvan ou konte sou sa a. Si blòk ou a pran swen teren sa a, gid Grounded in Philly sou vant pa sherif eksplike risk la ak sa ou ka fè.',
       },
       sheriff_sales: {
         one: (sale) => `Vann nan yon vant pa sherif nan ${sale}.`,
@@ -2320,7 +2320,7 @@ const ht: Catalog = {
       correction: 'Rapòte yon koreksyon',
       correctionHelp: 'Louvri yon fòm sou GitHub, ranpli ak pasèl sa a. Pou voye l, ou bezwen yon kont GitHub gratis.',
       ownerNote:
-        'Si ou posede pwopriyete sa a epi yon dosye Vil la sou li mal, biwo Vil la ki kenbe dosye a ka korije l nan sous la: Biwo Evalyasyon Pwopriyete (Office of Property Assessment) pou non pwopriyetè, adrès postal ak evalyasyon, Depatman Dosye (Department of Records) pou akt, ak Lisans ak Enspeksyon (Licenses and Inspections) pou vyolasyon ak pèmi.',
+        'Si ou posede pwopriyete sa a epi yon dosye Vil la sou li mal, biwo Vil la ki kenbe dosye a ka korije l nan sous la: Biwo Pwopriyete Evalyasyon (Office of Property Assessment) pou non pwopriyetè, adrès postal ak evalyasyon, Depatman Dosye (Department of Records) pou akt, ak Lisans ak Enspeksyon (Licenses and Inspections) pou vyolasyon ak pèmi.',
     },
 
     ownerList: {
@@ -2339,7 +2339,7 @@ const ht: Catalog = {
       moreOnline: (n) => `${plural(n, { other: '# lòt dosye' })} sou paj teren an sou entènèt.`,
       lastAssessment: (year, value) => `Evalyasyon Vil la pou ${year}: ${value}.`,
       moreSources: (n) => `${plural(n, { other: '# lòt sous' })} sou paj teren an sou entènèt.`,
-      taxCenter: (url) => `Balans jodi a: Tax Center Vil la, ${url}`,
+      taxCenter: (url) => `Balans jodi a: Sant Taks Filadèlfi, ${url}`,
       rules: 'Règ pou teren sa a',
     },
 
@@ -2381,14 +2381,14 @@ const ht: Catalog = {
         'INDUSTRIAL/INDUSTRIAL MIXED-USE': 'yon distri endistriyèl',
         'SPECIAL PURPOSE': 'yon distri ki gen yon objektif espesyal, tankou pak, enstitisyon oswa ayewopò a',
       },
-      basePending: 'Yon pwojè lwa ki an atant nan Konsèy Vil la ta chanje l.',
+      basePending: 'Yon pwojè lwa ki an atant nan Konsèy Minisipal ta chanje l.',
       readBill: 'Li pwojè lwa a',
       overlaysIntro: (n) => (n === 1 ? 'Yon zonaj siperpoze ajoute pwòp règ li isit la:' : `${formatNumber(n)} zonaj siperpoze ajoute pwòp règ yo isit la:`),
       noOverlays: 'Okenn zonaj siperpoze pa kouvri teren sa a.',
       overlayKinds: { 1: 'Distri zonaj siperpoze', 2: 'Règ espesyal', 3: 'Limit sou pavaj' },
       readRule: (section) => (section ? `Li règ la: seksyon ${section} Kòd Zonaj la` : 'Li règ la nan Kòd Zonaj la'),
       sunset: (date) => `Fikse pou fini nan ${date}.`,
-      pending: (bill) => `Yon pwojè lwa ki an atant nan Konsèy Vil la${bill ? `, Pwojè ${bill},` : ''} ta chanje l.`,
+      pending: (bill) => `Yon pwojè lwa ki an atant nan Konsèy Minisipal${bill ? `, Pwojè ${bill},` : ''} ta chanje l.`,
       zoningNote:
         'Zonaj ak zonaj siperpoze yo ka chanje sa ki otorize sou yon teren. Kat Vil la yo ka an reta sou nouvo pwojè lwa, kidonk verifye ak biwo zonaj Vil la anvan ou planifye.',
       zoningHelp: 'Èd Vil la sou zonaj ak planifikasyon',
@@ -2410,7 +2410,7 @@ const ht: Catalog = {
         '/FNE': 'Règ siplemantè pou Far Northeast.',
         '/NE': 'Règ siplemantè pou Northeast.',
         '/UED': 'Règ sou gwo ekran ak panno ki limen.',
-        council: 'Règ siplemantè Konsèy Vil la te fikse pou yon pati nan yon distri Konsèy.',
+        council: 'Règ siplemantè Konsèy Minisipal te fikse pou yon pati nan yon distri Konsèy.',
         flood: 'Règ pwoteksyon kont inondasyon: limit sou konstriksyon ak ranpli tè kote inondasyon rive.',
         steep: 'Limit sou konstriksyon ak nivèlman sou pant apik.',
         coverage: 'Limite ki kantite nan yon teren ki ka kouvri ak bilding ak pavaj, pou pwoteje Wissahickon Creek.',
