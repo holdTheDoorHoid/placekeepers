@@ -12,6 +12,7 @@
 import type { Registry } from '../registry/types.ts';
 import { strings } from '../strings.ts';
 import { applyCatalog, type ApplyReport, type Catalog } from './catalog.ts';
+import { keepEnglish } from './english.ts';
 import {
   addressWithLanguage,
   decideLanguage,
@@ -162,6 +163,8 @@ export async function startLanguage(options: { registry?: Registry } = {}): Prom
       setLocale(code);
       // On a right to left page, values a template fills in keep their own direction.
       const rtl = languageOf(code).dir === 'rtl';
+      // The English words stay at hand for a letter printed in English (src/i18n/english.ts).
+      keepEnglish();
       const leaveOut = leftOutForTests()?.strings;
       const words = leaveOut?.length ? withoutKeys(catalog.default, leaveOut) : catalog.default;
       stringsReport = applyCatalog(strings, words, markFallback, rtl ? { isolate: isolateValue } : {});

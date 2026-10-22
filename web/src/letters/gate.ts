@@ -39,7 +39,11 @@ export function ownerLetterGate(parcel: ShardParcel | null): OwnerLetterGate {
  * 2026-10-21). An owner whose names carry them is left blank, so the letter begins "Dear property
  * owner", and so is any part of the address that carries them.
  */
-export function ownerAddressee(parcel: ShardParcel | null, clean: (text: string | null) => string | null): { name: string; address: string; nameLeftOut: boolean } {
+export function ownerAddressee(
+  parcel: ShardParcel | null,
+  clean: (text: string | null) => string | null,
+  joinNames: (names: string[]) => string = strings.join.names,
+): { name: string; address: string; nameLeftOut: boolean } {
   const names = parcel?.owner?.names ?? [];
   const estate = possibleEstate(names) || names.some(estateWords);
   const mailing = clean(parcel?.owner?.mailing ?? null) ?? '';
@@ -49,7 +53,7 @@ export function ownerAddressee(parcel: ShardParcel | null, clean: (text: string 
     .filter((part) => part && !estateWords(part))
     .join(', ');
   return {
-    name: estate ? '' : strings.join.names(names.map((n) => clean(n) ?? n)),
+    name: estate ? '' : joinNames(names.map((n) => clean(n) ?? n)),
     address,
     nameLeftOut: estate,
   };

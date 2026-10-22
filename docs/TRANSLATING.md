@@ -32,6 +32,11 @@ What stays in English, on purpose:
   written for the people who keep the map running; the page says so in the visitor's language.
 - **Column names in downloads** (CSV and GeoJSON), so files from different languages can be
   combined and read back. A translated note at the top of the file says so (`export.englishColumns`).
+- **A printed letter, unless the sender chooses otherwise.** The letters go to Council offices,
+  community organizations and owners who mostly read English, so on a page in another language a
+  letter prints in English by default, with a "Letter language" choice of English or the page's
+  language, and a translation on screen for the sender (src/letters/, orchestrator 2026-10-22).
+  Its English words come from `englishStrings()` (`web/src/i18n/english.ts`).
 - **The memorial removal email's subject and body** (`streets.removalSubject`, `streets.removalBody`),
   which the maintainers read, and web addresses. The tests fail if a catalog translates them.
 - **Proper names**: Placekeepers, Philly311, LandCare, Fraud Guard, the Tangled Title Fund, and so

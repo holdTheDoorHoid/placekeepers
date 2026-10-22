@@ -22,6 +22,21 @@ export function setLocale(code: LanguageCode): void {
   cache.clear();
 }
 
+/**
+ * Runs `fn` with the formatters of another language (numbers, dates, times, lists), then puts the
+ * page's back: for text the page writes in a language other than its own, such as a letter
+ * printed in English from a page in Spanish. `fn` must not wait for anything.
+ */
+export function withLocale<T>(code: LanguageCode, fn: () => T): T {
+  const before = active;
+  setLocale(code);
+  try {
+    return fn();
+  } finally {
+    setLocale(before);
+  }
+}
+
 /** The page's language code, such as "en", "es" or "zh-Hans". */
 export function currentLocale(): LanguageCode {
   return active;

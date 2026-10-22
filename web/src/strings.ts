@@ -102,10 +102,10 @@ const VALUE_SPOT = '\uE000';
  * the value a link: { label: "License:", gap: " ", after: "" } in English, "Licence\u202F:" and " "
  * in French, "许可证：" and "" in Chinese.
  */
-export function labelledParts(label: string): { label: string; gap: string; after: string } {
-  const whole = strings.join.labelled(label, VALUE_SPOT);
+export function labelledParts(label: string, join: Pick<typeof strings.join, 'labelled' | 'colon'> = strings.join): { label: string; gap: string; after: string } {
+  const whole = join.labelled(label, VALUE_SPOT);
   const at = whole.indexOf(VALUE_SPOT);
-  if (at < 0) return { label: strings.join.colon(label), gap: ' ', after: '' };
+  if (at < 0) return { label: join.colon(label), gap: ' ', after: '' };
   const head = whole.slice(0, at);
   const lead = head.trimEnd();
   return { label: lead, gap: head.slice(lead.length), after: whole.slice(at + VALUE_SPOT.length) };
@@ -930,6 +930,14 @@ export const strings = {
     kept: 'What you type is kept in this browser only, so you can come back to it. Nothing is sent anywhere.',
     notKept: 'This browser is not keeping what you type right now, perhaps a private window. Print before you close the page.',
     preview: 'The letter',
+    // The letter's language, on a page in another language (orchestrator, 2026-10-22): the offices,
+    // organizations and owners these letters go to mostly read English, so a letter prints in
+    // English unless the sender chooses the page's language, and the sender sees a translation.
+    language: 'Letter language',
+    languageHelp:
+      'The offices, community organizations and owners these letters go to mostly read English, so the letter prints in English unless you choose your language.',
+    translationTitle: 'Your letter in your language',
+    translationNote: 'So you know what you sign. Only the letter above is printed; this translation stays on your screen.',
     salutation: (name: string) => `Dear ${name},`,
     dearOwner: 'Dear property owner,',
     sincerely: 'Sincerely,',

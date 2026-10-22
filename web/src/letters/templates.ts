@@ -69,9 +69,12 @@ export interface Letter {
   signature: string[];
 }
 
+/** The words a letter is written with: the strings of the letter's language. */
+export type LetterText = Pick<typeof strings, 'letters' | 'join'>;
+
 /** "a, b and c", in the letter's language (strings.join.and). */
-export function listWords(items: string[]): string {
-  return strings.join.and(items);
+export function listWords(items: string[], text: LetterText = strings): string {
+  return text.join.and(items);
 }
 
 /**
@@ -95,8 +98,13 @@ function firstLine(text: string): string {
   return text.split(/\r?\n/)[0]?.trim() ?? '';
 }
 
-export function buildLetter(template: TemplateId, f: LetterFields): Letter {
-  const l = strings.letters;
+/**
+ * The letter, in the language of `text` (the page's own by default). Numbers and dates follow the
+ * formatters in use, so build a letter in another language inside withLocale (src/i18n/locale.ts).
+ * What was typed is used as typed.
+ */
+export function buildLetter(template: TemplateId, f: LetterFields, text: LetterText = strings): Letter {
+  const l = text.letters;
   const extra = f.extra.trim() ? [f.extra.trim()] : [];
   const reach = f.contact.trim() ? l.reachMe(f.contact.trim()) : l.reachMeBlank;
   const signature = [f.senderName.trim() || l.yourName, ...(f.group.trim() ? [f.group.trim()] : [])];
@@ -105,9 +113,10 @@ export function buildLetter(template: TemplateId, f: LetterFields): Letter {
   const me = l.me(f.senderName.trim(), f.group.trim());
   switch (template) {
     case 'owner': {
-      const planWords = listWords([
-        ...f.plans.map((id) => l.fields.planOptions[id]).filter((x): x is string => !!x),
-      ]);
+      const planWords = listWords(
+        f.plans.map((id) => l.fields.planOptions[id]).filter((x): x is string => !!x),
+        text,
+      );
       const name = firstLine(f.recipientName);
       return {
         ...base,
