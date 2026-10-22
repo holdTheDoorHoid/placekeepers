@@ -44,7 +44,7 @@
   }
   .facts {
     margin: 0;
-    padding-left: 18px;
+    padding-inline-start: 18px;
   }
   .unknown {
     color: var(--pk-muted);

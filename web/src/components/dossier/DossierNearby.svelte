@@ -33,7 +33,7 @@
 <style>
   ul {
     margin: 0 0 6px;
-    padding-left: 1.2em;
+    padding-inline-start: 1.2em;
   }
   .layers {
     display: flex;
@@ -43,6 +43,6 @@
   }
   .layers .button {
     white-space: normal;
-    text-align: left;
+    text-align: start;
   }
 </style>

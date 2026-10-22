@@ -27,6 +27,6 @@
 <style>
   ul {
     margin: 0 0 8px;
-    padding-left: 18px;
+    padding-inline-start: 18px;
   }
 </style>

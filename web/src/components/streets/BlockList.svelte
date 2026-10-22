@@ -70,7 +70,7 @@
     background: none;
     color: var(--pk-accent);
     font: inherit;
-    text-align: left;
+    text-align: start;
     cursor: pointer;
   }
   .link[aria-pressed='true'] .name {

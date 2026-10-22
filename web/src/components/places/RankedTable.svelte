@@ -116,7 +116,7 @@
     font: inherit;
     text-decoration: underline;
     cursor: pointer;
-    text-align: left;
+    text-align: start;
   }
   .sort {
     padding: 0;

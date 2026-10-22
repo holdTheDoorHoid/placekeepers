@@ -231,7 +231,7 @@
   .crashes,
   .facts {
     margin: 0;
-    padding-left: 18px;
+    padding-inline-start: 18px;
   }
   .suggestions li,
   .crashes li {

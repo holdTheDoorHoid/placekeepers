@@ -286,11 +286,11 @@
   }
   .left {
     grid-area: left;
-    border-right: 1px solid var(--pk-surface-2);
+    border-inline-end: 1px solid var(--pk-surface-2);
   }
   .right {
     grid-area: right;
-    border-left: 1px solid var(--pk-surface-2);
+    border-inline-start: 1px solid var(--pk-surface-2);
   }
   .panel-close {
     display: none;
@@ -326,7 +326,7 @@
     color: var(--pk-text);
     font: inherit;
     font-weight: 700;
-    text-align: left;
+    text-align: start;
     cursor: pointer;
   }
   .tab::after {
@@ -378,14 +378,14 @@
   }
 
   /* Phones: both panels open over the map, one at a time, and the drawer's tabs stay in one row
-     that scrolls sideways, with a fade at its right edge to show there are more. */
+     that scrolls sideways, with a fade at its end (right, or left in Arabic) to show there are more. */
   @media (max-width: 767px) {
     .tabs {
       flex-wrap: nowrap;
       overflow-x: auto;
       scrollbar-width: none;
-      padding-right: 32px;
-      mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+      padding-inline-end: 32px;
+      mask-image: linear-gradient(to var(--pk-end), #000 calc(100% - 28px), transparent);
     }
     .tab {
       flex: none;
@@ -395,7 +395,7 @@
       grid-area: map;
       z-index: 4;
       display: none;
-      border-right: 0;
+      border-inline-end: 0;
     }
     .left.open {
       display: block;

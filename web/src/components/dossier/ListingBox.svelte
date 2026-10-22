@@ -48,7 +48,7 @@
   }
   .links {
     margin: 4px 0 6px;
-    padding-left: 1.2em;
+    padding-inline-start: 1.2em;
   }
   .credit {
     font-size: 0.8rem;

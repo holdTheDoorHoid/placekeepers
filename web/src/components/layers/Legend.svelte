@@ -13,7 +13,7 @@
     {#if entry.kind === 'ramp'}
       <li class="ramp">
         <span class="title">{entry.title}</span>
-        <span class="bar" style:background="linear-gradient(to right, {entry.stops.join(', ')})" aria-hidden="true"></span>
+        <span class="bar" style:background="linear-gradient(to var(--pk-end), {entry.stops.join(', ')})" aria-hidden="true"></span>
         <span class="ends"><span>{entry.low}</span><span>{entry.high}</span></span>
       </li>
     {:else if entry.kind === 'swatch'}

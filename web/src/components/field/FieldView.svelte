@@ -373,7 +373,7 @@
     flex-wrap: wrap;
     gap: 6px;
   }
-  /* Phones: one row of chips that scrolls sideways, so the map keeps its room. Its right edge
+  /* Phones: one row of chips that scrolls sideways, so the map keeps its room. Its end (right, or left in Arabic)
      fades, so it shows there is more to see; the last chip can scroll clear of the fade. */
   @media (max-width: 560px) {
     .chips {
@@ -381,8 +381,9 @@
       overflow-x: auto;
       scrollbar-width: none;
       margin: 0 -12px;
-      padding: 2px 40px 2px 12px;
-      mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);
+      padding: 2px 0;
+      padding-inline: 12px 40px;
+      mask-image: linear-gradient(to var(--pk-end), #000 calc(100% - 36px), transparent);
     }
     .chips .chip {
       flex: none;
@@ -401,14 +402,15 @@
     border-radius: 14px 14px 0 0;
     box-shadow: var(--pk-shadow);
   }
-  /* A phone turned sideways: the open sheet runs down the left of the map, so the map stays in
+  /* A phone turned sideways: the open sheet runs down the start of the map (left, or right in Arabic), so the map stays in
      sight beside it instead of being squeezed under it. */
   @media (max-height: 500px) and (min-width: 560px) {
     .sheet.open {
       align-self: stretch;
       max-height: none;
       width: min(55%, 440px);
-      border-radius: 0 14px 0 0;
+      border-radius: 0;
+      border-start-end-radius: 14px;
     }
   }
   .sheet h2 {
@@ -429,7 +431,7 @@
     color: var(--pk-text);
     font: inherit;
     font-weight: 700;
-    text-align: left;
+    text-align: start;
     cursor: pointer;
     position: relative;
   }

@@ -221,7 +221,7 @@
       justify-content: space-between;
     }
     .sample p {
-      text-align: left;
+      text-align: start;
     }
   }
   .stage {

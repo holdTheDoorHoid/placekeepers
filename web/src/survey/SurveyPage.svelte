@@ -411,7 +411,7 @@
   }
   .counts {
     margin: 0;
-    padding-left: 20px;
+    padding-inline-start: 20px;
   }
   .actions {
     display: flex;
@@ -430,7 +430,7 @@
   }
   .guidance ul,
   .guidance ol {
-    padding-left: 20px;
+    padding-inline-start: 20px;
     margin: 0 0 8px;
   }
   footer {

@@ -574,15 +574,17 @@
     display: block;
     height: 100%;
     min-width: 2px;
-    border-radius: 0 4px 4px 0;
+    border-radius: 0;
+    border-start-end-radius: 4px;
+    border-end-end-radius: 4px;
   }
   .bar-value {
-    text-align: right;
+    text-align: end;
     font-variant-numeric: tabular-nums;
   }
   .sources a,
   section > p > a {
-    margin-left: 4px;
+    margin-inline-start: 4px;
   }
   .visually-hidden {
     position: absolute;

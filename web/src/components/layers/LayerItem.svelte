@@ -121,15 +121,18 @@
     min-width: 0;
   }
   .status {
-    margin: 6px 0 0 28px;
+    margin: 6px 0 0;
+    margin-inline-start: 28px;
     font-size: 0.875rem;
     color: var(--pk-muted);
   }
   .shown {
-    margin: 6px 0 0 28px;
+    margin: 6px 0 0;
+    margin-inline-start: 28px;
   }
   details {
-    margin: 6px 0 0 28px;
+    margin: 6px 0 0;
+    margin-inline-start: 28px;
     font-size: 0.9rem;
   }
   .sources-title {
@@ -137,7 +140,7 @@
   }
   .sources {
     margin: 0;
-    padding-left: 18px;
+    padding-inline-start: 18px;
   }
   .sources li {
     margin-bottom: 4px;

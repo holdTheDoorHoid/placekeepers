@@ -60,7 +60,7 @@
 <style>
   .parcels {
     margin: 8px 0;
-    padding-left: 1.2em;
+    padding-inline-start: 1.2em;
   }
   .parcels li {
     margin: 4px 0;
@@ -71,7 +71,7 @@
     background: none;
     color: var(--pk-accent);
     font: inherit;
-    text-align: left;
+    text-align: start;
     text-decoration: underline;
     cursor: pointer;
   }

@@ -159,7 +159,7 @@
   }
   ul {
     margin: 0;
-    padding-left: 18px;
+    padding-inline-start: 18px;
   }
   p {
     margin: 2px 0;
@@ -168,8 +168,8 @@
     color: var(--pk-muted);
   }
   .disagree {
-    border-left: 3px solid var(--pk-surface-2);
-    padding-left: 6px;
+    border-inline-start: 3px solid var(--pk-surface-2);
+    padding-inline-start: 6px;
   }
   .suggestions li {
     margin-bottom: 8px;
@@ -179,6 +179,6 @@
     font-size: 0.875rem;
   }
   .partners {
-    padding-left: 18px;
+    padding-inline-start: 18px;
   }
 </style>

@@ -38,9 +38,11 @@
   .route {
     margin: 6px 0 10px;
     padding: 8px 10px;
-    border-left: 3px solid var(--pk-accent);
+    border-inline-start: 3px solid var(--pk-accent);
     background: var(--pk-surface);
-    border-radius: 0 var(--pk-radius) var(--pk-radius) 0;
+    border-radius: 0;
+    border-start-end-radius: var(--pk-radius);
+    border-end-end-radius: var(--pk-radius);
   }
   .route-title {
     margin: 0 0 4px;
@@ -75,12 +77,12 @@
   }
   .steps {
     margin: 0 0 4px;
-    padding-left: 1.3em;
+    padding-inline-start: 1.3em;
     font-size: 0.9rem;
   }
   .links {
     margin: 4px 0;
-    padding-left: 1.2em;
+    padding-inline-start: 1.2em;
     font-size: 0.875rem;
   }
   .checked {

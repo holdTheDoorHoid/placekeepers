@@ -115,6 +115,11 @@
     font: 9pt/1.25 var(--pk-font);
     color: #000;
   }
+  /* Khmer and Arabic need taller lines (app.css), on paper too. */
+  :global(:root:lang(km)) .print-sheet,
+  :global(:root:lang(ar)) .print-sheet {
+    line-height: 1.55;
+  }
   .brand {
     margin: 0;
     font-size: 8pt;
@@ -141,7 +146,7 @@
   ul,
   ol {
     margin: 0 0 3px;
-    padding-left: 1.3em;
+    padding-inline-start: 1.3em;
   }
   .meta {
     color: #333;
@@ -160,14 +165,14 @@
     font-size: 8pt;
   }
   caption {
-    text-align: left;
+    text-align: start;
     font-weight: 600;
   }
   th,
   td {
     padding: 2px 4px;
     border-bottom: 1px solid #ccc;
-    text-align: left;
+    text-align: start;
     vertical-align: top;
   }
   .sources {

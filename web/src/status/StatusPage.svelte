@@ -182,18 +182,18 @@
   .source {
     padding: 12px 14px;
     border: 1px solid var(--pk-surface-2);
-    border-left: 6px solid var(--pk-border);
+    border-inline-start: 6px solid var(--pk-border);
     border-radius: var(--pk-radius);
   }
   .source[data-status='ok'] {
-    border-left-color: var(--pk-ok-ink);
+    border-inline-start-color: var(--pk-ok-ink);
   }
   .source[data-status='stale'] {
-    border-left-color: #b07d12;
+    border-inline-start-color: #b07d12;
   }
   .source[data-status='failing'],
   .source[data-status='unknown'] {
-    border-left-color: var(--pk-fail-ink);
+    border-inline-start-color: var(--pk-fail-ink);
   }
   .title {
     display: flex;
@@ -228,7 +228,7 @@
   }
   .details {
     margin: 4px 0 6px;
-    padding-left: 18px;
+    padding-inline-start: 18px;
     font-size: 0.925rem;
   }
   .meta {
@@ -246,7 +246,7 @@
     font-size: 1.1rem;
   }
   .notes ul {
-    padding-left: 20px;
+    padding-inline-start: 20px;
   }
   footer {
     margin-top: 24px;
