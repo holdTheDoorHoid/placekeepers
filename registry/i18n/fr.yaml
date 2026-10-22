@@ -1,0 +1,1410 @@
+# French (fr) translations of the visitor facing words in registry/*.yaml, by id. English in
+# registry/*.yaml is the source; anything left out here shows the English. Which fields may be
+# translated, and the shape of this file, are in docs/TRANSLATING.md and
+# web/src/i18n/registry-text.ts. The key terms are fixed in docs/i18n/glossary-fr.md.
+
+groups:
+  lots:
+    label: "Terrains et bâtiments"
+    description: "Terrains vacants et bâtiments abandonnés, et ce qu'on pourrait en faire."
+  care:
+    label: "Soins déjà en cours"
+    description: "Terrains déjà entretenus, jardins, parcs et autres lieux dont des gens s'occupent déjà."
+  displacement:
+    label: "Prix et protections"
+    description: "Là où les prix montent, pour que le verdissement et d'autres améliorations soient associés à des protections pour les voisins qui y habitent maintenant."
+  rules:
+    label: "Règles du terrain et audiences"
+    description: "Quartiers et propriétés historiques, zonages superposés, audiences à venir sur des terrains et des bâtiments, et sites brownfield fédéraux."
+  streets:
+    label: "Rues et mémoriaux"
+    description: "Le réseau High Injury Network, les accidents, les personnes tuées dans nos rues, et les poteaux de rue, les aménagements de modération de la circulation et les brigadiers scolaires que la Ville répertorie."
+  transit:
+    label: "Bus et trains"
+    description: "Arrêts et lignes de la SEPTA, la fréquence du service, le nombre de personnes qui montent, et les arrêts qui ont un abribus ou un banc, d'après la liste des abribus de la Ville et OpenStreetMap."
+  heat:
+    label: "Chaleur, arbres et inondations"
+    description: "À quel point la chaleur de l'été frappe chaque quartier, les arbres que la Ville entretient dans ses rues et ses parcs, et les endroits où la FEMA prévoit des inondations."
+  amenities:
+    label: "Bancs, eau, toilettes et plus"
+    description: "Des endroits pour s'asseoir, boire de l'eau, utiliser des toilettes ou emprunter un livre, tels que cartographiés dans OpenStreetMap, et les fontaines à boire des parcs."
+  public_places:
+    label: "Bibliothèques, centres de loisirs et piscines"
+    description: "Les bibliothèques de la Free Library, les centres de loisirs, piscines et aires de jeux d'eau de Parcs et loisirs, et les refuges de la Ville contre le froid ou la chaleur, tels que la Ville les répertorie."
+  conditions:
+    label: "Problèmes signalés au 311"
+    description: "Dépôts sauvages, lumières éteintes et graffitis que des gens ont signalés à Philly311 au cours des 90 derniers jours, comptés par tronçon de rue."
+  placemaking:
+    label: "Art et création de lieux"
+    description: "Fresques, sculptures, mosaïques et autre art public, de la Ville, d'OpenStreetMap et de Wikidata, et les aires de jeux de la Ville."
+  walking:
+    label: "Marche, vélo et habitants"
+    description: "À quel point chaque zone est praticable à pied, combien de personnes et de lieux du quotidien se trouvent à courte distance à pied, et à quel point chaque rue est stressante pour les personnes à vélo."
+  then_and_now:
+    label: "Hier et aujourd'hui"
+    description: "Ce qui se trouvait dans une rue avant, et ce qu'il reste du passé. Les photos aériennes depuis 1959 et l'atlas de 1860 se chargent depuis les serveurs de la Ville seulement quand on les active ; la carte du redlining de 1937 vient de ce site."
+  safety_context:
+    label: "Là où le soin est le plus nécessaire"
+    description: "Du contexte qui montre où les améliorations aideront probablement le plus."
+  boundaries:
+    label: "Limites"
+    description: "Districts du Conseil municipal, organisations communautaires et quartiers."
+  basemap:
+    label: "Fond de carte"
+    description: "Rues, bâtiments et noms de lieux, sous tout le reste."
+
+sources:
+  opa_properties:
+    name: "Propriétés de l'OPA"
+    publisher: "Ville de Philadelphie, Bureau de l'évaluation immobilière"
+  pwd_parcels:
+    name: "Parcelles du Water Department"
+    publisher: "Philadelphia Water Department"
+  vacant_indicators_land:
+    name: "Indicateurs de propriétés vacantes, terrains"
+    publisher: "Ville de Philadelphie"
+  vacant_indicators_bldg:
+    name: "Indicateurs de propriétés vacantes, bâtiments"
+    publisher: "Ville de Philadelphie"
+  shootings:
+    name: "Victimes de fusillades"
+    publisher: "Philadelphia Police Department"
+  high_injury_network:
+    name: "Réseau Vision Zero High Injury Network 2025"
+    publisher: "Ville de Philadelphie, Bureau des systèmes de transport et d'infrastructure"
+  real_estate_transfers:
+    name: "Transferts de biens immobiliers"
+    publisher: "Ville de Philadelphie, Département des archives"
+  assessment_history:
+    name: "Historique des évaluations"
+    publisher: "Ville de Philadelphie, Bureau de l'évaluation immobilière"
+  li_violations:
+    name: "Infractions au code relevées par L&I"
+    publisher: "Ville de Philadelphie, Département des licences et des inspections"
+  li_complaints:
+    name: "Plaintes reçues par L&I"
+    publisher: "Ville de Philadelphie, Département des licences et des inspections"
+  li_permits:
+    name: "Permis de construire et de zonage de L&I"
+    publisher: "Ville de Philadelphie, Département des licences et des inspections"
+  li_unsafe:
+    name: "Bâtiments non sûrs"
+    publisher: "Ville de Philadelphie, Département des licences et des inspections"
+  li_imminently_dangerous:
+    name: "Bâtiments en danger imminent"
+    publisher: "Ville de Philadelphie, Département des licences et des inspections"
+  li_clean_and_seal:
+    name: "Ordres de travaux de nettoyage et de scellement"
+    publisher: "Ville de Philadelphie, Département des licences et des inspections"
+  li_demolitions:
+    name: "Démolitions de bâtiments"
+    publisher: "Ville de Philadelphie, Département des licences et des inspections"
+  building_footprints:
+    name: "Empreintes des bâtiments"
+    publisher: "Ville de Philadelphie, Département des licences et des inspections"
+  land_use:
+    name: "Occupation du sol"
+    publisher: "Commission d'urbanisme de Philadelphie"
+  city_owned_property:
+    name: "Propriétés appartenant à la Ville"
+    publisher: "Ville de Philadelphie, Département de la planification et du développement"
+  phs_landcare:
+    name: "Terrains de PHS LandCare"
+    publisher: "Pennsylvania Horticultural Society, via la Ville de Philadelphie"
+  gardens_phs_ngt:
+    name: "Jardins soutenus par PHS et le Neighborhood Gardens Trust"
+    publisher: "Pennsylvania Horticultural Society et Neighborhood Gardens Trust"
+  gardens_registered:
+    name: "Jardins communautaires enregistrés"
+    publisher: "Parcs et loisirs de Philadelphie"
+  ppr_properties:
+    name: "Propriétés de Parcs et loisirs"
+    publisher: "Parcs et loisirs de Philadelphie"
+  zoning_base_districts:
+    name: "Districts de zonage de base"
+    publisher: "Commission d'urbanisme de Philadelphie"
+  council_districts:
+    name: "Districts du Conseil municipal 2024"
+    publisher: "Ville de Philadelphie"
+  community_organizations:
+    name: "Organisations communautaires enregistrées (RCO)"
+    publisher: "Commission d'urbanisme de Philadelphie"
+  neighborhoods:
+    name: "Quartiers de Philadelphie"
+    publisher: "Abaca Labs, via OpenDataPhilly"
+  acs_poverty:
+    name: "Taux de pauvreté par secteur de recensement (ACS 2020 à 2024)"
+    publisher: "Bureau du recensement des États-Unis (U.S. Census Bureau), American Community Survey"
+  cagp_tax_2025:
+    name: "Dette d'impôts en juillet 2025 (Clean & Green Philly)"
+    publisher: "Clean & Green Philly, Code for Philly"
+  crashes_2020_2024:
+    name: "Accidents, 2020 à 2024 (données de PennDOT, copie de la Ville)"
+    publisher: "Ville de Philadelphie, d'après les registres d'accidents du Pennsylvania Department of Transportation"
+  crashes_2016_2020:
+    name: "Accidents, 2016 à 2020 (données de PennDOT, copie de la Ville)"
+    publisher: "Ville de Philadelphie, d'après les registres d'accidents du Pennsylvania Department of Transportation"
+  crashes_2007_2017:
+    name: "Accidents, 2015 (données de PennDOT, copie de la Ville de 2007 à 2017)"
+    publisher: "Ville de Philadelphie, d'après les registres d'accidents du Pennsylvania Department of Transportation"
+  fatal_crashes:
+    name: "Accidents mortels"
+    publisher: "Philadelphia Police Department, Accident Investigation Unit"
+  schools:
+    name: "Écoles"
+    publisher: "Ville de Philadelphie, Commission d'urbanisme"
+  street_centerlines:
+    name: "Axes des rues"
+    publisher: "Ville de Philadelphie, Département des rues"
+  memorial_names:
+    name: "Noms des mémoriaux, choisis à la main"
+    publisher: "Placekeepers, d'après des listes de mémoriaux publiques comme TrafficVictimsPHL de la Bicycle Coalition"
+  pba_laser:
+    name: "Problèmes de stationnement signalés avec Laser Vision"
+    publisher: "Philly Bike Action"
+  census_tracts_2020:
+    name: "Secteurs de recensement 2020"
+    publisher: "Ville de Philadelphie, Commission d'urbanisme, d'après le Bureau du recensement des États-Unis (U.S. Census Bureau)"
+  tree_canopy_2018:
+    name: "Couvert arboré 2008 à 2018"
+    publisher: "Ville de Philadelphie, Parcs et loisirs, avec le University of Vermont Spatial Analysis Laboratory"
+  street_trees:
+    name: "Inventaire des arbres de rue"
+    publisher: "Ville de Philadelphie, Parcs et loisirs"
+  fema_floodplain:
+    name: "Zone inondable de la FEMA (2023)"
+    publisher: "Federal Emergency Management Agency, publié par la Ville de Philadelphie"
+  basemap_openstreetmap:
+    name: "Fond de carte d'OpenStreetMap"
+    publisher: "OpenStreetMap contributors, dans un fichier de carte construit par Protomaps"
+  septa_gtfs:
+    name: "Horaires de la SEPTA (GTFS)"
+    publisher: "Southeastern Pennsylvania Transportation Authority (SEPTA)"
+  septa_ridership_bus:
+    name: "Fréquentation des arrêts de bus de la SEPTA"
+    publisher: "Southeastern Pennsylvania Transportation Authority (SEPTA)"
+  septa_ridership_trolley:
+    name: "Fréquentation des arrêts de tramway de la SEPTA"
+    publisher: "Southeastern Pennsylvania Transportation Authority (SEPTA)"
+  osm_philadelphia:
+    name: "OpenStreetMap à Philadelphie (arrêts de bus, abribus, bancs, eau, toilettes et plus)"
+    publisher: "OpenStreetMap contributors, d'après l'extrait de la Pennsylvanie de Geofabrik"
+  heat_vulnerability:
+    name: "Vulnérabilité à la chaleur par secteur de recensement"
+    publisher: "Ville de Philadelphie, Département de santé publique et Bureau du développement durable"
+  library_locations:
+    name: "Emplacements de la Free Library"
+    publisher: "Ville de Philadelphie, pour la Free Library of Philadelphia"
+  ppr_program_sites:
+    name: "Sites de programmes de Parcs et loisirs"
+    publisher: "Ville de Philadelphie, Parcs et loisirs"
+  ppr_swimming_pools:
+    name: "Piscines de Parcs et loisirs"
+    publisher: "Ville de Philadelphie, Parcs et loisirs"
+  ppr_spraygrounds:
+    name: "Aires de jeux d'eau de Parcs et loisirs"
+    publisher: "Ville de Philadelphie, Parcs et loisirs"
+  ppr_hydration_stations:
+    name: "Points d'eau de Parcs et loisirs"
+    publisher: "Ville de Philadelphie, Parcs et loisirs"
+  philly311_conditions:
+    name: "Demandes à Philly311 sur les dépôts sauvages, les lumières éteintes et les graffitis"
+    publisher: "Ville de Philadelphie, Philly311"
+  bus_shelters:
+    name: "Abribus"
+    publisher: "Ville de Philadelphie, Bureau des systèmes de transport et d'infrastructure"
+  street_poles:
+    name: "Poteaux de rue"
+    publisher: "Ville de Philadelphie, Département des rues (division de l'éclairage des rues)"
+  traffic_calming:
+    name: "Dispositifs de modération de la circulation"
+    publisher: "Ville de Philadelphie, Département des rues"
+  crossing_guards:
+    name: "Emplacements de brigadiers scolaires"
+    publisher: "Ville de Philadelphie, Département des rues"
+  percent_for_art:
+    name: "Collection Percent for Art"
+    publisher: "Ville de Philadelphie, Département de la planification et du développement"
+  wikidata_art:
+    name: "Art public dans Wikidata"
+    publisher: "Contributeurs de Wikidata (Wikimedia Foundation)"
+  commercial_corridors:
+    name: "Axes commerciaux de Philadelphie"
+    publisher: "Ville de Philadelphie, Département de la planification et du développement"
+  epa_walkability:
+    name: "Indice national de marchabilité (Smart Location Database de l'EPA)"
+    publisher: "U.S. Environmental Protection Agency, Office of Community Revitalization"
+  census_blocks_2020:
+    name: "Habitants par îlot de recensement (recensement de 2020)"
+    publisher: "Bureau du recensement des États-Unis (U.S. Census Bureau), données de redécoupage du recensement de 2020 (P.L. 94-171)"
+  dvrpc_lts:
+    name: "Stress de la circulation à vélo (Level of Traffic Stress de la DVRPC)"
+    publisher: "Delaware Valley Regional Planning Commission (DVRPC)"
+  snap_retailers:
+    name: "Magasins d'alimentation qui acceptent le SNAP (USDA)"
+    publisher: "U.S. Department of Agriculture, données sur les détaillants SNAP"
+  real_estate_sales:
+    name: "Ventes immobilières, dans toute la ville"
+    publisher: "Ville de Philadelphie, Département des archives"
+  assessment_values:
+    name: "Valeurs marchandes évaluées, dans toute la ville, deux années d'imposition"
+    publisher: "Ville de Philadelphie, Bureau de l'évaluation immobilière"
+  acs_tenure:
+    name: "Locataires et propriétaires par secteur de recensement (ACS 2020 à 2024)"
+    publisher: "Bureau du recensement des États-Unis (U.S. Census Bureau), American Community Survey"
+  market_value_analysis:
+    name: "Market Value Analysis 2026 (analyse de la valeur marchande)"
+    publisher: "Reinvestment Fund, pour le Département de la planification et du développement de la Ville de Philadelphie"
+  li_history:
+    name: "Registres de L&I pour la chronologie du terrain"
+    publisher: "Ville de Philadelphie, Département des licences et des inspections"
+  cagp_vacant_land_2024:
+    name: "Liste des terrains vacants, juin 2024 (L&I, tenue par Clean & Green Philly)"
+    publisher: "Ville de Philadelphie, Département des licences et des inspections, tenue par Clean & Green Philly (Code for Philly)"
+  cagp_vacant_buildings_2024:
+    name: "Liste des bâtiments vacants, juin 2024 (Clean & Green Philly)"
+    publisher: "Clean & Green Philly, Code for Philly"
+  historic_districts:
+    name: "Quartiers historiques locaux"
+    publisher: "Commission historique de Philadelphie"
+  historic_sites:
+    name: "Registre des lieux historiques de Philadelphie, propriétés"
+    publisher: "Commission historique de Philadelphie"
+  zoning_overlays:
+    name: "Zonages superposés"
+    publisher: "Commission d'urbanisme de Philadelphie"
+  appeals:
+    name: "Appels devant le Conseil d'ajustement du zonage, le L&I Review Board et d'autres comités"
+    publisher: "Ville de Philadelphie, Département des licences et des inspections"
+  epa_brownfields:
+    name: "Propriétés brownfield de l'EPA (ACRES), Philadelphie"
+    publisher: "United States Environmental Protection Agency"
+  land_conveyances:
+    name: "Actes des agences foncières de la Ville depuis 2014"
+    publisher: "Ville de Philadelphie, Département des archives"
+  land_conveyed_by_fy:
+    name: "Propriétés cédées par programme et par exercice, 2017 à 2023 (tableau de bord de gestion des terres)"
+    publisher: "Ville de Philadelphie, Département de la planification et du développement (gestion des terres)"
+  city_aerial_photos:
+    name: "Photographies aériennes par année (orthophotos)"
+    publisher: "Ville de Philadelphie, Bureau de l'innovation et de la technologie"
+  dvrpc_aerial_photos:
+    name: "Photographies aériennes de 1959 et 1975"
+    publisher: "Delaware Valley Regional Planning Commission, hébergées par la Ville de Philadelphie"
+  usgs_aerial_photos_1999:
+    name: "Photographies aériennes de 1999"
+    publisher: "U.S. Geological Survey, hébergées par la Ville de Philadelphie"
+  city_atlas_1860:
+    name: "Atlas Hexamer et Locher de 1860"
+    publisher: "Greater Philadelphia GeoHistory Network, hébergé par la Ville de Philadelphie"
+  mapping_inequality_1937:
+    name: "Mapping Inequality : la carte de la HOLC de 1937 pour Philadelphie"
+    publisher: "University of Richmond, Digital Scholarship Lab"
+  acs_rent_burden:
+    name: "Loyer en part du revenu par secteur de recensement (ACS 2020 à 2024)"
+    publisher: "Bureau du recensement des États-Unis (U.S. Census Bureau), American Community Survey"
+  acs_occupancy:
+    name: "Logements habités et vides par secteur de recensement (ACS 2020 à 2024)"
+    publisher: "Bureau du recensement des États-Unis (U.S. Census Bureau), American Community Survey"
+  acs_vacancy:
+    name: "Pourquoi les logements sont vides, par secteur de recensement (ACS 2020 à 2024)"
+    publisher: "Bureau du recensement des États-Unis (U.S. Census Bureau), American Community Survey"
+  acs_income:
+    name: "Revenu médian des ménages par secteur de recensement (ACS 2020 à 2024)"
+    publisher: "Bureau du recensement des États-Unis (U.S. Census Bureau), American Community Survey"
+  acs_rent:
+    name: "Loyer médian par secteur de recensement (ACS 2020 à 2024)"
+    publisher: "Bureau du recensement des États-Unis (U.S. Census Bureau), American Community Survey"
+  warming_cooling_sites:
+    name: "Refuges contre le froid et contre la chaleur"
+    publisher: "Ville de Philadelphie, Bureau de gestion des urgences"
+  ppr_playgrounds:
+    name: "Aires de jeux"
+    publisher: "Ville de Philadelphie, Parcs et loisirs"
+
+layers:
+  vacant_parcels:
+    label: "Terrains et bâtiments vacants"
+    description: "Parcelles probablement vacantes, avec notre degré de certitude et pourquoi. Combine l'indicateur de vacance de la Ville avec les registres de l'évaluateur foncier, les empreintes des bâtiments, les démolitions, les dossiers de L&I et la carte d'occupation du sol, de sorte qu'aucune source seule ne peut la faire échouer."
+    settings:
+      min_confidence:
+        label: "Afficher les parcelles dont nous sommes au moins aussi sûrs"
+        options:
+          "1":
+            label: "Tout signe de vacance"
+          "2":
+            label: "Probablement ou très probablement vacant"
+          "3":
+            label: "Seulement très probablement vacant"
+      kinds:
+        label: "Afficher"
+        options:
+          both:
+            label: "Terrains et bâtiments"
+          lots:
+            label: "Terrains seulement"
+          buildings:
+            label: "Bâtiments seulement"
+      listed:
+        label: "Indiqué comme disponible par les agences foncières de la Ville"
+        options:
+          any:
+            label: "Toute parcelle"
+          available:
+            label: "Seulement celles indiquées comme disponibles"
+      lens:
+        label: "Colorier les terrains selon"
+        options:
+          violence:
+            label: "L'angle « réduction de la violence »"
+          heat:
+            label: "L'angle « chaleur et ombre »"
+          placemaking:
+            label: "L'angle « création de lieux »"
+  hin_2025:
+    label: "Réseau High Injury Network"
+    description: "Les rues où se produisent la plupart des décès et des blessures graves de la circulation à Philadelphie, telles que le programme Vision Zero de la Ville les a cartographiées en 2025."
+  shootings_hex:
+    label: "Fusillades, comptées par zone"
+    description: "Les victimes de fusillades pendant la période choisie, comptées par hexagone d'environ deux rues de large. Affiché pour orienter le soin là où il aide le plus, pas pour dire que des lieux sont dangereux."
+    settings:
+      window:
+        label: "Période"
+        options:
+          m12:
+            label: "Les 12 derniers mois"
+          m36:
+            label: "Les 3 dernières années"
+  landcare_lots:
+    label: "Terrains entretenus par PHS LandCare"
+    description: "Terrains vacants que la Pennsylvania Horticultural Society a nettoyés et verdis et dont elle continue de tondre l'herbe, par LandCare et Community LandCare. C'est le soin que les essais de Philadelphie ont testé."
+  gardens:
+    label: "Jardins communautaires"
+    description: "Jardins et fermes communautaires soutenus par PHS ou le Neighborhood Gardens Trust, et jardins enregistrés auprès de Parcs et loisirs. Des gens s'occupent déjà de ces lieux, donc ils ne sont jamais montrés comme vacants."
+  council_districts:
+    label: "Districts du Conseil municipal"
+    description: "Les dix districts du Conseil municipal tels que dessinés en 2024, pour que vous voyiez quel bureau contacter."
+    settings:
+      names:
+        label: "Afficher les noms"
+  community_organizations:
+    label: "Organisations communautaires enregistrées"
+    description: "Des groupes de quartier enregistrés auprès de la Ville, qui sont informés des changements de zonage dans leur zone. Leurs zones se chevauchent souvent."
+    settings:
+      names:
+        label: "Afficher les noms"
+  neighborhoods:
+    label: "Quartiers"
+    description: "Noms et limites des quartiers, d'après la carte des quartiers d'OpenDataPhilly par Abaca Labs."
+    settings:
+      names:
+        label: "Afficher les noms"
+  segments:
+    label: "Sécurité des rues, tronçon par tronçon"
+    description: "Chaque tronçon de rue colorié selon l'angle « sécurité des rues » : s'il est sur le réseau High Injury Network, combien de personnes y ont été tuées ou grièvement blessées à pied ou à vélo dans les cinq dernières années des registres de PennDOT, si quelqu'un y a été tué ces deux dernières années, et si une école se trouve à moins de 400 mètres. Déplacez les curseurs de l'angle pour changer le mélange. Un tronçon indique aussi combien de poteaux la Ville répertorie le long de celui-ci et combien de leurs lampes sont des LED, ainsi que la modération de la circulation que la Ville y répertorie."
+    settings:
+      min_score:
+        label: "Afficher les tronçons dont le score est d'au moins"
+        options:
+          "1":
+            label: "Tout score supérieur à zéro"
+          "20":
+            label: "20 sur 100"
+          "40":
+            label: "40 sur 100"
+          "60":
+            label: "60 sur 100"
+  crashes:
+    label: "Accidents"
+    description: "Les accidents signalés à PennDOT à Philadelphie de 2015 à 2024, coloriés selon la gravité des blessures. Choisissez les années, la gravité des blessures et les personnes impliquées. Les registres de PennDOT arrivent environ un an après les accidents, donc les décès les plus récents apparaissent plutôt comme des mémoriaux."
+    settings:
+      years:
+        label: "Années"
+        options:
+          latest:
+            label: "La dernière année des registres"
+          recent:
+            label: "Les cinq dernières années"
+          all:
+            label: "Chaque année depuis 2015"
+      severity:
+        label: "Gravité des blessures"
+        options:
+          "3":
+            label: "Quelqu'un a été tué"
+          "2":
+            label: "Quelqu'un a été tué ou grièvement blessé"
+          "1":
+            label: "Quelqu'un a été blessé"
+          "0":
+            label: "Chaque accident"
+      mode:
+        label: "Qui était impliqué"
+        options:
+          all:
+            label: "Tout le monde"
+          walk_cycle:
+            label: "Les personnes à pied ou à vélo"
+          walk:
+            label: "Les personnes à pied"
+          cycle:
+            label: "Les personnes à vélo"
+          motorcycle:
+            label: "Les personnes à moto"
+  memorials:
+    label: "Mémoriaux"
+    description: "Les personnes tuées dans nos rues à pied, à vélo ou en trottinette, d'après les registres du Police Department sur les décès dans des accidents de la route depuis 2019, chacune marquée discrètement là où cela s'est passé. Un nom n'apparaît que lorsqu'une liste de mémoriaux publique le donne déjà, et chacun peut demander qu'un nom ou un marqueur soit retiré."
+    settings:
+      show_names:
+        label: "Afficher les noms"
+      all_fatal:
+        label: "Rendre aussi hommage aux personnes tuées en voiture et à moto"
+  parking_reports:
+    label: "Problèmes de stationnement signalés (Laser Vision)"
+    description: "Là où des personnes qui utilisent l'application Laser Vision de Philly Bike Action ont signalé des véhicules qui bloquent des trottoirs, des passages piétons, des coins de rue, des rampes de trottoir et des pistes cyclables pendant les 12 mois jusqu'à la date de la légende, comptés par zone d'environ une rue de large. Cela montre où des personnes qui utilisent une seule application ont signalé des problèmes, pas tous les problèmes. Une zone avec moins de 5 signalements est laissée de côté, afin qu'aucun signalement isolé n'apparaisse jamais. Beaucoup de signalements au même endroit sont une preuve en faveur d'aménagements physiques : avancées de trottoir, bornes, angles dégagés, pistes cyclables protégées et zones de livraison."
+    settings:
+      kind:
+        label: "Afficher les signalements de véhicules"
+        options:
+          all:
+            label: "Qui bloquent le passage de l'une de ces façons"
+          sidewalk:
+            label: "Sur un trottoir"
+          bike_lane:
+            label: "Dans une piste cyclable"
+          crosswalk:
+            label: "Sur un passage piéton"
+          corner:
+            label: "Sur un coin de rue"
+          ramp:
+            label: "Bloquant une rampe de trottoir"
+  street_poles:
+    label: "Poteaux de rue et lampes répertoriées par la Ville"
+    description: "Chaque poteau de rue que le Département des rues répertorie, avec les lampes qu'il y répertorie : LED, l'ancien sodium haute pression, ou une lampe d'un type qu'il ne précise pas. Beaucoup de poteaux, comme ceux de PECO et ceux des feux de circulation, n'ont aucune lampe répertoriée. C'est ce que la Ville a installé, pas si une lampe fonctionne ce soir : signalez une lumière éteinte à Philly311 avec le numéro du poteau. Affiché de près, sur quelques rues de large."
+    settings:
+      show:
+        label: "Afficher"
+        options:
+          all:
+            label: "Chaque poteau"
+          lamps:
+            label: "Les poteaux avec une lampe répertoriée par la Ville"
+          not_led:
+            label: "Les lampes que la Ville ne répertorie pas comme LED"
+  traffic_calming:
+    label: "Modération de la circulation répertoriée par la Ville"
+    description: "Les coussins ralentisseurs, dos d'âne et plateaux que le Département des rues a installés pour ralentir les conducteurs dans les rues résidentielles, avec le jour où chacun a été posé. Les voisins peuvent les demander à la Ville dans une rue résidentielle ; les artères et les routes de l'État n'y sont pas admissibles. Un tronçon de rue montre combien il en a et depuis quand, et un tronçon du réseau High Injury Network où des personnes ont été blessées dit quand aucun n'est encore enregistré."
+  crossing_guards:
+    label: "Postes de brigadiers scolaires"
+    description: "Les coins de rue où la Ville place un brigadier scolaire, un service de sécurité qui aide les enfants et tout le monde à traverser près des écoles au début et à la fin de la journée d'école. Chaque poste nomme son coin de rue et l'école la plus proche à moins de 400 mètres."
+  basemap:
+    label: "Fond de carte"
+    description: "Rues, bâtiments, parcs, eau et noms de lieux d'après OpenStreetMap, sous tout le reste. Choisissez l'aspect gris pour que les données ressortent, ou désactivez le fond de carte."
+    settings:
+      look:
+        label: "Aspect"
+        options:
+          light:
+            label: "Clair, en couleur"
+          muted:
+            label: "Gris, pour que les données ressortent"
+  transit_stops:
+    label: "Arrêts de bus et de tramway"
+    description: "Chaque arrêt de bus et de tramway de la SEPTA à Philadelphie, d'après les horaires actuels de la SEPTA : les lignes qui s'y arrêtent, la fréquence des bus ou des tramways un jour de semaine, un samedi et un dimanche typiques, l'heure où le service commence et finit, et combien de personnes y montent un jour de semaine moyen, d'après les propres comptages de la SEPTA. Chaque arrêt montre ce que trouvent les usagers là où OpenStreetMap le sait, un abribus là où la liste de la Ville en indique un, sa priorité selon l'angle « confort aux arrêts », et ce que les voisins peuvent faire. Les stations de métro, d'El et de Regional Rail peuvent être ajoutées dans les paramètres."
+    settings:
+      service:
+        label: "Afficher les arrêts avec"
+        options:
+          all:
+            label: "N'importe quel service"
+          frequent:
+            label: "Service fréquent : toutes les 15 minutes ou mieux en milieu de journée"
+          long_wait:
+            label: "Longues attentes : moins souvent que toutes les 30 minutes en milieu de journée"
+      color:
+        label: "Colorier les arrêts selon"
+        options:
+          lens:
+            label: "La priorité selon l'angle « confort aux arrêts »"
+          wait:
+            label: "La fréquence des bus ou des trains en milieu de journée"
+          boardings:
+            label: "Le nombre de personnes qui montent chaque jour de semaine"
+      stations:
+        label: "Afficher aussi les stations de métro, d'El et de Regional Rail"
+  transit_routes:
+    label: "Lignes de bus, de tramway et de train"
+    description: "Les rues et les voies que suit chaque ligne de la SEPTA à Philadelphie, d'après les horaires actuels de la SEPTA, coloriées selon le type de véhicule. Choisissez les lignes fréquentes pour voir où un bus ou un train passe au moins toutes les 15 minutes en milieu de journée."
+    settings:
+      service:
+        label: "Afficher les lignes"
+        options:
+          all:
+            label: "Chaque ligne"
+          frequent:
+            label: "Lignes fréquentes : toutes les 15 minutes ou mieux en milieu de journée"
+  stop_amenities:
+    label: "Abribus et bancs aux arrêts"
+    description: "Ce que trouvent les usagers aux arrêts de bus et de tramway qu'OpenStreetMap connaît : un abribus ou un toit, un banc mais pas d'abribus, ni l'un ni l'autre, ou pas encore relevé. Pas encore relevé veut dire que personne ne l'a encore noté ; cela ne veut pas dire que l'arrêt n'a rien. OpenStreetMap n'a pour l'instant qu'environ un arrêt sur dix (la liste complète des arrêts de la SEPTA est sa propre couche). Les voisins peuvent relever les arrêts avec l'application de téléphone StreetComplete, et leurs réponses apparaissent ici en environ une semaine."
+    settings:
+      show:
+        label: "Afficher"
+        options:
+          all:
+            label: "Chaque arrêt"
+          surveyed:
+            label: "Les arrêts que quelqu'un a relevés"
+          unsurveyed:
+            label: "Les arrêts pas encore relevés"
+  city_shelters:
+    label: "Abribus répertoriés par la Ville"
+    description: "Les abribus de la liste propre de la Ville, qu'elle installe et entretient avec son partenaire publicitaire, avec l'arrêt de la SEPTA que chacun dessert. Un arrêt avec un abribus de la Ville compte comme abrité dans l'angle « confort aux arrêts ». Là où OpenStreetMap dit qu'un arrêt n'a pas d'abribus mais que la Ville en répertorie un, la page de l'arrêt dit que les deux ne concordent pas, et un relevé sur place tranche. La liste a été modifiée pour la dernière fois en janvier 2025, donc un abribus installé ou retiré depuis peut manquer."
+  heat_tracts:
+    label: "Vulnérabilité à la chaleur par quartier"
+    description: "À quel point la chaleur de l'été frappe les habitants de chaque secteur de recensement, d'après l'indice de vulnérabilité à la chaleur de la Ville (Heat Vulnerability Index, Département de santé publique et Bureau du développement durable, données de 2017 à 2019). Il réunit l'exposition à la chaleur, à quel point le secteur devient chaud les jours d'été tel que les satellites le mesurent, et la sensibilité à la chaleur, combien des personnes qui y vivent sont plus à risque par forte chaleur (douze mesures d'âge, de santé, de revenu, d'éducation, de langue et de race, telles que la Ville a construit l'indice). Les secteurs sont ombrés par cinquièmes de la ville, le cinquième le plus foncé étant le plus à risque. L'exposition et la sensibilité peuvent être montrées seules dans les paramètres."
+    settings:
+      measure:
+        label: "Ombrer les secteurs selon"
+        options:
+          vulnerability:
+            label: "Vulnérabilité à la chaleur : la chaleur et les personnes à risque ensemble"
+          exposure:
+            label: "Exposition à la chaleur : à quel point il fait chaud"
+          sensitivity:
+            label: "Sensibilité à la chaleur : combien de personnes sont à risque par forte chaleur"
+      priority:
+        label: "Entourer les secteurs que la Ville classe très haut"
+  city_trees:
+    label: "Arbres des rues et des parcs"
+    description: "Chaque arbre de l'inventaire des arbres de Parcs et loisirs (2025) : les arbres que la Ville entretient sur ses trottoirs et dans ses parcs, pas les arbres des cours privées, avec le type de chaque arbre et la taille de son tronc. Affiché de près, sur quelques rues de large. Les petits arbres, avec un tronc de moins de 4 pouces de diamètre, sont souvent des jeunes arbres, et TreePhilly demande que les jeunes arbres reçoivent environ 20 gallons d'eau (environ 75 litres) par semaine de mars à décembre."
+    settings:
+      show:
+        label: "Afficher"
+        options:
+          all:
+            label: "Chaque arbre"
+          big:
+            label: "Grands arbres d'ombre : un tronc d'au moins 12 pouces de diamètre"
+          small:
+            label: "Petits arbres : un tronc de moins de 4 pouces de diamètre, souvent jeunes"
+  floodplain:
+    label: "Zone inondable"
+    description: "Là où les cartes d'inondation de la FEMA prévoient des inondations, telles que la Ville les publie (2023) : la zone inondable à 1 pour cent de chance par an, où une inondation a au moins 1 chance sur 100 chaque année, et la zone à 0,2 pour cent de chance par an à côté (souvent appelées zones inondables de 100 ans et de 500 ans). Tout ce qui est construit là doit suivre les règles de la Ville sur les zones inondables. Un verdissement qui absorbe la pluie y aide, avec des plantes qui supportent un sol détrempé."
+    settings:
+      zones:
+        label: "Afficher"
+        options:
+          both:
+            label: "Les zones à 1 pour cent et à 0,2 pour cent de chance par an"
+          high:
+            label: "Seulement la zone inondable à 1 pour cent de chance par an"
+  benches:
+    label: "Bancs, tels que cartographiés dans OpenStreetMap"
+    description: "Des endroits pour s'asseoir : les bancs que des gens ont ajoutés à OpenStreetMap, la carte libre que chacun peut améliorer, avec la présence d'un dossier là où la carte l'indique. Il manque beaucoup de bancs dans OpenStreetMap, donc une rue sans aucun banc affiché peut quand même en avoir. Chacun peut ajouter un banc avec l'application de téléphone StreetComplete, et il apparaît ici en environ une semaine."
+  picnic_tables:
+    label: "Tables de pique-nique, telles que cartographiées dans OpenStreetMap"
+    description: "Les tables de pique-nique que des gens ont ajoutées à OpenStreetMap, surtout dans les parcs, avec la présence d'un toit là où la carte l'indique. Il en manque beaucoup dans OpenStreetMap. Chacun peut en ajouter une avec l'application de téléphone StreetComplete, et elle apparaît ici en environ une semaine."
+  drinking_water:
+    label: "Eau potable, telle que cartographiée dans OpenStreetMap"
+    description: "Les fontaines à boire et les robinets d'eau que des gens ont ajoutés à OpenStreetMap, avec la possibilité de remplir une bouteille là où la carte l'indique. OpenStreetMap n'en connaît que quelques dizaines dans la ville, donc les fontaines à boire que Parcs et loisirs répertorie sont leur propre couche. Chacun peut ajouter une fontaine avec l'application de téléphone StreetComplete, et elle apparaît ici en environ une semaine."
+  toilets:
+    label: "Toilettes publiques, telles que cartographiées dans OpenStreetMap"
+    description: "Les toilettes que des gens ont ajoutées à OpenStreetMap, avec qui peut les utiliser, la présence d'un droit d'entrée et l'accès en fauteuil roulant là où la carte l'indique. Les toilettes fermées au public sont laissées de côté. OpenStreetMap en connaît moins d'une centaine dans la ville. Chacun peut en ajouter avec l'application de téléphone StreetComplete, et elles apparaissent ici en environ une semaine."
+  bookcases:
+    label: "Boîtes à livres (Little Free Libraries), telles que cartographiées dans OpenStreetMap"
+    description: "Des bibliothèques publiques en libre accès, souvent appelées Little Free Libraries ou boîtes à livres, où chacun peut prendre ou laisser un livre, telles que des gens les ont ajoutées à OpenStreetMap. Beaucoup manquent. Chacun peut en ajouter une avec l'application de téléphone StreetComplete, et elle apparaît ici en environ une semaine."
+  park_water:
+    label: "Fontaines à boire dans les parcs"
+    description: "Les fontaines à boire et les points de remplissage de bouteilles dans les parcs et les centres de loisirs, tels que Parcs et loisirs de Philadelphie les répertorie. Celle qui se trouve dans un centre de loisirs peut être utilisée quand le centre est ouvert."
+  libraries:
+    label: "Bibliothèques de la Free Library"
+    description: "Chaque site de la Free Library of Philadelphia que la Ville répertorie, avec son adresse, son numéro de téléphone et un lien vers sa page pour les horaires d'ouverture. Les bibliothèques sont gratuites et ouvertes à tous."
+  recreation_centers:
+    label: "Centres de loisirs"
+    description: "Là où Parcs et loisirs de Philadelphie organise des programmes : centres de loisirs, centres pour personnes âgées et centres d'éducation à l'environnement, avec la présence d'une salle de sport, tels que la Ville les répertorie."
+  pools:
+    label: "Piscines et aires de jeux d'eau"
+    description: "Piscines de la Ville, aires de jeux d'eau et jets d'eau, des endroits pour se rafraîchir les jours de chaleur, avec l'indication qu'ils sont en service cette année ou non, telle que Parcs et loisirs de Philadelphie la répertorie. Les piscines n'ouvrent que pour la saison d'été ; vérifiez auprès de Parcs et loisirs les horaires de cette semaine."
+    settings:
+      show:
+        label: "Afficher"
+        options:
+          in_service:
+            label: "Seulement celles en service cette année"
+          all:
+            label: "Toutes, y compris celles hors service"
+  cooling_centers:
+    label: "Refuges contre la chaleur et contre le froid"
+    description: "Les lieux que le Bureau de gestion des urgences de la Ville répertorie comme refuges contre le froid ou la chaleur : bibliothèques, centres de loisirs, partenaires communautaires et centres communautaires de la Philadelphia Housing Authority, avec l'indication qu'ils étaient indiqués comme ouverts, leurs horaires et ce qu'ils offrent, tels qu'indiqués le jour où cette carte a copié la liste pour la dernière fois. Pas en direct : les sites ouvrent et ferment selon la météo, appelez donc le site ou Philly311 avant de vous déplacer. Une bibliothèque ou un centre de loisirs qui est aussi un refuge n'apparaît qu'une fois."
+    settings:
+      kind:
+        label: "Sites pour"
+        options:
+          any:
+            label: "La chaleur ou le froid"
+          cooling:
+            label: "Se rafraîchir par temps chaud"
+          warming:
+            label: "Se réchauffer par temps froid"
+      show:
+        label: "Afficher"
+        options:
+          all:
+            label: "Tous, ouverts ou fermés selon la liste"
+          open:
+            label: "Seulement ceux indiqués comme ouverts"
+  dumping:
+    label: "Dépôts sauvages signalés au 311"
+    description: "Les tronçons où quelqu'un a interrogé Philly311 sur un dépôt sauvage au cours des 90 derniers jours, avec le nombre de demandes et l'indication qu'une demande est encore ouverte ou non. Compté par tronçon de rue, jamais par adresse, et sans rien sur qui a signalé. Une demande montre que quelqu'un a remarqué et a demandé de l'aide ; certains tronçons demandent plus souvent que d'autres, donc peu de demandes ne veut pas dire un tronçon propre."
+    settings:
+      show:
+        label: "Afficher les tronçons avec"
+        options:
+          any:
+            label: "N'importe quelle demande au cours des 90 derniers jours"
+          open:
+            label: "Une demande encore ouverte"
+  dark_lights:
+    label: "Lampadaires de rue et de ruelle signalés éteints"
+    description: "Les tronçons où quelqu'un a demandé à Philly311 de réparer un lampadaire de rue ou de ruelle éteint au cours des 90 derniers jours, avec le nombre de demandes et l'indication qu'une demande est encore ouverte ou non, à côté des poteaux et des lampes que la Ville répertorie le long du tronçon. Compté par tronçon de rue, jamais par adresse, et sans rien sur qui a signalé."
+    settings:
+      show:
+        label: "Afficher les tronçons avec"
+        options:
+          any:
+            label: "N'importe quelle demande au cours des 90 derniers jours"
+          open:
+            label: "Une demande encore ouverte"
+  graffiti:
+    label: "Graffitis signalés au 311"
+    description: "Les tronçons où quelqu'un a demandé à Philly311 d'enlever des graffitis au cours des 90 derniers jours, avec le nombre de demandes et l'indication qu'une demande est encore ouverte ou non. Compté par tronçon de rue, jamais par adresse, et sans rien sur qui a signalé."
+    settings:
+      show:
+        label: "Afficher les tronçons avec"
+        options:
+          any:
+            label: "N'importe quelle demande au cours des 90 derniers jours"
+          open:
+            label: "Une demande encore ouverte"
+  public_art:
+    label: "Art public"
+    description: "Fresques, sculptures et statues, mosaïques et autre art public, d'après la liste Percent for Art de la Ville, OpenStreetMap et Wikidata. Quand deux ou trois d'entre elles répertorient la même œuvre, la carte la montre une fois et renvoie vers chacune. Les œuvres qui rendent hommage à quelqu'un sont montrées seulement comme œuvres commémoratives, sans noms. Mural Arts Philadelphia tient la plus grande liste des fresques de la ville sur son propre site ; ses conditions n'autorisent pas à la copier, donc la carte renvoie vers elle. Si une œuvre manque, ajoutez-la à OpenStreetMap et elle apparaît ici en environ une semaine."
+    settings:
+      murals:
+        label: "Fresques et peintures murales"
+      sculptures:
+        label: "Sculptures et statues"
+      mosaics:
+        label: "Mosaïques"
+      other:
+        label: "Autres types d'art"
+      inside:
+        label: "Œuvres à l'intérieur des bâtiments"
+  playgrounds:
+    label: "Aires de jeux"
+    description: "Les aires de jeux que Parcs et loisirs de Philadelphie répertorie, avec les âges auxquels chacune est destinée et l'année d'installation quand la Ville la donne. Un parc en a souvent deux, une pour les plus jeunes et une pour les plus grands. La page d'un terrain nomme l'aire de jeux la plus proche et sa distance en ligne droite."
+  walkability:
+    label: "À quel point chaque zone est praticable à pied (EPA)"
+    description: "L'indice national de marchabilité (National Walkability Index) de l'Agence américaine de protection de l'environnement (EPA) pour chaque groupe d'îlots de recensement, une zone de quelques rues, d'après sa Smart Location Database (2021, à partir de données d'environ 2017 à 2019). Il note de 1 à 20 à quel point une zone se prête à la marche, à partir de quatre mesures : combien de coins de rue il y a, à quelle distance se trouve l'arrêt de transport en commun le plus proche, et deux mesures du mélange de logements, d'emplois et de commerces. Les zones sont ombrées par cinquièmes des groupes d'îlots de Philadelphie, ou selon les classes propres de l'EPA, qui comparent tout le pays. Chaque mesure peut être montrée seule dans les paramètres. Les groupes d'îlots sont découpés selon la terre de la ville, donc les rivières restent vides."
+    settings:
+      measure:
+        label: "Ombrer les zones selon"
+        options:
+          index:
+            label: "L'indice de marchabilité : les quatre mesures ensemble"
+          corners:
+            label: "Coins de rue : à quel point les rues sont reliées entre elles"
+          transit:
+            label: "Transports : à quelle distance se trouve l'arrêt le plus proche"
+          mix:
+            label: "Un mélange de logements, d'emplois et de commerces"
+      compare:
+        label: "Comparer avec"
+        options:
+          city:
+            label: "Philadelphie : cinquièmes des groupes d'îlots de la ville"
+          nation:
+            label: "Tout le pays : les classes propres de l'EPA"
+  walking_distance:
+    label: "Habitants et lieux à distance de marche"
+    description: "Pour chaque hexagone d'environ deux rues de large : combien de personnes habitent à moins de 5 minutes à pied de son milieu, d'après le recensement de 2020 ; combien de sept types de lieux du quotidien sont à moins de 10 minutes à pied (une bibliothèque, un centre de loisirs, une piscine ou une aire de jeux d'eau, une fontaine à boire dans un parc, une école, une épicerie ou un marché qui accepte le SNAP, et un arrêt de bus, de tramway ou de train) ; ou combien de coins de rue sont à moins de 5 minutes à pied. Cinq minutes de marche sont comptées comme 400 mètres et dix minutes de marche comme 800 mètres en ligne droite, ce qui va un peu plus loin qu'une marche le long des rues et traverse des voies ferrées, des autoroutes et des rivières que les piétons ne peuvent pas traverser."
+    settings:
+      measure:
+        label: "Ombrer les hexagones selon"
+        options:
+          people:
+            label: "Les personnes qui habitent à moins de 5 minutes à pied"
+          places:
+            label: "Les types de lieux du quotidien à moins de 10 minutes à pied"
+          corners:
+            label: "Les coins de rue à moins de 5 minutes à pied"
+  traffic_stress:
+    label: "Stress de la circulation pour les personnes à vélo (DVRPC)"
+    description: "À quel point chaque rue est stressante à parcourir à vélo, telle que la Delaware Valley Regional Planning Commission la note d'après le nombre de voies, la vitesse de la circulation et le type de piste cyclable, s'il y en a une : le niveau 1 convient à la plupart des personnes de tout âge, le niveau 2 à la plupart des adultes, le niveau 3 seulement aux cyclistes sûrs d'eux, et le niveau 4 seulement aux plus intrépides. Là où les deux sens d'une rue diffèrent, le plus stressant est montré. Les notes viennent des modèles de la DVRPC et des limites de vitesse affichées, pas d'un parcours de chaque rue."
+    settings:
+      show:
+        label: "Afficher"
+        options:
+          all:
+            label: "Chaque rue que la DVRPC note"
+          stressful:
+            label: "Seulement les rues stressantes : niveaux 3 et 4"
+          calm:
+            label: "Seulement les rues calmes : niveaux 1 et 2"
+  displacement_watch:
+    label: "Vigilance sur les déplacements : signes que les prix montent"
+    description: "Les zones (secteurs de recensement) avec au moins deux de ces signes, dont au moins un concerne les prix eux-mêmes (les trois premiers) : des logements vendus bien plus cher qu'il y a cinq ans, plus vite que dans l'ensemble de la ville ; les valeurs d'évaluation de la Ville qui montent bien plus vite que celles de la ville ; l'analyse de la valeur marchande de la Ville (Market Value Analysis) qui constate des prix devenant inaccessibles aux habitants de longue date ; des entreprises qui achètent beaucoup des logements vendus ; au moins trois logements sur cinq loués ; ou beaucoup de locataires qui paient la moitié de leur revenu ou plus en loyer (ajouté par le propriétaire du projet le 9 octobre 2026). Le verdissement et les autres améliorations peuvent faire monter encore les prix, donc quand une suggestion de verdir un terrain, de planter des arbres, d'aménager un endroit pour s'asseoir, de lancer un jardin ou de demander de l'art, ou un terrain que la Ville indique comme disponible, se trouve dans l'une de ces zones, sa fiche ajoute des moyens de protéger les voisins. Cela montre des signes dans des registres publics, pas une prévision, et cela ne dit rien de qui habite ici. Touchez une zone pour voir ses signes et ce qui a été mesuré pour chacun, et, comme contexte, le loyer médian, le revenu médian des ménages et combien de logements sont vides, d'après l'enquête du Bureau du recensement ; chaque chiffre d'enquête vient avec sa marge d'erreur."
+    settings:
+      shade:
+        label: "Ombrer les zones (désactivé montre seulement leurs contours)"
+  historic_districts:
+    label: "Quartiers historiques"
+    description: "Les quartiers historiques locaux de la Commission historique de Philadelphie. Les changements aux bâtiments et aux terrains d'un quartier peuvent nécessiter l'examen de la Commission, même une fresque, une clôture ou un jardin : demandez d'abord à la Commission (215 686 7660). La Ville demande à tout le monde de confirmer le statut historique d'une propriété auprès de la Commission. Touchez un quartier pour son nom et le jour où il a été désigné."
+  historic_properties:
+    label: "Propriétés au registre historique"
+    description: "Les propriétés du Registre des lieux historiques de Philadelphie, chacune sa propre parcelle, inscrites séparément ou dans le cadre d'un quartier historique (affichées de près). Les changements ici peuvent nécessiter l'examen de la Commission historique : demandez-lui d'abord (215 686 7660)."
+  zoning_overlays:
+    label: "Zonages superposés"
+    description: "Les zones où le Code de zonage ajoute ses propres règles par-dessus le zonage de base : conservation de quartier, rues commerçantes, protection contre les inondations et contre les pentes raides, limites sur le revêtement près de la Wissahickon, hauteurs près de l'aéroport, enseignes et plus. Beaucoup se chevauchent, et quelques-unes couvrent la plus grande partie de la ville. Touchez un endroit pour voir chaque zonage superposé qui s'y trouve, avec sa section du Code de zonage. Les zonages superposés peuvent changer ce qui est permis ; vérifiez auprès de la Ville avant de planifier."
+    settings:
+      show:
+        label: "Afficher"
+        options:
+          all:
+            label: "Les zonages superposés et les autres règles spéciales"
+          districts:
+            label: "Seulement les zonages superposés"
+  hearings:
+    label: "Audiences à venir"
+    description: "Les audiences fixées devant le Conseil d'ajustement du zonage, le L&I Review Board, le Board of Building Standards et les autres comités de la Ville au sujet d'une propriété, d'après les registres d'appels de la Ville, avec le jour, l'heure et le type d'appel. Chacun peut participer à une audience de zonage ; touchez-en une pour voir comment, et pour ouvrir la page du terrain. La personne qui a déposé un appel n'est indiquée que sur la page de ce terrain, jamais sur la carte."
+    settings:
+      boards:
+        label: "Afficher"
+        options:
+          all:
+            label: "Chaque comité"
+          zoning:
+            label: "Seulement le Conseil d'ajustement du zonage"
+  brownfields:
+    label: "Sites brownfield (EPA)"
+    description: "Les propriétés où une subvention fédérale pour brownfield a payé une évaluation ou une dépollution, d'après les registres de l'EPA. Ce n'est pas une carte de tout le terrain contaminé, et elle ne dit pas si un site est contaminé aujourd'hui. Testez le sol avant de cultiver des aliments sur un de ces sites ou près de l'un d'eux."
+  aerial_photos:
+    label: "Photos aériennes par année"
+    description: "Des photographies aériennes de toute la ville, prises depuis un avion : celles de la Ville elle-même pour chaque année où elle en a depuis 1996 (chaque printemps, la plupart des années de mars à mai), et des plus anciennes que la Ville héberge, de la Delaware Valley Regional Planning Commission (1959 et 1975) et du U.S. Geological Survey (1999). Faites défiler les années pour voir ce qui se trouvait dans une rue avant : des maisons qui sont tombées, des terrains qui ont été dégagés, des jardins qui ont poussé. Les photos viennent directement des serveurs de la Ville quand cette couche est activée, et sont dessinées sous tout le reste sur la carte. Les années plus anciennes sont moins nettes, et les photos jusqu'en 2000 sont en noir et blanc."
+    settings:
+      year:
+        label: "Année"
+        options:
+          "1959":
+            label: "1959"
+          "1975":
+            label: "1975"
+          "1996":
+            label: "1996"
+          "1999":
+            label: "1999"
+          "2000":
+            label: "2000"
+          "2004":
+            label: "2004"
+          "2005":
+            label: "2005"
+          "2008":
+            label: "2008"
+          "2009":
+            label: "2009"
+          "2010":
+            label: "2010"
+          "2011":
+            label: "2011"
+          "2012":
+            label: "2012"
+          "2014":
+            label: "2014"
+          "2015":
+            label: "2015"
+          "2016":
+            label: "2016"
+          "2017":
+            label: "2017"
+          "2018":
+            label: "2018"
+          "2019":
+            label: "2019"
+          "2020":
+            label: "2020"
+          "2022":
+            label: "2022"
+          "2023":
+            label: "2023"
+          "2024":
+            label: "2024"
+          "2025":
+            label: "2025"
+      opacity:
+        label: "Intensité de la photo, en pourcentage"
+  atlas_1860:
+    label: "Atlas de 1860 (Hexamer et Locher)"
+    description: "L'atlas de Philadelphie de 1860 de Hexamer et Locher, dessiné pâté de maisons par pâté de maisons avec ses bâtiments et ses terrains, ajusté à la carte d'aujourd'hui par le Greater Philadelphia GeoHistory Network et hébergé par la Ville. Il ne couvre que Center City et Northern Liberties. Baissez son intensité pour voir les rues d'aujourd'hui à travers. Il vient directement des serveurs de la Ville quand cette couche est activée."
+    settings:
+      opacity:
+        label: "Intensité de l'atlas, en pourcentage"
+  redlining_1937:
+    label: "Carte du redlining de 1937 (notes de la HOLC)"
+    description: "En 1937, un organisme fédéral, la Home Owners' Loan Corporation (HOLC), a noté les quartiers de Philadelphie de A à D selon le degré de sécurité qu'il jugeait pour les prêts hypothécaires à cet endroit. Les notes dépendaient des personnes qui habitaient chaque zone : les zones où vivaient des familles noires et de nombreuses familles immigrées étaient le plus souvent notées D et entourées en rouge, d'où vient le mot redlining. Cette couche montre les zones et les notes de 1937 telles que Mapping Inequality les a tracées. Les notes sont une trace de la façon dont l'organisme jugeait les lieux en 1937 ; elles ne disent rien des personnes qui y vivent aujourd'hui. Touchez une zone pour sa note et un lien vers sa description de 1937 sur Mapping Inequality. Usage non commercial seulement."
+    settings:
+      shade:
+        label: "Ombrer les zones (désactivé montre seulement leurs contours et leurs notes)"
+
+lenses:
+  violence:
+    label: "Réduction de la violence"
+    description: "Là où nettoyer, verdir ou sceller réduirait le plus probablement la violence armée à proximité, d'après des essais randomisés à Philadelphie."
+    factors:
+      untreated_vacancy:
+        label: "Terrain vacant non traité ou bâtiment abandonné ouvert"
+        explain: "Des essais randomisés à Philadelphie ont constaté que verdir des terrains vacants et donner des portes et des fenêtres en bon état aux maisons abandonnées réduisait la violence armée à proximité. Les lieux déjà traités ainsi obtiennent 0 : les terrains qu'entretient PHS LandCare, et les bâtiments dont le propriétaire a réparé les portes et les fenêtres après un avis d'infraction de L&I. Tout autre terrain ou bâtiment vacant obtient 100."
+      shootings_nearby:
+        label: "Fusillades à proximité ces trois dernières années"
+        explain: "Les personnes blessées par balle ces trois dernières années dans un rayon d'environ un quart de mile (l'hexagone du lieu et les six qui l'entourent), d'après les registres du Police Department sur les victimes de fusillades. Le rang est la part des lieux de la carte qui en ont moins. Les essais ont mesuré moins de fusillades autour des lieux traités, donc le soin aide le plus là où les fusillades se produisent."
+      poverty:
+        label: "Taux de pauvreté du quartier"
+        explain: "La part des personnes qui vivent sous le seuil de pauvreté dans le secteur de recensement du lieu (enquête du Bureau du recensement, 2020 à 2024). Le rang est la part des lieux de la carte situés dans des secteurs où le taux est plus bas. Dans l'essai mené dans toute la ville, la baisse de la violence armée a été constatée dans les quartiers sous le seuil de pauvreté."
+      canopy_gap:
+        label: "Peu d'arbres à proximité"
+        explain: "Le couvert d'arbres sur le terrain dans un rayon d'environ un quart de mile, d'après le relevé du couvert arboré de la Ville de 2018. Le rang est la part des lieux de la carte qui ont plus d'arbres autour d'eux, donc moins il y a d'arbres, plus le rang est élevé. Les arbres de rue sont liés à moins de criminalité, mais les preuves sont partagées et dépendent de l'emplacement."
+    presets:
+      research:
+        label: "Fondé sur la recherche"
+      vacancy_only:
+        label: "Vacance seulement"
+  heat:
+    label: "Chaleur et ombre"
+    description: "Là où planter des arbres ou verdir un terrain vacant rafraîchirait le plus de personnes : des terrains dans des quartiers où la chaleur de l'été frappe le plus durement les habitants, avec peu d'ombre autour, et beaucoup de personnes pour sentir la différence."
+    factors:
+      heat_vulnerability:
+        label: "Vulnérabilité du quartier à la chaleur"
+        explain: "À quel point la chaleur de l'été frappe les habitants du secteur de recensement du terrain, d'après l'indice de vulnérabilité à la chaleur de la Ville (Heat Vulnerability Index, Département de santé publique et Bureau du développement durable, données de 2017 à 2019) : à quel point le secteur devient chaud les jours d'été, tel que les satellites le mesurent, avec combien des personnes qui y vivent sont plus à risque par forte chaleur, selon l'âge, la santé, le revenu et plus encore. Le rang est la part des lieux de la carte situés dans des secteurs où le score est plus bas."
+      few_trees:
+        label: "Peu d'arbres à proximité"
+        explain: "Le couvert d'arbres sur le terrain dans un rayon d'environ un quart de mile, d'après le relevé du couvert arboré de la Ville de 2018, la même mesure que l'angle « réduction de la violence ». Le rang est la part des lieux de la carte qui ont plus d'arbres autour d'eux, donc moins il y a d'arbres, plus le rang est élevé. Les arbres rafraîchissent les rues par leur ombre et par l'eau que leurs feuilles dégagent. Les études s'accordent pour dire qu'ils rafraîchissent le jour, surtout là où le couvert dépasse environ 40 pour cent d'une rue, et moins la nuit."
+      few_street_trees:
+        label: "Peu d'arbres de la Ville dans la rue"
+        explain: "Les arbres situés à moins de 100 mètres du terrain dans l'inventaire des arbres de Parcs et loisirs de 2025, les arbres que la Ville entretient dans ses rues et ses parcs, pas les arbres des cours privées. Le rang est la part des lieux de la carte qui ont plus de ces arbres autour d'eux, donc moins il y a d'arbres, plus le rang est élevé. Les arbres de rue donnent de l'ombre aux trottoirs où les gens marchent et attendent."
+      people_nearby:
+        label: "Personnes que cela toucherait"
+        explain: "Habitants par kilomètre carré de terre dans le secteur de recensement du terrain (enquête du Bureau du recensement, 2020 à 2024). Le rang est la part des lieux de la carte situés dans des secteurs avec moins d'habitants. Plus de personnes sentiraient le rafraîchissement. La population ne compte que les personnes qu'une amélioration toucherait ; ce n'est jamais, seule, une mesure du besoin."
+    presets:
+      balanced:
+        label: "Équilibré"
+      people_at_risk:
+        label: "Personnes les plus à risque"
+      fewest_trees:
+        label: "Le moins d'arbres"
+  placemaking:
+    label: "Création de lieux"
+    description: "Là où un terrain vacant deviendrait le plus probablement un lieu public que les gens utilisent chaque jour, comme un jardin, un petit parc, un endroit pour s'asseoir à l'ombre ou un emplacement pour de l'art : des terrains avec beaucoup de voisins et de lieux du quotidien à courte distance à pied, loin d'un parc et de l'art public. Il s'agit d'usage et d'accueil, pas de criminalité."
+    factors:
+      neighbors:
+        label: "Personnes à moins de 5 minutes à pied"
+        explain: "Combien de personnes habitent à moins de 5 minutes à pied du terrain, comptées comme 400 mètres en ligne droite, d'après le recensement de 2020. Le rang est la part des lieux de la carte qui ont moins de personnes autour d'eux. Plus de voisins veut dire plus de personnes que servirait un jardin, un banc ou une fresque. La population ne compte que les personnes qu'un projet toucherait."
+      everyday_places:
+        label: "Lieux du quotidien à moins de 10 minutes à pied"
+        explain: "Combien de sept types de lieux du quotidien se trouvent à moins de 10 minutes à pied, comptées comme 800 mètres en ligne droite : une bibliothèque, un centre de loisirs, une piscine ou une aire de jeux d'eau, une fontaine à boire dans un parc, une école, une épicerie ou un marché qui accepte le SNAP, et un arrêt de bus, de tramway ou de train. Le rang est la part des lieux de la carte qui en ont moins. Les personnes qui vont vers ces lieux passent devant le terrain. À quel point les passants aident un nouveau lieu public dépend de la rue et du lieu, donc les preuves sont partagées."
+      walkability:
+        label: "Marchabilité"
+        explain: "L'indice national de marchabilité de l'EPA pour le groupe d'îlots du terrain : coins de rue, proximité des transports, et mélange de logements, d'emplois et de commerces (données d'environ 2017 à 2019). Le rang est la part des lieux de la carte situés dans des zones moins praticables à pied. Là où les gens marchent, plus de personnes utiliseraient un lieu sur le terrain. Les études sur les lieux praticables à pied trouvent des corrélations dont le sens dépend du lieu, donc les preuves sont partagées."
+      far_from_park:
+        label: "Loin d'un parc"
+        explain: "La distance en ligne droite entre le terrain et le bord du terrain de parc le plus proche de Parcs et loisirs : parcs, aires de jeux, centres de loisirs, places, coulées vertes et espaces naturels, mais pas ses dépôts de travail, ses terrains de golf ni ses terre-pleins plantés. Le rang est la part des lieux de la carte qui en sont plus proches, donc plus c'est loin, plus le rang est élevé. Un terrain loin d'un parc pourrait donner aux voisins l'espace ouvert qui leur manque."
+      no_art_nearby:
+        label: "Pas d'art public à proximité"
+        explain: "La distance en ligne droite entre le terrain et l'œuvre d'art public la plus proche de la liste Percent for Art de la Ville ou de Wikidata, sans compter les œuvres à l'intérieur des bâtiments. Le rang est la part des lieux de la carte qui en sont plus proches, donc plus c'est loin, plus le rang est élevé. Ces deux listes ne contiennent qu'une partie de l'art de la ville : les fresques de Mural Arts et les œuvres que seul OpenStreetMap cartographie n'y sont pas, regardez donc aussi la couche Art public. L'art est bienvenu pour la beauté et la fierté ; aucune étude ne le lie à moins de violence."
+      commercial_corridor:
+        label: "Sur ou près d'un axe commercial"
+        explain: "La note maximale, 100, quand le terrain se trouve sur l'un des axes commerciaux de la Ville, les rues et centres commerçants que la Commission d'urbanisme a relevés de 2011 à 2017, ou à moins de 50 mètres de l'un d'eux, et 0 sinon. Les commerces font passer des gens devant le terrain chaque jour. Les rues commerçantes très fréquentées peuvent aussi apporter des problèmes, donc les preuves sont partagées."
+    presets:
+      balanced:
+        label: "Équilibré"
+      most_neighbors:
+        label: "Le plus de voisins"
+      where_people_walk:
+        label: "Là où les gens marchent déjà"
+      far_from_a_park:
+        label: "Loin d'un parc"
+  street_safety:
+    label: "Sécurité des rues"
+    description: "Les tronçons de rue où les personnes à pied et à vélo sont le plus à risque, d'après les registres d'accidents, le réseau High Injury Network de la Ville et les écoles proches."
+    factors:
+      high_injury_network:
+        label: "Sur le réseau High Injury Network"
+        explain: "La Ville a constaté que la plupart des décès et des blessures graves de la circulation se produisent dans ces rues, environ 12 pour cent de toutes les rues de Philadelphie."
+      walking_cycling_harm:
+        label: "Personnes tuées ou grièvement blessées à pied ou à vélo, 5 dernières années"
+        explain: "Compte les personnes tuées ou grièvement blessées à pied ou à vélo sur ce tronçon ou à ses coins, dans les cinq dernières années des registres d'accidents de PennDOT. Le rang est la part des tronçons de toute la ville qui en ont moins."
+      recent_death:
+        label: "Quelqu'un a été tué ici ces 2 dernières années"
+        explain: "Un décès sur ce tronçon ou à ses coins ces deux dernières années, d'après les registres du Police Department sur les accidents mortels, qui sont mis à jour chaque nuit."
+      school_nearby:
+        label: "École à moins de 400 mètres"
+        explain: "Les enfants marchent vers l'école et en reviennent ici. 400 mètres font environ cinq minutes de marche."
+    presets:
+      research:
+        label: "Fondé sur la recherche"
+      recorded_harm:
+        label: "Dommages enregistrés seulement"
+  transit_comfort:
+    label: "Confort aux arrêts"
+    description: "Les arrêts de bus et de tramway où un abribus, un banc ou de l'ombre aideraient le plus les usagers : arrêts très fréquentés, arrêts où un relevé n'a rien trouvé pour s'asseoir ou s'abriter, arrêts avec peu d'ombre dans des quartiers chauds, arrêts sur le réseau High Injury Network, et arrêts avec de longues attentes. Là où personne n'a encore relevé un arrêt, son abribus et son banc comptent à moitié."
+    factors:
+      riders:
+        label: "Personnes qui montent chaque jour de semaine"
+        explain: "Combien de personnes montent ici un jour de semaine moyen, d'après le comptage de la SEPTA elle-même. Le rang est la part des arrêts avec moins d'usagers. Plus d'usagers veut dire plus de personnes aidées par un abribus ou un banc ; la Ville vise à placer des abribus aux 15 pour cent d'arrêts de bus les plus fréquentés. Les arrêts que la SEPTA n'a pas encore comptés sont laissés de côté pour ce facteur."
+      no_shelter:
+        label: "Pas d'abribus"
+        explain: "100 là où un relevé n'a trouvé aucun abribus, 0 là où il y a un abribus, que l'arrêt entier est sous un toit, ou que la liste propre de la Ville des abribus en indique un (quoi que dise OpenStreetMap). Là où personne n'a encore relevé l'arrêt, il compte pour 50, à moitié, donc un arrêt n'est jamais noté comme n'ayant pas un abribus qu'il pourrait avoir ; relevez-le pour le savoir. Dans une étude à Minneapolis et Saint Paul, les usagers des arrêts sans banc ni abribus ont trouvé leurs attentes plus longues qu'elles ne l'étaient."
+      no_bench:
+        label: "Pas de banc"
+        explain: "100 là où un relevé n'a trouvé aucun banc, 0 là où il y en a un, et 50, à moitié, là où personne n'a encore relevé l'arrêt. La même étude a constaté qu'un banc fait paraître une attente plus courte."
+      little_shade:
+        label: "Peu d'ombre à proximité"
+        explain: "Le couvert d'arbres sur le terrain autour de l'arrêt, dans une zone d'environ deux rues de large, d'après le relevé du couvert arboré de la Ville de 2018. Le rang est la part des arrêts qui ont plus d'arbres autour d'eux, donc moins il y a d'arbres, plus le rang est élevé. L'ombre rafraîchit les personnes qui attendent au soleil, mais son effet dépend du climat et de ce qui donne l'ombre."
+      heat:
+        label: "Quartier chaud en été"
+        explain: "À quel point le secteur de recensement de l'arrêt devient chaud les jours d'été, d'après la partie exposition à la chaleur de l'indice de vulnérabilité à la chaleur de la Ville (températures de surface mesurées par satellite et part du secteur qui est goudronnée, bâtie ou verte). Le rang est la part des arrêts situés dans des secteurs plus frais."
+      high_injury_network:
+        label: "Sur le réseau High Injury Network"
+        explain: "L'arrêt se trouve sur l'une des rues, ou à côté de l'une des rues, où se produisent la plupart des décès et des blessures graves de la circulation à Philadelphie, donc beaucoup d'usagers traversent cette rue pour atteindre l'arrêt ou pour le quitter. Des études ailleurs ont constaté que les accidents impliquant des piétons se concentrent aux arrêts de bus très fréquentés sur de larges routes, où une traversée sûre compte le plus."
+      long_wait:
+        label: "Longues attentes en milieu de journée"
+        explain: "Le temps typique entre les bus ou les tramways de 10 h à 14 h en semaine, d'après les horaires de la SEPTA. Le rang est la part des arrêts avec des attentes plus courtes. Une longue attente, c'est quand un siège et un toit comptent le plus. Les arrêts sans service en milieu de journée sont laissés de côté pour ce facteur."
+    presets:
+      balanced:
+        label: "Équilibré"
+      busiest_first:
+        label: "Les arrêts les plus fréquentés d'abord"
+      heat_and_shade:
+        label: "Chaleur et ombre"
+
+suggestions:
+  clean_and_green:
+    label: "Nettoyer et verdir ce terrain (clean and green)"
+    summary: "Enlever les déchets, niveler, semer de l'herbe et planter quelques arbres, ajouter une clôture basse à poteaux et à lisse, et tondre régulièrement."
+    cost: "Environ 1 100 $ à 1 500 $ au départ et 150 $ à 300 $ par an (à confirmer avec PHS)"
+  seal_abandoned_building:
+    label: "Faire sceller ce bâtiment"
+    summary: "Signaler un bâtiment abandonné ouvert pour que la Ville scelle ses portes et ses fenêtres."
+    cost: "Signalement gratuit"
+  plant_shade_trees:
+    label: "Planter des arbres d'ombre sur ce terrain et le long de celui-ci"
+    summary: "Moins d'arbres donnent de l'ombre à cette zone qu'autour d'au moins la moitié des lieux de cette carte (relevé du couvert arboré de la Ville, 2018). Les arbres rafraîchissent une rue par leur ombre et par l'eau que leurs feuilles dégagent. La Ville plante des arbres de rue gratuits dans le trottoir quand le propriétaire d'un bien le demande, et TreePhilly distribue des arbres gratuits à planter en pleine terre sur un terrain privé. Choisissez des arbres qui grandiront, pour qu'ils donnent de l'ombre à la rue et que les voisins puissent encore voir de l'autre côté du terrain."
+    cost: "Arbres gratuits de la Ville et de TreePhilly. Les jeunes arbres ont besoin d'environ 20 gallons d'eau (environ 75 litres) par semaine de mars à décembre"
+  cool_green_lot:
+    label: "Verdir ce terrain pour rafraîchir la rue"
+    summary: "Selon l'indice de vulnérabilité à la chaleur de la Ville, la chaleur de l'été frappe les gens ici plus durement qu'autour d'au moins la moitié des lieux de cette carte. La terre nue, le gravier et les gravats absorbent le soleil, alors que l'herbe, les massifs de jardin et surtout les arbres gardent un terrain plus frais et donnent de l'ombre au trottoir à côté. Quoi que devienne ce terrain, un jardin, un terrain nettoyé et verdi ou un jardin latéral, plantez-y des arbres d'ombre, et gardez-les hauts pour que le terrain reste ouvert à la vue."
+    cost: "D'arbres gratuits (TreePhilly) jusqu'à environ 1 100 $ à 1 500 $ au départ pour un nettoyage et verdissement complet (à confirmer avec PHS)"
+  seating_and_shade:
+    label: "Aménager un endroit pour s'asseoir à l'ombre"
+    summary: "Plus de personnes habitent à moins de 5 minutes à pied de ce terrain qu'autour d'au moins la moitié des lieux de cette carte. Quelques bancs ou une table de pique-nique sous des arbres d'ombre peuvent en faire un endroit où les voisins s'arrêtent, se reposent et se rencontrent. Demandez aux voisins ce qu'ils utiliseraient, choisissez des sièges solides, et plantez des arbres qui grandiront pour que le terrain reste ouvert à la vue. Prévoyez qui l'entretiendra."
+    cost: "D'arbres gratuits (TreePhilly) et d'un banc construit à partir d'un plan libre jusqu'à quelques milliers de dollars. Les mini-subventions pour l'espace public de Feet First Philly donnent de 500 $ à 2 500 $"
+  community_garden:
+    label: "Lancer un jardin communautaire"
+    summary: "Ce terrain est plus loin d'un parc qu'au moins la moitié des lieux de cette carte, et au moins 1 000 personnes habitent à moins de 5 minutes à pied. Un jardin communautaire donne aux voisins de l'espace vert, de la nourriture et des fleurs, et une raison de se rencontrer. Il faut des jardiniers qui reviennent chaque semaine, de l'eau et la permission d'utiliser le terrain. Une fois qu'un jardin fonctionne, le Neighborhood Gardens Trust peut aider à le garder jardin pour de bon."
+    cost: "De quelques bacs surélevés jusqu'à quelques milliers de dollars avec la terre, une clôture et l'eau. L'Urban Garden Agreement de la Land Bank coûte 1 $"
+  art_request:
+    label: "Se renseigner sur une fresque ou une autre œuvre d'art"
+    summary: "Beaucoup de gens habitent autour de ce terrain, et aucune œuvre de la liste Percent for Art de la Ville ni de Wikidata ne se trouve à moins de 5 minutes à pied. Ces listes oublient beaucoup de fresques, donc regardez d'abord la couche Art public et la propre liste de fresques de Mural Arts. Un mur nu face au terrain pourrait accueillir une fresque : Mural Arts reçoit les demandes des propriétaires de murs sur son propre site. L'art est bienvenu pour la beauté et la fierté ; aucune étude ne le lie à moins de violence."
+    cost: "Demande gratuite à Mural Arts"
+  report_dumping:
+    label: "Signaler le dépôt sauvage à Philly311"
+    summary: "Quelqu'un a interrogé Philly311 sur un dépôt sauvage dans un tronçon de rue en face de ce terrain au cours des 90 derniers jours, et la demande est encore ouverte. Si les déchets sont toujours là, ajoutez votre propre demande, avec une photo, pour que la Ville les enlève. Un signalement concerne les déchets, jamais la personne qui les a laissés."
+    cost: "Signalement gratuit"
+  report_dark_light:
+    label: "Signaler le lampadaire éteint à Philly311"
+    summary: "Quelqu'un a demandé à Philly311 de réparer un lampadaire de rue ou de ruelle éteint dans un tronçon de rue en face de ce terrain, au cours des 90 derniers jours, et la demande est encore ouverte. Si la lumière est toujours éteinte, ajoutez votre propre demande, avec le numéro du poteau s'il en a un. Une rue éclairée aide les voisins à utiliser la rue et le terrain après la tombée de la nuit."
+    cost: "Signalement gratuit"
+  report_graffiti:
+    label: "Signaler les graffitis à Philly311"
+    summary: "Quelqu'un a demandé à Philly311 d'enlever des graffitis dans un tronçon de rue en face de ce terrain au cours des 90 derniers jours, et la demande est encore ouverte. S'ils sont toujours là, ajoutez votre propre demande, avec une photo, pour que la Ville puisse les nettoyer. Si les voisins préfèrent de l'art sur ce mur, demandez à son propriétaire au sujet d'une fresque."
+    cost: "Signalement gratuit"
+  memorial_or_ghost_bike:
+    label: "Un mémorial ou un ghost bike"
+    summary: "Un mémorial rend hommage à la personne qui est morte et rappelle à tous ceux qui passent de ralentir. Pour une personne tuée à vélo, la Bicycle Coalition peut installer un ghost bike, un vélo peint en blanc."
+    cost: "Faible ; une demande de ghost bike est gratuite"
+  traffic_calming_petition:
+    label: "Demander la modération de la circulation dans cette rue résidentielle"
+    summary: "Les voisins peuvent demander à la Ville des coussins ralentisseurs dans une rue résidentielle. La Ville note les demandes trois fois par an à partir des données d'accidents, et si cette rue est choisie, 60 pour cent du tronçon signe une pétition. Les artères, les routes de l'État, et les rues courtes, raides et sinueuses n'y sont pas admissibles."
+    cost: "Demande gratuite"
+  daylighting_check:
+    label: "Vérifier que ce coin est dégagé sur 20 pieds"
+    summary: "La loi de Pennsylvanie interdit déjà de stationner à moins de 20 pieds d'un passage piéton à une intersection, et à moins de 30 pieds d'un panneau stop ou d'un feu, pour que les conducteurs et les personnes qui traversent puissent se voir. Si des voitures se garent là, demandez à la Ville de dégager le coin avec de la peinture, des poteaux ou des jardinières. Signalez un lampadaire éteint ici à Philly311."
+    cost: "Demande gratuite"
+  asphalt_art_check:
+    label: "Art sur l'asphalte à ce coin, vérifier d'abord auprès de la Ville"
+    summary: "Une étude d'intersections peintes a constaté moins d'accidents impliquant des personnes à pied et à vélo, mais elle n'avait pas de groupe de comparaison et a été financée par le parrain du programme. En 2025, le gouvernement fédéral a commencé à presser les États de retirer l'art sur les passages piétons, et Philadelphie n'a pas de procédure de permis pour cela. Vérifiez auprès de la Ville avant de peindre quoi que ce soit."
+    cost: "Inconnu ; il n'y a pas de procédure de la Ville pour le chiffrer"
+  stop_survey:
+    label: "Relever cet arrêt avec StreetComplete"
+    summary: "Personne n'a encore noté si cet arrêt a un abribus ou un banc, ou bien OpenStreetMap et la liste des abribus de la Ville ne s'accordent pas sur son abribus. Chacun peut le savoir en quelques minutes avec l'application de téléphone gratuite StreetComplete, et les réponses arrivent sur cette carte en environ une semaine. Si l'application n'a aucune question ici, l'arrêt n'est pas encore dans OpenStreetMap : ajoutez-le avec la couche Things de l'application, ou laissez une note."
+    cost: "Gratuit ; environ trois minutes par arrêt"
+  stop_shelter_request:
+    label: "Demander un abribus à la Ville pour cet arrêt"
+    summary: "Un relevé n'a trouvé aucun abribus ici, et la liste des abribus de la Ville n'en a pas non plus ici. Le programme d'abribus de la Ville, géré par son bureau des transports (OTIS), construit des abribus payés par la publicité qui s'y trouve et vise à les placer aux 15 pour cent d'arrêts de bus les plus fréquentés. Il n'y a pas de formulaire de demande public, donc écrivez à OTIS avec le numéro de l'arrêt et le nombre de personnes qui montent ici."
+    cost: "Demande gratuite"
+  stop_bench_request:
+    label: "Demander un banc à la Ville pour cet arrêt"
+    summary: "Un relevé n'a trouvé aucun banc ici. Les bancs aux arrêts relèvent du programme de mobilier urbain de la Ville, géré par OTIS, et nous n'avons trouvé aucun moyen public d'en demander un, donc écrivez à OTIS avec le numéro de l'arrêt. Un banc que vous construisez vous-même demande une permission, et la démarche de permis de la Ville pour un banc sur un trottoir n'est pas encore confirmée."
+    cost: "Demande gratuite"
+  stop_streetlight_report:
+    label: "Signaler un lampadaire éteint à cet arrêt"
+    summary: "OpenStreetMap dit que cet arrêt n'est pas éclairé. Si un lampadaire ici est éteint, signalez-le à Philly311. Le programme actuel d'éclairage public de la Ville remplace des lumières mais n'en ajoute pas de nouvelles, donc un arrêt sans aucune lumière est une question pour OTIS."
+    cost: "Signalement gratuit"
+  stop_shade_trees:
+    label: "Planter des arbres d'ombre près de cet arrêt"
+    summary: "Peu d'arbres donnent de l'ombre à cet arrêt. La Ville plante des arbres de rue gratuits dans le trottoir devant une maison ou un commerce quand son propriétaire le demande, et les arrose la première année. Demandez aux propriétaires des bâtiments à côté de l'arrêt d'en demander un ; les voisins peuvent aider à l'arroser ensuite."
+    cost: "Arbres de rue gratuits pour les propriétaires"
+
+routes:
+  land_bank_garden_agreement:
+    label: "Accord de jardin ou licence de la Land Bank"
+    who: "Toute personne pour un Urban Garden Agreement à 1 $ ; les groupes avec un parrain à but non lucratif pour une Community Garden License"
+    steps:
+      - "Vérifiez que la Land Bank ou la Ville est propriétaire du terrain."
+      - "Lisez le guide de Grounded in Philly sur l'obtention de la permission d'utiliser des terrains de la Ville."
+      - "Faites une demande auprès de la Land Bank, ou participez d'abord à l'un de ses webinaires gratuits."
+    cost: "1 $ (Urban Garden Agreement), 25 $ par an (Individual Garden Agreement), ou une assurance et un parrain (Community Garden License)"
+    timeline: "Des semaines pour les accords courts ; des mois pour une licence"
+    links:
+      "https://phillylandbank.org/":
+        label: "Philadelphia Land Bank"
+      "https://groundedinphilly.org/get-permission-to-use-land-city/":
+        label: "Grounded in Philly : la permission d'utiliser des terrains de la Ville"
+  ask_the_owner:
+    label: "Demander la permission au propriétaire"
+    who: "Toute personne"
+    steps:
+      - "Trouvez l'adresse postale du propriétaire sur la page du terrain."
+      - "Écrivez pour demander la permission de nettoyer et de verdir le terrain, et proposez un accord écrit simple."
+      - "Demandez au Garden Justice Legal Initiative de relire tout accord avant de le signer."
+    cost: "Gratuit"
+    timeline: "Dépend du propriétaire"
+    links:
+      "https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/":
+        label: "Garden Justice Legal Initiative"
+  community_landcare:
+    label: "Prendre en charge un terrain avec PHS Community LandCare"
+    who: "Groupes d'habitants"
+    steps:
+      - "Contactez PHS au sujet de Community LandCare."
+    cost: "À confirmer avec PHS"
+    timeline: "À confirmer avec PHS"
+    links:
+      "https://phsonline.org/":
+        label: "Pennsylvania Horticultural Society"
+  report_to_311:
+    label: "Le signaler à Philly311"
+    who: "Toute personne"
+    steps:
+      - "Signalez le bâtiment ouvert, le dépôt sauvage, les graffitis, ou le lampadaire de rue ou de ruelle éteint à Philly311 en ligne, par application ou en appelant le 311."
+      - "Gardez le numéro de la demande de service et revenez vérifier."
+    cost: "Gratuit"
+    timeline: "De quelques jours à quelques semaines"
+    links:
+      "https://www.phila.gov/services/property-lots-housing/submit-a-service-request-with-311/":
+        label: "Philly311"
+  ghost_bike_request:
+    label: "Demander à la Bicycle Coalition un ghost bike ou un mémorial"
+    who: "La famille, ou des amis avec la bénédiction de la famille"
+    steps:
+      - "Parlez d'abord avec la famille. Un mémorial n'est installé qu'avec sa bénédiction."
+      - "Pour une personne tuée à vélo, remplissez le formulaire de demande de ghost bike de la Bicycle Coalition. Le même formulaire permet de demander qu'un ghost bike soit réparé ou remplacé."
+      - "Families for Safe Streets, géré par la Bicycle Coalition, soutient les familles après un accident et partage un guide de ressources pour l'après-accident."
+      - "Prévoyez qui s'occupera du mémorial avec le temps."
+    cost: "Demande gratuite"
+    timeline: "Non précisé"
+    links:
+      "https://bicyclecoalition.org/what-is-a-ghost-bike/":
+        label: "Bicycle Coalition : qu'est-ce qu'un ghost bike"
+      "https://forms.gle/HBtY1hG4xcdVJKNb8":
+        label: "Formulaire de demande de ghost bike"
+      "https://bicyclecoalition.org/programs/families-for-safe-streets/":
+        label: "Families for Safe Streets Greater Philadelphia"
+  traffic_calming_request:
+    label: "Demander la modération de la circulation dans une rue résidentielle"
+    who: "Les habitants du tronçon, surtout pour la rue où ils habitent"
+    steps:
+      - "Vérifiez si la rue est admissible sur la carte de modération de la circulation de la Ville, ou en appelant le 311."
+      - "Envoyez la demande en ligne de modération de la circulation de la Ville."
+      - "Si la Ville retient la demande, recueillez les signatures de 60 pour cent des foyers du tronçon, une par foyer."
+    cost: "Demande gratuite"
+    timeline: "La Ville note les demandes trois fois par an et installe généralement des coussins ralentisseurs de mai à octobre"
+    links:
+      "https://www.phila.gov/services/streets-sidewalks-alleys/request-traffic-calming-for-a-residential-street/":
+        label: "Ville de Philadelphie : demander la modération de la circulation"
+  otis_contact:
+    label: "Interroger le bureau des transports de la Ville (OTIS)"
+    who: "Toute personne"
+    steps:
+      - "Écrivez à le Bureau des systèmes de transport et d'infrastructure (OTIS) à otis@phila.gov, en nommant le coin de rue et ce que vous y voyez."
+      - "Demandez ce que la Ville autorise à ce coin de rue et comment le demander."
+    cost: "Gratuit"
+    timeline: "Non précisé"
+    links:
+      "https://visionzerophl.com/":
+        label: "Vision Zero Philadelphia"
+  treephilly_yard_trees:
+    label: "Obtenir des arbres gratuits lors d'une distribution de TreePhilly"
+    who: "Les habitants de Philadelphie, pour des arbres plantés en pleine terre sur une propriété privée, comme un terrain que vous possédez ou un terrain privé dont le propriétaire est d'accord par écrit"
+    steps:
+      - "Inscrivez-vous à la lettre d'information de TreePhilly pour savoir quand les inscriptions ouvrent. Les distributions ont lieu au printemps (de mars à mai) et à l'automne (de septembre à décembre) dans des codes postaux prioritaires."
+      - "Inscrivez-vous auprès du groupe communautaire qui accueille une distribution près de chez vous. Les inscriptions ouvrent environ deux semaines à un mois avant la distribution et ferment quand les arbres sont épuisés."
+      - "Récupérez l'arbre, de 2 à 10 pieds de haut dans un seau de 5 gallons, avec un sac de paillis gratuit, et plantez-le en pleine terre. Les arbres de la distribution ne peuvent pas aller dans un bac, dans le trottoir ni ailleurs sur la voie publique."
+    cost: "Gratuit"
+    timeline: "La prochaine distribution du printemps ou de l'automne"
+    links:
+      "https://treephilly.org/yard-trees/":
+        label: "TreePhilly : arbres pour les cours"
+  mural_arts_wall_request:
+    label: "Demander une fresque sur un mur à Mural Arts"
+    who: "Le propriétaire du mur, avec des voisins qui soutiennent le projet. Tout le monde peut commencer en demandant au propriétaire"
+    steps:
+      - "Trouvez un mur qui fait face au terrain et qui se voit bien de la rue, et demandez à son propriétaire s'il accueillerait volontiers une fresque."
+      - "Avec l'accord du propriétaire, remplissez le formulaire de demande de mur sur la page de contact de Mural Arts Philadelphia. Il pose des questions sur le mur, le soutien des voisins et pourquoi une fresque compte à cet endroit."
+      - "Tout ce qui se trouve dans la rue ou sur le trottoir, sur la voie publique, passe aussi par l'Commission des arts de la Ville."
+    cost: "Demande gratuite"
+    timeline: "Des mois"
+    links:
+      "https://muralarts.org/contact/":
+        label: "Mural Arts Philadelphia : page de contact, avec le formulaire pour une fresque sur votre mur"
+  public_space_mini_grant:
+    label: "Demander une mini-subvention pour l'espace public de Feet First Philly"
+    who: "Les voisins et les groupes communautaires. Le programme favorise les communautés qui ont reçu moins d'investissements dans leurs rues et les services de la Ville"
+    steps:
+      - "Lisez l'appel à propositions sur la page des mini-subventions de Feet First Philly. Les projets doivent rendre le quartier plus sûr et plus facile à parcourir à pied et en roulant ; demandez à Feet First Philly si un endroit pour s'asseoir sur un terrain est admissible."
+      - "Faites votre demande pendant que la période est ouverte. Les demandes ouvrent en août et sont dues en octobre."
+      - "Prévoyez d'envoyer un court rapport à mi-parcours et un autre à la fin."
+    cost: "Subventions de 500 $ à 2 500 $, financées en partie par le Département de santé publique"
+    timeline: "Les demandes ouvrent en août et sont dues en octobre chaque année"
+    links:
+      "https://feetfirstphilly.org/public-space-enhancement-mini-grant-2/":
+        label: "Feet First Philly : mini-subvention pour l'amélioration de l'espace public"
+  land_bank_side_yard:
+    label: "L'obtenir comme jardin latéral ou arrière (propriétaires voisins seulement)"
+    who: "Le propriétaire de la maison voisine, et seulement quand la liste de la Ville marque le terrain comme admissible à un jardin latéral"
+    steps:
+      - "Vérifiez que vous êtes propriétaire de la maison voisine et que le terrain est marqué admissible à un jardin latéral."
+      - "Lisez la page de la Land Bank sur les jardins latéraux et arrière et faites votre demande."
+      - "Attendez-vous à une longue attente. Après l'examen par le personnel, le conseil d'administration de la Land Bank et le Conseil municipal doivent l'approuver."
+    cost: "Un prix symbolique. Le terrain doit rester un jardin latéral pour toujours, sous un prêt hypothécaire de 30 ans à sa valeur estimée, qui est annulé si les règles sont respectées ; la Ville peut le reprendre si elles ne le sont pas"
+    timeline: "Le personnel vise à répondre en 120 jours, puis le conseil d'administration de la Land Bank et le Conseil municipal décident. Seuls 67 terrains ont été cédés de cette façon dans toute la ville de 2020 à 2023"
+    links:
+      "https://phillylandbank.org/side-or-rear-yards/":
+        label: "Philadelphia Land Bank : jardins latéraux ou arrière"
+  contact_phdc:
+    label: "Interroger la PHDC au sujet de cette parcelle"
+    who: "Toute personne"
+    steps:
+      - "Contactez la PHDC en indiquant l'adresse de la parcelle et son numéro de compte OPA."
+      - "Demandez qui gère la parcelle, si elle est disponible, et comment les voisins pourraient s'en occuper."
+      - "Si vous ne savez pas à qui demander, commencez par la Land Bank (land@phdc.phila.gov, 215 448 3034)."
+    cost: "Demande gratuite"
+    timeline: "Inconnu. Les terrains de la Redevelopment Authority n'ont pas encore de voie publiée pour les voisins"
+    links:
+      "https://phdcphila.org/":
+        label: "PHDC"
+      "https://phillylandbank.org/":
+        label: "Philadelphia Land Bank"
+  garden_adverse_possession:
+    label: "Possession prolongée d'un jardin (adverse possession, loi de 2024)"
+    who: "Les habitants, groupes ou organismes à but non lucratif de Philadelphie qui ont jardiné sur un terrain appartenant à un propriétaire privé"
+    steps:
+      - "Vérifiez les conditions de la loi de 2024 (53 Pa.C.S. section 1143, en vigueur depuis le 6 septembre 2024) : un terrain privé d'un demi-acre ou moins, 10 ans d'utilisation dont au moins 5 comme jardin, et aucun bâtiment permanent (les clôtures et les remises sont permises)."
+      - "Lisez le guide de Grounded in Philly sur la possession prolongée (adverse possession)."
+      - "Demandez un avocat au Garden Justice Legal Initiative. Cette voie demande une action en justice pour établir le titre de propriété (quiet title)."
+    cost: "Un avocat et des frais de justice. Tout privilège (lien) sur le terrain reste attaché à celui-ci"
+    timeline: "Au moins 10 ans d'utilisation, puis une action en justice"
+    links:
+      "https://groundedinphilly.org/how-to-obtain-land-adverse-possession/":
+        label: "Grounded in Philly : possession prolongée (adverse possession)"
+      "https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/":
+        label: "Garden Justice Legal Initiative"
+  conservatorship:
+    label: "Mise sous administration judiciaire (conservatorship, Act 135)"
+    who: "Un organisme à but non lucratif ou une personne qui saisit le tribunal"
+    warning: "La mise sous administration judiciaire (conservatorship) peut retirer un bien à son propriétaire. Des chercheurs ont constaté qu'elle est utilisée de façon disproportionnée dans les quartiers confrontés à la gentrification. Parlez au Garden Justice Legal Initiative avant de l'envisager."
+    steps:
+      - "Parlez d'abord au Garden Justice Legal Initiative, avant toute autre chose."
+      - "Demandez d'abord si écrire au propriétaire, ou aider une famille à garder le bien, répondrait au même besoin."
+      - "Connaissez les conditions de la loi : un tribunal ne peut nommer un administrateur (conservator) que pour un bien qui n'a pas été légalement occupé depuis 12 mois, qui n'est pas mis en vente, qui n'est pas en saisie immobilière, et qui n'a pas été acheté ces 6 derniers mois."
+    cost: "Frais de justice et de réparations. Depuis 2014, un requérant peut être payé le plus élevé de 2 500 $, 20 % des frais, ou 20 % du prix de vente"
+    timeline: "Une procédure judiciaire ; demandez à l'aide juridique combien de temps elle prendrait"
+    links:
+      "https://www.pubintlaw.org/cases-and-advocacy/garden-justice-legal-initiative/":
+        label: "Garden Justice Legal Initiative"
+  tangled_title_help:
+    label: "Aider une famille à garder une maison héritée (Tangled Title Fund)"
+    who: "Les familles dont la maison est encore au nom d'un parent décédé, avec un revenu du ménage jusqu'à 80 % du revenu médian de la zone ; le bien doit être le domicile du demandeur"
+    steps:
+      - "Contactez le Tangled Title Fund à Philadelphia VIP (tangledtitlefund@gmail.com, 215 523 9553)."
+      - "Le fonds paie jusqu'à 6 500 $ pour les frais juridiques de mise en règle du titre de propriété, et jusqu'à 3 500 $ de plus pour les droits de mutation, au cas par cas."
+    cost: "Gratuit pour la famille jusqu'aux limites du fonds ; la famille couvre ce qui les dépasse"
+    timeline: "Premier arrivé, premier servi"
+    links:
+      "https://phillyvip.org/tangled-title-fund/":
+        label: "Philadelphia VIP : Tangled Title Fund"
+  fraud_guard:
+    label: "S'inscrire aux alertes gratuites Fraud Guard de la Ville"
+    who: "Les propriétaires de biens et leurs familles"
+    steps:
+      - "Inscrivez-vous à Fraud Guard avec un nom et une adresse e-mail."
+      - "La Ville envoie un e-mail quand un document à votre nom est enregistré, pour qu'un faux acte soit repéré tôt."
+      - "Les questions vont au Département des archives (215 686 2290, records.info@phila.gov)."
+    cost: "Gratuit"
+    timeline: "Une alerte arrive environ 30 jours après l'enregistrement d'un document"
+    links:
+      "https://www.phila.gov/2022-09-06-own-property-in-philadelphia-get-free-deed-fraud-protection-with-fraud-guard/":
+        label: "Ville de Philadelphie : Fraud Guard"
+  bus_shelter_request:
+    label: "Demander un abribus à la Ville"
+    who: "Toute personne"
+    steps:
+      - "Notez le numéro SEPTA de l'arrêt (sur le panneau, et sur cette carte), le coin de rue, et combien de personnes y montent chaque jour de semaine."
+      - "Écrivez au Bureau des systèmes de transport et d'infrastructure (OTIS) de la Ville à otis@phila.gov, ou appelez le 215-686-9003. OTIS gère le programme d'abribus de la Ville ; il n'y a pas de formulaire de demande public."
+      - "Mettez en copie le bureau du district de votre membre du Conseil municipal, et prévenez aussi la SEPTA, par son formulaire de commentaires en ligne ou au 215-580-7800."
+    cost: "Demande gratuite"
+    timeline: "Non précisé. OTIS envoie les nouveaux emplacements d'abribus à la Commission des arts de la Ville pour examen (huit en décembre 2025)"
+    links:
+      "https://www.phila.gov/media/20240521160603/RFI-OTIS-street-furniture-20240521.pdf":
+        label: "OTIS : demande d'information sur le mobilier urbain (mai 2024), avec l'objectif de la Ville pour les abribus"
+      "https://www.phila.gov/media/20251205094032/Bus-Shelter-Upgrades-submission.pdf":
+        label: "Huit nouveaux abribus envoyés à la Commission des arts (décembre 2025)"
+      "https://wwww.septa.org/customer-service/comment-form/":
+        label: "Formulaire de commentaires de la SEPTA"
+      "https://phlcouncil.com/council-members/":
+        label: "Conseil municipal de Philadelphie : le membre du Conseil et le bureau de chaque district"
+  stop_bench_request:
+    label: "Demander un banc à la Ville pour un arrêt"
+    who: "Toute personne"
+    steps:
+      - "Notez le numéro SEPTA de l'arrêt (sur le panneau, et sur cette carte) et le coin de rue."
+      - "Écrivez à OTIS à otis@phila.gov, ou appelez le 215-686-9003, et demandez un banc à l'arrêt. Les bancs aux arrêts relèvent du programme de mobilier urbain de la Ville ; nous n'avons trouvé aucun formulaire de demande public."
+      - "Mettez en copie le bureau du district de votre membre du Conseil municipal."
+    cost: "Demande gratuite"
+    timeline: "Non précisé"
+    links:
+      "https://www.phila.gov/media/20240521160603/RFI-OTIS-street-furniture-20240521.pdf":
+        label: "OTIS : demande d'information sur le mobilier urbain (mai 2024)"
+      "https://phlcouncil.com/council-members/":
+        label: "Conseil municipal de Philadelphie : le membre du Conseil et le bureau de chaque district"
+  street_tree_request:
+    label: "Demander un arbre de rue gratuit"
+    who: "Le propriétaire de la maison, du commerce, du terrain ou de tout autre bien devant lequel l'arbre se trouverait ; les voisins peuvent demander au propriétaire de le faire"
+    steps:
+      - "Les arbres de rue sont plantés dans le trottoir devant un bien quand son propriétaire le demande. Parlez avec les propriétaires des bâtiments à côté de l'endroit. Pour un terrain vacant, demandez au propriétaire que nomme la page du terrain, ou à la Land Bank pour un terrain que la Ville ou la Land Bank possède."
+      - "Le propriétaire demande un arbre de rue gratuit à la Division de la gestion des arbres de rue (Street Tree Management Division) de Parcs et loisirs, en ligne, par e-mail à StreetTree.Info@phila.gov, ou par téléphone au 215-685-4363."
+      - "Un arboriste de la Ville vient décider quel arbre convient. La Ville le plante gratuitement pendant une saison de plantation (de la mi-avril à la mi-juin, ou de la mi-octobre à la mi-novembre) et l'arrose et le paille la première année. Ensuite, TreePhilly demande environ 20 gallons d'eau par semaine de mars à décembre."
+    cost: "Gratuit"
+    timeline: "La prochaine saison de plantation après la visite de l'arboriste"
+    links:
+      "https://www.phila.gov/services/trees-parks-the-environment/tree-related-services/get-a-street-tree/":
+        label: "Ville de Philadelphie : obtenir un arbre de rue"
+      "https://treephilly.org/street-trees/":
+        label: "TreePhilly : arbres de rue"
+  streetcomplete_survey:
+    label: "Relever l'arrêt avec StreetComplete"
+    who: "Toute personne avec un téléphone Android (une première version de test pour iPhone est apparue en septembre 2026)"
+    steps:
+      - "Installez l'application gratuite StreetComplete et créez un compte OpenStreetMap gratuit pour que vos réponses soient publiées."
+      - "À l'arrêt, touchez le marqueur de l'application et répondez à ses questions sur l'abribus, le banc, l'éclairage et le numéro de l'arrêt."
+      - "Si l'application n'a aucune question à l'arrêt, ajoutez l'arrêt avec sa couche Things, ou laissez une note pour qu'un autre cartographe puisse le faire."
+    cost: "Gratuit"
+    timeline: "Les réponses arrivent sur cette carte en environ une semaine"
+    links:
+      "https://holdthedoorhoid.github.io/placekeepers/streetcomplete/":
+        label: "Placekeepers : relever les arrêts de bus"
+      "https://streetcomplete.app/":
+        label: "StreetComplete"
+  neighborhood_gardens_trust:
+    label: "Garder un jardin communautaire pour toujours (Neighborhood Gardens Trust)"
+    who: "Les jardiniers dont le jardin communautaire existe depuis au moins trois saisons"
+    steps:
+      - "Vérifiez les critères du fonds : un jardin actif depuis au moins trois saisons de culture, des jardiniers capables de l'entretenir, des liens avec des groupes comme une société de développement communautaire, une église ou une école, et le soutien des voisins et du membre du Conseil municipal du district."
+      - "Faites votre demande avec le formulaire de demande de jardin en ligne du fonds, ou son formulaire imprimable. Le fonds répond en deux semaines environ, puis visite le jardin et le présente à son conseil d'administration."
+      - "Une fois approuvé, le fonds travaille avec la Ville pour acquérir le terrain et le détient pour que les voisins puissent continuer à jardiner, avec une assurance responsabilité et de l'aide pour l'eau et l'entretien. Les questions vont au 215 988 1630 ou à ngtrust@pennhort.org."
+    cost: "Demande gratuite"
+    timeline: "Une réponse en deux semaines environ ; acquérir le terrain prend plus longtemps"
+    links:
+      "https://ngtrust.org/preservation/":
+        label: "Neighborhood Gardens Trust : préservation des jardins"
+  community_land_trust:
+    label: "Garder des logements et des terrains abordables pour toujours (fiducies foncières communautaires)"
+    who: "Les voisins, les groupes communautaires et les organismes à but non lucratif"
+    steps:
+      - "Découvrez comment fonctionne une fiducie foncière communautaire (community land trust) : un organisme à but non lucratif possède le terrain pour toujours, les familles achètent ou louent les logements qui s'y trouvent, et un long bail foncier garde chaque logement abordable quand il est revendu."
+      - "Parlez avec une fiducie foncière déjà active à Philadelphie, comme la Community Justice Land Trust du Women's Community Revitalization Project, qui détient des logements à Point Breeze, Grays Ferry, Mantua, Germantown, Port Richmond et Haddington."
+      - "Demandez au Garden Justice Legal Initiative comment une fiducie foncière pourrait détenir un jardin ou un terrain dont votre groupe s'occupe déjà."
+    cost: "Demande gratuite"
+    timeline: "Long ; les projets d'une fiducie foncière prennent des années"
+    links:
+      "https://groundedsolutions.org/strengthening-neighborhoods/community-land-trusts":
+        label: "Grounded Solutions Network : fiducies foncières communautaires"
+      "https://www.wcrpphila.org/cjlt":
+        label: "Women's Community Revitalization Project : Community Justice Land Trust"
+  homestead_exemption:
+    label: "Baisser la facture d'impôts d'un propriétaire (la Homestead Exemption de la Ville)"
+    who: "Toute personne qui est propriétaire de son logement à Philadelphie et y habite comme résidence principale, même avec un prêt hypothécaire ou une dette d'impôts ; pas les logements sous un allègement fiscal de 10 ans"
+    steps:
+      - "Faites votre demande sur le Philadelphia Tax Center (tax-services.phila.gov), où une demande combinée couvre les programmes d'allègement fiscal de la Ville, ou appelez la Homestead Hotline au 215 686 9200, ou envoyez le formulaire par la poste au Département du revenu, P.O. Box 52817, Philadelphia, PA 19115."
+      - "L'exonération retire 100 000 $ de la valeur évaluée du logement pour la facture d'impôts, ce qui fait économiser jusqu'à 1 399 $ par an."
+      - "Faites votre demande avant le 1er décembre (avant le 1er octobre pour la voir sur la prochaine facture). Une fois acceptée, il n'est plus nécessaire de refaire la demande, sauf si l'acte change."
+    cost: "Gratuit"
+    timeline: "À déposer avant le 1er décembre de chaque année"
+    links:
+      "https://www.phila.gov/services/payments-assistance-taxes/taxes/property-and-real-estate-taxes/get-real-estate-tax-relief/get-the-homestead-exemption/":
+        label: "Ville de Philadelphie : obtenir la Homestead Exemption"
+  longtime_owner_occupants:
+    label: "Plafonner l'évaluation d'un propriétaire de longue date (le Longtime Owner Occupants Program de la Ville, LOOP)"
+    who: "Les propriétaires qui habitent leur logement depuis au moins 10 ans, dont l'évaluation a augmenté d'au moins 50 pour cent en un an ou de 75 pour cent sur cinq ans, avec un revenu du ménage sous la limite de la Ville (comme 103 050 $ pour une personne ou 147 200 $ pour quatre en 2026), à jour de leurs impôts ou dans un accord de paiement"
+    steps:
+      - "Faites votre demande sur le Philadelphia Tax Center (tax-services.phila.gov) avec la demande combinée de la Ville, ou appelez le 215 686 9200, écrivez à revenue@phila.gov, ou envoyez le formulaire par la poste au Département du revenu, P.O. Box 53190, Philadelphia, PA 19105."
+      - "LOOP plafonne l'évaluation qu'utilise la facture d'impôts, à 1,5 fois celle de l'année précédente ou 1,75 fois la valeur la plus basse des cinq dernières années, tant que le propriétaire reste admissible."
+      - "Faites votre demande avant la date limite annuelle de la Ville (le 30 septembre ces dernières années) ; la page de la Ville donne la date en vigueur."
+    cost: "Gratuit"
+    timeline: "Une date limite annuelle, le 30 septembre ces dernières années"
+    links:
+      "https://www.phila.gov/services/payments-assistance-taxes/payment-plans-and-assistance-programs/income-based-programs-for-residents/apply-for-the-longtime-owner-occupants-program-loop/":
+        label: "Ville de Philadelphie : demander LOOP"
+
+partners:
+  phs:
+    one_line: "LandCare, Community LandCare et Philly Spring Cleanup."
+  gjli:
+    one_line: "Aide juridique gratuite et guides pour utiliser les terrains vacants."
+  ngt:
+    one_line: "Préserve les jardins communautaires de façon permanente."
+  land_bank:
+    one_line: "Programmes de la Ville pour les terrains vacants, y compris les jardins latéraux et les jardins communautaires."
+  bike_coalition:
+    one_line: "Plaidoyer Vision Zero, ghost bikes et Families for Safe Streets."
+  feet_first:
+    one_line: "Plaidoyer pour les piétons, audits de marche et mini-subventions pour l'espace public."
+  treephilly:
+    one_line: "Le programme de plantation d'arbres de Parcs et loisirs : arbres de rue et arbres de cour gratuits."
+  mural_arts:
+    one_line: "Des fresques dans toute la ville ; les propriétaires de murs peuvent en demander une."
+
+options:
+  live_city_data:
+    label: "Récupérer les données en direct de la Ville"
+    description: >-
+      Quand vous ouvrez la page d'un terrain ou cherchez une adresse, votre navigateur demande
+      aux serveurs publics de la Ville de Philadelphie les registres les plus récents : le
+      propriétaire, les ventes, les évaluations, les inspections et les appels. Ces demandes
+      vont directement de votre appareil à la Ville, sans jamais passer par Placekeepers, et les
+      serveurs de la Ville les voient comme ils verraient une visite sur le site web des
+      propriétés de la Ville. Les photos aériennes de la Ville et son atlas de 1860, sous « Hier et
+      aujourd'hui », viennent aussi directement des serveurs de la Ville, mais seulement quand
+      vous activez l'une d'elles. Désactivez cette option pour utiliser seulement la copie
+      hebdomadaire des données que Placekeepers publie. La recherche d'adresse, l'ouverture d'une
+      parcelle qui n'est pas dans notre liste, et les anciennes photos et l'atlas ont besoin
+      qu'elle soit activée.

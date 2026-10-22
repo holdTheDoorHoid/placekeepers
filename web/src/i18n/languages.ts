@@ -149,7 +149,7 @@ export const LANGUAGES = [
     intl: 'fr',
     ready: false,
     reviewed: false,
-    offer: { question: 'Voulez-vous voir Placekeepers en français ?', yes: 'Voir en français', no: 'Continuer en anglais' },
+    offer: { question: 'Voulez-vous voir Placekeepers en français ?', yes: 'Voir en français', no: 'Continuer en anglais' },
   },
   {
     code: 'ar',
