@@ -2165,7 +2165,7 @@ const es: Catalog = {
         inYear: (n, year) => `Vendido ${n} veces en ${year}.`,
         between: (n, first, last) => `Vendido ${n} veces de ${first} a ${last}.`,
         careful:
-          'Las reventas rápidas pueden significar que la propiedad se está negociando para ganar dinero, y a veces una escritura falsificada. También pueden ser normales, como una familia que vende una casa heredada y el comprador que la revende después de repararla.',
+          'Las reventas rápidas pueden significar que la propiedad se está comprando y vendiendo para ganar dinero, y a veces una escritura falsificada. También pueden ser normales, como una familia que vende una casa heredada y el comprador que la revende después de repararla.',
         next: 'Mire quién vendió y quién compró en el historial de abajo. Los dueños y las familias pueden inscribirse en las alertas gratuitas de Fraud Guard de la Ciudad para enterarse cuando un documento los nombra.',
       },
       open_violations: {
@@ -2500,7 +2500,7 @@ const es: Catalog = {
       // explain "brownfield" for a reader who does not know the English word; they say nothing
       // about the ground being clean or safe.
       brownfield:
-        'Se registró una evaluación o una limpieza federal de un "brownfield" (un terreno que pudo haber tenido contaminación) en esta dirección o cerca de ella. Haga analizar el suelo antes de cultivar alimentos.',
+        'Se registró una evaluación o una limpieza federal de un "brownfield" (un terreno donde puede haber contaminación) en esta dirección o cerca de ella. Haga analizar el suelo antes de cultivar alimentos.',
       brownfieldSite: (name, feet) => `${name}, a unos ${formatNumber(feet)} pies de este lote`,
       onLot: 'en este lote',
       brownfieldMore: (n) => `y ${plural(n, { one: '# registro más', other: '# registros más' })} a unos 330 pies o menos`,
