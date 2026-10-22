@@ -761,8 +761,9 @@ districts are worked out by its point (`derive/represent.py`) and the people are
 - **Checked by hand on 2026-10-21.** For ten lots, one in each Council district, the ward,
   division, Council, House, Senate and Congressional districts matched the City's address service
   (the one Atlas reads) for all ten, and Atlas's own "Voting" view showed the same ward, division and
-  Council member with the same City Hall room and phone for the three checked there; Atlas's zoning
-  view listed the same community organizations with the same contacts for the two checked there.
+  Council member with the same City Hall room and phone for all ten; Atlas's zoning view listed the
+  same community organizations with the same contacts for the two checked there (seven
+  organizations).
   Every Philadelphia House and Senate member's name and district matched their page on palegis.us;
   Open States' office address and phone matched those pages for 30 of the 33 seats, and lagged for
   three (House 177, 190 and 202, whose members list a newer office there), so the lot page says

@@ -48,6 +48,9 @@ export interface StaticMapOptions {
 
 const TILE = 512;
 
+/** One PMTiles protocol for the page, shared by every small map on it (a half page flyer draws two at once). */
+let sharedProtocol: import('pmtiles').Protocol | null = null;
+
 function mercatorX(lng: number): number {
   return (lng + 180) / 360;
 }
@@ -97,9 +100,11 @@ export async function renderStaticMap(options: StaticMapOptions): Promise<Static
     ]);
     const choice = await basemap.chooseBasemap(options.mode, options.dataBase);
     const style = choice.style;
-    const protocol = new Protocol({ metadata: false });
-    maplibregl.addProtocol('pmtiles', protocol.tile);
-    for (const url of styleArchives(style)) registerArchive(protocol, url);
+    if (!sharedProtocol) {
+      sharedProtocol = new Protocol({ metadata: false });
+      maplibregl.addProtocol('pmtiles', sharedProtocol.tile);
+    }
+    for (const url of styleArchives(style)) registerArchive(sharedProtocol, url);
 
     container = document.createElement('div');
     container.setAttribute('aria-hidden', 'true');
@@ -142,7 +147,6 @@ export async function renderStaticMap(options: StaticMapOptions): Promise<Static
       return { x: Math.round(at.x * 10) / 10, y: Math.round(at.y * 10) / 10, label: p.label };
     });
     map.remove();
-    maplibregl.removeProtocol('pmtiles');
     return { image, marks, credit: image !== null && basemap.isProtomaps(style), width, height };
   } catch {
     return fallback;

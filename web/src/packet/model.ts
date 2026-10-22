@@ -185,13 +185,12 @@ function representLines(parcel: ShardParcel | null, table: ContactsTable | null)
   return lines;
 }
 
-function couldNotCheck(view: DossierView, parcel: ShardParcel | null, dataDate: string | null): string {
+function couldNotCheck(parcel: ShardParcel | null, dataDate: string | null): string {
   const parts: string[] = [];
   if (!parcel) parts.push(p().notChecked.noDossier);
   for (const part of parcel?.partial ?? []) parts.push(p().notChecked.partial[part] ?? part);
   for (const part of parcel?.missing ?? []) parts.push(p().notChecked.missing[part] ?? part);
   if (parcel && !parcel.represent) parts.push(p().notChecked.represent);
-  void view;
   return p().notChecked.line(parts, dataDate);
 }
 
@@ -239,7 +238,7 @@ export function packetLot(input: PacketLotInput, n: number, registry: Registry, 
     hearing: view.rules.hearing?.text ?? null,
     rules: rulesOf(view),
     represent: representLines(parcel, table),
-    couldNotCheck: couldNotCheck(view, parcel, dataDate),
+    couldNotCheck: couldNotCheck(parcel, dataDate),
     ownerLetter: ownerLetterGate(parcel),
     watchTract: parcel?.displacement?.tract ?? null,
   };
