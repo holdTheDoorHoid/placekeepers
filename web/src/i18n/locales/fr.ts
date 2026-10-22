@@ -1449,6 +1449,366 @@ const fr: Catalog = {
     stressDetailsSource: "D'après le réseau Level of Traffic Stress de la DVRPC, noté d'après les voies, les vitesses et les pistes cyclables.",
   },
 
+  landBank: {
+    pageTitle: 'La Land Bank en chiffres',
+    back: 'Retour à la carte',
+    intro:
+      "Combien de propriétés la Philadelphia Land Bank et les autres agences foncières de la Ville ont cédées, année par année, d'après les registres d'actes de la Ville. Seulement des comptes et des totaux : aucun nom et aucune adresse.",
+    loading: 'Chargement des chiffres',
+    loadFailed: "Les chiffres n'ont pas pu être chargés. Vérifiez votre connexion et réessayez.",
+    retry: 'Réessayer',
+    missing: "Les chiffres ne sont pas encore publiés. Ils apparaissent après la prochaine actualisation hebdomadaire des données.",
+    noStatus: 'Sans statut',
+    agencyLabel: 'Agence',
+    agencyHelp: "Chaque section ci-dessous suit ce choix, sauf les comptes de la Ville elle-même par programme et le compte hebdomadaire des terrains répertoriés.",
+    agencies: {
+      all: 'Les quatre agences',
+      PLB: 'Philadelphia Land Bank',
+      PRA: 'Redevelopment Authority',
+      PHDC: 'PHDC',
+      PUB: 'Ville de Philadelphie',
+    },
+    agencyLong: {
+      all: 'les quatre agences foncières ensemble',
+      PLB: 'la Philadelphia Land Bank',
+      PRA: 'la Philadelphia Redevelopment Authority',
+      PHDC: 'la Philadelphia Housing Development Corporation (PHDC)',
+      PUB: 'la Ville de Philadelphie',
+    },
+    headline: (agency, n, deeds, from, to) =>
+      `Dans les registres d'actes de la Ville, de ${from} à ${to}, ${plural(n, { one: '# propriété a été cédée', other: '# propriétés ont été cédées' })} par ${agency}, dans ${plural(deeds, { one: '# acte', other: '# actes' })}.`,
+    movedAll: (n) =>
+      `Non comptés : ${plural(n, { one: '# transfert', other: '# transferts' })} d'une propriété d'une agence à une autre, par exemple de la Ville à la Land Bank.`,
+    moved: (received, handed) =>
+      `Elle a aussi reçu ${plural(received, { one: '# propriété', other: '# propriétés' })} des autres agences et en a remis ${formatNumber(handed)} à celles-ci. Ces transferts ne sont pas comptés comme des cessions.`,
+    whatCounts:
+      "Une cession, ici, est un acte d'une agence foncière à quelqu'un en dehors des quatre agences : une personne, une entreprise, un organisme à but non lucratif, ou un autre organisme public comme la Philadelphia Housing Authority. Chaque propriété compte une fois. Les corrections, les levées d'anciennes restrictions, les transferts entre les agences et les accords enregistrés comme actes sont exclus.",
+    partial: (year, date) =>
+      `${year} ne va que jusqu'au ${date} : les registres d'actes de la Ville ont environ huit semaines de retard.`,
+    noNames: "Nous ne lisons les noms des acheteurs que pour distinguer une personne d'une entreprise et pour vérifier la maison voisine. Nous n'en gardons aucun.",
+    showNumbers: 'Afficher les chiffres',
+    tableLabel: (what) => `Les chiffres : ${what}`,
+    downloadCsv: 'Télécharger le CSV',
+    year: 'Année',
+    total: 'Total',
+    properties: 'Propriétés',
+    chartLabel: (what, from, to, max) => `${what}, ${from} à ${to}. L'année la plus haute compte ${max}. Les mêmes chiffres sont dans le tableau sous le graphique.`,
+    perYear: {
+      title: 'Cessions par année',
+      caption: 'Propriétés cédées chaque année. Un acte peut céder plusieurs propriétés.',
+      deeds: 'Actes',
+    },
+    buyers: {
+      title: 'Qui sont les acheteurs',
+      caption:
+        "Le type de chaque acheteur, lu d'après le nom que l'acte enregistre. Un organisme à but non lucratif n'est compté comme tel que si son nom l'indique ; beaucoup d'organismes à but non lucratif ont un nom comme celui d'une entreprise et sont comptés comme des entreprises.",
+      groups: {
+        individual: 'Personnes',
+        company: 'Entreprises',
+        nonprofit: 'Organismes à but non lucratif',
+        public: 'Autres organismes publics',
+        unknown: 'Pas clair',
+      },
+      share: (label, pct) => `${label} : ${pct} %`,
+      shares: 'Part de toutes les propriétés cédées ces années-là',
+    },
+    programs: {
+      title: 'Par programme',
+      caption:
+        "Les actes ne disent pas par quel programme une cession est passée. On peut en déduire un : un terrain seul cédé à une personne qui possède une maison attenante est probablement un jardin latéral ou arrière. Ce graphique compte ces terrains, selon notre déduction. Pour les autres, les registres ne disent rien, ce qui ne veut pas dire que ce n'étaient pas des jardins latéraux.",
+      series: 'Jardins latéraux ou arrière, selon notre déduction',
+      checked:
+        "Comment nous l'avons vérifié (9 octobre 2026) : 10 de ces terrains, tirés au hasard entre 2019 et 2026, recherchés à la main. Dans les 10 cas, l'acheteur est le propriétaire enregistré de la maison à côté ou derrière le terrain et y reçoit son courrier. Savoir si chacun est passé par le programme de jardin latéral reste notre déduction.",
+      compare: (cityTotal, ours, oursPlb, from, to) =>
+        `Pour les exercices ${from} à ${to}, le tableau de bord de la Ville a compté ${formatNumber(cityTotal)} jardins latéraux. D'après les actes, nous en déduisons ${formatNumber(ours)} pour les quatre agences, dont ${formatNumber(oursPlb)} de la Land Bank.`,
+      cityTitle: 'Les comptes de la Ville elle-même par programme',
+      cityCaption: (edited) =>
+        `D'après le tableau de bord Land Management de la Ville, par exercice (de juillet à juin). Il a été mis à jour pour la dernière fois le ${edited}, donc le dernier exercice est incomplet, et pour le logement il compte les logements construits, pas les propriétés.`,
+      fy: 'Exercice',
+      sideYards: 'Jardins latéraux',
+      gardens: 'Jardins ou espaces ouverts',
+      business: "Expansion d'entreprise",
+      homesBelow30: 'Logements, sous 30 % du revenu de la zone',
+      homes60to80: 'Logements, 60 % à 80 %',
+      homes80to120: 'Logements, 80 % à 120 %',
+      homesMarket: 'Logements, au prix du marché',
+      oursPlb: 'Notre déduction de jardins latéraux, Land Bank',
+      oursAll: 'Notre déduction de jardins latéraux, les quatre',
+      fyLabel: (fy) => `${fy - 1} à ${fy}`,
+    },
+    prices: {
+      title: 'Prix enregistrés sur les actes',
+      caption: (max) =>
+        `Le prix est ce que l'acte enregistre pour chaque propriété (sa part quand un acte en couvrait plusieurs). Ce n'est pas toujours de l'argent payé : certains programmes vendent à un prix symbolique et protègent l'usage du terrain par un prêt hypothécaire de 30 ans, et les actes de jardin latéral enregistrent souvent la valeur estimée du terrain. Le prix médian a la moitié des prix en dessous et la moitié au-dessus. « Symbolique » veut dire ${max} ou moins.`,
+      priced: 'Avec un prix',
+      median: 'Prix médian',
+      nominal: 'Prix symbolique',
+      none: 'Aucun prix enregistré',
+      summary: (median, pct) => `Prix médian sur ces années : ${median}. ${pct} % ont été cédées à un prix symbolique.`,
+    },
+    districts: {
+      title: 'Par district du Conseil municipal',
+      caption:
+        "Où se trouvent les propriétés, selon les limites actuelles des districts du Conseil municipal. Les limites changent après chaque recensement, donc les années antérieures sont aussi placées selon les limites actuelles.",
+      district: 'District',
+      districtName: (n) => `District ${n}`,
+      noLocation: "Pas d'emplacement dans les registres",
+      allYears: 'Toutes les années',
+      chartLabel: 'Propriétés cédées dans chaque district du Conseil municipal. Les mêmes chiffres sont dans le tableau en dessous.',
+    },
+    listed: {
+      title: 'Terrains indiqués comme disponibles, semaine par semaine',
+      caption: (from) =>
+        `La liste de la Ville des propriétés publiques, la même liste que montre la carte des propriétés de la Land Bank, comptée chaque semaine où notre copie a été actualisée. Le comptage commence le ${from} ; il n'y a pas de comptages hebdomadaires plus anciens.`,
+      date: 'Date de la liste',
+      records: 'Indiqués comme disponibles',
+      parcels: 'Parcelles',
+      sideYard: 'Ouvert à un voisin comme jardin latéral',
+      oneWeek: "Un graphique apparaît dès qu'il y a deux semaines à comparer.",
+      byStatus: (date) => `Chaque terrain de la liste selon son statut, ${date}`,
+      status: 'Statut',
+      count: 'Entrées',
+      chartLabel: (from, to) => `Terrains indiqués comme disponibles chaque semaine, ${from} à ${to}. Les mêmes chiffres sont dans le tableau en dessous.`,
+      mapLink: 'La carte des propriétés répertoriées de la Land Bank',
+    },
+    limits: {
+      title: 'Ce que ces chiffres ne peuvent pas montrer',
+      items: [
+        "Combien de temps les candidats ont attendu, combien ont candidaté, ou combien ont été refusés. Les registres publics contiennent des actes, pas des candidatures.",
+        "Le programme derrière la plupart des cessions. Les actes ne le disent pas ; les jardins latéraux et arrière sont notre déduction, et les comptes de la Ville elle-même par programme s'arrêtent en avril 2023.",
+        "Ce qui a été construit ou cultivé ensuite, ou si les restrictions d'un terrain ont été respectées.",
+        "Ce qu'un acheteur a finalement payé. Un acte enregistre un prix, et certains programmes associent un prix symbolique à un prêt hypothécaire de 30 ans.",
+        "Les terrains que les agences louent ou concèdent sous licence, comme les accords de jardin. Aucun acte ne les enregistre.",
+        "Les actes d'avant 2014, et les actes des huit dernières semaines environ, que la Ville n'a pas encore publiés.",
+      ],
+    },
+    sources: {
+      title: 'Sources et dates',
+      deeds: (fetched, last) =>
+        `Actes : Ville de Philadelphie, Department of Records, transferts de biens immobiliers, lus le ${fetched} ; l'acte le plus récent est daté du ${last}.`,
+      programs: (edited) =>
+        `Comptes par programme : Ville de Philadelphie, Department of Planning and Development, tableau de bord Land Management, mis à jour pour la dernière fois le ${edited}.`,
+      listed:
+        "Terrains répertoriés : Ville de Philadelphie, Department of Planning and Development (Land Management), tels que les montre la carte des propriétés de la Philadelphia Land Bank.",
+      districts: 'Districts du Conseil municipal : Ville de Philadelphie, limites actuelles.',
+      neighbours:
+        "Pour la déduction des jardins latéraux : la liste des propriétaires de la Ville (Office of Property Assessment) et les formes des parcelles (Water Department).",
+      board: "Les ordres du jour du conseil d'administration de la Land Bank, qui énumèrent chaque cession par programme",
+      council: "La législation du Conseil municipal, où le Conseil approuve chaque cession de la Land Bank",
+      method: 'Comment nous comptons, en détail',
+      deedsLink: 'Les transferts de biens immobiliers de la Ville',
+      programsLink: 'Le tableau du tableau de bord Land Management de la Ville',
+    },
+    csv: {
+      years: (agency) => `Cessions par année et par agence (les quatre agences et chacune ; cette page montrait ${agency}).`,
+      districts: 'Cessions par district du Conseil municipal (limites actuelles) et par année, pour les quatre agences et chacune.',
+      programs: 'Les comptes de la Ville elle-même par programme et par exercice, à côté de notre déduction de jardins latéraux.',
+      listed: 'Terrains de la liste de la Ville des propriétés publiques indiqués comme disponibles, chaque semaine depuis le début du comptage.',
+      counts: 'Comptes seulement : aucun nom, aucune adresse et aucun numéro de parcelle.',
+      dates: (fetched, last) => `Actes lus le ${fetched} ; l'acte le plus récent est daté du ${last}.`,
+      file: (part, day) => `placekeepers-land-bank-${part}-${day}.csv`,
+    },
+  },
+
+  basemap: {
+    missing: 'Le fond de carte n\'est pas disponible, donc les rues et les noms de lieux sont masqués. Les couches de données fonctionnent toujours.',
+    unavailable: "Le fond de carte n'est pas disponible ici, donc la carte affiche un arrière-plan uni.",
+    legend: 'Rues, bâtiments, parcs, eau et noms de lieux, en couleur.',
+    legendMuted: 'Rues, bâtiments, parcs, eau et noms de lieux, en gris, pour que les données ressortent.',
+  },
+
+  credits: {
+    basemap:
+      '<a href="https://protomaps.com" target="_blank" rel="noopener noreferrer">Protomaps</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>',
+    data: (statusUrl) => `Données : Ville de Philadelphie et <a href="${statusUrl}">d'autres</a>`,
+  },
+
+  status: {
+    pageTitle: 'État des données',
+    intro:
+      'Placekeepers actualise ses données chaque semaine. Si une source tombe en panne, la carte garde la dernière bonne copie et le dit ici.',
+    back: 'Retour à la carte',
+    loading: "Chargement de l'état des données",
+    loadFailed: "Nous n'avons pas pu charger le fichier d'état des données. La carte peut quand même fonctionner avec des données plus anciennes.",
+    retry: 'Réessayer',
+    builtOn: (date) => `Dernière actualisation : ${date}`,
+    buildId: (id) => `Build ${id}`,
+    summaryAllOk: 'Toutes les sources sont à jour.',
+    summary: (stale, failing, missing) => {
+      const parts: string[] = [];
+      if (stale) parts.push(plural(stale, { one: '# source est périmée', other: '# sources sont périmées' }));
+      if (failing) parts.push(plural(failing, { one: '# source ne fonctionne pas', other: '# sources ne fonctionnent pas' }));
+      if (missing) parts.push(plural(missing, { one: "# source n'a pas encore été récupérée", other: "# sources n'ont pas encore été récupérées" }));
+      return `${parts.join(', ')}.`;
+    },
+    statusLabel: {
+      ok: 'À jour',
+      stale: 'Périmée',
+      failing: 'Ne fonctionne pas',
+      missing: 'Pas encore récupérée',
+      unknown: 'Inconnu',
+    },
+    staleSince: (date) => `Utilise la dernière bonne copie, du ${date}.`,
+    staleNoDate: 'Utilise la dernière bonne copie.',
+    failingText: "Il n'y a pas de copie utilisable pour le moment, donc les couches qui en ont besoin peuvent manquer.",
+    missingText: "Cette source n'a pas encore été récupérée.",
+    unknownText: "Le fichier d'état signale quelque chose que nous ne reconnaissons pas.",
+    lastSuccess: (date) => `Dernier bon téléchargement : ${date}`,
+    neverSucceeded: 'Pas encore de bon téléchargement',
+    lastAttempt: (date) => `Dernière tentative : ${date}`,
+    rows: (n) => plural(n, { one: '# enregistrement', other: '# enregistrements' }),
+    newest: (date) => `Enregistrement le plus récent : ${date}`,
+    message: (text) => `Note de l'actualisation : ${text}`,
+    publisher: 'Publié par',
+    homepage: "D'où cela vient",
+    license: 'Licence',
+    cadence: {
+      daily: "Mis à jour chaque jour par l'éditeur",
+      weekly: "Mis à jour chaque semaine par l'éditeur",
+      monthly: "Mis à jour chaque mois par l'éditeur",
+      yearly: "Mis à jour chaque année par l'éditeur",
+      irregular: "Mis à jour de temps en temps par l'éditeur",
+      frozen: "N'est plus mis à jour par l'éditeur",
+    },
+    problems: "Problèmes dans le fichier d'état",
+    notesTitle: 'Notes de la dernière actualisation',
+    notesInEnglish: 'Ces notes sont écrites en anglais, pour les personnes qui font fonctionner la carte.',
+    basemapLabel: { ok: 'À jour', failing: 'Indisponible' },
+    basemapMade: (date) =>
+      `L'actualisation hebdomadaire crée une nouvelle copie du fond de carte environ une fois par mois. Cette copie a été créée à partir d'OpenStreetMap le ${date}.`,
+    basemapNoDate: "L'actualisation hebdomadaire crée une nouvelle copie du fond de carte environ une fois par mois.",
+    basemapMissing: "Le fond de carte n'est pas disponible sur cette copie du site, donc la carte affiche un arrière-plan uni. Les couches de données fonctionnent toujours.",
+  },
+
+  search: {
+    label: 'Rechercher une adresse, une intersection ou un numéro de parcelle',
+    placeholder: 'Adresse, intersection ou numéro de parcelle',
+    button: 'Rechercher',
+    searching: 'Recherche en cours',
+    tooShort: 'Tapez une adresse, comme 1234 Market St, ou deux rues qui se croisent, comme Broad et Girard.',
+    notFound:
+      "La Ville n'a pas trouvé ce lieu. Essayez un numéro de maison et une rue, deux rues qui se croisent, ou un numéro de parcelle à neuf chiffres.",
+    failed: (reason) => `Problème avec le service d'adresses de la Ville (${reason}). Réessayez dans un instant.`,
+    liveOff:
+      "La recherche d'adresse interroge le service d'adresses de la Ville, et les données en direct de la Ville sont désactivées dans les Paramètres. Vous pouvez toujours chercher par numéro de parcelle à neuf chiffres.",
+    resultsTitle: 'Choisissez un lieu',
+    resultsCount: (n) => plural(n, { one: '# lieu correspond', other: '# lieux correspondent' }),
+    intersection: 'Intersection',
+    showing: (label) => `Affichage de ${label} sur la carte.`,
+    noParcel: (label) => `Affichage de ${label} sur la carte. La Ville n'a pas de fiche de parcelle pour cette adresse exacte.`,
+    privacy: 'Les recherches vont de votre navigateur directement à la Ville de Philadelphie.',
+  },
+
+  pick: {
+    looking: 'Recherche de cette parcelle auprès de la Ville',
+    nothing: "La Ville n'a aucune parcelle à cet endroit. Touchez un terrain ou un bâtiment.",
+    liveOff: "Pour ouvrir une parcelle qui n'est pas dans notre liste, activez « Récupérer les données en direct de la Ville » dans les Paramètres.",
+    failed: (reason) => `Problème avec la carte des parcelles de la Ville (${reason}). Réessayez dans un instant.`,
+  },
+
+  historic: {
+    liveOff:
+      "Ces images viennent directement des serveurs de la Ville, donc elles ne peuvent être activées que lorsque « Récupérer les données en direct de la Ville » est activé (dans les Paramètres, sous « Confidentialité et données en direct »).",
+    refused: "Les anciennes photos aériennes et l'atlas de 1860 viennent des serveurs de la Ville. Activez les données en direct de la Ville dans les Paramètres pour les voir.",
+    serverError: "Le serveur d'images de la Ville n'a pas envoyé toutes les parties de cette image. Réessayez plus tard.",
+    photoYear: (year) => `La photo aérienne de ${year}, prise depuis un avion.`,
+    gaps1975: "Les photos de 1975 laissent des trous à l'extrême sud de la ville, autour de l'aéroport et du Navy Yard.",
+    termsNotStated: "Son éditeur n'indique aucune condition d'utilisation pour ces photos ; elles sont montrées telles que la Ville les héberge, avec mention de la source, et seront retirées si l'éditeur le demande.",
+    blackAndWhite: (year) => `Les photos de ${year} sont en noir et blanc.`,
+    under: "La photo se trouve sous toutes les autres couches. Baissez son intensité pour voir les rues d'aujourd'hui à travers.",
+    atlasCoverage: "L'atlas ne couvre que Center City et Northern Liberties.",
+    atlasCredit: "Atlas ajusté à la carte d'aujourd'hui par le Greater Philadelphia GeoHistory Network et hébergé par la Ville de Philadelphie avec sa permission.",
+    sliderRange: (first, last) => `De ${first} à ${last}`,
+    lotTitle: 'Anciennes photos aériennes',
+    lotButton: "Voir ce terrain sur d'anciennes photos aériennes",
+    lotHelp: (year) =>
+      `Ouvre la carte à ce terrain avec la photo aérienne de ${year}, la plus ancienne de cette carte. Faites défiler les années depuis lors sous « Hier et aujourd'hui » dans les couches.`,
+    lotLiveOff: 'Les photos viennent directement des serveurs de la Ville, donc elles ont besoin des données en direct de la Ville, qui sont désactivées.',
+    shown: (year) => `Les photos aériennes de ${year} sont affichées. Faites défiler les années sous « Hier et aujourd'hui » dans les couches.`,
+    statusOk: "Chaque service d'images a répondu au dernier contrôle hebdomadaire. Les images se chargent directement depuis les serveurs de la Ville quand quelqu'un active leur couche.",
+    statusStale: (date) =>
+      `Au dernier contrôle hebdomadaire, tous les services d'images n'ont pas répondu, donc certaines images peuvent ne pas s'afficher. Chacun a répondu pour la dernière fois le ${date}.`,
+    statusFailing: "Les services d'images n'ont pas répondu au contrôle hebdomadaire, donc les images peuvent ne pas s'afficher.",
+    services: (n) => `${plural(n, { one: "# service d'images vérifié", other: "# services d'images vérifiés" })}`,
+    lastCheck: (date) => `Dernier contrôle où tous les services ont répondu : ${date}`,
+  },
+
+  redlining: {
+    detailsTitle: 'Carte du redlining de 1937',
+    grades: {
+      A: 'A, noté « le meilleur » en 1937',
+      B: 'B, noté « encore souhaitable »',
+      C: 'C, noté « en déclin certain »',
+      D: 'D, noté « dangereux » et entouré en rouge : zone de redlining',
+    },
+    ungraded: 'Sans note (terrains industriels et commerciaux)',
+    area: (label, grade) => `Zone ${label}, notée ${grade} en 1937`,
+    areaUngraded: (label) => `${label} : une zone que la carte de 1937 a laissée sans note`,
+    context:
+      "En 1937, un organisme fédéral, la Home Owners' Loan Corporation, a noté les quartiers de la ville de A à D selon le degré de sécurité qu'il jugeait pour les prêts hypothécaires à cet endroit. Les notes dépendaient des personnes qui habitaient chaque zone : les zones où vivaient des familles noires et de nombreuses familles immigrées étaient le plus souvent notées D et entourées en rouge. Pendant des décennies, il y était plus difficile d'obtenir un prêt, et cette pratique s'appelle le redlining.",
+    notToday: "Les notes sont une trace de la façon dont un organisme fédéral jugeait les lieux en 1937. Elles ne disent rien des personnes qui y vivent aujourd'hui.",
+    legendTap: 'Touchez une zone pour voir sa note et un lien vers sa description de 1937.',
+    description: (label) => `Lire la description de 1937 de la zone ${label} sur Mapping Inequality`,
+    descriptionNote: "Les descriptions de 1937 ne sont pas copiées ici : elles restent sur Mapping Inequality, avec l'histoire qui les entoure.",
+    credit:
+      "Zones et notes de Mapping Inequality : Redlining in New Deal America, par Robert K. Nelson, LaDale Winling et al., Digital Scholarship Lab de l'University of Richmond. Placekeepers montre seulement les zones et les notes.",
+    homepageLabel: 'Mapping Inequality : Philadelphie',
+    nonCommercial: "Usage non commercial seulement. Sous licence Creative Commons Attribution NonCommercial 2.5, à part du reste des données de la carte.",
+    licenseLabel: 'CC BY-NC 2.5',
+    statusNote: "Usage non commercial seulement : cette source est sous licence pour un usage non commercial, donc le site la publie dans un fichier à part et jamais dans un téléchargement.",
+  },
+
+  options: {
+    title: 'Confidentialité et données en direct',
+    privacyLink: 'Comment Placekeepers protège votre vie privée',
+    turnOn: 'Activer les données en direct de la Ville',
+    resetNote: 'Votre choix sur les données en direct de la Ville ne change pas.',
+  },
+
+  failure: {
+    timeout: 'pas de réponse à temps',
+    network: 'connexion impossible',
+    http: 'réponse en erreur',
+    bad_data: 'réponse illisible',
+    not_found: 'aucun enregistrement trouvé',
+    aborted: 'aucune demande envoyée',
+    empty: 'aucune demande envoyée',
+  },
+
+  rulesMap: {
+    legend: {
+      district: 'Quartier historique',
+      property: 'Au registre historique',
+      overlay: 'Zonage superposé (overlay)',
+      supplemental: 'Autre règle spéciale du Code de zonage',
+      hearingZoning: 'Audience de zonage',
+      hearingOther: 'Audience devant un autre comité',
+      brownfield: "Site brownfield de l'EPA",
+    },
+    notes: {
+      historic: "Les changements ici peuvent nécessiter l'examen de la Historical Commission ; demandez-leur d'abord.",
+      overlays: "Les zonages superposés se chevauchent, et quelques-uns couvrent la plus grande partie de la ville. Touchez un endroit pour voir tous les zonages superposés qui s'y trouvent.",
+      hearings: "Touchez une audience pour voir comment y participer et pour ouvrir la page du terrain.",
+      brownfields: "Ce n'est pas une carte de tout le terrain contaminé. Testez le sol avant de cultiver de la nourriture sur un de ces sites ou près de l'un d'eux.",
+    },
+    districtTitle: (name) => name,
+    designated: (date) => `Désigné le ${date}.`,
+    noDate: "La couche de la Ville ne donne pas de jour de désignation.",
+    propertyTitle: 'Au Philadelphia Register of Historic Places',
+    listedOn: (date) => `Inscrit séparément le ${date}.`,
+    listedAlone: 'Inscrit séparément.',
+    inDistrict: (district, date) => `Fait partie de ${district}${date ? `, désigné le ${date}` : ''}.`,
+    overlaysHere: (n) => (n === 1 ? 'Un zonage superposé ici' : `${formatNumber(n)} zonages superposés ici`),
+    hearingTitle: (board) => `Audience : ${board}`,
+    hearingWhen: (date, time) => `${date}${time ? `, à ${time}` : ''}`,
+    hearingsHere: (n) => `${formatNumber(n)} audiences ici`,
+    about: (address) => `À propos de ${address}.`,
+    rco: (name) => `Organisation communautaire enregistrée (RCO) informée : ${name}.`,
+    openLot: 'Ouvrir la page de ce terrain',
+    namesNote: "La personne qui a déposé l'appel n'est indiquée que sur la page du terrain.",
+    brownfieldTitle: "Site brownfield de l'EPA",
+  },
+
   // @@NEXT@@
 };
 
