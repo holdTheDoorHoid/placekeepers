@@ -580,6 +580,35 @@
   cadence: daily
   health: {min_rows: 2000, max_drop_pct: 50, newest_field: requested, max_age_days: 10}
   release: v0.3
+# Milestone M5.4 (issue #48): "Did it work?". Two outcome histories the weekly map does not
+# need, read only by `pk didit` (yearly or on demand; docs/DIDIT_METHOD.md). Yearly, so the weekly
+# refresh fetches them at most once a month. Only the day, the kind and the point are downloaded.
+- id: philly311_dumping_history
+  name: Philly311 illegal dumping requests since 2016
+  publisher: City of Philadelphia, Philly311
+  homepage: https://opendataphilly.org/datasets/311-service-and-information-requests/
+  endpoint:
+    kind: carto
+    table: public_cases_fc
+    where: "service_code = 'SR-ST02' AND requested_datetime >= '2016-01-01' AND the_geom IS NOT NULL"
+  license: city_terms
+  attribution: "311 requests: City of Philadelphia, Philly311"
+  cadence: yearly
+  health: {min_rows: 200000, max_drop_pct: 5, newest_field: requested, max_age_days: 60}
+  release: v0.5
+- id: li_complaints_history
+  name: L&I complaints about vacant lots and buildings since 2015
+  publisher: City of Philadelphia, Department of Licenses and Inspections
+  homepage: https://opendataphilly.org/datasets/licenses-and-inspections-complaints/
+  endpoint:
+    kind: carto
+    table: complaints
+    where: "complaintdate >= '2015-01-01' AND complaintcodename ILIKE '%VACANT%' AND the_geom IS NOT NULL"
+  license: city_terms
+  attribution: "Complaints: City of Philadelphia, Department of Licenses and Inspections"
+  cadence: yearly
+  health: {min_rows: 120000, max_drop_pct: 5, newest_field: complaintdate, max_age_days: 60}
+  release: v0.5
 # Milestone M4.5 (issue #41): streets and stops. Four City layers, each with an explicit field list
 # (pipeline/src/placekeepers/adapters/streets_stops.py; docs/DATA_SOURCES.md, "Streets and stops").
 # The bus shelters are the City's own list, so "no public inventory exists" no longer holds.

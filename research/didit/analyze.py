@@ -1,139 +1,95 @@
-"""Run every comparison of the "Did it work?" study on the real data and write the results.
+"""Run the "Did it work?" study on the real data, as `pk didit` does, and keep the research tables.
 
     ../../pipeline/.venv/bin/python analyze.py
 
-Reads out/study.npz (build.py). Writes results/estimates.csv (one row per kind of care, outcome and
-comparison) and results/event_study.csv, and prints Markdown tables for docs/DIDIT_METHOD.md.
+Needs the pipeline's snapshots in the shared cache (`pk fetch` and `pk validate` of the sources in
+placekeepers.didit.study.SOURCES, including the two histories added for this study) and the
+vacancy model (`pk derive`). Writes, in results/: estimates.csv (every comparison, in full),
+event_study.csv (the change half year by half year, research only), care_dates.json (what the
+records say about when care happened), and prints a Markdown table for docs/DIDIT_METHOD.md.
 
-The choices below were fixed before any outcome was looked at (2026-10-21): two years before and
-after, the half year of care skipped, up to five comparison places within 3 km but at least 400 m
-away, matched on the two yearly counts before and the tract poverty rate, a counting circle of 200 m
-with a ring to 400 m for crime moving elsewhere, a 90 percent interval from 2,000 draws of whole
-areas, and three checks: the placebo two years before care, the ring, and a comparison with places
-that got the same care later only.
+The choices were fixed before any outcome was looked at (commit aed4f1e, 2026-10-21): two years
+before and after, the half year of care skipped, up to five comparison places within 3 km but at
+least 400 m away, matched on the two yearly counts before and the tract poverty rate, a counting
+circle of 200 m with a ring to 400 m, and a 90 percent interval from 2,000 draws of whole areas.
+The placebo was moved to the two years ending right before the matched years after the synthetic
+tests showed why (docs/DIDIT_METHOD.md, "Proving the method"), still before any real comparison.
 """
 
 from __future__ import annotations
 
 import csv
 import json
+from datetime import date
+from pathlib import Path
 
-import numpy as np
-from common import OUT, RESULTS
-from method import (
-    POST,
-    PRE,
-    Places,
-    estimate,
-    estimate_sets,
-    event_study,
-    match,
-    naive_before_after,
-    outcome_sums,
-)
-
-LAST_COMPLETE = 22
-OUTCOMES = {
-    # name: (first complete half, leave out the place's own square)
-    "shootings": (0, False),
-    "dumping": (2, True),
-    "complaints": (0, True),
-}
-TREATMENTS = ("landcare", "clean_seal", "demolition")
-PLACEBO_SHIFT = PRE + POST + 1  # the pretend window ends right before the real one begins
+from common import CACHE, DERIVED, RESULTS
+from placekeepers.didit import study
 
 
-def load() -> dict:
-    with np.load(OUT / "study.npz") as z:
-        return {k: z[k] for k in z.files}
+def snapshot(source_id: str) -> Path:
+    path = CACHE / "snapshots" / source_id / "current.parquet"
+    if not path.exists():
+        raise SystemExit(f"no snapshot of {source_id}: run pk fetch {source_id} && pk validate")
+    return path.resolve()
 
 
-def places_for(data: dict, treatment: str) -> tuple[Places, np.ndarray]:
-    keep = data[f"{treatment}_relevant"] & data["in_city"]
-    idx = np.flatnonzero(keep)
-    return (
-        Places(
-            x=data["x"][idx],
-            y=data["y"][idx],
-            poverty=data["poverty"][idx],
-            cluster=data["cluster"][idx],
-            care=data[f"{treatment}_care"][idx],
-            undated=data[f"{treatment}_undated"][idx],
-            pool=data[f"{treatment}_pool"][idx],
-        ),
-        idx,
-    )
-
-
-def outcome(data: dict, name: str, idx: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    near = data[f"{name}_near"][idx].astype(np.int64)
-    if OUTCOMES[name][1]:
-        near = near - data[f"{name}_own"][idx]
-    return near, data[f"{name}_ring"][idx].astype(np.int64)
-
-
-def fmt(v, digits=1):
-    return "" if v is None else f"{v:+.{digits}f}"
+def pct(e: dict) -> str:
+    if e["percent"] is None:
+        return ""
+    return f"{e['percent']:+.1f}% ({e['low']:+.1f} to {e['high']:+.1f})"
 
 
 def main() -> None:
-    data = load()
-    rows, events = [], []
-    for treatment in TREATMENTS:
-        places, idx = places_for(data, treatment)
-        for name, (first, _) in OUTCOMES.items():
-            near, ring = outcome(data, name, idx)
-            sets = match(places, near, first, LAST_COMPLETE)
-            main_est = estimate_sets(sets)
-            r_tp, r_tq, r_cp, r_cq = outcome_sums(sets, ring)
-            ring_est = estimate(
-                r_tp, r_tq, r_cp, r_cq, sets.n_controls, sets.cluster, controls=sets.controls
-            )
-            later = estimate_sets(match(places, near, first, LAST_COMPLETE, controls_from="later"))
-            placebo_sets = match(places, near, first, LAST_COMPLETE, shift=PLACEBO_SHIFT)
-            placebo = estimate_sets(placebo_sets)
-            naive = naive_before_after(sets)
-            cohorts = sorted(set(sets.half.tolist()))
-            for label, est in (
-                ("main", main_est),
-                ("ring", ring_est),
-                ("later", later),
-                ("placebo", placebo),
-            ):
+    inputs = study.Inputs(
+        paths={part: snapshot(source) for part, source in study.SOURCES.items()},
+        vacancy=DERIVED / "vacancy.parquet",
+    )
+    built = study.build(inputs)
+    out = study.run(built, generated=date.today())
+    rows = []
+    for kind in out.results["kinds"]:
+        for entry in kind["results"]:
+            for comparison in ("main", "around", "later", "placebo"):
                 rows.append(
                     {
-                        "treatment": treatment,
-                        "outcome": name,
-                        "comparison": label,
-                        **est.as_dict(),
-                        "first_half": cohorts[0] if cohorts else None,
-                        "last_half": cohorts[-1] if cohorts else None,
-                        "eligible": sets.eligible if label == "main" else None,
-                        "naive": naive if label == "main" else None,
+                        "kind": kind["id"],
+                        "outcome": entry["outcome"],
+                        "comparison": comparison,
+                        "verdict": entry["verdict"] if comparison == "main" else "",
+                        **entry[comparison],
+                        "naive": entry["naive"] if comparison == "main" else "",
+                        "cohorts": " to ".join(entry["cohorts"] or []),
                     }
                 )
-            for e, v in event_study(sets, near).items():
-                events.append({"treatment": treatment, "outcome": name, "half": e, "percent": v})
-            print(
-                f"{treatment:11s} {name:10s} sets={main_est.sets:5d} (of {sets.eligible}) "
-                f"clusters={main_est.clusters:3d} pre={main_est.t_pre:6d} "
-                f"main={fmt(main_est.percent)}% [{fmt(main_est.low)}, {fmt(main_est.high)}] "
-                f"ring={fmt(ring_est.percent)}% [{fmt(ring_est.low)}, {fmt(ring_est.high)}] "
-                f"later={fmt(later.percent)}% [{fmt(later.low)}, {fmt(later.high)}] n={later.sets} "
-                f"placebo={fmt(placebo.percent)}% [{fmt(placebo.low)}, {fmt(placebo.high)}] "
-                f"n={placebo.sets} naive={fmt(naive)}% balance={main_est.balance:.3f}"
-            )
     with open(RESULTS / "estimates.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0]))
         w.writeheader()
-        for row in rows:
-            w.writerow({k: round(v, 3) if isinstance(v, float) else v for k, v in row.items()})
+        w.writerows(rows)
     with open(RESULTS / "event_study.csv", "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=list(events[0]))
-        w.writeheader()
-        for row in events:
-            w.writerow({k: round(v, 2) if isinstance(v, float) else v for k, v in row.items()})
-    print(json.dumps({"rows": len(rows)}))
+        w = csv.writer(f)
+        w.writerow(["kind", "outcome", "half", "percent"])
+        for key, values in out.event_study.items():
+            kind, outcome = key.split("/")
+            for half, value in values.items():
+                w.writerow([kind, outcome, half, round(value, 1)])
+    (RESULTS / "care_dates.json").write_text(
+        json.dumps({"care": built.care, "outcomes": built.events}, indent=2) + "\n"
+    )
+    print(
+        "| Care | Outcome | Places | Areas | Change | Verdict | Placebo | Around (200 to 400 m) "
+        "| Later care only | Simple before and after |"
+    )
+    print("|---|---|---|---|---|---|---|---|---|---|")
+    for kind in out.results["kinds"]:
+        for e in kind["results"]:
+            if e["main"]["places"] == 0:
+                continue
+            print(
+                f"| {kind['id']} | {e['outcome']} | {e['main']['places']:,} | {e['main']['areas']} "
+                f"| {pct(e['main'])} | {e['verdict']} | {pct(e['placebo'])} | {pct(e['around'])} "
+                f"| {pct(e['later'])} | {e['naive']:+.1f}% |"
+            )
 
 
 if __name__ == "__main__":

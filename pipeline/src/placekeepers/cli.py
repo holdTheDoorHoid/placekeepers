@@ -13,6 +13,9 @@
     pk projects --data DIR       read the approved project reports again and replace only the
                                  projects layer and table in a data root a weekly publish wrote
                                  (M5.3: the quick publish after a label changes)
+    pk didit                     run the "Did it work?" study (M5.4, yearly or on demand) and
+                                 write data/didit/results.json and data/didit/totals.csv, which
+                                 are committed; the weekly publish copies the results to the site
 
 Common options: --sources a,b (limit to some sources), --offline (use only the cache),
 --cache DIR (instead of $PK_CACHE), -v (more detail).
@@ -311,6 +314,62 @@ def cmd_projects(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_didit(args: argparse.Namespace) -> int:
+    """The "Did it work?" study (M5.4, issue #48; docs/DIDIT_METHOD.md)."""
+    from placekeepers.derive.lenses import current_snapshot
+    from placekeepers.didit import study
+
+    ctx = _context(args)
+    paths, missing = {}, []
+    for part, source_id in study.SOURCES.items():
+        path = current_snapshot(ctx, source_id)
+        if path is None:
+            missing.append(source_id)
+        else:
+            paths[part] = path
+    vacancy = ctx.cache.root / "derived" / "vacancy.parquet"
+    if missing:
+        print(
+            "pk: Did it work? needs a snapshot of "
+            + ", ".join(missing)
+            + ". Run: pk fetch "
+            + " ".join(missing)
+            + " && pk validate "
+            + " ".join(missing),
+            file=sys.stderr,
+        )
+        return 1
+    if not vacancy.is_file():
+        print("pk: Did it work? needs the vacancy model: run pk derive first", file=sys.stderr)
+        return 1
+    root = Path(args.root) if args.root else ctx.settings.repo_root
+    projects = Path(args.projects) if args.projects else root / "build/data/tables/projects.json"
+    if not projects.is_file():
+        print(f"  no projects table at {projects}: projects neighbors finished are not counted")
+        projects = None
+    generated = date.fromisoformat(args.as_of) if args.as_of else ctx.today()
+    built = study.build(study.Inputs(paths=paths, vacancy=vacancy, projects=projects))
+    out = study.run(built, generated=generated, draws=args.draws)
+    results_path, totals_path = study.write(out, root)
+    problems = study.reproduce(out.results, totals_path.read_text(encoding="utf-8"))
+    print(f"Did it work? {built.n_places:,} places; data through {out.results['data_through']}.")
+    for kind in out.results["kinds"]:
+        for entry in kind["results"]:
+            main = entry["main"]
+            print(
+                f"  {kind['id']:<11} {entry['outcome']:<11} {entry['verdict']:<16} "
+                f"{main['places']:>5} places  {main['percent']}% ({main['low']} to "
+                f"{main['high']}); check {entry['check']}"
+            )
+    print(f"Wrote {results_path} and {totals_path}.")
+    if problems:
+        print(
+            "pk: the totals do not reproduce the results:", *problems, sep="\n  ", file=sys.stderr
+        )
+        return 1
+    return 0
+
+
 # Parser
 def build_parser() -> argparse.ArgumentParser:
     common = argparse.ArgumentParser(add_help=False)
@@ -411,6 +470,25 @@ def build_parser() -> argparse.ArgumentParser:
     projects.add_argument("--summary", help="also append the summary to this file")
     projects.add_argument("--as-of", help="today, YYYY-MM-DD (default: today in Philadelphia)")
     projects.set_defaults(func=cmd_projects)
+
+    didit = commands.add_parser(
+        "didit",
+        help='run the "Did it work?" study and write data/didit/ (yearly or on demand)',
+        parents=[common],
+    )
+    didit.add_argument(
+        "--projects",
+        help="the projects table (default: build/data/tables/projects.json when it exists)",
+    )
+    didit.add_argument("--root", help="write data/didit/ under this folder (default: the repo)")
+    didit.add_argument("--as-of", help="the day to record as the run's date, YYYY-MM-DD")
+    didit.add_argument(
+        "--draws",
+        type=int,
+        default=2000,
+        help="bootstrap draws (default 2000; fewer for a quick try)",
+    )
+    didit.set_defaults(func=cmd_didit)
     return parser
 
 
