@@ -1763,3 +1763,9 @@ sources:
   rco_contacts:
     name: "Thông tin liên hệ của các Tổ chức Cộng đồng Đã đăng ký (RCO)"
     publisher: "Philadelphia City Planning Commission"
+  philly311_dumping_history:
+    name: "Các yêu cầu báo đổ rác trái phép gửi Philly311 từ năm 2016"
+    publisher: "Thành phố Philadelphia, Philly311"
+  li_complaints_history:
+    name: "Các khiếu nại gửi L&I về lô đất trống và tòa nhà bỏ trống từ năm 2015"
+    publisher: "Thành phố Philadelphia, Department of Licenses and Inspections"

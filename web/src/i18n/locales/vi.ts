@@ -94,6 +94,7 @@ const vi: Catalog = {
     menuLabel: 'Các trang của trang web',
     map: 'Bản đồ',
     landBank: 'Land Bank qua các con số',
+    didIt: 'Có hiệu quả không?',
     pages: [
       { slug: 'about', label: 'Giới thiệu' },
       { slug: 'why', label: 'Vì sao cách này hiệu quả' },
@@ -1977,6 +1978,169 @@ const vi: Catalog = {
       dates: (fetched, last) => `Chứng thư đọc ngày ${fetched}; chứng thư mới nhất đề ngày ${last}.`,
       file: (part, day) => `placekeepers-land-bank-${part}-${day}.csv`,
     },
+  },
+
+  // "Có hiệu quả không?" (M5.4, issue #48): the page that compares places that got care with places
+  // that did not (src/didit/). "Chăm sóc" is care as work done at a place.
+  didit: {
+    pageTitle: 'Có hiệu quả không?',
+    back: 'Quay lại bản đồ',
+    intro:
+      'Khi một lô đất hoặc một tòa nhà được chăm sóc, các dãy phố xung quanh có thay đổi không, so với những nơi tương tự không được chăm sóc? Chúng tôi đã so sánh chính hồ sơ của Thành phố cho hàng nghìn địa điểm trên khắp Philadelphia. Dưới đây là những gì hồ sơ có thể cho biết, và những gì chúng không thể.',
+    loading: 'Đang tải kết quả',
+    loadFailed: 'Không tải được kết quả. Hãy kiểm tra kết nối và thử lại.',
+    retry: 'Thử lại',
+    missing: 'Kết quả chưa được công bố. Chúng sẽ xuất hiện sau lần làm mới dữ liệu hằng tuần tới.',
+    print: 'In trang này',
+    runOn: (generated, through) =>
+      `Phép so sánh này được chạy vào ngày ${generated}, với hồ sơ của Thành phố đến hết ngày ${through}. Nó được chạy lại khoảng mỗi năm một lần.`,
+    shortTitle: 'Câu trả lời ngắn gọn',
+    tallyIntro: (n) => `Chúng tôi đã thực hiện ${plural(n, { other: '# phép so sánh' })}.`,
+    tallyParts: {
+      fewer: (n) => `${formatNumber(n)} phép thấy ít vấn đề hơn ở gần đó sau khi được chăm sóc`,
+      more: (n) => `${formatNumber(n)} phép thấy nhiều hơn`,
+      no_clear_change: (n) => `${formatNumber(n)} phép không thấy thay đổi rõ ràng`,
+      check_failed: (n) =>
+        `${formatNumber(n)} phép không đáng tin, vì những nơi được chăm sóc đã thay đổi khác với các nơi khác từ trước khi được chăm sóc`,
+      too_few: (n) => `${formatNumber(n)} phép có quá ít địa điểm để kết luận`,
+    },
+    tallyJoin: (parts) =>
+      parts.length <= 1 ? `${parts.join('')}.` : `${parts.slice(0, -1).join('; ')}; và ${parts[parts.length - 1]}.`,
+    noneFewer:
+      'Hồ sơ của Thành phố không cho thấy việc chăm sóc làm giảm các vụ nổ súng, việc đổ rác hay các khiếu nại ở gần đó. Ở những nơi hồ sơ cho thấy sau đó nhiều hơn, lý do có khả năng nhất là việc chăm sóc đã đến những nơi vấn đề vốn đang tăng, chứ không phải việc chăm sóc đã gây ra điều đó.',
+    someFewer: 'Ở những nơi hồ sơ cho thấy sau khi được chăm sóc có ít vấn đề hơn, hãy đọc các phép kiểm tra bên dưới mỗi kết quả trước khi tin vào nó.',
+    notOneLot: 'Không điều nào ở đây là kết luận về một lô đất riêng lẻ nào.',
+    trialsTitle: 'Bằng chứng thực sự: các thử nghiệm ở Philadelphia',
+    trialsIntro:
+      'Một phép so sánh hồ sơ như thế này có thể gây hiểu lầm. Các thử nghiệm ngẫu nhiên không thể bị đánh lừa theo cùng những cách đó, và đã có hai thử nghiệm như vậy được thực hiện ngay tại đây:',
+    trials: [
+      'Xanh hóa các lô đất trống: trong một thử nghiệm trên toàn thành phố với 541 lô đất, bạo lực súng đạn giảm 29% ở gần các lô đất được xanh hóa tại những khu phố dưới mức nghèo (Branas và các cộng sự, 2018).',
+      'Trong cùng thử nghiệm đó, các vụ nổ súng giảm 6,8% ở gần các lô đất được xanh hóa và 9,2% ở gần các lô đất chỉ được dọn dẹp và cắt cỏ (Moyer và các cộng sự, 2019).',
+      'Sửa chữa các ngôi nhà bỏ hoang: cửa ra vào và cửa sổ dùng được làm giảm 13% các vụ tấn công bằng súng ở gần đó; chỉ dọn dẹp thì không tạo ra khác biệt nào đo được (South và các cộng sự, 2023).',
+    ],
+    trialLinks: ['Đọc về thử nghiệm xanh hóa', 'Đọc về nghiên cứu các vụ nổ súng', 'Đọc về thử nghiệm sửa nhà'],
+    whyLink: 'Tìm hiểu thêm về vì sao cách này hiệu quả',
+    warningsTitle: 'Vì sao một phép so sánh hồ sơ có thể gây hiểu lầm',
+    warnings: [
+      'Việc chăm sóc thường đến những nơi vấn đề vốn đang tăng, nên những nơi được chăm sóc có thể khác với những nơi được đem ra so sánh theo những cách mà không hồ sơ nào cho thấy.',
+      'Một năm tồi tệ thường được nối tiếp bằng một năm khá hơn dù sao đi nữa. Những nơi được chọn ngay sau một giai đoạn tồi tệ có thể trông như đã khá lên trong khi thực ra không có gì thay đổi.',
+      'Vấn đề có thể di chuyển xuống phố thay vì chấm dứt. Chúng tôi kiểm tra vòng quanh mỗi địa điểm để xem có chuyện đó không.',
+    ],
+    kinds: {
+      landcare: 'Các lô đất PHS LandCare đã dọn dẹp và xanh hóa',
+      clean_seal: 'Các bất động sản Thành phố đã dọn dẹp và bịt kín',
+      demolition: 'Các tòa nhà Thành phố đã phá dỡ',
+      projects: 'Các dự án hàng xóm đã hoàn thành',
+    },
+    kindNotes: {
+      landcare: (records, dated) =>
+        `Danh sách của PHS LandCare cho biết mùa mà từng lô đất được dọn dẹp và xanh hóa đối với ${formatNumber(dated)} trong số ${formatNumber(records)} lô đất của họ. Các lô đất không có mùa, phần lớn do hàng xóm chăm sóc qua Community LandCare, không được đưa vào so sánh.`,
+      clean_seal: (records) =>
+        `Các lệnh công việc dọn dẹp và bịt kín của Thành phố đã hoàn thành, tính theo ngày công việc xong: ${formatNumber(records)} lệnh từ năm 2007. Hồ sơ của Thành phố có ít lệnh hơn nhiều từ năm 2020 trở đi, nên phần lớn các phép so sánh này là từ năm 2017 đến năm 2019.`,
+      demolition: (records) =>
+        `Các vụ phá dỡ do chính Thành phố thực hiện, tính theo ngày mỗi vụ hoàn tất: ${formatNumber(records)} vụ từ năm 2007. Các vụ phá dỡ theo giấy phép tư nhân không được đưa vào so sánh.`,
+    },
+    outcomes: {
+      shootings: 'Các vụ nổ súng trong phạm vi khoảng hai dãy phố (200 mét)',
+      dumping: 'Việc đổ rác trái phép được báo cho Philly311 trong phạm vi khoảng hai dãy phố, không tính chính địa điểm đó',
+      complaints: 'Các khiếu nại gửi L&I về lô đất trống và tòa nhà bỏ trống trong phạm vi khoảng hai dãy phố, không tính chính địa điểm đó',
+    },
+    outcomeNouns: {
+      shootings: 'các vụ nổ súng',
+      dumping: 'các báo cáo về đổ rác',
+      complaints: 'các khiếu nại về bất động sản bỏ trống',
+    },
+    verdictLabels: {
+      fewer: 'Ít hơn sau khi được chăm sóc',
+      more: 'Nhiều hơn sau khi được chăm sóc',
+      no_clear_change: 'Không có thay đổi rõ ràng',
+      check_failed: 'Chúng tôi không thể kết luận',
+      too_few: 'Quá ít để kết luận',
+    },
+    verdicts: {
+      fewer: (noun, percent, range) =>
+        `Trong hai năm sau khi được chăm sóc, ${noun} ở gần đó ít hơn ${formatDecimal(percent, 1)}% so với mức dự kiến từ những nơi tương tự không được chăm sóc (dải 90 phần trăm: ${range}).`,
+      more: (noun, percent, range) =>
+        `Trong hai năm sau khi được chăm sóc, ${noun} ở gần đó nhiều hơn ${formatDecimal(percent, 1)}% so với mức dự kiến từ những nơi tương tự không được chăm sóc (dải 90 phần trăm: ${range}).`,
+      notCaused: 'Điều này không cho thấy rằng việc chăm sóc đã gây ra mức tăng đó.',
+      moreReports: 'Nhiều báo cáo hơn cũng có thể có nghĩa là có nhiều hàng xóm báo hơn sau khi Thành phố đã chú ý đến nơi đó.',
+      noClearChange: (change, range) =>
+        `Không có thay đổi rõ ràng. Phép so sánh thấy ${change} (dải 90 phần trăm: ${range}), và dải này bao gồm cả trường hợp không có thay đổi nào.`,
+      checkFailed: (noun) =>
+        `Trong những năm trước khi được chăm sóc, ${noun} ở gần những nơi này đã thay đổi khác với ${noun} ở gần các nơi so sánh, nên phép so sánh này không thể tách việc chăm sóc khỏi những gì đã diễn ra sẵn.`,
+      tooFew: (places, min) =>
+        `Chỉ có ${plural(places, { other: '# địa điểm' })} có thể so sánh được. Một phép so sánh cần ít nhất ${formatNumber(min)}.`,
+    },
+    whyMore: {
+      landcare: 'PHS và Thành phố chọn những lô đất nơi hàng xóm xin giúp đỡ, thường là nơi các vấn đề đang tăng.',
+      clean_seal:
+        'Thành phố dọn dẹp và bịt kín một bất động sản sau khi có khiếu nại về nơi đó, thường là khi một dãy phố đang xuống cấp hoặc sau khi chính bất động sản đó xảy ra chuyện.',
+      demolition: 'Thành phố phá dỡ một tòa nhà khi nó đã trở nên không an toàn, thường ở những dãy phố đang xuống cấp theo những cách mà hồ sơ không cho thấy.',
+      projects: 'Hàng xóm thường bắt đầu các dự án ở nơi các vấn đề đang tăng.',
+    },
+    half: (year, half) => `${half === 1 ? 'nửa đầu' : 'nửa cuối'} năm ${year}`,
+    noChange: 'không thay đổi',
+    fewerBy: (percent) => `giảm ${formatDecimal(percent, 1)}%`,
+    moreBy: (percent) => `tăng ${formatDecimal(percent, 1)}%`,
+    range: (low, high) => `từ ${low} đến ${high}`,
+    compared: (places, from, to, areas) =>
+      `So sánh: ${plural(places, { other: '# địa điểm' })} được chăm sóc từ ${from} đến ${to}, ở ${plural(areas, { other: '# khu vực' })} của thành phố, mỗi nơi có tối đa năm địa điểm tương tự không được chăm sóc để đối chiếu.`,
+    counts: (before, after, expected) =>
+      `Gần những nơi được chăm sóc: ${formatNumber(before)} trong hai năm trước, ${formatNumber(after)} trong hai năm sau, trong khi mức dự kiến từ các nơi so sánh là ${formatNumber(expected)}.`,
+    checksTitle: 'Các phép kiểm tra',
+    checks: {
+      passed: (change, range, places) =>
+        `Phép kiểm tra đạt: giả sử việc chăm sóc đến sớm hơn bốn năm rưỡi, phép so sánh lẽ ra không thấy thay đổi nào, và nó thấy ${change} (${range}; ${plural(places, { other: '# địa điểm' })} có hồ sơ từ xa đến vậy).`,
+      failed: (change, range, places) =>
+        `Phép kiểm tra không đạt: giả sử việc chăm sóc đến sớm hơn bốn năm rưỡi, phép so sánh đã thấy ${change} (${range}; ${plural(places, { other: '# địa điểm' })} có hồ sơ từ xa đến vậy) trong khi lẽ ra nó không thấy gì. Những nơi được chăm sóc đã đi theo một hướng khác từ trước.`,
+      tooFew: 'Không thể thực hiện phép kiểm tra: có quá ít địa điểm trong số này có hồ sơ từ đủ lâu về trước.',
+      around: (change, range) => `Xa hơn, cách 200 đến 400 mét: ${change} (${range}).`,
+      moved: 'Một phần vấn đề có thể đã chuyển đến đó.',
+      later: (change, range, places) =>
+        `Chỉ so sánh với những nơi được chăm sóc theo cách tương tự về sau: ${change} (${range}; ${plural(places, { other: '# địa điểm' })}).`,
+      naive: (change, noun) => `Một phép so sánh trước và sau đơn giản sẽ cho kết quả ${change}, vì nó bỏ qua việc ${noun} ở mọi nơi khác đã thay đổi ra sao.`,
+    },
+    projectsNow: (shown, ready, before) =>
+      `Bản đồ hiện ${plural(shown, { other: '# dự án' })} mà hàng xóm đã hoàn thành. Trong đó có ${formatNumber(ready)} dự án hoàn thành chậm nhất là vào ${before}, đủ lâu để có hai năm hồ sơ sau đó.`,
+    projectsNotRead: 'Bản sao này của bản đồ chưa có danh sách các dự án hàng xóm đã hoàn thành.',
+    projectsNeed: (min) =>
+      `Một phép so sánh cần ít nhất ${formatNumber(min)} dự án. Mỗi dự án được báo cáo sẽ đưa con số đó đến gần hơn, và cho hàng xóm thấy những người khác đã làm được gì.`,
+    projectsLink: 'Hãy cho chúng tôi biết về một dự án bạn đã hoàn thành',
+    cannotTitle: 'Những gì điều này không thể cho biết',
+    cannot: [
+      'Một nơi có còn trông bỏ trống về sau hay không. Danh sách bất động sản bỏ trống của Thành phố chỉ có cho năm 2024 và 2026, và LandCare cùng việc dọn dẹp và bịt kín được làm để giữ một nơi được chăm sóc trong lúc nó vẫn trống, nên “vẫn bỏ trống” không phân biệt được thành công với thất bại.',
+      'Bất cứ điều gì về một lô đất riêng lẻ. Các vụ nổ súng, việc đổ rác và các khiếu nại lên xuống ở mọi dãy phố vì nhiều lý do. Chỉ nhiều địa điểm gộp lại mới có thể cho thấy một xu hướng, và ngay cả khi đó cũng không chắc chắn.',
+      'Vì sao một điều gì đó thay đổi. Một phép so sánh cho thấy điều gì đã thay đổi, không phải điều gì đã gây ra nó.',
+      'Bất cứ điều gì về các lô đất đã rời khỏi LandCare. Danh sách của nó chỉ có những lô đất nó đang chăm sóc hiện nay.',
+      'Những thay đổi trong chính hồ sơ: hồ sơ dọn dẹp và bịt kín của Thành phố có ít lệnh hơn nhiều từ năm 2020 trở đi, các báo cáo đổ rác bắt đầu từ tháng 1 năm 2016, và L&I đã đổi tên các loại khiếu nại vào năm 2020. Mỗi phép so sánh đặt các địa điểm cạnh những nơi khác trong cùng những năm, điều này giải quyết phần lớn vấn đề đó.',
+    ],
+    chance: (n) =>
+      `Yếu tố ngẫu nhiên: ở mức 90 phần trăm, cứ khoảng mười phép so sánh thì có một phép có thể trông như có thay đổi dù thực ra không có, nên trong ${formatNumber(n)} phép so sánh, một hoặc hai phép có thể chỉ do ngẫu nhiên.`,
+    methodTitle: 'Cách chúng tôi so sánh',
+    method: [
+      'Một địa điểm là một ô vuông của thành phố rộng 100 mét, nơi việc chăm sóc đã diễn ra trong một nửa năm nào đó, từ năm 2017 trở đi.',
+      'Với mỗi nơi, chúng tôi tìm tối đa năm địa điểm trong phạm vi khoảng 2 dặm (3 km), nhưng không cùng một dãy phố, không được chăm sóc theo cách tương tự trong hai năm trước hoặc sau, có số đếm tương tự trong mỗi năm của hai năm trước, và có tỷ lệ hàng xóm dưới mức nghèo tương tự.',
+      'Chúng tôi so sánh mức thay đổi tại nơi được chăm sóc, từ hai năm trước đến hai năm sau, với mức thay đổi trung bình tại các nơi so sánh của nó, bỏ qua nửa năm của chính công việc đó.',
+      'Dải 90 phần trăm đến từ việc chọn lại toàn bộ các khu vực của thành phố 2.000 lần. Mức thay đổi thật rất có thể nằm trong dải đó.',
+      'Trước tiên chúng tôi thử phương pháp này trên những thành phố tự dựng mà chúng tôi biết trước đáp án. Nó tìm ra mức thay đổi chúng tôi đặt vào, và không tìm ra gì khi chúng tôi không đặt gì vào.',
+    ],
+    methodLink: 'Toàn bộ phương pháp, mọi con số và mã nguồn',
+    sourcesTitle: 'Nguồn',
+    sources: {
+      landcare: 'Các lô đất của PHS LandCare, từ Pennsylvania Horticultural Society qua Thành phố Philadelphia.',
+      clean_seal: 'Lệnh công việc dọn dẹp và bịt kín, từ Department of Licenses and Inspections của Thành phố.',
+      demolition: 'Các vụ phá dỡ tòa nhà, từ Department of Licenses and Inspections của Thành phố.',
+      shootings: (first, last) => `Các nạn nhân bị bắn, từ Philadelphia Police Department, từ ${first} đến ${last}. Chỉ đếm số lượng.`,
+      dumping: (first, last) => `Các yêu cầu báo đổ rác trái phép gửi Philly311, từ ${first} đến ${last}.`,
+      complaints: (first, last) =>
+        `Các khiếu nại về lô đất trống và tòa nhà bỏ trống, từ Department of Licenses and Inspections của Thành phố, từ ${first} đến ${last}.`,
+      poverty:
+        'Tỷ lệ hàng xóm dưới mức nghèo theo khu điều tra dân số (census tract), từ American Community Survey của Cục Điều tra Dân số Hoa Kỳ, 2020 đến 2024.',
+      projects: 'Các dự án hàng xóm đã hoàn thành, do hàng xóm báo cho Placekeepers và được người duy trì dự án duyệt.',
+    },
+    lotNote: 'Một lô đất riêng lẻ không thể cho thấy việc chăm sóc có hiệu quả hay không: các vụ nổ súng, việc đổ rác và các khiếu nại lên xuống ở mọi dãy phố vì nhiều lý do.',
+    lotLink: 'Xem hồ sơ của Thành phố cho thấy gì về toàn Philadelphia',
+    sealedOn: (date) => `Thành phố dọn dẹp và bịt kín nơi này lần gần nhất vào ngày ${date}.`,
   },
 
   projects: {

@@ -1351,6 +1351,12 @@ sources:
   rco_contacts:
     name: "ទំនាក់ទំនង​របស់​អង្គការ​សហគមន៍​ដែល​បាន​ចុះបញ្ជី (Registered Community Organizations)"
     publisher: "Philadelphia City Planning Commission"
+  philly311_dumping_history:
+    name: "សំណើ Philly311 អំពី​ការ​ចោលសំរាម​ខុសច្បាប់ ចាប់ពី​ឆ្នាំ 2016"
+    publisher: "ទីក្រុង Philadelphia, Philly311"
+  li_complaints_history:
+    name: "បណ្តឹង​ទៅ L&I អំពី​ដី​ទំនេរ និង​អគារ​ទំនេរ ចាប់ពី​ឆ្នាំ 2015"
+    publisher: "ទីក្រុង Philadelphia, Department of Licenses and Inspections"
 suggestions:
   clean_and_green:
     label: "សម្អាត និង​ធ្វើ​ឱ្យ​ដី​ឡូត៍​នេះ​បៃតង"

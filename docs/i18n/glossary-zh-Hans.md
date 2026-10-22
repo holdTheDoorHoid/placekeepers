@@ -180,3 +180,23 @@ changes them again should change every place the passage appears.
   public" warning, the posting rules (never on poles, street lights, traffic signs, trees or SEPTA
   shelters) and the project photo rule (never a child's face, never anyone who did not agree, never a
   license plate).
+
+## "Did it work?" page (M5.4, 2026-10-22)
+
+New terms for the page that compares places that got care with places that did not
+(`didit.*` in the catalog, and the two yearly sources in the registry text).
+
+| English | Chinese | Note |
+|---|---|---|
+| care (work done at a place: "got care", "after care") | 照看 | 关怀 stays for the framing "where care is needed most". Greening, cleaning and sealing, and demolition are all 照看 on this page, as the English calls them all "care" |
+| we could not tell (the check failed) | 我们无法判断 | A plain admission. Never "没有效果" (no effect) and never "有效" (it worked). "Too few to tell" is 地点太少，无法判断 |
+| does not show that care caused it | 并不表明是照看造成了 | "并不表明" is as strong as "does not show"; never 证明 (prove) |
+| the real evidence | 真正的证据 | the two randomized trials; observational comparisons "可能会误导人" (can mislead, not will) |
+| randomized trial | 随机试验 | as on the Why this works page |
+| 90 percent interval | 90% 区间 | written "从少 6.2% 到多 0.2%" ("from 6.2% fewer to 0.2% more") |
+| more, fewer than expected (a count compared with the comparison places) | 多, 少 | "多 3.2%", "少 6.2%", and 没有变化 for no change |
+| comparison places | 对照地点 | the similar places that did not get care |
+| the ring (200 to 400 meters out) | 一圈区域 | |
+| check (placebo, ring, later care) | 核查 | "核查通过", "核查未通过" |
+| placebo (pretending care came earlier) | 假设照看提前了四年半 | the word "placebo" itself is not used on the page |
+| half year | 上半年, 下半年 | "2017年上半年" |

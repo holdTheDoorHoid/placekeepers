@@ -378,6 +378,12 @@ sources:
   rco_contacts:
     name: "注册社区组织的联系方式"
     publisher: "费城城市规划委员会"
+  philly311_dumping_history:
+    name: "2016年以来的 Philly311 非法倾倒垃圾请求"
+    publisher: "费城市政府，Philly311"
+  li_complaints_history:
+    name: "2015年以来 L&I 关于空地和空置建筑的投诉"
+    publisher: "费城市政府，执照和检查部"
 
 lenses:
   violence:
