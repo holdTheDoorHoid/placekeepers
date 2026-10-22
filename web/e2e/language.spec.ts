@@ -121,6 +121,24 @@ test.describe('languages', () => {
     await expect(page.getByRole('link', { name: 'Contacto' })).toBeVisible();
   });
 
+  test('the letters, flyer and packet pages open in Spanish', async ({ page }) => {
+    await page.route(/^https?:\/\/(?!localhost[:/])/, (route) => route.abort());
+    for (const [path, title] of [
+      ['letters/', 'Escribir una carta'],
+      ['flyer/', 'Hacer un volante para los vecinos'],
+      ['packet/', 'Hacer un paquete'],
+    ] as const) {
+      await page.goto(`./${path}?lang=es`);
+      await expect(page.locator('html')).toHaveAttribute('lang', 'es');
+      await expect(page.getByRole('heading', { level: 1, name: title })).toBeVisible();
+      await expect(page.getByRole('button', { name: /^Idioma: Español/ })).toBeVisible();
+      await expect(page.getByRole('link', { name: 'Corregir una traducción' }).first()).toBeVisible();
+    }
+    // The letters keep their note that no lawyer has reviewed them, in Spanish.
+    await page.goto('./letters/?lang=es');
+    await expect(page.getByText('Un abogado todavía no ha revisado esta carta. No es asesoría legal.').first()).toBeVisible();
+  });
+
   test('the Data status page keeps the refresh notes in English, marked so', async ({ page }) => {
     await page.route(/^https?:\/\/(?!localhost[:/])/, (route) => route.abort());
     await page.goto('./status/?lang=es');

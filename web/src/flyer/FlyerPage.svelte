@@ -13,6 +13,9 @@
   import { strings } from '../strings.ts';
   import Dialog from '../components/common/Dialog.svelte';
   import SiteNav from '../components/common/SiteNav.svelte';
+  import LanguageOffer from '../components/language/LanguageOffer.svelte';
+  import LanguagePicker from '../components/language/LanguagePicker.svelte';
+  import TranslationNote from '../components/language/TranslationNote.svelte';
   import QrCode from '../components/print/QrCode.svelte';
   import StaticMapView from '../components/print/StaticMapView.svelte';
   import { clearFlyers, contactCaution, defaultFields, HOPES, hopeLines, readFlyers, writeFlyers, type FlyerFields, type Hope } from './flyer.ts';
@@ -81,11 +84,16 @@
 <div class="page">
   <header class="topbar screen-only">
     <a class="brand" href={config.siteBase}>{strings.app.name}</a>
-    <button class="button quiet small" type="button" aria-haspopup="dialog" onclick={() => (menuOpen = true)}>{strings.nav.menu}</button>
+    <div class="tools">
+      <LanguagePicker />
+      <button class="button quiet small" type="button" aria-haspopup="dialog" onclick={() => (menuOpen = true)}>{strings.nav.menu}</button>
+    </div>
   </header>
 
   <main>
     <div class="screen-only controls">
+      <LanguageOffer />
+      <TranslationNote />
       <h1>{t.pageTitle}</h1>
       <p>{t.intro}</p>
       <p class="small privacy">{t.kept}</p>
@@ -206,6 +214,10 @@
     padding: 12px 0;
     margin-bottom: 8px;
     border-bottom: 1px solid var(--pk-surface-2);
+  }
+  .tools {
+    display: flex;
+    gap: 8px;
   }
   .brand {
     font-size: 1.15rem;
