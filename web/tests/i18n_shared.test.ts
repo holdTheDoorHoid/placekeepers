@@ -10,6 +10,7 @@ import { applyCatalog, cloneText } from '../src/i18n/catalog.ts';
 import { setLocale } from '../src/i18n/locale.ts';
 import { hasFallback, isolateValue, markFallback } from '../src/i18n/marks.ts';
 import { labelledParts, strings } from '../src/strings.ts';
+import { SIGNS, signsText } from '../src/displacement/watch.ts';
 import { clockWords } from '../src/dossier/rules.ts';
 import { formatDuration, formatMiles } from '../src/survey/sheet.ts';
 import { clock } from '../src/transit/describe.ts';
@@ -113,6 +114,24 @@ describe('joining a label to its value, and a list into a phrase', () => {
       expect(labelledParts('许可证')).toEqual({ label: '许可证：', gap: '', after: '' });
     } finally {
       strings.join.labelled = english;
+    }
+  });
+});
+
+describe('the signs of a displacement watch area', () => {
+  it('are joined the page language way, without the English "and"', () => {
+    const english = strings.join.long;
+    try {
+      setLocale('pt-BR');
+      // As a page in Portuguese has it before its translator writes join.long.
+      const copy = cloneText(strings);
+      applyCatalog(copy, {}, markFallback);
+      strings.join.long = copy.join.long;
+      const text = signsText(SIGNS.prices | SIGNS.renters | SIGNS.mva);
+      expect(text).not.toContain('; and ');
+      expect(text).toMatch(/, .+ e /);
+    } finally {
+      strings.join.long = english;
     }
   });
 });
