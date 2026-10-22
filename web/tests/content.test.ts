@@ -1,4 +1,6 @@
-import { readdirSync } from 'node:fs';
+import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { join } from 'node:path';
+import { marked } from 'marked';
 import { describe, expect, it } from 'vitest';
 import { CONTENT_DIR, readContentPages } from '../plugins/content.ts';
 import { REMOVAL_EMAIL } from '../src/content/removal-email.ts';
@@ -77,5 +79,29 @@ describe('readContentPages', () => {
       expect(text, `content/${slug}.md`).not.toMatch(/remov[a-z]*[^.]*by email|by email[^.]*remov/i);
       expect(text, `content/${slug}.md`).not.toMatch(/follow up by email/i);
     }
+  });
+});
+
+describe('content pages in every language', () => {
+  /** Every Markdown page: content/*.md and content/<code>/*.md. */
+  function pages(): string[] {
+    const out: string[] = [];
+    for (const name of readdirSync(CONTENT_DIR)) {
+      const path = join(CONTENT_DIR, name);
+      if (statSync(path).isDirectory()) out.push(...readdirSync(path).filter((n) => n.endsWith('.md')).map((n) => join(path, n)));
+      else if (name.endsWith('.md') && name !== 'README.md') out.push(path);
+    }
+    return out;
+  }
+
+  it('never turns a wrapped line starting with a number, such as a year, into a list of its own', () => {
+    // Markdown reads "  2026." inside a list item as a new numbered list starting at 2026, with
+    // an empty item: the stray fourth item once on How to do it.
+    const problems: string[] = [];
+    for (const path of pages()) {
+      const html = marked.parse(readFileSync(path, 'utf8'), { async: false });
+      if (/<li>\s*<\/li>/.test(html) || /<ol start="\d{3,}"/.test(html)) problems.push(path.slice(CONTENT_DIR.length + 1));
+    }
+    expect(problems).toEqual([]);
   });
 });
