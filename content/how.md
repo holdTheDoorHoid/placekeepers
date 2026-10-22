@@ -50,9 +50,10 @@ the only step we can suggest is to contact PHDC and ask about the specific parce
 
 ### Privately owned lots
 
-- **Ask the owner.** Many owners can be reached at the mailing address shown on the lot's page. A
-  template letter asking for permission is planned but **not written yet**. Ask the Garden
-  Justice Legal Initiative to look over any agreement before you sign it.
+- **Ask the owner.** Many owners can be reached at the mailing address shown on the lot's page.
+  From a lot page, "Write a letter" opens [a letter asking the owner for permission](../letters/)
+  to care for the lot for a while. **A lawyer has not reviewed it yet, and it is not legal
+  advice.** Ask the Garden Justice Legal Initiative to look over any agreement before you sign it.
 - **Buy it.** An ordinary purchase, though many vacant properties have a tangled title (the owner
   died and the estate was never legally settled), which can make a sale difficult.
 - **Garden adverse possession.** A 2024 Pennsylvania law lets a Philadelphia resident, group, or
@@ -127,6 +128,38 @@ Like any greening, trees can raise nearby prices; see the ways to protect neighb
   it, so you find out fast if someone tries to take your property with a fake deed.
 - Since November 10, 2025, the City automatically blocks any deed where the seller was already
   dead on the date they supposedly signed it.
+
+## Organizing with your neighbors
+
+- **Who represents you.** Every lot page on our list ends with who represents the lot: its ward
+  and division, its City Council member, state representative, state senator and member of
+  Congress, each with their official office and phone, and the Registered Community Organizations
+  whose area covers it, with the contact the City publishes. Each one shows where it comes from and
+  the day it was last checked. Atlas, the City's map, shows the same for any address in its
+  "Voting" view.
+- **Packets.** Save the places you care about to a list, then choose "Make a packet" beside the
+  list (or "Make a packet of these places" above the ranked list in the analysis view). The packet
+  opens in its own tab, ready to print on Letter paper: a cover page with a small map, who to
+  contact, and one page for each place with what its lot page says. It is made in your browser from
+  our weekly copy of the City's records; nothing is sent anywhere.
+- **Letters.** [The letters page](../letters/) has four short letters to fill in and print: to a
+  lot's owner asking permission to care for it, to your City Council office asking support for a
+  side yard, a Land Bank lot or a cleanup, to a Registered Community Organization asking to present
+  your project at a meeting, and a follow up on a Philly311 report that has stayed open. **A lawyer
+  has not reviewed these letters yet. They are not legal advice.** For legal help, use
+  [Grounded in Philly's request form](https://groundedinphilly.org/request-representation/) (the
+  Garden Justice Legal Initiative). The site never sends a letter, and what you type stays in your
+  browser until you clear it.
+- The letter to an owner is offered for a company or a nonprofit, and for a person only where the
+  map is fairly sure the lot is vacant: a lot we are not sure about may be someone's home. City and
+  Land Bank lots go through the Land Bank's programs instead.
+- **A flyer for neighbors.** From a lot page, "Make a flyer for neighbors" makes a sign for the
+  lot's fence: a big headline, the address and a small map, what you hope to do, how neighbors can
+  reach you, and a QR code that opens the lot's page on Placekeepers. It prints on a Letter page or
+  as two half pages to a sheet. What you print is public, so use a group chat link or an email made
+  for the project rather than your home address or personal phone. Before you put it up, read
+  [where you may post it](../posting/): never on utility poles, street lights, traffic signs or
+  street trees, where City code sets fines from $300 a sign.
 
 ## Street and public space permits
 

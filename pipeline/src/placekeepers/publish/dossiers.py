@@ -133,6 +133,13 @@ OPTIONAL = (
     "appeals",
     # The nearest playground in Nearby (M4.7, issue #43)
     "ppr_playgrounds",
+    # Who represents each lot (M5.1, issue #45; publish/contacts.py)
+    "political_divisions",
+    "council_districts",
+    "pa_house_districts",
+    "pa_senate_districts",
+    "us_house_districts",
+    "rco_contacts",
 )
 #: The parts of a dossier whose records are downloaded only for the candidate parcels
 #: (placekeepers.candidates), with the source each comes from. A dossier lists in `partial` the
@@ -216,6 +223,9 @@ class DossierResult:
     history: HistoryResult | None = None
     #: dossiers with each kind of rule, appeals and upcoming hearings (M4.6), for the build notes
     rules: Counter = field(default_factory=Counter)
+    #: the districts and community organizations some dossier's `represent` names (M5.1), for
+    #: tables/contacts.json (publish/contacts.py), or None when no district source has a snapshot
+    represent_used: dict[str, set[str]] | None = None
 
     def manifest_block(self) -> dict[str, Any] | None:
         """The manifest's `dossiers` summary (docs/CONTRACTS.md section 3), or None when no
@@ -1054,6 +1064,22 @@ def build_dossiers(
     lot_rule = lot_rules(accounts, lot_shapes(ctx, paths, set(accounts)), points, rule_set.sets)
     hearings = upcoming_hearings(paths["appeals"], as_of) if "appeals" in paths else []
     near_hearings = hearings_near(hearings, {a: points[a] for a in accounts if a in points})
+    # Who represents each lot (M5.1): its ward and division, Council, state House, state Senate
+    # and Congressional districts, and the community organizations covering its point. Imported
+    # here, beside the other publish steps.
+    from placekeepers.publish.contacts import represent_for, used_districts
+
+    represent, represent_missing = represent_for(
+        ctx, statuses, {a: points[a] for a in accounts if a in points}
+    )
+    if represent:
+        result.represent_used = used_districts(represent)
+    if represent_missing:
+        result.notes.append(
+            "who represents each lot was worked out without "
+            + ", ".join(represent_missing)
+            + "; lot pages say they could not check those"
+        )
     missing_citywide = [
         part
         for part, sources in CITYWIDE_PARTS
@@ -1202,6 +1228,8 @@ def build_dossiers(
             dossier["rules"] = lot_rule[account]
             for key in dossier["rules"]:
                 result.rules[key] += 1
+        if account in represent:
+            dossier["represent"] = represent[account]
         found_appeals = records["appeals"].get(account)
         if found_appeals:
             dossier["appeals"] = found_appeals

@@ -3,6 +3,7 @@
 // only the fields the contract names, so nothing else can reach the page.
 
 import type { Geometry } from 'geojson';
+import type { Represent } from '../represent/contacts.ts';
 import type { LiGroups, ListRecord } from './timeline.ts';
 
 export type VacancyKind = 'lot' | 'building';
@@ -329,6 +330,12 @@ export interface ShardParcel {
   missing: RulePart[];
   /** The lot's frontage and depth in feet, as the assessor records them (M4.6), or null. */
   lotSize: { frontage: number; depth: number } | null;
+  /**
+   * Who represents the lot (M5.1): its ward and division, its Council, state House, state Senate
+   * and Congressional districts and the community organizations covering it, by number
+   * (tables/contacts.json names the people). Null when the dossier has none.
+   */
+  represent: Represent | null;
 }
 
 export interface Shard {

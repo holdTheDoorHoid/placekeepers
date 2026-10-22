@@ -1161,3 +1161,115 @@
   cadence: irregular
   health: {min_rows: 0, max_drop_pct: 100}
   release: v0.5
+# Who represents each lot (M5.1, issue #45; checked 2026-10-21): wards and divisions, the state
+# House and Senate and Congressional districts, the people who hold those seats with their
+# official offices, City Council from the City's own list, and the community organizations'
+# contacts as the City publishes them. pipeline/src/placekeepers/adapters/represent.py keeps only
+# official office addresses, phones and websites for officeholders.
+- id: political_divisions
+  name: Political wards and divisions
+  publisher: City of Philadelphia
+  homepage: https://opendataphilly.org/datasets/political-ward-divisions/
+  # 1,703 divisions on 2026-10-21, last edited 2026-09-10. "3412" is ward 34, division 12.
+  endpoint: {kind: arcgis, service: Political_Divisions, layer: 0}
+  license: city_terms
+  attribution: "Wards and divisions: City of Philadelphia"
+  cadence: irregular
+  health: {min_rows: 1650, max_drop_pct: 3}
+  release: v0.5
+- id: pa_house_districts
+  name: Pennsylvania House districts
+  publisher: U.S. Census Bureau, TIGER/Line Shapefiles
+  homepage: https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html
+  # The 2026 file; each run takes a newer year's file when the Bureau publishes one. Only the
+  # districts reaching Philadelphia are kept (about 30).
+  endpoint: {kind: url, url: "https://www2.census.gov/geo/tiger/TIGER2026/SLDL/tl_2026_42_sldl.zip", format: zip}
+  license: public_domain
+  attribution: "State House districts: U.S. Census Bureau, TIGER/Line Shapefiles"
+  cadence: yearly
+  health: {min_rows: 25, max_drop_pct: 20}
+  release: v0.5
+- id: pa_senate_districts
+  name: Pennsylvania Senate districts
+  publisher: U.S. Census Bureau, TIGER/Line Shapefiles
+  homepage: https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html
+  endpoint: {kind: url, url: "https://www2.census.gov/geo/tiger/TIGER2026/SLDU/tl_2026_42_sldu.zip", format: zip}
+  license: public_domain
+  attribution: "State Senate districts: U.S. Census Bureau, TIGER/Line Shapefiles"
+  cadence: yearly
+  health: {min_rows: 6, max_drop_pct: 30}
+  release: v0.5
+- id: us_house_districts
+  name: Congressional districts in Pennsylvania
+  publisher: U.S. Census Bureau, TIGER/Line Shapefiles
+  homepage: https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html
+  # The file for the Congress now sitting (the 119th, from the 2025 files, on 2026-10-21); each
+  # run looks for the newest year's file for the sitting Congress, so the 120th's districts come
+  # in on its first day, January 3, 2027.
+  endpoint: {kind: url, url: "https://www2.census.gov/geo/tiger/TIGER2025/CD/tl_2025_42_cd119.zip", format: zip}
+  license: public_domain
+  attribution: "Congressional districts: U.S. Census Bureau, TIGER/Line Shapefiles"
+  cadence: yearly
+  health: {min_rows: 3, max_drop_pct: 50}
+  release: v0.5
+- id: pa_legislators
+  name: Pennsylvania General Assembly members
+  publisher: Open States (Plural Policy)
+  homepage: https://open.pluralpolicy.com/data/
+  # The current members, updated about daily (253 on 2026-10-21). CC0. Kept: name, chamber,
+  # district, the district and Capitol offices' addresses and phones, and links (the member's
+  # page on the General Assembly's site is the one shown).
+  endpoint: {kind: url, url: "https://data.openstates.org/people/current/pa.csv", format: csv}
+  license: public_domain
+  attribution: "General Assembly members: Open States (CC0)"
+  cadence: weekly
+  health: {min_rows: 240, max_drop_pct: 5}
+  release: v0.5
+- id: us_legislators
+  name: Members of Congress
+  publisher: The unitedstates/congress-legislators project
+  homepage: https://github.com/unitedstates/congress-legislators
+  # Every current member (539 on 2026-10-21); Pennsylvania's are kept. CC0.
+  endpoint: {kind: url, url: "https://unitedstates.github.io/congress-legislators/legislators-current.json", format: json}
+  license: public_domain
+  attribution: "Members of Congress: unitedstates/congress-legislators (CC0)"
+  cadence: weekly
+  health: {min_rows: 15, max_drop_pct: 20}
+  release: v0.5
+- id: us_legislator_offices
+  name: District offices of members of Congress
+  publisher: The unitedstates/congress-legislators project
+  homepage: https://github.com/unitedstates/congress-legislators
+  # The district offices in Pennsylvania. CC0.
+  endpoint: {kind: url, url: "https://unitedstates.github.io/congress-legislators/legislators-district-offices.json", format: json}
+  license: public_domain
+  attribution: "Congressional district offices: unitedstates/congress-legislators (CC0)"
+  cadence: weekly
+  health: {min_rows: 20, max_drop_pct: 30}
+  release: v0.5
+- id: city_elected_officials
+  name: City elected officials
+  publisher: City of Philadelphia
+  homepage: https://atlas.phila.gov/
+  # The City's own list, the one Atlas shows in its "Voting" view. Only City Council is read:
+  # the 10 district members and the 7 at large (2026-10-21). The General Assembly's rows here
+  # lagged behind (two seats blank), so those come from Open States.
+  endpoint: {kind: carto, table: elected_officials, where: "office IN ('city_council', 'city_council_at_large')"}
+  license: city_terms
+  attribution: "City Council members: City of Philadelphia"
+  cadence: weekly
+  health: {min_rows: 15, max_drop_pct: 15}
+  release: v0.5
+- id: rco_contacts
+  name: Registered Community Organizations' contacts
+  publisher: Philadelphia City Planning Commission
+  homepage: https://opendataphilly.org/datasets/registered-community-organizations-rco-boundaries/
+  # The same layer as community_organizations, read weekly with what the City publishes for
+  # reaching each organization (owner, issue #45: "as the City publishes its contact"). Never the
+  # contact's own address or the alternate contact.
+  endpoint: {kind: arcgis, service: Zoning_RCO, layer: 0}
+  license: city_terms
+  attribution: "Registered Community Organizations: Philadelphia City Planning Commission"
+  cadence: weekly
+  health: {min_rows: 200, max_drop_pct: 15}
+  release: v0.5

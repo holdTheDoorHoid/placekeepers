@@ -147,6 +147,7 @@ export class AppStore {
       history: this.dossier.history,
       hiddenKinds: this.dossier.hiddenKinds,
       projects: this.dossier.projects,
+      contacts: this.dossier.contacts,
     });
   });
 

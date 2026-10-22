@@ -10,7 +10,8 @@
 // Everything here is a plain function of its inputs, so tests can check every state.
 
 import { watchNote, watchSigns, type WatchNote } from '../displacement/watch.ts';
-import { correctionUrl, projectReportUrl, propertyPageUrl, atlasUrl, googleMapsUrl, streetViewUrl, TAX_CENTER_URL } from '../config/links.ts';
+import { correctionUrl, projectReportUrl, propertyPageUrl, atlasUrl, atlasVotingUrl, googleMapsUrl, streetViewUrl, TAX_CENTER_URL } from '../config/links.ts';
+import { representView, type ContactsState, type RepresentView } from '../represent/contacts.ts';
 import { PERMISSION_ROUTES } from '../config/permission.ts';
 import type { Manifest } from '../data/manifest.ts';
 import { explainScore, type ScoreExplanation } from '../map/lens.ts';
@@ -159,6 +160,8 @@ export interface DossierInput {
   hiddenKinds?: readonly TimelineKind[];
   /** The projects neighbors finished (M5.3, tables/projects.json), once asked for. */
   projects?: ProjectsState;
+  /** Who holds each seat and the community organizations' contacts (tables/contacts.json, M5.1). */
+  contacts?: ContactsState;
 }
 
 // Output ------------------------------------------------------------------------------------------
@@ -371,6 +374,8 @@ export interface DossierView {
     layers: { id: string; label: string }[];
     provenance: Provenance;
   };
+  /** Who represents the lot (M5.1): its ward and division, each seat's member and the community organizations. */
+  represent: RepresentView;
   sources: {
     rows: SourceRow[];
     correctionUrl: string;
@@ -1044,6 +1049,10 @@ export function buildDossier(input: DossierInput): DossierView {
       items: projectItems,
       reportUrl: projectReportUrl(opa, address),
     },
+    represent: representView(parcel?.represent ?? null, input.contacts ?? { status: 'idle' }, {
+      listed: parcel !== null || shard.status === 'loading',
+      atlas: { label: strings.represent.atlas, url: atlasVotingUrl(opa) },
+    }),
     sources: { rows: sourceRows, correctionUrl: correctionUrl(opa, address) },
   };
 }

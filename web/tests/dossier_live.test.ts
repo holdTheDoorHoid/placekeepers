@@ -122,8 +122,11 @@ describe('opening a lot page', () => {
     await settle();
     expect(dossier.shard.status).toBe('found');
     expect(Object.values(dossier.live).every((p) => p.status === 'idle')).toBe(true);
-    // Only the site's own data root: the lot's shard and the projects neighbors finished (M5.3).
-    expect(city.asked.filter((k) => !k.startsWith('dossiers/') && k !== 'tables/projects.json')).toEqual([]);
+    // Only the site's own data root: the lot's shard, the projects neighbors finished (M5.3) and,
+    // since M5.1, who represents each lot.
+    expect(
+      city.asked.filter((k) => !k.startsWith('dossiers/') && k !== 'tables/projects.json' && k !== 'tables/contacts.json'),
+    ).toEqual([]);
   });
 
   it('gives up on a slow City after the time limit, so the page falls back to the snapshot', async () => {

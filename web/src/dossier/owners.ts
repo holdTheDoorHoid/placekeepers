@@ -210,6 +210,11 @@ export function possibleEstate(names: string[]): boolean {
   return nameUnits(names).some((unit) => !isOrganization(unit) && ESTATE.test(unit.replace(ESTATE_IGNORE, ' ')));
 }
 
+/** True when a text carries estate wording, the words possibleEstate looks for (M5.1: kept out of letters). */
+export function estateWords(text: string): boolean {
+  return ESTATE.test(text.toUpperCase().replace(ESTATE_IGNORE, ' '));
+}
+
 /** A private owner: a person, a company, a nonprofit, or a name we could not type. */
 export function isPrivate(type: OwnerType, hasNames: boolean): boolean {
   return !PUBLIC_OWNER_TYPES.has(type) && (type !== 'unknown' || hasNames);

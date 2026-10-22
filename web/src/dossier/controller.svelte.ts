@@ -26,6 +26,7 @@ import { isTimelineKind, type TimelineKind } from './timeline.ts';
 import type { DossierNotes } from './types.ts';
 import { readItem, writeItem } from '../state/storage.ts';
 import { loadProjectsTable, type ProjectsState } from '../projects/projects.ts';
+import { loadContacts, type ContactsState } from '../represent/contacts.ts';
 
 /** The kinds of record a reader switched off in the timeline, remembered in this browser only. */
 export const TIMELINE_HIDDEN_KEY = 'timeline-hidden';
@@ -86,6 +87,8 @@ export class DossierController {
    * fetched once, when the first lot page opens.
    */
   projects = $state.raw<ProjectsState>({ status: 'idle' });
+  /** Who holds each seat and the community organizations' contacts (tables/contacts.json, M5.1), loaded once. */
+  contacts = $state.raw<ContactsState>({ status: 'idle' });
 
   private readonly deps: DossierDeps;
   private historyRun: Promise<void> | null = null;
@@ -122,6 +125,7 @@ export class DossierController {
     this.historyRun = null;
     this.start(false);
     void this.loadProjects();
+    void this.loadContacts();
   }
 
   /** Fetches the projects neighbors finished once (again only after a failure). */
@@ -133,6 +137,16 @@ export class DossierController {
     return (async () => {
       const manifest = await this.deps.manifest();
       this.projects = await loadProjectsTable(this.deps.dataBase, manifest, this.deps.fetchImpl);
+    })();
+  }
+
+  /** Fetches tables/contacts.json once per visit (it is small, and every lot page names its representatives). */
+  loadContacts(): Promise<void> {
+    if (this.contacts.status === 'ready' || this.contacts.status === 'loading' || this.contacts.status === 'missing') return Promise.resolve();
+    this.contacts = { status: 'loading' };
+    return (async () => {
+      const manifest = await this.deps.manifest();
+      this.contacts = await loadContacts(this.deps.dataBase, manifest?.files ?? null, this.deps.fetchImpl);
     })();
   }
 

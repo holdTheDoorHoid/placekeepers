@@ -48,6 +48,17 @@ from placekeepers.adapters.projects import ProjectCorrections, ProjectReports
 from placekeepers.adapters.property_records import AssessmentHistory, RealEstateTransfers
 from placekeepers.adapters.pwd_parcels import PwdParcels
 from placekeepers.adapters.redlining import MappingInequality1937
+from placekeepers.adapters.represent import (
+    CityElectedOfficials,
+    PaHouseDistricts,
+    PaLegislators,
+    PaSenateDistricts,
+    PoliticalDivisions,
+    RcoContacts,
+    UsHouseDistricts,
+    UsLegislatorOffices,
+    UsLegislators,
+)
 from placekeepers.adapters.rules import (
     Appeals,
     EpaBrownfields,
@@ -201,6 +212,18 @@ ADAPTERS: dict[str, type[Adapter]] = {
     # the hand entries and corrections in data/curated/interventions.yaml
     "project_reports": ProjectReports,
     "project_corrections": ProjectCorrections,
+    # Who represents each lot (M5.1, issue #45): wards and divisions, the state House and Senate
+    # and Congressional districts, the members in those seats, City Council and the community
+    # organizations' contacts
+    "political_divisions": PoliticalDivisions,
+    "pa_house_districts": PaHouseDistricts,
+    "pa_senate_districts": PaSenateDistricts,
+    "us_house_districts": UsHouseDistricts,
+    "pa_legislators": PaLegislators,
+    "us_legislators": UsLegislators,
+    "us_legislator_offices": UsLegislatorOffices,
+    "city_elected_officials": CityElectedOfficials,
+    "rco_contacts": RcoContacts,
 }
 
 

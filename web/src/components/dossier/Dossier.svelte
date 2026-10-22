@@ -1,8 +1,8 @@
 <script lang="ts">
   // The lot page (docs/DESIGN.md section 5.6), in its sections: Summary, What you can do, Projects
-  // here (M5.3), Rules for this lot, Who owns it, History, Nearby, and Sources and freshness. A
-  // banner says whether the page is live from the City or from the weekly snapshot, and each part
-  // repeats it where it differs.
+  // here (M5.3), Rules for this lot, Who owns it, History, Nearby, Who represents you (M5.1), and
+  // Sources and freshness. A banner says whether the page is live from the City or from the weekly
+  // snapshot, and each part repeats it where it differs.
   import type { Snippet } from 'svelte';
   import type { Manifest } from '../../data/manifest.ts';
   import type { DossierView } from '../../dossier/build.ts';
@@ -14,6 +14,7 @@
   import DossierNearby from './DossierNearby.svelte';
   import DossierOwner from './DossierOwner.svelte';
   import DossierProjects from './DossierProjects.svelte';
+  import DossierRepresent from './DossierRepresent.svelte';
   import DossierRules from './DossierRules.svelte';
   import DossierSources from './DossierSources.svelte';
   import DossierSummary from './DossierSummary.svelte';
@@ -61,6 +62,7 @@
     { key: 'owner', label: s.sections.owner },
     { key: 'history', label: s.sections.history },
     { key: 'nearby', label: s.sections.nearby },
+    { key: 'represent', label: strings.represent.title },
     { key: 'sources', label: s.sections.sources },
   ] as const;
 
@@ -155,6 +157,10 @@
     <section aria-labelledby="{idPrefix}-nearby-title">
       <h3 id="{idPrefix}-nearby-title" tabindex="-1">{s.sections.nearby}</h3>
       <DossierNearby nearby={view.nearby} onShowLayer={actions.onShowLayer} />
+    </section>
+    <section aria-labelledby="{idPrefix}-represent-title">
+      <h3 id="{idPrefix}-represent-title" tabindex="-1">{strings.represent.title}</h3>
+      <DossierRepresent represent={view.represent} />
     </section>
     <section aria-labelledby="{idPrefix}-sources-title">
       <h3 id="{idPrefix}-sources-title" tabindex="-1">{s.sections.sources}</h3>

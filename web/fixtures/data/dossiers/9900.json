@@ -271,7 +271,19 @@
           "appellant": "EXAMPLE DARNELL",
           "owner": "EXAMPLE DARNELL"
         }
-      ]
+      ],
+      "represent": {
+        "ward": "37",
+        "division": "3712",
+        "council": "7",
+        "house": "195",
+        "senate": "3",
+        "congress": "3",
+        "rcos": [
+          54,
+          203
+        ]
+      }
     },
     "990000002": {
       "address": "1203 N SAMPLE ST",
@@ -445,6 +457,17 @@
             "m": 38
           }
         ]
+      },
+      "represent": {
+        "ward": "37",
+        "division": "3712",
+        "council": "7",
+        "house": "195",
+        "senate": "3",
+        "congress": "3",
+        "rcos": [
+          203
+        ]
       }
     },
     "990000004": {
@@ -604,6 +627,17 @@
         },
         "overlays": [
           "o878f2af2"
+        ]
+      },
+      "represent": {
+        "ward": "37",
+        "division": "3714",
+        "council": "7",
+        "house": "195",
+        "senate": "3",
+        "congress": "3",
+        "rcos": [
+          203
         ]
       }
     },
@@ -784,7 +818,18 @@
           "appellant": "QUINN SAMPLE; SAMPLE HOLDINGS LLC",
           "owner": "SAMPLE HOLDINGS LLC"
         }
-      ]
+      ],
+      "represent": {
+        "ward": "37",
+        "division": "3714",
+        "council": "7",
+        "house": "195",
+        "senate": "3",
+        "congress": "3",
+        "rcos": [
+          203
+        ]
+      }
     },
     "990000009": {
       "address": "1313 N EXAMPLE AVE",
@@ -943,6 +988,18 @@
         "overlays": [
           "o878f2af2"
         ]
+      },
+      "represent": {
+        "ward": "38",
+        "division": "3801",
+        "council": "5",
+        "house": "181",
+        "senate": "3",
+        "congress": "3",
+        "rcos": [
+          203,
+          310
+        ]
       }
     },
     "990000013": {
@@ -1000,6 +1057,17 @@
         },
         "overlays": [
           "o878f2af2"
+        ]
+      },
+      "represent": {
+        "ward": "38",
+        "division": "3801",
+        "council": "5",
+        "house": "181",
+        "senate": "3",
+        "congress": "3",
+        "rcos": [
+          310
         ]
       }
     },
@@ -1135,6 +1203,17 @@
         "overlays": [
           "o878f2af2"
         ]
+      },
+      "represent": {
+        "ward": "38",
+        "division": "3803",
+        "council": "5",
+        "house": "197",
+        "senate": "3",
+        "congress": "2",
+        "rcos": [
+          310
+        ]
       }
     },
     "990000033": {
@@ -1269,6 +1348,14 @@
         "overlays": [
           "o878f2af2"
         ]
+      },
+      "represent": {
+        "ward": "38",
+        "division": "3803",
+        "council": "5",
+        "house": "197",
+        "senate": "3",
+        "congress": "2"
       }
     },
     "990000098": {
@@ -1310,6 +1397,17 @@
         },
         "overlays": [
           "o878f2af2"
+        ]
+      },
+      "represent": {
+        "ward": "43",
+        "division": "4321",
+        "council": "7",
+        "house": "201",
+        "senate": "3",
+        "congress": "2",
+        "rcos": [
+          54
         ]
       }
     },

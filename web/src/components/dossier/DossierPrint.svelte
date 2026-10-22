@@ -107,6 +107,13 @@
     {#each m.history.li as line (line)}<p>{line}</p>{/each}
   </section>
 
+  {#if m.represent}
+    <section>
+      <h2>{strings.represent.title}</h2>
+      <p>{m.represent}</p>
+    </section>
+  {/if}
+
   <section>
     <h2>{s.sections.sources}</h2>
     <ul class="sources">{#each m.sources as line (line)}<li>{line}</li>{/each}</ul>

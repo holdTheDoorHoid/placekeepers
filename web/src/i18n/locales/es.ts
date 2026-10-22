@@ -92,6 +92,7 @@ const es: Catalog = {
       { slug: 'responsibly', label: 'Úselo con responsabilidad' },
       { slug: 'vacant-land', label: 'Cómo encontramos terrenos vacíos' },
       { slug: 'streetcomplete', label: 'Revisar paradas de autobús' },
+      { slug: 'posting', label: 'Dónde poner un volante' },
       { slug: 'terms', label: 'Condiciones' },
       { slug: 'privacy', label: 'Privacidad' },
       { slug: 'contact', label: 'Contacto' },
