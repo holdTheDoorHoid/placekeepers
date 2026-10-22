@@ -87,3 +87,22 @@ sẵn" does not read as "free to take". The words for "listed" and "noted as" ar
 label. Contact page: says people can write in Vietnamese and that we read it with a translation
 tool; promises no reply.
 
+## Russian (ru)
+
+Checked 109 items. Same meaning: 109. Changed: 0. Nothing needed fixing.
+
+Small differences, kept:
+
+| Place | Russian | Back translation | English | Why kept |
+|---|---|---|---|---|
+| `flyer.whereNot`, and the flyer line on How to do it | "штраф от $300 за каждую листовку или табличку" | a fine from $300 for each flyer or sign | fines from $300 a sign | "Or flyer" says the rule covers the paper itself. The amount is the same. |
+| `letters.gate.public` | "Вместо этого обращайтесь через программы Land Bank для соседей" | Instead, apply through the Land Bank's programs for neighbors | Ask through the Land Bank's programs for neighbors instead | Same meaning. "Обращайтесь" is "go to, apply to". |
+| `projects.tellUsNote` | "никогда не прикладывайте фото с лицом ребёнка или любого человека, не давшего согласия" | never attach a photo with the face of a child or of anyone who has not agreed | Photos stay on GitHub: never with the face of a child or of anyone who did not agree | The Russian speaks to the reader ("do not attach"), which is what the rule asks of them. Same rule. |
+
+Listed as available: every place says "внесли в список доступных" or "указывает как доступный"
+(entered in the list of available ones, indicates as available), the City's own label, never an
+offer. The same word "доступный" also means "affordable" in "доступное жилье" (the City status
+"held for affordable housing"), which is correct there and does not confuse the two. Contact page:
+says people can write in Russian and that we read it with a translation program; promises no
+reply.
+
