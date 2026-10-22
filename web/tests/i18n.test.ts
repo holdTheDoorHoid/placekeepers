@@ -241,8 +241,11 @@ describe('falling back to English', () => {
     expect(plainText(`\u2066a\u2069 \u2067b\u2069 ${address}`)).toBe('a b 1305 N EXAMPLE AVE');
     const english = cloneText(strings);
     applyCatalog(english, { place: { parcel: (id: string) => `القطعة ${id}` } }, markFallback, { isolate: isolateValue });
-    expect(english.place.parcel('990000005')).toBe('القطعة \u2068990000005\u2069');
+    expect(english.place.parcel('1305 N EXAMPLE AVE')).toBe('القطعة \u20681305 N EXAMPLE AVE\u2069');
     expect(english.place.parcel.length).toBe(1);
+    // Codes reach templates as they are, so a template can still compare them.
+    expect(english.place.parcel('990000005')).toBe('القطعة 990000005');
+    expect(english.lens.allOffFor('segment')).toBe(markFallback(strings.lens.allOffFor('segment')));
   });
 
   it('writes a catalog into the English object in place, leaf by leaf', () => {

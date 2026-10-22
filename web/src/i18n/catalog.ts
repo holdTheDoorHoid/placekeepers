@@ -59,9 +59,17 @@ function isBag(value: unknown): value is Bag {
   return !!value && typeof value === 'object' && !Array.isArray(value);
 }
 
-/** A template that marks what it returns, keeping the original's argument count. */
-function markedTemplate(fn: (...args: unknown[]) => unknown, mark: (text: string) => string): (...args: unknown[]) => unknown {
-  const wrapped = (...args: unknown[]) => markValue(fn(...args), mark);
+/**
+ * A template that marks what it returns, keeping the original's argument count. On a right to
+ * left page its text values are isolated too, so a date in Arabic stays whole inside an English
+ * sentence.
+ */
+function markedTemplate(
+  fn: (...args: unknown[]) => unknown,
+  mark: (text: string) => string,
+  isolate?: (text: string) => string,
+): (...args: unknown[]) => unknown {
+  const wrapped = (...args: unknown[]) => markValue(fn(...(isolate ? isolated(args, isolate) : args)), mark);
   Object.defineProperty(wrapped, 'length', { value: fn.length });
   return wrapped;
 }
@@ -73,9 +81,18 @@ function markValue(value: unknown, mark: (text: string) => string): unknown {
   return value;
 }
 
+/**
+ * The values a template is given, with each piece of text of more than one word isolated (right to
+ * left pages). A single word is left alone: it cannot fall out of order, and templates compare
+ * codes such as "segment" or "memorials", which must reach them as they are.
+ */
+function isolated(args: unknown[], isolate: (text: string) => string): unknown[] {
+  return args.map((a) => (typeof a === 'string' && /\s/.test(a.trim()) ? isolate(a) : a));
+}
+
 /** A translated template whose text values are isolated before it uses them (right to left pages). */
 function isolatingTemplate(fn: (...args: unknown[]) => unknown, isolate: (text: string) => string): (...args: unknown[]) => unknown {
-  const wrapped = (...args: unknown[]) => fn(...args.map((a) => (typeof a === 'string' ? isolate(a) : a)));
+  const wrapped = (...args: unknown[]) => fn(...isolated(args, isolate));
   Object.defineProperty(wrapped, 'length', { value: fn.length });
   return wrapped;
 }
@@ -132,7 +149,7 @@ function mergeValue(
       report.translated.push(path);
     } else {
       if (tr !== undefined) report.mismatched.push(path);
-      box[key] = markedTemplate(en as (...args: unknown[]) => unknown, mark);
+      box[key] = markedTemplate(en as (...args: unknown[]) => unknown, mark, how.isolate);
       report.fallback.push(path);
     }
   } else if (Array.isArray(en)) {
