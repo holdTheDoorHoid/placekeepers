@@ -16,7 +16,7 @@ and `content/<code>/`:
 | Flyer: `flyer.publicWarning`, `publicCaution`, `whereLead`, `whereNot` | 4 |
 | Projects: `projects.tellUsNote`, `projects.privacy` | 2 |
 | Who represents you: `represent.officialOnly` | 1 |
-| Listed as available, interface text: the nearby card and filter chip, the legend line, the Land Bank in numbers page (12 keys, its source line, its download line, the agency help line), the lot page box (11 keys), the City list lines on the owner section (5 keys, 4 agency names, 17 City statuses) | 51 |
+| Listed as available, interface text: the nearby card and filter chip, the legend line, the Land Bank in numbers page (12 keys, its source line, its download line, the agency help line), the lot page box (11 keys), the City list lines on the owner section (5 keys, 4 agency names, 17 City statuses) | 55 |
 | Listed as available, registry text: the layer setting label and its two options, and the displacement watch description | 4 |
 | Flyer, off limits and public warning on the Where to post a flyer page: the five places that are fine, the five that are off limits (sections 10-1202 and 10-1203, fines of $300 and up to $2,000, trees at least $300 a day, windshields under 10-711 and 10-723.2 at $100, mailboxes, SEPTA treated as off limits), and the "what you print is public" line | 11 |
 | How to do it page: the listed as available paragraph, the "Ask the owner" letter line, the Letters line, the line on when the owner letter is offered, the flyer line, and the "Tell us about a project you finished" section (an opening and five bullets) | 11 |
@@ -32,9 +32,36 @@ Use this responsibly) I back translated before opening the English. Each item wa
 meaning, softened, strengthened, changed, or a wrong fact (a number, code section or dollar
 amount). Every change of meaning and every wrong fact was fixed in place.
 
-Two automatic checks backed up the reading: the numbers, section codes and dollar amounts in every
-item were compared with the English (a script listed every digit sequence in both and I read the
-differences), and every translation was searched for dashes used as punctuation.
+Two automatic checks backed up the reading. First, a script listed every number, section code
+and dollar amount in each interface item, registry item and content section, in both the English
+and the translation, and I read every difference. The only differences were the date in the
+displacement watch description (the English writes 2026-10-09, each translation writes it in words
+in its own language). No number, code section or dollar amount was wrong. Second, the project's own
+dash rule found no dash used as punctuation in this file, and `tests/strings.test.ts` and
+`tests/i18n.test.ts` check every catalog, registry file and content page.
+
+I also read four more lines beside these in all nine languages and found them the same meaning:
+`flyer.byNeighbors` ("not by the City or the owner"), `flyer.kept`, `letters.kept` and
+`letters.intro`. They are not counted in the totals below.
+
+## Summary
+
+| Language | Items checked | Same meaning | Fixed | What was fixed |
+|---|---|---|---|---|
+| Spanish (es) | 109 | 109 | 0 | |
+| Chinese (zh-Hans) | 109 | 109 | 0 | |
+| Vietnamese (vi) | 109 | 109 | 0 | |
+| Russian (ru) | 109 | 109 | 0 | |
+| Portuguese, Brazil (pt-BR) | 109 | 109 | 0 | |
+| Haitian Creole (ht) | 109 | 109 | 0 | |
+| Khmer (km) | 109 | 109 | 0 | three questions for a native speaker |
+| French (fr) | 109 | 107 | 2 | "post whatever you want" on your own property; "people can ask for it" in a listed status |
+| Arabic (ar) | 109 | 108 | 1 | "not very sure" where English says "not sure" in the reason the owner letter is held back |
+
+Across all nine languages: 981 items, 3 changed and fixed, 0 wrong facts. Nothing in any language
+mentions buying, prices, taxes owed, death or estates in the owner letter, every language says the
+owner can say no and ask us to stop at any time, and no language promises a reply in its own
+language on the Contact page.
 
 ## Spanish (es)
 
@@ -173,7 +200,7 @@ colons, semicolons, question marks and the dollar sign were not touched.
 | Key or place | French text | Back translation | English | What changed |
 |---|---|---|---|---|
 | `content/fr/posting.md`, Where to post a flyer, "Your own window, door or fence" | "Votre propre propriété, c'est à vous d'y afficher ce que vous voulez." | Your own property, it is for you to post there whatever you want. | Your own property is yours to post on. | Strengthened. "Whatever you want" is not in English and reads as no limit at all, on a page about what the law does limit (the next sentence is about the window sign limit). Now "Vous pouvez afficher sur votre propre propriété." |
-| `dossier.owner.cityStatuses.OWNED - AVAILABLE`, second text | "La Land Bank le montre sur sa carte des propriétés que les gens peuvent demander." | The Land Bank shows it on its map of properties that people can ask for. | The Land Bank shows it on its map of properties people can apply for. | Reads as an invitation. "Demander" is the casual "ask for", close to the "you can ask for it" wording the project rules out for the listed status (no wording about ease of acquisition). Every other language has the formal "apply" (a request that goes through a process). Now "pour lesquelles les gens peuvent déposer une demande". |
+| `dossier.owner.cityStatuses`, the plain "available" status, second text | "La Land Bank le montre sur sa carte des propriétés que les gens peuvent demander." | The Land Bank shows it on its map of properties that people can ask for. | The Land Bank shows it on its map of properties people can apply for. | Reads as an invitation. "Demander" is the casual "ask for", close to the "you can ask for it" wording the project rules out for the listed status (no wording about ease of acquisition). Every other language has the formal "apply" (a request that goes through a process). Now "pour lesquelles les gens peuvent déposer une demande". |
 
 Small differences, kept:
 
