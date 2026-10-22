@@ -189,7 +189,7 @@ de proteger os vizinhos em [Use com responsabilidade](../responsibly/).
 | Moderar o tráfego em uma rua residencial (lombadas e similares) | Departamento de Ruas | 60% do quarteirão assina um abaixo-assinado | Pedir é grátis | Analisado três vezes por ano; instalado de maio a outubro |
 | Fazer uma festa de quarteirão ou um evento na rua | Departamento de Ruas e o distrito policial | 75% dos domicílios para uma festa de quarteirão, 90% para outros eventos | US$ 25 a US$ 150 | Peça com 21 dias de antecedência |
 | Fazer uma Playstreet no verão | Parques e Recreação | Abaixo-assinado de 75%, um morador supervisor, uma pequena rua de mão única | Grátis | Só no verão |
-| Tornar-se Capitão de Quarteirão (Block Captain) e organizar mutirões de limpeza | Departamento de Ruas | 51% do quarteirão assina | Grátis | Até três mutirões organizados por verão, com ferramentas fornecidas |
+| Tornar-se Capitão de Quarteirão (Block Captain) e organizar mutirões de limpeza | Departamento de Limpeza Urbana (Department of Sanitation, Philadelphia More Beautiful Committee) | 51% do quarteirão assina | Grátis | Até três mutirões organizados por verão, com ferramentas fornecidas |
 | Participar do Philly Spring Cleanup | Departamento de Ruas e PHS | Inscrever-se | Vassouras, luvas e sacos grátis | Primavera |
 | Construir um parklet | OTIS | Mostrar apoio da comunidade e fazer um seguro | Não informado | Sazonal, de abril a novembro; a análise pode levar meses |
 | Pedir uma árvore de rua grátis | Parques e Recreação (TreePhilly) | O proprietário do imóvel em frente ao qual ela ficaria faz o pedido | Grátis: a Prefeitura planta e rega no primeiro ano | A próxima época de plantio |

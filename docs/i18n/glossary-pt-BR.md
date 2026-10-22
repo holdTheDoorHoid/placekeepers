@@ -166,7 +166,10 @@ terras da Filadélfia", and the longer pages give that once in parentheses.
 | graffiti | Grafite | Not used: "pichação" (see above). |
 
 Names of offices the City does not publish in Portuguese are translated here, with the English
-name in parentheses on first use in a page: Departamento de Registros (Department of Records),
+name in parentheses on first use in a page: Departamento de Limpeza Urbana (Department of
+Sanitation, which runs the Block Captain program through the Philadelphia More Beautiful Committee;
+phila.gov/pt says only "saneamento", which in Brazil means water and sewers, so it is not used),
+Departamento de Registros (Department of Records),
 Departamento de Licenças e Inspeções (L&I), Departamento de Ruas (Streets Department), Departamento
 de Águas (Water Department), Departamento de Planejamento e Desenvolvimento, Escritório de Transporte
 e Sistemas de Infraestrutura (OTIS), Comissão Histórica (Historical Commission), Conselho de Ajuste de
