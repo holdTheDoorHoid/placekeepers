@@ -1458,6 +1458,9 @@ layers:
     settings:
       shade:
         label: "Tô đậm nhạt các khu (tắt thì chỉ hiện đường viền và xếp loại)"
+  projects:
+    label: "Các dự án hàng xóm đã hoàn thành"
+    description: "Các buổi dọn dẹp, vườn, chỗ ngồi, tranh tường, cây xanh, ghế ngồi và mái che của Thành phố, và các việc sửa qua 311 mà hàng xóm đã hoàn thành và cho chúng tôi biết. Placekeepers đọc và duyệt mỗi báo cáo trước khi nó xuất hiện. Hãy chạm vào một dự án để xem đã làm gì, khi nào, và cần những gì, kèm liên kết đến báo cáo và các ảnh của nó trên GitHub. Bản đồ không bao giờ hiện ai đã gửi một báo cáo, chỉ hiện tên một nhóm mà họ chọn."
 
 sources:
   opa_properties:
@@ -1727,3 +1730,36 @@ sources:
   ppr_playgrounds:
     name: "Các sân chơi"
     publisher: "Thành phố Philadelphia, Parks and Recreation"
+  project_reports:
+    name: "Các dự án hàng xóm đã hoàn thành, được báo qua biểu mẫu GitHub của trang web"
+    publisher: "Hàng xóm, qua biểu mẫu \"Hãy cho chúng tôi biết về một dự án bạn đã hoàn thành\" của Placekeepers"
+  project_corrections:
+    name: "Các dự án hàng xóm đã hoàn thành, các mục nhập thủ công và chỉnh sửa"
+    publisher: "Placekeepers"
+  political_divisions:
+    name: "Các ward và division chính trị"
+    publisher: "Thành phố Philadelphia"
+  pa_house_districts:
+    name: "Các khu vực của Hạ viện Pennsylvania"
+    publisher: "U.S. Census Bureau, TIGER/Line Shapefiles"
+  pa_senate_districts:
+    name: "Các khu vực của Thượng viện Pennsylvania"
+    publisher: "U.S. Census Bureau, TIGER/Line Shapefiles"
+  us_house_districts:
+    name: "Các khu vực bầu cử Quốc hội ở Pennsylvania"
+    publisher: "U.S. Census Bureau, TIGER/Line Shapefiles"
+  pa_legislators:
+    name: "Các thành viên Pennsylvania General Assembly"
+    publisher: "Open States (Plural Policy)"
+  us_legislators:
+    name: "Các thành viên Quốc hội Hoa Kỳ"
+    publisher: "Dự án unitedstates/congress-legislators"
+  us_legislator_offices:
+    name: "Các văn phòng khu vực của các thành viên Quốc hội Hoa Kỳ"
+    publisher: "Dự án unitedstates/congress-legislators"
+  city_elected_officials:
+    name: "Các quan chức dân cử của Thành phố"
+    publisher: "Thành phố Philadelphia"
+  rco_contacts:
+    name: "Thông tin liên hệ của các Tổ chức Cộng đồng Đã đăng ký (RCO)"
+    publisher: "Philadelphia City Planning Commission"
