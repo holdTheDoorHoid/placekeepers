@@ -1598,7 +1598,7 @@ const fr: Catalog = {
       council: "La législation du Conseil municipal, où le Conseil approuve chaque cession de la Land Bank",
       method: 'Comment nous comptons, en détail',
       deedsLink: 'Les transferts de biens immobiliers de la Ville',
-      programsLink: 'Le tableau du tableau de bord de gestion des terres de la Ville',
+      programsLink: 'Le tableau de données du tableau de bord de gestion des terres de la Ville',
     },
     csv: {
       years: (agency) => `Cessions par année et par agence (les quatre agences et chacune ; cette page montrait ${agency}).`,
