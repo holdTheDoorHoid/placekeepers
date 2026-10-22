@@ -13,7 +13,7 @@
   import LanguageOffer from '../components/language/LanguageOffer.svelte';
   import LanguagePicker from '../components/language/LanguagePicker.svelte';
   import TranslationNote from '../components/language/TranslationNote.svelte';
-  import { OUTCOMES, VERDICTS, detailLines, loadTable, tally, verdictSentence, type DiditTable, type KindBlock } from './data.ts';
+  import { OUTCOMES, VERDICTS, checkLines, loadTable, numberLines, tally, verdictSentence, type DiditTable, type KindBlock } from './data.ts';
 
   const t = strings.didit;
   const TRIAL_URLS = [TRIAL_GREENING_URL, TRIAL_SHOOTINGS_URL, TRIAL_HOUSES_URL];
@@ -122,11 +122,12 @@
           {#each OUTCOMES as outcome (outcome)}
             {@const r = kind.results.find((x) => x.outcome === outcome)}
             {#if r}
-              {@const lines = detailLines(r)}
+              {@const lines = checkLines(r)}
               <article class="result" data-outcome={outcome} data-verdict={r.verdict}>
                 <h3>{t.outcomes[outcome]}</h3>
                 <p class="verdict {r.verdict}"><strong>{t.verdictLabels[r.verdict]}.</strong></p>
                 {#each verdictSentence(kind.id, r, table.rules) as line (line)}<p>{line}</p>{/each}
+                {#each numberLines(r) as line (line)}<p class="small numbers">{line}</p>{/each}
                 {#if lines.length}
                   <h4 class="checks-title">{t.checksTitle}</h4>
                   <ul class="checks small">
@@ -149,8 +150,9 @@
                 <h3>{t.outcomes[outcome]}</h3>
                 <p class="verdict {r.verdict}"><strong>{t.verdictLabels[r.verdict]}.</strong></p>
                 {#each verdictSentence('projects', r, table.rules) as line (line)}<p>{line}</p>{/each}
+                {#each numberLines(r) as line (line)}<p class="small numbers">{line}</p>{/each}
                 <ul class="checks small">
-                  {#each detailLines(r) as line (line)}<li>{line}</li>{/each}
+                  {#each checkLines(r) as line (line)}<li>{line}</li>{/each}
                 </ul>
               </article>
             {/if}
@@ -268,6 +270,9 @@
     border-radius: var(--pk-radius);
     background: var(--pk-surface);
   }
+  .numbers {
+    color: var(--pk-muted);
+  }
   .checks-title {
     margin: 10px 0 2px;
     font-size: 0.9rem;
@@ -284,6 +289,7 @@
   }
   @media print {
     .tools,
+    .back,
     .no-print,
     header :global(.offer) {
       display: none !important;

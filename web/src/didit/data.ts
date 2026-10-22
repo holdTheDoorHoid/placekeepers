@@ -160,15 +160,21 @@ export function verdictSentence(kind: Kind, r: Result, rules: DiditTable['rules'
   }
 }
 
-/** The lines under a comparison: the numbers, then each check. */
-export function detailLines(r: Result): string[] {
-  const noun = t().outcomeNouns[r.outcome]!;
+/** The numbers behind a comparison: what was compared, and the counts before and after. */
+export function numberLines(r: Result): string[] {
   const m = r.main;
+  if (m.places === 0 || !r.cohorts) return [];
+  return [
+    t().compared(m.places, halfWords(r.cohorts[0]), halfWords(r.cohorts[1]), m.areas),
+    t().counts(m.before, m.after, Math.round(m.expected)),
+  ];
+}
+
+/** The checks of a comparison: the placebo, the ring around, the later care, the simple before
+ * and after. */
+export function checkLines(r: Result): string[] {
+  const noun = t().outcomeNouns[r.outcome]!;
   const lines: string[] = [];
-  if (m.places > 0 && r.cohorts) {
-    lines.push(t().compared(m.places, halfWords(r.cohorts[0]), halfWords(r.cohorts[1]), m.areas));
-    lines.push(t().counts(m.before, m.after, Math.round(m.expected)));
-  }
   if (r.check === 'too_few') lines.push(t().checks.tooFew);
   else if (r.placebo.percent !== null) {
     const words = [changeWords(r.placebo.percent), rangeWords(r.placebo), r.placebo.places] as const;
@@ -181,8 +187,13 @@ export function detailLines(r: Result): string[] {
   if (r.later.percent !== null && r.later.places > 0) {
     lines.push(t().checks.later(changeWords(r.later.percent), rangeWords(r.later), r.later.places));
   }
-  if (r.naive !== null && m.places > 0) lines.push(t().checks.naive(changeWords(r.naive), noun));
+  if (r.naive !== null && r.main.places > 0) lines.push(t().checks.naive(changeWords(r.naive), noun));
   return lines;
+}
+
+/** Everything under a comparison's verdict, in order. */
+export function detailLines(r: Result): string[] {
+  return [...numberLines(r), ...checkLines(r)];
 }
 
 /** How many comparisons ended each way, for the short answer (projects with no places left out). */
