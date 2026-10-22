@@ -94,6 +94,13 @@ all three places. English is the source of every word.
 | fiscal year | exercice | July to June |
 | Then and now (layer group) | Hier et aujourd'hui | |
 | issue (GitHub) | issue GitHub | "ticket" is avoided |
+| packet (lot packet, "Make a packet") | dossier ("Préparer un dossier") | a printable set of pages for a meeting; the lot page stays "la page du terrain" |
+| flyer (the sign for a fence) | affiche ("Faire une affiche pour les voisins", "Où placer une affiche") | "prospectus" only for handbills left on cars |
+| ward, division | ward, division | Philadelphia's voting districts; the ward is glossed once as « circonscription électorale », and "committee people" as « responsables du comité » |
+| letter greeting without a name | « Madame, Monsieur, » | with a name, « Bonjour Nom, »; neighbors of an organization, « Chers voisins de Nom, » |
+| a report of a finished project | compte rendu | never "signalement", which means a report of a problem |
+| project neighbors finished | projet terminé par des voisins | the layer is « Projets terminés par des voisins » |
+| "has not been reviewed by a lawyer, is not legal advice" | « Un avocat n'a pas encore relu cette lettre. Ce n'est pas un avis juridique. » | the same words on the letters page, in the packet and on the How to do it page |
 
 ## Names kept in English
 

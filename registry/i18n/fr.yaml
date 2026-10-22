@@ -689,7 +689,7 @@ layers:
             label: "Seulement ceux indiqués comme ouverts"
   dumping:
     label: "Dépôts sauvages signalés au 311"
-    description: "Les tronçons où quelqu'un a interrogé Philly311 sur un dépôt sauvage au cours des 90 derniers jours, avec le nombre de demandes et l'indication qu'une demande est encore ouverte ou non. Compté par tronçon de rue, jamais par adresse, et sans rien sur qui a signalé. Une demande montre que quelqu'un a remarqué et a demandé de l'aide ; certains tronçons demandent plus souvent que d'autres, donc peu de demandes ne veut pas dire un tronçon propre."
+    description: "Les tronçons où quelqu'un a contacté Philly311 au sujet d'un dépôt sauvage au cours des 90 derniers jours, avec le nombre de demandes et l'indication qu'une demande est encore ouverte ou non. Compté par tronçon de rue, jamais par adresse, et sans rien sur qui a signalé. Une demande montre que quelqu'un a remarqué et a demandé de l'aide ; certains tronçons demandent plus souvent que d'autres, donc peu de demandes ne veut pas dire un tronçon propre."
     settings:
       show:
         label: "Afficher les tronçons avec"
