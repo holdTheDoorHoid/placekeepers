@@ -153,6 +153,30 @@ test.describe('letters', () => {
     await noSidewaysScroll(page);
   });
 
+  test('a letter written from a page in Spanish prints in English, with a translation on screen', async ({ page }) => {
+    await offline(page);
+    await page.goto('./letters/?lang=es#opa=990000005&t=owner');
+    const letter = page.getByTestId('letter');
+    await expect(letter).toContainText('Dear property owner,');
+    await expect(letter).toContainText('A lawyer has not reviewed this letter yet. It is not legal advice.');
+    await expect(letter.locator('[lang="en"]').first()).toBeAttached();
+    // The sender reads what the letter says in Spanish, on screen only.
+    const translation = page.getByTestId('letter-translation');
+    await expect(translation).toContainText('Estimado/a propietario/a:');
+    await page.emulateMedia({ media: 'print' });
+    await expect(translation).toBeHidden();
+    await expect(letter).toBeVisible();
+    await page.emulateMedia({ media: 'screen' });
+
+    // Chosen: the letter prints in Spanish, says its translation is not yet checked, and needs no second copy.
+    await page.getByTestId('letter-language').getByRole('radio', { name: 'Español' }).check();
+    await expect(letter).toContainText('Estimado/a propietario/a:');
+    await expect(letter).toContainText('Un abogado todavía no ha revisado esta carta.');
+    await expect(letter).toContainText('Traducido con ayuda de inteligencia artificial');
+    await expect(translation).toHaveCount(0);
+    await expectAccessible(page, 'a letter from a page in Spanish');
+  });
+
   test('what is typed into a letter never leaves the browser, and one button clears it', async ({ page, context }) => {
     const seen = watchRequests(context);
     await offline(page);

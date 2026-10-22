@@ -13,10 +13,12 @@
 
 import {
   CITY_TIME_ZONE,
+  clockFormat,
   decimalFormat,
   formatDateIn,
   moneyFormat,
   numberFormat,
+  listFormat,
   timeFormat,
 } from './i18n/locale.ts';
 import type { Evidence } from './registry/types.ts';
@@ -57,6 +59,14 @@ export function formatTime(ms: number): string {
   return timeFormat().format(new Date(ms));
 }
 
+/**
+ * A time on the clock in the page's language, from hours (0 to 23) and minutes: "6:50 AM" in
+ * English, "6:50" in Portuguese. For times the City or SEPTA write down, not moments.
+ */
+export function formatClock(hours: number, minutes: number): string {
+  return clockFormat().format(new Date(Date.UTC(1970, 0, 1, hours, minutes)));
+}
+
 /** CITY WORDS become "City words": for descriptions the City writes in capitals. */
 export function sentenceCase(text: string): string {
   const lower = text.toLowerCase().replace(/\s+/g, ' ').trim();
@@ -77,6 +87,28 @@ function giveOrTake(margin: number | null, unit: 'points' | 'homes'): string {
 export function distanceWords(meters: number): string {
   if (meters < 1000) return strings.units.meters(Math.round(meters / 10) * 10);
   return strings.units.kilometers(Math.round(meters / 100) / 10);
+}
+
+/** "a, b and c" in the page's language (Intl.ListFormat): "a, b y c" in Spanish, "a、b和c" in Chinese. */
+export function formatList(items: readonly string[]): string {
+  return listFormat().format(items);
+}
+
+/** A character no label holds, to find where strings.join.labelled puts its value. */
+const VALUE_SPOT = '\uE000';
+
+/**
+ * strings.join.labelled split around its value, for markup that sets the label in bold or makes
+ * the value a link: { label: "License:", gap: " ", after: "" } in English, "Licence\u202F:" and " "
+ * in French, "许可证：" and "" in Chinese.
+ */
+export function labelledParts(label: string, join: Pick<typeof strings.join, 'labelled' | 'colon'> = strings.join): { label: string; gap: string; after: string } {
+  const whole = join.labelled(label, VALUE_SPOT);
+  const at = whole.indexOf(VALUE_SPOT);
+  if (at < 0) return { label: join.colon(label), gap: ' ', after: '' };
+  const head = whole.slice(0, at);
+  const lead = head.trimEnd();
+  return { label: lead, gap: head.slice(lead.length), after: whole.slice(at + VALUE_SPOT.length) };
 }
 
 /** A change in percent in words: "up 61%", "down 3%", "unchanged". */
@@ -140,6 +172,27 @@ export const strings = {
   units: {
     meters: (n: number) => `${formatNumber(n)} meters`,
     kilometers: (km: number) => `${formatDecimal(km, 1)} kilometers`,
+    /** Miles with one decimal, for a walk on a survey sheet: "0.4 miles", "10.3 miles". */
+    miles: (miles: number) => `${formatDecimal(miles, 1)} miles`,
+    /** A walk shorter than the shortest the sheet shows: "less than 0.1 miles". */
+    lessThanMiles: (miles: number) => `less than ${formatDecimal(miles, 1)} miles`,
+  },
+
+  // How pieces of text are joined, so each language joins them its own way (the translators' fix
+  // pass, issue #49). A language that leaves these out still gets them right and never marked as
+  // English (src/i18n/catalog.ts, OWN_FALLBACKS): the punctuation after a label as English writes
+  // it, and lists in the page language's own way (Intl.ListFormat), never with the English "and".
+  join: {
+    /** "Route: 47": a label and its value as one piece of text. French writes "Ligne\u202F: 47", Chinese "路线：47". */
+    labelled: (label: string, value: string) => `${label}: ${value}`,
+    /** "Protections:": a label alone, before a list. */
+    colon: (label: string) => `${label}:`,
+    /** "a, b and c": a short list, such as the plans in a letter to an owner. */
+    and: (items: string[]) => (items.length <= 1 ? items.join('') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`),
+    /** "a; b; and c": long phrases that may hold commas themselves, such as the signs of a displacement watch area. */
+    long: (items: string[]) => (items.length <= 1 ? items.join('') : `${items.slice(0, -1).join('; ')}; and ${items.at(-1)}`),
+    /** "A and B": the owners a letter is addressed to, as the City lists them. */
+    names: (names: string[]) => names.join(' and '),
   },
 
   header: {
@@ -877,9 +930,19 @@ export const strings = {
     kept: 'What you type is kept in this browser only, so you can come back to it. Nothing is sent anywhere.',
     notKept: 'This browser is not keeping what you type right now, perhaps a private window. Print before you close the page.',
     preview: 'The letter',
+    // The letter's language, on a page in another language (orchestrator, 2026-10-22): the offices,
+    // organizations and owners these letters go to mostly read English, so a letter prints in
+    // English unless the sender chooses the page's language, and the sender sees a translation.
+    language: 'Letter language',
+    languageHelp:
+      'The offices, community organizations and owners these letters go to mostly read English, so the letter prints in English unless you choose your language.',
+    translationTitle: 'Your letter in your language',
+    translationNote: 'So you know what you sign. Only the letter above is printed; this translation stays on your screen.',
     salutation: (name: string) => `Dear ${name},`,
     dearOwner: 'Dear property owner,',
     sincerely: 'Sincerely,',
+    /** The signature line before the sender types a name. */
+    yourName: '[your name]',
     reachMe: (contact: string) => `You can reach me at ${contact}.`,
     reachMeBlank: 'You can reach me at [how to reach you].',
     thanks: 'Thank you for considering this.',
@@ -1622,6 +1685,13 @@ export const strings = {
     } as Record<string, string>,
     estimateTitle: 'How long it takes',
     estimate: (time: string) => `Our estimate: ${time} for one person or pair.`,
+    /**
+     * How long a walk takes, our estimate rounded to 5 minutes (src/survey/sheet.ts,
+     * formatDuration): "about 45 minutes", "about 1 hour", "about 1 hour 15 minutes". `hours` may
+     * be 0; `minutes` is 0 to 55. It fills in `estimate` and `partEstimate`.
+     */
+    duration: (hours: number, minutes: number) =>
+      `about ${[hours ? plural(hours, 'hour', 'hours') : '', minutes || !hours ? `${formatNumber(minutes)} minutes` : ''].filter(Boolean).join(' ')}`,
     estimateBasis:
       'This is our own estimate, not a measurement: walking about 3 miles an hour from stop to stop, and about a minute at each stop. Getting to the first stop and home is extra.',
     trolleyTunnel:

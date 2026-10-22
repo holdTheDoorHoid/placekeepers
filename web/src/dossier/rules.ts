@@ -14,19 +14,19 @@
 // safe. Everything is a plain function of its inputs.
 
 import { atlasZoningUrl, epaRecordUrl, FIND_HISTORIC_URL, HISTORIC_PROJECT_REVIEW_URL, HISTORICAL_COMMISSION_URL, liHistoryUrl, TAKE_PART_URLS, ZONING_HELP_URL } from '../config/links.ts';
-import { formatDate, strings } from '../strings.ts';
+import { formatClock, formatDate, strings } from '../strings.ts';
 import { isUpcoming, nextHearing } from './appeals.ts';
 import { cityWords, plain } from './plain.ts';
 import type { Appeal, AppealBoard, Link, LotRules, Overlay, RulePart } from './types.ts';
 
 const r = () => strings.dossier.rules;
 
-/** "15:30" as "3:30 PM". */
+/** "15:30" as "3:30 PM" in English, and in the page language's own way ("15:30" in Portuguese). */
 export function clockWords(clock: string | null): string | null {
   if (!clock) return null;
   const [h, m] = clock.split(':').map(Number) as [number, number];
   if (!Number.isFinite(h) || !Number.isFinite(m)) return null;
-  return `${h % 12 === 0 ? 12 : h % 12}:${String(m).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}`;
+  return formatClock(h, m);
 }
 
 function day(value: string | null): string | null {

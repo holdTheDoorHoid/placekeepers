@@ -15,12 +15,19 @@
   import type { ShardParcel } from '../dossier/types.ts';
   import { ListStore } from '../places/lists.svelte.ts';
   import { loadContacts, rcoRows, type ContactsState } from '../represent/contacts.ts';
-  import { formatDate, strings } from '../strings.ts';
+  import { englishStrings } from '../i18n/english.ts';
+  import { languageOf, type LanguageCode } from '../i18n/languages.ts';
+  import { currentLanguage, currentLocale, withLocale } from '../i18n/locale.ts';
+  import { formatDate, labelledParts, strings } from '../strings.ts';
   import Dialog from '../components/common/Dialog.svelte';
   import SiteNav from '../components/common/SiteNav.svelte';
+  import LanguageOffer from '../components/language/LanguageOffer.svelte';
+  import LanguagePicker from '../components/language/LanguagePicker.svelte';
+  import TranslationNote from '../components/language/TranslationNote.svelte';
   import { ownerAddressee, ownerLetterGate } from './gate.ts';
+  import LetterBody from './LetterBody.svelte';
   import { draftKey, LetterDrafts } from './storage.ts';
-  import { buildLetter, EMPTY_FIELDS, isTemplate, TEMPLATES, type LetterFields, type TemplateId } from './templates.ts';
+  import { buildLetter, EMPTY_FIELDS, isTemplate, TEMPLATES, type LetterFields, type LetterText, type TemplateId } from './templates.ts';
 
   const l = strings.letters;
   const f = l.fields;
@@ -40,6 +47,13 @@
   const drafts = new LetterDrafts();
   let version = $state(0);
   let rcoChoice = $state<string | null>(null);
+  /**
+   * The language the letter prints in: English by default, since the people it goes to mostly
+   * read English, or the page's own language when the sender chooses it (orchestrator, 2026-10-22).
+   */
+  const pageCode = currentLocale();
+  let letterCode = $state<LanguageCode>('en');
+  const textOf = (code: LanguageCode): LetterText => (code === pageCode ? strings : englishStrings());
 
   const gate = $derived(ownerLetterGate(parcel));
   const key = $derived(draftKey(template, opa));
@@ -49,22 +63,40 @@
   const rco = $derived(rcos.find((r) => r.id === rcoChoice) ?? rcos[0] ?? null);
   const lotTitle = $derived(plain(parcel?.address ?? null) ?? list?.places.find((p) => p.id === opa)?.address ?? null);
 
-  /** What the City's records fill in for this letter, before anything is typed. */
-  const prefill = $derived.by((): Partial<LetterFields> => {
+  /** What the City's records fill in for this letter, before anything is typed, in a letter's language. */
+  function prefillIn(code: LanguageCode): Partial<LetterFields> {
     const lot = lotTitle ?? '';
     if (template === 'owner') {
-      const to = ownerAddressee(parcel, plain);
+      const to = ownerAddressee(parcel, plain, textOf(code).join.names);
       return { lotAddress: lot, recipientName: to.name, recipientAddress: to.address };
     }
     if (template === 'rco') return { lotAddress: lot, recipientName: rco?.name ?? '', recipientAddress: rco?.address ?? '' };
     return { lotAddress: lot, recipientName: seat?.name ?? '', recipientAddress: seat?.offices[0]?.address ?? '' };
-  });
+  }
 
-  const values = $derived.by((): LetterFields => {
+  /** The fields as a letter in this language uses them: what was typed, as typed, over what is filled in. */
+  function valuesIn(code: LanguageCode): LetterFields {
     void version;
-    return { ...EMPTY_FIELDS, date: formatDate(new Date().toISOString()) ?? '', ...prefill, ...drafts.get(key) };
+    const today = withLocale(code, () => formatDate(new Date().toISOString())) ?? '';
+    return { ...EMPTY_FIELDS, date: today, ...prefillIn(code), ...drafts.get(key) };
+  }
+
+  /** The letter in a language, with that language's words, numbers and dates. */
+  function letterIn(code: LanguageCode) {
+    return withLocale(code, () => buildLetter(template, valuesIn(code), textOf(code)));
+  }
+
+  // The form shows what fills the printed letter.
+  const values = $derived(valuesIn(letterCode));
+  const letter = $derived(letterIn(letterCode));
+  /** On screen only, beside an English letter on a page in another language: what it says, in the sender's language. */
+  const translation = $derived(letterCode !== pageCode ? letterIn(pageCode) : null);
+  /** The note at the top of the printed letter, in the letter's language. */
+  const note = $derived.by(() => {
+    const words = textOf(letterCode);
+    return { words: words.letters, label: labelledParts(words.letters.senderNote, words.join), help: words.join.labelled(words.letters.legalHelpShort, GROUNDED_LEGAL_HELP_URL) };
   });
-  const letter = $derived(buildLetter(template, values));
+  const letterLanguage = $derived(languageOf(letterCode));
   const offered = $derived(template !== 'owner' || gate.offered);
   const prefilled = $derived(
     (template === 'owner' ? !!parcel?.owner : template === 'rco' ? !!rco : !!seat) && generatedAt ? l.prefilledFrom(l.cityRecords, formatDate(generatedAt) ?? '') : null,
@@ -149,15 +181,20 @@
 <div class="page">
   <header class="topbar screen-only">
     <a class="brand" href={config.siteBase}>{strings.app.name}</a>
-    <button class="button quiet small" type="button" aria-haspopup="dialog" onclick={() => (menuOpen = true)}>{strings.nav.menu}</button>
+    <div class="tools">
+      <LanguagePicker />
+      <button class="button quiet small" type="button" aria-haspopup="dialog" onclick={() => (menuOpen = true)}>{strings.nav.menu}</button>
+    </div>
   </header>
 
   <main>
     <div class="screen-only">
+      <LanguageOffer />
+      <TranslationNote />
       <h1>{l.pageTitle}</h1>
       <p class="unreviewed" role="note">
         <strong>{l.unreviewed}</strong>
-        {l.legalHelp}: <a href={GROUNDED_LEGAL_HELP_URL} target="_blank" rel="noopener noreferrer">{GROUNDED_LEGAL_HELP_URL}</a>
+        {#if true}{@const help = labelledParts(l.legalHelp)}{help.label}{help.gap}<a href={GROUNDED_LEGAL_HELP_URL} target="_blank" rel="noopener noreferrer">{GROUNDED_LEGAL_HELP_URL}</a>{help.after}{/if}
       </p>
       <p>{l.intro}</p>
       <p class="small privacy">{drafts.persistent ? l.kept : l.notKept}</p>
@@ -255,6 +292,18 @@
           </div>
         </form>
       {/if}
+      {#if offered && pageCode !== 'en'}
+        <fieldset class="field language" data-testid="letter-language">
+          <legend>{l.language}</legend>
+          <p class="muted small">{l.languageHelp}</p>
+          {#each ['en', pageCode] as const as code (code)}
+            <label class="check">
+              <input type="radio" name="pk-letter-language" value={code} checked={letterCode === code} onchange={() => (letterCode = code)} />
+              <span lang={code} dir={languageOf(code).dir}>{languageOf(code).name}</span>
+            </label>
+          {/each}
+        </fieldset>
+      {/if}
       <div class="row">
         {#if offered}<button class="button primary" type="button" onclick={() => window.print()}>{l.print}</button>{/if}
         <button class="button quiet" type="button" onclick={clearAll}>{l.clear}</button>
@@ -265,17 +314,24 @@
 
     {#if offered}
       <article class="letter-sheet" aria-label={l.preview} data-testid="letter">
-        <aside class="sender-note">
-          <strong>{l.senderNote}:</strong> {l.unreviewed} {l.legalHelpShort}: {GROUNDED_LEGAL_HELP_URL}
-        </aside>
-        {#if letter.date}<p class="date">{letter.date}</p>{/if}
-        {#if letter.to.length}<p class="to">{#each letter.to as line, i (i)}{line}<br />{/each}</p>{/if}
-        {#if letter.subject}<p><strong>{letter.subject}</strong></p>{/if}
-        <p>{letter.salutation}</p>
-        {#each letter.paragraphs as paragraph, i (i)}<p>{paragraph}</p>{/each}
-        <p class="closing">{letter.closing}</p>
-        <p class="signature">{#each letter.signature as line, i (i)}{line}<br />{/each}</p>
+        <div lang={letterCode} dir={letterLanguage.dir}>
+          <aside class="sender-note">
+            <strong>{note.label.label}</strong>{note.label.gap}{note.words.unreviewed} {note.help}{note.label.after}
+            <!-- A letter in a language not yet checked by a native speaker says so, in that language. -->
+            {#if letterCode !== 'en' && !currentLanguage().reviewed}<br />{strings.language.aiNote}{/if}
+          </aside>
+          <LetterBody {letter} />
+        </div>
       </article>
+      {#if translation}
+        <section class="translation screen-only" aria-labelledby="pk-letter-translation" data-testid="letter-translation">
+          <h2 id="pk-letter-translation" class="preview-title">{l.translationTitle}</h2>
+          <p class="muted small">{l.translationNote}</p>
+          <div class="letter-sheet">
+            <LetterBody letter={translation} />
+          </div>
+        </section>
+      {/if}
     {/if}
   </main>
 </div>
@@ -298,6 +354,10 @@
     padding: 12px 0;
     margin-bottom: 8px;
     border-bottom: 1px solid var(--pk-surface-2);
+  }
+  .tools {
+    display: flex;
+    gap: 8px;
   }
   .brand {
     font-size: 1.15rem;
@@ -411,7 +471,7 @@
     font: 11pt/1.45 Georgia, 'Times New Roman', serif;
     overflow-wrap: anywhere;
   }
-  .letter-sheet p {
+  .letter-sheet :global(p) {
     margin: 0 0 10px;
   }
   .sender-note {
@@ -420,14 +480,15 @@
     border: 1px solid #555;
     font: 8.5pt/1.3 var(--pk-font, sans-serif);
   }
-  .date {
-    margin-bottom: 16px !important;
+  .letter-sheet :global(.date),
+  .letter-sheet :global(.to) {
+    margin-bottom: 16px;
   }
-  .to {
-    margin-bottom: 16px !important;
+  .letter-sheet :global(.closing) {
+    margin-top: 16px;
   }
-  .closing {
-    margin-top: 16px !important;
+  .language {
+    margin: 12px 0 0;
   }
   p[role='status']:empty {
     margin: 0;

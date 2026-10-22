@@ -17,6 +17,9 @@
   import { formatDate, strings } from '../strings.ts';
   import Dialog from '../components/common/Dialog.svelte';
   import SiteNav from '../components/common/SiteNav.svelte';
+  import LanguageOffer from '../components/language/LanguageOffer.svelte';
+  import LanguagePicker from '../components/language/LanguagePicker.svelte';
+  import TranslationNote from '../components/language/TranslationNote.svelte';
   import StaticMapView from '../components/print/StaticMapView.svelte';
   import RcoCard from '../components/represent/RcoCard.svelte';
   import SeatCard from '../components/represent/SeatCard.svelte';
@@ -149,11 +152,16 @@
 <div class="page">
   <header class="topbar screen-only">
     <a class="brand" href={config.siteBase}>{strings.app.name}</a>
-    <button class="button quiet small" type="button" aria-haspopup="dialog" onclick={() => (menuOpen = true)}>{strings.nav.menu}</button>
+    <div class="tools">
+      <LanguagePicker />
+      <button class="button quiet small" type="button" aria-haspopup="dialog" onclick={() => (menuOpen = true)}>{strings.nav.menu}</button>
+    </div>
   </header>
 
   <main>
     <section class="controls screen-only" aria-labelledby="pk-packet-title">
+      <LanguageOffer />
+      <TranslationNote />
       <h1 id="pk-packet-title">{t.pageTitle}</h1>
       <p>{t.intro}</p>
       {#if sources.length === 0}
@@ -378,6 +386,10 @@
     padding: 12px 0;
     margin-bottom: 8px;
     border-bottom: 1px solid var(--pk-surface-2);
+  }
+  .tools {
+    display: flex;
+    gap: 8px;
   }
   .brand {
     font-size: 1.15rem;

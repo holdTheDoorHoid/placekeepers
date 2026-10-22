@@ -196,6 +196,19 @@ describe('the files', () => {
     expect(exportFileName('', now, 'csv')).toBe('placekeepers-places-2026-10-04.csv');
   });
 
+  it('keeps a title in any script in the file name, and nothing a file name may not hold', () => {
+    const now = new Date('2026-10-04T16:00:00Z');
+    expect(exportFileName('Мой список: дворы', now, 'csv')).toBe('placekeepers-мой-список-дворы-2026-10-04.csv');
+    expect(exportFileName('我的地点 第二批', now, 'csv')).toBe('placekeepers-我的地点-第二批-2026-10-04.csv');
+    expect(exportFileName('أماكني', now, 'csv')).toBe('placekeepers-أماكني-2026-10-04.csv');
+    expect(exportFileName('ទីកន្លែងរបស់ខ្ញុំ', now, 'csv')).toBe('placekeepers-ទីកន្លែងរបស់ខ្ញុំ-2026-10-04.csv');
+    // Accents on Latin letters are dropped, as before.
+    expect(exportFileName('Calle Ñandú, café', now, 'csv')).toBe('placekeepers-calle-nandu-cafe-2026-10-04.csv');
+    // No slash, colon, star or question mark, and no invisible mark that turns text around.
+    expect(exportFileName('a\u202Eb/c:d*e?f\u2066g\u2069', now, 'csv')).toBe('placekeepers-a-b-c-d-e-f-g-2026-10-04.csv');
+    expect([...exportFileName('Сады '.repeat(20), now, 'csv').slice('placekeepers-'.length, -'-2026-10-04.csv'.length)]).toHaveLength(40);
+  });
+
   it('never uses words for buying or for how easy a lot is to get', () => {
     const texts = collectStrings({ permission: strings.permission, export: strings.export, plot: strings.plot, lists: strings.lists, filters: strings.filters });
     const offenders = texts.filter(([, text]) => /\b(easiest|easy|acquire|acquisition|buy|take)\b/i.test(text));

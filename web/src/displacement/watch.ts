@@ -59,11 +59,12 @@ export function signIds(bits: number): SignId[] {
   return SIGN_ORDER.filter((id) => (bits & SIGNS[id]) !== 0);
 }
 
-/** The signs in words, joined into one clause. */
+/**
+ * The signs in words, joined into one clause in the page's language: with semicolons in English
+ * ("a; b; and c"), as each sign is a long phrase (strings.join.long). It also fills the CSV column.
+ */
 export function signsText(bits: number): string {
-  const words = signIds(bits).map((id) => strings.displacement.signShort[id]);
-  if (words.length <= 1) return words.join('');
-  return `${words.slice(0, -1).join('; ')}; and ${words.at(-1)}`;
+  return strings.join.long(signIds(bits).map((id) => strings.displacement.signShort[id]));
 }
 
 export interface ProtectionLink {

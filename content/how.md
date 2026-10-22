@@ -168,7 +168,7 @@ Like any greening, trees can raise nearby prices; see the ways to protect neighb
 | Calm traffic on a residential street (speed humps and similar) | Streets Department | 60% of the block signs a petition | Free to ask | Reviewed three times a year; installed May to October |
 | Hold a block party or street event | Streets Department and the police district | 75% of households for a block party, 90% for other events | $25 to $150 | Apply 21 days ahead |
 | Run a Playstreet for the summer | Parks and Recreation | 75% petition, a resident supervisor, a small one way street | Free | Summer only |
-| Become a Block Captain and run cleanups | Streets Department | 51% of the block signs | Free | Up to three organized cleanups a summer, with tools provided |
+| Become a Block Captain and run cleanups | Department of Sanitation (Philadelphia More Beautiful Committee) | 51% of the block signs | Free | Up to three organized cleanups a summer, with tools provided |
 | Join Philly Spring Cleanup | Streets Department and PHS | Register | Free brooms, gloves, and bags | Spring |
 | Build a parklet | OTIS | Show community support and get insurance | Not stated | Seasonal, April through November; review can take months |
 | Ask for a free street tree | Parks and Recreation (TreePhilly) | The owner of the property it would stand in front of asks | Free: the City plants it and waters it the first year | The next planting season |
@@ -247,8 +247,8 @@ done nearby and what it took.
 ## Money to help pay for it
 
 - The City's Division of Safe Neighborhoods runs community violence prevention grants: about $24
-  million went to 147 groups in June 2025, and a new $25 million round was announced on June 17,
-  2026.
+  million went to 147 groups in June 2025, and a new $25 million round was announced on June
+  17, 2026.
 - Feet First Philly offers public space mini grants of $500 to $2,500, for projects that make a
   neighborhood easier to walk and roll in. Applications open in August and are due in October.
 - The Block Party Bonanza (a free kit and a gift card) was a 2026 only program and ended on

@@ -12,13 +12,29 @@ import { LANGUAGES, languageOf, type Language, type LanguageCode } from './langu
 export const CITY_TIME_ZONE = 'America/New_York';
 
 let active: LanguageCode = 'en';
-const cache = new Map<string, Intl.DateTimeFormat | Intl.NumberFormat | Intl.PluralRules>();
+type Formatter = Intl.DateTimeFormat | Intl.NumberFormat | Intl.PluralRules | Intl.ListFormat;
+const cache = new Map<string, Formatter>();
 
 /** Sets the page's language. Called by the boot step, and by tests that check a catalog. */
 export function setLocale(code: LanguageCode): void {
   if (code === active) return;
   active = code;
   cache.clear();
+}
+
+/**
+ * Runs `fn` with the formatters of another language (numbers, dates, times, lists), then puts the
+ * page's back: for text the page writes in a language other than its own, such as a letter
+ * printed in English from a page in Spanish. `fn` must not wait for anything.
+ */
+export function withLocale<T>(code: LanguageCode, fn: () => T): T {
+  const before = active;
+  setLocale(code);
+  try {
+    return fn();
+  } finally {
+    setLocale(before);
+  }
 }
 
 /** The page's language code, such as "en", "es" or "zh-Hans". */
@@ -35,7 +51,7 @@ export function isSourceLocale(): boolean {
   return active === 'en';
 }
 
-function cached<T extends Intl.DateTimeFormat | Intl.NumberFormat | Intl.PluralRules>(key: string, make: (intl: string) => T): T {
+function cached<T extends Formatter>(key: string, make: (intl: string) => T): T {
   const full = `${active}|${key}`;
   let hit = cache.get(full) as T | undefined;
   if (!hit) {
@@ -70,6 +86,20 @@ export function compactMoneyFormat(): Intl.NumberFormat {
 /** A time of day in Philadelphia: "2:14 PM", "14:14". */
 export function timeFormat(): Intl.DateTimeFormat {
   return cached('time', (intl) => new Intl.DateTimeFormat(intl, { hour: 'numeric', minute: '2-digit', timeZone: CITY_TIME_ZONE }));
+}
+
+/**
+ * A time on a clock rather than a moment: SEPTA's "6:50 AM" or a hearing's "3:30 PM", shown in
+ * the page language's own way ("6:50", "6:50 a.m.") whatever time zone the visitor is in. Format
+ * a Date made with Date.UTC(1970, 0, 1, hours, minutes).
+ */
+export function clockFormat(): Intl.DateTimeFormat {
+  return cached('clock', (intl) => new Intl.DateTimeFormat(intl, { hour: 'numeric', minute: '2-digit', timeZone: 'UTC' }));
+}
+
+/** "a, b and c" in the page's language: "a, b y c" in Spanish, "a、b和c" in Chinese. */
+export function listFormat(): Intl.ListFormat {
+  return cached('list', (intl) => new Intl.ListFormat(intl, { type: 'conjunction' }));
 }
 
 /** The plural category of a count in the page's language ("one", "few", "many", "other" ...). */

@@ -29,7 +29,7 @@
 </script>
 
 <section class="lens" aria-labelledby="{idPrefix}-lens-{lens.id}">
-  <svelte:element this={`h${level}`} id="{idPrefix}-lens-{lens.id}" class="lens-title">{strings.lens.title}: {lens.label}</svelte:element>
+  <svelte:element this={`h${level}`} id="{idPrefix}-lens-{lens.id}" class="lens-title">{strings.join.labelled(strings.lens.title, lens.label)}</svelte:element>
   <p class="muted small">{lens.description}</p>
 
   {#if lens.presets.length}

@@ -12,6 +12,7 @@
 import type { Registry } from '../registry/types.ts';
 import { strings } from '../strings.ts';
 import { applyCatalog, type ApplyReport, type Catalog } from './catalog.ts';
+import { keepEnglish } from './english.ts';
 import {
   addressWithLanguage,
   decideLanguage,
@@ -96,6 +97,40 @@ function showsAll(): boolean {
   return import.meta.env.DEV || (typeof __PK_E2E__ !== 'undefined' && __PK_E2E__);
 }
 
+/**
+ * End to end tests only (the PK_E2E build): parts of a catalog and content pages a test asks to
+ * leave out before the page loads (window.__PK_E2E_LEAVE_OUT__, set with addInitScript), so the
+ * English fallback and its lang="en" marking stay tested however complete the translations
+ * become (e2e/language.spec.ts). Always null on the published site.
+ */
+interface LeaveOut {
+  /** Key paths of the catalog, such as "search" or "search.placeholder". */
+  strings?: string[];
+  /** Content page slugs, such as "about". */
+  pages?: string[];
+}
+
+function leftOutForTests(): LeaveOut | null {
+  if (typeof __PK_E2E__ === 'undefined' || !__PK_E2E__) return null;
+  return (window as unknown as { __PK_E2E_LEAVE_OUT__?: LeaveOut }).__PK_E2E_LEAVE_OUT__ ?? null;
+}
+
+/** A copy of the catalog without the given key paths; what it shares with the original is never changed. */
+function withoutKeys(catalog: Catalog, paths: readonly string[]): Catalog {
+  const root: Record<string, unknown> = { ...catalog };
+  for (const path of paths) {
+    const parts = path.split('.');
+    let holder = root;
+    for (const part of parts.slice(0, -1)) {
+      const next = holder[part];
+      if (!next || typeof next !== 'object' || Array.isArray(next)) break;
+      holder = holder[part] = { ...(next as Record<string, unknown>) };
+    }
+    delete holder[parts.at(-1)!];
+  }
+  return root as Catalog;
+}
+
 function setDocumentLanguage(code: LanguageCode): void {
   const root = document.documentElement;
   root.lang = code;
@@ -128,7 +163,11 @@ export async function startLanguage(options: { registry?: Registry } = {}): Prom
       setLocale(code);
       // On a right to left page, values a template fills in keep their own direction.
       const rtl = languageOf(code).dir === 'rtl';
-      stringsReport = applyCatalog(strings, catalog.default, markFallback, rtl ? { isolate: isolateValue } : {});
+      // The English words stay at hand for a letter printed in English (src/i18n/english.ts).
+      keepEnglish();
+      const leaveOut = leftOutForTests()?.strings;
+      const words = leaveOut?.length ? withoutKeys(catalog.default, leaveOut) : catalog.default;
+      stringsReport = applyCatalog(strings, words, markFallback, rtl ? { isolate: isolateValue } : {});
       if (options.registry && registryText) registryReport = applyRegistryText(options.registry, registryText.default);
     } catch (error) {
       console.warn(`Placekeepers could not load the words for "${code}", so this page is in English.`, error);
@@ -157,7 +196,9 @@ export async function startLanguage(options: { registry?: Registry } = {}): Prom
 export async function loadContentPages(code: LanguageCode): Promise<Record<string, string> | null> {
   if (code === 'en') return null;
   try {
-    return (await CONTENT[code]()).default;
+    const pages = (await CONTENT[code]()).default;
+    const leaveOut = leftOutForTests()?.pages;
+    return leaveOut?.length ? Object.fromEntries(Object.entries(pages).filter(([slug]) => !leaveOut.includes(slug))) : pages;
   } catch (error) {
     console.warn(`Placekeepers could not load the pages for "${code}".`, error);
     return null;

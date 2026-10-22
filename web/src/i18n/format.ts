@@ -1,10 +1,10 @@
 // Helpers for writing catalogs (src/i18n/locales/<code>.ts): plural forms through
-// Intl.PluralRules, and the number, money and date formatters of web/src/strings.ts, which follow
-// the page's language. A catalog imports what it needs from here.
+// Intl.PluralRules, and the number, money, date, time, list and distance formatters of
+// web/src/strings.ts, which follow the page's language. A catalog imports what it needs from here.
 
 import { numberFormat, pluralCategory } from './locale.ts';
 
-export { formatDate, formatMoney, formatNumber, formatTime, formatDecimal } from '../strings.ts';
+export { distanceWords, formatClock, formatDate, formatDecimal, formatList, formatMoney, formatNumber, formatTime } from '../strings.ts';
 
 /**
  * One form per plural category the language uses, with "#" where the number goes. `other` is

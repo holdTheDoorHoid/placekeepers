@@ -298,7 +298,7 @@ export function csvCell(value: string | number | null, text = true): string {
 }
 
 function flagsText(flags: ExportFlag[]): string {
-  return flags.map((f) => `${f.title}: ${f.text}`).join(' | ');
+  return flags.map((f) => strings.join.labelled(f.title, f.text)).join(' | ');
 }
 
 /** The CSV file: the notes (terms first) as lines starting with "#", then a header and the rows. */
@@ -330,14 +330,26 @@ export function toGeoJson(result: ExportResult): string {
   return `{"terms_of_use": ${JSON.stringify(terms)},\n${body.slice(2)}\n`;
 }
 
-/** A file name such as "placekeepers-places-in-view-2026-10-04.csv". */
+/**
+ * A file name such as "placekeepers-places-in-view-2026-10-04.csv". The title keeps its letters
+ * and digits in any script ("placekeepers-мои-места-2026-10-04.csv"), with accents on Latin
+ * letters dropped as before ("cafe"). Everything else becomes a hyphen, so no character a system
+ * forbids in file names, and no invisible direction mark, reaches the name.
+ */
 export function exportFileName(title: string, now: Date, extension: 'csv' | 'geojson'): string {
-  const slug = title
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 40);
+  const slug = [
+    ...title
+      .toLowerCase()
+      .normalize('NFKD')
+      // Accents on Latin letters go; marks that belong to other scripts (Khmer vowels, Arabic
+      // vowel signs) stay, put back together with their letters.
+      .replace(/(\p{Script=Latin})\p{M}+/gu, '$1')
+      .normalize('NFC')
+      .replace(/[^\p{L}\p{M}\p{N}]+/gu, '-')
+      .replace(/^[-\p{M}]+|-+$/gu, ''),
+  ]
+    .slice(0, 40)
+    .join('');
   const day = now.toISOString().slice(0, 10);
   return `placekeepers-${slug || 'places'}-${day}.${extension}`;
 }

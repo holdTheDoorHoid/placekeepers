@@ -75,7 +75,7 @@ export interface PrintModel {
 function listingLines(listing: DossierView['actions']['listing'], watchPointer: string | null): PrintModel['listing'] {
   if (!listing) return null;
   const sideYard = listing.sideYard ? `${listing.sideYardLead} ${listing.sideYard.route.label}.` : null;
-  const links = listing.links.map((link) => `${link.label}: ${link.url}`);
+  const links = listing.links.map((link) => strings.join.labelled(link.label, link.url));
   return {
     title: listing.title,
     lines: [
@@ -108,7 +108,7 @@ function rulesLines(view: DossierView): string[] {
 function representLine(view: DossierView): string | null {
   const r = view.represent;
   if (r.status !== 'ready') return null;
-  const parts = [r.ward, ...r.rows.filter((row) => row.seat).map((row) => `${row.office}, ${row.district}: ${row.seat!.name}`)].filter(Boolean);
+  const parts = [r.ward, ...r.rows.filter((row) => row.seat).map((row) => strings.join.labelled(`${row.office}, ${row.district}`, row.seat!.name))].filter(Boolean);
   return parts.length ? `${parts.join('. ')}.` : null;
 }
 
@@ -127,12 +127,12 @@ export function printModel(view: DossierView, now: Date = new Date()): PrintMode
   const printed = view.actions.suggestions.slice(0, PRINT_LIMITS.suggestions);
   const watch =
     view.actions.watch && (view.actions.listing || printed.some((item) => displacementCaution(item.suggestion.id) !== null))
-      ? { text: view.actions.watch.text, links: view.actions.watch.links.map((link) => `${link.label}: ${link.url}`) }
+      ? { text: view.actions.watch.text, links: view.actions.watch.links.map((link) => strings.join.labelled(link.label, link.url)) }
       : null;
   const watchPointer = watch ? strings.displacement.printSeeAbove : null;
   const taxCenter = strings.dossier.print.taxCenter(view.owner.tax.link.url);
   const tax = view.owner.tax.flag
-    ? `${view.owner.tax.flag.title}: ${view.owner.tax.flag.text} ${taxCenter}`
+    ? `${strings.join.labelled(view.owner.tax.flag.title, view.owner.tax.flag.text)} ${taxCenter}`
     : `${view.owner.tax.text ?? ''} ${taxCenter}`.trim();
   return {
     title: view.title,
@@ -185,7 +185,7 @@ export function printModel(view: DossierView, now: Date = new Date()): PrintMode
       notInCopy: view.history.notInCopy?.text ?? null,
     },
     represent: representLine(view),
-    sources: view.sources.rows.slice(0, PRINT_LIMITS.sources).map((r) => `${r.name}: ${r.when}`),
+    sources: view.sources.rows.slice(0, PRINT_LIMITS.sources).map((r) => strings.join.labelled(r.name, r.when)),
     moreSources:
       view.sources.rows.length > PRINT_LIMITS.sources ? strings.dossier.print.moreSources(view.sources.rows.length - PRINT_LIMITS.sources) : null,
     notLegalAdvice: strings.app.notAffiliated,

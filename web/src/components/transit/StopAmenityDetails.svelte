@@ -21,7 +21,7 @@
   <h4>{s.factsTitle}</h4>
   <ul class="facts">
     {#each stop.answers as item (item.key)}
-      <li class:unknown={!item.known}>{item.label}: {item.value}{#if item.nearby} ({s.nearby}){/if}</li>
+      <li class:unknown={!item.known}>{strings.join.labelled(item.label, item.value)}{#if item.nearby} ({s.nearby}){/if}</li>
     {/each}
   </ul>
   {#if stop.anyUnknown}<p class="muted small">{s.unknownNote}</p>{/if}

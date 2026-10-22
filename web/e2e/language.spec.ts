@@ -1,7 +1,11 @@
 // Languages (issue #49): the picker in the top bar and in Settings, the language carried in links,
 // the first visit offer, English fallbacks marked for screen readers, the note on every translated
-// page, Arabic right to left, and the checks with axe in Spanish and Arabic. Spanish is the seed
-// translation; every other language falls back to English until its translator fills it in.
+// page, Arabic right to left, and the checks with axe in Spanish and Arabic.
+//
+// Every language will soon be fully translated, so no real language serves as the "not translated
+// yet" example. A test that needs English shown in its place asks the end to end build to leave
+// part of a catalog or a content page out (leaveOut, src/i18n/boot.ts), so the fallback and its
+// lang="en" marking stay tested however complete the translations are.
 
 import { expect, test, type Page } from '@playwright/test';
 import { SAMPLE_CENTER, expectAccessible, isPhone, openMap } from './helpers.ts';
@@ -15,6 +19,19 @@ async function openIn(page: Page, lang: string, hash: string): Promise<void> {
   await page.route('**/data/basemap/**', (route) => route.abort());
   await page.goto(`./?lang=${lang}#${hash}`);
   await expect(page.locator('[data-map-ready="true"]')).toBeAttached({ timeout: 60_000 });
+}
+
+/** Parts of the interface the tests of English fallbacks treat as not translated yet. */
+const UNTRANSLATED = ['search', 'layers', 'legend', 'field', 'sheet', 'chips', 'place'];
+
+/**
+ * Asks the end to end build to leave these catalog keys and content pages out of the next page
+ * loads, as if their translation did not exist yet (window.__PK_E2E_LEAVE_OUT__, src/i18n/boot.ts).
+ */
+async function leaveOut(page: Page, what: { strings?: string[]; pages?: string[] }): Promise<void> {
+  await page.addInitScript((value) => {
+    (window as unknown as { __PK_E2E_LEAVE_OUT__?: unknown }).__PK_E2E_LEAVE_OUT__ = value;
+  }, what);
 }
 
 /** The language a screen reader would use for an element: its own or its nearest ancestor's. */
@@ -55,6 +72,8 @@ test.describe('languages', () => {
   });
 
   test('English that is not translated yet is marked as English for screen readers', async ({ page }, info) => {
+    // As if the address search, the layer list and the field view were not translated yet.
+    await leaveOut(page, { strings: UNTRANSLATED });
     await openIn(page, 'es', isPhone(info) ? FIELD : ANALYSIS);
     // Translated: the settings button. Not yet translated: the address search box.
     expect(await langOf(page, 'button.settings')).toBe('es');
@@ -90,6 +109,7 @@ test.describe('languages', () => {
   });
 
   test('Arabic reads right to left, and the top bar mirrors', async ({ page }, info) => {
+    await leaveOut(page, { strings: UNTRANSLATED });
     await openIn(page, 'ar', FIELD);
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
     await expect(page.locator('html')).toHaveAttribute('lang', 'ar');
@@ -104,6 +124,8 @@ test.describe('languages', () => {
 
   test('a content page in Spanish, and one not translated yet shown in English', async ({ page }) => {
     await page.route(/^https?:\/\/(?!localhost[:/])/, (route) => route.abort());
+    // As if the About page had no Spanish translation yet.
+    await leaveOut(page, { pages: ['about'] });
     await page.goto('./contact/?lang=es');
     await expect(page.getByRole('heading', { level: 1, name: 'Contacto' })).toBeVisible();
     await expect(page.locator('main .prose')).not.toHaveAttribute('lang', 'en');
@@ -119,6 +141,24 @@ test.describe('languages', () => {
     // The menu's page names are in Spanish.
     await page.getByRole('button', { name: 'Menú' }).click();
     await expect(page.getByRole('link', { name: 'Contacto' })).toBeVisible();
+  });
+
+  test('the letters, flyer and packet pages open in Spanish', async ({ page }) => {
+    await page.route(/^https?:\/\/(?!localhost[:/])/, (route) => route.abort());
+    for (const [path, title] of [
+      ['letters/', 'Escribir una carta'],
+      ['flyer/', 'Hacer un volante para los vecinos'],
+      ['packet/', 'Hacer un paquete'],
+    ] as const) {
+      await page.goto(`./${path}?lang=es`);
+      await expect(page.locator('html')).toHaveAttribute('lang', 'es');
+      await expect(page.getByRole('heading', { level: 1, name: title })).toBeVisible();
+      await expect(page.getByRole('button', { name: /^Idioma: Español/ })).toBeVisible();
+      await expect(page.getByRole('link', { name: 'Corregir una traducción' }).first()).toBeVisible();
+    }
+    // The letters keep their note that no lawyer has reviewed them, in Spanish.
+    await page.goto('./letters/?lang=es');
+    await expect(page.getByText('Un abogado todavía no ha revisado esta carta. No es asesoría legal.').first()).toBeVisible();
   });
 
   test('the Data status page keeps the refresh notes in English, marked so', async ({ page }) => {

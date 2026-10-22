@@ -4,7 +4,7 @@
   import type { DossierView } from '../../dossier/build.ts';
   import { printModel } from '../../dossier/print.ts';
   import { currentLanguage, isSourceLocale } from '../../i18n/locale.ts';
-  import { strings } from '../../strings.ts';
+  import { labelledParts, strings } from '../../strings.ts';
 
   let { view, now = new Date() }: { view: DossierView; now?: Date } = $props();
   const m = $derived(printModel(view, now));
@@ -35,7 +35,7 @@
     {#if m.watch}
       <h3>{strings.displacement.watchTitle}</h3>
       <p class="note">{m.watch.text}</p>
-      <p>{strings.displacement.protectionsTitle}:</p>
+      <p>{strings.join.colon(strings.displacement.protectionsTitle)}</p>
       <ul>{#each m.watch.links as link (link)}<li>{link}</li>{/each}</ul>
     {/if}
     {#if m.listing}
@@ -47,10 +47,10 @@
       <h3>{action.label}</h3>
       {#if action.caution}<p class="note">{[action.caution, m.watchPointer].filter(Boolean).join(' ')}</p>{/if}
       {#if action.soil}<p class="note">{action.soil}</p>{/if}
-      {#if action.route}<p>{s.actions.route}: {action.route}</p>{/if}
+      {#if action.route}<p>{strings.join.labelled(s.actions.route, action.route)}</p>{/if}
       {#if action.warning}<p class="warning">{action.warning}</p>{/if}
       {#if action.steps.length}<ol>{#each action.steps as step (step)}<li>{step}</li>{/each}</ol>{/if}
-      <p>{s.actions.cost}: {action.cost}</p>
+      <p>{strings.join.labelled(s.actions.cost, action.cost)}</p>
     {/each}
   </section>
 
@@ -71,10 +71,13 @@
   <section>
     <h2>{s.sections.owner}</h2>
     <p>{m.owner.names.join('; ') || s.owner.noNames}</p>
-    {#if m.owner.mailing}<p>{s.owner.mailing}: {m.owner.mailing}</p>{/if}
-    <p>{s.owner.type}: {m.owner.type}</p>
+    {#if m.owner.mailing}<p>{strings.join.labelled(s.owner.mailing, m.owner.mailing)}</p>{/if}
+    <p>{strings.join.labelled(s.owner.type, m.owner.type)}</p>
     {#if m.owner.cityOwned}<p>{m.owner.cityOwned}</p>{/if}
-    {#each m.owner.flags as flag (flag.title + flag.text)}<p><strong>{flag.title}:</strong> {flag.text}</p>{/each}
+    {#each m.owner.flags as flag (flag.title + flag.text)}
+      {@const label = labelledParts(flag.title)}
+      <p><strong>{label.label}</strong>{label.gap}{flag.text}{label.after}</p>
+    {/each}
     {#if m.owner.held}<p>{m.owner.held}</p>{/if}
     <p>{m.owner.tax}</p>
     {#if m.owner.deedFraud}<p class="note">{m.owner.deedFraud}</p>{/if}

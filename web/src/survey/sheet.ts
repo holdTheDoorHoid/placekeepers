@@ -162,7 +162,7 @@ export function isTrolley(md: number): boolean {
 
 /** "47: Whitman Plaza to 5th-Godfrey", for the route menu. */
 export function routeLabel(route: Pick<IndexRoute, 'r' | 'nm'>): string {
-  return route.nm ? `${route.r}: ${route.nm}` : route.r;
+  return route.nm ? strings.join.labelled(route.r, route.nm) : route.r;
 }
 
 /** "Southbound to Whitman Plaza", or what SEPTA gives of it. */
@@ -237,20 +237,18 @@ export function estimateMinutes(meters: number, stops: number): number {
   return Math.max(5, Math.round(minutes / 5) * 5);
 }
 
-/** "about 45 minutes", "about 1 hour 15 minutes", "about 5 hours". */
+/** "about 45 minutes", "about 1 hour 15 minutes", "about 5 hours", in the page's language. */
 export function formatDuration(minutes: number): string {
-  const hours = Math.floor(minutes / 60);
-  const rest = minutes % 60;
-  const parts: string[] = [];
-  if (hours) parts.push(`${hours} ${hours === 1 ? 'hour' : 'hours'}`);
-  if (rest || !hours) parts.push(`${rest} minutes`);
-  return `about ${parts.join(' ')}`;
+  return strings.survey.duration(Math.floor(minutes / 60), minutes % 60);
 }
 
-/** "0.4 miles", "10.3 miles". */
+/** The shortest walk the sheet shows in miles; anything shorter is "less than 0.1 miles". */
+const SHORTEST_MILES = 0.1;
+
+/** "0.4 miles", "10.3 miles", in the page's language. */
 export function formatMiles(m: number): string {
   const miles = m / 1609.344;
-  return miles < 0.1 ? 'less than 0.1 miles' : `${miles.toFixed(1)} miles`;
+  return miles < SHORTEST_MILES ? strings.units.lessThanMiles(SHORTEST_MILES) : strings.units.miles(miles);
 }
 
 const OSM = 'https://www.openstreetmap.org';
