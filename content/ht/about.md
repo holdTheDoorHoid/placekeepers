@@ -38,8 +38,8 @@ bagay la pou lòt la.
 
 Placekeepers fè
 [Clean & Green Philly](https://github.com/CodeForPhilly/clean-and-green-philly) viv ankò epi li
-elaji l. Se yon pwojè volontè nan [Code for Philly](https://codeforphilly.org/) te bati ant 2023 ak
-2025. Li te klase teren vid pou netwayaj ak plantasyon paske rechèch nan Filadèlfi te jwenn ke
+elaji l. Se yon pwojè volontè nan [Code for Philly](https://codeforphilly.org/) te bati ant 2023
+ak 2025. Li te klase teren vid pou netwayaj ak plantasyon paske rechèch nan Filadèlfi te jwenn ke
 plante vèt diminye vyolans ak zam toupre. Ou ka li rechèch sa a sou paj
 [Poukisa sa mache](https://holdthedoorhoid.github.io/placekeepers/why/) nou an.
 

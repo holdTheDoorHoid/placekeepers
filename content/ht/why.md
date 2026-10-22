@@ -55,7 +55,7 @@ ou ki pwa pou ou ba li.
 
 Pyebwa gen badj Melanje pou chalè tou. Yon etid ki te mezire lè a depi yon bisiklèt nan tout yon
 vil te jwenn pyebwa rafrechi yon blòk nan jou ete, plis kote yo kouvri plis pase apeprè 40 pousan
-nan li, men tikal nan nwit. Estimasyon pou Filadèlfi di ke rive nan objektif Vil la nan 30 pousan
+nan li, men pa anpil nan nwit. Estimasyon pou Filadèlfi di ke rive nan objektif Vil la nan 30 pousan
 kouvèti pyebwa nan chak katye ta ka anpeche apeprè 400 lanmò bonè pa ane, pifò nan yo nan katye ki
 pi pòv, ki konte chak lanmò ki lye ak espas vèt, pa chalè sèlman; sa yo se modèl, se pa esè. Kidonk
 lantiy chalè ak lonbraj la konte pyebwa ak badj Melanje a, epi lòt mezi li yo (ki jan chalè ete a
