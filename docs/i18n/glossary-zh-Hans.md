@@ -10,9 +10,17 @@ or a later translator should change a term here first, then everywhere it appear
   reader is addressed directly, short sentences, words a neighbor in Chinatown or the Northeast
   would use.
 - Full width punctuation (，。：；？！（）“”) and no spaces between Chinese words. One space
-  between Chinese characters and Latin letters or digits ("2023 年到 2025 年", "OpenStreetMap 上"),
+  between Chinese characters and Latin letters or digits ("OpenStreetMap 上", "20 英尺", "每 15 分钟"),
   none next to punctuation.
-- No dashes as punctuation (the tests enforce it). Ranges are written with 到 ("5 月到 10 月").
+- Dates and years follow one rule everywhere (decided in the second catch up pass, 2026-10-22).
+  The browser writes a date with no spaces ("2026年10月5日"), so a date is Chinese text: it is written
+  the same way when we type it ("2025年7月9日", "2023年到2025年", "3月到12月", "30年的抵押贷款"),
+  and a template puts no space between a date placeholder and the Chinese around it
+  (`在${date}核查` style: "于${date}指定", "${date}的每周快照"). Digits that are not a date or a
+  year keep the digit spacing rule ("上午 10 点", "每 15 分钟", "约 1 小时 15 分钟"). A year placeholder
+  written by a template carries 年 ("${year}年", "${a0}年到${a1}年"). Times of day from the formatter
+  ("2:14 PM") are Latin text and keep their spaces.
+- No dashes as punctuation (the tests enforce it). Ranges are written with 到 ("5月到10月").
 - Numbers use Western digits, as the site formats them. Distances and amounts keep the units the
   City uses: 英尺, 英里, 加仑, 美元; metric where English says meters (米) or kilometers (公里).
 - Proper names stay in English: Placekeepers, Philly311, PHS LandCare, Community LandCare, SEPTA,
@@ -33,6 +41,9 @@ word exists, so a neighbor who then visits phila.gov finds the same words.
 | Longtime Owner Occupants Program (LOOP) | 长期业主居住者计划 (LOOP) | phila.gov/zh page "申请长期业主居住者计划 (LOOP)" |
 | Department of Licenses and Inspections | 执照和检查部 (L&I) | phila.gov/zh department page |
 | Department of Planning and Development | 规划与发展部 | phila.gov/zh department page |
+| Department of Sanitation | 卫生部 (we add "Department of Sanitation" in parentheses, because 公共卫生部 is Public Health) | phila.gov/zh page of the Philadelphia More Beautiful Committee |
+| Philadelphia More Beautiful Committee | 费城更美丽委员会 | same page |
+| Block Captain | 街区队长 | same page |
 | Office of Property Assessment | 财产评估办公室 (part of 税务局) | Homestead Exemption page |
 | Department of Revenue | 税务局 | Homestead Exemption page |
 | Registered Community Organization (RCO) | 注册社区组织 | phila.gov/zh RCO page |
@@ -129,7 +140,7 @@ Each passage is one fixed block of text, the same in the catalog, the registry a
 
 - Possible estate: 登记业主可能已经去世。家属可能仍然对这处房产享有权利，而且自己可能并不知道。如果您认识这家人，Tangled Title Fund（最高 6,500 美元的法律援助）和 Philadelphia VIP 可以帮助他们保住房产。家属也可以注册市政府免费的 Fraud Guard 提醒。
 - Conservatorship warning: 财产托管（conservatorship）可能让业主失去自己的房产。研究人员发现，它在面临绅士化的社区中被不成比例地使用。在您考虑这条途径之前，请先与 Garden Justice Legal Initiative 谈一谈。
-- Deed fraud notice: 契据盗窃是指有人提交一份伪造的契据来夺取房产，常常是业主已经去世或住在别处的房产。业主和家人可以注册市政府免费的 Fraud Guard 提醒：每当有文件登记了他们的姓名，就会收到一封电子邮件。自 2025 年 11 月起，市政府还会自动拦截卖方在据称签署契据时已经去世的契据。
+- Deed fraud notice: 契据盗窃是指有人提交一份伪造的契据来夺取房产，常常是业主已经去世或住在别处的房产。业主和家人可以注册市政府免费的 Fraud Guard 提醒：每当有文件登记了他们的姓名，就会收到一封电子邮件。自2025年11月起，市政府还会自动拦截卖方在据称签署契据时已经去世的契据。
 - Displacement caution (greening): 绿化可能会抬高附近的价格。请考虑同时配套保护措施。
 - Displacement caution (gardens, seating and art): 新的花园、座椅和艺术作品，可能让一个街区更受追捧，并抬高附近的价格和租金。请配套保护措施，保护租房或拖欠税款的邻居。
 - Brownfield soil note: 这个地址或其附近，有联邦棕地评估或清理的记录。在种植食物之前，请先检测土壤。

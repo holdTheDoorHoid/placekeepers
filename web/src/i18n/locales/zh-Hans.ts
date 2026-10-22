@@ -65,6 +65,16 @@ const zhHans: Catalog = {
   units: {
     meters: (n) => `${formatNumber(n)} 米`,
     kilometers: (km) => `${formatDecimal(km, 1)} 公里`,
+    miles: (miles) => `${formatDecimal(miles, 1)} 英里`,
+    lessThanMiles: (miles) => `不到 ${formatDecimal(miles, 1)} 英里`,
+  },
+
+  join: {
+    labelled: (label, value) => `${label}：${value}`,
+    colon: (label) => `${label}：`,
+    and: (items) => (items.length <= 1 ? items.join('') : `${items.slice(0, -1).join('、')}和${items.at(-1)}`),
+    long: (items) => (items.length <= 1 ? items.join('') : `${items.slice(0, -1).join('；')}；以及${items.at(-1)}`),
+    names: (names) => names.join(' 和 '),
   },
 
   header: {
@@ -110,7 +120,7 @@ const zhHans: Catalog = {
 
   freshness: {
     checking: '正在检查数据',
-    ok: (date) => `数据更新于 ${date}`,
+    ok: (date) => `数据更新于${date}`,
     stale: '部分数据已过期',
     failing: '部分数据无法加载',
     unknown: '数据状态不明',
@@ -221,18 +231,18 @@ const zhHans: Catalog = {
     city_building: (date) => (date ? `市政府把它列为可能的空置建筑（名单日期：${date}）` : '市政府把它列为可能的空置建筑'),
     assessor_vacant_land: '财产评估办公室把它归类为空地',
     no_building: '地块上没有建筑',
-    demolished: (year) => (year ? `${year} 年已拆除，此后没有新建任何建筑` : '已拆除，此后没有新建任何建筑'),
+    demolished: (year) => (year ? `${year}年已拆除，此后没有新建任何建筑` : '已拆除，此后没有新建任何建筑'),
     vacant_lot_record: 'L&I 在过去两年内记录过一起空地违规或投诉',
     landcare: '它属于 PHS LandCare，该组织负责照看空地',
-    sealed: (year) => (year ? `${year} 年被市政府封闭，此后没有申请过许可` : '被市政府封闭，此后没有申请过许可'),
+    sealed: (year) => (year ? `${year}年被市政府封闭，此后没有申请过许可` : '被市政府封闭，此后没有申请过许可'),
     unsafe: 'L&I 把它列为不安全的建筑，此后没有申请过许可',
     imminently_dangerous: 'L&I 认定它有迫在眉睫的危险，此后没有申请过许可',
     vacant_building_record: 'L&I 在过去两年内记录过一起空置房产违规或投诉',
     assessor_exterior: '财产评估办公室记录它的外观为空置或已封闭',
     built_since: (year) =>
-      year ? `${year} 年已发出新建施工许可，所以现在那里可能已有建筑` : '已发出新建施工许可，所以现在那里可能已有建筑',
+      year ? `${year}年已发出新建施工许可，所以现在那里可能已有建筑` : '已发出新建施工许可，所以现在那里可能已有建筑',
     construction_starting: (year) =>
-      year ? `${year} 年已发出新建施工许可，所以可能正在动工` : '已发出新建施工许可，所以可能正在动工',
+      year ? `${year}年已发出新建施工许可，所以可能正在动工` : '已发出新建施工许可，所以可能正在动工',
     side_yard: '隔壁自住房屋的业主也拥有这块地，所以它可能是侧院',
     land_use_shows_use: '市政府的土地用途地图显示它正在使用中',
     recent_permit: '过去两年内发出过建筑工程或分区方面的许可',
@@ -405,7 +415,7 @@ const zhHans: Catalog = {
     termsLine: (url) => `Placekeepers 导出文件：仅限用于社区关怀和合法行动。请先阅读使用条款：${url}`,
     englishColumns: '各种语言的下载文件中，列名一律使用英文，这样不同语言的文件可以合并，也可以重新读取。',
     madeLine: (n, title, day, dataDay) =>
-      `来自“${title}”的 ${plural(n, { other: '# 个地点' })}。生成于 ${day}${dataDay ? `，使用 ${dataDay} 的每周数据` : ''}。`,
+      `来自“${title}”的 ${plural(n, { other: '# 个地点' })}。生成于${day}${dataDay ? `，使用${dataDay}的每周数据` : ''}。`,
     ownerLine:
       '业主姓名和邮寄地址与市政府公布的一致。每一项业主标记都附有谨慎提示和保护性的下一步：请在行动之前先读地块页面上的说明。不构成法律意见。',
     scoreLine: (lens, weights) => `评分使用“${lens}”视角，权重为：${weights}。`,
@@ -497,7 +507,7 @@ const zhHans: Catalog = {
     rcoPreferred: '首选方式',
     rcoContact: '联系人',
     rcoAsPublished: '联系方式与市政府为公众公布的一致。',
-    checked: (who, when) => `${who}，${when} 核查`,
+    checked: (who, when) => `${who}，${when}核查`,
     sourceNames: {
       city_elected_officials: '费城市政府，其民选官员名单',
       pa_legislators: 'Open States',
@@ -535,9 +545,9 @@ const zhHans: Catalog = {
     leftOut: (n, limit) =>
       `一份资料包最多包含 ${formatNumber(limit)} 个地点，所以这份清单中有 ${plural(n, { other: '# 个地点' })}没有放进去。请为其余的做一份较小的清单。`,
     coverKicker: 'Placekeepers 资料包',
-    made: (date) => `制作于 ${date}`,
+    made: (date) => `制作于${date}`,
     count: (n) => plural(n, { other: '# 个地点' }),
-    dataFrom: (date) => `来自我们 ${date} 的每周市政府记录副本。网上的每个地块页面有今天的记录。`,
+    dataFrom: (date) => `来自我们${date}的每周市政府记录副本。网上的每个地块页面有今天的记录。`,
     lensUsed: (lens) => `按“${lens}”视角给出的建议。`,
     contentsTitle: '本资料包内容',
     contents: {
@@ -616,6 +626,9 @@ const zhHans: Catalog = {
     pageTitle: '制作给邻居的传单',
     make: '制作给邻居的传单',
     intro: '一块挂在空地围栏上的牌子：它告诉路过的人，邻居们关心这个地方，以及怎样找到彼此。您选择上面写什么，并在这里打印。不会发送到任何地方。',
+    language: '传单的语言',
+    languageHelp: '用您的邻居阅读的语言打印传单。您输入的内容，按您输入的样子打印。',
+    withEnglish: '在旁边加上英文，放在第二栏',
     noLot: '请从地块页面或资料包打开本页，这样传单才能显示地块的地址、一张地图和一个指向它页面的二维码。',
     loading: '正在读取每周副本……',
     headline: '标题',
@@ -742,7 +755,7 @@ const zhHans: Catalog = {
       },
       problemOther: '问题，用您自己的话',
     },
-    prefilledFrom: (source, date) => `根据${source}，${date} 填写。寄出之前请核对。`,
+    prefilledFrom: (source, date) => `根据${source}，${date}填写。寄出之前请核对。`,
     nameLeftOut: '这里把业主的姓名留空了。请按您所知道的写上，或者留空，信就会以“尊敬的业主”开头。',
     cityRecords: '市政府的记录',
     print: '打印这封信',
@@ -752,9 +765,14 @@ const zhHans: Catalog = {
     kept: '您输入的内容只保存在这个浏览器里，这样您可以回来继续。不会发送到任何地方。',
     notKept: '这个浏览器目前没有保存您输入的内容，可能是因为使用了无痕窗口。关闭页面之前请先打印。',
     preview: '这封信',
+    language: '信的语言',
+    languageHelp: '这些信寄往的办公室、社区组织和业主，大多阅读英文，所以除非您选择自己的语言，否则这封信会用英文打印。',
+    translationTitle: '您的信，用您的语言',
+    translationNote: '好让您知道自己签的是什么。只有上面的信会被打印；这份译文只留在您的屏幕上。',
     salutation: (name) => `尊敬的 ${name}：`,
     dearOwner: '尊敬的业主：',
     sincerely: '此致敬礼，',
+    yourName: '[您的姓名]',
     reachMe: (contact) => `您可以通过 ${contact} 联系我。`,
     reachMeBlank: '您可以通过 [如何联系您] 联系我。',
     thanks: '谢谢您考虑这件事。',
@@ -812,7 +830,7 @@ const zhHans: Catalog = {
       longtime_owner_occupants: '市政府的长期业主居住者计划（LOOP）',
       tangled_title_help: '处理产权纠葛的协助',
     },
-    checked: (date) => `${date} 核查`,
+    checked: (date) => `${date}核查`,
     signShort: {
       prices: '房价涨得比全市快',
       assessments: '市政府的评估价值涨得比全市快',
@@ -834,7 +852,7 @@ const zhHans: Catalog = {
       renters: '租户',
       rent_burden: '房租占收入一半或以上的租户',
     },
-    span: (a0, a1, b0, b1) => `${a0} 到 ${a1} 与 ${b0} 到 ${b1} 的成交`,
+    span: (a0, a1, b0, b1) => `${a0}年到${a1}年与${b0}年到${b1}年的成交`,
     pricesText: (p0, p1, change, city, span) =>
       `售出房屋的价格中位数从 ${p0} 变为 ${p1}，${changeWords(change)}${city === null ? '' : `，全市则是${changeWords(city)}`}${span ? `（${span}）` : ''}。`,
     companiesText: (share, sales, city) =>
@@ -993,7 +1011,7 @@ const zhHans: Catalog = {
                                       : style === 'crossing_guards'
                                         ? '学校过街协管员'
                                         : style === 'redlining'
-                                          ? '1937 年红线地图'
+                                          ? '1937年红线地图'
                                           : style === 'projects'
                                             ? '邻居们完成的项目'
                                             : '详细资料',
@@ -1040,7 +1058,7 @@ const zhHans: Catalog = {
       hasEmail
         ? '任何人都可以通过私人电子邮件，请求我们撤下这个纪念点。我们照办，不问原因。'
         : '任何人都可以请求我们撤下这个纪念点，无需说明理由。处理这类请求的专用私人邮箱很快就会设立；在那之前，“联系我们”页面说明了如何通过 GitHub 议题提出请求（任何人都能看到议题）。',
-    crashTitle: (year) => `${year} 年的交通事故`,
+    crashTitle: (year) => `${year}年的交通事故`,
     crashesHere: (n) => `此处有 ${plural(n, { other: '# 起交通事故' })}`,
     involved: '涉及的人',
     involvedModes: {
@@ -1063,7 +1081,7 @@ const zhHans: Catalog = {
   streetsStops: {
     shelterLegend: '市政府名单上的候车亭，以所在车站周围的圆环表示',
     shelterLegendLens: '有市政府候车亭的车站，在公交舒适度视角中算作有遮蔽。',
-    shelterLegendDate: '市政府最近一次更改名单是在 2025 年 1 月，所以之后新建或拆除的候车亭，名单上可能没有反映。',
+    shelterLegendDate: '市政府最近一次更改名单是在2025年1月，所以之后新建或拆除的候车亭，名单上可能没有反映。',
     shelterTitle: '市政府名单上的公交候车亭',
     shelterAt: (stop) => `它服务于 SEPTA 站点 ${stop}。`,
     shelterListed: (number) => `市政府名单上记录的站点编号是 ${number}。`,
@@ -1106,7 +1124,7 @@ const zhHans: Catalog = {
     calmingTitle: '交通减速措施',
     calmingWhat: '街道部名单上的减速垫、减速丘或减速台，用来让驾驶人减速。',
     calmingOn: (street) => `位于 ${street}`,
-    calmingSince: (date) => `设置于 ${date}。`,
+    calmingSince: (date) => `设置于${date}。`,
     calmingHere: (n) => `此处有 ${plural(n, { other: '# 处设施' })}`,
     calmingSource: '来自街道部的交通减速设施名单。',
 
@@ -1126,13 +1144,13 @@ const zhHans: Catalog = {
     blockNoPoles: '市政府名单上，这个路段沿线没有街道灯杆。',
     blockCalming: (n, year) =>
       year
-        ? `这里自 ${year} 年起有交通减速措施：市政府名单上，这个路段有 ${plural(n, { other: '# 处减速垫、减速丘或减速台' })}。`
+        ? `这里自${year}年起有交通减速措施：市政府名单上，这个路段有 ${plural(n, { other: '# 处减速垫、减速丘或减速台' })}。`
         : `市政府名单上，这个路段有 ${plural(n, { other: '# 处减速垫、减速丘或减速台' })}。`,
     blockNoCalming: '这里还没有交通减速措施的记录。',
     blockArterial: '市政府的减速垫只用于住宅街道。像这样的街道，请向市政府的交通与基础设施系统办公室询问其他改善办法。',
     memorialCalming: (n, year) =>
       year
-        ? `这个路段自 ${year} 年起有交通减速措施：市政府名单上有 ${plural(n, { other: '# 处设施' })}。`
+        ? `这个路段自${year}年起有交通减速措施：市政府名单上有 ${plural(n, { other: '# 处设施' })}。`
         : `市政府名单上，这个路段有 ${plural(n, { other: '# 处交通减速设施' })}。`,
     memorialNoCalming: '这个路段还没有交通减速措施的记录。',
     lightsPoles: (poles, lamps, led) =>
@@ -1160,7 +1178,7 @@ const zhHans: Catalog = {
       corner: '停在路口转角',
       ramp: '挡住路缘坡道',
     },
-    window: (start, end) => `从 ${start} 到 ${end}`,
+    window: (start, end) => `从${start}到${end}`,
     windowUnknown: '过去 12 个月',
     heatTitle: (window) => `地图缩小时：报告集中的地方。${window}。`,
     fewer: '报告较少',
@@ -1202,7 +1220,7 @@ const zhHans: Catalog = {
     matchedByNumber: '与 OpenStreetMap 中站点编号相同、位置相同的车站配对。',
     matchedByPlace: '与 OpenStreetMap 中位置相同（15 米以内）的车站配对。',
     halfway: '“尚未调查”的项目，在评分中各算一半（满分 100 中的 50 分），直到有人记录下来。',
-    canopy: (percent) => `车站周围约两个街区范围内的土地，约有 ${formatNumber(percent)}% 被树冠覆盖（市政府 2018 年的树冠调查）。`,
+    canopy: (percent) => `车站周围约两个街区范围内的土地，约有 ${formatNumber(percent)}% 被树冠覆盖（市政府2018年的树冠调查）。`,
     onHin: '这个车站位于高伤害路网上，也就是费城大多数交通死亡和重伤事故发生的街道。',
     noScore: '公交舒适度视角只给公交车站和有轨电车站评分。',
     tunnelStation: '这个有轨电车站在地下隧道里，所以公交舒适度视角不计入它，和对待地铁和铁路车站一样。',
@@ -1310,7 +1328,7 @@ const zhHans: Catalog = {
     },
     priority: '加粗轮廓：市政府评定高温脆弱度非常高的人口普查区',
     tractsNone: '指数没有报告的人口普查区，例如大型公园和机场，保持空白。',
-    tractsSource: '来自市政府的高温脆弱性指数（公共卫生部和可持续发展办公室），2017 年到 2019 年的数据。',
+    tractsSource: '来自市政府的高温脆弱性指数（公共卫生部和可持续发展办公室），2017年到2019年的数据。',
     treeBig: '市政府的一棵树：圆点越大，树干越粗',
     treeSmall: '一棵小树，常常是需要浇水的幼树',
     treesZoom: '请放大到几个街区的范围，才能看到树。',
@@ -1322,7 +1340,7 @@ const zhHans: Catalog = {
     treeUnnamed: '清单里没有注明树种的树',
     treeTrunk: (inches) => `离地面约胸高处，树干直径约 ${formatNumber(inches)} 英寸。`,
     treeNoTrunk: '清单里没有给出树干的粗细。',
-    treeYoung: 'TreePhilly 表示，幼树从 3 月到 12 月，每周大约需要 20 加仑水。',
+    treeYoung: 'TreePhilly 表示，幼树从3月到12月，每周大约需要 20 加仑水。',
     treesHere: (n) => `此处有 ${plural(n, { other: '# 棵树' })}`,
     treeSource: '来自公园与休闲部的树木清单，也就是市政府在街道和公园里养护的树。',
   },
@@ -1358,7 +1376,7 @@ const zhHans: Catalog = {
     },
     untitled: '没有记录标题。',
     by: (artist) => `作者：${artist}。`,
-    made: (year) => `${year} 年制作。`,
+    made: (year) => `${year}年制作。`,
     medium: (medium) => `材质：${medium}。`,
     where: (place) => `位置：${place}。`,
     inside: '在建筑物内，所以只有建筑物开放时才能看到。',
@@ -1425,12 +1443,14 @@ const zhHans: Catalog = {
     },
     estimateTitle: '需要多长时间',
     estimate: (time) => `我们的估计：一个人或一对搭档需要 ${time}。`,
+    duration: (hours, minutes) =>
+      `约 ${[hours ? plural(hours, { other: '# 小时' }) : '', minutes || !hours ? plural(minutes, { other: '# 分钟' }) : ''].filter(Boolean).join(' ')}`,
     estimateBasis:
       '这是我们自己的估计，不是实测：从一个车站走到下一个车站，按每小时约 3 英里计算，每个车站再停留约一分钟。前往第一个车站和回家的时间另算。',
     trolleyTunnel:
       'T1 到 T5 有轨电车线路在中心城一端走地下隧道，从 13 街到 37 街设有车站。请不要调查这些车站：这项调查针对的是街面上的车站。',
     asOf: (osm, schedules) =>
-      [osm ? `OpenStreetMap 显示的内容截至 ${osm}。` : null, schedules ? `车站来自 SEPTA 的时刻表（${schedules}）。` : null]
+      [osm ? `OpenStreetMap 显示的内容截至${osm}。` : null, schedules ? `车站来自 SEPTA 的时刻表（${schedules}）。` : null]
         .filter(Boolean)
         .join(''),
     print: '打印调查表',
@@ -1559,7 +1579,7 @@ const zhHans: Catalog = {
     indoor: { 1: '室内', 0: '室外' },
     waterIndoor: '在建筑物内：建筑物开放时才能用。',
     accessible: { 1: '列为残障人士可使用', 0: '没有列为无障碍' },
-    opened: (date) => `本季于 ${date} 开放。`,
+    opened: (date) => `本季于${date}开放。`,
     gym: '设有健身房。',
     noBuilding: '这是一个没有自己建筑的活动地点。',
     inPark: (park) => `位于 ${park}。`,
@@ -1579,7 +1599,7 @@ const zhHans: Catalog = {
         warming: '只显示取暖场所，供天冷时使用。',
       },
       asListed: (copied, changed) =>
-        `${copied ? `这是市政府在 ${copied} 的名单内容` : '这是本地图上次复制名单时，市政府名单上的内容'}${changed ? `（名单最近一次更改在 ${changed}）` : ''}。这不是实时信息：场所会随天气开放或关闭，所以出发前请先打电话问问该场所或拨打 311。`,
+        `${copied ? `这是市政府在${copied}的名单内容` : '这是本地图上次复制名单时，市政府名单上的内容'}${changed ? `（名单最近一次更改在${changed}）` : ''}。这不是实时信息：场所会随天气开放或关闭，所以出发前请先打电话问问该场所或拨打 311。`,
       oneMarker: '同时也是取暖或纳凉场所的图书馆或休闲中心，只显示一次，按场所显示。',
       kinds: {
         1: 'Free Library 分馆',
@@ -1608,7 +1628,7 @@ const zhHans: Catalog = {
     playgrounds: {
       kind: '儿童游乐场',
       ages: { 1: '适合 2 到 5 岁', 2: '适合 5 到 12 岁', 3: '适合 2 到 12 岁' },
-      installed: (year) => `${year} 年设置`,
+      installed: (year) => `${year}年设置`,
     },
   },
 
@@ -1630,7 +1650,7 @@ const zhHans: Catalog = {
     },
     summary: (n, open) =>
       `过去 90 天内向 Philly311 提出了 ${plural(n, { other: '# 项请求' })}，${open === 0 ? '都已办结' : `其中 ${formatNumber(open)} 项仍未办结`}。`,
-    newest: (date) => `最近的一项提出于 ${date}。`,
+    newest: (date) => `最近的一项提出于${date}。`,
     alley: (n, total) =>
       n === total ? (n === 1 ? '它与小巷的路灯有关。' : '全部与小巷的路灯有关。') : `其中 ${formatNumber(n)} 项与小巷的路灯有关。`,
     block: (street) => `在 ${street} 的这个街区。`,
@@ -1667,10 +1687,10 @@ const zhHans: Catalog = {
     walkNationNote:
       '与全国比较，费城几乎所有地区都高于平均水平，或属于步行最便利的地区，所以在费城范围内比较，更能显示各地的差别。',
     walkParts: '指数的评分范围是 1 到 20。街角和公共交通各占三分之一，住宅、工作和商店混合程度的两项指标各占六分之一。',
-    walkSource: '来自 EPA 的 Smart Location Database（2021 年），依据大约 2017 年到 2019 年的数据编制。',
+    walkSource: '来自 EPA 的 Smart Location Database（2021年），依据大约2017年到2019年的数据编制。',
 
     reachTitle: {
-      people: '步行 5 分钟范围内居住的人口（2020 年人口普查）',
+      people: '步行 5 分钟范围内居住的人口（2020年人口普查）',
       places: '步行 10 分钟范围内有几类日常场所',
       corners: '步行 5 分钟范围内的街角数',
     },
@@ -1685,7 +1705,7 @@ const zhHans: Catalog = {
     reachMeasured:
       '从每个六边形的中心按直线距离计算：步行 5 分钟按 400 米，步行 10 分钟按 800 米。这比沿街道步行稍微远一点，而且会越过铁路线、高速公路和河流。',
     reachSource: {
-      people: '人口来自 2020 年人口普查，按人口普查街区统计。',
+      people: '人口来自2020年人口普查，按人口普查街区统计。',
       places: '场所来自市政府、公园与休闲部、美国农业部（USDA）和 SEPTA。刚好在市界另一侧的场所不计入。',
       corners: '街角来自市政府的街道中心线。',
     },
@@ -1753,13 +1773,13 @@ const zhHans: Catalog = {
       PUB: '费城市政府',
     },
     headline: (agency, n, deeds, from, to) =>
-      `在市政府 ${from} 到 ${to} 的契据记录中，转让房产的机构是：${agency}。共转让 ${plural(n, { other: '# 处房产' })}，涉及 ${plural(deeds, { other: '# 份契据' })}。`,
+      `在市政府${from}到${to}的契据记录中，转让房产的机构是：${agency}。共转让 ${plural(n, { other: '# 处房产' })}，涉及 ${plural(deeds, { other: '# 份契据' })}。`,
     movedAll: (n) => `未计入：${plural(n, { other: '# 次' })}房产在机构之间的转移，例如从市政府转到土地银行。`,
     moved: (received, handed) =>
       `它还从其他机构接收了 ${plural(received, { other: '# 处房产' })}，并向它们转出了 ${formatNumber(handed)} 处。这些转移不算作转让。`,
     whatCounts:
       '这里的“转让”是指土地机构向这四个机构之外的人或单位出具的契据：个人、公司、非营利组织，或其他公共机构，例如费城住房管理局。每处房产只算一次。更正、旧限制条件的解除、机构之间的转移，以及作为契据登记的协议，都不计入。',
-    partial: (year, date) => `${year} 年的数据只到 ${date}：市政府的契据记录大约滞后八周。`,
+    partial: (year, date) => `${year}年的数据只到${date}：市政府的契据记录大约滞后八周。`,
     noNames: '我们读取买方的姓名，只是为了区分个人和公司，以及核对隔壁的房屋。我们一个姓名都不保留。',
     showNumbers: '显示数字',
     tableLabel: (what) => `数字：${what}`,
@@ -1767,7 +1787,7 @@ const zhHans: Catalog = {
     year: '年份',
     total: '合计',
     properties: '房产',
-    chartLabel: (what, from, to, max) => `${what}，${from} 年到 ${to} 年。数字最高的一年是 ${max}。相同的数字也列在图表下面的表格里。`,
+    chartLabel: (what, from, to, max) => `${what}，${from}年到${to}年。数字最高的一年是 ${max}。相同的数字也列在图表下面的表格里。`,
     perYear: {
       title: '每年的转让数',
       caption: '每年转让的房产数。一份契据可以转让多处房产。',
@@ -1793,12 +1813,12 @@ const zhHans: Catalog = {
         '契据上没有说明转让是通过哪个项目进行的。有一种情况可以推断：一个地块转让给了与它相邻的房屋的业主，那它很可能是侧院或后院。这张图统计的就是这样的地块，这是我们的推断。其余的无法从记录中得知，这并不表示它们不是侧院。',
       series: '侧院或后院（我们的推断）',
       checked:
-        '我们如何核实（2026 年 10 月 9 日）：从 2019 年到 2026 年随机抽取了其中 10 个地块，逐一人工查证。这 10 个地块的买方，都是地块旁边或后面那栋房屋的登记业主，并且在那里收信。每一个是否通过侧院计划取得，仍然是我们的推断。',
+        '我们如何核实（2026年10月9日）：从2019年到2026年随机抽取了其中 10 个地块，逐一人工查证。这 10 个地块的买方，都是地块旁边或后面那栋房屋的登记业主，并且在那里收信。每一个是否通过侧院计划取得，仍然是我们的推断。',
       compare: (cityTotal, ours, oursPlb, from, to) =>
-        `在 ${from} 到 ${to} 财政年度，市政府自己的统计面板统计了 ${formatNumber(cityTotal)} 个侧院。根据契据，我们推断四个机构共有 ${formatNumber(ours)} 个，其中 ${formatNumber(oursPlb)} 个来自土地银行。`,
+        `${from}年到${to}年的财政年度，市政府自己的统计面板统计了 ${formatNumber(cityTotal)} 个侧院。根据契据，我们推断四个机构共有 ${formatNumber(ours)} 个，其中 ${formatNumber(oursPlb)} 个来自土地银行。`,
       cityTitle: '市政府自己按项目的统计',
       cityCaption: (edited) =>
-        `来自市政府的 土地管理仪表板，按财政年度（7 月到次年 6 月）。它最近一次更新是 ${edited}，所以最后一年不完整；而且对住房统计的是建成的住房数量，而不是房产数量。`,
+        `来自市政府的土地管理仪表板，按财政年度（7月到次年6月）。它最近一次更新是${edited}，所以最后一年不完整；而且对住房统计的是建成的住房数量，而不是房产数量。`,
       fy: '财政年度',
       sideYards: '侧院',
       gardens: '菜园或开放空间',
@@ -1809,12 +1829,12 @@ const zhHans: Catalog = {
       homesMarket: '住房，市场价',
       oursPlb: '我们的侧院推断，土地银行',
       oursAll: '我们的侧院推断，四个机构合计',
-      fyLabel: (fy) => `${fy - 1} 到 ${fy} 年`,
+      fyLabel: (fy) => `${fy - 1}年到${fy}年`,
     },
     prices: {
       title: '契据上记录的价格',
       caption: (max) =>
-        `价格是契据为每处房产记录的价格（一份契据涵盖多处房产时，取其份额）。它不一定是实际支付的钱：有些项目以象征性的价格出售，并用 30 年的抵押贷款来保护地块的用途；侧院契据常常记录地块的评估价值。中位价格是指一半的价格低于它、一半高于它。“象征性”是指 ${max} 或更低。`,
+        `价格是契据为每处房产记录的价格（一份契据涵盖多处房产时，取其份额）。它不一定是实际支付的钱：有些项目以象征性的价格出售，并用30年的抵押贷款来保护地块的用途；侧院契据常常记录地块的评估价值。中位价格是指一半的价格低于它、一半高于它。“象征性”是指 ${max} 或更低。`,
       priced: '有价格',
       median: '中位价格',
       nominal: '象征性价格',
@@ -1833,7 +1853,7 @@ const zhHans: Catalog = {
     listed: {
       title: '列为可用的地块，逐周统计',
       caption: (from) =>
-        `市政府的公共房产名单，也就是土地银行房产地图所显示的同一份名单，按我们这份副本每周更新的时间统计。统计从 ${from} 开始；更早没有每周的统计。`,
+        `市政府的公共房产名单，也就是土地银行房产地图所显示的同一份名单，按我们这份副本每周更新的时间统计。统计从${from}开始；更早没有每周的统计。`,
       date: '名单日期',
       records: '列为可用',
       parcels: '地块',
@@ -1842,25 +1862,25 @@ const zhHans: Catalog = {
       byStatus: (date) => `名单上每一个地块，按状态分类，${date}`,
       status: '状态',
       count: '记录数',
-      chartLabel: (from, to) => `每周列为可用的地块，${from} 到 ${to}。相同的数字也列在下面的表格里。`,
+      chartLabel: (from, to) => `每周列为可用的地块，${from}到${to}。相同的数字也列在下面的表格里。`,
       mapLink: '土地银行的房产名单地图',
     },
     limits: {
       title: '这些数字无法说明什么',
       items: [
         '申请人等了多久、有多少人申请、有多少人被拒绝。公共记录里有契据，没有申请。',
-        '大多数转让背后的项目。契据上没有说明；侧院和后院是我们的推断，而市政府自己按项目的统计在 2023 年 4 月就中止了。',
+        '大多数转让背后的项目。契据上没有说明；侧院和后院是我们的推断，而市政府自己按项目的统计在2023年4月就中止了。',
         '之后建造或种植了什么，也不知道地块的限制条件是否得到遵守。',
-        '买方最终付了多少钱。契据只记录一个价格，有些项目把象征性价格和 30 年的抵押贷款搭配使用。',
+        '买方最终付了多少钱。契据只记录一个价格，有些项目把象征性价格和30年的抵押贷款搭配使用。',
         '各机构出租或授权使用的土地，例如菜园协议。没有契据记录这些。',
-        '2014 年以前的契据，以及最近八周左右的契据，因为市政府还没有公布。',
+        '2014年以前的契据，以及最近八周左右的契据，因为市政府还没有公布。',
       ],
     },
     sources: {
       title: '来源和日期',
-      deeds: (fetched, last) => `契据：费城市政府，记录部（Department of Records），房地产转让记录，读取于 ${fetched}；最新的一份契据日期是 ${last}。`,
+      deeds: (fetched, last) => `契据：费城市政府，记录部（Department of Records），房地产转让记录，读取于${fetched}；最新的一份契据日期是${last}。`,
       programs: (edited) =>
-        `按项目的统计：费城市政府，规划与发展部（Department of Planning and Development），土地管理仪表板，最近更新于 ${edited}。`,
+        `按项目的统计：费城市政府，规划与发展部（Department of Planning and Development），土地管理仪表板，最近更新于${edited}。`,
       listed: '列出的地块：费城市政府，规划与发展部（土地管理），与土地银行房产地图所显示的一致。',
       districts: '市议会选区：费城市政府，现行边界。',
       neighbours: '用于侧院推断的资料：市政府的业主名单（财产评估办公室）和地块形状（水务部）。',
@@ -1868,7 +1888,7 @@ const zhHans: Catalog = {
       council: '市议会的立法记录，市议会在其中批准每一次土地银行处置',
       method: '我们如何计数（详细说明）',
       deedsLink: '市政府的房地产转让记录',
-      programsLink: '市政府 土地管理仪表板的表格',
+      programsLink: '市政府土地管理仪表板的表格',
     },
     csv: {
       years: (agency) => `按年份和机构统计的转让（四个机构合计，以及每个机构各自的数字；本页显示的是${agency}）。`,
@@ -1876,7 +1896,7 @@ const zhHans: Catalog = {
       programs: '市政府自己按项目和财政年度的统计，与我们的侧院推断并列。',
       listed: '市政府公共房产名单上列为可用的地块，从开始统计起每周一次。',
       counts: '只有计数：没有姓名、地址和地块编号。',
-      dates: (fetched, last) => `契据读取于 ${fetched}；最新的一份契据日期是 ${last}。`,
+      dates: (fetched, last) => `契据读取于${fetched}；最新的一份契据日期是${last}。`,
       // A file name, so it stays as it is in every language.
       file: (part, day) => `placekeepers-land-bank-${part}-${day}.csv`,
     },
@@ -1897,7 +1917,7 @@ const zhHans: Catalog = {
     legendNote: 'Placekeepers 会阅读并批准每一份报告，然后它才会出现。',
     detailsTitle: '邻居们完成的项目',
     here: (n) => `这里有 ${plural(n, { other: '# 个项目' })}`,
-    finished: (month) => `完成于 ${month}`,
+    finished: (month) => `完成于${month}`,
     by: (group) => `完成者：${group}`,
     whatItTook: '做成这件事花了什么',
     report: '在 GitHub 上查看报告及其照片',
@@ -1959,7 +1979,7 @@ const zhHans: Catalog = {
       missing: '尚未获取',
       unknown: '未知',
     },
-    staleSince: (date) => `正在使用最近一份完好的副本，来自 ${date}。`,
+    staleSince: (date) => `正在使用最近一份完好的副本，来自${date}。`,
     staleNoDate: '正在使用最近一份完好的副本。',
     failingText: '目前没有可用的副本，所以需要它的图层可能缺失。',
     missingText: '这个数据来源还没有获取。',
@@ -1985,7 +2005,7 @@ const zhHans: Catalog = {
     notesTitle: '最近一次更新的备注',
     notesInEnglish: '这些备注是用英文写的，供维护这张地图运行的人阅读。',
     basemapLabel: { ok: '最新', failing: '不可用' },
-    basemapMade: (date) => `每周更新大约每个月会制作一份新的底图副本。这份副本是在 ${date} 根据 OpenStreetMap 制作的。`,
+    basemapMade: (date) => `每周更新大约每个月会制作一份新的底图副本。这份副本是在${date}根据 OpenStreetMap 制作的。`,
     basemapNoDate: '每周更新大约每个月会制作一份新的底图副本。',
     basemapMissing: '本网站的这份副本没有底图，所以地图显示为纯色背景。数据图层仍然可用。',
   },
@@ -2017,47 +2037,47 @@ const zhHans: Catalog = {
   historic: {
     liveOff:
       '这些图片直接来自市政府的服务器，所以只有在“获取市政府实时数据”开启时才能打开（在“设置”的“隐私和实时数据”下）。',
-    refused: '旧航拍照片和 1860 年的地图集来自市政府的服务器。请在“设置”中打开市政府实时数据，才能查看。',
+    refused: '旧航拍照片和1860年的地图集来自市政府的服务器。请在“设置”中打开市政府实时数据，才能查看。',
     serverError: '市政府的图片服务器没有发回这张图片的每一部分。请稍后再试。',
-    photoYear: (year) => `${year} 年的航拍照片，从飞机上拍摄。`,
-    gaps1975: '1975 年的照片在费城最南部，也就是机场和 Navy Yard 一带，有空缺。',
+    photoYear: (year) => `${year}年的航拍照片，从飞机上拍摄。`,
+    gaps1975: '1975年的照片在费城最南部，也就是机场和 Navy Yard 一带，有空缺。',
     termsNotStated: '发布者没有说明这些照片的使用条款；它们按市政府托管的样子显示，并注明出处，发布者要求撤下时就会撤下。',
-    blackAndWhite: (year) => `${year} 年的照片是黑白的。`,
+    blackAndWhite: (year) => `${year}年的照片是黑白的。`,
     under: '照片位于所有其他图层的下方。把它的强度调低，就能透过它看到今天的街道。',
     atlasCoverage: '这套地图集只涵盖中心城和 Northern Liberties。',
     atlasCredit: '地图集由 Greater Philadelphia GeoHistory Network 对齐到今天的地图，并经费城市政府许可，由其托管。',
-    sliderRange: (first, last) => `从 ${first} 到 ${last}`,
+    sliderRange: (first, last) => `从${first}年到${last}年`,
     lotTitle: '旧航拍照片',
     lotButton: '在旧航拍照片中查看这个地块',
     lotHelp: (year) =>
-      `在这个地块的位置打开地图，显示 ${year} 年的航拍照片，这是这张地图上最早的一张。之后各年份，可以在图层的“过去与现在”下拖动滑块查看。`,
+      `在这个地块的位置打开地图，显示${year}年的航拍照片，这是这张地图上最早的一张。之后各年份，可以在图层的“过去与现在”下拖动滑块查看。`,
     lotLiveOff: '照片直接来自市政府的服务器，所以需要市政府实时数据，而它现在是关闭的。',
-    shown: (year) => `已打开 ${year} 年的航拍照片。可以在图层的“过去与现在”下拖动滑块查看各年份。`,
+    shown: (year) => `已打开${year}年的航拍照片。可以在图层的“过去与现在”下拖动滑块查看各年份。`,
     statusOk: '上一次每周检查时，每个图片服务都有回应。有人打开相应图层时，图片会直接从市政府的服务器加载。',
     statusStale: (date) =>
-      `上一次每周检查时，并非每个图片服务都有回应，所以有些图片可能显示不出来。每个服务最近一次都有回应是在 ${date}。`,
+      `上一次每周检查时，并非每个图片服务都有回应，所以有些图片可能显示不出来。每个服务最近一次都有回应是在${date}。`,
     statusFailing: '每周检查时图片服务没有回应，所以图片可能显示不出来。',
     services: (n) => `已检查 ${plural(n, { other: '# 个图片服务' })}`,
     lastCheck: (date) => `每个服务都有回应的最近一次检查：${date}`,
   },
 
   redlining: {
-    detailsTitle: '1937 年红线地图',
+    detailsTitle: '1937年红线地图',
     grades: {
-      A: 'A，1937 年被评为“最好”',
+      A: 'A，1937年被评为“最好”',
       B: 'B，被评为“仍然理想”',
       C: 'C，被评为“明显衰退”',
       D: 'D，被评为“危险”，并用红线圈出：被划红线',
     },
     ungraded: '没有评级（工业和商业用地）',
-    area: (label, grade) => `${label} 区，1937 年评级为 ${grade}`,
-    areaUngraded: (label) => `${label}：1937 年的地图没有给这个区域评级`,
+    area: (label, grade) => `${label} 区，1937年评级为 ${grade}`,
+    areaUngraded: (label) => `${label}：1937年的地图没有给这个区域评级`,
     context:
-      '1937 年，联邦机构“房主贷款公司”（Home Owners’ Loan Corporation）按照它判断在各个社区发放抵押贷款有多安全，把费城的社区从 A 到 D 评级。评级在很大程度上取决于每个区域住着什么人：黑人家庭和许多移民家庭居住的区域，通常被评为 D，并用红线圈出。此后几十年，那里更难获得贷款，这种做法被称为划红线（redlining）。',
-    notToday: '这些评级只是记录了联邦机构在 1937 年如何评判各个地方。它们不说明今天住在那里的人。',
-    legendTap: '点按一个区域，查看它的评级，以及指向它 1937 年描述的链接。',
-    description: (label) => `在 Mapping Inequality 阅读 ${label} 区 1937 年的描述`,
-    descriptionNote: '1937 年的描述不复制到这里：它们留在 Mapping Inequality，连同其周围的历史背景。',
+      '1937年，联邦机构“房主贷款公司”（Home Owners’ Loan Corporation）按照它判断在各个社区发放抵押贷款有多安全，把费城的社区从 A 到 D 评级。评级在很大程度上取决于每个区域住着什么人：黑人家庭和许多移民家庭居住的区域，通常被评为 D，并用红线圈出。此后几十年，那里更难获得贷款，这种做法被称为划红线（redlining）。',
+    notToday: '这些评级只是记录了联邦机构在1937年如何评判各个地方。它们不说明今天住在那里的人。',
+    legendTap: '点按一个区域，查看它的评级，以及指向它1937年描述的链接。',
+    description: (label) => `在 Mapping Inequality 阅读 ${label} 区1937年的描述`,
+    descriptionNote: '1937年的描述不复制到这里：它们留在 Mapping Inequality，连同其周围的历史背景。',
     credit:
       '区域和评级来自 Mapping Inequality: Redlining in New Deal America，作者 Robert K. Nelson、LaDale Winling 等人，里士满大学 Digital Scholarship Lab。Placekeepers 只显示区域和评级。',
     homepageLabel: 'Mapping Inequality：费城',
@@ -2078,7 +2098,7 @@ const zhHans: Catalog = {
     network: '无法连接',
     http: '返回了错误',
     bad_data: '发回了我们无法读取的答案',
-    not_found: '没有这方面的记录',
+    not_found: '没有找到相关记录',
     aborted: '没有被询问',
     empty: '没有被询问',
   },
@@ -2100,12 +2120,12 @@ const zhHans: Catalog = {
       brownfields: '这不是所有污染土地的地图。在棕地上或附近种植食物之前，请先检测土壤。',
     },
     districtTitle: (name) => name,
-    designated: (date) => `于 ${date} 指定。`,
+    designated: (date) => `于${date}指定。`,
     noDate: '市政府的图层没有给出指定日期。',
     propertyTitle: '在费城历史名胜名录上',
-    listedOn: (date) => `于 ${date} 单独列入名录。`,
+    listedOn: (date) => `于${date}单独列入名录。`,
     listedAlone: '单独列入名录。',
-    inDistrict: (district, date) => `属于 ${district}${date ? `，于 ${date} 指定` : ''}。`,
+    inDistrict: (district, date) => `属于 ${district}${date ? `，于${date}指定` : ''}。`,
     overlaysHere: (n) => `这里有 ${plural(n, { other: '# 个叠加区' })}`,
     hearingTitle: (board) => `${board}听证会`,
     hearingWhen: (date, time) => `${date}${time ? `，${time}` : ''}`,
@@ -2141,21 +2161,21 @@ const zhHans: Catalog = {
 
     provenance: {
       live: (time) => `${time} 从市政府实时获取。`,
-      snapshot: (date) => `来自 ${date} 的每周快照。`,
+      snapshot: (date) => `来自${date}的每周快照。`,
       snapshotNoDate: '来自每周快照。',
       map: '来自地图的每周数据。',
       checking: '正在向市政府查询是否有更新的记录。',
       asking: '正在询问市政府。',
-      failedSnapshot: (reason, date) => `市政府的服务器${reason}，所以这里显示的是 ${date} 的每周快照。`,
+      failedSnapshot: (reason, date) => `市政府的服务器${reason}，所以这里显示的是${date}的每周快照。`,
       failedNothing: (reason) => `市政府的服务器${reason}，所以这一部分目前无法显示。`,
-      offSnapshot: (date) => `市政府实时数据已关闭，所以这里显示的是 ${date} 的每周快照。`,
+      offSnapshot: (date) => `市政府实时数据已关闭，所以这里显示的是${date}的每周快照。`,
       offNothing: '市政府实时数据已关闭，而我们的每周快照不包含这一部分。',
       none: '没有可显示的记录。',
     },
     banner: {
       live: '从费城市政府实时获取。',
       loading: '正在向市政府查询最新记录。',
-      off: (date) => `市政府实时数据已关闭。本页显示 ${date} 的每周快照。`,
+      off: (date) => `市政府实时数据已关闭。本页显示${date}的每周快照。`,
       offNoDate: '市政府实时数据已关闭。本页显示每周快照。',
       partial: '有些市政府查询没有成功。那些部分显示每周快照，或什么也不显示，并会注明。',
       failed: '市政府的服务器没有回应。本页显示我们每周快照中有的内容。',
@@ -2178,7 +2198,7 @@ const zhHans: Catalog = {
       lotSize: (frontage, depth) =>
         `市政府的财产评估办公室记录它临街宽约 ${formatNumber(Math.round(frontage))} 英尺，深约 ${formatNumber(Math.round(depth))} 英尺。`,
       landcare: '已由 PHS LandCare 维护。',
-      landcareSince: (year) => `自 ${year} 年起已由 PHS LandCare 维护。`,
+      landcareSince: (year) => `自${year}年起已由 PHS LandCare 维护。`,
       garden: '这里已经有人在种菜种花。在做任何计划之前，请先问问他们。',
       lensLine: (lens) => `“${lens}”视角下的优先度，也就是地图给地块着色所用的视角。`,
       flood: {
@@ -2201,7 +2221,7 @@ const zhHans: Catalog = {
       who: '谁可以做',
       cost: '费用',
       timeline: '需要多长时间',
-      lastChecked: (date) => `最近核查于 ${date}。`,
+      lastChecked: (date) => `最近核查于${date}。`,
       toConfirm: '仍待与这里列出的机构确认。',
       partners: '谁可以帮忙',
       otherRoutes: '这个地块的其他合法途径',
@@ -2305,7 +2325,7 @@ const zhHans: Catalog = {
       flagTitles: {
         absentee: '业主的邮件寄往哪里',
         possible_estate: '可能是遗产名下的房产',
-        tax_debt_2025: '截至 2025 年 7 月的欠税',
+        tax_debt_2025: '截至2025年7月的欠税',
         sheriff_sales: '过去的治安官拍卖',
         years_since_sale: '距上次出售的年数',
         many_parcels: '拥有许多空置地块的业主',
@@ -2316,14 +2336,14 @@ const zhHans: Catalog = {
       },
       otherFlag: '市政府记录中的一条提示',
       taxTitle: '税款',
-      taxNoDebt: '市政府不再把每处房产的税款余额作为开放数据公布。我们手上 2025 年 7 月的快照，没有显示这里有欠税。',
+      taxNoDebt: '市政府不再把每处房产的税款余额作为开放数据公布。我们手上2025年7月的快照，没有显示这里有欠税。',
       taxUnknown: '市政府不再把每处房产的税款余额作为开放数据公布。',
       taxHeld:
-        '市政府不再把每处房产的税款余额作为开放数据公布。对于可能是个人的业主，只有在我们认为很有可能或大概是空置的地块上，才会显示我们 2025 年 7 月的快照。',
+        '市政府不再把每处房产的税款余额作为开放数据公布。对于可能是个人的业主，只有在我们认为很有可能或大概是空置的地块上，才会显示我们2025年7月的快照。',
       taxCenter: '到市政府的税务中心（Tax Center）查看今天的余额',
       deedFraudTitle: '保护这处房产，防止契据盗窃',
       deedFraud:
-        '契据盗窃是指有人提交一份伪造的契据来夺取房产，常常是业主已经去世或住在别处的房产。业主和家人可以注册市政府免费的 Fraud Guard 提醒：每当有文件登记了他们的姓名，就会收到一封电子邮件。自 2025 年 11 月起，市政府还会自动拦截卖方在据称签署契据时已经去世的契据。',
+        '契据盗窃是指有人提交一份伪造的契据来夺取房产，常常是业主已经去世或住在别处的房产。业主和家人可以注册市政府免费的 Fraud Guard 提醒：每当有文件登记了他们的姓名，就会收到一封电子邮件。自2025年11月起，市政府还会自动拦截卖方在据称签署契据时已经去世的契据。',
       fraudGuard: '注册市政府免费的 Fraud Guard 提醒',
       deedCheck: '市政府阻止契据欺诈的自动检查',
       helpTitle: '给业主和家人的帮助',
@@ -2382,23 +2402,23 @@ const zhHans: Catalog = {
       },
       tax_debt_2025: {
         text: (amount, years) =>
-          `截至 2025 年 7 月，市政府记录显示欠缴房地产税 ${amount}${years ? `，涉及 ${plural(years, { other: '# 个纳税年度' })}` : ''}。`,
+          `截至2025年7月，市政府记录显示欠缴房地产税 ${amount}${years ? `，涉及 ${plural(years, { other: '# 个纳税年度' })}` : ''}。`,
         careful:
-          '这是最后一份公开记录，截至 2025 年 7 月 9 日，不是今天的余额：业主此后可能已经缴清，也可能又欠了更多。大约三年或更长时间不缴税，可能导致治安官拍卖，邻居们照看的地块可能被卖给外来的买家。',
+          '这是最后一份公开记录，截至2025年7月9日，不是今天的余额：业主此后可能已经缴清，也可能又欠了更多。大约三年或更长时间不缴税，可能导致治安官拍卖，邻居们照看的地块可能被卖给外来的买家。',
         next: '在依靠这个信息之前，请先到市政府的税务中心（Tax Center）查看今天的余额。如果您的街区在照看这个地块，Grounded in Philly 的治安官拍卖指南会解释其中的风险，以及您能做什么。',
       },
       sheriff_sales: {
-        one: (sale) => `${sale} 在治安官拍卖中售出。`,
+        one: (sale) => `${sale}在治安官拍卖中售出。`,
         many: (n, sales) => `在治安官拍卖中售出 ${n} 次：${sales}。`,
         sale: (date, price) => (price ? `${date}，价格 ${price}` : date),
-        andLast: (others, last) => `${others}；以及 ${last}`,
+        andLast: (others, last) => `${others}；以及${last}`,
         careful:
           '在治安官拍卖中，得标的出价会清偿房产上的旧债务，所以邻居们照看过的地块，可能转到外来的买家手里。过去有过拍卖，并不表示这处房产现在正在出售。',
         next: '如果您的街区在照看这个地块，请阅读 Grounded in Philly 的治安官拍卖指南，并向 Garden Justice Legal Initiative 寻求免费的法律帮助。',
       },
       years_since_sale: {
-        lastSold: (year) => `最近一次出售是在 ${year} 年。`,
-        notSoldSince: (year) => `至少从 ${year} 年起，没有在公开市场上出售过。`,
+        lastSold: (year) => `最近一次出售是在${year}年。`,
+        notSoldSince: (year) => `至少从${year}年起，没有在公开市场上出售过。`,
         careful:
           '这里不计入象征性价格的出售和治安官拍卖；完整的历史记录在下面。许多房屋在家族里代代相传，没有新的买卖，所以离上次出售已经很久，并不表示业主已经放弃了这处房产。',
         next: '如果一个家庭继承了房产，却没有办理新的契据，Tangled Title Fund 和 Philadelphia VIP 可以帮助他们理清产权，保住房产。',
@@ -2410,28 +2430,28 @@ const zhHans: Catalog = {
         next: '请用这份清单查看这位业主的其他地块，然后按合法的方式征求许可：写信给业主，并请 Garden Justice Legal Initiative 审阅任何协议。',
       },
       fast_resales: {
-        since: (n, year) => `自 ${year} 年起售出 ${n} 次。`,
-        inYear: (n, year) => `${year} 年售出 ${n} 次。`,
-        between: (n, first, last) => `${first} 年到 ${last} 年间售出 ${n} 次。`,
+        since: (n, year) => `自${year}年起售出 ${n} 次。`,
+        inYear: (n, year) => `${year}年售出 ${n} 次。`,
+        between: (n, first, last) => `${first}年到${last}年间售出 ${n} 次。`,
         careful:
           '快速转手可能意味着有人正在买卖这处房产来牟利，有时还可能涉及伪造的契据。它们也可能很平常，例如一个家庭卖掉继承的房子，买家修缮后转卖。',
         next: '请在下面的历史记录里，看看是谁卖出、谁买入。业主和家人可以注册市政府免费的 Fraud Guard 提醒，在有文件提到他们的姓名时得到通知。',
       },
       open_violations: {
-        one: (when, what) => `L&I 列出 1 项未了结的违规${what ? `，涉及 ${what}` : ''}${when ? `，日期为 ${when}` : ''}。`,
+        one: (when, what) => `L&I 列出 1 项未了结的违规${what ? `，涉及 ${what}` : ''}${when ? `，日期为${when}` : ''}。`,
         many: (n) => `L&I 列出 ${n} 项未了结的违规。`,
-        mostRecent: (when, what) => (what ? `最近的一项日期为 ${when}，涉及 ${what}。` : `最近的一项日期为 ${when}。`),
+        mostRecent: (when, what) => (what ? `最近的一项日期为${when}，涉及 ${what}。` : `最近的一项日期为${when}。`),
         careful: '违规是发给业主的通知，而业主可能没有能力解决，并且自检查以来，情况可能已经变了。',
         next: '请把实体方面的问题，例如倾倒垃圾或敞开的建筑，报告给 Philly311。如果您认识业主，请告诉他们：他们可能没有看到通知。',
       },
       unsafe: {
-        text: (since) => (since ? `L&I 把这栋建筑列为不安全建筑，自 ${since} 起。` : 'L&I 把这栋建筑列为不安全建筑。'),
+        text: (since) => (since ? `L&I 把这栋建筑列为不安全建筑，自${since}起。` : 'L&I 把这栋建筑列为不安全建筑。'),
         careful: '请不要进入，并让孩子远离：L&I 发现这个结构不安全。不要进入，也不要自己去封堵它。',
         next: '如果它可以随意进入，请向 Philly311 报告，好让市政府把它封起来。',
       },
       imminently_dangerous: {
         text: (since) =>
-          since ? `L&I 把这栋建筑列为有迫在眉睫的危险，自 ${since} 起。` : 'L&I 把这栋建筑列为有迫在眉睫的危险。',
+          since ? `L&I 把这栋建筑列为有迫在眉睫的危险，自${since}起。` : 'L&I 把这栋建筑列为有迫在眉睫的危险。',
         careful: 'L&I 发现这个结构随时可能倒塌。请远离它，也让别人远离。',
         next: '如有任何变化，例如砖块掉落或门敞开，请向 Philly311 报告。',
       },
@@ -2457,7 +2477,7 @@ const zhHans: Catalog = {
       partialParts: { transfers: '契据记录', assessments: '评估记录', li: 'L&I 违规记录' },
       notInCopyOff: '市政府实时数据可以显示它们。',
       notInCopyFailed: '市政府没有回应。请再试一次，查看它们。',
-      recordsNote: '市政府的契据记录从 2000 年起是完整的。更早的出售可能缺失。',
+      recordsNote: '市政府的契据记录从2000年起是完整的。更早的出售可能缺失。',
       datesNote:
         '每个日期是契据上的日期，每个价格四舍五入到美元，与市政府房产页面的显示方式一致；市政府会在几天或几周之后才登记契据。一份契据涵盖多处房产时，价格是这处房产所占的份额。',
       documents: {
@@ -2482,20 +2502,20 @@ const zhHans: Catalog = {
       noValue: '没有记录',
       noAssessments: '没有评估记录。',
       assessmentNote: '评估是市政府为征收房产税而估算的市场价值，不是成交价。',
-      chartLabel: (first, last, low, high) => `市政府 ${first} 年到 ${last} 年评估的图表，在 ${low} 和 ${high} 之间。相同的数字也列在下面的表格里。`,
+      chartLabel: (first, last, low, high) => `市政府${first}年到${last}年评估的图表，在 ${low} 和 ${high} 之间。相同的数字也列在下面的表格里。`,
       open: '未了结',
       liSummaryOpen: (n) => plural(n, { other: '# 项未了结的违规' }),
       liSummaryLast: (date) => `最近的违规：${date}。`,
       liUnsafe: 'L&I 把这栋建筑列为不安全建筑。',
-      liUnsafeSince: (date) => `L&I 把这栋建筑列为不安全建筑，自 ${date} 起。`,
+      liUnsafeSince: (date) => `L&I 把这栋建筑列为不安全建筑，自${date}起。`,
       liDangerous: 'L&I 把这栋建筑列为有迫在眉睫的危险。',
-      liDangerousSince: (date) => `L&I 把这栋建筑列为有迫在眉睫的危险，自 ${date} 起。`,
-      liSince2016: (n) => `2016 年以来记录了 ${plural(n, { other: '# 项违规' })}。`,
-      liSealed: (date) => `市政府最近一次清理并封闭是在 ${date}。`,
-      liDemolished: (date) => `最近一次拆除完成于 ${date}。`,
+      liDangerousSince: (date) => `L&I 把这栋建筑列为有迫在眉睫的危险，自${date}起。`,
+      liSince2016: (n) => `2016年以来记录了 ${plural(n, { other: '# 项违规' })}。`,
+      liSealed: (date) => `市政府最近一次清理并封闭是在${date}。`,
+      liDemolished: (date) => `最近一次拆除完成于${date}。`,
       liNeither: '没有列为不安全或有迫在眉睫的危险。',
       liNowTitle: 'L&I 现状',
-      earlyDeed: '2000 年以前：来自市政府说可能不完整的记录。',
+      earlyDeed: '2000年以前：来自市政府说可能不完整的记录。',
       timeline: {
         storyTitle: '这个地块的故事',
         storySource: (source) => `来源：${source}。`,
@@ -2504,7 +2524,7 @@ const zhHans: Catalog = {
         caption: '这处房产的所有记录，最新的在前，按年份排列',
         intro: '出售、L&I 记录、申诉和空置记录，放在同一份列表里，最新的在前。关掉某一类，就会隐藏它。',
         appeal: (board, kind) => (kind ? `${board}：${kind}` : board),
-        appealHearing: (date) => `听证会 ${date}`,
+        appealHearing: (date) => `听证会${date}`,
         show: '在时间线中显示',
         loading: '正在从每周副本加载时间线。',
         failed: '无法从每周副本加载时间线。',
@@ -2564,34 +2584,34 @@ const zhHans: Catalog = {
         lists: {
           city_land: '在市政府的空地名单上',
           city_building: '在市政府的空置建筑名单上',
-          june_2024_land: '在 L&I 2024 年 6 月的空地名单上，由 Clean & Green Philly 保存',
-          june_2024_building: '在 Clean & Green Philly 自己 2024 年 6 月的空置建筑名单上',
+          june_2024_land: '在 L&I 2024年6月的空地名单上，由 Clean & Green Philly 保存',
+          june_2024_building: '在 Clean & Green Philly 自己2024年6月的空置建筑名单上',
         },
         landcare: (program) => (program === 'community_landcare' ? '邻居们开始通过 PHS Community LandCare 照看这个地块' : 'PHS LandCare 开始照看这个地块'),
         story: {
-          cityDemolished: (year) => `这里曾有一栋建筑，直到 ${year} 年被市政府拆除。`,
-          privateDemolished: (year) => `这里曾有一栋建筑，直到 ${year} 年根据私人许可被拆除。`,
-          newConstruction: (year) => `L&I 在 ${year} 年发出了这里的新建施工许可。`,
-          dangerous: (date) => `L&I 自 ${date} 起把这栋建筑列为有迫在眉睫的危险。`,
-          unsafe: (date) => `L&I 自 ${date} 起把这栋建筑列为不安全建筑。`,
+          cityDemolished: (year) => `这里曾有一栋建筑，直到${year}年被市政府拆除。`,
+          privateDemolished: (year) => `这里曾有一栋建筑，直到${year}年根据私人许可被拆除。`,
+          newConstruction: (year) => `L&I 在${year}年发出了这里的新建施工许可。`,
+          dangerous: (date) => `L&I 自${date}起把这栋建筑列为有迫在眉睫的危险。`,
+          unsafe: (date) => `L&I 自${date}起把这栋建筑列为不安全建筑。`,
           sealed: (year, n) =>
             n > 1
-              ? `市政府最近一次派清理封闭队来这里是在 ${year} 年；已经来过 ${formatNumber(n)} 次。`
-              : `市政府在 ${year} 年派清理封闭队来过这里。`,
-          sheriff: (year) => `它在 ${year} 年的治安官拍卖中售出。`,
+              ? `市政府最近一次派清理封闭队来这里是在${year}年；已经来过 ${formatNumber(n)} 次。`
+              : `市政府在${year}年派清理封闭队来过这里。`,
+          sheriff: (year) => `它在${year}年的治安官拍卖中售出。`,
           cityList: (land, date, june) =>
-            `市政府 ${date} 的${land ? '空地' : '空置建筑'}名单包括它${june ? '，2024 年 6 月的一份名单也包括它' : ''}。`,
-          juneList: (land) => (land ? 'L&I 2024 年 6 月的空地名单包括它。' : 'Clean & Green Philly 2024 年 6 月的空置建筑名单包括它。'),
+            `市政府${date}的${land ? '空地' : '空置建筑'}名单包括它${june ? '，2024年6月的一份名单也包括它' : ''}。`,
+          juneList: (land) => (land ? 'L&I 2024年6月的空地名单包括它。' : 'Clean & Green Philly 2024年6月的空置建筑名单包括它。'),
           landcare: (year, program) =>
-            program === 'community_landcare' ? `邻居们自 ${year} 年起通过 PHS Community LandCare 照看它。` : `PHS LandCare 自 ${year} 年起照看它。`,
+            program === 'community_landcare' ? `邻居们自${year}年起通过 PHS Community LandCare 照看它。` : `PHS LandCare 自${year}年起照看它。`,
           sources: {
             demolitions: 'L&I 的拆除记录',
             permits: 'L&I 的许可记录',
             notices: 'L&I 的不安全和迫在眉睫危险建筑记录',
             cleanSeal: 'L&I 的清理封闭记录',
             deeds: '市政府的契据记录',
-            lists: (june) => (june ? '市政府的空置房产名单，以及 Clean & Green Philly 保存的 L&I 2024 年 6 月名单' : '市政府的空置房产名单'),
-            june: (land) => (land ? 'L&I 2024 年 6 月的名单，由 Clean & Green Philly 保存' : 'Clean & Green Philly 2024 年 6 月的名单'),
+            lists: (june) => (june ? '市政府的空置房产名单，以及 Clean & Green Philly 保存的 L&I 2024年6月名单' : '市政府的空置房产名单'),
+            june: (land) => (land ? 'L&I 2024年6月的名单，由 Clean & Green Philly 保存' : 'Clean & Green Philly 2024年6月的名单'),
             landcare: 'PHS LandCare 照看的地块名单',
           },
         },
@@ -2604,8 +2624,8 @@ const zhHans: Catalog = {
       areaSnapshot: '这个地块周围，大约两个街区宽的范围内',
       within500: '这个地块 500 英尺范围内',
       s12: (n) => `最近 12 个月有 ${plural(n, { other: '# 人' })}中枪`,
-      s36: (n) => `最近 3 年有 ${plural(n, { other: '# 人' })}中枪`,
-      killed: (n) => `2019 年以来，有 ${plural(n, { other: '# 人' })}在交通事故中遇难`,
+      s36: (n) => `最近3年有 ${plural(n, { other: '# 人' })}中枪`,
+      killed: (n) => `2019年以来，有 ${plural(n, { other: '# 人' })}在交通事故中遇难`,
       landcare: (n) => `${plural(n, { other: '# 块' })}由 PHS LandCare 维护的地块`,
       gardens: (n) => plural(n, { other: '# 个社区菜园' }),
       hearings: (n) => `还有 ${plural(n, { other: '# 场' })}关于其他房产的听证会`,
@@ -2619,10 +2639,10 @@ const zhHans: Catalog = {
     sources: {
       intro: '这个页面的每个部分来自哪里，以及有多新。',
       live: (time) => `${time} 从市政府实时获取`,
-      snapshot: (date) => `${date} 的每周快照`,
+      snapshot: (date) => `${date}的每周快照`,
       snapshotNoDate: '每周快照',
-      newest: (date) => `最新的记录 ${date}`,
-      taxSnapshot: 'Clean & Green Philly 的最终快照，2025 年 7 月 9 日',
+      newest: (date) => `最新的记录${date}`,
+      taxSnapshot: 'Clean & Green Philly 的最终快照，2025年7月9日',
       by: (publisher) => `来自 ${publisher}`,
       correction: '报告更正',
       correctionHelp: '会打开 GitHub 上的一份表格，并已填好这个地块的信息。提交它需要一个免费的 GitHub 账户。',
@@ -2641,10 +2661,10 @@ const zhHans: Catalog = {
     },
 
     print: {
-      printed: (date) => `由 Placekeepers 于 ${date} 打印。`,
+      printed: (date) => `由 Placekeepers 于${date}打印。`,
       recent: '近期历史',
       moreOnline: (n) => `网上的地块页面还有 ${plural(n, { other: '# 条记录' })}。`,
-      lastAssessment: (year, value) => `市政府 ${year} 年的评估：${value}。`,
+      lastAssessment: (year, value) => `市政府${year}年的评估：${value}。`,
       moreSources: (n) => `网上的地块页面还有 ${plural(n, { other: '# 个来源' })}。`,
       taxCenter: (url) => `今天的余额：市政府的税务中心（Tax Center），${url}`,
       rules: '这个地块的规定',
@@ -2656,13 +2676,13 @@ const zhHans: Catalog = {
       notOnList:
         '我们每周为名单上的地块整理这些规定，而这个地块不在名单上。市政府的地图 Atlas 显示它的分区和叠加区，历史委员会可以说明它是否属于历史保护对象。',
       hearingTitle: '即将举行听证会',
-      hearingSet: (board, date, time) => `关于这个地块的${board}听证会，定于 ${date}${time ? ` ${time}` : ''} 举行。`,
+      hearingSet: (board, date, time) => `关于这个地块的${board}听证会，定于${date}${time ? ` ${time} ` : ''}举行。`,
       hearingBoard: { zoning: '分区调整委员会', li_review: '执照和检查复审委员会', building: '建筑标准委员会', other: '市政府某委员会' },
       seeAppeal: '查看申诉',
       historicTitle: '历史保护认定',
-      inDistrict: (district, date) => `这个地块位于 ${district}${date ? `，于 ${date} 指定` : ''}。`,
+      inDistrict: (district, date) => `这个地块位于 ${district}${date ? `，于${date}指定` : ''}。`,
       districtName: (name) => (/district/i.test(name) ? name : `${name} 历史街区`),
-      listed: (date) => `这处房产自 ${date} 起单独列入费城历史名胜名录。`,
+      listed: (date) => `这处房产自${date}起单独列入费城历史名胜名录。`,
       listedNoDate: '这处房产单独列入费城历史名胜名录。',
       listedInDistrict: (district) => `这处房产作为 ${district} 的一部分，列入费城历史名胜名录。`,
       askFirst: '这里的改动可能需要历史委员会审查；请先询问他们。如果是壁画或菜园，请在开始之前先询问委员会。',
@@ -2686,7 +2706,7 @@ const zhHans: Catalog = {
       noOverlays: '没有分区叠加区覆盖这个地块。',
       overlayKinds: { 1: '叠加区', 2: '特别规定', 3: '铺装限制' },
       readRule: (section) => (section ? `阅读规定：《分区法规》第 ${section} 节` : '阅读《分区法规》中的规定'),
-      sunset: (date) => `定于 ${date} 终止。`,
+      sunset: (date) => `定于${date}终止。`,
       pending: (bill) => `市政府的议会有一项待审议的法案${bill ? `（法案 ${bill}）` : ''}会改变它。`,
       zoningNote:
         '分区和叠加区可能改变一个地块上允许做什么。市政府的地图可能落后于新的法案，所以在做计划之前，请向市政府的分区办公室核实。',
@@ -2747,9 +2767,9 @@ const zhHans: Catalog = {
         other: '市政府的另一个委员会',
       },
       comingUp: '即将举行',
-      filed: (date) => `提出于 ${date}`,
-      hearingOn: (date, time, upcoming) => `${upcoming ? '听证会定于 ' : '听证会：'}${date}${time ? `，${time}` : ''}`,
-      decidedOn: (date) => `裁决于 ${date}`,
+      filed: (date) => `提出于${date}`,
+      hearingOn: (date, time, upcoming) => `${upcoming ? '听证会定于' : '听证会：'}${date}${time ? `，${time}` : ''}`,
+      decidedOn: (date) => `裁决于${date}`,
       status: (status) => `状态：${status}`,
       decision: (decision) => `裁决：${decision}`,
       rco: (name) => `市政府已通知这个注册社区组织：${name}。`,
