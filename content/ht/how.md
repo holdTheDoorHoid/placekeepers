@@ -35,7 +35,7 @@ chak demann poukont li epi li ka di non a nenpòt vant oswa lokasyon.
 - **Individual Garden Agreement.** Pou yon sèl moun, $25 pa ane, ak asirans responsablite.
 - **Community Garden License.** Pou yon gwoup ki gen yon sponsò san bi likratif, jiska 5 an, ak
   asirans ak yon plan antretyen. **Poko konfime:** Grounded in Philly te note ke Land Bank te
-  sispann siyen nouvo lis kalite sa a an 2020, kidonk mande Land Bank dirèkteman anvan ou planifye
+  sispann siyen nouvo kontra lokasyon kalite sa a an 2020, kidonk mande Land Bank dirèkteman anvan ou planifye
   alantou youn.
 - **Interim Use Agreement.** Yon akò tanporè ki mare ak yon dat oswa yon evènman.
 - **Achte yon teren jaden nèt.** Louvri pou jaden ki ap mache depi omwen 5 an, epi li bezwen

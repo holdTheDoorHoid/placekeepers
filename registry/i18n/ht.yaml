@@ -140,7 +140,7 @@ sources:
     name: To povrete pa sektè resansman (ACS 2020 a 2024)
     publisher: Biwo Resansman Etazini (U.S. Census Bureau), American Community Survey
   cagp_tax_2025:
-    name: Dèt taks depi jiyè 2025 (Clean & Green Philly)
+    name: Dèt taks dapre dosye jiyè 2025 (Clean & Green Philly)
     publisher: Clean & Green Philly, Code for Philly
   crashes_2020_2024:
     name: Aksidan, 2020 a 2024 (done PennDOT, kopi Vil la)
@@ -1371,7 +1371,7 @@ routes:
     who: Pwopriyetè kay ki rete nan kay yo depi omwen 10 lane, ki gen evalyasyon ki monte omwen 50 pousan nan yon ane oswa 75 pousan sou senk lane, ak revni fanmi anba limit Vil la (tankou $103,050 pou yon moun oswa $147,200 pou kat nan 2026), ki ajou ak taks yo oswa ki nan yon akò peman
     steps:
       - Aplike sou Sant Taks Filadèlfi (tax-services.phila.gov) ak aplikasyon konbine Vil la, oswa rele 215 686 9200, voye yon imèl bay revenue@phila.gov, oswa voye fòm nan pa lapòs bay Depatman Revni, P.O. Box 53190, Philadelphia, PA 19105.
-      - LOOP mete yon limit sou evalyasyon bòdwo taks la itilize, nan 1.5 fwa sa ane anvan an oswa 1.75 fwa pi ba valè senk dènye ane yo, toutotan pwopriyetè a rete elijib.
+      - LOOP mete yon limit sou evalyasyon bòdwo taks la itilize, nan 1.5 fwa sa ane anvan an oswa 1.75 fwa valè ki pi ba nan senk dènye ane yo, toutotan pwopriyetè a rete elijib.
       - 'Aplike anvan dat limit chak ane Vil la (30 septanm nan dènye lane yo); paj Vil la bay dat aktyèl la.'
     cost: Gratis
     timeline: Yon dat limit chak ane, 30 septanm nan dènye lane yo
