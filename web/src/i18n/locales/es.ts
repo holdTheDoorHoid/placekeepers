@@ -640,7 +640,7 @@ const es: Catalog = {
       'Solo se muestran las parcelas que las agencias de tierras de la Ciudad indican como disponibles. Una parcela que el mapa no considera vacía no se dibuja; el mapa propio del Land Bank las muestra todas.',
     selected: 'Lugar seleccionado',
     landcare: 'Lote mantenido por PHS LandCare: ya está cuidado',
-    garden: 'Huerto o granja comunitaria',
+    garden: 'Jardín o granja comunitaria',
     hin: 'Calle de la Red de Lesiones Graves',
     hexIntro: (window) => `Personas baleadas, por hexágono, ${window.toLowerCase()}`,
     hexNone: 'Los hexágonos sin tiroteos se dejan en blanco.',
@@ -2374,7 +2374,7 @@ const es: Catalog = {
       s36: (n) => `${plural(n, { one: '# persona baleada', other: '# personas baleadas' })} en los últimos 3 años`,
       killed: (n) => `${plural(n, { one: '# persona murió', other: '# personas murieron' })} en choques de tránsito desde 2019`,
       landcare: (n) => `${plural(n, { one: '# lote mantenido', other: '# lotes mantenidos' })} por PHS LandCare`,
-      gardens: (n) => plural(n, { one: '# huerto comunitario', other: '# huertos comunitarios' }),
+      gardens: (n) => plural(n, { one: '# jardín comunitario', other: '# jardines comunitarios' }),
       hearings: (n) => `${plural(n, { one: '# audiencia', other: '# audiencias' })} todavía por venir sobre otras propiedades`,
       playgroundHeading: 'Parque infantil más cercano',
       playground: (name, meters) =>
