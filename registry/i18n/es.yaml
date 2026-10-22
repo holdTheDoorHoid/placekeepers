@@ -876,3 +876,134 @@ layers:
       shade:
         label: "Sombrear las áreas (apagado muestra solo sus contornos y calificaciones)"
 
+
+lenses:
+  violence:
+    label: "Reducción de la violencia"
+    description: "Dónde limpiar, reverdecer o sellar probablemente reduciría más la violencia con armas de fuego en los alrededores, según ensayos aleatorizados en Filadelfia."
+    factors:
+      untreated_vacancy:
+        label: "Lote vacío o edificio abandonado abierto, sin atender"
+        explain: "Ensayos aleatorizados en Filadelfia encontraron que reverdecer lotes vacíos y poner puertas y ventanas que funcionen en casas abandonadas redujo la violencia con armas de fuego en los alrededores. Los lugares que ya recibieron ese tratamiento tienen puntaje 0: los lotes que mantiene PHS LandCare y los edificios cuyo dueño arregló las puertas y ventanas después de una notificación de L&I. Cualquier otro lote o edificio vacío tiene puntaje 100."
+      shootings_nearby:
+        label: "Tiroteos cercanos en los últimos tres años"
+        explain: "Personas baleadas en los últimos tres años a un cuarto de milla más o menos (el hexágono del lugar y los seis que lo rodean), según los registros de víctimas de disparos del Departamento de Policía. La posición es la parte de los lugares del mapa con menos. Los ensayos midieron menos tiroteos alrededor de los lugares tratados, así que el cuidado ayuda más donde ocurren los tiroteos."
+      poverty:
+        label: "Tasa de pobreza del vecindario"
+        explain: "La parte de las personas que viven por debajo de la línea de pobreza en el sector censal del lugar (encuesta de la Oficina del Censo, 2020 a 2024). La posición es la parte de los lugares del mapa en sectores con una tasa menor. En el ensayo de toda la ciudad, la baja de la violencia con armas de fuego se encontró en vecindarios por debajo de la línea de pobreza."
+      canopy_gap:
+        label: "Pocos árboles cerca"
+        explain: "Copa de los árboles en el terreno a un cuarto de milla más o menos, según el estudio de la Ciudad sobre las copas de los árboles de 2018. La posición es la parte de los lugares del mapa con más árboles a su alrededor, así que menos árboles dan una posición más alta. Los árboles de las calles se relacionan con menos delitos, pero la evidencia es mixta y depende de dónde estén."
+    presets:
+      research:
+        label: "Basado en investigación"
+      vacancy_only:
+        label: "Solo vacancia"
+  heat:
+    label: "Calor y sombra"
+    description: "Dónde plantar árboles o reverdecer un lote vacío refrescaría más a las personas: lotes en vecindarios donde el calor del verano golpea más fuerte, con poca sombra alrededor, y con muchas personas que notarían la diferencia."
+    factors:
+      heat_vulnerability:
+        label: "Vulnerabilidad al calor del vecindario"
+        explain: "Qué tan fuerte golpea el calor del verano a las personas del sector censal del lote, según el Índice de Vulnerabilidad al Calor de la Ciudad (Departamento de Salud Pública y Oficina de Sostenibilidad, datos de 2017 a 2019): qué tan caluroso se pone el sector en los días de verano, según lo miden los satélites, junto con cuántas de las personas que viven allí corren más riesgo con el calor, por edad, salud, ingresos y más. La posición es la parte de los lugares del mapa en sectores con un puntaje menor."
+      few_trees:
+        label: "Pocos árboles cerca"
+        explain: "Copa de los árboles en el terreno a un cuarto de milla más o menos, según el estudio de la Ciudad sobre las copas de los árboles de 2018, la misma medida que usa el lente de reducción de la violencia. La posición es la parte de los lugares del mapa con más árboles a su alrededor, así que menos árboles dan una posición más alta. Los árboles refrescan las calles con su sombra y con el agua que sueltan sus hojas. Los estudios coinciden en que refrescan de día, más donde la copa cubre más de un 40 por ciento de una cuadra, y menos de noche."
+      few_street_trees:
+        label: "Pocos árboles de la Ciudad en la cuadra"
+        explain: "Árboles a 100 metros o menos del lote en el inventario de árboles de Parques y Recreación de 2025, los árboles que la Ciudad cuida en sus calles y parques, no los árboles de patios privados. La posición es la parte de los lugares del mapa con más de estos árboles a su alrededor, así que menos árboles dan una posición más alta. Los árboles de las calles dan sombra a las aceras por donde la gente camina y espera."
+      people_nearby:
+        label: "Personas a las que esto llegaría"
+        explain: "Residentes por kilómetro cuadrado de terreno en el sector censal del lote (encuesta de la Oficina del Censo, 2020 a 2024). La posición es la parte de los lugares del mapa en sectores con menos personas. Más personas notarían el efecto de refrescar. La población solo cuenta a quiénes llegaría una mejora; nunca es por sí sola una medida de necesidad."
+    presets:
+      balanced:
+        label: "Equilibrado"
+      people_at_risk:
+        label: "Personas en mayor riesgo"
+      fewest_trees:
+        label: "Menos árboles"
+  placemaking:
+    label: "Creación de lugares"
+    description: "Dónde un lote vacío probablemente se convertiría en un lugar público que la gente use todos los días, como un jardín, un parque pequeño, un lugar para sentarse a la sombra o un espacio para arte: lotes con muchos vecinos y lugares de todos los días a poca distancia a pie, lejos de un parque y de arte público. Se trata de uso y de acogida, no de delincuencia."
+    factors:
+      neighbors:
+        label: "Personas a 5 minutos a pie"
+        explain: "Cuántas personas viven a 5 minutos a pie del lote, contados como 400 metros en línea recta, según el censo de 2020. La posición es la parte de los lugares del mapa con menos personas a su alrededor. Más vecinos significa más personas a las que serviría un jardín, un banco o un mural. La población solo cuenta a quiénes llegaría un proyecto."
+      everyday_places:
+        label: "Lugares de todos los días a 10 minutos a pie"
+        explain: "Cuántos de siete tipos de lugares de todos los días están a 10 minutos a pie, contados como 800 metros en línea recta: una biblioteca, un centro recreativo, una piscina o zona de juegos de agua, una fuente de agua potable en un parque, una escuela, una tienda de comestibles o un mercado que acepta SNAP, y una parada de autobús, tranvía o tren. La posición es la parte de los lugares del mapa con menos. Las personas que van a esos lugares pasan caminando por el lote. Cuánto ayudan los transeúntes a un lugar público nuevo depende de la calle y del lugar, así que la evidencia es mixta."
+      walkability:
+        label: "Caminabilidad"
+        explain: "El Índice Nacional de Caminabilidad de la EPA del grupo de bloques del lote: esquinas, qué tan cerca está el transporte público, y qué tan bien se mezclan viviendas, empleos y tiendas (datos de más o menos 2017 a 2019). La posición es la parte de los lugares del mapa en zonas menos caminables. Donde la gente camina, más personas usarían un lugar en el lote. Los estudios de lugares caminables encuentran correlaciones cuyo significado depende del lugar, así que la evidencia es mixta."
+      far_from_park:
+        label: "Lejos de un parque"
+        explain: "La distancia en línea recta del lote al borde del terreno de parque más cercano de Parques y Recreación: parques, parques infantiles, centros recreativos, plazas, corredores verdes y áreas naturales, pero no sus patios de trabajo, campos de golf ni camellones plantados. La posición es la parte de los lugares del mapa que están más cerca de uno, así que más lejos da una posición más alta. Un lote lejos de un parque podría darles a los vecinos el espacio abierto que les falta."
+      no_art_nearby:
+        label: "Sin arte público cerca"
+        explain: "La distancia en línea recta del lote a la obra de arte público más cercana de la lista Percent for Art de la Ciudad o de Wikidata, sin contar las obras dentro de edificios. La posición es la parte de los lugares del mapa que están más cerca de una, así que más lejos da una posición más alta. Estas dos listas tienen solo una parte del arte de la ciudad: los murales de Mural Arts y las obras que solo OpenStreetMap tiene en el mapa no están en ellas, así que mire también la capa de Arte público. El arte es bienvenido por su belleza y por el orgullo que da; ningún estudio lo relaciona con menos violencia."
+      commercial_corridor:
+        label: "En un corredor comercial o cerca de uno"
+        explain: "Puntaje completo, 100, cuando el lote está en uno de los corredores comerciales de la Ciudad, las calles y centros de compras que la Comisión de Planificación estudió de 2011 a 2017, o a 50 metros o menos de uno, y 0 en los demás casos. Las tiendas traen gente que pasa por el lote todos los días. Las calles comerciales muy concurridas también pueden traer problemas, así que la evidencia es mixta."
+    presets:
+      balanced:
+        label: "Equilibrado"
+      most_neighbors:
+        label: "Más vecinos"
+      where_people_walk:
+        label: "Donde la gente ya camina"
+      far_from_a_park:
+        label: "Lejos de un parque"
+  street_safety:
+    label: "Seguridad en la calle"
+    description: "Cuadras donde las personas que caminan y andan en bicicleta corren más riesgo, según los registros de choques, la Red de Lesiones Graves de la Ciudad y las escuelas cercanas."
+    factors:
+      high_injury_network:
+        label: "En la Red de Lesiones Graves"
+        explain: "La Ciudad encontró que la mayoría de las muertes y lesiones graves de tránsito ocurren en estas calles, que son más o menos 12 por ciento de todas las calles de Filadelfia."
+      walking_cycling_harm:
+        label: "Personas que murieron o resultaron gravemente heridas al caminar o andar en bicicleta, últimos 5 años"
+        explain: "Cuenta a las personas que murieron o resultaron gravemente heridas al caminar o andar en bicicleta en esta cuadra o en sus esquinas, en los cinco años más recientes de los registros de choques de PennDOT. La posición es la parte de las cuadras de toda la ciudad con menos."
+      recent_death:
+        label: "Alguien murió aquí en los últimos 2 años"
+        explain: "Una muerte en esta cuadra o en sus esquinas en los últimos dos años, según los registros de choques mortales del Departamento de Policía, que se actualizan cada noche."
+      school_nearby:
+        label: "Escuela a 400 metros o menos"
+        explain: "Los niños caminan hacia la escuela y de regreso por aquí. 400 metros son más o menos cinco minutos a pie."
+    presets:
+      research:
+        label: "Basado en investigación"
+      recorded_harm:
+        label: "Solo daño registrado"
+  transit_comfort:
+    label: "Comodidad del transporte público"
+    description: "Paradas de autobús y tranvía donde un refugio, un banco o sombra ayudarían más a los pasajeros: paradas muy concurridas, paradas donde una revisión no encontró nada bajo lo que sentarse ni donde sentarse, paradas con poca sombra en vecindarios calurosos, paradas en la Red de Lesiones Graves, y paradas con esperas largas. Donde nadie ha revisado todavía una parada, su refugio y su banco cuentan a medias."
+    factors:
+      riders:
+        label: "Personas que suben cada día de semana"
+        explain: "Cuántas personas suben aquí en un día de semana promedio, según el conteo propio de SEPTA. La posición es la parte de las paradas con menos pasajeros. Más pasajeros significa más personas ayudadas por un refugio o un banco; la Ciudad se propone poner refugios en el 15 por ciento de las paradas de autobús más concurridas. Las paradas que SEPTA todavía no ha contado se dejan fuera de este factor."
+      no_shelter:
+        label: "Sin refugio"
+        explain: "100 donde una revisión no encontró refugio, 0 donde hay un refugio, toda la parada está bajo techo, o la lista propia de la Ciudad de refugios de autobús tiene uno allí (diga lo que diga OpenStreetMap). Donde nadie ha revisado todavía la parada cuenta como 50, a medias, para que una parada nunca se califique como sin un refugio que quizás tiene; revísela para averiguarlo. En un estudio en Minneapolis y Saint Paul, los pasajeros en paradas sin banco ni refugio sentían que sus esperas eran más largas de lo que eran."
+      no_bench:
+        label: "Sin banco"
+        explain: "100 donde una revisión no encontró banco, 0 donde hay uno, y 50, a medias, donde nadie ha revisado todavía la parada. El mismo estudio encontró que un banco hace que una espera se sienta más corta."
+      little_shade:
+        label: "Poca sombra cerca"
+        explain: "Copa de los árboles en el terreno alrededor de la parada, en un área de unas dos cuadras de ancho, según el estudio de la Ciudad sobre las copas de los árboles de 2018. La posición es la parte de las paradas con más árboles a su alrededor, así que menos árboles dan una posición más alta. La sombra refresca a las personas que esperan al sol, pero cuánto ayuda depende del clima y de lo que da la sombra."
+      heat:
+        label: "Vecindario caluroso en verano"
+        explain: "Qué tan caluroso se pone el sector censal de la parada en los días de verano, según la parte de exposición al calor del Índice de Vulnerabilidad al Calor de la Ciudad (temperaturas de la superficie medidas por satélite y cuánto del sector es pavimento, construcción o verde). La posición es la parte de las paradas en sectores más frescos."
+      high_injury_network:
+        label: "En la Red de Lesiones Graves"
+        explain: "La parada está en una de las calles donde ocurren la mayoría de las muertes y lesiones graves de tránsito en Filadelfia, o en su esquina, así que muchos pasajeros cruzan esa calle para llegar a la parada o para irse de ella. Estudios de otros lugares encontraron que los choques con personas a pie se concentran en paradas de autobús concurridas en calles anchas, donde un cruce seguro importa más."
+      long_wait:
+        label: "Esperas largas al mediodía"
+        explain: "El tiempo típico entre autobuses o tranvías de 10 a 2 en días de semana, según los horarios de SEPTA. La posición es la parte de las paradas con esperas más cortas. Una espera larga es cuando más importan un asiento y un techo. Las paradas sin servicio al mediodía se dejan fuera de este factor."
+    presets:
+      balanced:
+        label: "Equilibrado"
+      busiest_first:
+        label: "Primero las paradas más concurridas"
+      heat_and_shade:
+        label: "Calor y sombra"
+
