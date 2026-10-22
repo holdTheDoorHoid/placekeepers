@@ -24,11 +24,11 @@ Placekeepers 为两类人而建，他们常常就在同一个街区。
 
 ## 以 Clean & Green Philly 为基础
 
-Placekeepers 复兴并延伸了 [Clean & Green Philly](https://github.com/CodeForPhilly/clean-and-green-philly)，这是 [Code for Philly](https://codeforphilly.org/) 的志愿者在 2023 年到 2025 年间建成的项目。它给空地排序，用于清理和绿化，因为在费城所做的研究发现，绿化能减少附近的枪支暴力。您可以在我们的[为什么行得通](https://holdthedoorhoid.github.io/placekeepers/why/)页面阅读这项研究。
+Placekeepers 复兴并延伸了 [Clean & Green Philly](https://github.com/CodeForPhilly/clean-and-green-philly)，这是 [Code for Philly](https://codeforphilly.org/) 的志愿者在2023年到2025年间建成的项目。它给空地排序，用于清理和绿化，因为在费城所做的研究发现，绿化能减少附近的枪支暴力。您可以在我们的[为什么行得通](https://holdthedoorhoid.github.io/placekeepers/why/)页面阅读这项研究。
 
-Clean & Green Philly 于 2025 年 7 月关闭。市政府的空地名单在 2024 年 6 月就不再可靠，而没有经费的志愿者团队无法取代它。Placekeepers 有意结合了许多市政府记录，这样，一个出了问题的来源就不会再让整张地图瘫痪。请在[我们如何找出空地](https://holdthedoorhoid.github.io/placekeepers/vacant-land/)了解具体做法。
+Clean & Green Philly 于2025年7月关闭。市政府的空地名单在2024年6月就不再可靠，而没有经费的志愿者团队无法取代它。Placekeepers 有意结合了许多市政府记录，这样，一个出了问题的来源就不会再让整张地图瘫痪。请在[我们如何找出空地](https://holdthedoorhoid.github.io/placekeepers/vacant-land/)了解具体做法。
 
-Placekeepers 目前没有重用 Clean & Green Philly 的任何代码。它确实使用了该项目 2025 年 7 月最终的欠税快照（MIT 许可证），已在[数据状态页面](https://holdthedoorhoid.github.io/placekeepers/status/)中注明出处。我们以后若用到它的任何代码，会保留它的 MIT 声明，列在我们源代码中的 NOTICE 文件里。
+Placekeepers 目前没有重用 Clean & Green Philly 的任何代码。它确实使用了该项目2025年7月最终的欠税快照（MIT 许可证），已在[数据状态页面](https://holdthedoorhoid.github.io/placekeepers/status/)中注明出处。我们以后若用到它的任何代码，会保留它的 MIT 声明，列在我们源代码中的 NOTICE 文件里。
 
 ## 名字的由来
 

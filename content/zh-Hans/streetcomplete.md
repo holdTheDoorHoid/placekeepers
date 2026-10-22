@@ -1,12 +1,12 @@
 # 用 StreetComplete 调查公交站
 
-有屋顶遮头、有地方可坐，等公交车就轻松多了。Placekeepers 想显示费城哪些公交车站和有轨电车站有候车亭或长椅，这样邻居和组织者就能看到，哪里的乘客还在没有这些设施的情况下候车。市政府发布了一份名单，列出它与广告合作伙伴共同运营的候车亭，大约有 490 个，地图上显示了这份名单。这份名单没有说明长椅或灯光，漏掉了不属于市政府的候车亭，而且最近一次更改是在 2025 年 1 月。所以地图也使用 OpenStreetMap，也就是任何人都能改进的免费世界地图，它对费城的车站仍然所知甚少。您可以用一款免费的手机应用 StreetComplete，一次花几分钟，帮助填补这个空白。市政府的名单和 OpenStreetMap 对某个候车亭说法不一致的地方，车站页面会注明，实地调查可以确定。
+有屋顶遮头、有地方可坐，等公交车就轻松多了。Placekeepers 想显示费城哪些公交车站和有轨电车站有候车亭或长椅，这样邻居和组织者就能看到，哪里的乘客还在没有这些设施的情况下候车。市政府发布了一份名单，列出它与广告合作伙伴共同运营的候车亭，大约有 490 个，地图上显示了这份名单。这份名单没有说明长椅或灯光，漏掉了不属于市政府的候车亭，而且最近一次更改是在2025年1月。所以地图也使用 OpenStreetMap，也就是任何人都能改进的免费世界地图，它对费城的车站仍然所知甚少。您可以用一款免费的手机应用 StreetComplete，一次花几分钟，帮助填补这个空白。市政府的名单和 OpenStreetMap 对某个候车亭说法不一致的地方，车站页面会注明，实地调查可以确定。
 
 [打开地图，查看尚未调查的车站](../#l=stop_amenities&s=stop_amenities.show:unsurveyed)
 
 [为整条公交或有轨电车线路打印一份调查表](../survey/)
 
-我们最后一次对照 StreetComplete 自己的网站、它的[问答页面](https://wiki.openstreetmap.org/wiki/StreetComplete/FAQ)和[问题列表](https://wiki.openstreetmap.org/wiki/StreetComplete/Quests)，核对本页的应用细节，是在 2026 年 10 月 4 日。StreetComplete 由志愿者制作，不属于 Placekeepers，所以它的界面可能会变。
+我们最后一次对照 StreetComplete 自己的网站、它的[问答页面](https://wiki.openstreetmap.org/wiki/StreetComplete/FAQ)和[问题列表](https://wiki.openstreetmap.org/wiki/StreetComplete/Quests)，核对本页的应用细节，是在2026年10月4日。StreetComplete 由志愿者制作，不属于 Placekeepers，所以它的界面可能会变。
 
 ## StreetComplete 是什么
 
@@ -15,7 +15,7 @@ StreetComplete 是一款免费的应用，让您在外面走路时，向 OpenStr
 ## 安装它
 
 - **Android 手机。** 从 [Google Play](https://play.google.com/store/apps/details?id=de.westnordost.streetcomplete) 或 [F-Droid](https://f-droid.org/packages/de.westnordost.streetcomplete/) 安装 StreetComplete。它需要 Android 7.1 或更新的版本。
-- **iPhone。** 2026 年 9 月底，通过 Apple 的 TestFlight 推出了面向 iPhone 的第一个测试版。链接在 [StreetComplete 的项目页面](https://github.com/streetcomplete/StreetComplete)上。它还很新，请预期会有一些粗糙之处。
+- **iPhone。** 2026年9月底，通过 Apple 的 TestFlight 推出了面向 iPhone 的第一个测试版。链接在 [StreetComplete 的项目页面](https://github.com/streetcomplete/StreetComplete)上。它还很新，请预期会有一些粗糙之处。
 - **OpenStreetMap 账户。** 您可以马上开始回答。要发布您的答案，请用一个免费的 [OpenStreetMap 账户](https://www.openstreetmap.org/user/new)登录。在那之前，应用会把您的答案保存在您的手机上。
 
 这款应用离线也能用。联网时，它会在您给出每个答案之后马上发送；没有联网时，它会保留答案，稍后再发送。
@@ -38,7 +38,7 @@ StreetComplete 大约四年之后，会再次询问候车亭和长椅，这样�
 
 ## 车站不在地图上时
 
-StreetComplete 只能询问已经在 OpenStreetMap 里的车站。2026 年 10 月 4 日，在 SEPTA 列出的费城大约 8,000 个公交车站和有轨电车站中，OpenStreetMap 有大约 830 个，所以许多车站还没有问题。如果您站在一个车站，而应用在那里什么都没有显示，您有两种办法来帮忙：
+StreetComplete 只能询问已经在 OpenStreetMap 里的车站。2026年10月4日，在 SEPTA 列出的费城大约 8,000 个公交车站和有轨电车站中，OpenStreetMap 有大约 830 个，所以许多车站还没有问题。如果您站在一个车站，而应用在那里什么都没有显示，您有两种办法来帮忙：
 
 - 打开 StreetComplete 的 **Things** 图层（overlay）。它会显示公交站、长椅、候车亭、垃圾桶和街道上的其他东西，并让您在缺少的东西所在的地方添加一个。请把新的公交站放在人行道上，紧挨着车站的站牌。
 - 或者点按 **Create new note**（新建备注），描述缺少了什么，让另一位地图编辑者去添加。
@@ -47,7 +47,7 @@ StreetComplete 只能询问已经在 OpenStreetMap 里的车站。2026 年 10 �
 
 ## 长椅、饮水、厕所和社区小型图书亭
 
-我们的地图还显示长椅、野餐桌、饮用水、公共厕所和社区小型图书亭（little free library），这些都是人们添加到 OpenStreetMap 上的。每一种都是**长椅、饮水、厕所等**下面的一个独立图层，而且每一种都远不完整：2026 年 10 月 5 日，OpenStreetMap 上费城有大约 2,070 张长椅、300 张野餐桌、150 个社区小型图书亭、73 个公共厕所和 30 个饮水点。
+我们的地图还显示长椅、野餐桌、饮用水、公共厕所和社区小型图书亭（little free library），这些都是人们添加到 OpenStreetMap 上的。每一种都是**长椅、饮水、厕所等**下面的一个独立图层，而且每一种都远不完整：2026年10月5日，OpenStreetMap 上费城有大约 2,070 张长椅、300 张野餐桌、150 个社区小型图书亭、73 个公共厕所和 30 个饮水点。
 
 您可以用 StreetComplete 的 **Things** 图层，添加缺少的东西：打开它，点按那个东西所在的位置，然后选择它是什么。这个图层涵盖长椅、野餐桌、饮用水、厕所和公共书架，以及街道上的许多其他东西。它们被标注上去之后，StreetComplete 还会就其中一些提问，例如长椅有没有靠背，以及公共厕所是否收费或者轮椅能否通行。您添加的内容大约一周内就会出现在我们的地图上。
 
