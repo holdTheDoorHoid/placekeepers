@@ -153,6 +153,13 @@ Like any greening, trees can raise nearby prices; see the ways to protect neighb
 - The letter to an owner is offered for a company or a nonprofit, and for a person only where the
   map is fairly sure the lot is vacant: a lot we are not sure about may be someone's home. City and
   Land Bank lots go through the Land Bank's programs instead.
+- **A flyer for neighbors.** From a lot page, "Make a flyer for neighbors" makes a sign for the
+  lot's fence: a big headline, the address and a small map, what you hope to do, how neighbors can
+  reach you, and a QR code that opens the lot's page on Placekeepers. It prints on a Letter page or
+  as two half pages to a sheet. What you print is public, so use a group chat link or an email made
+  for the project rather than your home address or personal phone. Before you put it up, read
+  [where you may post it](../posting/): never on utility poles, street lights, traffic signs or
+  street trees, where City code sets fines from $300 a sign.
 
 ## Street and public space permits
 

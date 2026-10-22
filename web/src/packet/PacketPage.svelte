@@ -53,6 +53,8 @@
   const lots = registry.layers.find((l) => l.style === 'vacant_parcels');
   const lens = $derived(parcelLensOf(registry, appState));
   const lotPage = (opa: string) => `${config.siteBase}#p=${opa}`;
+  const flyerPage = (opa: string, at: [number, number] | null) =>
+    `${config.siteBase}flyer/#opa=${opa}${at ? `&at=${at[0].toFixed(6)},${at[1].toFixed(6)}` : ''}`;
   const lettersPage = (opa: string) => `${config.siteBase}letters/#${new URLSearchParams({ opa, ...(sourceId && sourceId !== 'view' ? { list: sourceId } : {}) }).toString()}`;
 
   const packet: Packet | null = $derived.by(() => {
@@ -293,6 +295,7 @@
                 {t.parcel(lot.opa)}.
                 <a class="screen-only" href={lotPage(lot.opa)}>{t.lotPage}</a>
                 <a class="screen-only" href={lettersPage(lot.opa)}>{t.lettersLink}</a>
+                <a class="screen-only" href={flyerPage(lot.opa, lot.center)}>{strings.flyer.make}</a>
               </p>
             </header>
             {#if !lot.listed}<p class="note">{t.notListed}</p>{/if}

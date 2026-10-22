@@ -44,6 +44,8 @@ export default defineConfig({
         landBank: 'land-bank/index.html',
         packet: 'packet/index.html',
         letters: 'letters/index.html',
+        flyer: 'flyer/index.html',
+        posting: 'posting/index.html',
       },
     },
   },

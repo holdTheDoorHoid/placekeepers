@@ -1446,6 +1446,40 @@ stakes only, marked as not yet reviewed by a lawyer. What the owner will see on 
   everything I typed" removes it. An end to end test types into every letter, prints, reloads and
   checks that no request carried any of it.
 
+**The neighbor flyer, as built (M5.2, issue #46, 2026-10-21).** The 596 Acres idea: a sign on the
+fence of a vacant lot tells passers by that neighbors care about it and how to find each other.
+Placekeepers has no servers and no accounts, so the people who print it bring their own way to be
+reached. What the owner will see:
+
+- **"Make a flyer for neighbors"** on every lot page and on each page of a packet. It opens the
+  flyer page in its own tab with the lot (and its point, for the map) after "#" in the address.
+- A printable page with a big plain headline ("Neighbors care about this lot", which people can
+  change), the address and a small map of the blocks around it with the lot marked (our own base
+  map, drawn once as a picture), what the organizers hope to do (a cleanup, a garden, a place to
+  sit, a mural with the wall owner's permission, asking the City about it, or their own words), how
+  to reach them (whatever they type: a group chat link, an email, a phone, a meeting time and
+  place), a **QR code to the lot's page on Placekeepers** with nothing added (the site's address and
+  `#p=` with the parcel, no tracking parameters), an optional second QR code for their own link
+  (only a plain https or http address), and "Put up by neighbors, not by the City or the owner."
+- A Letter page, or a half page that prints two to a sheet with a dashed line to cut along.
+- A warning beside the contact field, always: what you print is public; prefer a group chat link or
+  an email made for the project over a home address or a personal phone. When the field looks like
+  a phone number or a street address, a second reminder appears; it never blocks.
+- **Where you may post it**, on the page and in a guide of its own ("Where to post a flyer",
+  `content/posting.md`, in the site menu and linked from the How page): the lawful places first
+  (your own window or fence, the lot owner's fence with permission, community boards at libraries
+  and recreation centers after asking staff, businesses that agree, handing it to people), then
+  what is off limits with the City code sections and fines (Philadelphia Code section 10-1202:
+  utility poles, street lights, traffic and parking signs, historical markers, City and street
+  trees; $300 a sign for a first offense and up to $2,000 after; Parks and Recreation's rule on
+  trees; handbills on cars; mailboxes; SEPTA property), each with its source.
+- The QR codes are made in the browser by a small, pinned, MIT licensed library (qrcode-generator
+  2.0.4, credited on the page); a unit test decodes each code back to the lot's page. What people
+  type stays in this browser (`placekeepers:v1:flyer`, at most 20 lots) and "Clear what I typed"
+  removes it; an end to end test checks that none of it is ever sent.
+- Not yet: the flyer in the site's other languages, and in two languages side by side, waits for
+  the translation work (M5.5, issue #49), as the issue planned.
+
 ## 6. Finding vacant land without depending on one source
 
 The City's vacancy indicator stopped being accurate in June 2024, and that alone ended the original

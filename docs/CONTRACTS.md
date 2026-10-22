@@ -2232,4 +2232,9 @@ does not say who represents the lot and link Atlas's "Voting" view.
 {fields}}}`, at most 40 drafts and 2,000 characters a field; what a person types into a letter,
 never sent anywhere, removed by "Clear everything I typed") and `packet-view` (`{"name", "created",
 "places": [saved places as in saved lists]}`: the places the analysis view hands to a packet tab,
-replaced each time).
+replaced each time). From M5.2 (2026-10-21) a third, `flyer` (`{"version": 1, "lots": {"<opa or
+->": {"headline", "hopes", "ownWords", "contact", "ownLink", "ownLinkLabel", "size"}}}`, at most 20
+lots and 600 characters a field; what a person types for a neighbor flyer, never sent anywhere,
+removed by "Clear what I typed"). The packet, letters and flyer pages take what they are about after
+"#" in their address (`list=`, `from=view`, `opa=`, `t=`, `at=<longitude>,<latitude>` and `s=`, the
+map's settings as its address bar writes them), never in a query a server would see.
