@@ -68,6 +68,16 @@ const ht: Catalog = {
   units: {
     meters: (n) => `${formatNumber(n)} mèt`,
     kilometers: (km) => `${formatDecimal(km, 1)} kilomèt`,
+    miles: (miles) => `${formatDecimal(miles, 1)} mil`,
+    lessThanMiles: (miles) => `mwens pase ${formatDecimal(miles, 1)} mil`,
+  },
+
+  join: {
+    labelled: (label, value) => `${label}: ${value}`,
+    colon: (label) => `${label}:`,
+    and: (items) => (items.length <= 1 ? items.join('') : `${items.slice(0, -1).join(', ')} ak ${items.at(-1)}`),
+    long: (items) => (items.length <= 1 ? items.join('') : `${items.slice(0, -1).join('; ')}; epi ${items.at(-1)}`),
+    names: (names) => names.join(' ak '),
   },
 
   header: {
@@ -661,6 +671,9 @@ const ht: Catalog = {
       mural: 'Pentire yon miral, ak pèmisyon pwopriyetè mi an',
       ask_city: 'Mande Vil la sa ki ka rive isit la',
     },
+    language: 'Lang afich la',
+    languageHelp: 'Enprime afich la nan lang vwazen ou yo li. Sa ou tape enprime jan ou te tape l.',
+    withEnglish: 'Ajoute angle bò kote l, nan yon dezyèm kolòn',
     ownWords: 'Oswa ak pwòp mo ou',
     contact: 'Ki jan vwazen yo ka jwenn ou',
     contactHelp: 'Yon lyen gwoup mesaj, yon imèl, yon telefòn, oswa yon lè ak yon kote reyinyon.',
@@ -703,6 +716,12 @@ const ht: Catalog = {
     unreviewed: 'Yon avoka poko revize lèt sa a. Se pa konsèy jiridik.',
     legalHelp: 'Pou èd jiridik, mande Grounded in Philly, yon pwojè Garden Justice Legal Initiative',
     legalHelpShort: 'Èd jiridik gratis: Grounded in Philly (Garden Justice Legal Initiative)',
+    language: 'Lang lèt la',
+    languageHelp:
+      'Biwo yo, òganizasyon kominotè yo ak pwopriyetè yo lèt sa yo ale bay yo pi souvan li angle, kidonk lèt la enprime an angle sof si ou chwazi lang ou.',
+    translationTitle: 'Lèt ou a nan lang ou',
+    translationNote: 'Pou ou konnen sa ou siyen. Se sèlman lèt ki anwo a ki enprime; tradiksyon sa a rete sou ekran ou.',
+    yourName: '[non ou]',
     senderNote: 'Nòt pou moun k ap voye a',
     chooseTemplate: 'Ki lèt',
     templates: {
@@ -1525,6 +1544,8 @@ const ht: Catalog = {
     },
     estimateTitle: 'Konbyen tan sa pran',
     estimate: (time) => `Estimasyon nou: ${time} pou yon moun oswa yon pè.`,
+    duration: (hours, minutes) =>
+      `apeprè ${[hours ? plural(hours, { other: '# èdtan' }) : '', minutes || !hours ? `${formatNumber(minutes)} minit` : ''].filter(Boolean).join(' ')}`,
     estimateBasis:
       'Sa se pwòp estimasyon nou, se pa yon mezi: mache apeprè 3 mil pa èdtan de yon estasyon a yon lòt, ak apeprè yon minit nan chak estasyon. Pou rive nan premye estasyon an epi retounen lakay, se plis tan.',
     trolleyTunnel:

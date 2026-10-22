@@ -166,7 +166,7 @@ Tankou nenpòt plantasyon, pyebwa ka fè pri toupre yo monte; gade fason pou pwo
 | Ralanti trafik sou yon ri rezidansyèl (dòdàn ak bagay ki sanble) | Depatman Ri | 60% nan blòk la siyen yon petisyon | Gratis pou mande | Revize twa fwa pa ane; enstale me rive oktòb |
 | Fè yon fèt blòk oswa yon evènman nan ri | Depatman Ri ak distri lapolis la | 75% nan fanmi yo pou yon fèt blòk, 90% pou lòt evènman | $25 a $150 | Aplike 21 jou davans |
 | Fè yon Playstreet pou ete a | Pak ak Rekreyasyon | Yon petisyon 75%, yon sipèvizè rezidan, yon ti ri ak yon sèl sans | Gratis | Ete sèlman |
-| Vin yon Kapitèn Blòk epi fè netwayaj | Depatman Ri | 51% nan blòk la siyen | Gratis | Jiska twa netwayaj òganize pa ete, ak zouti bay |
+| Vin yon kòmandan blòk epi fè netwayaj | Depatman Sanitasyon (Philadelphia Pi Bèl Komite, Philadelphia More Beautiful Committee) | 51% nan blòk la siyen | Gratis | Jiska twa netwayaj òganize pa ete, ak zouti bay |
 | Patisipe nan Philly Spring Cleanup | Depatman Ri ak PHS | Enskri | Bale, gan, ak sak gratis | Prentan |
 | Bati yon parklet | OTIS | Montre sipò kominotè epi jwenn asirans | Pa endike | Sezonye, avril rive novanm; revizyon an ka pran plizyè mwa |
 | Mande yon pyebwa ri gratis | Pak ak Rekreyasyon (TreePhilly) | Pwopriyetè pwopriyete kote pyebwa a ta kanpe devan li mande | Gratis: Vil la plante l epi li wouze l premye ane a | Pwochen sezon plantasyon an |
@@ -206,7 +206,7 @@ yon pwolonjman twotwa.
 | Pwojè | Pri tipik | Wout legal | Prèv | Ki moun ki ede |
 |---|---|---|---|---|
 | Netwaye epi plante yon teren, style PHS | Apeprè $1,100 a $1,500 pou kòmanse, $150 a $300 pa ane apre (**poko konfime ak PHS**) | Pèmisyon pwopriyetè a, oswa yon akò Land Bank | Solid, pou vyolans | PHS |
-| Sèlman netwayaj ak koupe zèb | Mwens pase plantasyon konplè | Menm bagay ak anlè a | Solid, pou tire nan esè orijinal la | PHS, Kapitèn Blòk |
+| Sèlman netwayaj ak koupe zèb | Mwens pase plantasyon konplè | Menm bagay ak anlè a | Solid, pou tire nan esè orijinal la | PHS, kòmandan blòk |
 | Sele pòt ak fenèt yon kay abandone | Pwopriyetè a oswa Vil la peye | Rapòte bay Philly311; Lisans ak Enspeksyon ka netwaye epi sele l | Solid, pou vyolans | Lisans ak Enspeksyon |
 | Kòmanse yon jaden kominotè | Varye | Yon akò jaden oswa lisans, oswa pèmisyon pwopriyetè a | Bati sou prèv plantasyon an anwo a | PHS, Neighborhood Gardens Trust, Garden Justice Legal Initiative |
 | Plante yon pyebwa | Gratis atravè TreePhilly | Mande youn (gade Pyebwa sou yon teren ak sou bò li, anwo a) | Melanje, pou vyolans; Melanje pou chalè tou: pyebwa rafrechi yon blòk pandan jounen an, men benefis sante yo se estimasyon, se pa esè | TreePhilly |
