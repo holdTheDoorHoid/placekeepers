@@ -1,7 +1,8 @@
 <script lang="ts">
-  // The lot page (docs/DESIGN.md section 5.6), in six sections: Summary, What you can do, Who owns
-  // it, History, Nearby, and Sources and freshness. A banner says whether the page is live from the
-  // City or from the weekly snapshot, and each part repeats it where it differs.
+  // The lot page (docs/DESIGN.md section 5.6), in its sections: Summary, What you can do, Projects
+  // here (M5.3), Rules for this lot, Who owns it, History, Nearby, and Sources and freshness. A
+  // banner says whether the page is live from the City or from the weekly snapshot, and each part
+  // repeats it where it differs.
   import type { Snippet } from 'svelte';
   import type { Manifest } from '../../data/manifest.ts';
   import type { DossierView } from '../../dossier/build.ts';
@@ -12,6 +13,7 @@
   import DossierHistory from './DossierHistory.svelte';
   import DossierNearby from './DossierNearby.svelte';
   import DossierOwner from './DossierOwner.svelte';
+  import DossierProjects from './DossierProjects.svelte';
   import DossierRules from './DossierRules.svelte';
   import DossierSources from './DossierSources.svelte';
   import DossierSummary from './DossierSummary.svelte';
@@ -53,6 +55,8 @@
   const sections = [
     { key: 'summary', label: s.sections.summary },
     { key: 'actions', label: s.sections.actions },
+    // Projects neighbors finished here (M5.3)
+    { key: 'projects', label: strings.projects.section },
     { key: 'rules', label: s.sections.rules },
     { key: 'owner', label: s.sections.owner },
     { key: 'history', label: s.sections.history },
@@ -123,6 +127,10 @@
     <section aria-labelledby="{idPrefix}-actions-title">
       <h3 id="{idPrefix}-actions-title" tabindex="-1">{s.sections.actions}</h3>
       <DossierActions actions={view.actions} {idPrefix} />
+    </section>
+    <section aria-labelledby="{idPrefix}-projects-title">
+      <h3 id="{idPrefix}-projects-title" tabindex="-1">{strings.projects.section}</h3>
+      <DossierProjects projects={view.projects} onShowLayer={actions.onShowLayer} />
     </section>
     <section aria-labelledby="{idPrefix}-rules-title">
       <h3 id="{idPrefix}-rules-title" tabindex="-1">{s.sections.rules}</h3>

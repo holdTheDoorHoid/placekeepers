@@ -93,6 +93,9 @@ const SCHEMAS: Record<keyof Registry, Fields> = {
           nonEmpty: true,
           fields: { key: str({ pattern: TILE_KEY_PATTERN }), service: str({ pattern: SERVICE_PATTERN }) },
         },
+        // github_issues (M5.3): the repository and the approval label
+        repo: str({ optional: true, pattern: /^[A-Za-z0-9-]+\/[A-Za-z0-9._-]+$/ }),
+        label: str({ optional: true, pattern: /^[A-Za-z0-9][A-Za-z0-9 _.-]*$/ }),
       },
     },
     license: id(),
@@ -224,6 +227,8 @@ const ENDPOINT_REQUIRED: Record<string, string[]> = {
   sparql: ['url'],
   // Picture services the browser loads from their own server (M4.3).
   arcgis_tiles: ['url', 'bounds', 'services'],
+  // The reports of projects neighbors finished, read by the pipeline only (M5.3).
+  github_issues: ['repo', 'label'],
 };
 
 function isPlainObject(v: unknown): v is Record<string, unknown> {
@@ -526,6 +531,9 @@ export function validateRegistry(raw: RawRegistryFiles, options: ValidateOptions
     }
     if (source.endpoint.kind === 'sparql' && source.endpoint.url !== undefined && !source.endpoint.url.startsWith('https://')) {
       errors.push(`${where}.endpoint.url should be an https link to a query service`);
+    }
+    if (source.endpoint.kind !== 'github_issues' && (source.endpoint.repo !== undefined || source.endpoint.label !== undefined)) {
+      errors.push(`${where}.endpoint of kind ${source.endpoint.kind} cannot have "repo" or "label"`);
     }
     if (source.endpoint.kind === 'arcgis_tiles') checkTiles(source.endpoint, where, errors);
     else if (source.endpoint.bounds !== undefined || source.endpoint.services !== undefined) {

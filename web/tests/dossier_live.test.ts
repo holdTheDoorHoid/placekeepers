@@ -9,6 +9,7 @@ import { loadRegistry } from '../plugins/registry.ts';
 import { parseManifest, type Manifest } from '../src/data/manifest.ts';
 import { DossierController } from '../src/dossier/controller.svelte.ts';
 import { clearShardCache } from '../src/dossier/shard.ts';
+import { clearProjectsCache } from '../src/projects/projects.ts';
 import { defaultState } from '../src/state/defaults.ts';
 import { LIVE_CITY_DATA, decodeOptions, defaultOptions, encodeOptions, readOptions, saveOptions } from '../src/state/options.ts';
 import { encodeState } from '../src/state/url.ts';
@@ -16,6 +17,8 @@ import { encodeState } from '../src/state/url.ts';
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
 const SHARD = read('../fixtures/data/dossiers/9900.json');
 const COMMON = read('../fixtures/data/dossiers/common.json');
+// Projects neighbors finished (M5.3): one small table from the data root, fetched once.
+const PROJECTS = read('../fixtures/data/tables/projects.json');
 const manifest = parseManifest(JSON.parse(read('../fixtures/data/manifest.json'))).manifest!;
 const BASE = 'https://example.org/data/';
 
@@ -67,6 +70,8 @@ function fakeCity(answers: Partial<Record<string, Answer>> = {}) {
         ? { body: JSON.parse(SHARD) }
         : key === 'dossiers/common.json'
           ? { body: JSON.parse(COMMON) }
+          : key === 'tables/projects.json'
+            ? { body: JSON.parse(PROJECTS) }
           : key === 'property'
             ? { body: { rows: [PROPERTY_ROW] } }
             : { body: { rows: [] } });
@@ -82,6 +87,7 @@ function fakeCity(answers: Partial<Record<string, Answer>> = {}) {
 
 function controller(city: ReturnType<typeof fakeCity>, options: { liveOn?: () => boolean; manifest?: Manifest | null; timeoutMs?: number; now?: () => number } = {}) {
   clearShardCache();
+  clearProjectsCache();
   return new DossierController({
     dataBase: BASE,
     manifest: async () => (options.manifest === undefined ? manifest : options.manifest),
@@ -116,7 +122,8 @@ describe('opening a lot page', () => {
     await settle();
     expect(dossier.shard.status).toBe('found');
     expect(Object.values(dossier.live).every((p) => p.status === 'idle')).toBe(true);
-    expect(city.asked.filter((k) => !k.startsWith('dossiers/'))).toEqual([]);
+    // Only the site's own data root: the lot's shard and the projects neighbors finished (M5.3).
+    expect(city.asked.filter((k) => !k.startsWith('dossiers/') && k !== 'tables/projects.json')).toEqual([]);
   });
 
   it('gives up on a slow City after the time limit, so the page falls back to the snapshot', async () => {

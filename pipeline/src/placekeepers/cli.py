@@ -10,6 +10,9 @@
     pk publish [--out DIR]       write manifest.json and the map layers
     pk health [ids...]           show each source's status
     pk all                       fetch, validate, derive, publish, then show health
+    pk projects --data DIR       read the approved project reports again and replace only the
+                                 projects layer and table in a data root a weekly publish wrote
+                                 (M5.3: the quick publish after a label changes)
 
 Common options: --sources a,b (limit to some sources), --offline (use only the cache),
 --cache DIR (instead of $PK_CACHE), -v (more detail).
@@ -25,7 +28,7 @@ import time
 from datetime import date
 from pathlib import Path
 
-from placekeepers.config import ConfigError, Settings
+from placekeepers.config import ConfigError, Settings, local_date
 from placekeepers.context import Context
 from placekeepers.health import SourceStatus
 from placekeepers.registry import RegistryError, load_registry
@@ -229,6 +232,85 @@ def cmd_all(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_projects(args: argparse.Namespace) -> int:
+    """The quick publish of projects neighbors finished (M5.3, .github/workflows/projects.yml)."""
+    from placekeepers.adapters.projects import github_token
+    from placekeepers.httpclient import PoliteClient
+    from placekeepers.projects import (
+        GITHUB_GRAPHQL,
+        REPORTS_SOURCE,
+        ReportsError,
+        fetch_reports,
+        read_inputs,
+        read_reports,
+    )
+    from placekeepers.publish.projects import (
+        INPUTS_DIR,
+        QuickPublishError,
+        refresh_projects,
+        summary_markdown,
+    )
+    from placekeepers.registry import GithubIssuesEndpoint
+
+    settings = Settings.from_env(cache_root=Path(args.cache).expanduser() if args.cache else None)
+    registry = load_registry(settings.registry_dir, repo_root=settings.repo_root)
+    source = registry.sources.get(REPORTS_SOURCE)
+    if source is None or not isinstance(source.endpoint, GithubIssuesEndpoint):
+        print(
+            f"pk: the registry has no {REPORTS_SOURCE} source of kind github_issues",
+            file=sys.stderr,
+        )
+        return 2
+    if args.issues_file:
+        reports = read_reports(Path(args.issues_file))
+    else:
+        token = github_token()
+        if token is None:
+            print("pk: no GitHub token: set GITHUB_TOKEN", file=sys.stderr)
+            return 2
+        headers = {"Authorization": f"Bearer {token}", "Accept": "application/json"}
+        with PoliteClient() as client:
+            try:
+                reports = fetch_reports(
+                    lambda payload: client.post_json(GITHUB_GRAPHQL, payload, headers=headers),
+                    source.endpoint.repo,
+                    source.endpoint.label,
+                )
+            except ReportsError as exc:
+                print(f"pk: {exc}", file=sys.stderr)
+                return 1
+    inputs = Path(args.inputs) if args.inputs else settings.cache_root / INPUTS_DIR
+    index, limits = read_inputs(inputs)
+    now = settings.now()
+    today = date.fromisoformat(args.as_of) if args.as_of else local_date(now)
+    attribution = "; ".join(
+        registry.sources[s].attribution
+        for s in (REPORTS_SOURCE, "project_corrections", "opa_properties")
+        if s in registry.sources
+    )
+    try:
+        build = refresh_projects(
+            Path(args.data),
+            reports,
+            registry=registry,
+            repo_root=settings.repo_root,
+            index=index,
+            limits=limits,
+            now=now,
+            today=today,
+            attribution=attribution,
+        )
+    except QuickPublishError as exc:
+        print(f"pk: {exc}", file=sys.stderr)
+        return 1
+    summary = summary_markdown(build)
+    print(summary)
+    if args.summary:
+        with open(args.summary, "a", encoding="utf-8") as handle:
+            handle.write(summary)
+    return 0
+
+
 # Parser
 def build_parser() -> argparse.ArgumentParser:
     common = argparse.ArgumentParser(add_help=False)
@@ -312,6 +394,23 @@ def build_parser() -> argparse.ArgumentParser:
         parents=[common, filters, offline, force, out],
     )
     run_all.set_defaults(func=cmd_all)
+
+    projects = commands.add_parser(
+        "projects",
+        help="replace only the projects layer and table in a published data root",
+        parents=[common],
+    )
+    projects.add_argument("--data", required=True, help="a data root a weekly publish wrote")
+    projects.add_argument(
+        "--inputs",
+        help="the project inputs folder (default: <cache>/derived/project_inputs)",
+    )
+    projects.add_argument(
+        "--issues-file", help="read the reports from this file instead of GitHub (for tests)"
+    )
+    projects.add_argument("--summary", help="also append the summary to this file")
+    projects.add_argument("--as-of", help="today, YYYY-MM-DD (default: today in Philadelphia)")
+    projects.set_defaults(func=cmd_projects)
     return parser
 
 

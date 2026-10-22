@@ -1,0 +1,24 @@
+# Projects neighbors finished: hand entries and corrections (docs/CONTRACTS.md section 5,
+# docs/owner/approving-projects.md). The pipeline reads this file at every publish and merges it
+# with the reports the owner approved on GitHub (the `project-approved` label).
+#
+# A correction names a report by its issue number and changes what the map shows:
+#   - issue: 12
+#     parcel: "371000001"        # the right lot (9 digits, in quotes)
+#   - issue: 13
+#     address: 2931 N Lawrence St  # or the right address
+#   - issue: 14
+#     suppressed: true           # never shown, whatever the issue says (always wins)
+#     comment: why, for curators only; never published
+#
+# A hand entry is a project nobody reported through the form:
+#   - id: h2026_0001             # ours, stable, never reused
+#     kind: garden               # cleanup, garden, seating, art, trees, city_install, fix_311, other
+#     parcel: "371000002"        # or address, or lat and lng
+#     finished: 2025-06          # year and month
+#     group: Sample Block Club   # optional
+#     what_it_took: ...          # optional
+#     source: https://...        # optional public page about it
+#
+# Never write the name or contact details of a person here.
+[]

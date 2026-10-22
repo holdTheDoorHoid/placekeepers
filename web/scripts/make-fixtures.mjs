@@ -36,6 +36,7 @@ import {
   streetsStopsFixtures,
 } from './streetstops-fixtures.mjs';
 import { HISTORIC_LAYERS, HISTORIC_SOURCES, REDLINING_FILE, REDLINING_LICENSE, redliningFixture } from './historic-fixtures.mjs';
+import { PROJECTS_FILES, PROJECTS_LAYERS, PROJECTS_NOTES, PROJECTS_SOURCES, projectsFixtures } from './projects-fixtures.mjs';
 
 const FIXTURES = new URL('../fixtures/', import.meta.url);
 const ROOT = new URL('data/', FIXTURES);
@@ -639,6 +640,8 @@ writeFileSync(path(`data/${redliningFile}`), redliningText);
 mkdirSync(path('data/tables/routes'), { recursive: true });
 for (const [name, text] of routeSheetFixtures(toLngLat)) writeFileSync(path(`data/${name}`), text);
 writeFileSync(path('data/tables/stop_amenities.json'), JSON.stringify(stopTable) + '\n');
+// Projects neighbors finished (M5.3): the table and the layer (scripts/projects-fixtures.mjs).
+for (const [name, text] of projectsFixtures()) writeFileSync(path(`data/${name}`), text);
 
 // Run from the fixtures folder with relative paths, because tippecanoe records its command
 // line in the file's metadata and local folder names do not belong in committed files.
@@ -772,6 +775,8 @@ const manifest = {
     ...Object.fromEntries(Object.entries(HISTORIC_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
     // Streets and stops (M4.5)
     ...Object.fromEntries(Object.entries(STREETS_STOPS_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
+    // Projects neighbors finished (M5.3)
+    ...Object.fromEntries(Object.entries(PROJECTS_SOURCES).map(([id, [rows, newest]]) => [id, ok(rows, newest)])),
   },
   layers: {
     vacant_parcels: {
@@ -826,6 +831,7 @@ const manifest = {
     ...RULES_LAYERS,
     ...HISTORIC_LAYERS,
     ...STREETS_STOPS_LAYERS,
+    ...PROJECTS_LAYERS,
   },
   files: Object.fromEntries(
     [
@@ -858,6 +864,7 @@ const manifest = {
       ...handWritten
         .map(([name]) => name)
         .filter((name) => ![...shardFiles, ...historyFiles].some(([shard]) => shard === name)),
+      ...PROJECTS_FILES,
     ].map((p) => [p, p === REDLINING_FILE ? { ...fileInfo(p), license: REDLINING_LICENSE } : fileInfo(p)]),
   ),
   dossiers: shardFiles.length
@@ -881,6 +888,7 @@ const manifest = {
     'Displacement watch tiles were skipped for this sample too, so its layer is published as GeoJSON.',
     'The rules and records tiles were skipped for this sample too, so those layers are published as GeoJSON.',
     'Street pole, shelter, traffic calming and crossing guard tiles were skipped for this sample too, so those layers are published as GeoJSON.',
+    ...PROJECTS_NOTES,
   ],
 };
 writeFileSync(new URL('manifest.json', ROOT), JSON.stringify(manifest, null, 2) + '\n');

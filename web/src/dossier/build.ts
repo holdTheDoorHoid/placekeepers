@@ -10,7 +10,7 @@
 // Everything here is a plain function of its inputs, so tests can check every state.
 
 import { watchNote, watchSigns, type WatchNote } from '../displacement/watch.ts';
-import { correctionUrl, propertyPageUrl, atlasUrl, googleMapsUrl, streetViewUrl, TAX_CENTER_URL } from '../config/links.ts';
+import { correctionUrl, projectReportUrl, propertyPageUrl, atlasUrl, googleMapsUrl, streetViewUrl, TAX_CENTER_URL } from '../config/links.ts';
 import { PERMISSION_ROUTES } from '../config/permission.ts';
 import type { Manifest } from '../data/manifest.ts';
 import { explainScore, type ScoreExplanation } from '../map/lens.ts';
@@ -55,6 +55,7 @@ import {
   type TimelineRow,
   type TimelineYear,
 } from './timeline.ts';
+import { describeProject, monthWords, projectsOn, type ProjectView, type ProjectsState } from '../projects/projects.ts';
 import { buildRules, type RulesView } from './rules.ts';
 import type {
   Appeal,
@@ -153,6 +154,8 @@ export interface DossierInput {
   history?: HistoryState;
   /** The kinds of record the reader switched off in the timeline. */
   hiddenKinds?: readonly TimelineKind[];
+  /** The projects neighbors finished (M5.3, tables/projects.json), once asked for. */
+  projects?: ProjectsState;
 }
 
 // Output ------------------------------------------------------------------------------------------
@@ -245,6 +248,16 @@ export interface TimelineView {
   provenance: Provenance;
 }
 
+/**
+ * Projects here (M5.3, issue #47): the projects neighbors finished on this lot that the owner
+ * approved, newest first, and the form to report one, prefilled with the lot.
+ */
+export interface ProjectsView {
+  status: 'loading' | 'ready' | 'unpublished' | 'failed';
+  items: ProjectView[];
+  reportUrl: string;
+}
+
 export interface AssessmentRow {
   year: number;
   value: string;
@@ -317,6 +330,8 @@ export interface DossierView {
   };
   /** Rules for this lot (M4.6, src/dossier/rules.ts), with where its appeals come from. */
   rules: RulesView & { provenance: Provenance; appealsProvenance: Provenance };
+  /** Projects neighbors finished here (M5.3). */
+  projects: ProjectsView;
   owner: {
     names: string[];
     mailing: string | null;
@@ -715,7 +730,22 @@ export function buildDossier(input: DossierInput): DossierView {
   const settled = history.status !== 'idle' && history.status !== 'loading';
   // Appeals (M4.6): the City's answer when live, else the weekly copy's; null when not known.
   const appeals: Appeal[] | null = live.appeals.status === 'ok' ? live.appeals.data : parcel && !parcel.missing.includes('appeals') ? (parcel.appeals ?? []) : null;
-  const built = buildTimeline({ transfers, li: timelineLi, appeals, lists: copy?.lists ?? [], landcare: parcel?.landcare ?? null, today: asOf });
+  // Projects neighbors finished (M5.3), from tables/projects.json.
+  const projectsState: ProjectsState = input.projects ?? { status: 'idle' };
+  const projectRecords = projectsState.status === 'found' ? projectsOn(projectsState.table, opa) : [];
+  const projectItems = projectRecords.map(describeProject);
+  const built = buildTimeline({
+    transfers,
+    li: timelineLi,
+    appeals,
+    lists: copy?.lists ?? [],
+    landcare: parcel?.landcare ?? null,
+    projects: projectRecords.map((record, i) => ({
+      finished: record.finished,
+      text: strings.projects.timelineText(projectItems[i]!.kind, record.group),
+    })),
+    today: asOf,
+  });
   const hidden = new Set(input.hiddenKinds ?? []);
   const visible: TimelineRow[] = built.rows.filter((row) => !hidden.has(row.kind));
   const timelineNotes: TimelineView['notes'] = [];
@@ -731,7 +761,13 @@ export function buildDossier(input: DossierInput): DossierView {
     years: byYear(visible),
     newest: visible
       .filter((row) => row.day !== null)
-      .flatMap((row) => row.items.map((item) => ({ date: row.day!.length === 4 ? row.day! : (formatDate(row.day, 'short') ?? row.day!), kind: row.label, text: item.text })))
+      .flatMap((row) =>
+        row.items.map((item) => ({
+          date: row.day!.length === 4 ? row.day! : row.day!.length === 7 ? monthWords(row.day!) : (formatDate(row.day, 'short') ?? row.day!),
+          kind: row.label,
+          text: item.text,
+        })),
+      )
       .slice(0, 10),
     shown: visible.reduce((sum, row) => sum + row.items.length, 0),
     kinds: built.kinds.map((k) => ({ ...k, shown: !hidden.has(k.id) })),
@@ -979,6 +1015,16 @@ export function buildDossier(input: DossierInput): DossierView {
         : null,
     },
     nearby: { groups, layers, provenance: nearbyProvenance },
+    projects: {
+      status:
+        projectsState.status === 'found'
+          ? 'ready'
+          : projectsState.status === 'unpublished' || projectsState.status === 'failed'
+            ? projectsState.status
+            : 'loading',
+      items: projectItems,
+      reportUrl: projectReportUrl(opa, address),
+    },
     sources: { rows: sourceRows, correctionUrl: correctionUrl(opa, address) },
   };
 }

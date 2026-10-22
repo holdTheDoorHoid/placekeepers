@@ -1,0 +1,113 @@
+name: Tell us about a project you finished
+description: A cleanup, a garden, a place to sit, a mural, trees, a bench or a 311 fix that neighbors finished. Once we have read it, it can appear on the map.
+title: "Project: "
+labels: ["project-report"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for caring for your block. Tell us what neighbors finished. A person who runs
+        Placekeepers reads every report before it appears on the map, under "Projects neighbors
+        finished", with a link back to this page.
+
+        **What the map shows:** what was done, where, the month and year it was finished, the
+        group name if you give one, and your note on what it took. The map never shows your
+        GitHub user name, and it does not show your answer about permission.
+
+        **Anyone can read this page**, including every answer below. Please leave out phone
+        numbers, email addresses and the names of people.
+
+        **Photos are welcome here on GitHub only**, added below or in a comment. Never post a
+        photo with the face of a child, or of anyone who did not agree, and never one that shows
+        a license plate. The map never shows photos: it links to this page.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What was done
+      options:
+        - Cleanup
+        - Garden
+        - Place to sit
+        - Mural or art
+        - Trees
+        - A shelter or bench the City installed
+        - A 311 fix
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Where
+      description: The link to the lot's page on the map, its parcel number, or the street address.
+      placeholder: "https://holdthedoorhoid.github.io/placekeepers/#p=123456700, or 1234 Example Street"
+    validations:
+      required: true
+  - type: dropdown
+    id: month
+    attributes:
+      label: Month it was finished
+      options:
+        - January
+        - February
+        - March
+        - April
+        - May
+        - June
+        - July
+        - August
+        - September
+        - October
+        - November
+        - December
+    validations:
+      required: true
+  - type: input
+    id: year
+    attributes:
+      label: Year it was finished
+      placeholder: "2026"
+    validations:
+      required: true
+  - type: dropdown
+    id: permission
+    attributes:
+      label: Was permission given?
+      description: >-
+        Please answer honestly. We never judge the answer, and the map does not show it. It helps
+        us see which lawful routes neighbors use and where they get stuck.
+      options:
+        - Yes, from the owner
+        - Yes, from the City or the Land Bank
+        - Not needed
+        - No, or not sure
+    validations:
+      required: true
+  - type: input
+    id: group
+    attributes:
+      label: Group name to show (optional)
+      description: >-
+        Your block, group or organization, as you want it shown on the map. Leave it empty to show
+        no name. Please no names of people.
+    validations:
+      required: false
+  - type: textarea
+    id: note
+    attributes:
+      label: What it took (optional)
+      description: >-
+        A few sentences for neighbors who want to do the same: how many people, how long, what it
+        cost, who helped. The map shows this note. Links, phone numbers and email addresses are
+        left out of what the map shows.
+    validations:
+      required: false
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: Showing it on the map
+      options:
+        - label: >-
+            I agree that this report may be shown on the Placekeepers map and in its data downloads
+            under the site's data license, the Open Database License.
+          required: true

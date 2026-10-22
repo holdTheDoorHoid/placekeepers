@@ -21,6 +21,7 @@ import type { StyleId } from './ids.ts';
 import { landcare } from './landcare.ts';
 import { memorials } from './memorials.ts';
 import { parkingReports } from './parking_reports.ts';
+import { projects } from './projects.ts';
 import { publicArt } from './public_art.ts';
 import { publicPlace } from './public_place.ts';
 import { brownfields, hearings, historicDistricts, historicProperties, zoningOverlays } from './rules.ts';
@@ -74,6 +75,7 @@ export const STYLES: Record<StyleId, StyleModule> = {
   crossing_guards: crossingGuards,
   historic_imagery: historicImagery,
   redlining,
+  projects,
 };
 
 export function styleFor(layer: Layer): StyleModule | null {

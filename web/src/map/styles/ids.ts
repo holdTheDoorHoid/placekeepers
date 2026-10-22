@@ -48,5 +48,7 @@ export const STYLE_IDS = [
   // Then and now (M4.3): pictures from the City's own servers, and the 1937 redlining map
   'historic_imagery',
   'redlining',
+  // Projects neighbors finished (M5.3)
+  'projects',
 ] as const;
 export type StyleId = (typeof STYLE_IDS)[number];

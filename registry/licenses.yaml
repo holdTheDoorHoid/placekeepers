@@ -49,3 +49,10 @@
   url: https://creativecommons.org/licenses/by-nc/2.5/
   share_alike: false
   non_commercial: true
+# Projects neighbors finished (M5.3, issue #47): every reporter ticks a box agreeing that the report
+# may be shown on the map and in its downloads under the site's data license, the Open Database
+# License. Photos are not covered: they stay on GitHub, and the map only links to the report.
+- id: neighbor_reports_odbl
+  label: Reports neighbors sent through the site's GitHub form, shared under the Open Database License as each reporter agreed
+  url: https://opendatacommons.org/licenses/odbl/1-0/
+  share_alike: true

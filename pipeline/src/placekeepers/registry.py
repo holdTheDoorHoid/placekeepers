@@ -54,7 +54,9 @@ Weight = Annotated[int, Field(strict=True, ge=0, le=5)]
 Evidence = Literal["strong", "moderate", "mixed", "weak", "not_violence", "context"]
 Cadence = Literal["daily", "weekly", "monthly", "yearly", "irregular", "frozen"]
 AppliesTo = Literal["parcel", "segment", "crash", "stop", "cell"]
-EndpointKind = Literal["carto", "arcgis", "url", "osm_extract", "curated", "sparql", "arcgis_tiles"]
+EndpointKind = Literal[
+    "carto", "arcgis", "url", "osm_extract", "curated", "sparql", "arcgis_tiles", "github_issues"
+]
 
 
 class Strict(BaseModel):
@@ -216,6 +218,19 @@ class ArcgisTilesEndpoint(Strict):
         return self
 
 
+class GithubIssuesEndpoint(Strict):
+    """Issues of a GitHub repository that carry one label (added 2026-10-21 by M5.3,
+    docs/CONTRACTS.md section 1): the reports of projects neighbors finished, which the owner
+    approves with the label. Read with GitHub's GraphQL API and the workflow's built in read only
+    token; the adapter keeps no user names (placekeepers.adapters.projects)."""
+
+    kind: Literal["github_issues"]
+    #: owner/name, such as holdTheDoorHoid/placekeepers
+    repo: Annotated[str, StringConstraints(pattern=r"^[A-Za-z0-9-]+/[A-Za-z0-9._-]+$")]
+    #: the label that marks an issue as approved
+    label: Annotated[str, StringConstraints(pattern=r"^[A-Za-z0-9][A-Za-z0-9 _.-]*$")]
+
+
 Endpoint = Annotated[
     CartoEndpoint
     | ArcgisEndpoint
@@ -223,7 +238,8 @@ Endpoint = Annotated[
     | OsmExtractEndpoint
     | CuratedEndpoint
     | SparqlEndpoint
-    | ArcgisTilesEndpoint,
+    | ArcgisTilesEndpoint
+    | GithubIssuesEndpoint,
     Field(discriminator="kind"),
 ]
 

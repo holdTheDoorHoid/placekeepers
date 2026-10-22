@@ -637,3 +637,8 @@ BUILDERS = (*BUILDERS, *STREETS_STOPS_BUILDERS)
 from placekeepers.publish.redlining import REDLINING_BUILDERS  # noqa: E402
 
 BUILDERS = (*BUILDERS, *REDLINING_BUILDERS)
+
+# Projects neighbors finished (M5.3, issue #47): the reports the owner approved, and hand entries.
+from placekeepers.publish.projects import PROJECT_BUILDERS  # noqa: E402
+
+BUILDERS = (*BUILDERS, *PROJECT_BUILDERS)

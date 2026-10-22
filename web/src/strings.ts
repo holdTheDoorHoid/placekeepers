@@ -742,7 +742,9 @@ export const strings = {
                                         ? 'School crossing guard'
                                         : style === 'redlining'
                                           ? '1937 redlining map'
-                                          : 'Details',
+                                          : style === 'projects'
+                                            ? 'Project neighbors finished'
+                                            : 'Details',
     memorialTitle: 'In memory',
     peopleHere: (n: number) => `${plural(n, 'person is', 'people are')} remembered here`,
     killed: {
@@ -1702,6 +1704,50 @@ export const strings = {
       dates: (fetched: string, last: string) => `Deeds read ${fetched}; the newest deed is dated ${last}.`,
       file: (part: string, day: string) => `placekeepers-land-bank-${part}-${day}.csv`,
     },
+  },
+
+  // Projects neighbors finished (M5.3, issue #47): the map layer's legend and a tapped project
+  // (src/map/styles/projects.ts, src/components/projects/ProjectDetails.svelte), the lot page's
+  // "Projects here" (src/components/dossier/DossierProjects.svelte), its kind in the lot
+  // timeline, and the link to the report form.
+  projects: {
+    kinds: {
+      cleanup: 'Cleanup',
+      garden: 'Garden',
+      seating: 'Place to sit',
+      art: 'Mural or art',
+      trees: 'Trees',
+      city_install: 'A shelter or bench the City installed',
+      fix_311: 'A 311 fix',
+      other: 'Another project',
+    } as Record<string, string>,
+    legend: 'A project neighbors finished',
+    legendNote: 'Placekeepers reads and approves every report before it appears.',
+    detailsTitle: 'Project neighbors finished',
+    here: (n: number) => `${plural(n, 'project', 'projects')} here`,
+    finished: (month: string) => `Finished in ${month}`,
+    by: (group: string) => `By ${group}`,
+    whatItTook: 'What it took',
+    report: 'See the report and its photos on GitHub',
+    source: 'Read more about it',
+    openLot: 'Open the lot page',
+    privacy: 'The map never shows who sent a report, only a group name they chose to show.',
+    // The lot page
+    section: 'Projects here',
+    loading: 'Looking for projects neighbors reported here.',
+    none: 'No one has reported a project neighbors finished here yet.',
+    unpublished: 'This copy of the map has no list of projects neighbors finished yet.',
+    failed: 'The list of projects neighbors finished could not be loaded. Try again later.',
+    tellUs: 'Tell us about a project you finished',
+    tellUsHere: 'Tell us about a project you finished here',
+    tellUsNote:
+      'The form opens on GitHub, where anyone can read it. A person reads every report before it appears on the map. Photos stay on GitHub: never with the face of a child or of anyone who did not agree, and never with a license plate.',
+    oneLot: 'One lot on its own cannot show whether a project worked.',
+    // The lot timeline
+    timelineKind: 'Project neighbors finished',
+    timelineToggle: 'Projects neighbors finished',
+    timelineText: (kind: string, group: string | null) => (group ? `${kind}, by ${group}` : kind),
+    printTitle: 'Projects neighbors finished here',
   },
 
   basemap: {

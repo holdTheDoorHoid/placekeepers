@@ -6,7 +6,7 @@ import { displacementCaution, isGarden } from '../config/suggestions.ts';
 import { formatDate, strings } from '../strings.ts';
 import type { DossierView } from './build.ts';
 
-export const PRINT_LIMITS = { suggestions: 3, steps: 3, flags: 6, events: 10, li: 4, sources: 6, reasons: 5 } as const;
+export const PRINT_LIMITS = { suggestions: 3, steps: 3, flags: 6, events: 10, li: 4, sources: 6, reasons: 5, projects: 4 } as const;
 
 export interface PrintModel {
   title: string;
@@ -35,6 +35,11 @@ export interface PrintModel {
    * appeal is on the lot page online, not on the sheet.
    */
   rules: string[];
+  /**
+   * Projects neighbors finished here (M5.3): one line each, newest first, with the address of its
+   * report on GitHub; empty when there are none.
+   */
+  projects: string[];
   owner: {
     names: string[];
     mailing: string | null;
@@ -148,6 +153,9 @@ export function printModel(view: DossierView, now: Date = new Date()): PrintMode
     watch,
     watchPointer,
     rules: rulesLines(view),
+    projects: view.projects.items
+      .slice(0, PRINT_LIMITS.projects)
+      .map((project) => [project.kind, project.when, project.by, project.link?.url].filter(Boolean).join('. ')),
     owner: {
       names: view.owner.names,
       mailing: view.owner.mailing,

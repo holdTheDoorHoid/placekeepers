@@ -24,6 +24,7 @@ from placekeepers.publish.dossiers import DossierResult, build_dossiers
 from placekeepers.publish.land_bank import LandBankResult, build_land_bank
 from placekeepers.publish.layers import builder_for
 from placekeepers.publish.manifest import MANIFEST, build_manifest, git_short_hash
+from placekeepers.publish.projects import ProjectsResult, build_projects_files
 from placekeepers.publish.route_sheets import RouteSheetsResult, build_route_sheets
 from placekeepers.publish.stop_table import StopTableResult, build_stop_table
 from placekeepers.publish.tiles import (
@@ -64,6 +65,8 @@ class PublishResult:
     stop_table: StopTableResult | None = None
     #: the numbers of "The Land Bank in numbers" (publish/land_bank.py, M4.4)
     land_bank: LandBankResult | None = None
+    #: the table of projects neighbors finished (publish/projects.py, M5.3)
+    projects: ProjectsResult | None = None
 
 
 def geojson_name(file: str, source_layer: str) -> str:
@@ -265,6 +268,8 @@ def publish(ctx: Context, out_dir: Path, *, as_of: date | None = None) -> Publis
         notes.extend(result.stop_table.notes)
         result.land_bank = build_land_bank(ctx, statuses, staging, as_of)
         notes.extend(result.land_bank.notes)
+        result.projects = build_projects_files(ctx, statuses, staging, as_of)
+        notes.extend(result.projects.notes)
 
         exe = find_tippecanoe()
         if exe is None:

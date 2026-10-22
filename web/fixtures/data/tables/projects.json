@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "generated_at": "2026-10-04T10:03:12Z",
+  "as_of": "2026-10-04",
+  "projects": [
+    {
+      "id": "r14",
+      "issue": 14,
+      "kind": "city_install",
+      "finished": "2026-09",
+      "approved": "2026-09-30",
+      "parcel": null,
+      "address": "Bus stop at Sample St and Example Ave",
+      "lng": -75.15655,
+      "lat": 39.98535,
+      "group": "Sample Stop Riders",
+      "note": "We wrote to OTIS with the stop number and how many people get on there. A bench came eight months later.",
+      "link": "https://github.com/holdTheDoorHoid/placekeepers/issues/14"
+    },
+    {
+      "id": "r13",
+      "issue": 13,
+      "kind": "trees",
+      "finished": "2026-05",
+      "approved": "2026-06-03",
+      "parcel": "990000002",
+      "address": "1203 N SAMPLE ST",
+      "lng": -75.157554,
+      "lat": 39.985243,
+      "group": null,
+      "note": null,
+      "link": "https://github.com/holdTheDoorHoid/placekeepers/issues/13"
+    },
+    {
+      "id": "r12",
+      "issue": 12,
+      "kind": "garden",
+      "finished": "2026-05",
+      "approved": "2026-06-02",
+      "parcel": "990000005",
+      "address": "1305 N EXAMPLE AVE",
+      "lng": -75.155725,
+      "lat": 39.985108,
+      "group": "Example Avenue Growers",
+      "note": "Twelve neighbors, four Saturdays and about $300 for soil and seeds. The Land Bank signed a garden agreement first.",
+      "link": "https://github.com/holdTheDoorHoid/placekeepers/issues/12"
+    },
+    {
+      "id": "h2025_0001",
+      "issue": null,
+      "kind": "cleanup",
+      "finished": "2025-09",
+      "approved": null,
+      "parcel": "990000005",
+      "address": "1305 N EXAMPLE AVE",
+      "lng": -75.155725,
+      "lat": 39.985108,
+      "group": "Example Block Club",
+      "note": "A Saturday cleanup with tools from the Streets Department.",
+      "link": "https://example.org/sample-block-club-cleanup"
+    }
+  ]
+}

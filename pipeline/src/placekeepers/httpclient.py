@@ -197,6 +197,37 @@ class PoliteClient:
 
         return self._with_retries(url, call)
 
+    def post_json(
+        self,
+        url: str,
+        payload: dict[str, Any],
+        *,
+        headers: dict[str, str] | None = None,
+        check: Callable[[Any], None] | None = None,
+    ) -> Any:
+        """POST a JSON body and decode the JSON reply, with the same retries as get_json (added
+        2026-10-21 by M5.3 for GitHub's GraphQL API, which reads the repository's own issues with
+        the workflow's read only token). `check` may raise RetryableError for an error sent with
+        HTTP 200."""
+
+        def call() -> Any:
+            try:
+                response = self.http.post(url, json=payload, headers=headers)
+            except httpx.TransportError as exc:
+                raise RetryableError(f"network problem ({type(exc).__name__}: {exc})") from exc
+            finally:
+                self.requests_sent += 1
+            self._check_status(response)
+            try:
+                reply = response.json()
+            except ValueError as exc:
+                raise RetryableError(f"{_short(url)} did not send valid JSON") from exc
+            if check is not None:
+                check(reply)
+            return reply
+
+        return self._with_retries(url, call)
+
     def download(
         self,
         url: str,

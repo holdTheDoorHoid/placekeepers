@@ -47,6 +47,9 @@ describe('defaults per view', () => {
       'basemap',
       // The displacement watch (M4.1): on for organizers, off in the field view.
       'displacement_watch',
+      // Projects neighbors finished (M5.3): on for organizers, off in the field view, like the
+      // other care layers.
+      'projects',
     ]);
   });
 
