@@ -173,7 +173,7 @@ colons, semicolons, question marks and the dollar sign were not touched.
 | Key or place | French text | Back translation | English | What changed |
 |---|---|---|---|---|
 | `content/fr/posting.md`, Where to post a flyer, "Your own window, door or fence" | "Votre propre propriété, c'est à vous d'y afficher ce que vous voulez." | Your own property, it is for you to post there whatever you want. | Your own property is yours to post on. | Strengthened. "Whatever you want" is not in English and reads as no limit at all, on a page about what the law does limit (the next sentence is about the window sign limit). Now "Vous pouvez afficher sur votre propre propriété." |
-| `dossier.owner.cityStatuses.OWNED - AVAILABLE`, second text | "La Land Bank le montre sur sa carte des propriétés que les gens peuvent demander." | The Land Bank shows it on its map of properties that people can ask for. | The Land Bank shows it on its map of properties people can apply for. | Reads as an invitation. "Demander" is the casual "ask for", close to the "you can ask for it" wording the owner ruled out for the listed status. Every other language has the formal "apply" (a request that goes through a process). Now "pour lesquelles les gens peuvent déposer une demande". |
+| `dossier.owner.cityStatuses.OWNED - AVAILABLE`, second text | "La Land Bank le montre sur sa carte des propriétés que les gens peuvent demander." | The Land Bank shows it on its map of properties that people can ask for. | The Land Bank shows it on its map of properties people can apply for. | Reads as an invitation. "Demander" is the casual "ask for", close to the "you can ask for it" wording the project rules out for the listed status (no wording about ease of acquisition). Every other language has the formal "apply" (a request that goes through a process). Now "pour lesquelles les gens peuvent déposer une demande". |
 
 Small differences, kept:
 
@@ -188,4 +188,27 @@ Listed as available: every place says "indiqué comme disponible" (indicated as 
 vigilance" name for the displacement watch is older wording that I did not change, but "vigilance"
 can sound like policing. Contact page: says people can write in French and that we read it with a
 translation tool; promises no reply.
+
+## Arabic (ar)
+
+Checked 109 items. Same meaning: 108. Changed: 1, fixed.
+
+| Key or place | Arabic text | Back translation | English | What changed |
+|---|---|---|---|---|
+| `letters.gate.not_sure` (why the owner letter is not offered where the map is unsure the lot is vacant) | "لسنا متأكدين كثيرًا من أن هذه القطعة فارغة" | We are not very sure that this lot is empty. | We are not sure this lot is vacant. | Softened. The translator reused the confidence label "not very sure" (`لسنا متأكدين كثيرًا`), which implies a fair chance it is vacant. This line says the map cannot tell, and the letter is held back because the lot may be someone's home. Now "لسنا متأكدين من أن هذه القطعة فارغة", the same wording the catalog already uses for the same English sentence in `dossier.owner.heldBack` and for "a lot we are not sure about" on How to do it. |
+
+Small differences, kept:
+
+| Place | Arabic | Back translation | English | Why kept |
+|---|---|---|---|---|
+| `letters.gate.public` | "مكتب مجلس المدينة" | the City Council office | your Council office | The letter and the page that follow are for the reader's own district office. The gate line only points to that letter. |
+| `letters.owner.ask` | "الجيران في هذا المقطع" | the neighbors in this segment | the neighbors on this block | "Block" has no single everyday Arabic word. A native speaker may know a better one. |
+| Where to post a flyer, the library bullet | "سلوكًا معطِّلًا" | disruptive behavior | disruptive | Same. |
+
+Listed as available: every place says "مُدرجة كمتاحة" or "تُدرجها ... على أنها متاحة" (listed
+as available), the City's own label, never an offer. "غير متاح" (not available) is also used for
+the letter that the page does not offer ("الخطاب إلى المالك غير متاح هنا"), which is a different
+meaning of the same word and reads correctly. For a native speaker to look at: the word "ملصق"
+(poster, sticker) stands for "flyer" throughout, and "منشور" appears for "handbill". Contact page:
+says people can write in Arabic and that we read it with a translation tool; promises no reply.
 
