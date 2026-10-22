@@ -48,6 +48,9 @@ simple, readable by speakers of any dialect.
 | Philadelphia Tax Center | مركز ضرائب فيلادلفيا | phila.gov/ar |
 | real estate tax | ضريبة العقارات | phila.gov/ar |
 | City Council | مجلس المدينة | phila.gov/ar |
+| Department of Sanitation | قسم الصرف الصحي | phila.gov/ar page heading (the browser title says إدارة الصرف الصحي). Kept as the City writes it, with the English name beside it where a neighbor reads it, because الصرف الصحي can also mean sewage, and this department collects trash. A native speaker may prefer النظافة. |
+| Philadelphia More Beautiful Committee | لجنة فيلادلفيا المزيد من الجمال | phila.gov/ar |
+| block captain | the City writes كابتن بلوك or قائد للبلوك; this translation keeps قائد مقطع (Block Captain) |
 
 Not found on phila.gov in Arabic (the translator's own rendering, kept the same everywhere):
 Parks and Recreation = إدارة الحدائق والترفيه; Streets Department = إدارة الشوارع; Water

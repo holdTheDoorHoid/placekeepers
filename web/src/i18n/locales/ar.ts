@@ -71,6 +71,7 @@ const MORE_RECORD: Nouns = { one: 'سجل إضافي واحد', two: 'سجلين
 const MORE_SOURCE: Nouns = { one: 'مصدر إضافي واحد', two: 'مصدران إضافيان', few: 'مصادر إضافية', many: 'مصدرًا إضافيًا', other: 'مصدر إضافي' };
 const GARDEN: Nouns = { one: 'حديقة مجتمعية واحدة', two: 'حديقتان مجتمعيتان', few: 'حدائق مجتمعية', many: 'حديقة مجتمعية', other: 'حديقة مجتمعية' };
 const PROJECT: Nouns = { one: 'مشروع واحد', two: 'مشروعان', few: 'مشاريع', many: 'مشروعًا', other: 'مشروع' };
+const HOUR: Nouns = { one: 'ساعة واحدة', two: 'ساعتين', few: 'ساعات', many: 'ساعة', other: 'ساعة' };
 const GROUP: Nouns = { one: 'مجموعة كتل واحدة', two: 'مجموعتا كتل', few: 'مجموعات كتل', many: 'مجموعة كتل', other: 'مجموعة كتل' };
 
 /** A change in percent in words: "up 61%", "down 3%", "unchanged" (strings.ts, changeWords). */
@@ -129,6 +130,16 @@ const ar: Catalog = {
   units: {
     meters: (n) => count(n, { one: 'متر واحد', two: 'مترين', few: 'أمتار', many: 'مترًا', other: 'متر' }),
     kilometers: (km) => `${formatDecimal(km, 1)} كيلومتر`,
+    miles: (miles) => `${formatDecimal(miles, 1)} ميل`,
+    lessThanMiles: (miles) => `أقل من ${formatDecimal(miles, 1)} ميل`,
+  },
+
+  join: {
+    labelled: (label, value) => `${label}: ${value}`,
+    colon: (label) => `${label}:`,
+    and: (items) => (items.length <= 1 ? items.join('') : `${items.slice(0, -1).join('، ')} و${items.at(-1)}`),
+    long: (items) => (items.length <= 1 ? items.join('') : `${items.slice(0, -1).join('؛ ')}؛ و${items.at(-1)}`),
+    names: (names) => names.join(' و'),
   },
 
   header: {
@@ -1253,6 +1264,8 @@ const ar: Catalog = {
     },
     estimateTitle: 'كم يستغرق',
     estimate: (time) => `تقديرنا: ${time} لشخص واحد أو زوج.`,
+    duration: (hours, minutes) =>
+      `نحو ${[hours ? count(hours, HOUR) : '', minutes || !hours ? count(minutes, MINUTE) : ''].filter(Boolean).join(' و')}`,
     estimateBasis:
       'هذا تقدير منا وليس قياسًا: مشي بسرعة نحو 3 أميال في الساعة من موقف إلى موقف، ودقيقة تقريبًا عند كل موقف. والوصول إلى أول موقف والعودة إلى البيت وقت إضافي.',
     trolleyTunnel:
@@ -2886,6 +2899,9 @@ const ar: Catalog = {
     ownLinkLabelPlaceholder: 'انضم إلى محادثتنا الجماعية',
     size: 'الورق',
     sizes: { letter: 'ملصق واحد على صفحة Letter', half: 'نصف صفحة، اثنان في الورقة' },
+    language: 'لغة الملصق',
+    languageHelp: 'اطبع الملصق باللغة التي يقرأ بها جيرانك. وما تكتبه يُطبع كما كتبته.',
+    withEnglish: 'أضف الإنجليزية بجانبه، في عمود ثانٍ',
     print: 'اطبع الملصق',
     clear: 'امسح ما كتبته',
     confirmClear: 'هل تريد مسح ما كتبته للملصقات من هذا المتصفح؟ لا يمكن استرجاعه.',
@@ -2917,6 +2933,11 @@ const ar: Catalog = {
     legalHelpShort: 'مساعدة قانونية مجانية: Grounded in Philly (Garden Justice Legal Initiative)',
     senderNote: 'ملاحظة للمرسِل',
     chooseTemplate: 'أي خطاب',
+    language: 'لغة الخطاب',
+    languageHelp:
+      'المكاتب والمنظمات المجتمعية والمالكون الذين تُرسل إليهم هذه الخطابات يقرؤون في الغالب الإنجليزية، لذلك يُطبع الخطاب بالإنجليزية ما لم تختر لغتك.',
+    translationTitle: 'خطابك بلغتك',
+    translationNote: 'لتعرف ما الذي توقّع عليه. المطبوع هو الخطاب أعلاه فقط؛ وتبقى هذه الترجمة على شاشتك.',
     templates: {
       owner: 'إلى مالك القطعة، يطلب إذنًا بالعناية بها',
       council: 'إلى مكتب مجلس المدينة، يطلب الدعم',
@@ -2997,6 +3018,7 @@ const ar: Catalog = {
     salutation: (name) => `إلى ${name}،`,
     dearOwner: 'إلى مالك العقار،',
     sincerely: 'مع خالص التقدير،',
+    yourName: '[اسمك]',
     reachMe: (contact) => `يمكنك الوصول إليّ على ${contact}.`,
     reachMeBlank: 'يمكنك الوصول إليّ على [كيف يمكن الوصول إليك].',
     thanks: 'شكرًا لك على النظر في هذا الطلب.',
