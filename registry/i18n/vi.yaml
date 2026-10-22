@@ -764,3 +764,163 @@ routes:
       "https://www.phila.gov/services/payments-assistance-taxes/payment-plans-and-assistance-programs/income-based-programs-for-residents/apply-for-the-longtime-owner-occupants-program-loop/":
         label: >-
           Thành phố Philadelphia: nộp đơn xin LOOP
+
+suggestions:
+  clean_and_green:
+    label: Dọn dẹp và xanh hóa lô đất này
+    summary: Dọn rác, san phẳng, trồng cỏ và vài cây, lắp hàng rào thấp bằng cột và thanh ngang, và cắt cỏ thường xuyên.
+    cost: Khoảng $1,100 đến $1,500 ban đầu và $150 đến $300 mỗi năm (cần xác nhận với PHS)
+  seal_abandoned_building:
+    label: Nhờ bịt kín tòa nhà này
+    summary: Báo một tòa nhà bỏ hoang để ngỏ để Thành phố bịt kín cửa ra vào và cửa sổ của nó.
+    cost: Miễn phí để báo
+  plant_shade_trees:
+    label: Trồng cây bóng mát trên và dọc theo lô đất này
+    summary: >-
+      Ở khu vực này có ít cây che bóng hơn quanh ít nhất một nửa số địa điểm trên bản đồ này
+      (khảo sát tán cây năm 2018 của Thành phố). Cây làm mát một dãy phố bằng bóng của chúng và
+      lượng nước lá cây thải ra. Thành phố trồng miễn phí cây ven đường trên vỉa hè khi chủ sở hữu
+      bất động sản yêu cầu, và TreePhilly phát miễn phí cây để trồng xuống đất trên đất tư nhân.
+      Hãy chọn những cây sẽ cao lớn, để chúng che bóng cho đường phố mà hàng xóm vẫn nhìn xuyên
+      qua lô đất được.
+    cost: Cây miễn phí từ Thành phố và TreePhilly. Cây non cần khoảng 20 gallon nước mỗi tuần từ tháng 3 đến tháng 12
+  cool_green_lot:
+    label: Xanh hóa lô đất này để làm mát dãy phố
+    summary: >-
+      Theo chỉ số dễ bị tổn thương do nóng của Thành phố, cái nóng mùa hè tác động lên người dân ở
+      đây mạnh hơn quanh ít nhất một nửa số địa điểm trên bản đồ này. Đất trống, sỏi và gạch vụn
+      hấp thụ nắng, trong khi cỏ, luống vườn và nhất là cây giữ cho lô đất mát hơn và che bóng cho
+      vỉa hè bên cạnh. Dù lô đất này trở thành gì, một khu vườn, một lô đất đã được dọn dẹp và xanh
+      hóa hay một sân hông, hãy trồng cây bóng mát trong đó, và giữ cho cây cao để lô đất vẫn
+      thoáng tầm nhìn.
+    cost: Từ cây miễn phí (TreePhilly) đến khoảng $1,100 đến $1,500 ban đầu cho một lô dọn dẹp và xanh hóa đầy đủ (cần xác nhận với PHS)
+  seating_and_shade:
+    label: Làm một chỗ ngồi dưới bóng mát
+    summary: >-
+      Có nhiều người sống trong vòng 5 phút đi bộ của lô đất này hơn quanh ít nhất một nửa số địa
+      điểm trên bản đồ này. Vài chiếc ghế hoặc một bàn dã ngoại dưới những cây bóng mát có thể
+      biến nó thành nơi hàng xóm dừng chân, nghỉ ngơi và gặp nhau. Hãy hỏi hàng xóm xem họ sẽ dùng
+      gì, chọn ghế chắc chắn, và trồng những cây sẽ cao lớn để lô đất vẫn thoáng tầm nhìn. Hãy lên
+      kế hoạch xem ai sẽ giữ cho nó sạch.
+    cost: >-
+      Từ cây miễn phí (TreePhilly) và một chiếc ghế đóng theo mẫu thiết kế mở đến vài nghìn đô la.
+      Các khoản tài trợ nhỏ cho không gian công cộng của Feet First Philly là $500 đến $2,500
+  community_garden:
+    label: Bắt đầu một vườn cộng đồng
+    summary: >-
+      Lô đất này ở xa công viên hơn ít nhất một nửa số địa điểm trên bản đồ này, và có ít nhất
+      1.000 người sống trong vòng 5 phút đi bộ. Một vườn cộng đồng mang đến cho hàng xóm không
+      gian xanh, rau quả và hoa, và một lý do để gặp nhau. Nó cần những người làm vườn quay lại
+      mỗi tuần, nước, và sự cho phép sử dụng đất. Khi một khu vườn đã hoạt động, Neighborhood
+      Gardens Trust có thể giúp giữ nó làm vườn mãi mãi.
+    cost: >-
+      Từ vài luống vườn nâng cao đến vài nghìn đô la với đất, hàng rào và nước. Urban Garden
+      Agreement của Land Bank giá $1
+  art_request:
+    label: Hỏi về một bức tranh tường hoặc nghệ thuật khác
+    summary: >-
+      Nhiều người sống quanh lô đất này, và không có tác phẩm nào trong danh sách Percent for Art
+      của Thành phố hay trong Wikidata nằm trong vòng 5 phút đi bộ. Những danh sách đó bỏ sót
+      nhiều bức tranh tường, nên hãy xem lớp Nghệ thuật công cộng và danh sách tranh tường riêng
+      của Mural Arts trước. Một bức tường trống hướng ra lô đất có thể có một bức tranh tường:
+      Mural Arts nhận yêu cầu từ chủ các bức tường trên trang web riêng của họ. Nghệ thuật được
+      chào đón vì vẻ đẹp và niềm tự hào; không có nghiên cứu nào liên hệ nó với việc giảm bạo lực.
+    cost: Miễn phí để hỏi Mural Arts
+  report_dumping:
+    label: Báo việc đổ rác trái phép cho Philly311
+    summary: >-
+      Có người đã hỏi Philly311 về việc đổ rác trái phép trên một đoạn phố mà lô đất này nhìn ra
+      trong 90 ngày qua, và yêu cầu vẫn còn đang mở. Nếu rác vẫn còn đó, hãy gửi yêu cầu của riêng
+      bạn, kèm một tấm ảnh, để Thành phố dọn đi. Một báo cáo là về đống rác, không bao giờ về
+      người đã bỏ nó.
+    cost: Miễn phí để báo
+  report_dark_light:
+    label: Báo đèn đường bị tắt cho Philly311
+    summary: >-
+      Có người đã nhờ Philly311 sửa một đèn đường hoặc đèn hẻm bị tắt trên một đoạn phố mà lô đất
+      này nhìn ra, trong 90 ngày qua, và yêu cầu vẫn còn đang mở. Nếu đèn vẫn tắt, hãy gửi yêu cầu
+      của riêng bạn, kèm số của cột nếu có. Một con phố có đèn giúp hàng xóm dùng con phố và lô
+      đất sau khi trời tối.
+    cost: Miễn phí để báo
+  report_graffiti:
+    label: Báo việc vẽ bậy lên tường cho Philly311
+    summary: >-
+      Có người đã nhờ Philly311 xóa hình vẽ bậy trên một đoạn phố mà lô đất này nhìn ra trong 90
+      ngày qua, và yêu cầu vẫn còn đang mở. Nếu nó vẫn còn đó, hãy gửi yêu cầu của riêng bạn, kèm
+      một tấm ảnh, để Thành phố có thể tẩy sạch. Nếu hàng xóm muốn có nghệ thuật trên bức tường đó
+      hơn, hãy hỏi chủ sở hữu về một bức tranh tường.
+    cost: Miễn phí để báo
+  memorial_or_ghost_bike:
+    label: Một nơi tưởng niệm hoặc một chiếc ghost bike
+    summary: >-
+      Một nơi tưởng niệm tôn vinh người đã mất và nhắc mọi người đi ngang qua hãy đi chậm lại. Với
+      một người thiệt mạng khi đi xe đạp, Bicycle Coalition có thể đặt một chiếc ghost bike, một
+      chiếc xe đạp sơn màu trắng.
+    cost: Thấp; yêu cầu một chiếc ghost bike là miễn phí
+  traffic_calming_petition:
+    label: Đề nghị làm chậm xe trên đường phố khu dân cư này
+    summary: >-
+      Hàng xóm có thể đề nghị Thành phố làm đệm giảm tốc trên một đường phố khu dân cư. Thành phố
+      chấm điểm các yêu cầu ba lần mỗi năm dựa trên dữ liệu tai nạn, và nếu con đường này được
+      chọn, 60 phần trăm dãy phố ký một bản kiến nghị. Các đường huyết mạch (arterial), đường cao
+      tốc của tiểu bang, các đường ngắn, dốc và cong thì không đủ điều kiện.
+    cost: Miễn phí để yêu cầu
+  daylighting_check:
+    label: Kiểm tra xem góc đường này có thoáng trong 20 feet không
+    summary: >-
+      Luật Pennsylvania đã cấm đỗ xe trong vòng 20 feet từ một vạch qua đường ở giao lộ, và trong
+      vòng 30 feet từ một biển dừng hoặc tín hiệu giao thông, để người lái xe và người băng qua
+      đường nhìn thấy nhau. Nếu xe đỗ ở đó, hãy hỏi Thành phố về việc làm thoáng góc đường bằng
+      sơn, cột hoặc chậu cây. Hãy báo đèn đường bị tắt ở đây cho Philly311.
+    cost: Miễn phí để hỏi
+  asphalt_art_check:
+    label: Nghệ thuật vẽ trên mặt đường ở góc này, hãy hỏi Thành phố trước
+    summary: >-
+      Một nghiên cứu về các giao lộ được sơn thấy ít vụ tai nạn liên quan đến người đi bộ và đi xe
+      đạp hơn, nhưng nó không có nhóm đối chứng và do nhà tài trợ của chương trình chi trả. Năm
+      2025, chính phủ liên bang bắt đầu thúc giục các tiểu bang gỡ bỏ nghệ thuật trên vạch qua
+      đường, và Philadelphia không có quy trình cấp phép cho nó. Hãy hỏi Thành phố trước khi sơn
+      bất cứ thứ gì.
+    cost: Chưa rõ; Thành phố không có quy trình nào để định giá
+  stop_survey:
+    label: Khảo sát trạm này bằng StreetComplete
+    summary: >-
+      Chưa có ai ghi lại trạm này có mái che hay ghế ngồi không, hoặc OpenStreetMap và danh sách
+      mái che trạm xe buýt của Thành phố không thống nhất về mái che của nó. Bất kỳ ai cũng có thể
+      tìm hiểu trong vài phút bằng ứng dụng điện thoại StreetComplete miễn phí, và câu trả lời đến
+      bản đồ này trong khoảng một tuần. Nếu ứng dụng không có câu hỏi nào ở đây, trạm chưa có
+      trong OpenStreetMap: hãy thêm nó bằng lớp phủ Things của ứng dụng, hoặc để lại một ghi chú.
+    cost: Miễn phí; khoảng ba phút mỗi trạm
+  stop_shelter_request:
+    label: Đề nghị Thành phố làm mái che ở trạm này
+    summary: >-
+      Một cuộc khảo sát thấy không có mái che ở đây, và danh sách mái che trạm xe buýt của Thành
+      phố cũng không có mái che nào ở đây. Chương trình mái che trạm xe buýt của Thành phố, do văn
+      phòng giao thông (OTIS) điều hành, xây các mái che do tiền quảng cáo trên đó chi trả và đặt
+      mục tiêu lắp ở 15 phần trăm trạm xe buýt đông khách nhất. Không có mẫu yêu cầu công khai,
+      nên hãy viết thư cho OTIS kèm số trạm và số người lên xe ở đây.
+    cost: Miễn phí để hỏi
+  stop_bench_request:
+    label: Đề nghị Thành phố đặt ghế ngồi ở trạm này
+    summary: >-
+      Một cuộc khảo sát thấy không có ghế ngồi ở đây. Ghế ngồi ở các trạm thuộc chương trình đồ
+      dùng đường phố của Thành phố, do OTIS điều hành, và chúng tôi không tìm thấy cách công khai
+      nào để yêu cầu, nên hãy viết thư cho OTIS kèm số trạm. Một chiếc ghế tự bạn làm cần có sự
+      cho phép, và con đường xin giấy phép của Thành phố cho một chiếc ghế trên vỉa hè vẫn chưa
+      được xác nhận.
+    cost: Miễn phí để hỏi
+  stop_streetlight_report:
+    label: Báo đèn đường bị tắt ở trạm này
+    summary: >-
+      OpenStreetMap cho biết trạm này không có đèn chiếu sáng. Nếu một đèn đường ở đây bị tắt, hãy
+      báo cho Philly311. Chương trình đèn đường hiện nay của Thành phố thay đèn nhưng không thêm
+      đèn mới, nên một trạm hoàn toàn không có đèn là câu hỏi dành cho OTIS.
+    cost: Miễn phí để báo
+  stop_shade_trees:
+    label: Trồng cây bóng mát cạnh trạm này
+    summary: >-
+      Có ít cây che bóng cho trạm này. Thành phố trồng miễn phí cây ven đường trên vỉa hè trước
+      một ngôi nhà hoặc cơ sở kinh doanh khi chủ sở hữu yêu cầu, và tưới nước cho chúng trong năm
+      đầu. Hãy nhờ chủ của các tòa nhà bên cạnh trạm yêu cầu một cây; sau đó hàng xóm có thể giúp
+      tưới.
+    cost: Cây ven đường miễn phí cho chủ sở hữu bất động sản
