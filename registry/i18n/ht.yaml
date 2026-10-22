@@ -325,6 +325,39 @@ sources:
   ppr_playgrounds:
     name: Teren jwèt
     publisher: Vil Filadèlfi, Pak ak Rekreyasyon
+  project_reports:
+    name: 'Pwojè vwazen yo fini, rapòte sou fòm GitHub sit la'
+    publisher: 'Vwazen yo, atravè fòm "Di nou sou yon pwojè ou fini" Placekeepers'
+  project_corrections:
+    name: 'Pwojè vwazen yo fini, antre alamen ak koreksyon'
+    publisher: Placekeepers
+  political_divisions:
+    name: Ward ak divizyon politik
+    publisher: Vil Filadèlfi
+  pa_house_districts:
+    name: Distri Chanm Reprezantan Pensilvani
+    publisher: Biwo Resansman Etazini (U.S. Census Bureau), TIGER/Line Shapefiles
+  pa_senate_districts:
+    name: Distri Sena Pensilvani
+    publisher: Biwo Resansman Etazini (U.S. Census Bureau), TIGER/Line Shapefiles
+  us_house_districts:
+    name: Distri kongrèsyonèl nan Pensilvani
+    publisher: Biwo Resansman Etazini (U.S. Census Bureau), TIGER/Line Shapefiles
+  pa_legislators:
+    name: Manm Asanble Jeneral Pensilvani
+    publisher: Open States (Plural Policy)
+  us_legislators:
+    name: Manm Kongrè
+    publisher: Pwojè unitedstates/congress-legislators la
+  us_legislator_offices:
+    name: Biwo distri manm Kongrè yo
+    publisher: Pwojè unitedstates/congress-legislators la
+  city_elected_officials:
+    name: Ofisyèl Vil la eli
+    publisher: Vil Filadèlfi
+  rco_contacts:
+    name: Kontak Òganizasyon Kominotè Anrejistre yo
+    publisher: Komisyon Planifikasyon Vil Filadèlfi
 
 layers:
   vacant_parcels:
@@ -859,6 +892,9 @@ layers:
     settings:
       shade:
         label: Ombraje zòn yo (si ou fèmen l, se sèlman kontou yo ak nòt yo ki parèt)
+  projects:
+    label: Pwojè vwazen yo fini
+    description: Netwayaj, jaden, kote pou chita, miral, pyebwa, ban ak abri Vil la, ak repare 311 vwazen yo fini epi di nou sou yo. Placekeepers li epi apwouve chak rapò anvan li parèt. Tape youn pou wè sa yo te fè, kilè, ak sa li te pran, ak yon lyen nan rapò a ak foto li yo sou GitHub. Kat la pa janm montre ki moun ki voye yon rapò, sèlman yon non gwoup yo te chwazi.
 
 lenses:
   violence:
