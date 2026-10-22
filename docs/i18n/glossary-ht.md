@@ -134,6 +134,23 @@ Title Fund, Philly311, SEPTA or the Land Bank's programs, so those stay as prope
 | projects neighbors finished | pwojè vwazen yo fini | the form is "Di nou sou yon pwojè ou fini" |
 | not reviewed by a lawyer | yon avoka poko revize l | always with "se pa konsèy jiridik" (not legal advice) |
 
+## The "Did it work?" page (M5.4)
+
+| English | Haitian Creole | Notes |
+|---|---|---|
+| Did it work? | Èske sa te mache? | the menu item and the page title |
+| care (done to a place: cleaned, greened, sealed, demolished) | swen | "places that got care" is "kote ki te jwenn swen"; "after care" is always "apre yo fin pran swen kote yo", so it is not read as medical aftercare |
+| comparison, comparison places | konparezon, kote pou konparezon | "similar places that did not get care" is "kote ki sanble ki pa t jwenn swen" |
+| verdict labels | "Mwens apre yo fin pran swen kote yo", "Plis apre yo fin pran swen kote yo", "Pa gen okenn chanjman klè", "Nou pa t ka di", "Twò piti pou nou ka di" | "We could not tell" stays a plain admission, never "pa gen efè" (no effect) |
+| "This does not show that care caused them." | "Sa a pa montre ke swen an se li ki te lakòz yo." | kept on every "more afterwards" verdict |
+| the real evidence | vrè prèv la | the randomized trials ("esè o aza"); a comparison of records "can mislead" is "ka twonpe moun" |
+| 90 percent interval | entèval 90 pousan | a change in words: "3.2% plis", "6.2% mwens", "pa gen chanjman"; a range is "soti nan 6.2% mwens rive nan 0.2% plis" |
+| shootings, dumping reports, complaints about vacant property | tire, rapò sou fatra jete ilegalman, plent sou pwopriyete vid | bare nouns, as the sentences need them |
+| a half year | mwatye ane | "premye mwatye ane 2017", "dezyèm mwatye ane 2024" |
+| area of the city (a cell of about 5 square kilometers) | zòn | |
+| the check (placebo) | verifikasyon | "Verifikasyon an pase" and "Verifikasyon an echwe" |
+| still vacant | li kontinye vid | never "toujou vid", which can be read as "always vacant" |
+
 ## The word for word passages (docs/ETHICS.md)
 
 Each is one fixed unit. The same Haitian Creole text is used wherever the English repeats it

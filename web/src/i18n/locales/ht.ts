@@ -25,6 +25,9 @@ function giveOrTake(margin: number | null, unit: 'points' | 'homes'): string {
   return ` (plis oswa mwens ${unit === 'points' ? `${formatNumber(margin)} pwen` : formatNumber(margin)})`;
 }
 
+/** The words of `didit.noChange`, so `didit.range` can write "soti nan 0% rive nan 2.1% plis". */
+const NO_CHANGE = 'pa gen chanjman';
+
 const ht: Catalog = {
   app: {
     name: 'Placekeepers',
@@ -95,6 +98,7 @@ const ht: Catalog = {
     menuLabel: 'Paj sit la',
     map: 'Kat',
     landBank: 'Land Bank an chif',
+    didIt: 'Èske sa te mache?',
     pages: [
       { slug: 'about', label: 'Apwopo' },
       { slug: 'why', label: 'Poukisa sa mache' },
@@ -2006,6 +2010,179 @@ const ht: Catalog = {
       counts: 'Kantite sèlman: pa gen non, pa gen adrès ak pa gen nimewo pasèl.',
       dates: (fetched, last) => `Akt li ${fetched}; akt ki pi resan an gen dat ${last}.`,
     },
+  },
+
+  // "Èske sa te mache?" (M5.4, pwoblèm #48): paj web/did-it-work/. "Swen" se sa yo fè yon kote
+  // (netwaye, amenaje an vèt, sele, demoli). Apre li, nou toujou ekri "apre yo fin pran swen kote yo",
+  // pou "apre swen" pa konfonn ak swen medikal. Chif ak pousantaj jan modèl yo bay yo.
+  didit: {
+    pageTitle: 'Èske sa te mache?',
+    back: 'Retounen nan kat la',
+    intro:
+      'Lè yon teren oswa yon bilding te jwenn swen, èske blòk ki alantou l yo te chanje, konpare ak kote ki sanble ki pa t jwenn swen? Nou te konpare pwòp dosye Vil la pou plizyè milye kote atravè Filadèlfi. Men sa dosye yo ka di, ak sa yo pa ka di.',
+    loading: 'N ap chaje rezilta yo',
+    loadFailed: 'Nou pa t ka chaje rezilta yo. Verifye koneksyon ou epi eseye ankò.',
+    retry: 'Eseye ankò',
+    missing: 'Rezilta yo poko pibliye. Yo parèt apre pwochen mizajou done semèn nan.',
+    print: 'Enprime paj sa a',
+    runOn: (generated, through) =>
+      `Konparezon sa a te fèt nan dat ${generated}, ak dosye Vil la jiska ${through}. Yo refè l apeprè yon fwa chak ane.`,
+    // Repons kout la
+    shortTitle: 'Repons kout la',
+    tallyIntro: (n) => `Nou fè ${plural(n, { other: '# konparezon' })}.`,
+    tallyParts: {
+      fewer: (n) => `${formatNumber(n)} nan yo te jwenn mwens pwoblèm toupre apre yo fin pran swen kote yo`,
+      more: (n) => `${formatNumber(n)} nan yo te jwenn plis`,
+      no_clear_change: (n) => `${formatNumber(n)} nan yo pa t jwenn okenn chanjman klè`,
+      check_failed: (n) =>
+        `${formatNumber(n)} nan yo nou pa t ka fè rezilta yo konfyans, paske kote ki te jwenn swen yo te deja ap chanje yon lòt jan anvan sa`,
+      too_few: (n) => `${formatNumber(n)} nan yo pa t gen ase kote pou nou ka di`,
+    },
+    tallyJoin: (parts) =>
+      parts.length <= 1 ? `${parts.join('')}.` : `${parts.slice(0, -1).join('; ')}; epi ${parts[parts.length - 1]}.`,
+    noneFewer:
+      'Dosye Vil la pa montre ke swen te fè tire, fatra jete oswa plent bese toupre. Kote yo montre plis apre yo fin pran swen kote yo, rezon ki pi gen chans se swen an te ale kote pwoblèm yo te deja ap grandi, se pa swen an ki te lakòz yo.',
+    someFewer:
+      'Kote dosye yo montre mwens pwoblèm apre yo fin pran swen kote yo, li verifikasyon ki anba chak rezilta anvan ou fè l konfyans.',
+    notOneLot: 'Okenn nan sa a pa yon jijman sou yon sèl teren.',
+    // Vrè prèv la (docs/EVIDENCE.md)
+    trialsTitle: 'Vrè prèv la: esè nan Filadèlfi',
+    trialsIntro:
+      'Yon konparezon dosye tankou sa a ka twonpe moun. Esè o aza pa ka twonpe nan menm fason sa yo, epi de te fèt isit la:',
+    trials: [
+      'Amenajman vèt teren vid: nan yon esè nan tout vil la ak 541 teren, vyolans ak zam te bese 29% toupre teren ki te gen amenajman vèt yo nan katye ki anba liy povrete a (Branas ak kòlèg li yo, 2018).',
+      'Nan menm esè a, tire te bese 6.8% toupre teren ki te gen amenajman vèt yo ak 9.2% toupre teren ki te sèlman netwaye epi koupe zèb (Moyer ak kòlèg li yo, 2019).',
+      'Repare kay abandone: pòt ak fenèt ki fonksyone te diminye atak ak zam 13% toupre yo; netwayaj poukont li pa t fè okenn diferans ki mezirab (South ak kòlèg li yo, 2023).',
+    ],
+    trialLinks: ['Li esè amenajman vèt la', 'Li etid sou tire yo', 'Li esè sou reparasyon kay yo'],
+    whyLink: 'Plis sou poukisa sa mache',
+    warningsTitle: 'Poukisa yon konparezon dosye ka twonpe',
+    warnings: [
+      'Swen souvan ale kote pwoblèm yo deja ap grandi, kidonk kote ki jwenn li yo ka diferan de kote yo konpare yo ak yo nan fason okenn dosye pa montre.',
+      'Yon move ane souvan swiv pa yon pi bon ane kanmenm. Kote yo chwazi touswit apre yon move peryòd ka sanble yo amelyore lè anyen pa t chanje.',
+      'Pwoblèm yo ka deplase pi lwen sou ri a olye yo fini. Pou sa, nou verifye sèk ki alantou chak kote a.',
+    ],
+    // Yon kalite swen
+    kinds: {
+      landcare: 'Teren PHS LandCare te netwaye epi amenaje an vèt',
+      clean_seal: 'Pwopriyete Vil la te netwaye epi sele',
+      demolition: 'Bilding Vil la te demoli',
+      projects: 'Pwojè vwazen yo fini',
+    },
+    kindNotes: {
+      landcare: (records, dated) =>
+        `Lis PHS LandCare a bay sezon chak teren te netwaye epi amenaje an vèt pou ${formatNumber(dated)} nan ${plural(records, { other: '# teren' })} li yo. Teren ki pa gen sezon, ki majorite yo se vwazen ki pran swen yo atravè Community LandCare, yo kite yo deyò.`,
+      clean_seal: (records) =>
+        `Lòd travay Vil la pou netwaye ak sele ki te fèt, selon jou travay la te fini: ${formatNumber(records)} depi 2007. Dosye Vil la gen anpil mwens nan yo depi 2020, kidonk pifò nan konparezon sa yo se de 2017 a 2019.`,
+      demolition: (records) =>
+        `Demolisyon Vil la menm te fè, selon jou chak te fini: ${formatNumber(records)} depi 2007. Demolisyon ak yon pèmi prive yo kite yo deyò.`,
+    },
+    outcomes: {
+      shootings: 'Tire nan yon distans apeprè de blòk (200 mèt)',
+      dumping: 'Fatra jete ilegalman yo rapòte bay Philly311 nan yon distans apeprè de blòk, san konte kote a menm',
+      complaints: 'Plent bay L&I sou teren ak bilding vid nan yon distans apeprè de blòk, san konte kote a menm',
+    },
+    outcomeNouns: {
+      shootings: 'tire',
+      dumping: 'rapò sou fatra jete ilegalman',
+      complaints: 'plent sou pwopriyete vid',
+    },
+    verdictLabels: {
+      fewer: 'Mwens apre yo fin pran swen kote yo',
+      more: 'Plis apre yo fin pran swen kote yo',
+      no_clear_change: 'Pa gen okenn chanjman klè',
+      check_failed: 'Nou pa t ka di',
+      too_few: 'Twò piti pou nou ka di',
+    },
+    verdicts: {
+      fewer: (noun, percent, range) =>
+        `Nan de ane apre yo fin pran swen kote yo, te gen ${formatDecimal(percent, 1)}% mwens ${noun} toupre pase sa yo t ap atann dapre kote ki sanble ki pa t jwenn swen (entèval 90 pousan: ${range}).`,
+      more: (noun, percent, range) =>
+        `Nan de ane apre yo fin pran swen kote yo, te gen ${formatDecimal(percent, 1)}% plis ${noun} toupre pase sa yo t ap atann dapre kote ki sanble ki pa t jwenn swen (entèval 90 pousan: ${range}).`,
+      notCaused: 'Sa a pa montre ke swen an se li ki te lakòz yo.',
+      moreReports: 'Plis rapò kapab vle di tou ke plis vwazen ap rapòte apre Vil la te bay kote a atansyon.',
+      noClearChange: (change, range) =>
+        `Pa gen okenn chanjman klè. Konparezon an te bay rezilta sa a: ${change} (entèval 90 pousan: ${range}), epi entèval sa a gen ladan l posiblite pa gen okenn chanjman ditou.`,
+      checkFailed: (noun) =>
+        `Nan ane anvan yo te pran swen kote sa yo, ${noun} toupre yo te deja ap chanje yon lòt jan pase toupre kote pou konparezon yo, kidonk konparezon sa a pa ka separe swen an ak sa ki te deja ap pase.`,
+      tooFew: (n, min) => `Se sèlman ${plural(n, { other: '# kote' })} ki te ka konpare. Yon konparezon bezwen omwen ${formatNumber(min)}.`,
+    },
+    whyMore: {
+      landcare: 'PHS ak Vil la chwazi teren kote vwazen yo mande èd, souvan kote pwoblèm yo ap grandi.',
+      clean_seal:
+        'Vil la netwaye epi sele yon pwopriyete apre plent sou li, souvan lè yon blòk ap vin pi mal oswa apre pwoblèm sou pwopriyete a menm.',
+      demolition: 'Vil la demoli yon bilding lè li fin vin pa an sekirite, souvan sou blòk ki ap vin pi mal nan fason dosye yo pa montre.',
+      projects: 'Vwazen yo souvan kòmanse pwojè kote pwoblèm yo ap grandi.',
+    },
+    half: (year, half) => `${half === 1 ? 'premye' : 'dezyèm'} mwatye ane ${year}`,
+    noChange: NO_CHANGE,
+    fewerBy: (percent) => `${formatDecimal(percent, 1)}% mwens`,
+    moreBy: (percent) => `${formatDecimal(percent, 1)}% plis`,
+    range: (low, high) => `soti nan ${low === NO_CHANGE ? '0%' : low} rive nan ${high === NO_CHANGE ? '0%' : high}`,
+    compared: (n, from, to, areas) =>
+      `Konpare: ${plural(n, { other: '# kote' })} ki te jwenn swen soti nan ${from} rive nan ${to}, nan ${plural(areas, { other: '# zòn' })} nan vil la, chak ak jiska senk kote ki sanble ki pa t jwenn swen.`,
+    counts: (before, after, expected) =>
+      `Toupre kote ki te jwenn swen yo: ${formatNumber(before)} nan de ane anvan yo, ${formatNumber(after)} nan de ane apre yo, alòske yo t ap atann ${formatNumber(expected)} dapre kote pou konparezon yo.`,
+    checksTitle: 'Verifikasyon',
+    checks: {
+      passed: (change, range, n) =>
+        `Verifikasyon an pase: si nou fè kòmsi swen an te vini kat ane edmi pi bonè, konparezon an pa ta dwe jwenn okenn chanjman, epi rezilta li a se: ${change} (${range}; ${plural(n, { other: '# kote' })} ki gen dosye depi lontan konsa).`,
+      failed: (change, range, n) =>
+        `Verifikasyon an echwe: si nou fè kòmsi swen an te vini kat ane edmi pi bonè, rezilta konparezon an se: ${change} (${range}; ${plural(n, { other: '# kote' })} ki gen dosye depi lontan konsa), alòske li ta dwe montre pa gen okenn chanjman. Kote ki te jwenn swen yo te deja sou yon lòt chemen.`,
+      tooFew: 'Nou pa t ka fè verifikasyon an: twò kèk nan kote sa yo gen dosye ki ase lontan.',
+      around: (change, range) => `Pi lwen, 200 a 400 mèt alantou: ${change} (${range}).`,
+      moved: 'Yon pati nan pwoblèm nan ka te deplase la.',
+      later: (change, range, n) =>
+        `Konpare sèlman ak kote ki te jwenn menm swen an pita: ${change} (${range}; ${plural(n, { other: '# kote' })}).`,
+      naive: (change, noun) =>
+        `Yon senp konparezon anvan ak apre ta di: ${change}, paske li kite deyò fason ${noun} te chanje nan tout lòt kote yo.`,
+    },
+    // Pwojè vwazen yo fini
+    projectsNow: (shown, ready, before) =>
+      `Kat la montre ${plural(shown, { other: '# pwojè' })} vwazen yo fini. ${formatNumber(ready)} nan yo te fini anvan ${before}, ase lontan pou gen dosye de ane apre.`,
+    projectsNotRead: 'Kopi kat sa a poko gen lis pwojè vwazen yo fini.',
+    projectsNeed: (min) =>
+      `Yon konparezon bezwen omwen ${formatNumber(min)}. Chak pwojè yo rapòte fè nou pi pre, epi montre vwazen sa lòt moun fè.`,
+    projectsLink: 'Di nou sou yon pwojè ou fini',
+    // Sa sa a pa ka di
+    cannotTitle: 'Sa konparezon sa a pa ka di',
+    cannot: [
+      'Si yon kote kontinye sanble vid pita. Lis Vil la sou pwopriyete vid yo egziste sèlman pou 2024 ak 2026, epi LandCare ak netwaye epi sele fèt pou kenbe yon kote an bon eta pandan l rete vid, kidonk "li kontinye vid" pa ka di si se siksè oswa echèk.',
+      'Anyen sou yon sèl teren. Tire, fatra jete ak plent monte epi bese sou chak blòk pou anpil rezon. Se sèlman anpil kote ansanm ki ka montre yon modèl, e menm lè sa a pa ak sètitid.',
+      'Poukisa yon bagay te chanje. Yon konparezon montre sa ki te chanje, pa sa ki te lakòz li.',
+      'Anyen sou teren ki te kite LandCare. Lis li a gen sèlman teren li pran swen kounye a.',
+      'Chanjman nan dosye yo menm: dosye Vil la sou netwaye ak sele gen anpil mwens lòd depi 2020, rapò li yo sou fatra jete kòmanse nan janvye 2016, epi L&I te chanje non kalite plent li yo an 2020. Chak konparezon mete kote yo ak lòt kote nan menm ane yo, sa ki regle pifò nan pwoblèm sa a.',
+    ],
+    chance: (n) =>
+      `Chans: ak yon entèval 90 pousan, apeprè yon konparezon sou dis ka sanble yon chanjman lè pa gen okenn, kidonk nan ${plural(n, { other: '# konparezon' })}, youn oswa de ka se chans sèlman.`,
+    // Ki jan nou te konpare
+    methodTitle: 'Ki jan nou te konpare',
+    method: [
+      'Yon kote se yon kare nan vil la ki gen 100 mèt toupatou, kote swen te fèt nan kèk mwatye ane, depi 2017.',
+      'Pou chak kote, nou te jwenn jiska senk kote nan apeprè 2 mil (3 kilomèt), men pa sou menm blòk la, ki pa t jwenn menm swen an nan de ane anvan oswa apre, ak yon kantite ki sanble nan chak nan de ane anvan yo ak yon pousantaj ki sanble vwazen ki nan povrete.',
+      'Nou te konpare chanjman nan kote ki te jwenn swen an, soti nan de ane anvan rive nan de ane apre, ak chanjman mwayèn nan kote pou konparezon li yo, san nou pa konte mwatye ane travay la menm.',
+      'Entèval 90 pousan an soti nan refè tout zòn nan vil la 2,000 fwa. Vrè chanjman an gen plis chans rete andedan l.',
+      'Nou te teste metòd la anvan sou vil nou envante kote nou te konnen repons lan. Li te jwenn chanjman nou te mete a, epi li pa t jwenn anyen lè nou pa t mete anyen.',
+    ],
+    methodLink: 'Metòd la konplè, chak chif ak kòd la',
+    // Sous
+    sourcesTitle: 'Sous',
+    sources: {
+      landcare: 'Teren PHS LandCare, soti nan Pennsylvania Horticultural Society atravè Vil Filadèlfi.',
+      clean_seal: 'Lòd travay pou netwaye ak sele, soti nan Depatman Lisans ak Enspeksyon Vil la.',
+      demolition: 'Demolisyon bilding, soti nan Depatman Lisans ak Enspeksyon Vil la.',
+      shootings: (first, last) => `Moun ki pran bal, soti nan Depatman Polis Filadèlfi, ${first} rive ${last}. Se sèlman kantite.`,
+      dumping: (first, last) => `Demann pou fatra jete ilegalman bay Philly311, ${first} rive ${last}.`,
+      complaints: (first, last) =>
+        `Plent sou teren ak bilding vid, soti nan Depatman Lisans ak Enspeksyon Vil la, ${first} rive ${last}.`,
+      poverty: 'Pousantaj vwazen ki nan povrete selon sektè resansman, soti nan sondaj Biwo Resansman an (American Community Survey), 2020 a 2024.',
+      projects: 'Pwojè vwazen yo fini, jan yo te rapòte bay Placekeepers epi moun k ap kenbe pwojè a te apwouve yo.',
+    },
+    // Paj teren an
+    lotNote:
+      'Yon sèl teren pa ka montre si swen an te mache: tire, fatra jete ak plent monte epi bese sou chak blòk pou anpil rezon.',
+    lotLink: 'Gade sa dosye Vil la montre pou tout Filadèlfi',
+    sealedOn: (date) => `Vil la te netwaye epi sele l pou dènye fwa nan ${date}.`,
   },
 
   basemap: {

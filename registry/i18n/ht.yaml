@@ -358,6 +358,12 @@ sources:
   rco_contacts:
     name: Kontak Òganizasyon Kominotè Anrejistre yo
     publisher: Komisyon Planifikasyon Vil Filadèlfi
+  philly311_dumping_history:
+    name: Demann Philly311 sou fatra jete ilegalman depi 2016
+    publisher: Vil Filadèlfi, Philly311
+  li_complaints_history:
+    name: Plent bay L&I sou teren ak bilding vid depi 2015
+    publisher: Vil Filadèlfi, Depatman Lisans ak Enspeksyon
 
 layers:
   vacant_parcels:
