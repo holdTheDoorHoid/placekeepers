@@ -855,3 +855,133 @@ layers:
     settings:
       shade:
         label: "Ombrer les zones (désactivé montre seulement leurs contours et leurs notes)"
+
+lenses:
+  violence:
+    label: "Réduction de la violence"
+    description: "Là où nettoyer, verdir ou sceller réduirait le plus probablement la violence armée à proximité, d'après des essais randomisés à Philadelphie."
+    factors:
+      untreated_vacancy:
+        label: "Terrain vacant non traité ou bâtiment abandonné ouvert"
+        explain: "Des essais randomisés à Philadelphie ont constaté que verdir des terrains vacants et donner des portes et des fenêtres en bon état aux maisons abandonnées réduisait la violence armée à proximité. Les lieux déjà traités ainsi obtiennent 0 : les terrains qu'entretient PHS LandCare, et les bâtiments dont le propriétaire a réparé les portes et les fenêtres après un avis d'infraction de L&I. Tout autre terrain ou bâtiment vacant obtient 100."
+      shootings_nearby:
+        label: "Fusillades à proximité ces trois dernières années"
+        explain: "Les personnes blessées par balle ces trois dernières années dans un rayon d'environ un quart de mile (l'hexagone du lieu et les six qui l'entourent), d'après les registres du Police Department sur les victimes de fusillades. Le rang est la part des lieux de la carte qui en ont moins. Les essais ont mesuré moins de fusillades autour des lieux traités, donc le soin aide le plus là où les fusillades se produisent."
+      poverty:
+        label: "Taux de pauvreté du quartier"
+        explain: "La part des personnes qui vivent sous le seuil de pauvreté dans le secteur de recensement du lieu (enquête du Bureau du recensement, 2020 à 2024). Le rang est la part des lieux de la carte situés dans des secteurs où le taux est plus bas. Dans l'essai mené dans toute la ville, la baisse de la violence armée a été constatée dans les quartiers sous le seuil de pauvreté."
+      canopy_gap:
+        label: "Peu d'arbres à proximité"
+        explain: "Le couvert d'arbres sur le terrain dans un rayon d'environ un quart de mile, d'après le relevé du couvert arboré de la Ville de 2018. Le rang est la part des lieux de la carte qui ont plus d'arbres autour d'eux, donc moins il y a d'arbres, plus le rang est élevé. Les arbres de rue sont liés à moins de criminalité, mais les preuves sont partagées et dépendent de l'emplacement."
+    presets:
+      research:
+        label: "Fondé sur la recherche"
+      vacancy_only:
+        label: "Vacance seulement"
+  heat:
+    label: "Chaleur et ombre"
+    description: "Là où planter des arbres ou verdir un terrain vacant rafraîchirait le plus de personnes : des terrains dans des quartiers où la chaleur de l'été frappe le plus durement les habitants, avec peu d'ombre autour, et beaucoup de personnes pour sentir la différence."
+    factors:
+      heat_vulnerability:
+        label: "Vulnérabilité du quartier à la chaleur"
+        explain: "À quel point la chaleur de l'été frappe les habitants du secteur de recensement du terrain, d'après l'indice de vulnérabilité à la chaleur de la Ville (Heat Vulnerability Index, Department of Public Health et Office of Sustainability, données de 2017 à 2019) : à quel point le secteur devient chaud les jours d'été, tel que les satellites le mesurent, avec combien des personnes qui y vivent sont plus à risque par forte chaleur, selon l'âge, la santé, le revenu et plus encore. Le rang est la part des lieux de la carte situés dans des secteurs où le score est plus bas."
+      few_trees:
+        label: "Peu d'arbres à proximité"
+        explain: "Le couvert d'arbres sur le terrain dans un rayon d'environ un quart de mile, d'après le relevé du couvert arboré de la Ville de 2018, la même mesure que l'angle « réduction de la violence ». Le rang est la part des lieux de la carte qui ont plus d'arbres autour d'eux, donc moins il y a d'arbres, plus le rang est élevé. Les arbres rafraîchissent les rues par leur ombre et par l'eau que leurs feuilles dégagent. Les études s'accordent pour dire qu'ils rafraîchissent le jour, surtout là où le couvert dépasse environ 40 pour cent d'une rue, et moins la nuit."
+      few_street_trees:
+        label: "Peu d'arbres de la Ville dans la rue"
+        explain: "Les arbres situés à moins de 100 mètres du terrain dans l'inventaire des arbres de Parks and Recreation de 2025, les arbres que la Ville entretient dans ses rues et ses parcs, pas les arbres des cours privées. Le rang est la part des lieux de la carte qui ont plus de ces arbres autour d'eux, donc moins il y a d'arbres, plus le rang est élevé. Les arbres de rue donnent de l'ombre aux trottoirs où les gens marchent et attendent."
+      people_nearby:
+        label: "Personnes que cela toucherait"
+        explain: "Habitants par kilomètre carré de terre dans le secteur de recensement du terrain (enquête du Bureau du recensement, 2020 à 2024). Le rang est la part des lieux de la carte situés dans des secteurs avec moins d'habitants. Plus de personnes sentiraient le rafraîchissement. La population ne compte que les personnes qu'une amélioration toucherait ; ce n'est jamais, seule, une mesure du besoin."
+    presets:
+      balanced:
+        label: "Équilibré"
+      people_at_risk:
+        label: "Personnes les plus à risque"
+      fewest_trees:
+        label: "Le moins d'arbres"
+  placemaking:
+    label: "Création de lieux"
+    description: "Là où un terrain vacant deviendrait le plus probablement un lieu public que les gens utilisent chaque jour, comme un jardin, un petit parc, un endroit pour s'asseoir à l'ombre ou un emplacement pour de l'art : des terrains avec beaucoup de voisins et de lieux du quotidien à courte distance à pied, loin d'un parc et de l'art public. Il s'agit d'usage et d'accueil, pas de criminalité."
+    factors:
+      neighbors:
+        label: "Personnes à moins de 5 minutes à pied"
+        explain: "Combien de personnes habitent à moins de 5 minutes à pied du terrain, comptées comme 400 mètres en ligne droite, d'après le recensement de 2020. Le rang est la part des lieux de la carte qui ont moins de personnes autour d'eux. Plus de voisins veut dire plus de personnes que servirait un jardin, un banc ou une fresque. La population ne compte que les personnes qu'un projet toucherait."
+      everyday_places:
+        label: "Lieux du quotidien à moins de 10 minutes à pied"
+        explain: "Combien de sept types de lieux du quotidien se trouvent à moins de 10 minutes à pied, comptées comme 800 mètres en ligne droite : une bibliothèque, un centre de loisirs, une piscine ou une aire de jeux d'eau, une fontaine à boire dans un parc, une école, une épicerie ou un marché qui accepte le SNAP, et un arrêt de bus, de tramway ou de train. Le rang est la part des lieux de la carte qui en ont moins. Les personnes qui vont vers ces lieux passent devant le terrain. À quel point les passants aident un nouveau lieu public dépend de la rue et du lieu, donc les preuves sont partagées."
+      walkability:
+        label: "Marchabilité"
+        explain: "L'indice national de marchabilité de l'EPA pour le groupe d'îlots du terrain : coins de rue, proximité des transports, et mélange de logements, d'emplois et de commerces (données d'environ 2017 à 2019). Le rang est la part des lieux de la carte situés dans des zones moins praticables à pied. Là où les gens marchent, plus de personnes utiliseraient un lieu sur le terrain. Les études sur les lieux praticables à pied trouvent des corrélations dont le sens dépend du lieu, donc les preuves sont partagées."
+      far_from_park:
+        label: "Loin d'un parc"
+        explain: "La distance en ligne droite entre le terrain et le bord du terrain de parc le plus proche de Parks and Recreation : parcs, aires de jeux, centres de loisirs, places, coulées vertes et espaces naturels, mais pas ses dépôts de travail, ses terrains de golf ni ses terre-pleins plantés. Le rang est la part des lieux de la carte qui en sont plus proches, donc plus c'est loin, plus le rang est élevé. Un terrain loin d'un parc pourrait donner aux voisins l'espace ouvert qui leur manque."
+      no_art_nearby:
+        label: "Pas d'art public à proximité"
+        explain: "La distance en ligne droite entre le terrain et l'œuvre d'art public la plus proche de la liste Percent for Art de la Ville ou de Wikidata, sans compter les œuvres à l'intérieur des bâtiments. Le rang est la part des lieux de la carte qui en sont plus proches, donc plus c'est loin, plus le rang est élevé. Ces deux listes ne contiennent qu'une partie de l'art de la ville : les fresques de Mural Arts et les œuvres que seul OpenStreetMap cartographie n'y sont pas, regardez donc aussi la couche Art public. L'art est bienvenu pour la beauté et la fierté ; aucune étude ne le lie à moins de violence."
+      commercial_corridor:
+        label: "Sur ou près d'un axe commercial"
+        explain: "La note maximale, 100, quand le terrain se trouve sur l'un des axes commerciaux de la Ville, les rues et centres commerçants que la Planning Commission a relevés de 2011 à 2017, ou à moins de 50 mètres de l'un d'eux, et 0 sinon. Les commerces font passer des gens devant le terrain chaque jour. Les rues commerçantes très fréquentées peuvent aussi apporter des problèmes, donc les preuves sont partagées."
+    presets:
+      balanced:
+        label: "Équilibré"
+      most_neighbors:
+        label: "Le plus de voisins"
+      where_people_walk:
+        label: "Là où les gens marchent déjà"
+      far_from_a_park:
+        label: "Loin d'un parc"
+  street_safety:
+    label: "Sécurité des rues"
+    description: "Les tronçons de rue où les personnes à pied et à vélo sont le plus à risque, d'après les registres d'accidents, le réseau High Injury Network de la Ville et les écoles proches."
+    factors:
+      high_injury_network:
+        label: "Sur le réseau High Injury Network"
+        explain: "La Ville a constaté que la plupart des décès et des blessures graves de la circulation se produisent dans ces rues, environ 12 pour cent de toutes les rues de Philadelphie."
+      walking_cycling_harm:
+        label: "Personnes tuées ou grièvement blessées à pied ou à vélo, 5 dernières années"
+        explain: "Compte les personnes tuées ou grièvement blessées à pied ou à vélo sur ce tronçon ou à ses coins, dans les cinq dernières années des registres d'accidents de PennDOT. Le rang est la part des tronçons de toute la ville qui en ont moins."
+      recent_death:
+        label: "Quelqu'un a été tué ici ces 2 dernières années"
+        explain: "Un décès sur ce tronçon ou à ses coins ces deux dernières années, d'après les registres du Police Department sur les accidents mortels, qui sont mis à jour chaque nuit."
+      school_nearby:
+        label: "École à moins de 400 mètres"
+        explain: "Les enfants marchent vers l'école et en reviennent ici. 400 mètres font environ cinq minutes de marche."
+    presets:
+      research:
+        label: "Fondé sur la recherche"
+      recorded_harm:
+        label: "Dommages enregistrés seulement"
+  transit_comfort:
+    label: "Confort aux arrêts"
+    description: "Les arrêts de bus et de tramway où un abribus, un banc ou de l'ombre aideraient le plus les usagers : arrêts très fréquentés, arrêts où un relevé n'a rien trouvé pour s'asseoir ou s'abriter, arrêts avec peu d'ombre dans des quartiers chauds, arrêts sur le réseau High Injury Network, et arrêts avec de longues attentes. Là où personne n'a encore relevé un arrêt, son abribus et son banc comptent à moitié."
+    factors:
+      riders:
+        label: "Personnes qui montent chaque jour de semaine"
+        explain: "Combien de personnes montent ici un jour de semaine moyen, d'après le comptage de la SEPTA elle-même. Le rang est la part des arrêts avec moins d'usagers. Plus d'usagers veut dire plus de personnes aidées par un abribus ou un banc ; la Ville vise à placer des abribus aux 15 pour cent d'arrêts de bus les plus fréquentés. Les arrêts que la SEPTA n'a pas encore comptés sont laissés de côté pour ce facteur."
+      no_shelter:
+        label: "Pas d'abribus"
+        explain: "100 là où un relevé n'a trouvé aucun abribus, 0 là où il y a un abribus, que l'arrêt entier est sous un toit, ou que la liste propre de la Ville des abribus en indique un (quoi que dise OpenStreetMap). Là où personne n'a encore relevé l'arrêt, il compte pour 50, à moitié, donc un arrêt n'est jamais noté comme n'ayant pas un abribus qu'il pourrait avoir ; relevez-le pour le savoir. Dans une étude à Minneapolis et Saint Paul, les usagers des arrêts sans banc ni abribus ont trouvé leurs attentes plus longues qu'elles ne l'étaient."
+      no_bench:
+        label: "Pas de banc"
+        explain: "100 là où un relevé n'a trouvé aucun banc, 0 là où il y en a un, et 50, à moitié, là où personne n'a encore relevé l'arrêt. La même étude a constaté qu'un banc fait paraître une attente plus courte."
+      little_shade:
+        label: "Peu d'ombre à proximité"
+        explain: "Le couvert d'arbres sur le terrain autour de l'arrêt, dans une zone d'environ deux rues de large, d'après le relevé du couvert arboré de la Ville de 2018. Le rang est la part des arrêts qui ont plus d'arbres autour d'eux, donc moins il y a d'arbres, plus le rang est élevé. L'ombre rafraîchit les personnes qui attendent au soleil, mais son effet dépend du climat et de ce qui donne l'ombre."
+      heat:
+        label: "Quartier chaud en été"
+        explain: "À quel point le secteur de recensement de l'arrêt devient chaud les jours d'été, d'après la partie exposition à la chaleur de l'indice de vulnérabilité à la chaleur de la Ville (températures de surface mesurées par satellite et part du secteur qui est goudronnée, bâtie ou verte). Le rang est la part des arrêts situés dans des secteurs plus frais."
+      high_injury_network:
+        label: "Sur le réseau High Injury Network"
+        explain: "L'arrêt se trouve sur l'une des rues, ou à côté de l'une des rues, où se produisent la plupart des décès et des blessures graves de la circulation à Philadelphie, donc beaucoup d'usagers traversent cette rue pour atteindre l'arrêt ou pour le quitter. Des études ailleurs ont constaté que les accidents impliquant des piétons se concentrent aux arrêts de bus très fréquentés sur de larges routes, où une traversée sûre compte le plus."
+      long_wait:
+        label: "Longues attentes en milieu de journée"
+        explain: "Le temps typique entre les bus ou les tramways de 10 h à 14 h en semaine, d'après les horaires de la SEPTA. Le rang est la part des arrêts avec des attentes plus courtes. Une longue attente, c'est quand un siège et un toit comptent le plus. Les arrêts sans service en milieu de journée sont laissés de côté pour ce facteur."
+    presets:
+      balanced:
+        label: "Équilibré"
+      busiest_first:
+        label: "Les arrêts les plus fréquentés d'abord"
+      heat_and_shade:
+        label: "Chaleur et ombre"
