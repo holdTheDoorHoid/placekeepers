@@ -122,3 +122,21 @@ Listed as available: every place says "consta como disponível na lista" (appear
 the list) or "lista como disponível", the City's own label, never an offer. Contact page: says
 people can write in Portuguese and that we read it with a translation tool; promises no reply.
 
+## Haitian Creole (ht)
+
+Checked 109 items. Same meaning: 109. Changed: 0. Nothing needed fixing.
+
+Small differences, kept:
+
+| Place | Haitian Creole | Back translation | English | Why kept |
+|---|---|---|---|---|
+| `letters.owner.terms` and `letters.owner.intro` | "Nou t ap fè sa", "teren dosye Vil la mete sou non ou" | We would do this; the lot the City's records put in your name | We would do this; the lot that the City's records list in your name | Same meaning. The conditional "t ap" is how Creole says "would". |
+| `letters.gate.not_listed` | "si yon lèt bay pwopriyetè li bon isit la" | whether a letter to its owner is good here | whether a letter to its owner is right here | Same meaning. |
+
+Listed as available: every place says "mete l sou lis kòm disponib" (put on the list as
+available), which keeps it the City's label, and the line "kote moun ka aplike" (where people can
+apply) is English's own wording. None reads as an invitation. For a native speaker to look at:
+"disponib" is a borrowed word, so confirm it reads as "listed" and not "free for the taking" in
+everyday Creole. Contact page: says people can write in Creole and that we read it with a
+translation tool; promises no reply.
+
