@@ -7,13 +7,27 @@
 // Used at build time (plugins/content.ts, so a stray dash fails the build) and by tests
 // (tests/strings.test.ts, so it fails CI on every pull request).
 
-const EM_OR_EN_DASH = /[–—]/g;
+// The rule holds in every language the site speaks (issue #49), so the dashes other writing
+// systems use count too: the figure dash, the horizontal bar (quotation dash), the two and three
+// em dashes, and the small em dash of Chinese typesetting. Russian, French and Vietnamese often
+// use an em dash where English would use a comma or a colon: rewrite those the same way.
+const DASHES: Record<string, string> = {
+  '\u2012': 'figure dash',
+  '\u2013': 'en dash',
+  '\u2014': 'em dash',
+  '\u2015': 'horizontal bar',
+  '\u2E3A': 'two em dash',
+  '\u2E3B': 'three em dash',
+  '\uFE58': 'small em dash',
+};
+const EM_OR_EN_DASH = new RegExp(`[${Object.keys(DASHES).join('')}]`, 'g');
 
 // A hyphen with a real character on each side, separated by a space or a tab: "low - sometimes
 // free". A list marker ("- item") has nothing but a line start or more whitespace before its
 // leading space, so it can never match. Tabs and spaces only (not "\s"), so a hyphen at the very
-// start of a new line is never joined to the end of the line before it.
-const SPACED_HYPHEN = /\S[ \t]+-[ \t]+\S/g;
+// start of a new line is never joined to the end of the line before it. The Unicode hyphens, the
+// minus sign and the full width hyphens count as hyphens here.
+const SPACED_HYPHEN = /\S[ \t\u00A0\u202F]+[-\u2010\u2011\u2212\uFE63\uFF0D][ \t\u00A0\u202F]+\S/g;
 
 function lineOf(text: string, index: number): number {
   let line = 1;
@@ -33,7 +47,7 @@ export function findDashViolations(text: string): string[] {
 
   for (const match of text.matchAll(EM_OR_EN_DASH)) {
     const index = match.index ?? 0;
-    const kind = match[0] === '—' ? 'em dash' : 'en dash';
+    const kind = DASHES[match[0]] ?? 'dash';
     problems.push(`${kind} on line ${lineOf(text, index)}: "${snippetAround(text, index, index + 1)}"`);
   }
 

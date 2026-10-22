@@ -46,8 +46,10 @@ export function readRegistryText(code: string, dir: string = REGISTRY_TEXT_DIR):
 export async function loadCatalog(code: string): Promise<Catalog | null> {
   const path = resolve(LOCALES_DIR, `${code}.ts`);
   if (!existsSync(path)) return null;
-  // The file's time in the address, so the dev server picks up a translator's edit.
-  const mod = (await import(`${pathToFileURL(path).href}?v=${statSync(path).mtimeMs}`)) as { default?: Catalog };
+  // The file's time in the address, so the dev server picks up a translator's edit. Vitest loads
+  // modules its own way and needs the plain address.
+  const url = pathToFileURL(path).href;
+  const mod = (await import(process.env.VITEST ? url : `${url}?v=${Math.round(statSync(path).mtimeMs)}`)) as { default?: Catalog };
   return mod.default ?? null;
 }
 

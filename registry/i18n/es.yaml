@@ -1,0 +1,71 @@
+# Spanish (es) translations of the visitor facing words in registry/*.yaml, by id. English in
+# registry/*.yaml is the source; anything left out here shows the English. Which fields may be
+# translated, and the shape of this file, are in docs/TRANSLATING.md and
+# web/src/i18n/registry-text.ts.
+#
+# Seeded by the translation plumbing (issue #49, part A): the layer groups and the app wide
+# option, which head the settings drawer's sections. The rest is for the Spanish translator.
+
+groups:
+  lots:
+    label: Lotes y edificios
+    description: Lotes vacíos y edificios abandonados, y lo que se podría hacer con ellos.
+  care:
+    label: Cuidado que ya existe
+    description: Lotes que ya reciben mantenimiento, huertos, parques y otros lugares que la gente ya cuida.
+  displacement:
+    label: Precios y protecciones
+    description: Dónde suben los precios, para que el reverdecimiento y otras mejoras vayan de la mano con protecciones para los vecinos que viven allí ahora.
+  rules:
+    label: Reglas del terreno y audiencias
+    description: Distritos y propiedades históricas, zonificación superpuesta, audiencias pendientes sobre lotes y edificios, y sitios federales contaminados (brownfields).
+  streets:
+    label: Calles y memoriales
+    description: La Red de Lesiones Graves, los choques, las personas que murieron en nuestras calles, y los postes, las medidas para calmar el tránsito y los guardias de cruce escolar que registra la Ciudad.
+  transit:
+    label: Autobuses y trenes
+    description: Paradas y rutas de SEPTA, con qué frecuencia pasa el servicio, cuántas personas suben y qué paradas tienen refugio o banco, según la lista de refugios de la Ciudad y OpenStreetMap.
+  heat:
+    label: Calor, árboles e inundaciones
+    description: Cuánto golpea el calor del verano a cada vecindario, los árboles que la Ciudad cuida en sus calles y parques, y dónde FEMA prevé inundaciones.
+  amenities:
+    label: Bancos, agua, baños y más
+    description: Lugares para sentarse, tomar agua, usar un baño o tomar prestado un libro, según OpenStreetMap, y los bebederos de los parques.
+  public_places:
+    label: Bibliotecas, centros recreativos y piscinas
+    description: Sucursales de la Free Library, centros recreativos de Parks and Recreation, piscinas y zonas de juegos de agua, y los lugares de la Ciudad para refugiarse del frío y del calor, según los registra la Ciudad.
+  conditions:
+    label: Problemas reportados al 311
+    description: Basura tirada ilegalmente, luces apagadas y grafitis que la gente reportó a Philly311 en los últimos 90 días, contados por cuadra.
+  placemaking:
+    label: Arte y creación de lugares
+    description: Murales, esculturas, mosaicos y otro arte público, de la Ciudad, OpenStreetMap y Wikidata, y los parques infantiles de la Ciudad.
+  walking:
+    label: Caminar, andar en bicicleta y personas
+    description: Qué tan fácil es caminar en cada zona, cuántas personas y lugares de todos los días quedan a poca distancia a pie, y qué tan estresante es cada calle para quien va en bicicleta.
+  then_and_now:
+    label: Antes y ahora
+    description: Lo que hubo antes en una cuadra y lo que queda del pasado. Las fotos aéreas desde 1959 y el atlas de 1860 se cargan desde los servidores de la Ciudad solo cuando se activan; el mapa de redlining de 1937 viene de este sitio.
+  safety_context:
+    label: Donde más se necesita cuidado
+    description: Contexto que muestra dónde las mejoras probablemente ayuden más.
+  boundaries:
+    label: Límites
+    description: Distritos del Concejo, organizaciones comunitarias y vecindarios.
+  basemap:
+    label: Mapa base
+    description: Calles, edificios y nombres de lugares, debajo de todo lo demás.
+
+options:
+  live_city_data:
+    label: Traer datos en vivo de la Ciudad
+    description: >-
+      Cuando abre la página de un lote o busca una dirección, su navegador les pide los registros
+      más recientes a los servidores públicos de la Ciudad de Filadelfia: el dueño, las ventas, los
+      avalúos, las inspecciones y las apelaciones. Estas solicitudes van directo de su dispositivo a
+      la Ciudad, nunca pasan por Placekeepers, y los servidores de la Ciudad las ven como verían una
+      visita al sitio web de propiedades de la Ciudad. Las fotos aéreas de la Ciudad y su atlas de
+      1860, en "Antes y ahora", también llegan directo de los servidores de la Ciudad, pero solo
+      cuando activa una de ellas. Desactive esta opción para usar solo la copia semanal de los datos
+      que publica Placekeepers. La búsqueda de direcciones, abrir una parcela que no está en nuestra
+      lista y las fotos y el atlas antiguos la necesitan activada.
