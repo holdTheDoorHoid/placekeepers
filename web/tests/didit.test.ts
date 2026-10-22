@@ -18,7 +18,7 @@ import {
   type Estimate,
   type Result,
 } from '../src/didit/data.ts';
-import { strings } from '../src/strings.ts';
+import { collectStrings, strings } from '../src/strings.ts';
 
 const read = (path: string) => JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8'));
 const sample = parseTable(read('../fixtures/data/tables/didit.json'))!;
@@ -142,9 +142,9 @@ describe('the sentences', () => {
   it('never calls a place dangerous, never mentions police, and never judges one lot', () => {
     const all: string[] = [];
     for (const kind of sample.kinds) for (const r of kind.results) all.push(...verdictSentence(kind.id, r, sample.rules), ...detailLines(r));
-    all.push(...Object.values(strings.didit).filter((v): v is string => typeof v === 'string'));
-    all.push(...strings.didit.cannot, ...strings.didit.method, ...strings.didit.warnings, ...strings.didit.trials);
-    const text = all.join(' ');
+    all.push(...collectStrings(strings.didit).map(([, text]) => text));
+    // The shootings come from the Philadelphia Police Department: its name is the source's credit.
+    const text = all.join(' ').replaceAll('Philadelphia Police Department', 'the source');
     expect(text).not.toMatch(/\b(dangerous|high crime|hot ?spots?|police|policing|arrest)\b/i);
     expect(text).not.toMatch(/[–—]| - /);
     expect(strings.didit.lotNote).toContain('One lot cannot show whether care worked');
