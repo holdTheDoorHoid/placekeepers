@@ -713,7 +713,9 @@ const ru: Catalog = {
                                         ? 'Дежурный на школьном переходе'
                                         : style === 'redlining'
                                           ? 'Карта редлайнинга 1937 года'
-                                          : 'Подробности',
+                                          : style === 'projects'
+                                            ? 'Проект, завершённый соседями'
+                                            : 'Подробности',
     memorialTitle: 'В память',
     peopleHere: (n) => `Здесь помнят людей: ${formatNumber(n)}`,
     killed: {
