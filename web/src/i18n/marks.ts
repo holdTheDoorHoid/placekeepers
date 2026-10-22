@@ -76,15 +76,21 @@ function directText(el: Element): string {
   return text;
 }
 
-/** What an element's own words are: its text, or the name given in an attribute when it has none. */
-function elementKind(el: Element): 'fallback' | 'translated' | null {
+/**
+ * What an element's own words are: its text, or, for an element with no words inside it at all
+ * (an icon button, a text box), the name an attribute gives it. An element whose words sit in its
+ * children has none of its own: the children settle themselves, so a row of buttons labeled in
+ * English does not make the buttons inside it English.
+ */
+function elementKind(el: Element): { kind: 'fallback' | 'translated'; fromText: boolean } | null {
   const own = textKind(directText(el));
-  if (own) return own;
+  if (own) return { kind: own, fromText: true };
+  if (LETTER.test(el.textContent ?? '')) return null;
   for (const name of NAMED_BY) {
     const value = el.getAttribute(name);
     if (value) {
       const kind = textKind(value);
-      if (kind) return kind;
+      if (kind) return { kind, fromText: name === 'placeholder' };
     }
   }
   return null;
@@ -95,37 +101,74 @@ function inheritedLang(el: Element, pageLang: string): string {
   return el.parentElement?.closest('[lang]')?.getAttribute('lang') ?? pageLang;
 }
 
-function settle(el: Element, pageLang: string): void {
-  if (el.tagName === 'HTML') return;
-  const ours = el.hasAttribute(OWN);
-  // An element with its own lang attribute (a language name in the picker, say) keeps it.
-  if (!ours && el.hasAttribute('lang')) return;
-  const kind = elementKind(el);
-  const want = kind === 'fallback' ? 'en' : kind === 'translated' ? pageLang : null;
-  if (want && want !== inheritedLang(el, pageLang)) {
-    if (el.getAttribute('lang') !== want) el.setAttribute('lang', want);
-    if (!ours) el.setAttribute(OWN, '');
-  } else if (ours) {
-    el.removeAttribute('lang');
-    el.removeAttribute(OWN);
-  }
+/** The language the page, or an ancestor's own lang attribute (not one put there here), declares. */
+function declaredLang(el: Element, pageLang: string): string {
+  return el.parentElement?.closest(`[lang]:not([${OWN}])`)?.getAttribute('lang') ?? pageLang;
 }
 
-function settleTree(root: Element, pageLang: string): void {
-  settle(root, pageLang);
+/** The direction an element inherits from the nearest ancestor with a dir attribute. */
+function inheritedDir(el: Element): string {
+  return el.parentElement?.closest('[dir]')?.getAttribute('dir') ?? 'ltr';
+}
+
+/** The direction for an element's own words on a right to left page. */
+function directionFor(el: Element, want: string, pageLang: string): string {
+  if (want === pageLang) return 'rtl';
+  // A text box keeps "auto", so what a visitor types in Arabic still runs right to left.
+  return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' ? 'auto' : 'ltr';
+}
+
+function settle(el: Element, pageLang: string, rtl: boolean): void {
+  if (el.tagName === 'HTML') return;
+  const ours = el.hasAttribute(OWN);
+  // An element with its own lang or dir attribute (a language name in the picker, say) keeps it.
+  if (!ours && (el.hasAttribute('lang') || el.hasAttribute('dir'))) return;
+  const found = elementKind(el);
+  // Unmarked words are in the language of their surroundings: the page's, or the language a part
+  // of the page declares itself (an English content page shown before its translation exists).
+  const want = found?.kind === 'fallback' ? 'en' : found?.kind === 'translated' ? declaredLang(el, pageLang) : null;
+  const lang = want !== null && want !== inheritedLang(el, pageLang) ? want : null;
+  // On an Arabic page an English sentence reads left to right, so its words and punctuation stay
+  // in order and a cut off line ends with "..." where it should; Arabic inside it reads right to
+  // left again. Only an element's own text decides this, never a label on a box of other things.
+  let dir: string | null = null;
+  if (rtl && want !== null && found?.fromText) {
+    const wanted = directionFor(el, want, pageLang);
+    if (wanted !== inheritedDir(el)) dir = wanted;
+  }
+  if (lang === null && dir === null) {
+    if (ours) {
+      el.removeAttribute('lang');
+      el.removeAttribute('dir');
+      el.removeAttribute(OWN);
+    }
+    return;
+  }
+  if (lang !== null) {
+    if (el.getAttribute('lang') !== lang) el.setAttribute('lang', lang);
+  } else if (ours) el.removeAttribute('lang');
+  if (dir !== null) {
+    if (el.getAttribute('dir') !== dir) el.setAttribute('dir', dir);
+  } else if (ours) el.removeAttribute('dir');
+  if (!ours) el.setAttribute(OWN, '');
+}
+
+function settleTree(root: Element, pageLang: string, rtl: boolean): void {
+  settle(root, pageLang, rtl);
   // Parents before children, so a child knows the language it inherits.
   const walker = root.ownerDocument.createTreeWalker(root, 1 /* NodeFilter.SHOW_ELEMENT */);
-  for (let node = walker.nextNode(); node; node = walker.nextNode()) settle(node as Element, pageLang);
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) settle(node as Element, pageLang, rtl);
 }
 
 /**
  * Puts lang="en" on every element whose words are English fallbacks, and the page's language
- * back on a translated element inside one, now and whenever the page changes. Returns a function
- * that stops watching.
+ * back on a translated element inside one, now and whenever the page changes; on a right to left
+ * page, the matching dir too. Returns a function that stops watching.
  */
-export function watchFallbacks(doc: Document, pageLang: string): () => void {
+export function watchFallbacks(doc: Document, pageLang: string, pageDir: 'ltr' | 'rtl' = 'ltr'): () => void {
   if (!doc.body) return () => {};
-  settleTree(doc.body, pageLang);
+  const rtl = pageDir === 'rtl';
+  settleTree(doc.body, pageLang, rtl);
   let pending = new Set<Element>();
   let scheduled = false;
   const flush = () => {
@@ -133,7 +176,7 @@ export function watchFallbacks(doc: Document, pageLang: string): () => void {
     const roots = [...pending].filter((el) => el.isConnected);
     pending = new Set();
     // Skip any element inside another one already being settled.
-    for (const el of roots) if (!roots.some((other) => other !== el && other.contains(el))) settleTree(el, pageLang);
+    for (const el of roots) if (!roots.some((other) => other !== el && other.contains(el))) settleTree(el, pageLang, rtl);
   };
   const observer = new MutationObserver((records) => {
     for (const record of records) {

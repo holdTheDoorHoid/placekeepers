@@ -142,7 +142,7 @@ export async function startLanguage(options: { registry?: Registry } = {}): Prom
   if (address !== window.location.href) history.replaceState(history.state, '', address);
 
   if (code !== 'en') {
-    const start = () => watchFallbacks(document, code);
+    const start = () => watchFallbacks(document, code, languageOf(code).dir);
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
     else start();
   }
