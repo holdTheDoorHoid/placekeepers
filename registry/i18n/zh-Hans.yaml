@@ -345,6 +345,39 @@ sources:
   ppr_playgrounds:
     name: "儿童游乐场"
     publisher: "费城市政府，公园与休闲部"
+  project_reports:
+    name: "邻居们完成的项目，通过本网站的 GitHub 表格报告"
+    publisher: "邻居们，通过 Placekeepers 的“告诉我们您完成的一个项目”表格"
+  project_corrections:
+    name: "邻居们完成的项目，人工录入和更正"
+    publisher: "Placekeepers"
+  political_divisions:
+    name: "选举区（ward）和投票分区（division）"
+    publisher: "费城市政府"
+  pa_house_districts:
+    name: "宾夕法尼亚州众议院选区"
+    publisher: "美国人口普查局，TIGER/Line Shapefiles"
+  pa_senate_districts:
+    name: "宾夕法尼亚州参议院选区"
+    publisher: "美国人口普查局，TIGER/Line Shapefiles"
+  us_house_districts:
+    name: "宾夕法尼亚州的国会选区"
+    publisher: "美国人口普查局，TIGER/Line Shapefiles"
+  pa_legislators:
+    name: "宾夕法尼亚州议会议员"
+    publisher: "Open States（Plural Policy）"
+  us_legislators:
+    name: "国会议员"
+    publisher: "unitedstates/congress-legislators 项目"
+  us_legislator_offices:
+    name: "国会议员的选区办公室"
+    publisher: "unitedstates/congress-legislators 项目"
+  city_elected_officials:
+    name: "市政府民选官员"
+    publisher: "费城市政府"
+  rco_contacts:
+    name: "注册社区组织的联系方式"
+    publisher: "费城城市规划委员会"
 
 lenses:
   violence:
@@ -1398,3 +1431,6 @@ layers:
     settings:
       shade:
         label: "给这些区域着色（关闭则只显示它们的轮廓和评级）"
+  projects:
+    label: "邻居们完成的项目"
+    description: "邻居们完成并告诉我们的清理、菜园、可以坐的地方、壁画、树木、市政府的长椅和候车亭，以及 311 问题的解决。每一份报告，在出现之前，都由 Placekeepers 阅读并批准。点按一个项目，可以查看做了什么、什么时候做的、做成花了什么，并附有指向 GitHub 上报告及其照片的链接。地图从不显示是谁提交了报告，只显示他们选择公开的团体名称。"
