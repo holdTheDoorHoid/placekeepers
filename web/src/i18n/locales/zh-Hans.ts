@@ -994,7 +994,9 @@ const zhHans: Catalog = {
                                         ? '学校过街协管员'
                                         : style === 'redlining'
                                           ? '1937 年红线地图'
-                                          : '详细资料',
+                                          : style === 'projects'
+                                            ? '邻居们完成的项目'
+                                            : '详细资料',
     memorialTitle: '纪念',
     peopleHere: (n) => `这里纪念着 ${formatNumber(n)} 位遇难者`,
     killed: {
