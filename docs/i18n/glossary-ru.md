@@ -28,6 +28,7 @@ the genitive singular: "1,5 мили").
 | displacement watch | наблюдение за вытеснением жителей | an area is a "зона наблюдения за вытеснением жителей" |
 | conservatorship | консерваторство (conservatorship) | the Latin word stays in brackets next to it in the warning, so it matches the route's name |
 | Act 135 | Act 135 | the law's name stays |
+| conservator | попечитель (conservator) | the person a court appoints to care for the property |
 | side yard (program) | боковой двор (side yard program) | "side or rear yard" is "боковой или задний двор" |
 | Registered Community Organization | зарегистрированная общественная организация (RCO) | |
 | block (a street block, as the data counts it) | отрезок улицы | the unit of the street layers and 311 counts |
