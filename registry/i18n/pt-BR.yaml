@@ -1,0 +1,55 @@
+# Brazilian Portuguese (pt-BR) translations of the visitor facing words in registry/*.yaml, by id.
+# English in registry/*.yaml is the source; anything left out here shows the English. Which fields
+# may be translated, and the shape of this file, are in docs/TRANSLATING.md and
+# web/src/i18n/registry-text.ts. The key terms are in docs/i18n/glossary-pt-BR.md.
+
+groups:
+  lots:
+    label: "Lotes e prédios"
+    description: "Lotes vazios e prédios abandonados, e o que poderia ser feito com eles."
+  care:
+    label: "Cuidado que já existe"
+    description: "Lotes que já recebem manutenção, jardins, parques e outros lugares de que as pessoas já cuidam."
+  displacement:
+    label: "Preços e proteções"
+    description: "Onde os preços estão subindo, para que áreas verdes e outras melhorias possam vir junto com proteções para os vizinhos que moram ali agora."
+  rules:
+    label: "Regras do terreno e audiências"
+    description: "Distritos e imóveis históricos, zoneamentos sobrepostos, audiências ainda por vir sobre lotes e prédios, e áreas federais de brownfield (terrenos que podem ter contaminação)."
+  streets:
+    label: "Ruas e memoriais"
+    description: "A Rede de Lesões Graves, as colisões, as pessoas que morreram em nossas ruas, e os postes, a moderação de tráfego e os guardas de travessia escolar que a Prefeitura lista."
+  transit:
+    label: "Ônibus e trens"
+    description: "Pontos e linhas da SEPTA, com que frequência passa o serviço, quantas pessoas embarcam e quais pontos têm abrigo ou banco, segundo a lista de abrigos da Prefeitura e o OpenStreetMap."
+  heat:
+    label: "Calor, árvores e enchentes"
+    description: "O quanto o calor do verão atinge cada bairro, as árvores que a Prefeitura mantém em suas ruas e parques, e onde a FEMA prevê enchentes."
+  amenities:
+    label: "Bancos, água, banheiros e mais"
+    description: "Lugares para sentar, beber água, usar um banheiro ou pegar um livro emprestado, como mapeados no OpenStreetMap, e os bebedouros dos parques."
+  public_places:
+    label: "Bibliotecas, centros recreativos e piscinas"
+    description: "Unidades da Free Library, centros recreativos, piscinas e áreas de jogos de água de Parques e Recreação, e os locais da Prefeitura para se aquecer ou se refrescar, como a Prefeitura os lista."
+  conditions:
+    label: "Problemas informados ao 311"
+    description: "Descarte ilegal de lixo, luzes apagadas e pichação que as pessoas informaram ao Philly311 nos últimos 90 dias, contados por quarteirão."
+  placemaking:
+    label: "Arte e espaços de convivência"
+    description: "Murais, esculturas, mosaicos e outras obras de arte pública, da Prefeitura, do OpenStreetMap e do Wikidata, e os parquinhos da Prefeitura."
+  walking:
+    label: "Caminhar, pedalar e pessoas"
+    description: "O quanto cada área é caminhável, quantas pessoas e lugares do dia a dia ficam a uma curta caminhada, e o quanto cada rua é estressante para quem anda de bicicleta."
+  then_and_now:
+    label: "Antes e agora"
+    description: "O que havia antes em um quarteirão e o que do passado ainda está lá. As fotos aéreas desde 1959 e o atlas de 1860 só são carregados dos servidores da Prefeitura quando ativados; o mapa de redlining de 1937 vem deste site."
+  safety_context:
+    label: "Onde o cuidado é mais necessário"
+    description: "Contexto que mostra onde as melhorias provavelmente ajudam mais."
+  boundaries:
+    label: "Limites"
+    description: "Distritos da Câmara Municipal, organizações comunitárias e bairros."
+  basemap:
+    label: "Mapa base"
+    description: "Ruas, prédios e nomes de lugares, por baixo de todo o resto."
+
