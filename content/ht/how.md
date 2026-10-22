@@ -55,16 +55,16 @@ nou ka sijere se kontakte PHDC epi mande sou pasèl espesifik la.
   Legal Initiative gade nenpòt akò anvan ou siyen l.
 - **Achte l.** Yon acha òdinè, byenke anpil pwopriyete vid gen yon tit ki mele (pwopriyetè a te
   mouri epi sikseswon an pa t janm regle legalman), sa ki ka fè yon vant difisil.
-- **Posesyon advèsatif pou jaden.** Yon lwa Pennsylvanie 2024 pèmèt yon rezidan, yon gwoup, oswa yon
+- **Posesyon advèsatif pou jaden.** Yon lwa Pensilvani 2024 pèmèt yon rezidan, yon gwoup, oswa yon
   òganizasyon san bi likratif Filadèlfi mande yon tribinal pou tit yon ti teren prive Filadèlfi
   (mwatye yon akr oswa mwens) apre 10 lane itilizasyon, omwen 5 ladan yo kòm jaden, san okenn
   bilding pèmanan. Li bezwen yon avoka ak yon pwosè, epi nenpòt dèt ki egziste ki mare ak tè a rete
   ak li. **Poko konfime:** nou vle pou Garden Justice Legal Initiative revize jan nou dekri lwa sa a
   anvan ou konte sou rezime sa a.
-- **Posesyon advèsatif òdinè.** Règ ki la depi lontan Pennsylvanie a: 21 lane itilizasyon ouvè ak
+- **Posesyon advèsatif òdinè.** Règ ki la depi lontan Pensilvani a: 21 lane itilizasyon ouvè ak
   kontinyèl san pèmisyon pwopriyetè a kapab mennen tou nan yon tribinal ki bay tit la. Se yon chemen
   ki trè long.
-- **Konsèvatè pa tribinal (conservatorship).** Act 135 Pennsylvanie pèmèt yon tribinal non yon moun
+- **Konsèvatè pa tribinal (conservatorship).** Act 135 Pensilvani pèmèt yon tribinal non yon moun
   pou pran swen, yo rele l yon konsèvatè, yon pwopriyete ki rete vid pandan yon ane oswa plis, ki pa
   an vant, epi yo pa t achte nan dènye 6 mwa. *Pwosedi konsèvatè pa tribinal (conservatorship) ka
   retire yon pwopriyete nan men pwopriyetè li. Chèchè yo jwenn yo itilize l anpil plis nan katye ki
@@ -151,7 +151,7 @@ Gen kèk bagay moun souvan mande ki poko gen yon pwosesis klè nan Vil la:
   demann piblik; ekri otis@phila.gov ak nimewo estasyon an.
 - **Atizay sou asfalt oswa sou pasaj pyeton.** Nou pa jwenn okenn pwosesis Vil la. Nan jiyè 2025
   gouvènman federal la te kòmanse mande vil yo retire kalite atizay ri sa a, epi Florid te bay lòd
-  pou retire yo. Pa gen okenn pozisyon Pennsylvanie oswa Filadèlfi ki jwenn. **Verifye ak Vil la
+  pou retire yo. Pa gen okenn pozisyon Pensilvani oswa Filadèlfi ki jwenn. **Verifye ak Vil la
   an premye anvan ou planifye youn.**
 - **Yon abri bis.** **Poko konfime:** abri yo mete anba kontra piblisite Vil la, epi nou pa jwenn
   okenn wout demann pou rezidan. OTIS jere pwogram nan epi li vize pou mete abri nan 15 pousan
@@ -165,7 +165,7 @@ Gen kèk bagay moun souvan mande ki poko gen yon pwosesis klè nan Vil la:
   premye.
 
 **Fè yon kwen pi vizib** (kenbe zòn ki bò pasaj pyeton an lib de machin ki estasyone) se pa yon
-nouvo règ pou mande. Lwa Pennsylvanie deja entèdi estasyone nan 20 pye de yon pasaj pyeton nan yon
+nouvo règ pou mande. Lwa Pensilvani deja entèdi estasyone nan 20 pye de yon pasaj pyeton nan yon
 kafou, kidonk sa pou mande se yon chanjman fizik ki kenbe kwen an lib, tankou poto, veso plant oswa
 yon pwolonjman twotwa.
 

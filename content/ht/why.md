@@ -28,7 +28,7 @@ vwazen toupre teren ki pa t trete, ak 68.7% mwens souvan pami vwazen ki anba liy
 Medicine* nan 2023) te chwazi 258 kay abandone, sitou nan katye nwa ki gen revni ki ba, epi yo te
 asiyen yo o aza pou reparasyon konplè (pòt ak fenèt ki fonksyone, ansanm ak netwayaj), netwayaj
 sèlman, oswa anyen. Reparasyon konplè a te diminye atak ak zam 13.1% ak vyolasyon lwa sou zam 8.4%.
-Tire yo te bese 7.0%, byenke chif pi piti sa a pa t ase gwo pou chèchè yo ekzeklu chans. Netwayaj
+Tire yo te bese 7.0%, byenke chif pi piti sa a pa t ase gwo pou chèchè yo ekskli chans. Netwayaj
 poukont li, san reparasyon yo, pa t fè okenn diferans ki mezirab. Pa t gen okenn siy ke vyolans lan
 te deplase sou blòk ki toupre yo.
 

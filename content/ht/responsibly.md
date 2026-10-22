@@ -43,7 +43,7 @@ sit la pa voye lèt bay pwopriyetè yo otomatikman.
 
 ## Konsèvatè pa tribinal: yon vrè zouti, itilize ak prekosyon
 
-Act 135 Pennsylvanie pèmèt yon tribinal non yon moun pou pran swen yon pwopriyete ki rete vid
+Act 135 Pensilvani pèmèt yon tribinal non yon moun pou pran swen yon pwopriyete ki rete vid
 pandan lontan. Se yon vrè zouti legal, men yo ka itilize l tou pou retire yon pwopriyete nan men yon
 fanmi. Kote kat la mansyone konsèvatè pa tribinal (conservatorship), li pote avètisman egzak sa a:
 

@@ -144,13 +144,13 @@ sources:
     publisher: Clean & Green Philly, Code for Philly
   crashes_2020_2024:
     name: Aksidan, 2020 a 2024 (done PennDOT, kopi Vil la)
-    publisher: Vil Filadèlfi, apati dosye aksidan Depatman Transpò Pennsylvanie (PennDOT)
+    publisher: Vil Filadèlfi, apati dosye aksidan Depatman Transpò Pensilvani (PennDOT)
   crashes_2016_2020:
     name: Aksidan, 2016 a 2020 (done PennDOT, kopi Vil la)
-    publisher: Vil Filadèlfi, apati dosye aksidan Depatman Transpò Pennsylvanie (PennDOT)
+    publisher: Vil Filadèlfi, apati dosye aksidan Depatman Transpò Pensilvani (PennDOT)
   crashes_2007_2017:
     name: Aksidan, 2015 (done PennDOT, kopi Vil la pou 2007 a 2017)
-    publisher: Vil Filadèlfi, apati dosye aksidan Depatman Transpò Pennsylvanie (PennDOT)
+    publisher: Vil Filadèlfi, apati dosye aksidan Depatman Transpò Pensilvani (PennDOT)
   fatal_crashes:
     name: Aksidan ki lakòz lanmò
     publisher: Depatman Polis Filadèlfi, Inite Ankèt Aksidan
@@ -192,7 +192,7 @@ sources:
     publisher: Southeastern Pennsylvania Transportation Authority (SEPTA)
   osm_philadelphia:
     name: OpenStreetMap nan Filadèlfi (estasyon bis, abri, ban, dlo, twalèt ak plis ankò)
-    publisher: Kontribitè OpenStreetMap, soti nan ekstrè Pennsylvanie Geofabrik la
+    publisher: Kontribitè OpenStreetMap, soti nan ekstrè Pensilvani Geofabrik la
   heat_vulnerability:
     name: Vilnerabilite chalè pa sektè resansman
     publisher: Vil Filadèlfi, Depatman Sante Piblik ak Biwo Dirabilite
@@ -1041,7 +1041,7 @@ suggestions:
     cost: Gratis pou mande
   daylighting_check:
     label: Verifye si kwen sa a lib sou 20 pye
-    summary: Lwa Pennsylvanie deja entèdi estasyone nan 20 pye de yon pasaj pyeton nan yon kafou, ak nan 30 pye de yon panno estòp oswa yon siyal, pou chofè yo ak moun k ap travèse ka wè youn lòt. Si machin estasyone la, mande Vil la sou fè kwen an pi vizib ak penti, poto oswa veso plant. Rapòte yon limyè ri ki etenn isit la bay Philly311.
+    summary: Lwa Pensilvani deja entèdi estasyone nan 20 pye de yon pasaj pyeton nan yon kafou, ak nan 30 pye de yon panno estòp oswa yon siyal, pou chofè yo ak moun k ap travèse ka wè youn lòt. Si machin estasyone la, mande Vil la sou fè kwen an pi vizib ak penti, poto oswa veso plant. Rapòte yon limyè ri ki etenn isit la bay Philly311.
     cost: Gratis pou mande
   asphalt_art_check:
     label: Atizay sou asfalt nan kwen sa a, verifye ak Vil la an premye
