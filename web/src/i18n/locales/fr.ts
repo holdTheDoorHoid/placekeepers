@@ -1787,7 +1787,7 @@ const fr: Catalog = {
       brownfield: "Site brownfield de l'EPA",
     },
     notes: {
-      historic: "Les changements ici peuvent nécessiter l'examen de la Commission historique ; demandez-leur d'abord.",
+      historic: "Les changements ici peuvent nécessiter l'examen de la Commission historique ; demandez-lui d'abord.",
       overlays: "Les zonages superposés se chevauchent, et quelques-uns couvrent la plus grande partie de la ville. Touchez un endroit pour voir tous les zonages superposés qui s'y trouvent.",
       hearings: "Touchez une audience pour voir comment y participer et pour ouvrir la page du terrain.",
       brownfields: "Ce n'est pas une carte de tout le terrain contaminé. Testez le sol avant de cultiver des aliments sur un de ces sites ou près de l'un d'eux.",
@@ -2375,7 +2375,7 @@ const fr: Catalog = {
       listedNoDate: 'Cette propriété est inscrite séparément au Registre des lieux historiques de Philadelphie.',
       listedInDistrict: (district) => `Cette propriété figure au Registre des lieux historiques de Philadelphie au titre de ${district}.`,
       askFirst:
-        "Les changements ici peuvent nécessiter l'examen de la Commission historique ; demandez-leur d'abord. Pour une fresque ou un jardin, demandez à la Commission avant de commencer.",
+        "Les changements ici peuvent nécessiter l'examen de la Commission historique ; demandez-lui d'abord. Pour une fresque ou un jardin, demandez à la Commission avant de commencer.",
       contact: 'Commission historique de Philadelphie : 215 686 7660, preservation@phila.gov.',
       confirm: "La Ville demande à tout le monde de confirmer le statut historique d'une propriété auprès de la Commission.",
       commissionSite: 'Le site web de la Commission historique',

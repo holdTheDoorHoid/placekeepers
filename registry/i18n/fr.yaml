@@ -635,7 +635,7 @@ layers:
             label: "Toutes, y compris celles hors service"
   cooling_centers:
     label: "Refuges contre la chaleur et contre le froid"
-    description: "Les lieux que l'Bureau de gestion des urgences de la Ville répertorie comme refuges contre le froid ou la chaleur : bibliothèques, centres de loisirs, partenaires communautaires et centres communautaires de la Philadelphia Housing Authority, avec l'indication qu'ils étaient indiqués comme ouverts, leurs horaires et ce qu'ils offrent, tels qu'indiqués le jour où cette carte a copié la liste pour la dernière fois. Pas en direct : les sites ouvrent et ferment selon la météo, appelez donc le site ou Philly311 avant de vous déplacer. Une bibliothèque ou un centre de loisirs qui est aussi un refuge n'apparaît qu'une fois."
+    description: "Les lieux que le Bureau de gestion des urgences de la Ville répertorie comme refuges contre le froid ou la chaleur : bibliothèques, centres de loisirs, partenaires communautaires et centres communautaires de la Philadelphia Housing Authority, avec l'indication qu'ils étaient indiqués comme ouverts, leurs horaires et ce qu'ils offrent, tels qu'indiqués le jour où cette carte a copié la liste pour la dernière fois. Pas en direct : les sites ouvrent et ferment selon la météo, appelez donc le site ou Philly311 avant de vous déplacer. Une bibliothèque ou un centre de loisirs qui est aussi un refuge n'apparaît qu'une fois."
     settings:
       kind:
         label: "Sites pour"
@@ -762,7 +762,7 @@ layers:
     description: "Les quartiers historiques locaux de la Commission historique de Philadelphie. Les changements aux bâtiments et aux terrains d'un quartier peuvent nécessiter l'examen de la Commission, même une fresque, une clôture ou un jardin : demandez d'abord à la Commission (215 686 7660). La Ville demande à tout le monde de confirmer le statut historique d'une propriété auprès de la Commission. Touchez un quartier pour son nom et le jour où il a été désigné."
   historic_properties:
     label: "Propriétés au registre historique"
-    description: "Les propriétés du Registre des lieux historiques de Philadelphie, chacune sa propre parcelle, inscrites séparément ou dans le cadre d'un quartier historique (affichées de près). Les changements ici peuvent nécessiter l'examen de la Commission historique : demandez-leur d'abord (215 686 7660)."
+    description: "Les propriétés du Registre des lieux historiques de Philadelphie, chacune sa propre parcelle, inscrites séparément ou dans le cadre d'un quartier historique (affichées de près). Les changements ici peuvent nécessiter l'examen de la Commission historique : demandez-lui d'abord (215 686 7660)."
   zoning_overlays:
     label: "Zonages superposés"
     description: "Les zones où le Code de zonage ajoute ses propres règles par-dessus le zonage de base : conservation de quartier, rues commerçantes, protection contre les inondations et contre les pentes raides, limites sur le revêtement près de la Wissahickon, hauteurs près de l'aéroport, enseignes et plus. Beaucoup se chevauchent, et quelques-unes couvrent la plus grande partie de la ville. Touchez un endroit pour voir chaque zonage superposé qui s'y trouve, avec sa section du Code de zonage. Les zonages superposés peuvent changer ce qui est permis ; vérifiez auprès de la Ville avant de planifier."
@@ -1272,12 +1272,12 @@ routes:
       - "Écrivez au Bureau des systèmes de transport et d'infrastructure (OTIS) de la Ville à otis@phila.gov, ou appelez le 215-686-9003. OTIS gère le programme d'abribus de la Ville ; il n'y a pas de formulaire de demande public."
       - "Mettez en copie le bureau du district de votre membre du Conseil municipal, et prévenez aussi la SEPTA, par son formulaire de commentaires en ligne ou au 215-580-7800."
     cost: "Demande gratuite"
-    timeline: "Non précisé. OTIS envoie les nouveaux emplacements d'abribus à l'Commission des arts de la Ville pour examen (huit en décembre 2025)"
+    timeline: "Non précisé. OTIS envoie les nouveaux emplacements d'abribus à la Commission des arts de la Ville pour examen (huit en décembre 2025)"
     links:
       "https://www.phila.gov/media/20240521160603/RFI-OTIS-street-furniture-20240521.pdf":
         label: "OTIS : demande d'information sur le mobilier urbain (mai 2024), avec l'objectif de la Ville pour les abribus"
       "https://www.phila.gov/media/20251205094032/Bus-Shelter-Upgrades-submission.pdf":
-        label: "Huit nouveaux abribus envoyés à l'Commission des arts (décembre 2025)"
+        label: "Huit nouveaux abribus envoyés à la Commission des arts (décembre 2025)"
       "https://wwww.septa.org/customer-service/comment-form/":
         label: "Formulaire de commentaires de la SEPTA"
       "https://phlcouncil.com/council-members/":
