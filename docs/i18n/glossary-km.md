@@ -159,3 +159,25 @@ New terms for who represents you, packets, letters, flyers and projects:
 | a lawyer has not reviewed it, not legal advice | មេធាវីមិនទាន់បានពិនិត្យ... នៅឡើយទេ។ វាមិនមែនជាដំបូន្មានផ្នែកច្បាប់ទេ។ | the "yet" is kept (មិនទាន់ ... នៅឡើយ) |
 | projects neighbors finished | គម្រោងដែលអ្នកជិតខាងបានបញ្ចប់ | the layer, the form and the timeline use the same words |
 | elected officials' offices | ការិយាល័យ | official offices only; no personal phone or email |
+
+## Catch up pass 2 (2026-10-22)
+
+| English | Khmer | Note |
+|---|---|---|
+| held for the district Council member | រក្សាទុកសម្រាប់សមាជិក Council នៃស្រុក | The checker's note was right: ក្រុមប្រឹក្សាស្រុក is the district council of a Cambodian srok, not a City Council member. It now uses the glossary term សមាជិក Council, as in the letters and the district pages |
+| mile, less than 0.1 miles | ម៉ែល, តិចជាង 0.1 ម៉ែល | ម៉ែល is kept whole: the word segmenter splits it, so the zero width space script keeps it as one word |
+| about 1 hour 15 minutes | ប្រហែល 1 ម៉ោង 15 នាទី | Khmer has one form, so the hour count never changes shape |
+| label and value, label alone | `ខ្សែ៖ 47`, `ការការពារ៖` | The Khmer colon ៖ touches the label and a space follows it, as everywhere else in the catalog |
+| lists: a, b and c; long lists; owners' names | a, b និង c; a; b និង c; A និង B | Short lists match what the browser writes for Khmer. Long lists use a semicolon between phrases and no semicolon before និង, since Khmer has no "; and" |
+| found no record of it (a City server) | រកមិនឃើញកំណត់ត្រាអំពីវា | English changed from "has no record of it". The Khmer was "មិនមានកំណត់ត្រាអំពីវាទេ" (has no record of it), which says a record does not exist. It now says the lookup did not find one |
+| Department of Sanitation (Philadelphia More Beautiful Committee) | kept in English | phila.gov publishes no Khmer name for it, as for the Streets Department, so the name stays English on the Block Captain row |
+
+Flyer and letter language keys: "Flyer language" is ភាសារបស់ខិត្តប័ណ្ណ and "Letter language" is
+ភាសារបស់លិខិត. "In a second column" is ក្នុងជួរឈរទីពីរ. In the note under the letter, the
+second sentence says the translation stays on the screen only (ប៉ុណ្ណោះ), so a reader knows what
+is printed.
+
+About the zero width spaces: the segmenter left some words split (a bare consonant cut off its
+word, as in ប៉ូលីស, ហ្វីត, ចំណត, អ្នកជិះ, and ម៉ែល). The script now joins a bare consonant to the word
+before it and keeps ម៉ែល whole, so no line break falls inside those words. Only the places of the
+spaces changed in that clean up, not any word.
