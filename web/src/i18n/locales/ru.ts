@@ -83,6 +83,16 @@ const ru: Catalog = {
   units: {
     meters: (n) => plural(n, { one: '# метр', few: '# метра', many: '# метров', other: '# метра' }),
     kilometers: (km) => `${formatDecimal(km, 1)} километра`,
+    miles: (miles) => `${formatDecimal(miles, 1)} мили`,
+    lessThanMiles: (miles) => `меньше ${formatDecimal(miles, 1)} мили`,
+  },
+
+  join: {
+    labelled: (label, value) => `${label}: ${value}`,
+    colon: (label) => `${label}:`,
+    and: (items) => (items.length <= 1 ? items.join('') : `${items.slice(0, -1).join(', ')} и ${items.at(-1)}`),
+    long: (items) => (items.length <= 1 ? items.join('') : `${items.slice(0, -1).join('; ')} и ${items.at(-1)}`),
+    names: (names) => names.join(' и '),
   },
 
   header: {
@@ -1197,6 +1207,13 @@ const ru: Catalog = {
     },
     estimateTitle: 'Сколько это занимает',
     estimate: (time) => `Наша оценка: ${time} для одного человека или пары.`,
+    duration: (hours, minutes) =>
+      `около ${[
+        hours ? plural(hours, { one: '# часа', few: '# часов', many: '# часов', other: '# часа' }) : '',
+        minutes || !hours ? plural(minutes, { one: '# минуты', few: '# минут', many: '# минут', other: '# минуты' }) : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}`,
     estimateBasis:
       'Это наша собственная оценка, а не измерение: ходьба со скоростью примерно 3 мили в час от остановки до остановки и около минуты на каждой остановке. Дорога до первой остановки и домой не входит.',
     trolleyTunnel:
@@ -2853,6 +2870,9 @@ const ru: Catalog = {
     ownLinkLabelPlaceholder: 'Присоединяйтесь к нашему групповому чату',
     size: 'Бумага',
     sizes: { letter: 'Одна листовка на странице Letter', half: 'Половина страницы, по две на лист' },
+    language: 'Язык листовки',
+    languageHelp: 'Напечатайте листовку на языке, на котором читают ваши соседи. То, что вы вводите, печатается так, как вы это набрали.',
+    withEnglish: 'Добавить рядом английский, во втором столбце',
     print: 'Распечатать листовку',
     clear: 'Стереть введённое',
     confirmClear: 'Стереть из этого браузера то, что вы ввели для листовок? Вернуть это не получится.',
@@ -2966,9 +2986,15 @@ const ru: Catalog = {
     notKept:
       'Сейчас этот браузер не хранит то, что вы вводите, возможно, из-за приватного окна. Распечатайте, прежде чем закрыть страницу.',
     preview: 'Письмо',
+    language: 'Язык письма',
+    languageHelp:
+      'Офисы, общественные организации и владельцы, которым адресованы эти письма, в основном читают по-английски, поэтому письмо печатается на английском, если вы не выберете свой язык.',
+    translationTitle: 'Ваше письмо на вашем языке',
+    translationNote: 'Чтобы вы знали, что подписываете. Печатается только письмо выше; этот перевод остаётся на вашем экране.',
     salutation: (name) => `Здравствуйте, ${name}!`,
     dearOwner: 'Уважаемый владелец недвижимости!',
     sincerely: 'С уважением,',
+    yourName: '[ваше имя]',
     reachMe: (contact) => `Связаться со мной можно по контакту: ${contact}.`,
     reachMeBlank: 'Связаться со мной можно по контакту: [как с вами связаться].',
     thanks: 'Спасибо, что рассмотрите это.',

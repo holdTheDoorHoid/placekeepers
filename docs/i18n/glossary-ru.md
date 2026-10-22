@@ -97,6 +97,7 @@ would mislead, the plain name is used and the English name stays in brackets.
 | Office of Transportation and Infrastructure Systems (OTIS) | Управление транспорта и инфраструктурных систем (OTIS) | phila.gov/ru writes "Управление транспорта, инфраструктуры и устойчивого развития", which is a mistranslation of "Systems"; the literal name is used |
 | Longtime Owner Occupants Program (LOOP) | городская программа для давних владельцев, живущих в своём доме (Longtime Owner Occupants Program, LOOP) | phila.gov/ru writes "Жильцы с длительным сроком эксплуатации", which does not mean this; the plain description is used |
 | Homestead Exemption | Homestead Exemption | phila.gov/ru writes "освобождение от уплаты налогов на усадьбу" on the page, but "программа Homestead Exemption" on the Russian application form; the English name stays |
+| Department of Sanitation (Philadelphia More Beautiful Committee) | Департамент санитарии (Philadelphia More Beautiful Committee) | phila.gov/ru; the Block Captain program now sits here, not under the Department of Streets; the committee's English name stays in brackets as English has it |
 | Department of Records | Департамент записей (Department of Records) | no Russian name found; own rendering |
 | Department of Planning and Development | Департамент планирования и развития (Department of Planning and Development) | own rendering |
 | Philadelphia City Planning Commission | Градостроительная комиссия Филадельфии (Philadelphia City Planning Commission) | own rendering |
