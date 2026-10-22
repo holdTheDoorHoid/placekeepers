@@ -177,3 +177,24 @@ Padrões de Construção (Board of Building Standards).
 
 Portuguese counts 0 and 1 as the same plural form in the standard rules, but people write
 "0 lugares". The catalog's `pl()` helper gives zero the plural form.
+
+## Words kept in English on purpose
+
+- **OpenStreetMap editor and StreetComplete screens.** The English page names the editor's labels
+  and buttons ("Shelter", "Add field:", "Save", "Upload", "Uh…", "Things", "Create new note"). They
+  stay in English with a Portuguese gloss in parentheses, because the labels on a visitor's screen
+  depend on the language of their browser or phone and we cannot check them.
+- **issue do GitHub.** The word "issue" stays, with "um pedido público" on the Contact page, since
+  that is what the GitHub page calls it.
+- **Brownfield.** The brownfield soil note adds a short gloss, "(terreno que pode ter contaminação)",
+  after the word, since most readers do not know the EPA's term. It says nothing the English does
+  not already imply, and it never says "limpo" or "seguro".
+- **Site names and titles of other organizations' pages**, such as "Mapping Inequality: Redlining in
+  New Deal America", stay as they are.
+
+## Checking against the English
+
+- The six word for word passages of `docs/ETHICS.md` are the same text in the catalog, the registry
+  and every content page that quotes them (About, Use this responsibly, How to do it).
+- `routes.conservatorship.warning` in the registry is the same sentence as
+  `dossier.actions.conservatorshipWarning` in the catalog.

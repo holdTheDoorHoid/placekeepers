@@ -2394,7 +2394,7 @@ const ptBR: Catalog = {
       snapshotNoDate: 'cópia semanal',
       newest: (date) => `registro mais recente ${date}`,
       taxSnapshot: 'cópia final da Clean & Green Philly, 9 de julho de 2025',
-      by: (publisher) => `de ${publisher}`,
+      by: (publisher) => `Publicado por: ${publisher}`,
       correction: 'Informar uma correção',
       correctionHelp: 'Abre um formulário no GitHub, já preenchido com este lote. Para enviá-lo é preciso uma conta gratuita do GitHub.',
       ownerNote:
